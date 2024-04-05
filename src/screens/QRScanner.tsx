@@ -1,8 +1,8 @@
-import { CommonActions } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import { useCameraPermissions, CameraView, Camera } from "expo-camera/next";
 import { useEffect, useState } from "react";
 import { ToastAndroid, View, Vibration } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Button, FAB, Text, TextInput } from "react-native-paper";
 
 export default function QRScanner({ navigation }: any) {
   const [hasPermission, request] = useCameraPermissions();
@@ -11,15 +11,19 @@ export default function QRScanner({ navigation }: any) {
   const onBarcodeScanned = (barCodeScannerResult: any) => {
     setIsScanned(true);
     Vibration.vibrate();
+
+    const parsed = JSON.parse(barCodeScannerResult?.data);
+
+    if (!parsed.roomId)
+      return ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
+
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
         routes: [
           {
             name: "Home",
-            params: {
-              ...JSON.parse(barCodeScannerResult.data),
-            },
+            params: parsed,
           },
         ],
       })
@@ -63,17 +67,73 @@ export default function QRScanner({ navigation }: any) {
           }}
         />
       </CameraView>
-      {isScanned && (
-        <View style={{ padding: 10 }}>
+
+      <View style={{ padding: 10 }}>
+        {isScanned && (
           <Button
             mode="contained"
             onPress={() => setIsScanned(false)}
             contentStyle={{ padding: 5 }}
+            style={{ marginBottom: 10 }}
           >
             Scan again
           </Button>
-        </View>
-      )}
+        )}
+        <ManualCodeInput />
+      </View>
     </View>
   );
 }
+
+const ManualCodeInput = () => {
+  const [code, setCode] = useState("");
+  const navigation = useNavigation<any>();
+
+  return (
+    <View>
+      <Text
+        style={{
+          fontSize: 18,
+          fontWeight: "400",
+          color: "gray",
+        }}
+      >
+        Or enter the code manually
+      </Text>
+      <TextInput
+        mode="outlined"
+        label="Enter code"
+        value={code}
+        onChangeText={setCode}
+        style={{ marginBottom: 10 }}
+      />
+
+      <Button
+        mode="contained"
+        onPress={() => {
+          if (code && code.length > 15) {
+            Vibration.vibrate();
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: "Home",
+                    params: {
+                      roomId: code,
+                    },
+                  },
+                ],
+              })
+            );
+          } else {
+            ToastAndroid.show("Please enter a code", ToastAndroid.SHORT);
+          }
+        }}
+        contentStyle={{ padding: 5 }}
+      >
+        Join room
+      </Button>
+    </View>
+  );
+};

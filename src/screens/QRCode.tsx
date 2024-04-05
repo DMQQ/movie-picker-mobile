@@ -8,6 +8,15 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 import { CommonActions } from "@react-navigation/native";
 
+const categories = {
+  series: [],
+  movies: [],
+  "top-rated": [],
+  popular: "",
+
+  "now-playing": [],
+};
+
 export default function QRCode({ navigation }: any) {
   const {
     qrCode,
@@ -29,10 +38,26 @@ export default function QRCode({ navigation }: any) {
 
     socket.on("active", (users: string[]) => {
       dispatch(roomActions.setUsers(users));
+
+      users.length > 1 &&
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: "Home",
+                params: {
+                  roomId: qrCode,
+                },
+              },
+            ],
+          })
+        );
     });
 
     return () => {
       socket.off("active-users");
+      socket.off("active");
     };
   }, [qrCode]);
 
