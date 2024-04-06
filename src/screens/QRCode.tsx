@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Dimensions, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Button, Checkbox, Text, TextInput } from "react-native-paper";
 
 import QR from "react-native-qrcode-svg";
 import { socket } from "../service/socket";
@@ -8,14 +8,18 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 import { CommonActions } from "@react-navigation/native";
 
-const categories = {
-  series: [],
-  movies: [],
-  "top-rated": [],
-  popular: "",
-
-  "now-playing": [],
-};
+const categories = [
+  "/discover/movie",
+  "/movie/now_playing",
+  "/movie/popular",
+  "/movie/top_rated",
+  "/movie/upcoming",
+  "/tv/top_rated",
+  "/tv/popular",
+  "/tv/airing_today",
+  "/tv/on_the_air",
+  "/discover/tv",
+];
 
 export default function QRCode({ navigation }: any) {
   const {
@@ -23,9 +27,11 @@ export default function QRCode({ navigation }: any) {
     room: { users },
   } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
+  const [category, setCategory] = useState("");
+  const [pageRange, setPageRange] = useState("1"); // to randomize the page on first load
 
-  const handleGenerateCode = () => {
-    socket.emit("create-room");
+  const handleGenerateCode = (category: string) => {
+    socket.emit("create-room", category, pageRange);
 
     socket.on("room-created", (roomId) => {
       dispatch(roomActions.setQRCode(roomId));
@@ -61,14 +67,6 @@ export default function QRCode({ navigation }: any) {
     };
   }, [qrCode]);
 
-  useEffect(() => {
-    handleGenerateCode();
-
-    return () => {
-      socket.off("room-created");
-    };
-  }, []);
-
   const onJoinOwnRoom = () => {
     navigation.dispatch(
       CommonActions.reset({
@@ -84,6 +82,45 @@ export default function QRCode({ navigation }: any) {
       })
     );
   };
+
+  if (!category) {
+    return (
+      <View style={{ flex: 1, padding: 15, justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "column" }}>
+          <Text style={{ fontSize: 25, fontWeight: "bold", marginTop: 5 }}>
+            Choose category
+          </Text>
+          <TextInput
+            keyboardType="numeric"
+            mode="outlined"
+            label={"Page Range"}
+            value={pageRange.toString()}
+            onChangeText={(text) =>
+              setPageRange(text.replace(/[^0-9]/g, "").replace(/^0+/, ""))
+            }
+            style={{ marginTop: 10 }}
+          />
+        </View>
+
+        <View>
+          {categories.map((c, i) => (
+            <Button
+              key={i}
+              mode="contained"
+              contentStyle={{ padding: 5 }}
+              style={{ marginTop: 10 }}
+              onPress={() => {
+                setCategory(c);
+                handleGenerateCode(c);
+              }}
+            >
+              {c}
+            </Button>
+          ))}
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, padding: 15 }}>

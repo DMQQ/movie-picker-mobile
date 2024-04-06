@@ -5,7 +5,9 @@ import { Movie } from "../../../types";
 export default function Content(card: Movie) {
   return (
     <View style={{ padding: 10 }}>
-      <Text style={{ fontSize: 25, fontWeight: "bold" }}>{card.title}</Text>
+      <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+        {card.title ? card.title : card.name}
+      </Text>
       <View
         style={{
           flexDirection: "row",

@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { socket } from "./src/service/socket";
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
+import Overview from "./src/screens/Overview";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,7 +33,7 @@ export default function App() {
     <Provider store={store}>
       <PaperProvider theme={MD2DarkTheme}>
         <NavigationContainer theme={DarkTheme}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
+          <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
             <SafeAreaView style={{ flex: 1 }}>
               <StatusBar style="auto" backgroundColor="#000" />
 
@@ -56,6 +57,14 @@ export default function App() {
                   }}
                 />
                 <Stack.Screen name="QRScanner" component={QRScanner} />
+
+                <Stack.Screen
+                  name="Overview"
+                  component={Overview}
+                  options={{
+                    headerShown: true,
+                  }}
+                />
               </Stack.Navigator>
             </SafeAreaView>
           </GestureHandlerRootView>
