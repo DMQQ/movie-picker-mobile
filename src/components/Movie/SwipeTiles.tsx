@@ -94,7 +94,7 @@ const SwipeTile = ({
             ],
           }}
         >
-          <Poster card={card} />
+          <Poster translate={position} card={card} />
 
           <Content {...card} />
         </Card>
