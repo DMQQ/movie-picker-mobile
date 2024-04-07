@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
-import { Dimensions, View } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { Dimensions, Share, ToastAndroid, View } from "react-native";
 import { Button, Checkbox, Text, TextInput } from "react-native-paper";
-
 import QR from "react-native-qrcode-svg";
-import { socket } from "../service/socket";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 import { CommonActions } from "@react-navigation/native";
+import { SocketContext } from "../service/SocketContext";
+import * as Clipboard from "expo-clipboard";
+
+import * as Sharing from "expo-sharing";
 
 const categories = [
   "/discover/movie",
@@ -26,23 +28,24 @@ export default function QRCode({ navigation }: any) {
     qrCode,
     room: { users },
   } = useAppSelector((state) => state.room);
+  const { socket } = useContext(SocketContext);
   const dispatch = useAppDispatch();
   const [category, setCategory] = useState("");
   const [pageRange, setPageRange] = useState("1"); // to randomize the page on first load
 
   const handleGenerateCode = (category: string) => {
-    socket.emit("create-room", category, pageRange);
-
-    socket.on("room-created", (roomId) => {
-      dispatch(roomActions.setQRCode(roomId));
-    });
+    socket?.emit("create-room", category, pageRange);
   };
 
   useEffect(() => {
-    if (!qrCode) return;
-    socket.emit("join-room", qrCode);
+    socket?.on("room-created", (roomId) => {
+      dispatch(roomActions.setQRCode(roomId));
+    });
 
-    socket.on("active", (users: string[]) => {
+    if (!qrCode) return;
+    socket?.emit("join-room", qrCode);
+
+    socket?.on("active", (users: string[]) => {
       dispatch(roomActions.setUsers(users));
 
       users.length > 1 &&
@@ -62,8 +65,8 @@ export default function QRCode({ navigation }: any) {
     });
 
     return () => {
-      socket.off("active-users");
-      socket.off("active");
+      socket?.off("active-users");
+      socket?.off("active");
     };
   }, [qrCode]);
 
@@ -146,9 +149,27 @@ export default function QRCode({ navigation }: any) {
             size={Dimensions.get("screen").width / 1.5}
           />
         </View>
-        <Text style={{ marginTop: 5, fontWeight: "bold", fontSize: 17 }}>
+
+        <Button
+          onLongPress={async () => {
+            try {
+              await Share.share({
+                message: qrCode,
+                //  message: `qr-mobile://home/${qrCode}`,
+                url: `qr-mobile://home/${qrCode}`,
+                title: "Share Room Code",
+              });
+            } catch (error) {
+              console.log(error);
+            }
+          }}
+          onPress={async () => {
+            await Clipboard.setStringAsync(qrCode);
+            ToastAndroid.show("Copied to clipboard", ToastAndroid.SHORT);
+          }}
+        >
           {qrCode}
-        </Text>
+        </Button>
       </View>
 
       <View>

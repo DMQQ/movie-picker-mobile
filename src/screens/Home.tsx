@@ -1,14 +1,22 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ToastAndroid, View, useWindowDimensions } from "react-native";
-import { Button, Modal, Portal, Text, useTheme } from "react-native-paper";
-import { socket } from "../service/socket";
+import {
+  Button,
+  Dialog,
+  Modal,
+  Portal,
+  Text,
+  useTheme,
+} from "react-native-paper";
+//import { socket } from "../service/socket";
 import { Movie } from "../../types";
-import { DarkTheme } from "@react-navigation/native";
+import { CommonActions, DarkTheme } from "@react-navigation/native";
 import Poster from "../components/Movie/Poster";
 import Content from "../components/Movie/Content";
 import Card from "../components/Movie/Card";
 import SwipeTile from "../components/Movie/SwipeTiles";
 import HeaderButton from "../components/Overview/HeaderButton";
+import { SocketContext } from "../service/SocketContext";
 
 export default function Home({ route, navigation }: any) {
   const [cards, setCards] = useState<Movie[]>([]);
@@ -17,36 +25,32 @@ export default function Home({ route, navigation }: any) {
   const window = useWindowDimensions();
   const room = route.params?.roomId;
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => <HeaderButton navigation={navigation} room={room} />,
-    });
-  }, []);
+  const { socket } = useContext(SocketContext);
 
   useEffect(() => {
-    socket.emit("join-room", room);
+    socket?.emit("join-room", room);
 
-    socket.emit("get-movies", room);
-    socket.on("movies", (cards) => {
+    socket?.emit("get-movies", room);
+    socket?.on("movies", (cards) => {
       setCards(cards.movies);
     });
 
-    socket.on("room-deleted", () => {
+    socket?.on("room-deleted", () => {
       navigation.goBack();
       ToastAndroid.show("Room has been deleted", ToastAndroid.SHORT);
     });
 
-    socket.on("matched", (data: Movie) => {
+    socket?.on("matched", (data: Movie) => {
       if (typeof match !== "undefined" || data == null) return;
 
       setMatch(data);
     });
 
     return () => {
-      socket.off("room-joined");
-      socket.off("movies");
-      socket.emit("leave-room", room);
-      socket.off("room-deleted");
+      socket?.off("room-joined");
+      socket?.off("movies");
+      socket?.emit("leave-room", room);
+      socket?.off("room-deleted");
     };
   }, []);
 
@@ -58,13 +62,13 @@ export default function Home({ route, navigation }: any) {
     });
 
     if (cards.length === 1) {
-      socket.emit("finish", room);
-      socket.emit("get-buddy-status", room);
+      socket?.emit("finish", room);
+      socket?.emit("get-buddy-status", room);
     }
   };
 
   const likeCard = (card: Movie, index: number) => {
-    socket.emit("pick-movie", {
+    socket?.emit("pick-movie", {
       roomId: room,
       //  movie: card.title,
       movie: card.id,
@@ -74,7 +78,7 @@ export default function Home({ route, navigation }: any) {
   };
 
   const dislikeCard = (index: number) => {
-    socket.emit("pick-movie", {
+    socket?.emit("pick-movie", {
       roomId: room,
       movie: 0,
       index,
@@ -82,8 +86,48 @@ export default function Home({ route, navigation }: any) {
     removeCardLocally(index);
   };
 
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+
   return (
     <View style={{ flex: 1 }}>
+      <View
+        style={{
+          padding: 10,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          // borderBottomWidth: 1,
+          // borderBottomColor: theme.colors.surface,
+          backgroundColor: theme.colors.surface,
+        }}
+      >
+        <Button onPress={() => setShowLeaveModal((p) => !p)}>Leave</Button>
+        <HeaderButton navigation={navigation} room={room} />
+      </View>
+
+      <Portal>
+        <Dialog visible={showLeaveModal}>
+          <Dialog.Title>Leave Room</Dialog.Title>
+          <Dialog.Content>
+            <Text>Are you sure you want to leave the room?</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setShowLeaveModal(false)}>Cancel</Button>
+            <Button
+              onPress={() =>
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: "Landing" }],
+                  })
+                )
+              }
+            >
+              Leave
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
       {cards.map((card, index) => (
         <SwipeTile
           length={cards.length}

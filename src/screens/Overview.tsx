@@ -15,10 +15,10 @@ export default function Overview({ route }: any) {
       >
         Matched movies
       </Text>
-      {route.params.matches.map((match: any, index: number) => {
+      {route?.params?.matches?.map((match: any, index: number) => {
         return (
           <View key={index} style={{ paddingVertical: 10 }}>
-            <Text>{match.title || match.name}</Text>
+            <Text>{match?.title || match?.name}</Text>
           </View>
         );
       })}
