@@ -17,6 +17,8 @@ import Card from "../components/Movie/Card";
 import SwipeTile from "../components/Movie/SwipeTiles";
 import HeaderButton from "../components/Overview/HeaderButton";
 import { SocketContext } from "../service/SocketContext";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { roomActions } from "../redux/room/roomSlice";
 
 export default function Home({ route, navigation }: any) {
   const [cards, setCards] = useState<Movie[]>([]);
@@ -24,15 +26,20 @@ export default function Home({ route, navigation }: any) {
   const theme = useTheme();
   const window = useWindowDimensions();
   const room = route.params?.roomId;
-
+  const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
     socket?.emit("join-room", room);
-
     socket?.emit("get-movies", room);
+    socket?.emit("get-room-details", room);
+
     socket?.on("movies", (cards) => {
       setCards(cards.movies);
+    });
+
+    socket?.on("room-details", (data) => {
+      if (data !== undefined) dispatch(roomActions.setRoom(data));
     });
 
     socket?.on("room-deleted", () => {
@@ -51,6 +58,8 @@ export default function Home({ route, navigation }: any) {
       socket?.off("movies");
       socket?.emit("leave-room", room);
       socket?.off("room-deleted");
+      socket?.off("matched");
+      socket?.off("room-details");
     };
   }, []);
 
@@ -70,7 +79,6 @@ export default function Home({ route, navigation }: any) {
   const likeCard = (card: Movie, index: number) => {
     socket?.emit("pick-movie", {
       roomId: room,
-      //  movie: card.title,
       movie: card.id,
       index,
     });
@@ -128,8 +136,26 @@ export default function Home({ route, navigation }: any) {
         </Dialog>
       </Portal>
 
+      {cards.length === 0 && (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ fontSize: 20 }}>No movies left</Text>
+        </View>
+      )}
+
       {cards.map((card, index) => (
         <SwipeTile
+          onPress={() =>
+            navigation.navigate("MovieDetails", {
+              id: card.id,
+              type: route.params?.type || "movie",
+            })
+          }
           length={cards.length}
           key={card.id}
           card={card}
@@ -144,7 +170,11 @@ export default function Home({ route, navigation }: any) {
           dismissableBackButton
           visible={typeof match !== "undefined"}
           onDismiss={() => setMatch(undefined)}
-          style={{ justifyContent: "center", alignItems: "center" }}
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            flex: 1,
+          }}
         >
           <Text
             style={{
@@ -162,15 +192,21 @@ export default function Home({ route, navigation }: any) {
               style={{
                 backgroundColor: theme.colors.surface,
                 height: window.height * 0.75,
+                justifyContent: "space-between",
               }}
             >
               <Poster card={match} />
-              <Content {...match} />
+
+              <Content theme={theme} {...match} />
 
               <Button
                 mode="contained"
                 onPress={() => setMatch(undefined)}
-                style={{ marginTop: 15, borderRadius: 20 }}
+                style={{
+                  marginVertical: 10,
+                  borderRadius: 20,
+                  marginHorizontal: 10,
+                }}
                 contentStyle={{ padding: 5 }}
                 buttonColor={theme.colors.primary}
               >

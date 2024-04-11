@@ -9,9 +9,10 @@ const initialState = {
 
   room: {
     roomId: "",
-    movies: [],
     users: [],
-    createdAt: 0,
+    type: "",
+    page: 1,
+    name: "",
   },
 };
 

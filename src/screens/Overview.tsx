@@ -3,6 +3,7 @@ import { Text, useTheme } from "react-native-paper";
 
 export default function Overview({ route }: any) {
   const theme = useTheme();
+
   return (
     <View style={{ flex: 1, padding: 15 }}>
       <Text

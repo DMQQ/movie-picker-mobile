@@ -1,4 +1,4 @@
-import { useWindowDimensions } from "react-native";
+import { Pressable, useWindowDimensions } from "react-native";
 import { Movie } from "../../../types";
 import Animated, {
   Extrapolation,
@@ -12,6 +12,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Card from "./Card";
 import Poster from "./Poster";
 import Content from "./Content";
+import { useTheme } from "react-native-paper";
 
 const SwipeTile = ({
   card,
@@ -19,15 +20,18 @@ const SwipeTile = ({
   likeCard,
   removeCard,
   length,
+  onPress,
 }: {
   card: Movie;
   index: number;
   likeCard: () => void;
   removeCard: () => void;
   length: number;
+  onPress?: () => void;
 }) => {
   const { width, height } = useWindowDimensions();
   const position = useSharedValue({ x: 0, y: 0 });
+  const theme = useTheme();
 
   const moveGesture = Gesture.Pan()
     .onChange(({ translationX, translationY }) => {
@@ -57,6 +61,8 @@ const SwipeTile = ({
         );
 
         runOnJS(removeCard)();
+      } else if (position.value.y < -height * 0.35) {
+        if (onPress) runOnJS(onPress)();
       }
     });
 
@@ -78,8 +84,10 @@ const SwipeTile = ({
     };
   }, []);
 
+  const gesture = Gesture.Race(moveGesture);
+
   return (
-    <GestureDetector gesture={moveGesture}>
+    <GestureDetector gesture={gesture}>
       <Animated.View style={[animatedStyle]}>
         <Card
           style={{
@@ -96,7 +104,7 @@ const SwipeTile = ({
         >
           <Poster translate={position} card={card} />
 
-          <Content {...card} />
+          <Content theme={theme} {...card} />
         </Card>
       </Animated.View>
     </GestureDetector>

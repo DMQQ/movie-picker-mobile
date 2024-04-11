@@ -1,9 +1,8 @@
 import { View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+import { MD3Theme, Text, useTheme } from "react-native-paper";
 import { Movie } from "../../../types";
 
-export default function Content(card: Movie) {
-  const theme = useTheme();
+export default function Content(card: Movie & { theme: MD3Theme }) {
   return (
     <View style={{ padding: 10 }}>
       <Text style={{ fontSize: 25, fontWeight: "bold" }}>
@@ -24,7 +23,7 @@ export default function Content(card: Movie) {
             fontSize: 18,
             fontWeight: "bold",
             marginLeft: 10,
-            backgroundColor: theme.colors.primary,
+            backgroundColor: card.theme.colors.primary,
             paddingHorizontal: 10,
             borderRadius: 100,
           }}

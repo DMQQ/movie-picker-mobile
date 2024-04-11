@@ -1,5 +1,4 @@
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
-import { StatusBar } from "expo-status-bar";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./src/screens/Home";
@@ -11,10 +10,12 @@ import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
 import Overview from "./src/screens/Overview";
 import { SocketProvider } from "./src/service/SocketContext";
-
+import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MovieDetails from "./src/screens/MovieDetails";
+import { RootStackParamList } from "./src/screens/types";
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
@@ -35,11 +36,25 @@ export default function App() {
                   },
                 },
               }}
+              onStateChange={(state) => {
+                const currentRoute =
+                  state?.routes[state.index]?.name || "Landing";
+
+                if (
+                  ["Home", "QRCode", "QRScanner", "Overview"].includes(
+                    currentRoute
+                  )
+                ) {
+                  StatusBar.setBackgroundColor(MD2DarkTheme.colors.surface);
+                } else {
+                  StatusBar.setBackgroundColor("#000");
+                }
+              }}
             >
               <GestureHandlerRootView
                 style={{ flex: 1, backgroundColor: "#000" }}
               >
-                <StatusBar style="auto" backgroundColor="#000" />
+                <StatusBar backgroundColor="#000" />
 
                 <Stack.Navigator
                   initialRouteName="Landing"
@@ -52,9 +67,14 @@ export default function App() {
                     component={QRCode}
                     options={{
                       headerShown: true,
+                      title: "Create Room",
                     }}
                   />
-                  <Stack.Screen name="QRScanner" component={QRScanner} />
+                  <Stack.Screen
+                    name="QRScanner"
+                    component={QRScanner}
+                    options={{ headerShown: true, title: "Scan QR Code" }}
+                  />
 
                   <Stack.Screen
                     name="Overview"
@@ -63,6 +83,7 @@ export default function App() {
                       headerShown: true,
                     }}
                   />
+                  <Stack.Screen name="MovieDetails" component={MovieDetails} />
                 </Stack.Navigator>
               </GestureHandlerRootView>
             </NavigationContainer>

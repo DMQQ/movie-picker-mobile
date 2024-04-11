@@ -1,12 +1,8 @@
 import { StyleProp, ViewStyle, useWindowDimensions } from "react-native";
-import { Card as CardComponent, useTheme } from "react-native-paper";
+import { Button, Card as CardComponent, useTheme } from "react-native-paper";
 import Animated, {
-  SlideInDown,
-  SlideInUp,
   SlideOutDown,
   ZoomInDown,
-  ZoomInUp,
-  CurvedTransition,
   JumpingTransition,
 } from "react-native-reanimated";
 
