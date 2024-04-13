@@ -73,8 +73,8 @@ export default function QRScanner({ navigation }: any) {
           <Button
             mode="contained"
             onPress={() => setIsScanned(false)}
-            contentStyle={{ padding: 5 }}
-            style={{ marginBottom: 10 }}
+            contentStyle={{ padding: 7.5 }}
+            style={{ marginBottom: 100 }}
           >
             Scan again
           </Button>
@@ -91,21 +91,12 @@ const ManualCodeInput = () => {
 
   return (
     <View>
-      <Text
-        style={{
-          fontSize: 18,
-          fontWeight: "400",
-          color: "gray",
-        }}
-      >
-        Or enter the code manually
-      </Text>
       <TextInput
         mode="outlined"
         label="Enter code"
         value={code}
         onChangeText={setCode}
-        style={{ marginBottom: 10 }}
+        style={{ marginBottom: 10, borderRadius: 20 }}
       />
 
       <Button
@@ -130,7 +121,8 @@ const ManualCodeInput = () => {
             ToastAndroid.show("Please enter a code", ToastAndroid.SHORT);
           }
         }}
-        contentStyle={{ padding: 5 }}
+        contentStyle={{ padding: 7.5 }}
+        style={{ borderRadius: 100 }}
       >
         Join room
       </Button>
