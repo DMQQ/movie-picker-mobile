@@ -6,7 +6,11 @@ import socketIOClient, {
   SocketOptions,
 } from "socket.io-client";
 
-const url = "http://192.168.0.25:3000"; //("http://srv25.mikr.us:40056"); //
+const isDev = true;
+
+export const url = isDev
+  ? "http://192.168.0.25:3000"
+  : "http://srv25.mikr.us:40056"; //
 
 export const SocketContext = React.createContext<{
   socket: Socket | null;

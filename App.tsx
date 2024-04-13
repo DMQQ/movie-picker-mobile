@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./src/screens/Home";
 import QRScanner from "./src/screens/QRScanner";
 import Landing from "./src/screens/Landing";
-import QRCode from "./src/screens/QRCode";
+import QRCode from "./src/screens/CreateRoom/Main";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
@@ -62,14 +62,7 @@ export default function App() {
                 >
                   <Stack.Screen name="Landing" component={Landing} />
                   <Stack.Screen name="Home" component={Home} />
-                  <Stack.Screen
-                    name="QRCode"
-                    component={QRCode}
-                    options={{
-                      headerShown: true,
-                      title: "Create Room",
-                    }}
-                  />
+                  <Stack.Screen name="QRCode" component={QRCode} />
                   <Stack.Screen
                     name="QRScanner"
                     component={QRScanner}

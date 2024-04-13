@@ -1,7 +1,8 @@
 import { View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+import { Text, useTheme, Card, Button } from "react-native-paper";
+import { useAppSelector } from "../redux/store";
 
-export default function Overview({ route }: any) {
+export default function Overview({ route, navigation }: any) {
   const theme = useTheme();
 
   return (
@@ -18,8 +19,32 @@ export default function Overview({ route }: any) {
       </Text>
       {route?.params?.matches?.map((match: any, index: number) => {
         return (
-          <View key={index} style={{ paddingVertical: 10 }}>
-            <Text>{match?.title || match?.name}</Text>
+          <View
+            key={index}
+            style={{
+              padding: 5,
+              borderRadius: 15,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              backgroundColor: theme.colors.surface,
+              alignItems: "center",
+              paddingHorizontal: 10,
+            }}
+          >
+            <Text style={{ fontSize: 17, fontWeight: "700" }}>
+              {match?.title || match?.name}
+            </Text>
+
+            <Button
+              mode="text"
+              onPress={() =>
+                navigation.navigate("MovieDetails", {
+                  id: match.id,
+                })
+              }
+            >
+              Show details
+            </Button>
           </View>
         );
       })}

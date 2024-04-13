@@ -8,7 +8,6 @@ import {
   Text,
   useTheme,
 } from "react-native-paper";
-//import { socket } from "../service/socket";
 import { Movie } from "../../types";
 import { CommonActions, DarkTheme } from "@react-navigation/native";
 import Poster from "../components/Movie/Poster";
@@ -17,14 +16,13 @@ import Card from "../components/Movie/Card";
 import SwipeTile from "../components/Movie/SwipeTiles";
 import HeaderButton from "../components/Overview/HeaderButton";
 import { SocketContext } from "../service/SocketContext";
-import { useAppDispatch, useAppSelector } from "../redux/store";
+import { useAppDispatch } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 
 export default function Home({ route, navigation }: any) {
   const [cards, setCards] = useState<Movie[]>([]);
   const [match, setMatch] = useState<Movie | undefined>(undefined);
   const theme = useTheme();
-  const window = useWindowDimensions();
   const room = route.params?.roomId;
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
@@ -103,8 +101,7 @@ export default function Home({ route, navigation }: any) {
           padding: 10,
           flexDirection: "row",
           justifyContent: "space-between",
-          // borderBottomWidth: 1,
-          // borderBottomColor: theme.colors.surface,
+
           backgroundColor: theme.colors.surface,
         }}
       >
@@ -191,8 +188,10 @@ export default function Home({ route, navigation }: any) {
             <Card
               style={{
                 backgroundColor: theme.colors.surface,
-                height: window.height * 0.75,
-                justifyContent: "space-between",
+                justifyContent: "flex-end",
+                position: "relative",
+                transform: [{ translateY: -10 }],
+                height: "auto",
               }}
             >
               <Poster card={match} />

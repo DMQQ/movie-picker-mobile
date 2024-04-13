@@ -1,4 +1,4 @@
-import { Pressable, useWindowDimensions } from "react-native";
+import { useWindowDimensions } from "react-native";
 import { Movie } from "../../../types";
 import Animated, {
   Extrapolation,
@@ -81,6 +81,7 @@ const SwipeTile = ({
         { translateY: position.value.y },
         { rotate: `${rotate}deg` },
       ],
+      top: withSpring(height * 0.1, { duration: 250 }),
     };
   }, []);
 
@@ -93,11 +94,11 @@ const SwipeTile = ({
           style={{
             position: "absolute",
             left: width * 0.05,
-            top: height * 0.15,
+
             transform: [
-              { translateY: index * 30 },
+              { translateY: index * 16 },
               {
-                scale: 1 - index * 0.05,
+                scale: 1 - index * 0.035,
               },
             ],
           }}

@@ -13,16 +13,16 @@ export default function Landing({ navigation }: any) {
         <Button
           mode="contained"
           onPress={() => navigation.navigate("QRCode")}
-          style={{ borderRadius: 10 }}
-          contentStyle={{ padding: 5 }}
+          style={{ borderRadius: 100 }}
+          contentStyle={{ padding: 7.5 }}
         >
           Create Room
         </Button>
         <Button
           mode="contained"
           onPress={() => navigation.navigate("QRScanner")}
-          style={{ marginTop: 15, borderRadius: 10 }}
-          contentStyle={{ padding: 5 }}
+          style={{ marginTop: 15, borderRadius: 100 }}
+          contentStyle={{ padding: 7.5 }}
         >
           Join Room
         </Button>
