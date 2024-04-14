@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { MD3Theme, Text } from "react-native-paper";
-import { Movie } from "../../../types";
+import { Movie, TVShow } from "../../../types";
 
 const reviewRange = (rating: number) => {
   if (rating >= 7.5) {
@@ -14,7 +14,9 @@ const reviewRange = (rating: number) => {
   }
 };
 
-export default function Content(card: Movie & { theme: MD3Theme }) {
+type ContentProps = { theme: MD3Theme } & Movie;
+
+export default function Content(card: ContentProps) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{card.title ? card.title : card.name}</Text>
@@ -29,7 +31,7 @@ export default function Content(card: Movie & { theme: MD3Theme }) {
             { backgroundColor: reviewRange(card.vote_average) },
           ]}
         >
-          {(card.vote_average * 10).toFixed(1)}%
+          {Math.trunc(card.vote_average * 10)}/100
         </Text>
       </View>
 

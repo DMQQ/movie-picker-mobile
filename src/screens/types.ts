@@ -8,7 +8,7 @@ export type RootStackParamList = {
   QRCode: undefined;
   QRScanner: undefined;
   Overview: undefined;
-  MovieDetails: { id: number; type: "movie" | "tv" };
+  MovieDetails: { id: number; type: "movie" | "tv"; img?: string };
 };
 
 export type Props<Key extends keyof RootStackParamList> =

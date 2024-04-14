@@ -10,6 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Props } from "./types";
 import { useAppSelector } from "../redux/store";
+import useFetch from "../service/useFetch";
 
 type MovieDetails = Movie & {
   adult: boolean;
@@ -48,7 +49,6 @@ export default function MovieDetails({
   route,
   navigation,
 }: Props<"MovieDetails">) {
-  const [movie, setMovie] = useState<MovieDetails | null>(null);
   const { width, height } = useWindowDimensions();
   const theme = useTheme();
 
@@ -95,12 +95,7 @@ export default function MovieDetails({
     };
   });
 
-  useEffect(() => {
-    fetch(`http://srv25.mikr.us:40056/movie/${route.params.id}?type=${type}`)
-      .then((response) => response.json())
-      .then((data) => setMovie(data))
-      .catch((e) => console.error(JSON.stringify(e, null, 2)));
-  }, [route.params]);
+  const { data: movie } = useFetch(`/movie/${route.params.id}?type=${type}`);
 
   if (!movie)
     return (
