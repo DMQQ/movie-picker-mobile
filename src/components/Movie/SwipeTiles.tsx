@@ -12,7 +12,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Card from "./Card";
 import Poster from "./Poster";
 import Content from "./Content";
-import { useTheme } from "react-native-paper";
+import { TouchableRipple, useTheme } from "react-native-paper";
 
 const SwipeTile = ({
   card,
@@ -103,7 +103,9 @@ const SwipeTile = ({
             ],
           }}
         >
-          <Poster translate={position} card={card} />
+          <TouchableRipple onPress={onPress}>
+            <Poster translate={position} card={card} />
+          </TouchableRipple>
 
           <Content theme={theme} {...card} />
         </Card>

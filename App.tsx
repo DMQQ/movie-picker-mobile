@@ -76,7 +76,13 @@ export default function App() {
                       headerShown: true,
                     }}
                   />
-                  <Stack.Screen name="MovieDetails" component={MovieDetails} />
+                  <Stack.Screen
+                    name="MovieDetails"
+                    component={MovieDetails}
+                    options={{
+                      presentation: "modal",
+                    }}
+                  />
                 </Stack.Navigator>
               </GestureHandlerRootView>
             </NavigationContainer>

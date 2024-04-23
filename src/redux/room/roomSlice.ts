@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Movie } from "../../../types";
 
 const initialState = {
   isHost: false,
@@ -13,15 +14,27 @@ const initialState = {
     type: "",
     page: 1,
     name: "",
+
+    matches: [] as Movie[],
+
+    movies: [] as Movie[],
   },
 };
+
+type MovieMatch = Movie;
 
 const roomSlice = createSlice({
   name: "room",
   initialState,
   reducers: {
     setRoom(state, action) {
-      state.room = action.payload;
+      state.room.name = action.payload.name;
+      state.room.roomId = action.payload.roomId;
+      state.room.type = action.payload.type;
+      state.room.page = action.payload.page;
+      state.room.users = action.payload.users;
+      state.room.matches = [];
+      state.room.movies = [];
     },
 
     setQRCode(state, action) {
@@ -44,6 +57,39 @@ const roomSlice = createSlice({
 
     setUsers(state, action) {
       state.room.users = action.payload;
+    },
+
+    addMatch(
+      state,
+      {
+        payload,
+      }: {
+        payload: MovieMatch;
+      }
+    ) {
+      state.room.matches.push(payload);
+    },
+
+    addMovies(
+      state,
+      {
+        payload,
+      }: {
+        payload: Movie[];
+      }
+    ) {
+      state.room.movies.push(...payload);
+    },
+
+    removeMovie(
+      state,
+      {
+        payload,
+      }: {
+        payload: number;
+      }
+    ) {
+      state.room.movies.splice(payload, 1);
     },
   },
 });

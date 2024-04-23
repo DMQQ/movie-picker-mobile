@@ -1,26 +1,16 @@
-import { View } from "react-native";
+import { FlatList, View } from "react-native";
 import { Text, useTheme, Card, Button } from "react-native-paper";
-import { useAppSelector } from "../redux/store";
 
 export default function Overview({ route, navigation }: any) {
   const theme = useTheme();
 
   return (
     <View style={{ flex: 1, padding: 15 }}>
-      <Text
-        style={{
-          fontSize: 25,
-          color: theme.colors.primary,
-          fontWeight: "bold",
-          marginBottom: 25,
-        }}
-      >
-        Matched movies
-      </Text>
-      {route?.params?.matches?.map((match: any, index: number) => {
-        return (
+      <FlatList
+        data={route?.params?.matches}
+        keyExtractor={(match) => match.id.toString()}
+        renderItem={({ item: match }) => (
           <View
-            key={index}
             style={{
               padding: 5,
               borderRadius: 15,
@@ -46,8 +36,8 @@ export default function Overview({ route, navigation }: any) {
               Show details
             </Button>
           </View>
-        );
-      })}
+        )}
+      />
     </View>
   );
 }

@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { ToastAndroid, View, useWindowDimensions } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   Button,
   Dialog,
@@ -8,105 +7,88 @@ import {
   Text,
   useTheme,
 } from "react-native-paper";
-import { Movie } from "../../types";
 import { CommonActions, DarkTheme } from "@react-navigation/native";
 import Poster from "../components/Movie/Poster";
 import Content from "../components/Movie/Content";
 import Card from "../components/Movie/Card";
 import SwipeTile from "../components/Movie/SwipeTiles";
 import HeaderButton from "../components/Overview/HeaderButton";
-import { SocketContext } from "../service/SocketContext";
-import { useAppDispatch } from "../redux/store";
-import { roomActions } from "../redux/room/roomSlice";
+import useRoom from "../service/useRoom";
+import { Props } from "./types";
+import { Movie } from "../../types";
 
-export default function Home({ route, navigation }: any) {
-  const [cards, setCards] = useState<Movie[]>([]);
-  const [match, setMatch] = useState<Movie | undefined>(undefined);
+const styles = StyleSheet.create({
+  navigation: {
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  emptyListContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  matchModal: {
+    margin: 20,
+    padding: 20,
+    borderRadius: 20,
+    backgroundColor: "white",
+  },
+  matchText: {
+    fontSize: 35,
+    fontWeight: "bold",
+    textAlign: "left",
+    margin: 10,
+  },
+  matchCard: {
+    justifyContent: "flex-end",
+    position: "relative",
+    transform: [{ translateY: -10 }],
+    height: "auto",
+  },
+  matchClose: {
+    marginVertical: 10,
+    borderRadius: 20,
+    marginHorizontal: 10,
+  },
+});
+
+export default function Home({ route, navigation }: Props<"Home">) {
+  const roomId = route.params?.roomId;
+
+  const {
+    cards,
+    dislikeCard,
+    likeCard,
+    match,
+    showLeaveModal,
+    toggleLeaveModal,
+    hideMatchModal,
+  } = useRoom(roomId);
   const theme = useTheme();
-  const room = route.params?.roomId;
-  const dispatch = useAppDispatch();
-  const { socket } = useContext(SocketContext);
 
-  useEffect(() => {
-    socket?.emit("join-room", room);
-    socket?.emit("get-movies", room);
-    socket?.emit("get-room-details", room);
-
-    socket?.on("movies", (cards) => {
-      setCards(cards.movies);
+  const handleNavigateDetails = (card: Movie) => {
+    navigation.navigate("MovieDetails", {
+      id: card.id,
+      type: route.params?.type || "movie",
     });
-
-    socket?.on("room-details", (data) => {
-      if (data !== undefined) dispatch(roomActions.setRoom(data));
-    });
-
-    socket?.on("room-deleted", () => {
-      navigation.goBack();
-      ToastAndroid.show("Room has been deleted", ToastAndroid.SHORT);
-    });
-
-    socket?.on("matched", (data: Movie) => {
-      if (typeof match !== "undefined" || data == null) return;
-
-      setMatch(data);
-    });
-
-    return () => {
-      socket?.off("room-joined");
-      socket?.off("movies");
-      socket?.emit("leave-room", room);
-      socket?.off("room-deleted");
-      socket?.off("matched");
-      socket?.off("room-details");
-    };
-  }, []);
-
-  const removeCardLocally = (index: number) => {
-    setCards((prev) => {
-      const _prev = [...prev];
-      _prev.splice(index, 1);
-      return _prev;
-    });
-
-    if (cards.length === 1) {
-      socket?.emit("finish", room);
-      socket?.emit("get-buddy-status", room);
-    }
   };
 
-  const likeCard = (card: Movie, index: number) => {
-    socket?.emit("pick-movie", {
-      roomId: room,
-      movie: card.id,
-      index,
-    });
-    removeCardLocally(index);
-  };
-
-  const dislikeCard = (index: number) => {
-    socket?.emit("pick-movie", {
-      roomId: room,
-      movie: 0,
-      index,
-    });
-    removeCardLocally(index);
-  };
-
-  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const handleLeaveRoom = () =>
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "Landing" }],
+      })
+    );
 
   return (
     <View style={{ flex: 1 }}>
       <View
-        style={{
-          padding: 10,
-          flexDirection: "row",
-          justifyContent: "space-between",
-
-          backgroundColor: theme.colors.surface,
-        }}
+        style={[styles.navigation, { backgroundColor: theme.colors.surface }]}
       >
-        <Button onPress={() => setShowLeaveModal((p) => !p)}>Leave</Button>
-        <HeaderButton navigation={navigation} room={room} />
+        <Button onPress={toggleLeaveModal}>Leave</Button>
+        <HeaderButton navigation={navigation} room={roomId} />
       </View>
 
       <Portal>
@@ -116,43 +98,21 @@ export default function Home({ route, navigation }: any) {
             <Text>Are you sure you want to leave the room?</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setShowLeaveModal(false)}>Cancel</Button>
-            <Button
-              onPress={() =>
-                navigation.dispatch(
-                  CommonActions.reset({
-                    index: 0,
-                    routes: [{ name: "Landing" }],
-                  })
-                )
-              }
-            >
-              Leave
-            </Button>
+            <Button onPress={toggleLeaveModal}>Cancel</Button>
+            <Button onPress={handleLeaveRoom}>Leave</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
 
       {cards.length === 0 && (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <View style={styles.emptyListContainer}>
           <Text style={{ fontSize: 20 }}>No movies left</Text>
         </View>
       )}
 
       {cards.map((card, index) => (
         <SwipeTile
-          onPress={() =>
-            navigation.navigate("MovieDetails", {
-              id: card.id,
-              type: route.params?.type || "movie",
-            })
-          }
+          onPress={() => handleNavigateDetails(card)}
           length={cards.length}
           key={card.id}
           card={card}
@@ -166,33 +126,18 @@ export default function Home({ route, navigation }: any) {
         <Modal
           dismissableBackButton
           visible={typeof match !== "undefined"}
-          onDismiss={() => setMatch(undefined)}
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            flex: 1,
-          }}
+          onDismiss={hideMatchModal}
+          style={styles.matchModal}
         >
-          <Text
-            style={{
-              fontSize: 35,
-              fontWeight: "bold",
-              textAlign: "left",
-              margin: 10,
-              color: theme.colors.primary,
-            }}
-          >
+          <Text style={[styles.matchText, { color: theme.colors.primary }]}>
             It's a match!
           </Text>
           {typeof match !== "undefined" && (
             <Card
-              style={{
-                backgroundColor: theme.colors.surface,
-                justifyContent: "flex-end",
-                position: "relative",
-                transform: [{ translateY: -10 }],
-                height: "auto",
-              }}
+              style={[
+                styles.matchCard,
+                { backgroundColor: theme.colors.surface },
+              ]}
             >
               <Poster card={match} />
 
@@ -200,12 +145,8 @@ export default function Home({ route, navigation }: any) {
 
               <Button
                 mode="contained"
-                onPress={() => setMatch(undefined)}
-                style={{
-                  marginVertical: 10,
-                  borderRadius: 20,
-                  marginHorizontal: 10,
-                }}
+                onPress={hideMatchModal}
+                style={styles.matchClose}
                 contentStyle={{ padding: 5 }}
                 buttonColor={theme.colors.primary}
               >

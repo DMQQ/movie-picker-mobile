@@ -23,7 +23,7 @@ export default function Content(card: ContentProps) {
 
       <View style={styles.row}>
         <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-          {card.release_date}
+          {card.release_date || card.first_air_date}
         </Text>
         <Text
           style={[
