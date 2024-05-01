@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { url } from "../../service/SocketContext";
 
 function generateArrayWithMaxIncrement(max: number, length = 7) {
@@ -30,7 +30,10 @@ export default function ChoosePageRange({ navigation }: any) {
     fetch(
       `${url}/movie/max-count?type=${category}&genres=${genre
         .map((g: any) => g.id)
-        .join(",")}`
+        .join(",")}`,
+      {
+        cache: "force-cache",
+      }
     )
       .then((res) => res.json())
       .then((data) => {
@@ -38,7 +41,10 @@ export default function ChoosePageRange({ navigation }: any) {
       });
   }, [category, genre]);
 
-  const nums = generateArrayWithMaxIncrement(maxCount, 7);
+  const nums = useMemo(
+    () => generateArrayWithMaxIncrement(maxCount, 7),
+    [maxCount]
+  );
 
   const theme = useTheme();
 

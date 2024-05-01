@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { Button, useTheme } from "react-native-paper";
+import { Button, Icon, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
 
 const categories = [
@@ -46,7 +46,7 @@ const categories = [
 ];
 
 export default function ChooseCategory({ navigation }: any) {
-  const { setCategory } = useCreateRoom();
+  const { setCategory, category } = useCreateRoom();
 
   const onPress = (category: (typeof categories)[0]) => {
     setCategory(category.path);
@@ -71,19 +71,32 @@ export default function ChooseCategory({ navigation }: any) {
           <Button
             key={i}
             mode="contained"
-            buttonColor={theme.colors.surface}
-            contentStyle={{ padding: 5 }}
-            style={{ marginTop: 10, borderRadius: 10 }}
+            buttonColor={
+              category === c.path
+                ? theme.colors.secondary
+                : theme.colors.surface
+            }
+            contentStyle={{
+              padding: 5,
+            }}
+            style={{
+              marginTop: 10,
+              borderRadius: 10,
+            }}
             onPress={() => {
               onPress(c);
             }}
           >
+            {["/discover/movie", "/discover/tv"].includes(c.path) && (
+              <Icon source={"crown"} size={16} />
+            )}{" "}
             {c.label}
           </Button>
         ))}
       </View>
 
       <Button
+        icon="dice-4"
         mode="contained"
         style={{
           borderRadius: 100,
