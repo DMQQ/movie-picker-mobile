@@ -91,6 +91,14 @@ const roomSlice = createSlice({
     ) {
       state.room.movies.splice(payload, 1);
     },
+
+    reset(state) {
+      state.room = initialState.room;
+      state.qrCode = "";
+      state.isHost = false;
+      state.isCreated = false;
+      state.joined = false;
+    },
   },
 });
 

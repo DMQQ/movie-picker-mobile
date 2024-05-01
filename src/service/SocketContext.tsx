@@ -6,15 +6,18 @@ import socketIOClient, {
   SocketOptions,
 } from "socket.io-client";
 
-const isDev = false;
+const isDev = true;
 
 export const url = isDev
   ? "http://192.168.0.25:3000"
   : "http://srv25.mikr.us:40056"; //
 
+const userId = Math.random().toString(36).substring(7);
+
 export const SocketContext = React.createContext<{
   socket: Socket | null;
-}>({ socket: null });
+  userId: string;
+}>({ socket: null, userId: "" });
 
 const connectionConfig = {
   jsonp: false,
@@ -32,7 +35,7 @@ const connectionConfig = {
   path: "/socket.io",
 
   extraHeaders: {
-    "user-id": Math.random().toString(36).substring(7),
+    "user-id": userId,
   },
 } as Partial<ManagerOptions & SocketOptions>;
 
@@ -62,7 +65,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   }, [url]);
 
   return (
-    <SocketContext.Provider value={{ socket: socket.current }}>
+    <SocketContext.Provider value={{ socket: socket.current, userId }}>
       {children}
     </SocketContext.Provider>
   );

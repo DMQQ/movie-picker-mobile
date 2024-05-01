@@ -74,6 +74,7 @@ export default function App() {
                     component={Overview}
                     options={{
                       headerShown: true,
+                      title: "",
                     }}
                   />
                   <Stack.Screen

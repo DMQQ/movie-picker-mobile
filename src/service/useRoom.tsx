@@ -12,11 +12,11 @@ export default function useRoom(room: string) {
   const [match, setMatch] = useState<Movie | undefined>(undefined);
 
   const {
-    room: { movies: cards, roomId },
+    room: { movies: cards },
   } = useAppSelector((state) => state.room);
 
   const setCards = (movies: Movie[]) => {
-    dispatch(roomActions.addMovies(movies));
+    if (cards.length === 0) dispatch(roomActions.addMovies(movies));
   };
 
   const removeCard = (index: number) => {
@@ -25,6 +25,30 @@ export default function useRoom(room: string) {
 
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
+
+  const [matchQueue, setMatchQueue] = useState<Movie[]>([]);
+
+  useEffect(() => {
+    if (matchQueue.length > 0 && match === undefined) {
+      setMatch(matchQueue[0]);
+      setMatchQueue((prev) => prev.slice(1));
+
+      console.log("matchQueue", matchQueue);
+    }
+  }, [matchQueue, match]);
+
+  useEffect(() => {
+    socket?.on("matched", (data: Movie) => {
+      if (typeof match !== "undefined" || data == null) return;
+
+      setMatch(data);
+      dispatch(roomActions.addMatch(data));
+    });
+
+    return () => {
+      socket?.off("matched");
+    };
+  }, []);
 
   useEffect(() => {
     socket?.emit("join-room", room);
@@ -44,20 +68,14 @@ export default function useRoom(room: string) {
       ToastAndroid.show("Room has been deleted", ToastAndroid.SHORT);
     });
 
-    socket?.on("matched", (data: Movie) => {
-      if (typeof match !== "undefined" || data == null) return;
-
-      setMatch(data);
-      dispatch(roomActions.addMatch(data));
-    });
-
     return () => {
       socket?.off("room-joined");
       socket?.off("movies");
       socket?.emit("leave-room", room);
       socket?.off("room-deleted");
-      socket?.off("matched");
       socket?.off("room-details");
+
+      dispatch(roomActions.reset());
     };
   }, []);
 
@@ -82,7 +100,7 @@ export default function useRoom(room: string) {
   const dislikeCard = (index: number) => {
     socket?.emit("pick-movie", {
       roomId: room,
-      movie: 0,
+      movie: undefined,
       index,
     });
     removeCardLocally(index);
@@ -93,7 +111,7 @@ export default function useRoom(room: string) {
   };
 
   const toggleLeaveModal = () => {
-    setShowLeaveModal(false);
+    setShowLeaveModal((p) => !p);
   };
 
   return {

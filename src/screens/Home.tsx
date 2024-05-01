@@ -1,5 +1,6 @@
-import { StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import {
+  Appbar,
   Button,
   Dialog,
   Modal,
@@ -7,7 +8,11 @@ import {
   Text,
   useTheme,
 } from "react-native-paper";
-import { CommonActions, DarkTheme } from "@react-navigation/native";
+import {
+  CommonActions,
+  DarkTheme,
+  useIsFocused,
+} from "@react-navigation/native";
 import Poster from "../components/Movie/Poster";
 import Content from "../components/Movie/Content";
 import Card from "../components/Movie/Card";
@@ -16,6 +21,11 @@ import HeaderButton from "../components/Overview/HeaderButton";
 import useRoom from "../service/useRoom";
 import { Props } from "./types";
 import { Movie } from "../../types";
+import { useContext, useState } from "react";
+import QRCode from "react-native-qrcode-svg";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { SocketContext } from "../service/SocketContext";
+import { roomActions } from "../redux/room/roomSlice";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -29,10 +39,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   matchModal: {
-    margin: 20,
     padding: 20,
     borderRadius: 20,
-    backgroundColor: "white",
   },
   matchText: {
     fontSize: 35,
@@ -45,6 +53,7 @@ const styles = StyleSheet.create({
     position: "relative",
     transform: [{ translateY: -10 }],
     height: "auto",
+    marginTop: 15,
   },
   matchClose: {
     marginVertical: 10,
@@ -54,8 +63,6 @@ const styles = StyleSheet.create({
 });
 
 export default function Home({ route, navigation }: Props<"Home">) {
-  const roomId = route.params?.roomId;
-
   const {
     cards,
     dislikeCard,
@@ -64,8 +71,12 @@ export default function Home({ route, navigation }: Props<"Home">) {
     showLeaveModal,
     toggleLeaveModal,
     hideMatchModal,
-  } = useRoom(roomId);
+  } = useRoom(route.params?.roomId);
   const theme = useTheme();
+
+  const [showQRModal, setShowQRModal] = useState(false);
+  const qrCode = useAppSelector((state) => state.room.qrCode);
+  const { userId } = useContext(SocketContext);
 
   const handleNavigateDetails = (card: Movie) => {
     navigation.navigate("MovieDetails", {
@@ -74,25 +85,54 @@ export default function Home({ route, navigation }: Props<"Home">) {
     });
   };
 
-  const handleLeaveRoom = () =>
+  const dispatch = useAppDispatch();
+
+  const handleLeaveRoom = () => {
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
         routes: [{ name: "Landing" }],
       })
     );
+    dispatch(roomActions.reset());
+  };
+
+  const isFocused = useIsFocused();
 
   return (
     <View style={{ flex: 1 }}>
-      <View
+      {/* <View
         style={[styles.navigation, { backgroundColor: theme.colors.surface }]}
       >
         <Button onPress={toggleLeaveModal}>Leave</Button>
         <HeaderButton navigation={navigation} room={roomId} />
-      </View>
+      </View> */}
+
+      <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
+        <Button onPress={toggleLeaveModal}>Leave</Button>
+
+        <Appbar.Content title="" />
+
+        <Appbar.Action
+          color={theme.colors.primary}
+          size={17}
+          icon="qrcode-scan"
+          onPress={() => setShowQRModal((p) => !p)}
+        />
+
+        <Appbar.Action
+          size={20}
+          color={theme.colors.primary}
+          icon="heart"
+          onPress={() => navigation.navigate("Overview")}
+        />
+      </Appbar.Header>
 
       <Portal>
-        <Dialog visible={showLeaveModal}>
+        <Dialog
+          visible={showLeaveModal}
+          style={{ backgroundColor: theme.colors.surface }}
+        >
           <Dialog.Title>Leave Room</Dialog.Title>
           <Dialog.Content>
             <Text>Are you sure you want to leave the room?</Text>
@@ -100,6 +140,47 @@ export default function Home({ route, navigation }: Props<"Home">) {
           <Dialog.Actions>
             <Button onPress={toggleLeaveModal}>Cancel</Button>
             <Button onPress={handleLeaveRoom}>Leave</Button>
+          </Dialog.Actions>
+        </Dialog>
+
+        <Dialog
+          visible={showQRModal}
+          style={{
+            backgroundColor: theme.colors.surface,
+            borderRadius: 10,
+            paddingBottom: 10,
+          }}
+        >
+          <Dialog.Title>QR Code</Dialog.Title>
+          <Dialog.Content>
+            <Text>Scan this code to join the room</Text>
+          </Dialog.Content>
+
+          <Dialog.Content>
+            <QRCode
+              backgroundColor={theme.colors.surface}
+              color={theme.colors.primary}
+              value={JSON.stringify({
+                roomId: qrCode,
+                host: userId,
+                type: "join",
+              })}
+              size={Dimensions.get("screen").width / 1.35}
+            />
+            <Text
+              style={{
+                color: theme.colors.primary,
+                textAlign: "center",
+                marginTop: 5,
+                fontSize: 18,
+              }}
+            >
+              {qrCode}
+            </Text>
+          </Dialog.Content>
+
+          <Dialog.Actions>
+            <Button onPress={() => setShowQRModal(false)}>Close</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -122,40 +203,43 @@ export default function Home({ route, navigation }: Props<"Home">) {
         />
       ))}
 
-      <Portal theme={DarkTheme}>
-        <Modal
-          dismissableBackButton
-          visible={typeof match !== "undefined"}
-          onDismiss={hideMatchModal}
-          style={styles.matchModal}
-        >
-          <Text style={[styles.matchText, { color: theme.colors.primary }]}>
-            It's a match!
-          </Text>
-          {typeof match !== "undefined" && (
-            <Card
-              style={[
-                styles.matchCard,
-                { backgroundColor: theme.colors.surface },
-              ]}
-            >
-              <Poster card={match} />
-
-              <Content theme={theme} {...match} />
-
-              <Button
-                mode="contained"
-                onPress={hideMatchModal}
-                style={styles.matchClose}
-                contentStyle={{ padding: 5 }}
-                buttonColor={theme.colors.primary}
+      {isFocused && (
+        <Portal theme={DarkTheme}>
+          <Modal
+            dismissable
+            dismissableBackButton
+            visible={typeof match !== "undefined"}
+            onDismiss={hideMatchModal}
+            style={styles.matchModal}
+          >
+            <Text style={[styles.matchText, { color: theme.colors.primary }]}>
+              It's a match!
+            </Text>
+            {typeof match !== "undefined" && (
+              <Card
+                style={[
+                  styles.matchCard,
+                  { backgroundColor: theme.colors.surface },
+                ]}
               >
-                Close
-              </Button>
-            </Card>
-          )}
-        </Modal>
-      </Portal>
+                <Poster card={match} />
+
+                <Content theme={theme} {...match} />
+
+                <Button
+                  mode="contained"
+                  onPress={hideMatchModal}
+                  style={styles.matchClose}
+                  contentStyle={{ padding: 5 }}
+                  buttonColor={theme.colors.primary}
+                >
+                  Close
+                </Button>
+              </Card>
+            )}
+          </Modal>
+        </Portal>
+      )}
     </View>
   );
 }

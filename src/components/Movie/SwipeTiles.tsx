@@ -96,7 +96,7 @@ const SwipeTile = ({
             left: width * 0.05,
 
             transform: [
-              { translateY: index * 16 },
+              { translateY: index * 12.5 },
               {
                 scale: 1 - index * 0.035,
               },
