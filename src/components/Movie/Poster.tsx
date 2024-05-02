@@ -61,6 +61,8 @@ export default function Poster(props: {
         }}
         resizeMode="cover"
         source={{
+          height: height * 0.3,
+          cache: "only-if-cached",
           uri: "https://image.tmdb.org/t/p/w500" + props.card.poster_path,
         }}
       />

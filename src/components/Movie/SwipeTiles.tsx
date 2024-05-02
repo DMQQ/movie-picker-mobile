@@ -2,6 +2,8 @@ import { useWindowDimensions } from "react-native";
 import { Movie } from "../../../types";
 import Animated, {
   Extrapolation,
+  FadeIn,
+  FadeInDown,
   interpolate,
   runOnJS,
   useAnimatedStyle,
@@ -13,6 +15,7 @@ import Card from "./Card";
 import Poster from "./Poster";
 import Content from "./Content";
 import { TouchableRipple, useTheme } from "react-native-paper";
+import { memo } from "react";
 
 const SwipeTile = ({
   card,
@@ -64,7 +67,8 @@ const SwipeTile = ({
       } else if (position.value.y < -height * 0.35) {
         if (onPress) runOnJS(onPress)();
       }
-    });
+    })
+    .enabled(index === 0);
 
   const animatedStyle = useAnimatedStyle(() => {
     const rotate = interpolate(
@@ -85,33 +89,47 @@ const SwipeTile = ({
     };
   }, []);
 
-  const gesture = Gesture.Race(moveGesture);
+  const gesture = moveGesture;
+
+  // const cardInitialAnimatedStyle = useAnimatedStyle(
+  //   () => ({
+  //     transform: [
+  //       { translateY: index * 15 },
+  //       {
+  //         scale: 1 - index * 0.035,
+  //       },
+  //     ],
+  //   }),
+  //   [index]
+  // );
+
+  if (index > 0) return null;
 
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View style={[animatedStyle]}>
-        <Card
-          style={{
-            position: "absolute",
-            left: width * 0.05,
-
-            transform: [
-              { translateY: index * 12.5 },
-              {
-                scale: 1 - index * 0.035,
-              },
-            ],
-          }}
+      <Animated.View
+        style={[animatedStyle]}
+        entering={FadeInDown.duration(100)}
+      >
+        <Animated.View
+        // style={cardInitialAnimatedStyle}
         >
-          <TouchableRipple onPress={onPress}>
-            <Poster translate={position} card={card} />
-          </TouchableRipple>
+          <Card
+            style={{
+              position: "absolute",
+              left: width * 0.05,
+            }}
+          >
+            <TouchableRipple onPress={onPress}>
+              <Poster translate={position} card={card} />
+            </TouchableRipple>
 
-          <Content theme={theme} {...card} />
-        </Card>
+            <Content theme={theme} {...card} />
+          </Card>
+        </Animated.View>
       </Animated.View>
     </GestureDetector>
   );
 };
 
-export default SwipeTile;
+export default memo(SwipeTile);
