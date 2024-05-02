@@ -27,7 +27,6 @@ export default function useFetch(path: string) {
       const data = await response.json();
       setData(data);
     } catch (error) {
-      console.log(JSON.stringify(error, null, 2));
       setError(error as any);
     } finally {
       setLoading(false);

@@ -2,15 +2,33 @@ import { CommonActions, useNavigation } from "@react-navigation/native";
 import { useCameraPermissions, CameraView, Camera } from "expo-camera/next";
 import { useEffect, useState } from "react";
 import { ToastAndroid, View, Vibration } from "react-native";
-import { Button, FAB, Text, TextInput } from "react-native-paper";
+import {
+  Button,
+  Dialog,
+  FAB,
+  Modal,
+  Portal,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 
-export default function QRScanner({ navigation }: any) {
+export default function QRScanner() {
   const [hasPermission, request] = useCameraPermissions();
+  const [isManual, setIsManual] = useState(false);
+  const theme = useTheme();
   const [isScanned, setIsScanned] = useState(false);
+  const navigation = useNavigation<any>();
 
   const onBarcodeScanned = (barCodeScannerResult: any) => {
     setIsScanned(true);
     Vibration.vibrate();
+
+    const isValid =
+      !barCodeScannerResult?.data?.startsWith("https://") &&
+      barCodeScannerResult.data.includes("roomId");
+
+    if (!isValid) return;
 
     const parsed = JSON.parse(barCodeScannerResult?.data);
 
@@ -68,29 +86,59 @@ export default function QRScanner({ navigation }: any) {
         />
       </CameraView>
 
-      <View style={{ padding: 10 }}>
-        {isScanned && (
-          <Button
-            mode="contained"
-            onPress={() => setIsScanned(false)}
-            contentStyle={{ padding: 7.5 }}
-            style={{ marginBottom: 100 }}
+      <Portal>
+        <>
+          <Dialog
+            dismissable={true}
+            onDismiss={() => setIsScanned(false)}
+            visible={isScanned}
+            style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
           >
-            Scan again
-          </Button>
-        )}
-        <ManualCodeInput />
-      </View>
+            <Dialog.Title>Something went wrong!</Dialog.Title>
+
+            <Dialog.Content>
+              <Text>Invalid QR code</Text>
+            </Dialog.Content>
+
+            <Dialog.Actions>
+              <Button onPress={() => setIsScanned(false)}>Close</Button>
+            </Dialog.Actions>
+          </Dialog>
+
+          <Dialog
+            dismissable={true}
+            onDismiss={() => setIsManual(false)}
+            visible={isManual}
+            style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
+          >
+            <Dialog.Title>Join room manually</Dialog.Title>
+
+            <Dialog.Actions>
+              <ManualCodeInput navigation={navigation} />
+            </Dialog.Actions>
+          </Dialog>
+        </>
+      </Portal>
+
+      <FAB
+        label="Join manually"
+        onPress={() => setIsManual(true)}
+        style={{
+          position: "absolute",
+          margin: 16,
+          right: 0,
+          bottom: 0,
+        }}
+      />
     </View>
   );
 }
 
-const ManualCodeInput = () => {
+const ManualCodeInput = ({ navigation }: { navigation: any }) => {
   const [code, setCode] = useState("");
-  const navigation = useNavigation<any>();
 
   return (
-    <View>
+    <View style={{ flex: 1, paddingHorizontal: 10 }}>
       <TextInput
         mode="outlined"
         label="Enter code"
@@ -100,7 +148,7 @@ const ManualCodeInput = () => {
       />
 
       <Button
-        mode="contained"
+        mode="text"
         onPress={() => {
           if (code && code.length > 15) {
             Vibration.vibrate();
@@ -121,8 +169,7 @@ const ManualCodeInput = () => {
             ToastAndroid.show("Please enter a code", ToastAndroid.SHORT);
           }
         }}
-        contentStyle={{ padding: 7.5 }}
-        style={{ borderRadius: 100 }}
+        style={{ marginTop: 10 }}
       >
         Join room
       </Button>

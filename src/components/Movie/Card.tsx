@@ -18,8 +18,7 @@ export default function Card({
 
   return (
     <Animated.View
-      layout={JumpingTransition}
-      entering={ZoomInDown.duration(200)}
+      entering={ZoomInDown.duration(150)}
       exiting={SlideOutDown.duration(100)}
     >
       <CardComponent

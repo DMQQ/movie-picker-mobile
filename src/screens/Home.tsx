@@ -17,7 +17,6 @@ import Poster from "../components/Movie/Poster";
 import Content from "../components/Movie/Content";
 import Card from "../components/Movie/Card";
 import SwipeTile from "../components/Movie/SwipeTiles";
-import HeaderButton from "../components/Overview/HeaderButton";
 import useRoom from "../service/useRoom";
 import { Props } from "./types";
 import { Movie } from "../../types";
@@ -109,6 +108,18 @@ export default function Home({ route, navigation }: Props<"Home">) {
 
         <Appbar.Content title="" />
 
+        {!(cards.length > 0) && (
+          <Appbar.Action
+            color={theme.colors.primary}
+            size={22}
+            icon="refresh"
+            onPress={() => {
+              socket?.emit("leave-room", route.params?.roomId);
+              socket?.emit("join-room", route.params?.roomId);
+            }}
+          />
+        )}
+
         <Appbar.Action
           color={theme.colors.primary}
           size={17}
@@ -127,7 +138,7 @@ export default function Home({ route, navigation }: Props<"Home">) {
       <Portal>
         <Dialog
           visible={showLeaveModal}
-          style={{ backgroundColor: theme.colors.surface }}
+          style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
         >
           <Dialog.Title>Leave Room</Dialog.Title>
           <Dialog.Content>
@@ -183,7 +194,7 @@ export default function Home({ route, navigation }: Props<"Home">) {
 
       {cards.length === 0 && (
         <View style={styles.emptyListContainer}>
-          <Text style={{ fontSize: 20 }}>No movies left</Text>
+          <Text style={{ fontSize: 20 }}>Waiting for other players</Text>
         </View>
       )}
 
@@ -208,7 +219,7 @@ export default function Home({ route, navigation }: Props<"Home">) {
             onDismiss={hideMatchModal}
             style={styles.matchModal}
           >
-            <Text style={[styles.matchText, { color: theme.colors.primary }]}>
+            <Text style={[styles.matchText, { color: "#fff" }]}>
               It's a match!
             </Text>
             {typeof match !== "undefined" && (

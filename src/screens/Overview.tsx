@@ -5,6 +5,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { useAppSelector } from "../redux/store";
 import Animated, { FadeIn, useAnimatedStyle } from "react-native-reanimated";
 import { memo } from "react";
+import { Movie } from "../../types";
 
 const Matches = ({ route, navigation }: any) => {
   const {
@@ -14,11 +15,22 @@ const Matches = ({ route, navigation }: any) => {
   return (
     <View style={{ flex: 1, padding: 15 }}>
       <Animated.FlatList
-        contentContainerStyle={{ paddingTop: 10 }}
+        ListHeaderComponent={
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text style={{ fontSize: 20, marginBottom: 15, fontWeight: "400" }}>
+              Matched with your friends
+            </Text>
+            <Text style={{ fontSize: 20, marginBottom: 15, fontWeight: "400" }}>
+              ({matches.length})
+            </Text>
+          </View>
+        }
         data={matches}
         keyExtractor={(match) => match.id.toString()}
         renderItem={({ item: match, index }) => (
-          <AnimatedMatchCard
+          <AnimatedCard
             match={match}
             type={type}
             navigation={navigation}
@@ -30,13 +42,13 @@ const Matches = ({ route, navigation }: any) => {
   );
 };
 
-const AnimatedMatchCard = ({
+const AnimatedCard = ({
   match,
   type,
   navigation,
   index,
 }: {
-  match: any;
+  match: Movie;
   type: string;
   navigation: any;
   index: number;
@@ -62,10 +74,35 @@ const AnimatedMatchCard = ({
   );
 };
 
-const YourLikes = () => {
+const YourLikes = ({ navigation }: any) => {
+  const { likes } = useAppSelector((state) => state.room.room);
+
   return (
-    <View>
-      <Text>Likes</Text>
+    <View style={{ flex: 1, padding: 15 }}>
+      <Animated.FlatList
+        ListHeaderComponent={
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text style={{ fontSize: 20, marginBottom: 15, fontWeight: "400" }}>
+              Your Likes
+            </Text>
+            <Text style={{ fontSize: 20, marginBottom: 15, fontWeight: "400" }}>
+              ({likes.length})
+            </Text>
+          </View>
+        }
+        data={likes}
+        keyExtractor={(match) => match.id.toString()}
+        renderItem={({ item: match, index }) => (
+          <AnimatedCard
+            match={match}
+            type={""}
+            navigation={navigation}
+            index={index}
+          />
+        )}
+      />
     </View>
   );
 };
@@ -73,7 +110,7 @@ const YourLikes = () => {
 const FriendsLikes = () => {
   return (
     <View>
-      <Text>Friends</Text>
+      <Text>Friends Likes</Text>
     </View>
   );
 };
