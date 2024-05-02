@@ -30,10 +30,6 @@ export default function QRCodePage({ navigation }: any) {
 
     return () => {
       socket?.off("room-created");
-
-      if (qrCode) {
-        socket?.emit("leave-room", qrCode);
-      }
     };
   }, [category, pageRange, genre]);
 

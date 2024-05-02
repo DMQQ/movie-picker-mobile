@@ -1,34 +1,21 @@
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  View,
-  useWindowDimensions,
-} from "react-native";
-import {
-  Text,
-  useTheme,
-  Card,
-  Button,
-  TouchableRipple,
-} from "react-native-paper";
+import { Dimensions, Image, View } from "react-native";
+import { Text, useTheme, TouchableRipple } from "react-native-paper";
 
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useAppSelector } from "../redux/store";
 import Animated, { FadeIn, useAnimatedStyle } from "react-native-reanimated";
+import { memo } from "react";
 
 const Matches = ({ route, navigation }: any) => {
   const {
     room: { matches, type },
   } = useAppSelector((state) => state.room);
-  const theme = useTheme();
 
   return (
     <View style={{ flex: 1, padding: 15 }}>
       <Animated.FlatList
         contentContainerStyle={{ paddingTop: 10 }}
         data={matches}
-        inverted={matches.length > 1}
         keyExtractor={(match) => match.id.toString()}
         renderItem={({ item: match, index }) => (
           <AnimatedMatchCard
@@ -55,7 +42,7 @@ const AnimatedMatchCard = ({
   index: number;
 }) => {
   return (
-    <Card
+    <TouchableRipple
       style={{ marginBottom: 15 }}
       onPress={() =>
         navigation.navigate("MovieDetails", {
@@ -71,8 +58,7 @@ const AnimatedMatchCard = ({
         }}
         style={{ width: "100%", height: 250, borderRadius: 10 }}
       />
-      <Card.Title title={match.title || match.name} />
-    </Card>
+    </TouchableRipple>
   );
 };
 
@@ -94,14 +80,13 @@ const FriendsLikes = () => {
 
 const OverviewTopTabs = createMaterialTopTabNavigator();
 
-export default function Overview({ route, navigation }: any) {
+function Overview({ route, navigation }: any) {
   const theme = useTheme();
 
   return (
     <OverviewTopTabs.Navigator
+      initialLayout={{ width: Dimensions.get("window").width }}
       initialRouteName="Matches"
-      overdrag
-      tabBarPosition="top"
       screenOptions={{
         tabBarLabelStyle: {
           fontSize: 14,
@@ -122,14 +107,14 @@ export default function Overview({ route, navigation }: any) {
       <OverviewTopTabs.Screen name="Matches" component={Matches} />
       <OverviewTopTabs.Screen
         options={{
-          title: "Likes",
+          tabBarLabel: "Likes",
         }}
         name="YourLikes"
         component={YourLikes}
       />
       <OverviewTopTabs.Screen
         options={{
-          title: "Friends",
+          tabBarLabel: "Friends",
         }}
         name="FriendsLikes"
         component={FriendsLikes}
@@ -137,3 +122,5 @@ export default function Overview({ route, navigation }: any) {
     </OverviewTopTabs.Navigator>
   );
 }
+
+export default memo(Overview);

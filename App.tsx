@@ -73,7 +73,7 @@ export default function App() {
                     name="Overview"
                     component={Overview}
                     options={{
-                      headerShown: true,
+                      headerShown: false,
                       title: "",
                     }}
                   />

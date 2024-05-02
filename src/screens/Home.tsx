@@ -49,11 +49,12 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   matchCard: {
-    justifyContent: "flex-end",
+    justifyContent: "flex-start",
     position: "relative",
-    transform: [{ translateY: -10 }],
+    transform: [{ translateY: -15 }],
     height: "auto",
     marginTop: 15,
+    minHeight: Dimensions.get("screen").height / 1.5,
   },
   matchClose: {
     marginVertical: 10,
@@ -75,7 +76,7 @@ export default function Home({ route, navigation }: Props<"Home">) {
   const theme = useTheme();
 
   const [showQRModal, setShowQRModal] = useState(false);
-  const qrCode = useAppSelector((state) => state.room.qrCode);
+  const qrCode = useAppSelector((state) => state.room.room.roomId);
   const { userId } = useContext(SocketContext);
 
   const handleNavigateDetails = (card: Movie) => {
@@ -86,6 +87,7 @@ export default function Home({ route, navigation }: Props<"Home">) {
   };
 
   const dispatch = useAppDispatch();
+  const { socket } = useContext(SocketContext);
 
   const handleLeaveRoom = () => {
     navigation.dispatch(
@@ -95,19 +97,13 @@ export default function Home({ route, navigation }: Props<"Home">) {
       })
     );
     dispatch(roomActions.reset());
+    socket?.emit("leave-room", route.params?.roomId);
   };
 
   const isFocused = useIsFocused();
 
   return (
     <View style={{ flex: 1 }}>
-      {/* <View
-        style={[styles.navigation, { backgroundColor: theme.colors.surface }]}
-      >
-        <Button onPress={toggleLeaveModal}>Leave</Button>
-        <HeaderButton navigation={navigation} room={roomId} />
-      </View> */}
-
       <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
         <Button onPress={toggleLeaveModal}>Leave</Button>
 
@@ -229,7 +225,7 @@ export default function Home({ route, navigation }: Props<"Home">) {
                 <Button
                   mode="contained"
                   onPress={hideMatchModal}
-                  style={styles.matchClose}
+                  style={[styles.matchClose]}
                   contentStyle={{ padding: 5 }}
                   buttonColor={theme.colors.primary}
                 >

@@ -3,20 +3,19 @@ import { SocketContext } from "./SocketContext";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 import { Movie } from "../../types";
-import { useNavigation } from "@react-navigation/native";
-import { ToastAndroid } from "react-native";
+import { Image } from "react-native";
 
 export default function useRoom(room: string) {
-  const navigation = useNavigation();
   const [showLeaveModal, setShowLeaveModal] = useState(false);
-  const [match, setMatch] = useState<Movie | undefined>(undefined);
-
+  const setMatch = (movie: Movie) => {
+    dispatch(roomActions.setMatch(movie));
+  };
   const {
-    room: { movies: cards },
+    room: { movies: cards, match, roomId, isFinished },
   } = useAppSelector((state) => state.room);
 
   const setCards = (movies: Movie[]) => {
-    if (cards.length === 0) dispatch(roomActions.addMovies(movies));
+    dispatch(roomActions.addMovies(movies));
   };
 
   const removeCard = (index: number) => {
@@ -26,67 +25,50 @@ export default function useRoom(room: string) {
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
 
-  const [matchQueue, setMatchQueue] = useState<Movie[]>([]);
-
   useEffect(() => {
-    if (matchQueue.length > 0 && match === undefined) {
-      setMatch(matchQueue[0]);
-      setMatchQueue((prev) => prev.slice(1));
+    (async () => {
+      socket?.emit("join-room", room);
 
-      console.log("matchQueue", matchQueue);
-    }
-  }, [matchQueue, match]);
+      socket?.on("movies", (cards) => {
+        setCards(cards.movies);
 
-  useEffect(() => {
-    socket?.on("matched", (data: Movie) => {
-      if (typeof match !== "undefined" || data == null) return;
+        Promise.all(
+          cards.movies.map((card: Movie, index: number) =>
+            Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)
+          )
+        );
+      });
 
-      setMatch(data);
-      dispatch(roomActions.addMatch(data));
-    });
+      socket?.on("room-details", (data) => {
+        if (data !== undefined) dispatch(roomActions.setRoom(data));
+      });
+
+      socket?.on("matched", (data: Movie) => {
+        setMatch(data);
+        dispatch(roomActions.addMatch(data));
+      });
+    })();
 
     return () => {
-      socket?.off("matched");
-    };
-  }, []);
-
-  useEffect(() => {
-    socket?.emit("join-room", room);
-    socket?.emit("get-movies", room);
-    socket?.emit("get-room-details", room);
-
-    socket?.on("movies", (cards) => {
-      setCards(cards.movies);
-    });
-
-    socket?.on("room-details", (data) => {
-      if (data !== undefined) dispatch(roomActions.setRoom(data));
-    });
-
-    socket?.on("room-deleted", () => {
-      navigation.goBack();
-      ToastAndroid.show("Room has been deleted", ToastAndroid.SHORT);
-    });
-
-    return () => {
-      socket?.off("room-joined");
       socket?.off("movies");
-      socket?.emit("leave-room", room);
       socket?.off("room-deleted");
+      socket?.off("matched");
       socket?.off("room-details");
 
-      dispatch(roomActions.reset());
+      socket?.emit("leave-room", room);
     };
-  }, []);
+  }, [roomId]);
 
   const removeCardLocally = (index: number) => {
     removeCard(index);
+  };
 
-    if (cards.length === 1) {
+  useEffect(() => {
+    if (isFinished) {
       socket?.emit("finish", room);
       socket?.emit("get-buddy-status", room);
     }
-  };
+  }, [isFinished]);
 
   const likeCard = (card: Movie, index: number) => {
     socket?.emit("pick-movie", {
@@ -95,19 +77,20 @@ export default function useRoom(room: string) {
       index,
     });
     removeCardLocally(index);
+    dispatch(roomActions.likeMovie(card));
   };
 
   const dislikeCard = (index: number) => {
     socket?.emit("pick-movie", {
       roomId: room,
-      movie: undefined,
+      movie: 0,
       index,
     });
     removeCardLocally(index);
   };
 
   const hideMatchModal = () => {
-    setMatch(undefined);
+    dispatch(roomActions.removeCurrentMatch());
   };
 
   const toggleLeaveModal = () => {
