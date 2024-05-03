@@ -14,6 +14,11 @@ export default function Poster(props: {
     x: number;
     y: number;
   }>;
+
+  imageDimensions?: {
+    height: number;
+    width: number;
+  };
 }) {
   const { height, width } = useWindowDimensions();
 
@@ -34,6 +39,11 @@ export default function Poster(props: {
     };
   });
 
+  const imageDimensions = props?.imageDimensions || {
+    height: height * 0.675,
+    width: width * 0.95 - 20,
+  };
+
   return (
     <View style={{ position: "relative" }}>
       <Animated.View
@@ -47,21 +57,21 @@ export default function Poster(props: {
             borderRadius: 19,
             zIndex: 1,
             opacity: 0,
-            width: width * 0.9 - 20,
-            height: height * 0.3,
+            ...imageDimensions,
           },
           overlayAnimatedStyle,
         ]}
       />
       <Image
         style={{
-          height: height * 0.3,
-          width: width * 0.9 - 20,
+          ...imageDimensions,
           borderRadius: 19,
         }}
+        //resizeMode="cover"
         resizeMode="cover"
+        resizeMethod="resize"
         source={{
-          height: height * 0.3,
+          height: imageDimensions.height,
           cache: "only-if-cached",
           uri: "https://image.tmdb.org/t/p/w500" + props.card.poster_path,
         }}

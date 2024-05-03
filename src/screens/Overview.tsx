@@ -1,20 +1,28 @@
 import { Dimensions, Image, View } from "react-native";
-import { Text, useTheme, TouchableRipple } from "react-native-paper";
+import { Text, useTheme, TouchableRipple, Button } from "react-native-paper";
 
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useAppSelector } from "../redux/store";
 import Animated, { FadeIn, useAnimatedStyle } from "react-native-reanimated";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { Movie } from "../../types";
+import MatchModal from "../components/Movie/MatchModal";
 
 const Matches = ({ route, navigation }: any) => {
   const {
     room: { matches, type },
   } = useAppSelector((state) => state.room);
 
+  const [match, setMatch] = useState<Movie | undefined>(undefined);
+
+  const randomMovie = () => {
+    setMatch(matches[Math.floor(Math.random() * matches.length)]);
+  };
+
   return (
-    <View style={{ flex: 1, padding: 15 }}>
+    <View style={{ flex: 1, padding: 15, position: "relative" }}>
       <Animated.FlatList
+        style={{ marginBottom: 50 }}
         ListHeaderComponent={
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
@@ -38,6 +46,26 @@ const Matches = ({ route, navigation }: any) => {
           />
         )}
       />
+
+      {match && (
+        <MatchModal match={match} hideMatchModal={() => setMatch(undefined)} />
+      )}
+
+      <Button
+        onPress={randomMovie}
+        mode="contained"
+        style={{
+          position: "absolute",
+          bottom: 10,
+          left: 10,
+          right: 10,
+          width: "100%",
+          borderRadius: 100,
+        }}
+        contentStyle={{ padding: 7.5 }}
+      >
+        Randomize
+      </Button>
     </View>
   );
 };
@@ -55,7 +83,7 @@ const AnimatedCard = ({
 }) => {
   return (
     <TouchableRipple
-      style={{ marginBottom: 15 }}
+      style={{ marginBottom: 15, flexDirection: "row" }}
       onPress={() =>
         navigation.navigate("MovieDetails", {
           id: match.id,
@@ -63,13 +91,53 @@ const AnimatedCard = ({
         })
       }
     >
-      <Image
-        resizeMode="cover"
-        source={{
-          uri: "https://image.tmdb.org/t/p/w500" + match.poster_path,
-        }}
-        style={{ width: "100%", height: 250, borderRadius: 10 }}
-      />
+      <>
+        <Image
+          resizeMode="cover"
+          source={{
+            uri: "https://image.tmdb.org/t/p/w500" + match.poster_path,
+          }}
+          style={{ width: "25%", height: 100, borderRadius: 10 }}
+        />
+
+        <View style={{ gap: 5 }}>
+          <Text
+            lineBreakMode="clip"
+            textBreakStrategy="simple"
+            style={{
+              marginLeft: 10,
+              fontSize: 17,
+              fontWeight: "500",
+              color: "#fff",
+              flexWrap: "wrap",
+            }}
+          >
+            {match.title || match.name || match.original_title}
+          </Text>
+
+          <Text
+            style={{
+              marginLeft: 10,
+              fontSize: 17,
+              fontWeight: "500",
+              color: "#fff",
+            }}
+          >
+            {match.release_date || match.first_air_date}
+          </Text>
+
+          <Text
+            style={{
+              marginLeft: 10,
+              fontSize: 17,
+              fontWeight: "500",
+              color: "#fff",
+            }}
+          >
+            {match.vote_average.toFixed(1)}/10
+          </Text>
+        </View>
+      </>
     </TouchableRipple>
   );
 };

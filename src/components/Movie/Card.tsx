@@ -1,36 +1,32 @@
-import { StyleProp, ViewStyle, useWindowDimensions } from "react-native";
-import { Button, Card as CardComponent, useTheme } from "react-native-paper";
+import { StyleProp, ViewStyle } from "react-native";
+import { Card as CardComponent } from "react-native-paper";
 import Animated, {
+  SlideInDown,
   SlideOutDown,
-  ZoomInDown,
-  JumpingTransition,
+  ZoomIn,
 } from "react-native-reanimated";
 
 export default function Card({
   children,
   style,
+  onPress,
 }: {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  onPress?: () => void;
 }) {
-  const { width, height } = useWindowDimensions();
-  const theme = useTheme();
-
   return (
     <Animated.View
-      entering={ZoomInDown.duration(150)}
-      exiting={SlideOutDown.duration(100)}
+      entering={SlideInDown.duration(100)}
+      exiting={SlideOutDown.duration(50)}
     >
       <CardComponent
+        onPress={onPress}
         style={[
           {
-            width: width * 0.9,
-            height: height * 0.7,
-            backgroundColor: theme.colors.surface,
+            width: "auto",
+            height: "auto",
             borderRadius: 25,
-            padding: 10,
-            borderWidth: 1,
-            borderColor: "#1F1F1F",
           },
           style,
         ]}

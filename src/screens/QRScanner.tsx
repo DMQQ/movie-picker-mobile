@@ -1,12 +1,11 @@
 import { CommonActions, useNavigation } from "@react-navigation/native";
-import { useCameraPermissions, CameraView, Camera } from "expo-camera/next";
+import { useCameraPermissions, CameraView } from "expo-camera/next";
 import { useEffect, useState } from "react";
 import { ToastAndroid, View, Vibration } from "react-native";
 import {
   Button,
   Dialog,
   FAB,
-  Modal,
   Portal,
   Text,
   TextInput,
@@ -121,6 +120,7 @@ export default function QRScanner() {
       </Portal>
 
       <FAB
+        theme={{ colors: { accent: theme.colors.primary } }}
         label="Join manually"
         onPress={() => setIsManual(true)}
         style={{

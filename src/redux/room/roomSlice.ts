@@ -85,7 +85,8 @@ const roomSlice = createSlice({
         payload: MovieMatch;
       }
     ) {
-      state.room.matches.push(payload);
+      if (!state.room.matches.find((m) => m.id === payload.id))
+        state.room.matches.push(payload);
     },
 
     setMatch(state, { payload }) {

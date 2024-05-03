@@ -2,7 +2,6 @@ import { useWindowDimensions } from "react-native";
 import { Movie } from "../../../types";
 import Animated, {
   Extrapolation,
-  FadeIn,
   FadeInDown,
   interpolate,
   runOnJS,
@@ -13,9 +12,9 @@ import Animated, {
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Card from "./Card";
 import Poster from "./Poster";
-import Content from "./Content";
-import { TouchableRipple, useTheme } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import { memo } from "react";
+import { LinearGradient } from "expo-linear-gradient";
 
 const SwipeTile = ({
   card,
@@ -34,7 +33,6 @@ const SwipeTile = ({
 }) => {
   const { width, height } = useWindowDimensions();
   const position = useSharedValue({ x: 0, y: 0 });
-  const theme = useTheme();
 
   const moveGesture = Gesture.Pan()
     .onChange(({ translationX, translationY }) => {
@@ -91,19 +89,21 @@ const SwipeTile = ({
 
   const gesture = moveGesture;
 
-  // const cardInitialAnimatedStyle = useAnimatedStyle(
-  //   () => ({
-  //     transform: [
-  //       { translateY: index * 15 },
-  //       {
-  //         scale: 1 - index * 0.035,
-  //       },
-  //     ],
-  //   }),
-  //   [index]
-  // );
+  const cardInitialAnimatedStyle = useAnimatedStyle(
+    () => ({
+      transform: [
+        {
+          translateY: withSpring(index * 7.5 * -1),
+        },
+        {
+          scale: withSpring(1 - index * 0.05),
+        },
+      ],
+    }),
+    [index]
+  );
 
-  if (index > 0) return null;
+  if (index > 3) return null;
 
   return (
     <GestureDetector gesture={gesture}>
@@ -111,20 +111,53 @@ const SwipeTile = ({
         style={[animatedStyle]}
         entering={FadeInDown.duration(100)}
       >
-        <Animated.View
-        // style={cardInitialAnimatedStyle}
-        >
+        <Animated.View style={cardInitialAnimatedStyle}>
           <Card
+            onPress={onPress}
             style={{
               position: "absolute",
               left: width * 0.05,
             }}
           >
-            <TouchableRipple onPress={onPress}>
-              <Poster translate={position} card={card} />
-            </TouchableRipple>
+            <LinearGradient
+              colors={["transparent", "transparent", "rgba(0,0,0,0.7)"]}
+              style={{
+                flex: 1,
+                borderRadius: 19,
+                overflow: "hidden",
+                width: width * 0.95 - 20,
+                height: height * 0.675,
+                justifyContent: "flex-end",
+                position: "absolute",
+                zIndex: 10,
+                padding: 10,
+                paddingBottom: 20,
+              }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 20,
+                  paddingHorizontal: 10,
+                  fontWeight: "bold",
+                }}
+              >
+                {card.title || card.name}
+              </Text>
+              <Text
+                style={{
+                  color: "white",
+                  paddingHorizontal: 10,
+                  fontWeight: "bold",
+                  marginTop: 5,
+                }}
+              >
+                {card.release_date || card.first_air_date},{" "}
+                {card.vote_average.toFixed(1)}/10
+              </Text>
+            </LinearGradient>
 
-            <Content theme={theme} {...card} />
+            <Poster translate={position} card={card} />
           </Card>
         </Animated.View>
       </Animated.View>

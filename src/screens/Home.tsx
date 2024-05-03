@@ -3,9 +3,11 @@ import {
   Appbar,
   Button,
   Dialog,
+  Icon,
   Modal,
   Portal,
   Text,
+  TouchableRipple,
   useTheme,
 } from "react-native-paper";
 import {
@@ -25,6 +27,7 @@ import QRCode from "react-native-qrcode-svg";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { SocketContext } from "../service/SocketContext";
 import { roomActions } from "../redux/room/roomSlice";
+import MatchModal from "../components/Movie/MatchModal";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -36,29 +39,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  matchModal: {
-    padding: 20,
-    borderRadius: 20,
-  },
-  matchText: {
-    fontSize: 35,
-    fontWeight: "bold",
-    textAlign: "left",
-    margin: 10,
-  },
-  matchCard: {
-    justifyContent: "flex-start",
-    position: "relative",
-    transform: [{ translateY: -15 }],
-    height: "auto",
-    marginTop: 15,
-    minHeight: Dimensions.get("screen").height / 1.5,
-  },
-  matchClose: {
-    marginVertical: 10,
-    borderRadius: 20,
-    marginHorizontal: 10,
   },
 });
 
@@ -169,8 +149,8 @@ export default function Home({ route, navigation }: Props<"Home">) {
               color={theme.colors.primary}
               value={JSON.stringify({
                 roomId: qrCode,
-                host: userId,
-                type: "join",
+                host: "dmq",
+                type: "movies",
               })}
               size={Dimensions.get("screen").width / 1.35}
             />
@@ -211,41 +191,7 @@ export default function Home({ route, navigation }: Props<"Home">) {
       ))}
 
       {isFocused && (
-        <Portal theme={DarkTheme}>
-          <Modal
-            dismissable
-            dismissableBackButton
-            visible={typeof match !== "undefined"}
-            onDismiss={hideMatchModal}
-            style={styles.matchModal}
-          >
-            <Text style={[styles.matchText, { color: "#fff" }]}>
-              It's a match!
-            </Text>
-            {typeof match !== "undefined" && (
-              <Card
-                style={[
-                  styles.matchCard,
-                  { backgroundColor: theme.colors.surface },
-                ]}
-              >
-                <Poster card={match} />
-
-                <Content theme={theme} {...match} />
-
-                <Button
-                  mode="contained"
-                  onPress={hideMatchModal}
-                  style={[styles.matchClose]}
-                  contentStyle={{ padding: 5 }}
-                  buttonColor={theme.colors.primary}
-                >
-                  Close
-                </Button>
-              </Card>
-            )}
-          </Modal>
-        </Portal>
+        <MatchModal hideMatchModal={hideMatchModal} match={match} />
       )}
     </View>
   );

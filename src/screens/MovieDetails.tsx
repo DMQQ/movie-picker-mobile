@@ -152,7 +152,7 @@ export default function MovieDetails({
         )}
 
         <View style={{ flexDirection: "row", gap: 5, marginTop: 15 }}>
-          {movie.genres.map((genre) => (
+          {movie.genres.map((genre: any) => (
             <Text
               key={genre.id}
               style={{
