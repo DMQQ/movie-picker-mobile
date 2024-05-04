@@ -71,8 +71,8 @@ const SwipeTile = ({
   const animatedStyle = useAnimatedStyle(() => {
     const rotate = interpolate(
       position.value.x,
-      [-width * 0.3, width * 0.3],
-      [-10, 10],
+      [-width * 0.35, width * 0.35],
+      [-12.5, 12.5],
       Extrapolation.CLAMP
     );
 
@@ -105,6 +105,11 @@ const SwipeTile = ({
 
   if (index > 3) return null;
 
+  const dims = {
+    width: width * 0.95 - 20,
+    height: height * 0.7,
+  };
+
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View
@@ -121,18 +126,19 @@ const SwipeTile = ({
           >
             <LinearGradient
               colors={["transparent", "transparent", "rgba(0,0,0,0.7)"]}
-              style={{
-                flex: 1,
-                borderRadius: 19,
-                overflow: "hidden",
-                width: width * 0.95 - 20,
-                height: height * 0.675,
-                justifyContent: "flex-end",
-                position: "absolute",
-                zIndex: 10,
-                padding: 10,
-                paddingBottom: 20,
-              }}
+              style={[
+                {
+                  flex: 1,
+                  borderRadius: 19,
+                  overflow: "hidden",
+                  justifyContent: "flex-end",
+                  position: "absolute",
+                  zIndex: 10,
+                  padding: 10,
+                  paddingBottom: 20,
+                },
+                dims,
+              ]}
             >
               <Text
                 style={{
@@ -157,7 +163,7 @@ const SwipeTile = ({
               </Text>
             </LinearGradient>
 
-            <Poster translate={position} card={card} />
+            <Poster imageDimensions={dims} translate={position} card={card} />
           </Card>
         </Animated.View>
       </Animated.View>

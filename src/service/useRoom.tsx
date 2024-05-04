@@ -26,12 +26,13 @@ export default function useRoom(room: string) {
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
+    console.log("useEffect -> useRoom");
+
     (async () => {
       socket?.emit("join-room", room);
 
       socket?.on("movies", (cards) => {
         setCards(cards.movies);
-
         Promise.all(
           cards.movies.map((card: Movie, index: number) =>
             Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)
@@ -41,6 +42,8 @@ export default function useRoom(room: string) {
 
       socket?.on("room-details", (data) => {
         if (data !== undefined) dispatch(roomActions.setRoom(data));
+
+        socket.off("room-details");
       });
 
       socket?.on("matched", (data: Movie) => {
@@ -51,10 +54,8 @@ export default function useRoom(room: string) {
 
     return () => {
       socket?.off("movies");
-      socket?.off("room-deleted");
       socket?.off("matched");
       socket?.off("room-details");
-
       socket?.emit("leave-room", room);
     };
   }, [roomId]);

@@ -3,21 +3,12 @@ import {
   Appbar,
   Button,
   Dialog,
-  Icon,
-  Modal,
   Portal,
   Text,
-  TouchableRipple,
   useTheme,
 } from "react-native-paper";
-import {
-  CommonActions,
-  DarkTheme,
-  useIsFocused,
-} from "@react-navigation/native";
-import Poster from "../components/Movie/Poster";
-import Content from "../components/Movie/Content";
-import Card from "../components/Movie/Card";
+import { CommonActions, useIsFocused } from "@react-navigation/native";
+
 import SwipeTile from "../components/Movie/SwipeTiles";
 import useRoom from "../service/useRoom";
 import { Props } from "./types";
@@ -56,7 +47,6 @@ export default function Home({ route, navigation }: Props<"Home">) {
 
   const [showQRModal, setShowQRModal] = useState(false);
   const qrCode = useAppSelector((state) => state.room.room.roomId);
-  const { userId } = useContext(SocketContext);
 
   const handleNavigateDetails = (card: Movie) => {
     navigation.navigate("MovieDetails", {

@@ -1,9 +1,10 @@
 import { DarkTheme } from "@react-navigation/native";
-import { Button, Modal, Portal, Text, useTheme } from "react-native-paper";
+import { Modal, Portal, Text, useTheme } from "react-native-paper";
 import Card from "./Card";
 import Poster from "./Poster";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, Easing, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import Animated, { FadeIn, ZoomIn, withTiming } from "react-native-reanimated";
 
 const styles = StyleSheet.create({
   matchModal: {
@@ -48,6 +49,45 @@ const styles = StyleSheet.create({
   },
 });
 
+const { width, height } = Dimensions.get("screen");
+
+function CustomEnteringTransition(targetValues: any) {
+  "worklet";
+
+  const duration = 150;
+
+  const animations = {
+    originX: withTiming(targetValues.originX, { duration }),
+    opacity: withTiming(1, { duration }),
+    transform: [
+      { scale: withTiming(1, { duration }) },
+      { rotate: withTiming("0deg", { duration }) },
+      {
+        translateY: withTiming(0, { duration }),
+      },
+      {
+        translateX: withTiming(0, { duration }),
+      },
+    ],
+  };
+  const initialValues = {
+    originX: -width,
+    opacity: 0,
+    transform: [
+      { scale: 0.5 },
+      { rotate: "40deg" },
+      {
+        translateY: height / 5,
+      },
+      {
+        translateX: width * 1.25,
+      },
+    ],
+  };
+
+  return { initialValues, animations };
+}
+
 export default function MatchModal({
   match,
   hideMatchModal,
@@ -66,54 +106,57 @@ export default function MatchModal({
         onDismiss={hideMatchModal}
         style={styles.matchModal}
       >
-        <Text
+        <Animated.Text
+          entering={FadeIn.delay(200)}
           style={[
             styles.matchText,
             {
               color: "#fff",
-              transform: [{ translateY: -15 }],
+              transform: [{ translateY: -25 }],
             },
           ]}
         >
           It's a match!
-        </Text>
+        </Animated.Text>
 
         {typeof match !== "undefined" && (
-          <Card
-            onPress={hideMatchModal}
-            style={{
-              transform: [{ translateY: -10 }],
-            }}
-          >
-            <LinearGradient
-              colors={["transparent", "transparent", theme.colors.primary]}
-              style={styles.gradient}
-            >
-              <Text
-                style={{
-                  color: "white",
-                  fontSize: 25,
-                  paddingHorizontal: 10,
-                  fontWeight: "bold",
-                }}
-              >
-                {match.title || match.name}
-              </Text>
-
-              <Text style={styles.details}>
-                {match.release_date || match.first_air_date},{" "}
-                {match.vote_average.toFixed(1)}/10
-              </Text>
-            </LinearGradient>
-
-            <Poster
-              imageDimensions={{
-                width: Dimensions.get("screen").width * 0.95 - 20,
-                height: Dimensions.get("screen").height * 0.7,
+          <Animated.View entering={CustomEnteringTransition}>
+            <Card
+              onPress={hideMatchModal}
+              style={{
+                transform: [{ translateY: -10 }],
               }}
-              card={match}
-            />
-          </Card>
+            >
+              <LinearGradient
+                colors={["transparent", "transparent", theme.colors.primary]}
+                style={styles.gradient}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 25,
+                    paddingHorizontal: 10,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {match.title || match.name}
+                </Text>
+
+                <Text style={styles.details}>
+                  {match.release_date || match.first_air_date},{" "}
+                  {match.vote_average.toFixed(1)}/10
+                </Text>
+              </LinearGradient>
+
+              <Poster
+                imageDimensions={{
+                  width: Dimensions.get("screen").width * 0.95 - 20,
+                  height: Dimensions.get("screen").height * 0.7,
+                }}
+                card={match}
+              />
+            </Card>
+          </Animated.View>
         )}
       </Modal>
     </Portal>
