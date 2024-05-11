@@ -1,8 +1,8 @@
-import { View } from "react-native";
-import { Button, Icon, useTheme } from "react-native-paper";
+import { FlatList, View } from "react-native";
+import { Button, Icon, Text, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
 
-const categories = [
+const movies = [
   {
     label: "All movies",
     path: "/discover/movie",
@@ -23,6 +23,9 @@ const categories = [
     label: "Upcoming",
     path: "/movie/upcoming",
   },
+];
+
+const series = [
   {
     label: "All TV",
     path: "/discover/tv",
@@ -45,10 +48,17 @@ const categories = [
   },
 ];
 
+const categories = movies.concat(series);
+
+type Category = {
+  label: string;
+  path: string;
+};
+
 export default function ChooseCategory({ navigation }: any) {
   const { setCategory, category } = useCreateRoom();
 
-  const onPress = (category: (typeof categories)[0]) => {
+  const onPress = (category: Category) => {
     setCategory(category.path);
 
     if (
@@ -62,14 +72,62 @@ export default function ChooseCategory({ navigation }: any) {
     navigation.navigate("ChoosePage");
   };
 
-  const theme = useTheme();
-
   return (
     <View style={{ flex: 1, padding: 15 }}>
-      <View style={{ flex: 1 }}>
-        {categories.map((c, i) => (
+      <List
+        category={category}
+        data={movies}
+        title="Movies"
+        onPress={onPress}
+      />
+
+      <List
+        category={category}
+        data={series}
+        title="Series"
+        onPress={onPress}
+      />
+
+      <Button
+        icon="dice-4"
+        mode="contained"
+        style={{
+          borderRadius: 100,
+          marginTop: 10,
+        }}
+        contentStyle={{ padding: 7.5 }}
+        onPress={() => {
+          onPress(categories[Math.floor(Math.random() * categories.length)]);
+        }}
+      >
+        Randomize
+      </Button>
+    </View>
+  );
+}
+
+const List = ({
+  data,
+  onPress,
+  title,
+  category,
+}: {
+  data: Category[];
+  onPress: (category: Category) => void;
+  title: string;
+  category: string;
+}) => {
+  const theme = useTheme();
+  return (
+    <View style={{ flex: 1 }}>
+      <Text style={{ fontSize: 20, fontWeight: "bold" }}>{title}</Text>
+
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.path}
+        renderItem={({ item: c }) => (
           <Button
-            key={i}
+            key={c.path}
             mode="contained"
             buttonColor={
               category === c.path
@@ -92,23 +150,8 @@ export default function ChooseCategory({ navigation }: any) {
             )}{" "}
             {c.label}
           </Button>
-        ))}
-      </View>
-
-      <Button
-        icon="dice-4"
-        mode="contained"
-        style={{
-          borderRadius: 100,
-          marginTop: 10,
-        }}
-        contentStyle={{ padding: 7.5 }}
-        onPress={() => {
-          onPress(categories[Math.floor(Math.random() * categories.length)]);
-        }}
-      >
-        Randomize
-      </Button>
+        )}
+      />
     </View>
   );
-}
+};

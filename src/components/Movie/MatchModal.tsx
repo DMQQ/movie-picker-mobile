@@ -54,7 +54,7 @@ const { width, height } = Dimensions.get("screen");
 function CustomEnteringTransition(targetValues: any) {
   "worklet";
 
-  const duration = 150;
+  const duration = 100;
 
   const animations = {
     originX: withTiming(targetValues.originX, { duration }),
