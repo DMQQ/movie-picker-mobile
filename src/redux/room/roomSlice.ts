@@ -11,6 +11,9 @@ const initialState = {
   room: {
     roomId: "",
     users: [] as string[],
+
+    usersCount: 0,
+
     type: "",
     page: 1,
     name: "",
@@ -136,6 +139,10 @@ const roomSlice = createSlice({
 
     likeMovie(state, { payload }) {
       state.room.likes.push(payload);
+    },
+
+    setActiveUsers(state, { payload }) {
+      state.room.usersCount = payload.length;
     },
 
     reset(state) {

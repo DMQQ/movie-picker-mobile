@@ -26,8 +26,6 @@ export default function useRoom(room: string) {
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
-    console.log("useEffect -> useRoom");
-
     (async () => {
       socket?.emit("join-room", room);
 
@@ -43,12 +41,16 @@ export default function useRoom(room: string) {
       socket?.on("room-details", (data) => {
         if (data !== undefined) dispatch(roomActions.setRoom(data));
 
-        socket.off("room-details");
+        // socket.off("room-details");
       });
 
       socket?.on("matched", (data: Movie) => {
         setMatch(data);
         dispatch(roomActions.addMatch(data));
+      });
+
+      socket?.on("active", (users: number[]) => {
+        dispatch(roomActions.setActiveUsers(users));
       });
     })();
 
@@ -56,6 +58,7 @@ export default function useRoom(room: string) {
       socket?.off("movies");
       socket?.off("matched");
       socket?.off("room-details");
+      socket?.off("active");
       socket?.emit("leave-room", room);
     };
   }, [roomId]);

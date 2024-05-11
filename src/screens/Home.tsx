@@ -1,6 +1,8 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import {
   Appbar,
+  Avatar,
+  Badge,
   Button,
   Dialog,
   Portal,
@@ -46,7 +48,9 @@ export default function Home({ route, navigation }: Props<"Home">) {
   const theme = useTheme();
 
   const [showQRModal, setShowQRModal] = useState(false);
-  const qrCode = useAppSelector((state) => state.room.room.roomId);
+  const { roomId: qrCode, usersCount } = useAppSelector(
+    (state) => state.room.room
+  );
 
   const handleNavigateDetails = (card: Movie) => {
     navigation.navigate("MovieDetails", {
@@ -76,7 +80,27 @@ export default function Home({ route, navigation }: Props<"Home">) {
       <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
         <Button onPress={toggleLeaveModal}>Leave</Button>
 
-        <Appbar.Content title="" />
+        <View
+          style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}
+        >
+          {usersCount > 1 &&
+            Array.from(new Array(usersCount > 5 ? 5 : usersCount))
+              .map((_, index) => index)
+              .map((n) => (
+                <Avatar.Text
+                  key={n}
+                  size={24}
+                  label={String.fromCharCode(65 + n)}
+                  color="white"
+                  style={{
+                    transform: [{ translateX: -n * 6.5 }],
+                    zIndex: n + 1,
+                    borderWidth: 0.5,
+                    borderColor: "#000",
+                  }}
+                />
+              ))}
+        </View>
 
         {!(cards.length > 0) && (
           <Appbar.Action
