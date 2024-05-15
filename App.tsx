@@ -14,6 +14,7 @@ import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MovieDetails from "./src/screens/MovieDetails";
 import { RootStackParamList } from "./src/screens/types";
+import SettingsScreen from "./src/screens/Settings";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -60,6 +61,8 @@ export default function App() {
                   initialRouteName="Landing"
                   screenOptions={{ headerShown: false }}
                 >
+                  <Stack.Screen name="Settings" component={SettingsScreen} />
+
                   <Stack.Screen name="Landing" component={Landing} />
                   <Stack.Screen name="Home" component={Home} />
                   <Stack.Screen name="QRCode" component={QRCode} />

@@ -34,12 +34,26 @@ const SwipeTile = ({
   const { width, height } = useWindowDimensions();
   const position = useSharedValue({ x: 0, y: 0 });
 
+  const isLeftVisible = useSharedValue(false);
+  const isRightVisible = useSharedValue(false);
+
   const moveGesture = Gesture.Pan()
     .onChange(({ translationX, translationY }) => {
       position.value = {
         x: translationX,
         y: translationY,
       };
+
+      if (position.value.x > 50) {
+        isLeftVisible.value = true;
+        isRightVisible.value = false;
+      } else if (position.value.x < -50) {
+        isLeftVisible.value = false;
+        isRightVisible.value = true;
+      } else {
+        isLeftVisible.value = false;
+        isRightVisible.value = false;
+      }
     })
     .onEnd(() => {
       position.value = withSpring({ x: 0, y: 0 });
@@ -163,7 +177,14 @@ const SwipeTile = ({
               </Text>
             </LinearGradient>
 
-            <Poster imageDimensions={dims} translate={position} card={card} />
+            <Poster
+              isSwipeable
+              isLeftVisible={isLeftVisible}
+              isRightVisible={isRightVisible}
+              imageDimensions={dims}
+              translate={position}
+              card={card}
+            />
           </Card>
         </Animated.View>
       </Animated.View>

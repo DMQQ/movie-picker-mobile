@@ -8,6 +8,10 @@ const initialState = {
 
   qrCode: "",
 
+  nickname: "",
+
+  language: "en",
+
   room: {
     roomId: "",
     users: [] as string[],
@@ -58,6 +62,20 @@ const roomSlice = createSlice({
       state.room.movies = [];
     },
 
+    setSettings(
+      state,
+      {
+        payload,
+      }: {
+        payload: {
+          nickname: string;
+          language: string;
+        };
+      }
+    ) {
+      state.nickname = payload.nickname;
+      state.language = payload.language;
+    },
     setQRCode(state, action) {
       state.qrCode = action.payload;
       state.isCreated = true;
@@ -143,6 +161,7 @@ const roomSlice = createSlice({
 
     setActiveUsers(state, { payload }) {
       state.room.usersCount = payload.length;
+      state.room.users = payload;
     },
 
     reset(state) {

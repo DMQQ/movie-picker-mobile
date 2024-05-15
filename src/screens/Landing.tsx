@@ -1,13 +1,16 @@
 import { Dimensions, Image, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Button, IconButton, Text } from "react-native-paper";
 import useFetch from "../service/useFetch";
 import Animated from "react-native-reanimated";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAppDispatch } from "../redux/store";
+import { roomActions } from "../redux/room/roomSlice";
 
 const { width, height } = Dimensions.get("screen");
 
 export default function Landing({ navigation }: any) {
-  const { data } = useFetch("/landing");
-
+  const { data } = useFetch<[]>("/landing");
   const tileWidth = width * 0.7; // Width of each tile
   const margin = 30; // Margin between each tile
   const totalTileWidth = tileWidth + margin;
@@ -17,15 +20,38 @@ export default function Landing({ navigation }: any) {
     (i) => i * totalTileWidth
   );
 
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    (async () => {
+      const nickname = (await AsyncStorage.getItem("nickname")) || "Guest";
+      const language = (await AsyncStorage.getItem("language")) || "en";
+
+      dispatch(roomActions.setSettings({ nickname, language }));
+    })();
+  }, []);
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold", padding: 15 }}>
-          Welcome!
-        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ fontSize: 24, fontWeight: "bold", padding: 15 }}>
+            Welcome!
+          </Text>
+
+          <IconButton
+            icon={"dots-horizontal"}
+            onPress={() => navigation.navigate("Settings")}
+          />
+        </View>
 
         <Animated.FlatList
-          data={data || []}
+          data={(data || []) as any}
           horizontal
           pagingEnabled
           keyExtractor={(item) => item.id.toString()}

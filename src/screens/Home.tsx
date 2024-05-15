@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import { SocketContext } from "../service/SocketContext";
 import { roomActions } from "../redux/room/roomSlice";
 import MatchModal from "../components/Movie/MatchModal";
+import ActiveUsers from "../components/Home/ActiveUsers";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -47,9 +48,7 @@ export default function Home({ route, navigation }: Props<"Home">) {
   const theme = useTheme();
 
   const [showQRModal, setShowQRModal] = useState(false);
-  const { roomId: qrCode, usersCount } = useAppSelector(
-    (state) => state.room.room
-  );
+  const { roomId: qrCode } = useAppSelector((state) => state.room.room);
 
   const handleNavigateDetails = (card: Movie) => {
     navigation.navigate("MovieDetails", {
@@ -80,27 +79,7 @@ export default function Home({ route, navigation }: Props<"Home">) {
       <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
         <Button onPress={toggleLeaveModal}>Leave</Button>
 
-        <View
-          style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}
-        >
-          {usersCount > 1 &&
-            Array.from(new Array(usersCount > 5 ? 5 : usersCount))
-              .map((_, index) => index)
-              .map((n) => (
-                <Avatar.Text
-                  key={n}
-                  size={24}
-                  label={String.fromCharCode(65 + n)}
-                  color="white"
-                  style={{
-                    transform: [{ translateX: -n * 6.5 }],
-                    zIndex: n + 1,
-                    borderWidth: 0.5,
-                    borderColor: "#000",
-                  }}
-                />
-              ))}
-        </View>
+        <ActiveUsers />
 
         {!(cards.length > 0) && (
           <Appbar.Action

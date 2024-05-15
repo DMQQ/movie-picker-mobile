@@ -3,7 +3,7 @@ import { Text, useTheme, TouchableRipple, Button } from "react-native-paper";
 
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useAppSelector } from "../redux/store";
-import Animated, { FadeIn, useAnimatedStyle } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { memo, useState } from "react";
 import { Movie } from "../../types";
 import MatchModal from "../components/Movie/MatchModal";
@@ -146,9 +146,16 @@ const AnimatedCard = ({
 const YourLikes = ({ navigation }: any) => {
   const { likes } = useAppSelector((state) => state.room.room);
 
+  const [match, setMatch] = useState<Movie | undefined>(undefined);
+
+  const randomMovie = () => {
+    setMatch(likes[Math.floor(Math.random() * likes.length)]);
+  };
+
   return (
     <View style={{ flex: 1, padding: 15 }}>
       <Animated.FlatList
+        style={{ marginBottom: 50 }}
         ListHeaderComponent={
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
@@ -172,6 +179,26 @@ const YourLikes = ({ navigation }: any) => {
           />
         )}
       />
+
+      {match && (
+        <MatchModal match={match} hideMatchModal={() => setMatch(undefined)} />
+      )}
+
+      <Button
+        onPress={randomMovie}
+        mode="contained"
+        style={{
+          position: "absolute",
+          bottom: 10,
+          left: 10,
+          right: 10,
+          width: "100%",
+          borderRadius: 100,
+        }}
+        contentStyle={{ padding: 7.5 }}
+      >
+        Randomize
+      </Button>
     </View>
   );
 };
@@ -186,7 +213,7 @@ const FriendsLikes = () => {
 
 const OverviewTopTabs = createMaterialTopTabNavigator();
 
-function Overview({ route, navigation }: any) {
+function Overview() {
   const theme = useTheme();
 
   return (
@@ -218,13 +245,13 @@ function Overview({ route, navigation }: any) {
         name="YourLikes"
         component={YourLikes}
       />
-      <OverviewTopTabs.Screen
+      {/* <OverviewTopTabs.Screen
         options={{
           tabBarLabel: "Friends",
         }}
         name="FriendsLikes"
         component={FriendsLikes}
-      />
+      /> */}
     </OverviewTopTabs.Navigator>
   );
 }

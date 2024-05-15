@@ -1,12 +1,57 @@
-import { Image, View, useWindowDimensions } from "react-native";
+import { Image, View, useWindowDimensions, Text } from "react-native";
 import Animated, {
   useAnimatedStyle,
   SharedValue,
   interpolate,
   interpolateColor,
-  SharedTransition,
+  withTiming,
 } from "react-native-reanimated";
-import { sharedElementTransition } from "../../service/utils/SharedElementTransition";
+
+const SwipeText = (props: {
+  text: string;
+  rotate: string;
+  color: string;
+  right: boolean;
+
+  isVisible?: SharedValue<boolean>;
+}) => {
+  const animatedStyle = useAnimatedStyle(() => {
+    if (!props.isVisible) return {};
+
+    return {
+      opacity: props.isVisible.value ? withTiming(1) : withTiming(0),
+    };
+  });
+
+  return (
+    <Animated.Text
+      style={[
+        {
+          position: "absolute",
+          top: props.text === "LIKE" ? 30 : 45,
+          zIndex: 10,
+          fontWeight: "bold",
+          fontSize: 30,
+
+          right: props.right ? 20 : undefined,
+
+          left: props.right ? undefined : 20,
+
+          transform: [{ rotate: props.rotate }],
+
+          borderWidth: 2.5,
+          borderColor: props.color,
+          paddingHorizontal: 10,
+
+          color: props.color,
+        },
+        animatedStyle,
+      ]}
+    >
+      {props.text}
+    </Animated.Text>
+  );
+};
 
 export default function Poster(props: {
   card: {
@@ -17,10 +62,16 @@ export default function Poster(props: {
     y: number;
   }>;
 
+  isLeftVisible?: SharedValue<boolean>;
+
+  isRightVisible?: SharedValue<boolean>;
+
   imageDimensions?: {
     height: number;
     width: number;
   };
+
+  isSwipeable?: boolean;
 }) {
   const { height, width } = useWindowDimensions();
 
@@ -36,7 +87,7 @@ export default function Poster(props: {
       backgroundColor: interpolateColor(
         props.translate.value.x,
         [-width, 0, width],
-        ["red", "rgba(0,0,0,0)", "green"]
+        ["rgba(255,0,0,0.5)", "rgba(0,0,0,0)", "rgba(0,255,0,0.5)"]
       ),
     };
   });
@@ -48,6 +99,27 @@ export default function Poster(props: {
 
   return (
     <View style={{ position: "relative" }}>
+      {props.isSwipeable && (
+        <>
+          <SwipeText
+            isVisible={props.isRightVisible}
+            text="DISLIKE"
+            color="red"
+            rotate="30deg"
+            right
+          />
+
+          {/* Placed on left   */}
+          <SwipeText
+            isVisible={props.isLeftVisible}
+            text="LIKE"
+            color="#24C722"
+            rotate="-30deg"
+            right={false}
+          />
+        </>
+      )}
+
       <Animated.View
         style={[
           {

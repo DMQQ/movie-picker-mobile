@@ -11,6 +11,8 @@ export default function useRoom(room: string) {
     dispatch(roomActions.setMatch(movie));
   };
   const {
+    nickname,
+    language,
     room: { movies: cards, match, roomId, isFinished },
   } = useAppSelector((state) => state.room);
 
@@ -27,7 +29,7 @@ export default function useRoom(room: string) {
 
   useEffect(() => {
     (async () => {
-      socket?.emit("join-room", room);
+      socket?.emit("join-room", room, nickname);
 
       socket?.on("movies", (cards) => {
         setCards(cards.movies);
