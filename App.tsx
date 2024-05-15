@@ -80,8 +80,10 @@ export default function App() {
                   <Stack.Screen
                     name="MovieDetails"
                     component={MovieDetails}
-                    options={{
-                      presentation: "modal",
+                    initialParams={{
+                      id: 0,
+                      type: "movie",
+                      img: "",
                     }}
                   />
                 </Stack.Navigator>

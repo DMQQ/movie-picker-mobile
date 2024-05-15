@@ -1,39 +1,52 @@
-import { useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Button, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
-import { url } from "../../service/SocketContext";
+import useFetch from "../../service/useFetch";
+import Skeleton from "../../components/Skeleton/Skeleton";
+import Animated, { FadeIn } from "react-native-reanimated";
+
+const ListEmptyComponent = () => {
+  const { width } = useWindowDimensions();
+  return (
+    <Skeleton>
+      <View style={{ width: width - 30, height: 60 * 10 }}>
+        {Array.from(new Array(10).keys()).map((i) => (
+          <View key={i} style={[styles.placeholder, { width: width - 30 }]} />
+        ))}
+      </View>
+    </Skeleton>
+  );
+};
 
 export default function ChooseGenre({ navigation }: any) {
   const { category, genre, setGenre: selectGenre } = useCreateRoom();
-  const [genres, setGenres] = useState([]);
-
-  useEffect(() => {
-    fetch(`${url}/movie/genres/${category.includes("tv") ? "tv" : "movie"}`)
-      .then((res) => res.json())
-      .then((data) => setGenres(data))
-      .catch((err) => console.log(JSON.stringify(err, null, 2)));
-  }, [category]);
-
-  const theme = useTheme();
-
-  //  navigation.navigate("ChoosePage");
+  const { data: genres, loading } = useFetch(
+    `/movie/genres/${category.includes("tv") ? "tv" : "movie"}`,
+    [category]
+  );
 
   return (
     <View style={{ flex: 1, padding: 15 }}>
-      <FlatList
-        initialNumToRender={12}
-        style={{ flex: 1, paddingBottom: 25 }}
-        data={genres as { id: number; name: string }[]}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <GenreTile
-            item={item}
-            isIncluded={genre.some((g) => g.id === item.id)}
-            selectGenre={selectGenre}
+      <View style={{ flex: 1 }}>
+        {loading ? (
+          <ListEmptyComponent />
+        ) : (
+          <FlatList
+            initialNumToRender={12}
+            style={{ flex: 1, paddingBottom: 25 }}
+            data={genres as { id: number; name: string }[]}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => (
+              <GenreTile
+                index={index}
+                item={item}
+                isIncluded={genre.some((g) => g.id === item.id)}
+                selectGenre={selectGenre}
+              />
+            )}
           />
         )}
-      />
+      </View>
 
       <Button
         mode="contained"
@@ -54,90 +67,71 @@ const GenreTile = ({
   item,
   isIncluded,
   selectGenre,
+  index,
 }: {
   item: { id: number; name: string };
   isIncluded: boolean;
   selectGenre: (val: any) => void;
+  index: number;
 }) => {
   const theme = useTheme();
 
+  const onTilePress = () => {
+    if (isIncluded) {
+      selectGenre((val: (typeof item)[]) =>
+        val.filter((g: any) => g.id !== item.id)
+      );
+    } else {
+      selectGenre((val: (typeof item)[]) => [...val, item]);
+    }
+  };
+
   return (
-    <TouchableRipple
-      style={{
-        backgroundColor: theme.colors.surface,
-        padding: 10,
-        borderRadius: 10,
-        marginBottom: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
+    <Animated.View
+      entering={FadeIn.delay(index * 50)}
+      style={[styles.tile, { backgroundColor: theme.colors.surface }]}
     >
       <>
-        <Text
-          style={{
-            fontSize: 17,
-            fontWeight: "600",
-            paddingHorizontal: 5,
-          }}
-        >
-          {item.name}
-        </Text>
+        <Text style={styles.tileText}>{item.name}</Text>
 
-        {
-          // <Button
-          //   mode="contained"
-          //   buttonColor={isIncluded ? theme.colors.error : theme.colors.primary}
-          //   style={{ borderRadius: 100 }}
-          //   onPress={() => {
-          //     if (isIncluded) {
-          //       selectGenre((val: any) =>
-          //         val.filter((g: any) => g.id !== item.id)
-          //       );
-          //     } else {
-          //       selectGenre((val: any) => [...val, item]);
-          //     }
-          //   }}
-          // >
-          //   {isIncluded ? "Remove" : "Select"}
-          // </Button>
-          <TouchableRipple
-            style={{ padding: 5 }}
-            onPress={() => {
-              if (isIncluded) {
-                selectGenre((val: any) =>
-                  val.filter((g: any) => g.id !== item.id)
-                );
-              } else {
-                selectGenre((val: any) => [...val, item]);
-              }
-            }}
+        <TouchableRipple style={{ padding: 5 }} onPress={onTilePress}>
+          <Text
+            style={[
+              styles.tileButtonText,
+              { color: isIncluded ? theme.colors.error : theme.colors.primary },
+            ]}
           >
-            <Text
-              style={{
-                color: isIncluded ? theme.colors.error : theme.colors.primary,
-                fontSize: 16,
-                fontWeight: "600",
-                paddingHorizontal: 5,
-              }}
-            >
-              {isIncluded ? "Remove" : "Select"}
-            </Text>
-          </TouchableRipple>
-        }
+            {isIncluded ? "Remove" : "Select"}
+          </Text>
+        </TouchableRipple>
       </>
-    </TouchableRipple>
+    </Animated.View>
   );
 };
 
-// <Button
-//   mode="contained"
-//   style={{ marginBottom: 10, borderRadius: 10 }}
-//   contentStyle={{ padding: 5 }}
-//   onPress={() => {
-//     selectGenre((val) => [...val, item]);
-//     navigation.navigate("ChoosePage");
-//   }}
-// >
-//   {item.name}
-// </Button>
+const styles = StyleSheet.create({
+  tile: {
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  tileText: {
+    fontSize: 17,
+    fontWeight: "600",
+    paddingHorizontal: 5,
+  },
+  tileButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    paddingHorizontal: 5,
+  },
+  placeholder: {
+    height: 50,
+    backgroundColor: "#000",
+    marginBottom: 10,
+    borderRadius: 10,
+  },
+});

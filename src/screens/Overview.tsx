@@ -88,6 +88,7 @@ const AnimatedCard = ({
         navigation.navigate("MovieDetails", {
           id: match.id,
           type: type,
+          img: match.poster_path,
         })
       }
     >

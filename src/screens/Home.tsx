@@ -2,7 +2,6 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import {
   Appbar,
   Avatar,
-  Badge,
   Button,
   Dialog,
   Portal,
@@ -56,6 +55,7 @@ export default function Home({ route, navigation }: Props<"Home">) {
     navigation.navigate("MovieDetails", {
       id: card.id,
       type: route.params?.type || "movie",
+      img: card.poster_path,
     });
   };
 

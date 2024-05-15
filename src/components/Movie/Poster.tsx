@@ -4,7 +4,9 @@ import Animated, {
   SharedValue,
   interpolate,
   interpolateColor,
+  SharedTransition,
 } from "react-native-reanimated";
+import { sharedElementTransition } from "../../service/utils/SharedElementTransition";
 
 export default function Poster(props: {
   card: {
@@ -62,7 +64,9 @@ export default function Poster(props: {
           overlayAnimatedStyle,
         ]}
       />
-      <Image
+      <Animated.Image
+        // sharedTransitionStyle={sharedElementTransition}
+        // sharedTransitionTag={"movie-poster-image-" + props.card.poster_path}
         style={{
           ...imageDimensions,
           borderRadius: 19,
@@ -71,8 +75,6 @@ export default function Poster(props: {
         resizeMode="cover"
         resizeMethod="resize"
         source={{
-          height: imageDimensions.height,
-          cache: "only-if-cached",
           uri: "https://image.tmdb.org/t/p/w500" + props.card.poster_path,
         }}
       />

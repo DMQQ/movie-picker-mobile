@@ -1,8 +1,23 @@
-import { View } from "react-native";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from "react-native";
+import {
+  Button,
+  MD3DarkTheme,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
 import { useEffect, useMemo, useState } from "react";
 import { url } from "../../service/SocketContext";
+import Skeleton from "../../components/Skeleton/Skeleton";
+import useFetch from "../../service/useFetch";
+import Animated, { FadeIn } from "react-native-reanimated";
 
 function generateArrayWithMaxIncrement(max: number, length = 7) {
   if (max === 0) return Array.from({ length }, (_, i) => i + 1);
@@ -21,24 +36,26 @@ function generateArrayWithMaxIncrement(max: number, length = 7) {
   return arr.sort((a, b) => a - b);
 }
 
+const { width, height } = Dimensions.get("screen");
+
 export default function ChoosePageRange({ navigation }: any) {
   const { pageRange, setPageRange, category, genre } = useCreateRoom();
 
   const [maxCount, setMaxCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     fetch(
       `${url}/movie/max-count?type=${category}&genres=${genre
         .map((g: any) => g.id)
-        .join(",")}`,
-      {
-        cache: "force-cache",
-      }
+        .join(",")}`
     )
       .then((res) => res.json())
       .then((data) => {
         setMaxCount(data.maxCount);
-      });
+      })
+      .finally(() => setLoading(false));
   }, [category, genre]);
 
   const nums = useMemo(
@@ -73,21 +90,36 @@ export default function ChoosePageRange({ navigation }: any) {
           Max page
         </Text>
 
-        {nums.map((n, index) => (
-          <Button
-            mode="contained"
-            style={{ marginBottom: 10, borderRadius: 10 }}
-            contentStyle={{ padding: 5 }}
-            key={index}
-            buttonColor={theme.colors.surface}
-            onPress={() => {
-              setPageRange(n.toString());
-              navigation.navigate("CreateQRCode");
-            }}
-          >
-            {n}
-          </Button>
-        ))}
+        {!loading ? (
+          nums.map((n, index) => (
+            <Animated.View key={index} entering={FadeIn.delay(index * 50)}>
+              <Button
+                mode="contained"
+                style={{ marginBottom: 10, borderRadius: 10 }}
+                contentStyle={{ padding: 5 }}
+                buttonColor={theme.colors.surface}
+                onPress={() => {
+                  setPageRange(n.toString());
+                  navigation.navigate("CreateQRCode");
+                }}
+              >
+                {n}
+              </Button>
+            </Animated.View>
+          ))
+        ) : (
+          <Skeleton>
+            <View style={{ width: width - 30, height: 50 * 7 }}>
+              <View style={styles.placeholder} />
+              <View style={styles.placeholder} />
+              <View style={styles.placeholder} />
+              <View style={styles.placeholder} />
+              <View style={styles.placeholder} />
+              <View style={styles.placeholder} />
+              <View style={styles.placeholder} />
+            </View>
+          </Skeleton>
+        )}
       </View>
 
       <Button
@@ -104,3 +136,13 @@ export default function ChoosePageRange({ navigation }: any) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  placeholder: {
+    width: width - 30,
+    height: 50,
+    backgroundColor: "#333",
+    borderRadius: 7.5,
+    marginBottom: 10,
+  },
+});

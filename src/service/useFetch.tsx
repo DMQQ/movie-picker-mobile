@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { url } from "./SocketContext";
 
-export default function useFetch(path: string) {
-  const [data, setData] = useState<any>(null);
+export default function useFetch<T>(path: string, dependency: any[] = []) {
+  const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, dependency);
 
   const refetch = async () => {
     try {
