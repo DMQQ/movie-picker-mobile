@@ -11,7 +11,7 @@ import { roomActions } from "../../redux/room/roomSlice";
 
 export default function QRCodePage({ navigation }: any) {
   const { category, pageRange, genre } = useCreateRoom();
-  const { qrCode } = useAppSelector((state) => state.room);
+  const { qrCode, room, nickname } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
   const theme = useTheme();
@@ -25,7 +25,8 @@ export default function QRCodePage({ navigation }: any) {
       "create-room",
       category,
       pageRange,
-      genre.map((g) => g.id)
+      genre.map((g) => g.id),
+      nickname
     );
 
     return () => {
@@ -38,31 +39,23 @@ export default function QRCodePage({ navigation }: any) {
       dispatch(roomActions.setQRCode(roomId));
     });
 
+    return () => {
+      socket?.off("room-created");
+    };
+  }, []);
+
+  useEffect(() => {
     if (!qrCode) return;
-    socket?.emit("join-room", qrCode);
+    socket?.emit("join-room", qrCode, nickname);
 
     socket?.on("active", (users: string[]) => {
       dispatch(roomActions.setUsers(users));
 
-      users.length > 1 &&
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [
-              {
-                name: "Home",
-                params: {
-                  roomId: qrCode,
-                },
-              },
-            ],
-          })
-        );
+      users.length > 1 && onJoinOwnRoom();
     });
 
     return () => {
       socket?.off("active");
-      socket?.off("room-created");
     };
   }, [qrCode]);
 

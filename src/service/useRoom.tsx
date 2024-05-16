@@ -12,7 +12,7 @@ export default function useRoom(room: string) {
   };
   const {
     nickname,
-    language,
+    isHost,
     room: { movies: cards, match, roomId, isFinished },
   } = useAppSelector((state) => state.room);
 
@@ -29,21 +29,29 @@ export default function useRoom(room: string) {
 
   useEffect(() => {
     (async () => {
-      socket?.emit("join-room", room, nickname);
+      // this causes issue with the room connection
 
-      socket?.on("movies", (_cards) => {
+      if (!isHost) {
+        socket?.emit("join-room", room, nickname);
+      } else {
+        socket?.emit("get-movies", room);
+      }
+
+      socket?.on("movies", async (_cards) => {
         setCards(_cards.movies);
-        Promise.all(
-          _cards.movies.map((card: Movie, index: number) =>
+        await Promise.all(
+          _cards.movies.map((card: Movie) =>
             Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)
           )
         );
       });
 
       socket?.on("room-details", (data) => {
-        if (data !== undefined) dispatch(roomActions.setRoom(data));
+        if (data !== undefined) {
+          dispatch(roomActions.setRoom(data));
 
-        // socket.off("room-details");
+          socket.off("room-details");
+        }
       });
 
       socket?.on("matched", (data: Movie) => {
@@ -61,9 +69,8 @@ export default function useRoom(room: string) {
       socket?.off("matched");
       socket?.off("room-details");
       socket?.off("active");
-      socket?.emit("leave-room", room);
     };
-  }, [roomId]);
+  }, []);
 
   const removeCardLocally = (index: number) => {
     removeCard(index);

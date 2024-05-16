@@ -20,9 +20,7 @@ export default function DialogModals({
   setShowQRModal: (a: any) => void;
   route: { params: { roomId: string } };
 }) {
-  const { roomId: qrCode, isFinished } = useAppSelector(
-    (state) => state.room.room
-  );
+  const { qrCode } = useAppSelector((state) => state.room);
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);

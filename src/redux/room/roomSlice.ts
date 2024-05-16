@@ -49,8 +49,6 @@ const roomSlice = createSlice({
   initialState,
   reducers: {
     setRoom(state, action: SetRoomAction) {
-      if (state.room.roomId !== "") return;
-
       state.room.name = action.payload.name;
       state.room.roomId = action.payload.id;
       state.qrCode = action.payload.id;

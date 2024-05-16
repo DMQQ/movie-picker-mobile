@@ -1,6 +1,6 @@
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { useCameraPermissions, CameraView } from "expo-camera/next";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ToastAndroid, View, Vibration } from "react-native";
 import {
   Button,
@@ -11,6 +11,8 @@ import {
   TextInput,
   useTheme,
 } from "react-native-paper";
+import { SocketContext } from "../service/SocketContext";
+import { useAppSelector } from "../redux/store";
 
 export default function QRScanner() {
   const [hasPermission, request] = useCameraPermissions();
@@ -18,6 +20,9 @@ export default function QRScanner() {
   const theme = useTheme();
   const [isScanned, setIsScanned] = useState(false);
   const navigation = useNavigation<any>();
+  const { nickname } = useAppSelector((state) => state.room);
+
+  const { socket } = useContext(SocketContext);
 
   const onBarcodeScanned = (barCodeScannerResult: any) => {
     setIsScanned(true);
@@ -33,6 +38,8 @@ export default function QRScanner() {
 
     if (!parsed.roomId)
       return ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
+
+    socket?.emit("join-room", parsed.roomId, nickname);
 
     navigation.dispatch(
       CommonActions.reset({

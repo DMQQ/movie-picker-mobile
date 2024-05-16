@@ -21,7 +21,7 @@ export default function ActiveUsers() {
           <Avatar.Text
             key={n}
             size={24}
-            label={nick[0].toUpperCase()}
+            label={nick?.[0]?.toUpperCase()}
             color="white"
             style={{
               transform: [{ translateX: -n * 6.5 }],
