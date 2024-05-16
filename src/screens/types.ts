@@ -14,5 +14,5 @@ export type RootStackParamList = {
   Settings: undefined;
 };
 
-export type Props<Key extends keyof RootStackParamList> =
+export type ScreenProps<Key extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Key>;

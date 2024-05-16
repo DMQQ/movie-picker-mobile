@@ -4,6 +4,7 @@ import { useCreateRoom } from "./ContextProvider";
 import useFetch from "../../service/useFetch";
 import Skeleton from "../../components/Skeleton/Skeleton";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { useGetGenresQuery } from "../../redux/movie/movieApi";
 
 const ListEmptyComponent = () => {
   const { width } = useWindowDimensions();
@@ -20,10 +21,9 @@ const ListEmptyComponent = () => {
 
 export default function ChooseGenre({ navigation }: any) {
   const { category, genre, setGenre: selectGenre } = useCreateRoom();
-  const { data: genres, loading } = useFetch(
-    `/movie/genres/${category.includes("tv") ? "tv" : "movie"}`,
-    [category]
-  );
+  const { data: genres = [], isLoading: loading } = useGetGenresQuery({
+    type: category.includes("tv") ? "tv" : "movie",
+  });
 
   return (
     <View style={{ flex: 1, padding: 15 }}>

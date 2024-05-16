@@ -83,6 +83,12 @@ export default function App() {
                   <Stack.Screen
                     name="MovieDetails"
                     component={MovieDetails}
+                    options={{
+                      headerShown: true,
+                      headerTransparent: true,
+                      headerTitleAlign: "center",
+                      headerTitle: "Movie Details",
+                    }}
                     initialParams={{
                       id: 0,
                       type: "movie",

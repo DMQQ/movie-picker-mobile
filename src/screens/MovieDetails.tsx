@@ -1,26 +1,25 @@
 import { useWindowDimensions } from "react-native";
-import { useEffect } from "react";
-import { Movie, MovieDetails as MovieDetailsType } from "../../types";
-import { useTheme } from "react-native-paper";
+import { MovieDetails as MovieDetailsType } from "../../types";
 import Animated, {
   interpolate,
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import { Props } from "./types";
+import { ScreenProps } from "./types";
 import { useAppSelector } from "../redux/store";
 import useFetch from "../service/useFetch";
 import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
 import MovieDetails from "../components/Movie/MovieDetails";
+import {
+  useGetMovieProvidersQuery,
+  useGetMovieQuery,
+} from "../redux/movie/movieApi";
 
 export default function MovieDetailsScreen({
   route,
-  navigation,
-}: Props<"MovieDetails">) {
+}: ScreenProps<"MovieDetails">) {
   const { width, height } = useWindowDimensions();
-  const theme = useTheme();
-
   const {
     room: { type },
   } = useAppSelector((state) => state.room);
@@ -31,15 +30,6 @@ export default function MovieDetailsScreen({
       scrollOffset.value = event.contentOffset.y;
     },
   });
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerShown: true,
-      headerTransparent: true,
-      headerTitleAlign: "center",
-      headerTitle: "Movie Details",
-    });
-  }, []);
 
   const IMG_HEIGHT = height * 0.75;
 
@@ -64,13 +54,16 @@ export default function MovieDetailsScreen({
     };
   });
 
-  const { data: movie, loading } = useFetch<MovieDetailsType>(
-    `/movie/${route.params.id}?type=${type}`
-  );
+  const { data: movie = {} as MovieDetailsType, isLoading: loading } =
+    useGetMovieQuery({
+      id: route.params.id,
+      type: type,
+    });
 
-  const { data: providers } = useFetch(
-    "/movie/providers/" + route.params.id + "?type=" + type
-  );
+  const { data: providers = [] } = useGetMovieProvidersQuery({
+    id: route.params.id,
+    type: type,
+  });
 
   return (
     <Animated.ScrollView

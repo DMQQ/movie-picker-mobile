@@ -1,23 +1,11 @@
-import {
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-} from "react-native";
-import {
-  Button,
-  MD3DarkTheme,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
+import { Dimensions, StyleSheet, View } from "react-native";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
 import { useEffect, useMemo, useState } from "react";
 import { url } from "../../service/SocketContext";
 import Skeleton from "../../components/Skeleton/Skeleton";
-import useFetch from "../../service/useFetch";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { useGetMaxPageRangeQuery } from "../../redux/movie/movieApi";
 
 function generateArrayWithMaxIncrement(max: number, length = 7) {
   if (max === 0) return Array.from({ length }, (_, i) => i + 1);
@@ -36,31 +24,20 @@ function generateArrayWithMaxIncrement(max: number, length = 7) {
   return arr.sort((a, b) => a - b);
 }
 
-const { width, height } = Dimensions.get("screen");
+const { width } = Dimensions.get("screen");
 
 export default function ChoosePageRange({ navigation }: any) {
   const { pageRange, setPageRange, category, genre } = useCreateRoom();
 
-  const [maxCount, setMaxCount] = useState(0);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    fetch(
-      `${url}/movie/max-count?type=${category}&genres=${genre
-        .map((g: any) => g.id)
-        .join(",")}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setMaxCount(data.maxCount);
-      })
-      .finally(() => setLoading(false));
-  }, [category, genre]);
+  const { data = {} as { maxCount: number }, isLoading: loading } =
+    useGetMaxPageRangeQuery({
+      type: category,
+      genres: genre.map((g: any) => g.id).join(","),
+    });
 
   const nums = useMemo(
-    () => generateArrayWithMaxIncrement(maxCount, 7),
-    [maxCount]
+    () => generateArrayWithMaxIncrement(data.maxCount, 7),
+    [data.maxCount]
   );
 
   const theme = useTheme();

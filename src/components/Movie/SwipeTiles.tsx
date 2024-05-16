@@ -1,6 +1,7 @@
 import { useWindowDimensions } from "react-native";
 import { Movie } from "../../../types";
 import Animated, {
+  Easing,
   Extrapolation,
   FadeInDown,
   interpolate,
@@ -8,11 +9,12 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Card from "./Card";
 import Poster from "./Poster";
-import { Text, useTheme } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { memo } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -57,6 +59,9 @@ const SwipeTile = ({
     })
     .onEnd(() => {
       position.value = withSpring({ x: 0, y: 0 });
+
+      isLeftVisible.value = false;
+      isRightVisible.value = false;
 
       if (position.value.x > width * 0.35) {
         position.value = withSpring(
@@ -107,17 +112,17 @@ const SwipeTile = ({
     () => ({
       transform: [
         {
-          translateY: withSpring(index * 7.5 * -1),
+          translateY: withSpring(index * 10 * -1),
         },
         {
-          scale: withSpring(1 - index * 0.05),
+          scale: withSpring(1 - index * 0.075),
         },
       ],
     }),
     [index]
   );
 
-  if (index > 3) return null;
+  if (index >= 3) return null;
 
   const dims = {
     width: width * 0.95 - 20,
@@ -169,7 +174,7 @@ const SwipeTile = ({
                   color: "white",
                   paddingHorizontal: 10,
                   fontWeight: "bold",
-                  marginTop: 5,
+                  marginTop: 10,
                 }}
               >
                 {card.release_date || card.first_air_date},{" "}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { url } from "./SocketContext";
 
-export default function useFetch<T>(path: string, dependency: any[] = []) {
+export default function useFetch<T = []>(path: string, dependency: any[] = []) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -11,8 +11,8 @@ export default function useFetch<T>(path: string, dependency: any[] = []) {
   }, dependency);
 
   const refetch = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await fetch(url + path, {
         method: "GET",
         headers: {

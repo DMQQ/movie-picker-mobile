@@ -16,8 +16,8 @@ export default function useRoom(room: string) {
     room: { movies: cards, match, roomId, isFinished },
   } = useAppSelector((state) => state.room);
 
-  const setCards = (movies: Movie[]) => {
-    dispatch(roomActions.addMovies(movies));
+  const setCards = (_movies: Movie[]) => {
+    dispatch(roomActions.addMovies(_movies));
   };
 
   const removeCard = (index: number) => {
@@ -31,10 +31,10 @@ export default function useRoom(room: string) {
     (async () => {
       socket?.emit("join-room", room, nickname);
 
-      socket?.on("movies", (cards) => {
-        setCards(cards.movies);
+      socket?.on("movies", (_cards) => {
+        setCards(_cards.movies);
         Promise.all(
-          cards.movies.map((card: Movie, index: number) =>
+          _cards.movies.map((card: Movie, index: number) =>
             Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)
           )
         );

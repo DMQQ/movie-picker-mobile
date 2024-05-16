@@ -5,12 +5,11 @@ const initialState = {
   isHost: false,
   isCreated: false,
   joined: false,
-
   qrCode: "",
-
   nickname: "",
-
   language: "en",
+
+  beenFired: false,
 
   room: {
     roomId: "",
@@ -137,6 +136,7 @@ const roomSlice = createSlice({
       if (payload.length !== 0) {
         state.room.movies = payload;
         state.room.isFinished = false;
+        state.beenFired = true;
       }
     },
 

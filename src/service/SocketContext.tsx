@@ -6,7 +6,7 @@ import socketIOClient, {
   SocketOptions,
 } from "socket.io-client";
 
-const isDev = true;
+const isDev = false;
 
 export const url = isDev
   ? "http://192.168.0.25:3000"
@@ -49,7 +49,6 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
     socket.current.timeout(1000).on("connect_error", (err) => {
       ToastAndroid.show("Connection error", ToastAndroid.SHORT);
-      console.log(err);
     });
 
     socket.current.on("disconnect", (msg) => {

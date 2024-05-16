@@ -4,14 +4,17 @@ import { Appbar, SegmentedButtons, Text, TextInput } from "react-native-paper";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppSelector } from "../redux/store";
+import { ScreenProps } from "./types";
 
-export default function SettingsScreen({ navigation }: any) {
+export default function SettingsScreen({
+  navigation,
+}: ScreenProps<"Settings">) {
   const { language: lg, nickname: nk } = useAppSelector((state) => state.room);
   const [nickname, setNickname] = useState<string>(nk);
   const [language, setLanguage] = useState<string>(lg);
 
   const handleSaveNickname = () => {
-    if (nickname.trim().length !== 0 && nickname !== nk) {
+    if (nickname.trim().length !== 0) {
       AsyncStorage.setItem("nickname", nickname);
 
       ToastAndroid.show("Nickname saved", ToastAndroid.SHORT);

@@ -6,11 +6,16 @@ import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppDispatch } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
+import { ScreenProps } from "./types";
+import { useGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
 
 const { width, height } = Dimensions.get("screen");
 
-export default function Landing({ navigation }: any) {
-  const { data } = useFetch<[]>("/landing");
+export default function Landing({ navigation }: ScreenProps<"Landing">) {
+  // const { data } = useFetch<[]>("/landing");
+
+  const { data = [] } = useGetLandingPageMoviesQuery({});
+
   const tileWidth = width * 0.7; // Width of each tile
   const margin = 30; // Margin between each tile
   const totalTileWidth = tileWidth + margin;
@@ -21,6 +26,8 @@ export default function Landing({ navigation }: any) {
   );
 
   const dispatch = useAppDispatch();
+
+  // Load the nickname and language from AsyncStorage
   useEffect(() => {
     (async () => {
       const nickname = (await AsyncStorage.getItem("nickname")) || "Guest";
