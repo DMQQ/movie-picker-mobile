@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   matchText: {
-    fontSize: 40,
+    fontSize: 45,
     textAlign: "left",
     fontWeight: "900",
   },

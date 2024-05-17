@@ -1,4 +1,4 @@
-import { Image, View, useWindowDimensions, Text } from "react-native";
+import { View, useWindowDimensions } from "react-native";
 import Animated, {
   useAnimatedStyle,
   SharedValue,
@@ -44,6 +44,8 @@ const SwipeText = (props: {
           paddingHorizontal: 10,
 
           color: props.color,
+
+          borderRadius: 10,
         },
         animatedStyle,
       ]}
@@ -87,7 +89,7 @@ export default function Poster(props: {
       backgroundColor: interpolateColor(
         props.translate.value.x,
         [-width, 0, width],
-        ["rgba(255,0,0,0.5)", "rgba(0,0,0,0)", "rgba(0,255,0,0.5)"]
+        ["rgba(255,0,0,0.4)", "rgba(0,0,0,0)", "rgba(0,255,0,0.4)"]
       ),
     };
   });

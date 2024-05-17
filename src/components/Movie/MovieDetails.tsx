@@ -30,42 +30,44 @@ export default function MovieDetails({
     >
       <Text
         style={{
-          fontSize: 35,
+          fontSize: 30,
           fontWeight: "bold",
-          marginTop: 10,
         }}
       >
         {movie.title || movie.name}
       </Text>
 
       {movie.tagline && (
-        <Text style={{ fontSize: 18, color: theme.colors.primary }}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: "rgba(255,255,255,0.7)",
+            marginTop: 5,
+          }}
+        >
           {movie.tagline}
         </Text>
       )}
 
-      <FlatList
-        style={{ marginTop: 10 }}
-        data={movie.genres}
-        horizontal
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <Text
-            style={{
-              fontSize: 15,
-              backgroundColor: theme.colors.primary,
-              borderRadius: 100,
-              padding: 2.5,
-              paddingHorizontal: 10,
-              marginRight: 5,
-            }}
-          >
-            {item.name}
-          </Text>
-        )}
-      />
+      <Text
+        style={{
+          fontSize: 17.5,
+          marginTop: 5,
+          color: "rgba(255,255,255,0.9)",
+        }}
+      >
+        {movie.overview}
+      </Text>
 
-      <Text style={{ fontSize: 20, marginTop: 10 }}>{movie.overview}</Text>
+      <Text
+        style={{
+          color: "rgba(255,255,255,0.65)",
+          fontSize: 17,
+          marginVertical: 10,
+        }}
+      >
+        {movie.genres.map((genre: any) => genre.name).join(", ")}
+      </Text>
 
       <WatchProviders providers={providers || []} />
 
@@ -73,35 +75,33 @@ export default function MovieDetails({
 
       <Seasons seasons={movie?.seasons || []} />
 
-      <Text style={{ fontSize: 20, marginTop: 5, color: theme.colors.primary }}>
+      <Text
+        style={{ fontSize: 16, marginTop: 5, color: "rgba(255,255,255,0.6)" }}
+      >
         {movie.release_date || movie?.last_episode_to_air?.air_date}
       </Text>
 
-      <Text style={{ fontSize: 20, marginTop: 10 }}>
+      <Text
+        style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}
+      >
         Rating: {movie.vote_average} out of {movie.vote_count} votes
       </Text>
 
-      <Text style={{ fontSize: 20, marginTop: 10 }}>
+      <Text
+        style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}
+      >
         Runtime: {movie.runtime} minutes
       </Text>
 
-      <Text style={{ fontSize: 20, marginTop: 10 }}>
-        Budget: {movie.budget} USD
-      </Text>
-
-      <Text style={{ fontSize: 20, marginTop: 10 }}>
-        Revenue: {movie.revenue} USD
-      </Text>
-
-      <Text style={{ fontSize: 20, marginTop: 10 }}>
-        Popularity: {movie.popularity}
-      </Text>
-
-      <Text style={{ fontSize: 20, marginTop: 10 }}>
+      <Text
+        style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}
+      >
         Status: {movie.status}
       </Text>
 
-      <Text style={{ fontSize: 20, marginTop: 10 }}>
+      <Text
+        style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}
+      >
         Original Language: {movie.original_language}
       </Text>
     </Animated.View>

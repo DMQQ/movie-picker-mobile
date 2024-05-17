@@ -3,6 +3,7 @@ import ActiveUsers from "./ActiveUsers";
 import { useContext } from "react";
 import { SocketContext } from "../../service/SocketContext";
 import { useNavigation } from "@react-navigation/native";
+import { useAppSelector } from "../../redux/store";
 
 export default function HomeAppbar({
   toggleLeaveModal,
@@ -20,13 +21,17 @@ export default function HomeAppbar({
   const { socket } = useContext(SocketContext);
   const navigation = useNavigation<any>();
 
+  const {
+    room: { isFinished },
+  } = useAppSelector((state) => state.room);
+
   return (
     <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
       <Button onPress={toggleLeaveModal}>Leave</Button>
 
       <ActiveUsers />
 
-      {!(cards.length > 0) && (
+      {!(cards.length > 0) && !isFinished && (
         <Appbar.Action
           color={theme.colors.primary}
           size={22}

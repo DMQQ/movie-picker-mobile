@@ -26,17 +26,6 @@ export default function App() {
           <PaperProvider theme={MD2DarkTheme}>
             <NavigationContainer
               theme={DarkTheme}
-              linking={{
-                prefixes: ["qr-mobile://"],
-                config: {
-                  screens: {
-                    Home: "home/:roomId",
-                    QRCode: "qr-code",
-                    QRScanner: "qr-scanner",
-                    Overview: "overview",
-                  },
-                },
-              }}
               onStateChange={(state) => {
                 const currentRoute =
                   state?.routes[state.index]?.name || "Landing";

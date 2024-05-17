@@ -18,36 +18,33 @@ const WatchProviders = ({ providers }: { providers: any }) => {
   if (providersList.length === 0) return null;
 
   return (
-    <View style={{ marginTop: 10 }}>
-      <Text style={{ fontSize: 20 }}>Watch Providers {providers.length}</Text>
+    <View style={{ marginVertical: 10, marginTop: 20 }}>
+      <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+        Streaming services (PL)
+      </Text>
 
       <ScrollView horizontal>
-        <Surface
-          style={{
-            padding: 7.5,
-            borderRadius: 12.5,
-            marginTop: 10,
-            width: providersList.length * (40 + 12),
-            flexDirection: "row",
-          }}
-        >
-          {providersList.map((provider) => (
-            <Image
-              key={provider as string}
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 5,
-                marginRight: 10,
-              }}
-              resizeMode="cover"
-              source={{
-                uri: "https://image.tmdb.org/t/p/w500" + provider,
-              }}
-            />
-          ))}
-        </Surface>
+        {providersList.map((provider) => (
+          <Image
+            key={provider as string}
+            style={{
+              width: 50,
+              height: 50,
+              borderRadius: 5,
+              marginRight: 10,
+              marginVertical: 15,
+            }}
+            resizeMode="cover"
+            source={{
+              uri: "https://image.tmdb.org/t/p/w500" + provider,
+            }}
+          />
+        ))}
       </ScrollView>
+
+      <Text style={{ color: "rgba(255,255,255,0.4)" }}>
+        The movie availabilities are powered by JustWatch
+      </Text>
     </View>
   );
 };

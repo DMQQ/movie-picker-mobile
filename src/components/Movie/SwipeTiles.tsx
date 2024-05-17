@@ -1,4 +1,4 @@
-import { useWindowDimensions } from "react-native";
+import { View, useWindowDimensions } from "react-native";
 import { Movie } from "../../../types";
 import Animated, {
   Easing,
@@ -12,11 +12,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Card from "./Card";
 import Poster from "./Poster";
 import { Text } from "react-native-paper";
 import { memo } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import TabBar from "../Home/TabBar";
 
 const SwipeTile = ({
   card,
@@ -58,31 +58,27 @@ const SwipeTile = ({
       }
     })
     .onEnd(() => {
-      position.value = withSpring({ x: 0, y: 0 });
-
-      isLeftVisible.value = false;
-      isRightVisible.value = false;
-
-      if (position.value.x > width * 0.35) {
+      if (position.value.x > width * 0.4) {
+        runOnJS(likeCard)();
         position.value = withSpring(
           { x: width + 100, y: 100 },
           {
             duration: 250,
           }
         );
-
-        runOnJS(likeCard)();
-      } else if (position.value.x < -width * 0.35) {
+      } else if (position.value.x < -width * 0.4) {
+        runOnJS(removeCard)();
         position.value = withSpring(
           { x: -width - 100, y: 100 },
           {
             duration: 250,
           }
         );
+      } else {
+        position.value = withSpring({ x: 0, y: 0 });
 
-        runOnJS(removeCard)();
-      } else if (position.value.y < -height * 0.35) {
-        if (onPress) runOnJS(onPress)();
+        isLeftVisible.value = false;
+        isRightVisible.value = false;
       }
     })
     .enabled(index === 0);
@@ -91,12 +87,11 @@ const SwipeTile = ({
     const rotate = interpolate(
       position.value.x,
       [-width * 0.35, width * 0.35],
-      [-12.5, 12.5],
+      [-10, 10],
       Extrapolation.CLAMP
     );
 
     return {
-      zIndex: length - index,
       transform: [
         { translateX: position.value.x },
         { translateY: position.value.y },
@@ -112,10 +107,16 @@ const SwipeTile = ({
     () => ({
       transform: [
         {
-          translateY: withSpring(index * 10 * -1),
+          translateY: withTiming(index * 10 * -1, {
+            duration: 100,
+            easing: Easing.ease,
+          }),
         },
         {
-          scale: withSpring(1 - index * 0.075),
+          scale: withTiming(1 - index * 0.05, {
+            duration: 100,
+            easing: Easing.ease,
+          }),
         },
       ],
     }),
@@ -130,70 +131,95 @@ const SwipeTile = ({
   };
 
   return (
-    <GestureDetector gesture={gesture}>
-      <Animated.View
-        style={[animatedStyle]}
-        entering={FadeInDown.duration(100)}
-      >
-        <Animated.View style={cardInitialAnimatedStyle}>
-          <Card
-            onPress={onPress}
-            style={{
-              position: "absolute",
-              left: width * 0.05,
-            }}
-          >
-            <LinearGradient
-              colors={["transparent", "transparent", "rgba(0,0,0,0.7)"]}
-              style={[
-                {
-                  flex: 1,
-                  borderRadius: 19,
-                  overflow: "hidden",
-                  justifyContent: "flex-end",
-                  position: "absolute",
-                  zIndex: 10,
-                  padding: 10,
-                  paddingBottom: 20,
-                },
-                dims,
-              ]}
+    <>
+      <GestureDetector gesture={gesture}>
+        <Animated.View
+          style={[animatedStyle, { zIndex: 1000 - index }]}
+          entering={FadeInDown.duration(100)}
+        >
+          <Animated.View style={cardInitialAnimatedStyle}>
+            <View
+              style={{
+                position: "absolute",
+                left: width * 0.05,
+                backgroundColor: "#000",
+                borderRadius: 25,
+              }}
             >
-              <Text
-                style={{
-                  color: "white",
-                  fontSize: 20,
-                  paddingHorizontal: 10,
-                  fontWeight: "bold",
-                }}
+              <LinearGradient
+                colors={["transparent", "transparent", "rgba(0,0,0,0.9)"]}
+                style={[
+                  {
+                    flex: 1,
+                    borderRadius: 19,
+                    overflow: "hidden",
+                    justifyContent: "flex-end",
+                    position: "absolute",
+                    zIndex: 10,
+                    padding: 10,
+                    paddingBottom: 20,
+                  },
+                  dims,
+                ]}
               >
-                {card.title || card.name}
-              </Text>
-              <Text
-                style={{
-                  color: "white",
-                  paddingHorizontal: 10,
-                  fontWeight: "bold",
-                  marginTop: 10,
-                }}
-              >
-                {card.release_date || card.first_air_date},{" "}
-                {card.vote_average.toFixed(1)}/10
-              </Text>
-            </LinearGradient>
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 24,
+                    paddingHorizontal: 10,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {card.title || card.name}
+                </Text>
+                {card.overview && (
+                  <Text
+                    style={{
+                      color: "rgba(255,255,255,0.7)",
+                      paddingHorizontal: 10,
+                      marginTop: 5,
+                      fontSize: 16,
+                    }}
+                    numberOfLines={3}
+                  >
+                    {card.overview}
+                  </Text>
+                )}
 
-            <Poster
-              isSwipeable
-              isLeftVisible={isLeftVisible}
-              isRightVisible={isRightVisible}
-              imageDimensions={dims}
-              translate={position}
-              card={card}
-            />
-          </Card>
+                <Text
+                  style={{
+                    color: "rgba(255,255,255,0.5)",
+                    paddingHorizontal: 10,
+                    marginTop: 5,
+                  }}
+                >
+                  {card.release_date || card.first_air_date},{" "}
+                  {card.vote_average.toFixed(1)}/10
+                </Text>
+              </LinearGradient>
+
+              <Poster
+                isSwipeable
+                isLeftVisible={isLeftVisible}
+                isRightVisible={isRightVisible}
+                imageDimensions={dims}
+                translate={position}
+                card={card}
+              />
+            </View>
+          </Animated.View>
         </Animated.View>
-      </Animated.View>
-    </GestureDetector>
+      </GestureDetector>
+
+      {index === 0 && (
+        <TabBar
+          zIndex={length - index}
+          likeCard={likeCard}
+          removeCard={removeCard}
+          openInfo={() => onPress?.()}
+        />
+      )}
+    </>
   );
 };
 

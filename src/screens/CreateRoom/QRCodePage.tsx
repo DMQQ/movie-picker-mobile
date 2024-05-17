@@ -48,6 +48,14 @@ export default function QRCodePage({ navigation }: any) {
     if (!qrCode) return;
     socket?.emit("join-room", qrCode, nickname);
 
+    socket?.on("room-details", (data) => {
+      if (data !== undefined) {
+        dispatch(roomActions.setRoom(data));
+
+        socket.off("room-details");
+      }
+    });
+
     socket?.on("active", (users: string[]) => {
       dispatch(roomActions.setUsers(users));
 

@@ -1,12 +1,11 @@
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
-
 import SwipeTile from "../components/Movie/SwipeTiles";
 import useRoom from "../service/useRoom";
 import { ScreenProps } from "./types";
 import { Movie } from "../../types";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import MatchModal from "../components/Movie/MatchModal";
 import DialogModals from "../components/Home/DialogModals";
 import HomeAppbar from "../components/Home/Appbar";
@@ -36,6 +35,8 @@ export default function Home({ route, navigation }: ScreenProps<"Home">) {
   } = useRoom(route.params?.roomId);
   const isFocused = useIsFocused();
   const [showQRModal, setShowQRModal] = useState(false);
+
+  const originalLength = useRef(cards.length);
 
   const handleNavigateDetails = (card: Movie) => {
     navigation.navigate("MovieDetails", {
@@ -72,7 +73,7 @@ export default function Home({ route, navigation }: ScreenProps<"Home">) {
       {cards.map((card, index) => (
         <SwipeTile
           onPress={() => handleNavigateDetails(card)}
-          length={cards.length}
+          length={originalLength.current}
           key={card.id}
           card={card}
           index={index}
