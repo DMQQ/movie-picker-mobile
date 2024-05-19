@@ -1,4 +1,8 @@
-import { MD2DarkTheme, PaperProvider } from "react-native-paper";
+import {
+  ActivityIndicator,
+  MD2DarkTheme,
+  PaperProvider,
+} from "react-native-paper";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./src/screens/Home";
@@ -10,7 +14,7 @@ import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
 import Overview from "./src/screens/Overview";
 import { SocketProvider } from "./src/service/SocketContext";
-import { StatusBar } from "react-native";
+import { StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MovieDetails from "./src/screens/MovieDetails";
 import { RootStackParamList } from "./src/screens/types";
@@ -40,6 +44,17 @@ export default function App() {
                   StatusBar.setBackgroundColor("#000");
                 }
               }}
+              fallback={
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <ActivityIndicator size={50} />
+                </View>
+              }
             >
               <GestureHandlerRootView
                 style={{ flex: 1, backgroundColor: "#000" }}

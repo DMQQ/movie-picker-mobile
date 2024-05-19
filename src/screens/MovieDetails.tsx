@@ -8,7 +8,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { ScreenProps } from "./types";
 import { useAppSelector } from "../redux/store";
-import useFetch from "../service/useFetch";
 import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
 import MovieDetails from "../components/Movie/MovieDetails";
 import {

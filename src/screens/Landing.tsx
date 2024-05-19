@@ -4,7 +4,7 @@ import useFetch from "../service/useFetch";
 import Animated from "react-native-reanimated";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAppDispatch } from "../redux/store";
+import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 import { ScreenProps } from "./types";
 import { useGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
@@ -27,6 +27,8 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
   const dispatch = useAppDispatch();
 
+  const { nickname } = useAppSelector((state) => state.room);
+
   // Load the nickname and language from AsyncStorage
   useEffect(() => {
     (async () => {
@@ -48,7 +50,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
           }}
         >
           <Text style={{ fontSize: 24, fontWeight: "bold", padding: 15 }}>
-            Welcome!
+            Welcome {nickname}!
           </Text>
 
           <IconButton

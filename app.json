@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Movie Picker",
-    "slug": "movie-picker",
+    "slug": "qr-mobile",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
