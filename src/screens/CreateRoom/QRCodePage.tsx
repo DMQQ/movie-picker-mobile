@@ -10,6 +10,18 @@ import { SocketContext } from "../../service/SocketContext";
 import { roomActions } from "../../redux/room/roomSlice";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
 
+interface ISocketResponse {
+  roomId: string;
+  details: {
+    type: "movie" | "tv";
+    page: number;
+    genres: number[];
+    host: string;
+    id: string;
+    users: string[];
+  };
+}
+
 export default function QRCodePage({ navigation }: any) {
   const { category, pageRange, genre } = useCreateRoom();
   const { qrCode, nickname } = useAppSelector((state) => state.room);
@@ -21,54 +33,34 @@ export default function QRCodePage({ navigation }: any) {
   } = useAppSelector((state) => state.room);
 
   useEffect(() => {
-    socket?.emit(
-      "create-room",
-      category,
-      pageRange,
-      genre.map((g) => g.id),
-      nickname
-    );
+    (async () => {
+      try {
+        const response = (await socket?.emitWithAck("create-room", {
+          type: category,
+          pageRange,
+          genre: genre.map((g) => g.id),
+          nickname,
+        })) as ISocketResponse;
 
-    return () => {
-      socket?.off("room-created");
-    };
+        if (response) {
+          dispatch(roomActions.setRoom(response.details));
+          dispatch(roomActions.setQRCode(response.roomId));
+
+          socket?.emit("join-room", response.roomId, nickname);
+
+          socket?.on("active", (users: string[]) => {
+            dispatch(roomActions.setActiveUsers(users));
+
+            users.length > 1 && onJoinOwnRoom(response.roomId);
+          });
+        }
+      } catch (error) {
+        ToastAndroid.show("Error creating room", ToastAndroid.SHORT);
+      }
+    })();
   }, [category, pageRange, genre]);
 
-  useEffect(() => {
-    socket?.on("room-created", (roomId) => {
-      dispatch(roomActions.setQRCode(roomId));
-    });
-
-    return () => {
-      socket?.off("room-created");
-    };
-  }, []);
-
-  useEffect(() => {
-    if (qrCode === "") return;
-
-    socket?.emit("join-room", qrCode, nickname);
-
-    socket?.on("room-details", (data) => {
-      if (data !== undefined) {
-        dispatch(roomActions.setRoom(data));
-
-        socket.off("room-details");
-      }
-    });
-
-    socket?.on("active", (users: string[]) => {
-      dispatch(roomActions.setUsers(users));
-
-      users.length > 1 && onJoinOwnRoom();
-    });
-
-    return () => {
-      socket?.off("active");
-    };
-  }, [qrCode]);
-
-  const onJoinOwnRoom = () => {
+  const onJoinOwnRoom = (code: string) => {
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -76,7 +68,7 @@ export default function QRCodePage({ navigation }: any) {
           {
             name: "Home",
             params: {
-              roomId: qrCode,
+              roomId: code,
               type: category.includes("movie") ? "movie" : "tv",
             },
           },
@@ -134,7 +126,7 @@ export default function QRCodePage({ navigation }: any) {
           }}
           contentStyle={{ padding: 7.5 }}
           onPress={() => {
-            onJoinOwnRoom();
+            onJoinOwnRoom(qrCode);
           }}
         >
           Next

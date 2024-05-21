@@ -46,13 +46,15 @@ export default function useRoom(room: string) {
         );
       });
 
-      socket?.on("room-details", (data) => {
-        if (data !== undefined) {
-          dispatch(roomActions.setRoom(data));
+      if (!isHost) {
+        socket?.on("room-details", (data) => {
+          if (data !== undefined) {
+            dispatch(roomActions.setRoom(data));
 
-          socket.off("room-details");
-        }
-      });
+            socket.off("room-details");
+          }
+        });
+      }
 
       socket?.on("matched", (data: Movie) => {
         setMatch(data);

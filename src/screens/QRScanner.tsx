@@ -13,18 +13,18 @@ import {
 } from "react-native-paper";
 import { SocketContext } from "../service/SocketContext";
 import { useAppSelector } from "../redux/store";
+import { ScreenProps } from "./types";
 
-export default function QRScanner() {
+export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
   const [hasPermission, request] = useCameraPermissions();
   const [isManual, setIsManual] = useState(false);
   const theme = useTheme();
   const [isScanned, setIsScanned] = useState(false);
-  const navigation = useNavigation<any>();
   const { nickname } = useAppSelector((state) => state.room);
 
   const { socket } = useContext(SocketContext);
 
-  const onBarcodeScanned = (barCodeScannerResult: any) => {
+  const onBarcodeScanned = async (barCodeScannerResult: any) => {
     setIsScanned(true);
     Vibration.vibrate();
 
@@ -39,19 +39,21 @@ export default function QRScanner() {
     if (!parsed.roomId)
       return ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
 
-    socket?.emit("join-room", parsed.roomId, nickname);
+    try {
+      socket?.emit("join-room", parsed.roomId, nickname);
 
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          {
-            name: "Home",
-            params: parsed,
-          },
-        ],
-      })
-    );
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: "Home",
+              params: parsed,
+            },
+          ],
+        })
+      );
+    } catch (error) {}
   };
 
   useEffect(() => {

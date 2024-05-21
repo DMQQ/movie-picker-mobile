@@ -36,7 +36,6 @@ type MovieMatch = Movie;
 
 type SetRoomAction = {
   payload: {
-    name: string;
     id: string;
     type: string;
     page: number;
@@ -49,7 +48,6 @@ const roomSlice = createSlice({
   initialState,
   reducers: {
     setRoom(state, action: SetRoomAction) {
-      state.room.name = action.payload.name;
       state.room.roomId = action.payload.id;
       state.qrCode = action.payload.id;
       state.room.type = action.payload.type;
