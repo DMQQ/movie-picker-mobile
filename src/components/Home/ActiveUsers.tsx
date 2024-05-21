@@ -1,8 +1,7 @@
 import { View } from "react-native";
-import { useAppSelector } from "../../redux/store";
-import { Avatar, Tooltip } from "react-native-paper";
+import { Avatar } from "react-native-paper";
 
-const AVATAR_COLORS = [
+export const AVATAR_COLORS = [
   "#f44336",
   "#e91e63",
   "#9c27b0",
@@ -11,13 +10,23 @@ const AVATAR_COLORS = [
   "#2196f3",
 ];
 
-export default function ActiveUsers() {
-  const { usersCount, users } = useAppSelector((state) => state.room.room);
+export default function ActiveUsers(props: {
+  data: string[];
+  showAll?: boolean;
+}) {
+  const isVisible = props.showAll ? true : props.data.length > 1;
 
   return (
-    <View style={{ flex: 1, flexDirection: "row", justifyContent: "center" }}>
-      {usersCount > 1 &&
-        users.slice(0, 6).map((nick, n) => (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "center",
+        position: "relative",
+      }}
+    >
+      {isVisible &&
+        props.data.slice(0, 6).map((nick, n) => (
           <Avatar.Text
             key={n}
             size={24}

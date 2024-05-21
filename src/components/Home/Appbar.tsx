@@ -22,14 +22,14 @@ export default function HomeAppbar({
   const navigation = useNavigation<any>();
 
   const {
-    room: { isFinished },
+    room: { isFinished, users },
   } = useAppSelector((state) => state.room);
 
   return (
     <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
       <Button onPress={toggleLeaveModal}>Leave</Button>
 
-      <ActiveUsers />
+      <ActiveUsers data={users} />
 
       {!(cards.length > 0) && !isFinished && (
         <Appbar.Action
