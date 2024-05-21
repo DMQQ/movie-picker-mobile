@@ -1,4 +1,4 @@
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { CommonActions } from "@react-navigation/native";
 import { useCameraPermissions, CameraView } from "expo-camera/next";
 import { useContext, useEffect, useState } from "react";
 import { ToastAndroid, View, Vibration } from "react-native";
@@ -20,6 +20,8 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
   const [isManual, setIsManual] = useState(false);
   const theme = useTheme();
   const [isScanned, setIsScanned] = useState(false);
+  const [isScannError, setIsScanError] = useState(false);
+
   const { nickname } = useAppSelector((state) => state.room);
 
   const { socket } = useContext(SocketContext);
@@ -40,20 +42,43 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
       return ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
 
     try {
-      socket?.emit("join-room", parsed.roomId, nickname);
+      await joinRoom(parsed.roomId);
+    } catch (error) {
+      ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
+    }
+  };
 
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [
-            {
-              name: "Home",
-              params: parsed,
-            },
-          ],
-        })
-      );
-    } catch (error) {}
+  const joinRoom = async (code: string) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await socket?.emitWithAck("join-room", code, nickname);
+
+        if (response.joined) {
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [
+                {
+                  name: "Home",
+                  params: {
+                    roomId: code,
+                  },
+                },
+              ],
+            })
+          );
+          resolve(true);
+        } else {
+          reject(false);
+          setIsScanError(true);
+        }
+      } catch (error) {
+        reject(error);
+        setIsScanError(true);
+      } finally {
+        setIsManual(false);
+      }
+    });
   };
 
   useEffect(() => {
@@ -98,8 +123,8 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
         <>
           <Dialog
             dismissable={true}
-            onDismiss={() => setIsScanned(false)}
-            visible={isScanned}
+            onDismiss={() => setIsScanError(false)}
+            visible={isScannError}
             style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
           >
             <Dialog.Title>Something went wrong!</Dialog.Title>
@@ -109,7 +134,7 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
             </Dialog.Content>
 
             <Dialog.Actions>
-              <Button onPress={() => setIsScanned(false)}>Close</Button>
+              <Button onPress={() => setIsScanError(false)}>Close</Button>
             </Dialog.Actions>
           </Dialog>
 
@@ -122,7 +147,7 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
             <Dialog.Title>Join room manually</Dialog.Title>
 
             <Dialog.Actions>
-              <ManualCodeInput navigation={navigation} />
+              <ManualCodeInput joinRoom={joinRoom} />
             </Dialog.Actions>
           </Dialog>
         </>
@@ -143,8 +168,20 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
   );
 }
 
-const ManualCodeInput = ({ navigation }: { navigation: any }) => {
+const ManualCodeInput = ({
+  joinRoom,
+}: {
+  joinRoom: (code: string) => Promise<any>;
+}) => {
   const [code, setCode] = useState("");
+
+  const onManualPress = async () => {
+    if (code && code.length > 15) {
+      joinRoom(code).catch(() => {});
+    } else {
+      ToastAndroid.show("Invalid code", ToastAndroid.SHORT);
+    }
+  };
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 10 }}>
@@ -156,30 +193,7 @@ const ManualCodeInput = ({ navigation }: { navigation: any }) => {
         style={{ marginBottom: 10, borderRadius: 20 }}
       />
 
-      <Button
-        mode="text"
-        onPress={() => {
-          if (code && code.length > 15) {
-            Vibration.vibrate();
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: "Home",
-                    params: {
-                      roomId: code,
-                    },
-                  },
-                ],
-              })
-            );
-          } else {
-            ToastAndroid.show("Please enter a code", ToastAndroid.SHORT);
-          }
-        }}
-        style={{ marginTop: 10 }}
-      >
+      <Button mode="text" onPress={onManualPress} style={{ marginTop: 10 }}>
         Join room
       </Button>
     </View>
