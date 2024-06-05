@@ -6,7 +6,7 @@ import socketIOClient, {
   SocketOptions,
 } from "socket.io-client";
 
-const isDev = true;
+const isDev = false;
 
 export const url = isDev
   ? "http://192.168.0.25:3000"

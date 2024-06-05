@@ -1,21 +1,16 @@
-import Animated, {
-  SharedTransition,
-  withSpring,
-  WithSpringConfig,
-} from "react-native-reanimated";
-
-const SPRING_CONFIG = {
-  mass: 1,
-  stiffness: 100,
-  damping: 200,
-};
+import { SharedTransition, withTiming } from "react-native-reanimated";
 
 export const sharedElementTransition = SharedTransition.custom((values) => {
   "worklet";
+
+  const options = {
+    duration: 200,
+  };
+
   return {
-    height: withSpring(values.targetHeight, SPRING_CONFIG),
-    width: withSpring(values.targetWidth, SPRING_CONFIG),
-    originX: withSpring(values.targetGlobalOriginX, SPRING_CONFIG),
-    originY: withSpring(values.targetGlobalOriginY, SPRING_CONFIG),
+    height: withTiming(values.targetHeight, options),
+    width: withTiming(values.targetWidth, options),
+    originX: withTiming(values.targetOriginX, options),
+    originY: withTiming(values.targetOriginY, options),
   };
 });

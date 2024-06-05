@@ -14,6 +14,7 @@ import {
   useGetMovieProvidersQuery,
   useGetMovieQuery,
 } from "../redux/movie/movieApi";
+import { sharedElementTransition } from "../service/utils/SharedElementTransition";
 
 export default function MovieDetailsScreen({
   route,
@@ -72,8 +73,8 @@ export default function MovieDetailsScreen({
       style={{ flex: 1, height }}
     >
       <Animated.Image
-        // sharedTransitionStyle={sharedElementTransition}
-        // sharedTransitionTag={"movie-poster-image-" + route.params.img}
+        //sharedTransitionStyle={sharedElementTransition}
+        // sharedTransitionTag={`movie-poster-image-${route.params.img}`}
         style={[
           {
             height: IMG_HEIGHT,

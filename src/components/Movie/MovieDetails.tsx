@@ -1,5 +1,4 @@
-import { FlatList } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+import { Text } from "react-native-paper";
 import Animated from "react-native-reanimated";
 import WatchProviders from "./WatchProviders";
 import LastEpisodeToAir from "./LastEpisodeDetails";
@@ -14,8 +13,6 @@ export default function MovieDetails({
   providers: any;
   width: number;
 }) {
-  const theme = useTheme();
-
   return (
     <Animated.View
       style={[
@@ -66,7 +63,7 @@ export default function MovieDetails({
           marginVertical: 10,
         }}
       >
-        {movie.genres.map((genre: any) => genre.name).join(", ")}
+        {movie?.genres?.map((genre: any) => genre.name).join(", ")}
       </Text>
 
       <WatchProviders providers={providers || []} />

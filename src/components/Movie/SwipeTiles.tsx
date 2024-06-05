@@ -1,4 +1,9 @@
-import { View, useWindowDimensions } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { Movie } from "../../../types";
 import Animated, {
   Easing,
@@ -17,6 +22,44 @@ import { Text } from "react-native-paper";
 import { memo } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import TabBar from "../Home/TabBar";
+
+const { width } = Dimensions.get("screen");
+
+const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    left: width * 0.05,
+    backgroundColor: "#000",
+    borderRadius: 25,
+  },
+  gradientContainer: {
+    flex: 1,
+    borderRadius: 19,
+    overflow: "hidden",
+    justifyContent: "flex-end",
+    position: "absolute",
+    zIndex: 10,
+    padding: 10,
+    paddingBottom: 20,
+  },
+  title: {
+    color: "white",
+    fontSize: 24,
+    paddingHorizontal: 10,
+    fontWeight: "bold",
+  },
+  overview: {
+    color: "rgba(255,255,255,0.8)",
+    paddingHorizontal: 10,
+    marginTop: 5,
+    fontSize: 16,
+  },
+  release_date: {
+    color: "rgba(255,255,255,0.6)",
+    paddingHorizontal: 10,
+    marginTop: 5,
+  },
+});
 
 const SwipeTile = ({
   card,
@@ -138,61 +181,19 @@ const SwipeTile = ({
           entering={FadeInDown.duration(100)}
         >
           <Animated.View style={cardInitialAnimatedStyle}>
-            <View
-              style={{
-                position: "absolute",
-                left: width * 0.05,
-                backgroundColor: "#000",
-                borderRadius: 25,
-              }}
-            >
+            <View style={styles.container}>
               <LinearGradient
                 colors={["transparent", "transparent", "rgba(0,0,0,0.9)"]}
-                style={[
-                  {
-                    flex: 1,
-                    borderRadius: 19,
-                    overflow: "hidden",
-                    justifyContent: "flex-end",
-                    position: "absolute",
-                    zIndex: 10,
-                    padding: 10,
-                    paddingBottom: 20,
-                  },
-                  dims,
-                ]}
+                style={[styles.gradientContainer, dims]}
               >
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 24,
-                    paddingHorizontal: 10,
-                    fontWeight: "bold",
-                  }}
-                >
-                  {card.title || card.name}
-                </Text>
+                <Text style={styles.title}>{card.title || card.name}</Text>
                 {card.overview && (
-                  <Text
-                    style={{
-                      color: "rgba(255,255,255,0.7)",
-                      paddingHorizontal: 10,
-                      marginTop: 5,
-                      fontSize: 16,
-                    }}
-                    numberOfLines={3}
-                  >
+                  <Text style={styles.overview} numberOfLines={3}>
                     {card.overview}
                   </Text>
                 )}
 
-                <Text
-                  style={{
-                    color: "rgba(255,255,255,0.5)",
-                    paddingHorizontal: 10,
-                    marginTop: 5,
-                  }}
-                >
+                <Text style={styles.release_date}>
                   {card.release_date || card.first_air_date},{" "}
                   {card.vote_average.toFixed(1)}/10
                 </Text>

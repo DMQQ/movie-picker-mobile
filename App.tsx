@@ -22,7 +22,29 @@ import SettingsScreen from "./src/screens/Settings";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+const Fallback = () => (
+  <View
+    style={{
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
+    <ActivityIndicator size={50} />
+  </View>
+);
+
 export default function App() {
+  const onStateChange = (state: any) => {
+    const currentRoute = state?.routes[state.index]?.name || "Landing";
+
+    if (["Home", "QRCode", "QRScanner", "Overview"].includes(currentRoute)) {
+      StatusBar.setBackgroundColor(MD2DarkTheme.colors.surface);
+    } else {
+      StatusBar.setBackgroundColor("#000");
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <SocketProvider>
@@ -30,31 +52,8 @@ export default function App() {
           <PaperProvider theme={MD2DarkTheme}>
             <NavigationContainer
               theme={DarkTheme}
-              onStateChange={(state) => {
-                const currentRoute =
-                  state?.routes[state.index]?.name || "Landing";
-
-                if (
-                  ["Home", "QRCode", "QRScanner", "Overview"].includes(
-                    currentRoute
-                  )
-                ) {
-                  StatusBar.setBackgroundColor(MD2DarkTheme.colors.surface);
-                } else {
-                  StatusBar.setBackgroundColor("#000");
-                }
-              }}
-              fallback={
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <ActivityIndicator size={50} />
-                </View>
-              }
+              onStateChange={onStateChange}
+              fallback={<Fallback />}
             >
               <GestureHandlerRootView
                 style={{ flex: 1, backgroundColor: "#000" }}
@@ -92,6 +91,8 @@ export default function App() {
                       headerTransparent: true,
                       headerTitleAlign: "center",
                       headerTitle: "Movie Details",
+                      // animation: "fade",
+                      // presentation: "modal",
                     }}
                     initialParams={{
                       id: 0,
