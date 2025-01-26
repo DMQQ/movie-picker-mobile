@@ -39,11 +39,7 @@ export default function useRoom(room: string) {
 
       socket?.on("movies", async (_cards) => {
         setCards(_cards.movies);
-        await Promise.all(
-          _cards.movies.map((card: Movie) =>
-            Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)
-          )
-        );
+        await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)));
       });
 
       if (!isHost) {

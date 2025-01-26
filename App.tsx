@@ -10,7 +10,7 @@ import { Provider } from "react-redux";
 import { store } from "./src/redux/store";
 import Overview from "./src/screens/Overview";
 import { SocketProvider } from "./src/service/SocketContext";
-import { StatusBar, View } from "react-native";
+import { Alert, StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MovieDetails from "./src/screens/MovieDetails";
 import { RootStackParamList } from "./src/screens/types";
