@@ -59,10 +59,10 @@ const styles = StyleSheet.create({
 const SwipeTile = ({
   card,
   index,
-  likeCard,
-  removeCard,
   length,
   onPress,
+
+  ...actions
 }: {
   card: Movie;
   index: number;
@@ -73,6 +73,18 @@ const SwipeTile = ({
 }) => {
   const { width, height } = useWindowDimensions();
   const position = useSharedValue({ x: 0, y: 0 });
+
+  const likeCard = () => {
+    setTimeout(() => {
+      actions.likeCard();
+    }, 500);
+  };
+
+  const removeCard = () => {
+    setTimeout(() => {
+      actions.removeCard();
+    }, 500);
+  };
 
   const isLeftVisible = useSharedValue(false);
   const isRightVisible = useSharedValue(false);
@@ -126,10 +138,7 @@ const SwipeTile = ({
       } else {
         position.value = withSpring({ x: width + 100, y: 100 });
       }
-
-      setTimeout(() => {
-        fn();
-      }, 500);
+      fn();
     };
   };
 

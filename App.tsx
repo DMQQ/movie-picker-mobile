@@ -42,7 +42,7 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
       <SocketProvider>
         <Provider store={store}>
           <PaperProvider theme={MD2DarkTheme}>
@@ -76,6 +76,8 @@ export default function App() {
                       headerTitle: "Movie Details",
                       // animation: "fade",
                       presentation: "modal",
+
+                      title: "",
                     }}
                     initialParams={{
                       id: 0,

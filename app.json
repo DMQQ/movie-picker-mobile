@@ -29,7 +29,9 @@
       ],
       "expo-build-properties"
     ],
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -43,7 +45,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
       "package": "com.dmq.qrmobile"
     },
     "web": {
@@ -53,6 +58,10 @@
       "eas": {
         "projectId": "ab2d7ea0-e25f-4063-a2e2-1a449547340b"
       }
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/ab2d7ea0-e25f-4063-a2e2-1a449547340b"
     }
   }
 }
