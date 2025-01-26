@@ -8,6 +8,8 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 import { ScreenProps } from "./types";
 import { useGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import SafeIOSContainer from "../components/SafeIOSContainer";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -21,9 +23,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const totalTileWidth = tileWidth + margin;
 
   // Calculate the snap offsets
-  const snapOffsets = [...Array(data?.length || 0).keys()].map(
-    (i) => i * totalTileWidth
-  );
+  const snapOffsets = [...Array(data?.length || 0).keys()].map((i) => i * totalTileWidth);
 
   const dispatch = useAppDispatch();
 
@@ -39,8 +39,10 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     })();
   }, []);
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={{ flex: 1 }}>
+    <SafeIOSContainer>
       <View style={{ flex: 1 }}>
         <View
           style={{
@@ -49,14 +51,9 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
             alignItems: "center",
           }}
         >
-          <Text style={{ fontSize: 24, fontWeight: "bold", padding: 15 }}>
-            Welcome {nickname}!
-          </Text>
+          <Text style={{ fontSize: 24, fontWeight: "bold", padding: 15 }}>Welcome {nickname}!</Text>
 
-          <IconButton
-            icon={"dots-horizontal"}
-            onPress={() => navigation.navigate("Settings")}
-          />
+          <IconButton icon={"dots-horizontal"} onPress={() => navigation.navigate("Settings")} />
         </View>
 
         <Animated.FlatList
@@ -108,6 +105,6 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
           Create Room
         </Button>
       </View>
-    </View>
+    </SafeIOSContainer>
   );
 }

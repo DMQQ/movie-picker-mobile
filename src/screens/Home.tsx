@@ -9,6 +9,7 @@ import { useRef, useState } from "react";
 import MatchModal from "../components/Movie/MatchModal";
 import DialogModals from "../components/Home/DialogModals";
 import HomeAppbar from "../components/Home/Appbar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -24,15 +25,7 @@ const styles = StyleSheet.create({
 });
 
 export default function Home({ route, navigation }: ScreenProps<"Home">) {
-  const {
-    cards,
-    dislikeCard,
-    likeCard,
-    match,
-    showLeaveModal,
-    toggleLeaveModal,
-    hideMatchModal,
-  } = useRoom(route.params?.roomId);
+  const { cards, dislikeCard, likeCard, match, showLeaveModal, toggleLeaveModal, hideMatchModal } = useRoom(route.params?.roomId);
   const isFocused = useIsFocused();
   const [showQRModal, setShowQRModal] = useState(false);
 
@@ -46,8 +39,10 @@ export default function Home({ route, navigation }: ScreenProps<"Home">) {
     });
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginBottom: insets.bottom }}>
       <HomeAppbar
         cards={cards}
         route={route}
@@ -82,9 +77,7 @@ export default function Home({ route, navigation }: ScreenProps<"Home">) {
         />
       ))}
 
-      {isFocused && (
-        <MatchModal hideMatchModal={hideMatchModal} match={match} />
-      )}
+      {isFocused && <MatchModal hideMatchModal={hideMatchModal} match={match} />}
     </View>
   );
 }

@@ -1,11 +1,5 @@
 import { View, useWindowDimensions } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  SharedValue,
-  interpolate,
-  interpolateColor,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle, SharedValue, interpolate, interpolateColor, withTiming } from "react-native-reanimated";
 import { sharedElementTransition } from "../../service/utils/SharedElementTransition";
 import { useEffect } from "react";
 
@@ -83,11 +77,7 @@ export default function Poster(props: {
     if (!props.translate) return {};
 
     return {
-      opacity: interpolate(
-        props.translate.value.x,
-        [-width / 2, 0, width / 2],
-        [1, 0, 1]
-      ),
+      opacity: interpolate(props.translate.value.x, [-width / 2, 0, width / 2], [1, 0, 1]),
       backgroundColor: interpolateColor(
         props.translate.value.x,
         [-width, 0, width],
@@ -105,22 +95,10 @@ export default function Poster(props: {
     <View style={{ position: "relative" }}>
       {props.isSwipeable && (
         <>
-          <SwipeText
-            isVisible={props.isRightVisible}
-            text="DISLIKE"
-            color="red"
-            rotate="30deg"
-            right
-          />
+          <SwipeText isVisible={props.isRightVisible} text="DISLIKE" color="red" rotate="30deg" right />
 
           {/* Placed on left   */}
-          <SwipeText
-            isVisible={props.isLeftVisible}
-            text="LIKE"
-            color="#24C722"
-            rotate="-30deg"
-            right={false}
-          />
+          <SwipeText isVisible={props.isLeftVisible} text="LIKE" color="#24C722" rotate="-30deg" right={false} />
         </>
       )}
 

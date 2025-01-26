@@ -1,16 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { ToastAndroid } from "react-native";
-import socketIOClient, {
-  ManagerOptions,
-  Socket,
-  SocketOptions,
-} from "socket.io-client";
+import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 
 const isDev = false;
 
-export const url = isDev
-  ? "http://192.168.0.25:3000"
-  : "http://srv25.mikr.us:40056"; //
+export const url = isDev ? "http://192.168.0.25:3000" : "https://moviepicker.bieda.it"; //
 
 const userId = Math.random().toString(36).substring(7);
 
@@ -63,9 +57,5 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [url]);
 
-  return (
-    <SocketContext.Provider value={{ socket: socket.current, userId }}>
-      {children}
-    </SocketContext.Provider>
-  );
+  return <SocketContext.Provider value={{ socket: socket.current, userId }}>{children}</SocketContext.Provider>;
 };

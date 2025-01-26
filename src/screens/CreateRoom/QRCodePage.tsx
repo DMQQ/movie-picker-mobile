@@ -1,5 +1,5 @@
 import { Dimensions, Share, ToastAndroid, View } from "react-native";
-import { Avatar, Button, Text, useTheme } from "react-native-paper";
+import { Appbar, Avatar, Button, Text, useTheme } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import QRCode from "react-native-qrcode-svg";
 import { CommonActions } from "@react-navigation/native";
@@ -9,6 +9,7 @@ import { memo, useContext, useEffect } from "react";
 import { SocketContext } from "../../service/SocketContext";
 import { roomActions } from "../../redux/room/roomSlice";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
 
 interface ISocketResponse {
   roomId: string;
@@ -78,61 +79,72 @@ export default function QRCodePage({ navigation }: any) {
   };
 
   return (
-    <View style={{ position: "relative", flex: 1, padding: 15 }}>
-      <Text style={{ fontSize: 24, fontWeight: "bold" }}>Scan to join!</Text>
+    <SafeIOSContainer>
+      <Appbar style={{ backgroundColor: "#000" }}>
+        <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
+        <Appbar.Content title="Join game" />
+      </Appbar>
+      <View style={{ position: "relative", flex: 1, padding: 15 }}>
+        <Text style={{ fontSize: 24, fontWeight: "bold" }}>Scan to join!</Text>
 
-      <Text
-        style={{
-          fontSize: 16,
-          color: "gray",
-        }}
-      >
-        Share this code with your friends to join the room and start playing
-        together
-      </Text>
-
-      <QrCodeBox code={qrCode} />
-
-      <View>
-        <View
+        <Text
           style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 10,
-            height: 25,
-            alignItems: "center",
+            fontSize: 16,
+            color: "gray",
           }}
         >
-          <Text style={{ fontSize: 16 }}>Active users:</Text>
-          <View style={{ flexDirection: "row", gap: 5 }}>
-            {users.map((nick, index) => (
-              <Avatar.Text
-                key={nick + index}
-                label={nick?.at(0)?.toUpperCase() || "N"}
-                size={25}
-                style={{
-                  backgroundColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
-                }}
-              />
-            ))}
+          Share this code with your friends to join the room and start playing together
+        </Text>
+
+        <QrCodeBox code={qrCode} />
+
+        <View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 10,
+              height: 25,
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: 16 }}>Active users:</Text>
+            <View style={{ flexDirection: "row", gap: 5 }}>
+              {users.map((nick, index) => (
+                <View
+                  key={nick + index}
+                  style={{
+                    flexDirection: "row",
+                    backgroundColor: "#000",
+                    gap: 5,
+                    borderRadius: 100,
+                    alignItems: "center",
+                  }}
+                >
+                  <Avatar.Text size={25} label={nick[0].toUpperCase()} style={{ backgroundColor: AVATAR_COLORS[index % 5] }} />
+
+                  <Text>{nick}</Text>
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
 
-        <Button
-          mode="contained"
-          style={{
-            borderRadius: 100,
-            marginTop: 10,
-          }}
-          contentStyle={{ padding: 7.5 }}
-          onPress={() => {
-            onJoinOwnRoom(qrCode);
-          }}
-        >
-          Next
-        </Button>
+          <Button
+            mode="contained"
+            style={{
+              borderRadius: 100,
+              marginTop: 10,
+            }}
+            contentStyle={{ padding: 7.5 }}
+            onPress={() => {
+              onJoinOwnRoom(qrCode);
+            }}
+          >
+            Next
+          </Button>
+        </View>
       </View>
-    </View>
+    </SafeIOSContainer>
   );
 }
 

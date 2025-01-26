@@ -1,8 +1,4 @@
-import {
-  ActivityIndicator,
-  MD2DarkTheme,
-  PaperProvider,
-} from "react-native-paper";
+import { ActivityIndicator, MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./src/screens/Home";
@@ -50,30 +46,17 @@ export default function App() {
       <SocketProvider>
         <Provider store={store}>
           <PaperProvider theme={MD2DarkTheme}>
-            <NavigationContainer
-              theme={DarkTheme}
-              onStateChange={onStateChange}
-              fallback={<Fallback />}
-            >
-              <GestureHandlerRootView
-                style={{ flex: 1, backgroundColor: "#000" }}
-              >
+            <NavigationContainer theme={DarkTheme} onStateChange={onStateChange} fallback={<Fallback />}>
+              <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
                 <StatusBar backgroundColor="#000" />
 
-                <Stack.Navigator
-                  initialRouteName="Landing"
-                  screenOptions={{ headerShown: false }}
-                >
+                <Stack.Navigator initialRouteName="Landing" screenOptions={{ headerShown: false }}>
                   <Stack.Screen name="Settings" component={SettingsScreen} />
 
                   <Stack.Screen name="Landing" component={Landing} />
                   <Stack.Screen name="Home" component={Home} />
                   <Stack.Screen name="QRCode" component={QRCode} />
-                  <Stack.Screen
-                    name="QRScanner"
-                    component={QRScanner}
-                    options={{ headerShown: true, title: "Scan QR Code" }}
-                  />
+                  <Stack.Screen name="QRScanner" component={QRScanner} options={{ headerShown: true, title: "Scan QR Code" }} />
 
                   <Stack.Screen
                     name="Overview"
@@ -92,7 +75,7 @@ export default function App() {
                       headerTitleAlign: "center",
                       headerTitle: "Movie Details",
                       // animation: "fade",
-                      // presentation: "modal",
+                      presentation: "modal",
                     }}
                     initialParams={{
                       id: 0,

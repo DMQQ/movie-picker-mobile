@@ -29,16 +29,18 @@
           "recordAudioAndroid": true
         }
       ],
-
       "expo-build-properties"
     ],
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
-      }
+      },
+      "bundleIdentifier": "pl.dmq.movie-picker"
     },
     "android": {
       "adaptiveIcon": {

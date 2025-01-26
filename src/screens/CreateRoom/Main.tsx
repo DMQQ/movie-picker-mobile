@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator();
 export default function QRCode({ navigation }: any) {
   return (
     <ContextProvider navigation={navigation}>
-      <Stack.Navigator initialRouteName="ChooseCategory">
+      <Stack.Navigator initialRouteName="ChooseCategory" screenOptions={{ headerShown: false }}>
         <Stack.Screen
           name="ChooseCategory"
           component={ChooseCategory}

@@ -1,6 +1,7 @@
 import { FlatList, View } from "react-native";
-import { Button, Icon, Text, useTheme } from "react-native-paper";
+import { Appbar, Button, Icon, Text, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
 
 const movies = [
   {
@@ -61,10 +62,7 @@ export default function ChooseCategory({ navigation }: any) {
   const onPress = (category: Category) => {
     setCategory(category.path);
 
-    if (
-      category.path === "/discover/movie" ||
-      category.path === "/discover/tv"
-    ) {
+    if (category.path === "/discover/movie" || category.path === "/discover/tv") {
       navigation.navigate("ChooseGenre");
       return;
     }
@@ -73,36 +71,32 @@ export default function ChooseCategory({ navigation }: any) {
   };
 
   return (
-    <View style={{ flex: 1, padding: 15 }}>
-      <List
-        category={category}
-        data={movies}
-        title="Movies"
-        onPress={onPress}
-      />
+    <SafeIOSContainer>
+      <Appbar style={{ backgroundColor: "#000" }}>
+        <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
+        <Appbar.Content title="Categories" />
+      </Appbar>
+      <View style={{ padding: 15, flex: 1 }}>
+        <List category={category} data={movies} title="Movies" onPress={onPress} />
 
-      <List
-        category={category}
-        data={series}
-        title="Series"
-        onPress={onPress}
-      />
+        <List category={category} data={series} title="Series" onPress={onPress} />
 
-      <Button
-        icon="dice-4"
-        mode="contained"
-        style={{
-          borderRadius: 100,
-          marginTop: 10,
-        }}
-        contentStyle={{ padding: 7.5 }}
-        onPress={() => {
-          onPress(categories[Math.floor(Math.random() * categories.length)]);
-        }}
-      >
-        Randomize
-      </Button>
-    </View>
+        <Button
+          icon="dice-4"
+          mode="contained"
+          style={{
+            borderRadius: 100,
+            marginTop: 10,
+          }}
+          contentStyle={{ padding: 7.5 }}
+          onPress={() => {
+            onPress(categories[Math.floor(Math.random() * categories.length)]);
+          }}
+        >
+          Randomize
+        </Button>
+      </View>
+    </SafeIOSContainer>
   );
 }
 
@@ -129,11 +123,7 @@ const List = ({
           <Button
             key={c.path}
             mode="contained"
-            buttonColor={
-              category === c.path
-                ? theme.colors.secondary
-                : theme.colors.surface
-            }
+            buttonColor={category === c.path ? theme.colors.secondary : theme.colors.surface}
             contentStyle={{
               padding: 5,
             }}
@@ -145,10 +135,7 @@ const List = ({
               onPress(c);
             }}
           >
-            {["/discover/movie", "/discover/tv"].includes(c.path) && (
-              <Icon source={"crown"} size={16} />
-            )}{" "}
-            {c.label}
+            {["/discover/movie", "/discover/tv"].includes(c.path) && <Icon source={"crown"} size={16} />} {c.label}
           </Button>
         )}
       />

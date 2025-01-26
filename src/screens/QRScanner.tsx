@@ -1,16 +1,8 @@
 import { CommonActions } from "@react-navigation/native";
-import { useCameraPermissions, CameraView } from "expo-camera/next";
+import { useCameraPermissions, CameraView } from "expo-camera";
 import { useContext, useEffect, useState } from "react";
 import { ToastAndroid, View, Vibration } from "react-native";
-import {
-  Button,
-  Dialog,
-  FAB,
-  Portal,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
+import { Button, Dialog, FAB, Portal, Text, TextInput, useTheme } from "react-native-paper";
 import { SocketContext } from "../service/SocketContext";
 import { useAppSelector } from "../redux/store";
 import { ScreenProps } from "./types";
@@ -30,16 +22,13 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
     setIsScanned(true);
     Vibration.vibrate();
 
-    const isValid =
-      !barCodeScannerResult?.data?.startsWith("https://") &&
-      barCodeScannerResult.data.includes("roomId");
+    const isValid = !barCodeScannerResult?.data?.startsWith("https://") && barCodeScannerResult.data.includes("roomId");
 
     if (!isValid) return;
 
     const parsed = JSON.parse(barCodeScannerResult?.data);
 
-    if (!parsed.roomId)
-      return ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
+    if (!parsed.roomId) return ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
 
     try {
       await joinRoom(parsed.roomId);
@@ -88,9 +77,7 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
   if (hasPermission === null) {
     return (
       <View style={{ flex: 1 }}>
-        <Text style={{ marginTop: 25, fontWeight: "bold", fontSize: 25 }}>
-          Requesting camera permission
-        </Text>
+        <Text style={{ marginTop: 25, fontWeight: "bold", fontSize: 25 }}>Requesting camera permission</Text>
 
         <Button mode="contained" onPress={() => request()}>
           Request permission
@@ -168,11 +155,7 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
   );
 }
 
-const ManualCodeInput = ({
-  joinRoom,
-}: {
-  joinRoom: (code: string) => Promise<any>;
-}) => {
+const ManualCodeInput = ({ joinRoom }: { joinRoom: (code: string) => Promise<any> }) => {
   const [code, setCode] = useState("");
 
   const onManualPress = async () => {
@@ -185,13 +168,7 @@ const ManualCodeInput = ({
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 10 }}>
-      <TextInput
-        mode="outlined"
-        label="Enter code"
-        value={code}
-        onChangeText={setCode}
-        style={{ marginBottom: 10, borderRadius: 20 }}
-      />
+      <TextInput mode="outlined" label="Enter code" value={code} onChangeText={setCode} style={{ marginBottom: 10, borderRadius: 20 }} />
 
       <Button mode="text" onPress={onManualPress} style={{ marginTop: 10 }}>
         Join room
