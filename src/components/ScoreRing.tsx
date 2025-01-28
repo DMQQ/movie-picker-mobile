@@ -9,7 +9,7 @@ const ScoreRing = ({ score }: { score: number }) => {
     return "#db2360"; // Red
   };
 
-  const size = 40;
+  const size = 50;
   const strokeWidth = 3;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
@@ -39,7 +39,7 @@ const ScoreRing = ({ score }: { score: number }) => {
           alignItems: "center",
         }}
       >
-        <Text style={{ color: "white", fontWeight: "700", fontSize: 10 }}>{(score * 10).toFixed(0)}%</Text>
+        <Text style={{ color: "white", fontWeight: "700", fontSize: 13 }}>{(score * 10).toFixed(0)}%</Text>
       </View>
     </View>
   );

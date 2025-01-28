@@ -90,7 +90,6 @@ export default function App() {
                     name="MovieDetails"
                     component={MovieDetails}
                     options={{
-                      headerShown: true,
                       headerTransparent: true,
                       headerTitleAlign: "center",
                       headerTitle: "Movie Details",

@@ -1,4 +1,4 @@
-import { useWindowDimensions } from "react-native";
+import { useWindowDimensions, View } from "react-native";
 import { MovieDetails as MovieDetailsType } from "../../types";
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { ScreenProps } from "./types";
@@ -6,8 +6,9 @@ import { useAppSelector } from "../redux/store";
 import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
 import MovieDetails from "../components/Movie/MovieDetails";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
+import { Appbar, IconButton } from "react-native-paper";
 
-export default function MovieDetailsScreen({ route }: ScreenProps<"MovieDetails">) {
+export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"MovieDetails">) {
   const { width, height } = useWindowDimensions();
   const {
     room: { type },
@@ -42,7 +43,7 @@ export default function MovieDetailsScreen({ route }: ScreenProps<"MovieDetails"
     type: typeOfContent,
   });
 
-  const { data: providers = [] } = useGetMovieProvidersQuery({
+  const { data: providers = [], refetch } = useGetMovieProvidersQuery({
     id: route.params.id,
     type: typeOfContent,
   });
@@ -54,6 +55,14 @@ export default function MovieDetailsScreen({ route }: ScreenProps<"MovieDetails"
       contentContainerStyle={{ alignItems: "center", position: "relative" }}
       style={{ flex: 1, height }}
     >
+      <View style={{ position: "absolute", top: 10, left: 10, zIndex: 100 }}>
+        <Appbar.BackAction color="#fff" onPress={() => navigation.goBack()} />
+      </View>
+
+      <View style={{ position: "absolute", top: 10, right: 10, zIndex: 100 }}>
+        <IconButton icon="refresh" iconColor="#fff" onPress={refetch} />
+      </View>
+
       <Animated.Image
         //sharedTransitionStyle={sharedElementTransition}
         // sharedTransitionTag={`movie-poster-image-${route.params.img}`}

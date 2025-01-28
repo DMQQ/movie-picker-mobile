@@ -79,22 +79,23 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   return (
     <SafeIOSContainer>
       <View style={{ flex: 1 }}>
-        <View style={styles.header}>
-          <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
-            <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} />
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>hello {nickname}.</Text>
+        {/* <View style={styles.header}>
+          <View style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
+            <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} color="#fff" />
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Hello {nickname}.</Text>
           </View>
 
           <IconButton icon={"dots-horizontal"} onPress={() => navigation.navigate("Settings")} />
-        </View>
+        </View> */}
 
         <VirtualizedList
           ListHeaderComponent={
             <ImageBackground
               style={{
                 width,
-                height: height / 1.7,
+                height: height / 1.6,
                 position: "relative",
+                marginBottom: 50,
               }}
               source={{
                 uri: "https://image.tmdb.org/t/p/w500" + featured?.poster_path,
@@ -129,13 +130,13 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
                   colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.8)", "#000000"]}
                 >
                   <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>{featured?.title || featured?.name}</Text>
-                  <Text style={{ fontSize: 18, fontWeight: "bold" }}>{featured?.overview}</Text>
+                  <Text style={{ fontSize: 15, fontWeight: "bold" }}>{featured?.overview}</Text>
                 </LinearGradient>
               </Pressable>
             </ImageBackground>
           }
           data={(data || []) as { name: string; results: Movie[] }[]}
-          initialNumToRender={3}
+          initialNumToRender={1}
           keyExtractor={(item) => item.name as string}
           getItemCount={(dt) => dt.length}
           getItem={(data, index) => data[index] as { name: string; results: Movie[] }}
@@ -199,7 +200,7 @@ const Section = ({ group, setSectionMovies }: SectionProps) => {
   }, [page]);
 
   return (
-    <View style={{ marginBottom: 15, padding: 15 }} key={group.name}>
+    <View style={{ marginBottom: 20, padding: 15 }} key={group.name}>
       <Text style={{ color: "#fff", fontSize: 40, marginBottom: 25, fontFamily: "Bebas" }}>{group.name}</Text>
       <VirtualizedList
         getItem={(data, index) => data[index]}
@@ -216,7 +217,8 @@ const Section = ({ group, setSectionMovies }: SectionProps) => {
           justifyContent: "flex-start",
           alignItems: "center",
         }}
-        snapToOffsets={group?.results?.map((_, index) => index * width * 0.3 + index * 10 - 10)}
+        initialNumToRender={3}
+        snapToOffsets={group?.results?.map((_, index) => index * width * 0.4 + index * 20 - 5)}
         snapToAlignment="start"
         decelerationRate="fast"
         renderItem={({ item }) => (
@@ -236,16 +238,16 @@ const Section = ({ group, setSectionMovies }: SectionProps) => {
             <Image
               resizeMode="cover"
               style={{
-                width: width * 0.3,
-                height: height * 0.25,
-                borderRadius: 5,
-                marginRight: 10,
+                width: width * 0.4,
+                height: height * 0.3,
+                borderRadius: 15,
+                marginRight: 20,
               }}
               source={{
                 uri: "https://image.tmdb.org/t/p/w500" + item.poster_path,
               }}
             />
-            <View style={{ position: "absolute", right: 25, bottom: 25 }}>
+            <View style={{ position: "absolute", right: 25, bottom: 5 }}>
               <ScoreRing score={item.vote_average} />
             </View>
           </Pressable>
