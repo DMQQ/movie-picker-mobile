@@ -93,7 +93,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
             <ImageBackground
               style={{
                 width,
-                height: height / 1.75,
+                height: height / 1.7,
                 position: "relative",
               }}
               source={{
@@ -128,7 +128,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
                   style={{ flex: 1, padding: 10 }}
                   colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.8)", "#000000"]}
                 >
-                  <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>{featured?.title}</Text>
+                  <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>{featured?.title || featured?.name}</Text>
                   <Text style={{ fontSize: 18, fontWeight: "bold" }}>{featured?.overview}</Text>
                 </LinearGradient>
               </Pressable>
@@ -216,7 +216,7 @@ const Section = ({ group, setSectionMovies }: SectionProps) => {
           justifyContent: "flex-start",
           alignItems: "center",
         }}
-        snapToOffsets={group.results.map((_, index) => index * width * 0.3 + index * 10 - 10)}
+        snapToOffsets={group?.results?.map((_, index) => index * width * 0.3 + index * 10 - 10)}
         snapToAlignment="start"
         decelerationRate="fast"
         renderItem={({ item }) => (
