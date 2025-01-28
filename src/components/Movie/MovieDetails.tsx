@@ -4,15 +4,7 @@ import WatchProviders from "./WatchProviders";
 import LastEpisodeToAir from "./LastEpisodeDetails";
 import Seasons from "./SeasonsList";
 
-export default function MovieDetails({
-  movie,
-  providers,
-  width,
-}: {
-  movie: any;
-  providers: any;
-  width: number;
-}) {
+export default function MovieDetails({ movie, providers, width }: { movie: any; providers: any; width: number }) {
   return (
     <Animated.View
       style={[
@@ -31,10 +23,10 @@ export default function MovieDetails({
           fontWeight: "bold",
         }}
       >
-        {movie.title || movie.name}
+        {movie?.title || movie?.name}
       </Text>
 
-      {movie.tagline && (
+      {movie?.tagline && (
         <Text
           style={{
             fontSize: 16,
@@ -42,7 +34,7 @@ export default function MovieDetails({
             marginTop: 5,
           }}
         >
-          {movie.tagline}
+          {movie?.tagline}
         </Text>
       )}
 
@@ -53,7 +45,7 @@ export default function MovieDetails({
           color: "rgba(255,255,255,0.9)",
         }}
       >
-        {movie.overview}
+        {movie?.overview}
       </Text>
 
       <Text
@@ -72,35 +64,19 @@ export default function MovieDetails({
 
       <Seasons seasons={movie?.seasons || []} />
 
-      <Text
-        style={{ fontSize: 16, marginTop: 5, color: "rgba(255,255,255,0.6)" }}
-      >
-        {movie.release_date || movie?.last_episode_to_air?.air_date}
+      <Text style={{ fontSize: 16, marginTop: 5, color: "rgba(255,255,255,0.6)" }}>
+        {movie?.release_date || movie?.last_episode_to_air?.air_date}
       </Text>
 
-      <Text
-        style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}
-      >
-        Rating: {movie.vote_average} out of {movie.vote_count} votes
+      <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>
+        Rating: {movie?.vote_average} out of {movie?.vote_count} votes
       </Text>
 
-      <Text
-        style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}
-      >
-        Runtime: {movie.runtime} minutes
-      </Text>
+      <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>Runtime: {movie?.runtime} minutes</Text>
 
-      <Text
-        style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}
-      >
-        Status: {movie.status}
-      </Text>
+      <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>Status: {movie?.status}</Text>
 
-      <Text
-        style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}
-      >
-        Original Language: {movie.original_language}
-      </Text>
+      <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>Original Language: {movie?.original_language}</Text>
     </Animated.View>
   );
 }

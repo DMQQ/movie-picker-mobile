@@ -15,6 +15,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MovieDetails from "./src/screens/MovieDetails";
 import { RootStackParamList } from "./src/screens/types";
 import SettingsScreen from "./src/screens/Settings";
+import { useEffect, useState } from "react";
+import { loadAsync } from "expo-font";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -30,7 +32,18 @@ const Fallback = () => (
   </View>
 );
 
+const theme = MD2DarkTheme;
+
 export default function App() {
+  const [isLoaded, setIsLoaded] = useState(false);
+  useEffect(() => {
+    loadAsync({
+      Bebas: require("./assets/fonts/BebasNeue-Regular.ttf"),
+    }).then(() => {
+      setIsLoaded(true);
+    });
+  }, []);
+
   const onStateChange = (state: any) => {
     const currentRoute = state?.routes[state.index]?.name || "Landing";
 
@@ -41,11 +54,18 @@ export default function App() {
     }
   };
 
+  if (!isLoaded)
+    return (
+      <View style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color={theme.colors.primary} size={"large"} />
+      </View>
+    );
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
       <SocketProvider>
         <Provider store={store}>
-          <PaperProvider theme={MD2DarkTheme}>
+          <PaperProvider theme={theme}>
             <NavigationContainer theme={DarkTheme} onStateChange={onStateChange} fallback={<Fallback />}>
               <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
                 <StatusBar backgroundColor="#000" />

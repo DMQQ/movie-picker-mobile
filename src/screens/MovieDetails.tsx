@@ -6,7 +6,6 @@ import { useAppSelector } from "../redux/store";
 import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
 import MovieDetails from "../components/Movie/MovieDetails";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
-import { sharedElementTransition } from "../service/utils/SharedElementTransition";
 
 export default function MovieDetailsScreen({ route }: ScreenProps<"MovieDetails">) {
   const { width, height } = useWindowDimensions();
@@ -36,14 +35,16 @@ export default function MovieDetailsScreen({ route }: ScreenProps<"MovieDetails"
     };
   });
 
+  const typeOfContent = type || route.params.type;
+
   const { data: movie = {} as MovieDetailsType, isLoading: loading } = useGetMovieQuery({
     id: route.params.id,
-    type: type,
+    type: typeOfContent,
   });
 
   const { data: providers = [] } = useGetMovieProvidersQuery({
     id: route.params.id,
-    type: type,
+    type: typeOfContent,
   });
 
   return (

@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from "react";
 import { ToastAndroid } from "react-native";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 
-const isDev = false;
+const isDev = true;
 
-export const url = isDev ? "http://192.168.0.25:3000" : "https://moviepicker.bieda.it"; //
+export const url = isDev ? "http://192.168.0.15:3000" : "https://moviepicker.bieda.it"; //
 
 const userId = Math.random().toString(36).substring(7);
 

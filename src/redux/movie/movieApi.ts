@@ -1,13 +1,23 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
-import { MovieDetails } from "../../../types";
+import { Movie, MovieDetails } from "../../../types";
+
+interface LandingPageParams {
+  skip?: number;
+  take?: number;
+}
+
+interface SectionParams {
+  name: string;
+  page?: number;
+}
 
 export const movieApi = createApi({
   reducerPath: "movieApi",
   baseQuery: fetchBaseQuery({ baseUrl: API_BASE_ENDPOINT }),
   endpoints: (builder) => ({
-    getLandingPageMovies: builder.query({
-      query: () => "/landing",
+    getLandingPageMovies: builder.query<{ name: string; results: Movie[] }[], LandingPageParams>({
+      query: (params = { skip: 0, take: 5 }) => `/landing?skip=${params.skip}&take=${params.take}`,
     }),
 
     getMovie: builder.query<
@@ -28,12 +38,16 @@ export const movieApi = createApi({
       query: ({ type }) => `/movie/genres/${type}`,
     }),
 
-    getMaxPageRange: builder.query<
-      { maxCount: number },
-      { type: string; genres: string }
-    >({
-      query: ({ type, genres }) =>
-        `/movie/max-count?type=${type}&genres=${genres}`,
+    getMaxPageRange: builder.query<{ maxCount: number }, { type: string; genres: string }>({
+      query: ({ type, genres }) => `/movie/max-count?type=${type}&genres=${genres}`,
+    }),
+
+    getSectionMovies: builder.query<{ name: string; results: Movie[] }, SectionParams>({
+      query: ({ name, page = 1 }) => `/landing/${name}/${page}`,
+    }),
+
+    getFeatured: builder.query<Movie, void>({
+      query: () => `/landing/featured`,
     }),
   }),
 });
@@ -44,4 +58,9 @@ export const {
   useGetMovieProvidersQuery,
   useGetGenresQuery,
   useGetMaxPageRangeQuery,
+  useLazyGetLandingPageMoviesQuery,
+
+  useLazyGetSectionMoviesQuery,
+
+  useGetFeaturedQuery,
 } = movieApi;

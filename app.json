@@ -27,7 +27,8 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
         }
       ],
-      "expo-build-properties"
+      "expo-build-properties",
+      "expo-font"
     ],
     "assetBundlePatterns": [
       "**/*"

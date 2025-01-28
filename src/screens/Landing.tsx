@@ -1,35 +1,53 @@
-import { Dimensions, Image, View } from "react-native";
-import { Button, IconButton, Text } from "react-native-paper";
-import useFetch from "../service/useFetch";
-import Animated from "react-native-reanimated";
-import { useEffect } from "react";
+import { Dimensions, Image, ImageBackground, Pressable, ScrollView, StyleSheet, View, VirtualizedList } from "react-native";
+import { Avatar, Button, IconButton, Text } from "react-native-paper";
+
+import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 import { ScreenProps } from "./types";
-import { useGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useGetFeaturedQuery, useLazyGetLandingPageMoviesQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
 import SafeIOSContainer from "../components/SafeIOSContainer";
+import ScoreRing from "../components/ScoreRing";
+import { Movie } from "../../types";
+import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 
 const { width, height } = Dimensions.get("screen");
 
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 15,
+  },
+});
+
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
-  // const { data } = useFetch<[]>("/landing");
+  const [page, setPage] = useState(0);
 
-  const { data = [] } = useGetLandingPageMoviesQuery({});
+  const [data, setData] = useState<{ name: string; results: Movie[] }[]>([]);
 
-  const tileWidth = width * 0.7; // Width of each tile
-  const margin = 30; // Margin between each tile
-  const totalTileWidth = tileWidth + margin;
+  const [getLandingMovies] = useLazyGetLandingPageMoviesQuery();
 
-  // Calculate the snap offsets
-  const snapOffsets = [...Array(data?.length || 0).keys()].map((i) => i * totalTileWidth);
+  useEffect(() => {
+    getLandingMovies({ skip: page * 3, take: 5 }).then((response) => {
+      if (response.data && Array.isArray(response.data)) {
+        setData((prev) => {
+          const uniqueSections = (response.data || []).filter(
+            (newSection) => !prev.some((existingSection) => existingSection.name === newSection.name)
+          );
+          return [...prev, ...uniqueSections];
+        });
+      }
+    });
+  }, [page]);
 
   const dispatch = useAppDispatch();
 
   const { nickname } = useAppSelector((state) => state.room);
 
-  // Load the nickname and language from AsyncStorage
   useEffect(() => {
     (async () => {
       const nickname = (await AsyncStorage.getItem("nickname")) || "Guest";
@@ -39,72 +57,200 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     })();
   }, []);
 
-  const insets = useSafeAreaInsets();
+  const setSectionMovies = useCallback(
+    (name: string, movies: Movie[]) => {
+      setData((prev) => {
+        const sectionIndex = prev.findIndex((section) => section.name === name);
+
+        if (sectionIndex === -1) return data;
+
+        const newData = [...prev];
+
+        newData[sectionIndex] = { name, results: [...newData[sectionIndex].results, ...movies] };
+
+        return newData;
+      });
+    },
+    [data.length]
+  );
+
+  const { data: featured, refetch } = useGetFeaturedQuery();
 
   return (
     <SafeIOSContainer>
       <View style={{ flex: 1 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ fontSize: 24, fontWeight: "bold", padding: 15 }}>Welcome {nickname}!</Text>
+        <View style={styles.header}>
+          <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
+            <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} />
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>hello {nickname}.</Text>
+          </View>
 
           <IconButton icon={"dots-horizontal"} onPress={() => navigation.navigate("Settings")} />
         </View>
 
-        <Animated.FlatList
-          data={(data || []) as any}
-          horizontal
-          pagingEnabled
-          keyExtractor={(item) => item.id.toString()}
-          style={{
-            flex: 1,
-          }}
-          contentContainerStyle={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          snapToOffsets={snapOffsets}
-          renderItem={({ item }) => (
-            <Image
-              key={item.id}
+        <VirtualizedList
+          ListHeaderComponent={
+            <ImageBackground
               style={{
-                width: width * 0.7,
-                height: height * 0.65,
-                borderRadius: 20,
-                margin: 15,
+                width,
+                height: height / 1.75,
+                position: "relative",
               }}
               source={{
-                uri: "https://image.tmdb.org/t/p/w500" + item.poster_path,
+                uri: "https://image.tmdb.org/t/p/w500" + featured?.poster_path,
               }}
-            />
+            >
+              <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  width,
+                  padding: 20,
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                }}
+              >
+                <IconButton background={"#000"} icon={"refresh"} iconColor="#fff" onPress={refetch} />
+                <ScoreRing score={featured?.vote_average || 0} />
+              </View>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("MovieDetails", {
+                    id: featured?.id!,
+                    type: featured?.title ? "movie" : "tv",
+                    img: featured?.poster_path,
+                  })
+                }
+                style={{ position: "absolute", bottom: 0, width }}
+              >
+                <LinearGradient
+                  style={{ flex: 1, padding: 10 }}
+                  colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.8)", "#000000"]}
+                >
+                  <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>{featured?.title}</Text>
+                  <Text style={{ fontSize: 18, fontWeight: "bold" }}>{featured?.overview}</Text>
+                </LinearGradient>
+              </Pressable>
+            </ImageBackground>
+          }
+          data={(data || []) as { name: string; results: Movie[] }[]}
+          initialNumToRender={3}
+          keyExtractor={(item) => item.name as string}
+          getItemCount={(dt) => dt.length}
+          getItem={(data, index) => data[index] as { name: string; results: Movie[] }}
+          onEndReached={() => setPage((prev) => prev + 1)}
+          renderItem={({ item: group }: { item: { name: string; results: Movie[] } }) => (
+            <Section setSectionMovies={setSectionMovies} group={group} />
           )}
         />
       </View>
 
-      <View style={{ justifyContent: "flex-end", padding: 15 }}>
+      <View style={{ paddingHorizontal: 15, flexDirection: "row", alignItems: "center" }}>
         <Button
           mode="contained-tonal"
           onPress={() => navigation.navigate("QRScanner")}
-          style={{ marginTop: 15, borderRadius: 100, marginBottom: 15 }}
+          style={{ marginTop: 15, borderRadius: 100, marginBottom: 15, flex: 1 }}
           contentStyle={{ padding: 7.5 }}
         >
-          Join Room
+          Join a game
         </Button>
 
         <Button
           mode="contained"
           onPress={() => navigation.navigate("QRCode")}
-          style={{ borderRadius: 100 }}
+          style={{ borderRadius: 100, flex: 1 }}
           contentStyle={{ padding: 7.5 }}
         >
-          Create Room
+          Create a game
         </Button>
       </View>
     </SafeIOSContainer>
   );
 }
+
+interface SectionProps {
+  group: { name: string; results: Movie[] };
+
+  setSectionMovies: (name: string, movies: Movie[]) => void;
+}
+
+const Section = ({ group, setSectionMovies }: SectionProps) => {
+  const navigation = useNavigation<any>();
+  const [page, setPage] = useState(1);
+  const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
+
+  const onEndReached = () => {
+    if (state.isLoading || !!state.error) {
+      console.log("onEndReached", state.isLoading, state.error);
+      return;
+    }
+    setPage((prev) => prev + 1);
+  };
+
+  useEffect(() => {
+    if (page > 1)
+      getSectionMovies({ name: group.name, page }).then((response) => {
+        if (response.data && Array.isArray(response.data.results)) {
+          console.log("getSectionMovies call made", group.name);
+          setSectionMovies(group.name, response.data.results);
+        }
+      });
+  }, [page]);
+
+  return (
+    <View style={{ marginBottom: 15, padding: 15 }} key={group.name}>
+      <Text style={{ color: "#fff", fontSize: 40, marginBottom: 25, fontFamily: "Bebas" }}>{group.name}</Text>
+      <VirtualizedList
+        getItem={(data, index) => data[index]}
+        getItemCount={(data) => data.length}
+        onEndReached={onEndReached}
+        data={(group.results || []) as any}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item, index) => item.id.toString() + "-" + index}
+        style={{
+          flex: 1,
+        }}
+        contentContainerStyle={{
+          justifyContent: "flex-start",
+          alignItems: "center",
+        }}
+        snapToOffsets={group.results.map((_, index) => index * width * 0.3 + index * 10 - 10)}
+        snapToAlignment="start"
+        decelerationRate="fast"
+        renderItem={({ item }) => (
+          <Pressable
+            onPress={() =>
+              navigation.navigate("MovieDetails", {
+                id: item.id,
+                type: item.type,
+                img: item.poster_path,
+              })
+            }
+            key={item.id}
+            style={{
+              position: "relative",
+            }}
+          >
+            <Image
+              resizeMode="cover"
+              style={{
+                width: width * 0.3,
+                height: height * 0.25,
+                borderRadius: 5,
+                marginRight: 10,
+              }}
+              source={{
+                uri: "https://image.tmdb.org/t/p/w500" + item.poster_path,
+              }}
+            />
+            <View style={{ position: "absolute", right: 25, bottom: 25 }}>
+              <ScoreRing score={item.vote_average} />
+            </View>
+          </Pressable>
+        )}
+      />
+    </View>
+  );
+};
