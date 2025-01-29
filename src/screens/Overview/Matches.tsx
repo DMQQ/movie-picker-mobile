@@ -4,7 +4,8 @@ import { Movie } from "../../../types";
 import TilesList from "../../components/Overview/TilesList";
 import { View } from "react-native";
 import MatchModal from "../../components/Movie/MatchModal";
-import { Button } from "react-native-paper";
+import { Button, Portal } from "react-native-paper";
+import Modal from "./Modal";
 
 export default function MatchesScreen() {
   const {
@@ -14,6 +15,7 @@ export default function MatchesScreen() {
   const [match, setMatch] = useState<Movie | undefined>(undefined);
 
   const randomMovie = () => {
+    if (match) return setMatch(undefined);
     setMatch(matches[Math.floor(Math.random() * matches.length)]);
   };
 
@@ -21,7 +23,7 @@ export default function MatchesScreen() {
     <View style={{ flex: 1, padding: 15, position: "relative" }}>
       <TilesList label="Matched with your friends" data={matches} />
 
-      <MatchModal match={match} hideMatchModal={() => setMatch(undefined)} />
+      {match && <Modal match={match} />}
 
       <Button
         onPress={randomMovie}
@@ -33,10 +35,11 @@ export default function MatchesScreen() {
           right: 10,
           width: "100%",
           borderRadius: 100,
+          ...(match ? { backgroundColor: "#f44336" } : {}),
         }}
         contentStyle={{ padding: 7.5 }}
       >
-        Randomize
+        {match ? "Close match" : "Random match"}
       </Button>
     </View>
   );
