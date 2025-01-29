@@ -1,3 +1,5 @@
+import "react-native-reanimated";
+
 import { ActivityIndicator, MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -18,6 +20,7 @@ import SettingsScreen from "./src/screens/Settings";
 import { useEffect, useState } from "react";
 import { loadAsync } from "expo-font";
 import FortuneWheel from "./src/screens/FortuneWheel";
+import { FancySpinner } from "./src/components/FancySpinner";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -29,7 +32,7 @@ const Fallback = () => (
       alignItems: "center",
     }}
   >
-    <ActivityIndicator size={50} />
+    <FancySpinner size={100} />
   </View>
 );
 
@@ -45,29 +48,14 @@ export default function App() {
     });
   }, []);
 
-  const onStateChange = (state: any) => {
-    const currentRoute = state?.routes[state.index]?.name || "Landing";
-
-    if (["Home", "QRCode", "QRScanner", "Overview"].includes(currentRoute)) {
-      StatusBar.setBackgroundColor(MD2DarkTheme.colors.surface);
-    } else {
-      StatusBar.setBackgroundColor("#000");
-    }
-  };
-
-  if (!isLoaded)
-    return (
-      <View style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator color={theme.colors.primary} size={"large"} />
-      </View>
-    );
+  if (!isLoaded) return <Fallback />;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
       <SocketProvider>
         <Provider store={store}>
           <PaperProvider theme={theme}>
-            <NavigationContainer theme={DarkTheme} onStateChange={onStateChange} fallback={<Fallback />}>
+            <NavigationContainer theme={DarkTheme} fallback={<Fallback />}>
               <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
                 <StatusBar backgroundColor="#000" />
 

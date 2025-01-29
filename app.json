@@ -1,5 +1,6 @@
 {
   "expo": {
+    "newArchEnabled": true,
     "name": "Movie Picker",
     "slug": "qr-mobile",
     "version": "1.0.1",
@@ -13,28 +14,16 @@
     },
     "plugins": [
       [
-        "expo-build-properties",
-        {
-          "android": {
-            "usesCleartextTraffic": true,
-            "cleartextTrafficPermitted": true
-          }
-        }
-      ],
-      [
         "expo-camera",
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
         }
       ],
-      "expo-build-properties",
       "expo-font"
     ],
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
@@ -46,10 +35,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
-      ],
+      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
       "package": "com.dmq.qrmobile"
     },
     "web": {
