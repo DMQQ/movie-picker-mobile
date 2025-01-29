@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import FortuneWheelComponent from "../components/FortuneWheelComponent";
 import SafeIOSContainer from "../components/SafeIOSContainer";
-import { Dimensions, Image, ImageBackground, useWindowDimensions, View } from "react-native";
+import { Dimensions, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
 import { useGetMovieProvidersQuery, useGetMovieQuery, useLazyGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
 import { Movie } from "../../types";
 import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, SlideInUp, SlideOutDown, SlideOutUp } from "react-native-reanimated";
@@ -108,7 +108,7 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
           <View
             style={{
               position: "absolute",
-              top: 0,
+              top: Platform.OS === "ios" ? 0 : 10,
               right: 0,
               width,
               justifyContent: "space-between",
@@ -130,7 +130,7 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
             style={{ flex: 1, padding: 10, position: "absolute", top: 0, width, height, justifyContent: "flex-end" }}
             colors={["transparent", "rgba(0,0,0,0.5)", "#000000"]}
           >
-            <View style={{ marginBottom: 80, padding: 10, gap: 0 }}>
+            <View style={{ marginBottom: Platform.OS === "ios" ? 80 : 10, padding: 10, gap: 0 }}>
               <Text style={{ fontSize: 50, fontFamily: "Bebas", width: width - 80 }}>{data?.title || selectedItem?.name}</Text>
 
               <Text style={{ fontSize: 16 }}>{data?.overview}</Text>

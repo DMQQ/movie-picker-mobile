@@ -1,4 +1,4 @@
-import { Dimensions, Image, ImageBackground, Pressable, ScrollView, StyleSheet, View, VirtualizedList } from "react-native";
+import { Dimensions, Image, ImageBackground, Platform, Pressable, ScrollView, StyleSheet, View, VirtualizedList } from "react-native";
 import { Avatar, Button, IconButton, MD2DarkTheme, Text } from "react-native-paper";
 
 import { useCallback, useEffect, useState } from "react";
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 15,
-    marginTop: 40,
+    marginTop: Platform.OS === "ios" ? 40 : 0,
   },
 });
 
@@ -97,10 +97,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
               }}
             >
               <View style={[styles.header]}>
-                <Pressable
-                  onPress={() => navigation.navigate("Settings")}
-                  style={{ flexDirection: "row", gap: 15, alignItems: "center", marginTop: 15 }}
-                >
+                <Pressable onPress={() => navigation.navigate("Settings")} style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
                   <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} color="#fff" />
                   <Text style={{ fontSize: 18, fontWeight: "bold" }}>Hello {nickname}.</Text>
                 </Pressable>
