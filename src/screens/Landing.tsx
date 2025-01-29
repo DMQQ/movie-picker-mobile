@@ -120,16 +120,6 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
               >
                 <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>{featured?.title || featured?.name}</Text>
                 <Text style={{ fontSize: 14, color: "rgba(255,255,255,0.95)" }}>{featured?.overview}</Text>
-
-                <Button
-                  onPress={refetch}
-                  icon="dice-6"
-                  mode="text"
-                  style={{ borderRadius: 100, marginTop: 15 }}
-                  contentStyle={{ padding: 5 }}
-                >
-                  Roll a dice
-                </Button>
               </LinearGradient>
             </ImageBackground>
           }

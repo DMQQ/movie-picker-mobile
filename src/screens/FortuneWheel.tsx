@@ -2,20 +2,12 @@ import { useEffect, useState } from "react";
 import FortuneWheelComponent from "../components/FortuneWheelComponent";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import { Dimensions, Image, ImageBackground, useWindowDimensions, View } from "react-native";
-import {
-  useGetLandingPageMoviesQuery,
-  useGetMovieProvidersQuery,
-  useGetMovieQuery,
-  useLazyGetLandingPageMoviesQuery,
-  useLazyGetMovieQuery,
-} from "../redux/movie/movieApi";
+import { useGetMovieProvidersQuery, useGetMovieQuery, useLazyGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
 import { Movie } from "../../types";
-import Content from "../components/Movie/Content";
 import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, SlideInUp, SlideOutDown, SlideOutUp } from "react-native-reanimated";
 import ScoreRing from "../components/ScoreRing";
 import { LinearGradient } from "expo-linear-gradient";
 import { Appbar, Button, IconButton, Text } from "react-native-paper";
-import MovieDetails from "../components/Movie/MovieDetails";
 import WatchProviders from "../components/Movie/WatchProviders";
 import { ScreenProps } from "./types";
 import { FancySpinner } from "../components/FancySpinner";
@@ -70,9 +62,7 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
 
         const movies = randomSection.results;
 
-        const randomRange = Math.random();
-
-        setSelectedCards(randomRange > 0.5 ? movies.slice(0, 12) : movies.slice(8, 20));
+        setSelectedCards(movies.slice(0, 12));
 
         setSignatures(movies.map(({ id }) => id).join("-"));
       }
@@ -164,7 +154,7 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
 
           {!isSpin && (
             <>
-              <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>Drag the weel up to spin!</Text>
+              <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>Spint the wheel!</Text>
               <Button rippleColor={"#fff"} onPress={throttle(handleThrowDice, 500)}>
                 Change movies!
               </Button>
@@ -173,20 +163,22 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
         </Animated.View>
       )}
 
-      <FortuneWheelComponent
-        style={{}}
-        key={signatures}
-        onSpinStart={() => {
-          setSelectedItem(undefined);
+      {selectedCards.length > 0 && (
+        <FortuneWheelComponent
+          style={{}}
+          key={signatures}
+          onSpinStart={() => {
+            setSelectedItem(undefined);
 
-          setIsSpin(true);
-        }}
-        onSelectedItem={(item) => {
-          setSelectedItem(item);
-        }}
-        size={screenWidth * 1.75}
-        items={selectedCards as any}
-      />
+            setIsSpin(true);
+          }}
+          onSelectedItem={(item) => {
+            setSelectedItem(item);
+          }}
+          size={screenWidth * 1.75}
+          items={selectedCards as any}
+        />
+      )}
     </SafeIOSContainer>
   );
 }

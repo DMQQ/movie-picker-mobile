@@ -17,6 +17,7 @@ import { RootStackParamList } from "./src/screens/types";
 import SettingsScreen from "./src/screens/Settings";
 import { useEffect, useState } from "react";
 import { loadAsync } from "expo-font";
+import FortuneWheel from "./src/screens/FortuneWheel";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -103,6 +104,15 @@ export default function App() {
                       id: 0,
                       type: "movie",
                       img: "",
+                    }}
+                  />
+                  <Stack.Screen
+                    name="FortuneWheel"
+                    component={FortuneWheel}
+                    options={{
+                      headerShown: false,
+                      title: "",
+                      presentation: "modal",
                     }}
                   />
                 </Stack.Navigator>
