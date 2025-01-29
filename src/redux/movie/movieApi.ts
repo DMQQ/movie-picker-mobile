@@ -55,6 +55,8 @@ export const movieApi = createApi({
 export const {
   useGetLandingPageMoviesQuery,
   useGetMovieQuery,
+
+  useLazyGetMovieQuery,
   useGetMovieProvidersQuery,
   useGetGenresQuery,
   useGetMaxPageRangeQuery,

@@ -21,7 +21,7 @@ export default function MatchesScreen() {
     <View style={{ flex: 1, padding: 15, position: "relative" }}>
       <TilesList label="Matched with your friends" data={matches} />
 
-      {match && <MatchModal match={match} hideMatchModal={() => setMatch(undefined)} />}
+      <MatchModal match={match} hideMatchModal={() => setMatch(undefined)} />
 
       <Button
         onPress={randomMovie}

@@ -1,17 +1,17 @@
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { ActivityIndicator, Text } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import SwipeTile from "../components/Movie/SwipeTiles";
 import useRoom from "../service/useRoom";
 import { ScreenProps } from "./types";
 import { Movie } from "../../types";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MatchModal from "../components/Movie/MatchModal";
 import DialogModals from "../components/Home/DialogModals";
 import HomeAppbar from "../components/Home/Appbar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-function throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
+export function throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
   let inThrottle = false;
 
   return function (...args: Parameters<T>): void {

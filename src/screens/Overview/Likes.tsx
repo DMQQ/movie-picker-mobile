@@ -19,9 +19,7 @@ export default function LikesScreen() {
     <View style={{ flex: 1, padding: 15 }}>
       <TilesList label="Your Likes" data={likes} />
 
-      {match && (
-        <MatchModal match={match} hideMatchModal={() => setMatch(undefined)} />
-      )}
+      <MatchModal match={match} hideMatchModal={() => setMatch(undefined)} />
 
       <Button
         onPress={randomMovie}

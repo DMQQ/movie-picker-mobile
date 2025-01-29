@@ -12,7 +12,8 @@ export type RootStackParamList = {
   MovieDetails: { id: number; type: "movie" | "tv"; img?: string };
 
   Settings: undefined;
+
+  FortuneWheel: undefined;
 };
 
-export type ScreenProps<Key extends keyof RootStackParamList> =
-  NativeStackScreenProps<RootStackParamList, Key>;
+export type ScreenProps<Key extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, Key>;

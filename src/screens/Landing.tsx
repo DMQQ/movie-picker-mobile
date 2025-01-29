@@ -1,5 +1,5 @@
 import { Dimensions, Image, ImageBackground, Pressable, ScrollView, StyleSheet, View, VirtualizedList } from "react-native";
-import { Avatar, Button, IconButton, Text } from "react-native-paper";
+import { Avatar, Button, IconButton, MD2DarkTheme, Text } from "react-native-paper";
 
 import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -12,6 +12,7 @@ import ScoreRing from "../components/ScoreRing";
 import { Movie } from "../../types";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import AppLoadingOverlay from "../components/AppLoadingOverlay";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -78,22 +79,15 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
   return (
     <SafeIOSContainer>
+      <AppLoadingOverlay />
+
       <View style={{ flex: 1 }}>
-        <View style={styles.header}>
-          <View style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
-            <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} color="#fff" />
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Hello {nickname}.</Text>
-          </View>
-
-          <IconButton icon={"dots-horizontal"} onPress={() => navigation.navigate("Settings")} />
-        </View>
-
         <VirtualizedList
           ListHeaderComponent={
             <ImageBackground
               style={{
                 width,
-                height: height / 1.5,
+                height: height / 1.35,
                 position: "relative",
                 marginBottom: 35,
               }}
@@ -101,38 +95,42 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
                 uri: "https://image.tmdb.org/t/p/w500" + featured?.poster_path,
               }}
             >
+              <View style={styles.header}>
+                <Pressable
+                  onPress={() => navigation.navigate("Settings")}
+                  style={{ flexDirection: "row", gap: 15, alignItems: "center", marginTop: 15 }}
+                >
+                  <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} color="#fff" />
+                  <Text style={{ fontSize: 18, fontWeight: "bold" }}>Hello {nickname}.</Text>
+                </Pressable>
+              </View>
               <View
                 style={{
                   position: "absolute",
-                  top: 0,
-                  right: 0,
-                  width,
-                  padding: 20,
-                  justifyContent: "space-between",
-                  flexDirection: "row",
+                  top: 20,
+                  right: 20,
                 }}
               >
-                <IconButton background={"#000"} icon={"refresh"} iconColor="#fff" onPress={refetch} />
                 <ScoreRing score={featured?.vote_average || 0} />
               </View>
-              <Pressable
-                onPress={() =>
-                  navigation.navigate("MovieDetails", {
-                    id: featured?.id!,
-                    type: featured?.title ? "movie" : "tv",
-                    img: featured?.poster_path,
-                  })
-                }
-                style={{ position: "absolute", bottom: 0, width }}
+
+              <LinearGradient
+                style={{ flex: 1, padding: 10, position: "absolute", bottom: 0, width }}
+                colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.8)", "#000000"]}
               >
-                <LinearGradient
-                  style={{ flex: 1, padding: 10 }}
-                  colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.8)", "#000000"]}
+                <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>{featured?.title || featured?.name}</Text>
+                <Text style={{ fontSize: 14, color: "rgba(255,255,255,0.95)" }}>{featured?.overview}</Text>
+
+                <Button
+                  onPress={refetch}
+                  icon="dice-6"
+                  mode="text"
+                  style={{ borderRadius: 100, marginTop: 15 }}
+                  contentStyle={{ padding: 5 }}
                 >
-                  <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>{featured?.title || featured?.name}</Text>
-                  <Text style={{ fontSize: 15, fontWeight: "bold" }}>{featured?.overview}</Text>
-                </LinearGradient>
-              </Pressable>
+                  Roll a dice
+                </Button>
+              </LinearGradient>
             </ImageBackground>
           }
           data={(data || []) as { name: string; results: Movie[] }[]}
@@ -157,14 +155,20 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
           Join a game
         </Button>
 
-        <Button
-          mode="contained"
-          onPress={() => navigation.navigate("QRCode")}
-          style={{ borderRadius: 100, flex: 1 }}
-          contentStyle={{ padding: 7.5 }}
-        >
-          Create a game
-        </Button>
+        <View style={{ flexDirection: "row", gap: 5 }}>
+          <IconButton
+            size={30}
+            onPress={() => navigation.navigate("FortuneWheel")}
+            icon={"ferris-wheel"}
+            style={{ backgroundColor: MD2DarkTheme.colors.primary }}
+          />
+          <IconButton
+            size={30}
+            onPress={() => navigation.navigate("QRCode")}
+            icon={"plus"}
+            style={{ backgroundColor: MD2DarkTheme.colors.primary }}
+          />
+        </View>
       </View>
     </SafeIOSContainer>
   );

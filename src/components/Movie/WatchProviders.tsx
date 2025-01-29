@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { Image, ScrollView, View } from "react-native";
+import { Image, ScrollView, StyleProp, View, ViewStyle } from "react-native";
 import { Surface, Text } from "react-native-paper";
 
-const WatchProviders = ({ providers }: { providers: any }) => {
+const WatchProviders = ({ providers, hideLabel = false, style }: { providers: any; hideLabel?: boolean; style?: StyleProp<ViewStyle> }) => {
   const providersList = useMemo(() => {
     let list = new Set();
 
@@ -18,10 +18,8 @@ const WatchProviders = ({ providers }: { providers: any }) => {
   if (providersList.length === 0) return null;
 
   return (
-    <View style={{ marginVertical: 10, marginTop: 20 }}>
-      <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-        Streaming services (PL)
-      </Text>
+    <View style={[{ marginVertical: 10, marginTop: 20 }, style]}>
+      {!hideLabel && <Text style={{ fontSize: 20, fontWeight: "bold" }}>Streaming services (PL)</Text>}
 
       <ScrollView horizontal>
         {providersList.map((provider) => (
@@ -42,9 +40,7 @@ const WatchProviders = ({ providers }: { providers: any }) => {
         ))}
       </ScrollView>
 
-      <Text style={{ color: "rgba(255,255,255,0.4)" }}>
-        The movie availabilities are powered by JustWatch
-      </Text>
+      <Text style={{ color: "rgba(255,255,255,0.4)" }}>The movie availabilities are powered by JustWatch</Text>
     </View>
   );
 };
