@@ -26,7 +26,7 @@ export default function HomeAppbar({
   } = useAppSelector((state) => state.room);
 
   return (
-    <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
+    <Appbar.Header style={{ backgroundColor: "#000" }}>
       <Button onPress={toggleLeaveModal}>Leave</Button>
 
       <ActiveUsers data={users} />
@@ -42,19 +42,9 @@ export default function HomeAppbar({
         />
       )}
 
-      <Appbar.Action
-        color={theme.colors.primary}
-        size={17}
-        icon="qrcode-scan"
-        onPress={() => setShowQRModal((p) => !p)}
-      />
+      <Appbar.Action color={theme.colors.primary} size={17} icon="qrcode-scan" onPress={() => setShowQRModal((p) => !p)} />
 
-      <Appbar.Action
-        size={20}
-        color={theme.colors.primary}
-        icon="heart"
-        onPress={() => navigation.navigate("Overview")}
-      />
+      <Appbar.Action size={20} color={theme.colors.primary} icon="heart" onPress={() => navigation.navigate("Overview")} />
     </Appbar.Header>
   );
 }

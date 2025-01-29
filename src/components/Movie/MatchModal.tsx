@@ -4,7 +4,7 @@ import Card from "./Card";
 import Poster from "./Poster";
 import { Dimensions, Easing, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import Animated, { FadeIn, ZoomIn, withTiming } from "react-native-reanimated";
+import Animated, { FadeIn, ZoomIn, withSpring, withTiming } from "react-native-reanimated";
 
 const styles = StyleSheet.create({
   matchModal: {
@@ -49,63 +49,29 @@ const styles = StyleSheet.create({
   },
 });
 
-const { width, height } = Dimensions.get("screen");
-
-function CustomEnteringTransition(targetValues: any) {
+const CustomEnteringTransition = () => {
   "worklet";
 
-  const duration = 100;
-
-  const animations = {
-    originX: withTiming(targetValues.originX, { duration }),
-    opacity: withTiming(1, { duration }),
-    transform: [
-      { scale: withTiming(1, { duration }) },
-      { rotate: withTiming("0deg", { duration }) },
-      {
-        translateY: withTiming(0, { duration }),
-      },
-      {
-        translateX: withTiming(0, { duration }),
-      },
-    ],
+  return {
+    initialValues: {
+      opacity: 0,
+      transform: [{ scale: 0.8 }],
+      left: 200,
+    },
+    animations: {
+      opacity: withTiming(1, { duration: 200 }),
+      transform: [{ scale: withTiming(1, { duration: 200 }) }],
+      left: withTiming(0, { duration: 200 }),
+    },
   };
-  const initialValues = {
-    originX: -width,
-    opacity: 0,
-    transform: [
-      { scale: 0.5 },
-      { rotate: "40deg" },
-      {
-        translateY: height / 5,
-      },
-      {
-        translateX: width * 1.25,
-      },
-    ],
-  };
+};
 
-  return { initialValues, animations };
-}
-
-export default function MatchModal({
-  match,
-  hideMatchModal,
-}: {
-  match: any;
-  hideMatchModal: any;
-}) {
+export default function MatchModal({ match, hideMatchModal }: { match: any; hideMatchModal: any }) {
   const theme = useTheme();
 
   return (
     <Portal theme={DarkTheme}>
-      <Modal
-        dismissable
-        dismissableBackButton
-        visible={typeof match !== "undefined"}
-        onDismiss={hideMatchModal}
-        style={styles.matchModal}
-      >
+      <Modal dismissable dismissableBackButton visible={typeof match !== "undefined"} onDismiss={hideMatchModal} style={styles.matchModal}>
         <Animated.Text
           entering={FadeIn.delay(200)}
           style={[
@@ -127,10 +93,7 @@ export default function MatchModal({
                 transform: [{ translateY: -10 }],
               }}
             >
-              <LinearGradient
-                colors={["transparent", "transparent", theme.colors.primary]}
-                style={styles.gradient}
-              >
+              <LinearGradient colors={["transparent", "transparent", theme.colors.primary]} style={styles.gradient}>
                 <Text
                   style={{
                     color: "white",
@@ -143,8 +106,7 @@ export default function MatchModal({
                 </Text>
 
                 <Text style={styles.details}>
-                  {match.release_date || match.first_air_date},{" "}
-                  {match.vote_average.toFixed(1)}/10
+                  {match.release_date || match.first_air_date}, {match.vote_average.toFixed(1)}/10
                 </Text>
               </LinearGradient>
 

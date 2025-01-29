@@ -1,12 +1,7 @@
 import { Pressable, View, useWindowDimensions } from "react-native";
-import { Icon } from "react-native-paper";
+import { Icon, TouchableRipple } from "react-native-paper";
 
-export default function TabBar(props: {
-  likeCard: () => void;
-  removeCard: () => void;
-  openInfo: () => void;
-  zIndex: number;
-}) {
+export default function TabBar(props: { likeCard: () => void; removeCard: () => void; openInfo: () => void; zIndex: number }) {
   const { width } = useWindowDimensions();
   return (
     <View
@@ -23,7 +18,9 @@ export default function TabBar(props: {
         },
       ]}
     >
-      <Pressable
+      <TouchableRipple
+        centered
+        borderless
         onPress={props.removeCard}
         style={{
           padding: 15,
@@ -32,9 +29,11 @@ export default function TabBar(props: {
         }}
       >
         <Icon source={"close"} size={25} color="#fff" />
-      </Pressable>
+      </TouchableRipple>
 
-      <Pressable
+      <TouchableRipple
+        centered
+        borderless
         onPress={props.openInfo}
         style={{
           padding: 15,
@@ -43,9 +42,11 @@ export default function TabBar(props: {
         }}
       >
         <Icon source={"information-outline"} size={25} color="#fff" />
-      </Pressable>
+      </TouchableRipple>
 
-      <Pressable
+      <TouchableRipple
+        centered
+        borderless
         onPress={props.likeCard}
         style={{
           padding: 15,
@@ -54,7 +55,7 @@ export default function TabBar(props: {
         }}
       >
         <Icon source={"heart"} size={25} color="red" />
-      </Pressable>
+      </TouchableRipple>
     </View>
   );
 }

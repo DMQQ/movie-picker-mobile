@@ -11,6 +11,20 @@ import DialogModals from "../components/Home/DialogModals";
 import HomeAppbar from "../components/Home/Appbar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+function throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
+  let inThrottle = false;
+
+  return function (...args: Parameters<T>): void {
+    if (!inThrottle) {
+      func.apply(null, args);
+      inThrottle = true;
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
+    }
+  };
+}
+
 const styles = StyleSheet.create({
   navigation: {
     padding: 10,
@@ -72,8 +86,8 @@ export default function Home({ route, navigation }: ScreenProps<"Home">) {
           key={card.id}
           card={card}
           index={index}
-          likeCard={() => likeCard(card, index)}
-          removeCard={() => dislikeCard(index)}
+          likeCard={throttle(() => likeCard(card, index), 500)}
+          removeCard={throttle(() => dislikeCard(index), 500)}
         />
       ))}
 

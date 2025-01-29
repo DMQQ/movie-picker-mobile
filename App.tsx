@@ -84,6 +84,7 @@ export default function App() {
                     options={{
                       headerShown: false,
                       title: "",
+                      presentation: "modal",
                     }}
                   />
                   <Stack.Screen

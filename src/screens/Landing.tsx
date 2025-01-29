@@ -79,23 +79,23 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   return (
     <SafeIOSContainer>
       <View style={{ flex: 1 }}>
-        {/* <View style={styles.header}>
+        <View style={styles.header}>
           <View style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
             <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} color="#fff" />
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>Hello {nickname}.</Text>
           </View>
 
           <IconButton icon={"dots-horizontal"} onPress={() => navigation.navigate("Settings")} />
-        </View> */}
+        </View>
 
         <VirtualizedList
           ListHeaderComponent={
             <ImageBackground
               style={{
                 width,
-                height: height / 1.6,
+                height: height / 1.5,
                 position: "relative",
-                marginBottom: 50,
+                marginBottom: 35,
               }}
               source={{
                 uri: "https://image.tmdb.org/t/p/w500" + featured?.poster_path,
@@ -201,7 +201,7 @@ const Section = ({ group, setSectionMovies }: SectionProps) => {
 
   return (
     <View style={{ marginBottom: 20, padding: 15 }} key={group.name}>
-      <Text style={{ color: "#fff", fontSize: 40, marginBottom: 25, fontFamily: "Bebas" }}>{group.name}</Text>
+      <Text style={{ color: "#fff", fontSize: 45, marginBottom: 20, fontFamily: "Bebas" }}>{group.name}</Text>
       <VirtualizedList
         getItem={(data, index) => data[index]}
         getItemCount={(data) => data.length}
@@ -218,7 +218,7 @@ const Section = ({ group, setSectionMovies }: SectionProps) => {
           alignItems: "center",
         }}
         initialNumToRender={3}
-        snapToOffsets={group?.results?.map((_, index) => index * width * 0.4 + index * 20 - 5)}
+        snapToOffsets={group?.results?.map((_, index) => index * width * 0.375 + index * 20 - 5)}
         snapToAlignment="start"
         decelerationRate="fast"
         renderItem={({ item }) => (
@@ -238,8 +238,8 @@ const Section = ({ group, setSectionMovies }: SectionProps) => {
             <Image
               resizeMode="cover"
               style={{
-                width: width * 0.4,
-                height: height * 0.3,
+                width: width * 0.375,
+                height: height * 0.275,
                 borderRadius: 15,
                 marginRight: 20,
               }}
