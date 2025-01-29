@@ -56,11 +56,17 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
   const [selectedCards, setSelectedCards] = useState<Movie[]>([]);
 
   const handleThrowDice = () => {
-    getLazyMovies({ skip: 0, take: 5 }).then((response) => {
+    getLazyMovies({ skip: 0, take: 5 }).then(async (response) => {
       if (response.data && Array.isArray(response.data)) {
         const randomSection = response.data[Math.floor(Math.random() * response.data.length)];
 
         const movies = randomSection.results;
+
+        Promise.any(
+          movies.map((movie) => {
+            return Image.prefetch("https://image.tmdb.org/t/p/w500" + movie.poster_path);
+          })
+        );
 
         setSelectedCards(movies.slice(0, 12));
 
@@ -86,8 +92,8 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
       )}
       {selectedItem && selectedItem?.id === data?.id ? (
         <AnimatedBackgroundImage
-          entering={FadeIn}
-          exiting={FadeOut}
+          entering={FadeIn.duration(350)}
+          exiting={FadeOut.duration(350)}
           style={{
             width,
             height: height,

@@ -157,6 +157,7 @@ const Wheel = ({
 
 const Segment = memo(({ item, index, segmentAngle, wheelSize }: { item: any; index: number; segmentAngle: number; wheelSize: number }) => {
   const radius = wheelSize / 2;
+
   return (
     <View
       style={[
@@ -170,7 +171,6 @@ const Segment = memo(({ item, index, segmentAngle, wheelSize }: { item: any; ind
         style={[
           styles.image,
           {
-            borderRadius: 20,
             width: wheelSize * 0.2,
             height: wheelSize * 0.2,
             transform: [{ translateY: -radius * 0.75 }],
@@ -186,7 +186,6 @@ const Segment = memo(({ item, index, segmentAngle, wheelSize }: { item: any; ind
           style={{
             width: wheelSize * 0.2,
             height: wheelSize * 0.2,
-            borderRadius: 20,
           }}
         />
       </View>

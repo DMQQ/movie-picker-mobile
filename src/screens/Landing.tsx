@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 15,
+    marginTop: 40,
   },
 });
 
@@ -78,7 +79,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const { data: featured, refetch } = useGetFeaturedQuery();
 
   return (
-    <SafeIOSContainer>
+    <SafeIOSContainer style={{ marginTop: 0 }}>
       <AppLoadingOverlay />
 
       <View style={{ flex: 1 }}>
@@ -87,7 +88,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
             <ImageBackground
               style={{
                 width,
-                height: height / 1.35,
+                height: height / 1.25,
                 position: "relative",
                 marginBottom: 35,
               }}
@@ -95,7 +96,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
                 uri: "https://image.tmdb.org/t/p/w500" + featured?.poster_path,
               }}
             >
-              <View style={styles.header}>
+              <View style={[styles.header]}>
                 <Pressable
                   onPress={() => navigation.navigate("Settings")}
                   style={{ flexDirection: "row", gap: 15, alignItems: "center", marginTop: 15 }}
@@ -103,23 +104,20 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
                   <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} color="#fff" />
                   <Text style={{ fontSize: 18, fontWeight: "bold" }}>Hello {nickname}.</Text>
                 </Pressable>
-              </View>
-              <View
-                style={{
-                  position: "absolute",
-                  top: 20,
-                  right: 20,
-                }}
-              >
+
                 <ScoreRing score={featured?.vote_average || 0} />
               </View>
 
               <LinearGradient
                 style={{ flex: 1, padding: 10, position: "absolute", bottom: 0, width }}
-                colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.8)", "#000000"]}
+                colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"]}
               >
-                <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>{featured?.title || featured?.name}</Text>
-                <Text style={{ fontSize: 14, color: "rgba(255,255,255,0.95)" }}>{featured?.overview}</Text>
+                <Text style={{ fontSize: 50, fontFamily: "Bebas" }} numberOfLines={2}>
+                  {featured?.title || featured?.name}
+                </Text>
+                <Text numberOfLines={8} style={{ fontSize: 14, color: "rgba(255,255,255,0.95)", fontWeight: "500" }}>
+                  {featured?.overview}
+                </Text>
               </LinearGradient>
             </ImageBackground>
           }

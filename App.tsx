@@ -77,7 +77,7 @@ export default function App() {
                   <Stack.Screen name="Landing" component={Landing} />
                   <Stack.Screen name="Home" component={Home} />
                   <Stack.Screen name="QRCode" component={QRCode} />
-                  <Stack.Screen name="QRScanner" component={QRScanner} options={{ headerShown: true, title: "Scan QR Code" }} />
+                  <Stack.Screen name="QRScanner" component={QRScanner} options={{ headerShown: false, title: "Scan QR Code" }} />
 
                   <Stack.Screen
                     name="Overview"
