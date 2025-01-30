@@ -179,7 +179,7 @@ const Segment = memo(({ item, index, segmentAngle, wheelSize }: { item: any; ind
       >
         <Image
           source={{
-            uri: "https://image.tmdb.org/t/p/w500" + item.poster_path,
+            uri: "https://image.tmdb.org/t/p/w200" + item.poster_path,
           }}
           resizeMode="contain"
           borderRadius={20}

@@ -1,107 +1,85 @@
 import { useEffect } from "react";
-import { StyleSheet, ViewStyle } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, {
+  useSharedValue,
   useAnimatedStyle,
   withRepeat,
   withTiming,
-  withDelay,
   withSequence,
-  withSpring,
-  useSharedValue,
+  withDelay,
+  Easing,
 } from "react-native-reanimated";
 
-type FancySpinnerProps = {
-  hideAnimation?: boolean;
-  size?: number;
-  colors?: [string, string, string];
-  borderWidth?: number;
-  style?: ViewStyle;
-};
+export const FancySpinner = ({ size = 100, speed = 2000, dotSize = 16 }: { size?: number; speed?: number; dotSize?: number }) => {
+  const angle = useSharedValue(0);
+  const hue = useSharedValue(0);
 
-export const FancySpinner = ({
-  hideAnimation = false,
-  size = 100,
-  colors = ["#7845ac", "#ca469c", "#fd5f80"],
-  borderWidth = 4,
-  style,
-}: FancySpinnerProps) => {
-  const rotation1 = useSharedValue(0);
-  const rotation2 = useSharedValue(0);
-  const rotation3 = useSharedValue(0);
-  const scale = useSharedValue(1);
+  const scales = [useSharedValue(1), useSharedValue(1), useSharedValue(1)];
 
   useEffect(() => {
-    rotation1.value = withRepeat(withTiming(360, { duration: 1200 }), -1);
-    rotation2.value = withRepeat(withDelay(400, withTiming(360, { duration: 1200 })), -1);
-    rotation3.value = withRepeat(withDelay(800, withTiming(360, { duration: 1200 })), -1);
+    angle.value = withRepeat(withTiming(360, { duration: speed * 2, easing: Easing.linear }), -1);
+
+    hue.value = withRepeat(withTiming(360, { duration: speed * 3, easing: Easing.linear }), -1);
+
+    scales.forEach((scale, index) => {
+      scale.value = withDelay(
+        index * 150,
+        withRepeat(withSequence(withTiming(1.8, { duration: speed / 2 }), withTiming(1, { duration: speed / 2 })), -1)
+      );
+    });
   }, []);
 
-  useEffect(() => {
-    if (hideAnimation) {
-      scale.value = withSequence(withSpring(1.2), withSpring(0));
-    }
-  }, [hideAnimation]);
+  const getAnimatedDotStyle = (index: number) =>
+    useAnimatedStyle(() => {
+      const radius = size / 2 - dotSize;
+      const theta = ((angle.value + index * 120) * Math.PI) / 180;
+      const currentHue = (hue.value + index * 60) % 360;
+      const color = `hsl(${currentHue}, 100%, 70%)`;
 
-  const containerStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const animatedStyle1 = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotation1.value}deg` }],
-  }));
-
-  const animatedStyle2 = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotation2.value}deg` }],
-  }));
-
-  const animatedStyle3 = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotation3.value}deg` }],
-  }));
-
-  const dynamicStyles = StyleSheet.create({
-    container: {
-      width: size,
-      height: size,
-      alignItems: "center",
-      justifyContent: "center",
-      position: "relative",
-      ...style,
-    },
-    circle: {
-      position: "absolute",
-      borderRadius: size / 2,
-      borderWidth,
-      width: "100%",
-      height: "100%",
-    },
-    circle1: {
-      borderColor: colors[0],
-      borderTopColor: "transparent",
-      borderLeftColor: "transparent",
-      borderRightColor: colors[0], // Explicitly set other borders
-      borderBottomColor: colors[0],
-    },
-    circle2: {
-      borderColor: colors[1],
-      borderTopColor: "transparent",
-      borderRightColor: "transparent",
-      width: "75%",
-      height: "75%",
-    },
-    circle3: {
-      borderColor: colors[2],
-      borderBottomColor: "transparent",
-      borderRightColor: "transparent",
-      width: "50%",
-      height: "50%",
-    },
-  });
+      return {
+        transform: [
+          { translateX: radius * Math.cos(theta) - dotSize / 2 },
+          { translateY: radius * Math.sin(theta) - dotSize / 2 },
+          { scale: scales[index].value },
+        ],
+        backgroundColor: color,
+        style: {
+          shadowColor: color,
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 1,
+          shadowRadius: 15,
+          elevation: 20,
+        },
+      };
+    });
 
   return (
-    <Animated.View style={[dynamicStyles.container, containerStyle]}>
-      <Animated.View style={[dynamicStyles.circle, dynamicStyles.circle1, animatedStyle1]} />
-      <Animated.View style={[dynamicStyles.circle, dynamicStyles.circle2, animatedStyle2]} />
-      <Animated.View style={[dynamicStyles.circle, dynamicStyles.circle3, animatedStyle3]} />
-    </Animated.View>
+    <View style={[styles.container, { width: size, height: size }]}>
+      {[0, 1, 2].map((index) => (
+        <Animated.View
+          key={index}
+          style={[
+            styles.dot,
+            {
+              width: dotSize,
+              height: dotSize,
+              borderRadius: dotSize / 2,
+            },
+            getAnimatedDotStyle(index),
+          ]}
+        />
+      ))}
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  dot: {
+    position: "absolute",
+  },
+});

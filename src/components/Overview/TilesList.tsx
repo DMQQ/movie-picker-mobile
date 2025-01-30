@@ -9,6 +9,8 @@ interface TileListProps {
   data: any[];
 
   label: string;
+
+  useMovieType?: boolean;
 }
 
 export default function TilesList<T>(props: TileListProps) {
@@ -24,12 +26,7 @@ export default function TilesList<T>(props: TileListProps) {
       style={{ marginBottom: 50 }}
       ListHeaderComponent={
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={{ fontSize: 20, marginBottom: 15, fontWeight: "400" }}>
-            {props.label}
-          </Text>
-          <Text style={{ fontSize: 20, marginBottom: 15, fontWeight: "400" }}>
-            ({props.data.length})
-          </Text>
+          <Text style={{ fontSize: 35, marginBottom: 15, fontFamily: "Bebas" }}>{props.label}</Text>
         </View>
       }
       data={props.data}
@@ -38,7 +35,7 @@ export default function TilesList<T>(props: TileListProps) {
       renderItem={({ item: match, index }) => (
         <MatchTile
           match={match}
-          type={type}
+          type={props.useMovieType ? match.type || (match?.name ? "tv" : "movie") : type}
           navigation={navigation}
           index={index}
         />

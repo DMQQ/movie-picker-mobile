@@ -7,6 +7,7 @@ import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
 import MovieDetails from "../components/Movie/MovieDetails";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
 import { Appbar, IconButton } from "react-native-paper";
+import Favourite from "../components/Favourite";
 
 export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"MovieDetails">) {
   const { width, height } = useWindowDimensions();
@@ -60,7 +61,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
       </View>
 
       <View style={{ position: "absolute", top: 10, right: 10, zIndex: 100 }}>
-        <IconButton icon="refresh" iconColor="#fff" onPress={refetch} />
+        <Favourite movie={movie} />
       </View>
 
       <Animated.Image

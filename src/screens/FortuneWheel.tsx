@@ -12,6 +12,7 @@ import WatchProviders from "../components/Movie/WatchProviders";
 import { ScreenProps } from "./types";
 import { FancySpinner } from "../components/FancySpinner";
 import { throttle } from "./Home";
+import Favourite from "../components/Favourite";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
 
@@ -20,19 +21,17 @@ const AnimatedBackgroundImage = Animated.createAnimatedComponent(ImageBackground
 export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">) {
   const [signatures, setSignatures] = useState("");
 
-  const [selectedItem, setSelectedItem] = useState<Movie | undefined>();
+  const [selectedItem, setSelectedItem] = useState<(Movie & { type: string }) | undefined>();
 
   const [getLazyMovies] = useLazyGetLandingPageMoviesQuery();
 
-  const {
-    data,
-    refetch,
-    isLoading: isMovieLoading,
-  } = useGetMovieQuery({ id: selectedItem?.id!, type: selectedItem?.title ? "movie" : "tv" });
+  const type = selectedItem?.type === "tv" ? "tv" : "movie";
+
+  const { data, refetch, isLoading: isMovieLoading } = useGetMovieQuery({ id: selectedItem?.id!, type });
 
   const { data: providers = [], refetch: refetchProviders } = useGetMovieProvidersQuery({
     id: selectedItem?.id!,
-    type: selectedItem?.title ? "movie" : "tv",
+    type,
   });
 
   useEffect(() => {
@@ -64,7 +63,7 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
 
         Promise.any(
           movies.map((movie) => {
-            return Image.prefetch("https://image.tmdb.org/t/p/w500" + movie.poster_path);
+            return Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path);
           })
         );
 
@@ -131,22 +130,26 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
             colors={["transparent", "rgba(0,0,0,0.5)", "#000000"]}
           >
             <View style={{ marginBottom: Platform.OS === "ios" ? 80 : 10, padding: 10, gap: 0 }}>
-              <Text style={{ fontSize: 50, fontFamily: "Bebas", width: width - 80 }}>{data?.title || selectedItem?.name}</Text>
+              <Text style={{ fontSize: 50, fontFamily: "Bebas", width: width - 80 }}>{data?.title || data?.name}</Text>
 
               <Text style={{ fontSize: 16 }}>{data?.overview}</Text>
 
               <WatchProviders hideLabel providers={providers} style={{ marginTop: 0 }} />
 
-              <Button
-                mode="contained"
-                onPress={() => {
-                  setSelectedItem(undefined);
-                }}
-                contentStyle={{ padding: 5 }}
-                style={{ borderRadius: 100, marginTop: 30 }}
-              >
-                Roll Again
-              </Button>
+              <View style={{ flexDirection: "row", gap: 10, alignItems: "center", marginTop: 30 }}>
+                <Button
+                  mode="contained"
+                  onPress={() => {
+                    setSelectedItem(undefined);
+                  }}
+                  contentStyle={{ padding: 5 }}
+                  style={{ borderRadius: 100, flex: 1 }}
+                >
+                  Roll Again
+                </Button>
+
+                <Favourite movie={data as Movie} />
+              </View>
             </View>
           </LinearGradient>
         </AnimatedBackgroundImage>
@@ -160,7 +163,7 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
 
           {!isSpin && (
             <>
-              <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>Spint the wheel!</Text>
+              <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>Spin the wheel!</Text>
               <Button rippleColor={"#fff"} onPress={throttle(handleThrowDice, 500)}>
                 Change movies!
               </Button>

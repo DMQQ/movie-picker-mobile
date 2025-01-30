@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 import { Movie } from "../../types";
 import { Image } from "react-native";
+import { saveFavorite } from "../redux/favourites/favourites";
 
 export default function useRoom(room: string) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
@@ -55,6 +56,7 @@ export default function useRoom(room: string) {
       socket?.on("matched", (data: Movie) => {
         setMatch(data);
         dispatch(roomActions.addMatch(data));
+        dispatch(saveFavorite(data));
       });
 
       socket?.on("active", (users: number[]) => {

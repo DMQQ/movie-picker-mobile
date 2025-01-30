@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { loadAsync } from "expo-font";
 import FortuneWheel from "./src/screens/FortuneWheel";
 import { FancySpinner } from "./src/components/FancySpinner";
+import Favourites from "./src/screens/Favourites";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -97,6 +98,15 @@ export default function App() {
                   <Stack.Screen
                     name="FortuneWheel"
                     component={FortuneWheel}
+                    options={{
+                      headerShown: false,
+                      title: "",
+                      presentation: "modal",
+                    }}
+                  />
+                  <Stack.Screen
+                    name="Favourites"
+                    component={Favourites}
                     options={{
                       headerShown: false,
                       title: "",

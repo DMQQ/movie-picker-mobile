@@ -12,6 +12,7 @@ import { Movie } from "../../types";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
+import { loadFavorites } from "../redux/favourites/favourites";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -72,6 +73,8 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
       const language = (await AsyncStorage.getItem("language")) || "en";
 
       dispatch(roomActions.setSettings({ nickname, language }));
+
+      dispatch(loadFavorites());
     })();
   }, []);
 
@@ -125,7 +128,10 @@ const FeaturedSection = memo(
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>Hello {nickname}.</Text>
           </Pressable>
 
-          <ScoreRing score={featured?.vote_average || 0} />
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+            <IconButton icon="heart" iconColor="#fff" size={28} onPress={() => props.navigate("Favourites")} />
+            <ScoreRing score={featured?.vote_average || 0} />
+          </View>
         </View>
 
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
@@ -159,7 +165,7 @@ const BottomTab = memo(
           <IconButton
             size={30}
             onPress={() => navigate("FortuneWheel")}
-            icon={"ferris-wheel"}
+            icon={"dice-6"}
             style={{ backgroundColor: MD2DarkTheme.colors.primary }}
           />
           <IconButton size={30} onPress={() => navigate("QRCode")} icon={"plus"} style={{ backgroundColor: MD2DarkTheme.colors.primary }} />
@@ -241,7 +247,7 @@ const Section = memo(({ group }: SectionProps) => {
           resizeMode="cover"
           style={sectionStyles.image}
           source={{
-            uri: "https://image.tmdb.org/t/p/w342" + item.poster_path,
+            uri: "https://image.tmdb.org/t/p/w200" + item.poster_path,
           }}
         />
         <View style={{ position: "absolute", right: 25, bottom: 5 }}>

@@ -14,6 +14,8 @@ export type RootStackParamList = {
   Settings: undefined;
 
   FortuneWheel: undefined;
+
+  Favourites: undefined;
 };
 
 export type ScreenProps<Key extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, Key>;
