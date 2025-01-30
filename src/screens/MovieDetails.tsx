@@ -79,7 +79,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
           uri: "https://image.tmdb.org/t/p/w500" + route.params.img || movie?.poster_path,
         }}
       />
-      {loading ? <MovieDetailsSkeleton /> : <MovieDetails movie={movie} providers={providers} width={width} />}
+      {loading ? <MovieDetailsSkeleton /> : <MovieDetails type={typeOfContent} movie={movie} providers={providers} width={width} />}
     </Animated.ScrollView>
   );
 }

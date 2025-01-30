@@ -6,8 +6,9 @@ import Seasons from "./SeasonsList";
 import { ScrollView, View } from "react-native";
 
 import { BlurView } from "expo-blur";
+import Similar from "../Similar";
 
-export default function MovieDetails({ movie, providers, width }: { movie: any; providers: any; width: number }) {
+export default function MovieDetails({ movie, providers, width, type }: { movie: any; providers: any; width: number; type: string }) {
   return (
     <Animated.View
       style={[
@@ -60,7 +61,7 @@ export default function MovieDetails({ movie, providers, width }: { movie: any; 
           {movie?.overview}
         </Text>
 
-        <ScrollView horizontal style={{ flexDirection: "row", marginVertical: 15 }}>
+        <ScrollView showsHorizontalScrollIndicator={false} horizontal style={{ flexDirection: "row", marginVertical: 15 }}>
           {movie?.genres?.map((genre: any) => (
             <View
               key={genre.name}
@@ -96,6 +97,8 @@ export default function MovieDetails({ movie, providers, width }: { movie: any; 
         <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>Status: {movie?.status}</Text>
 
         <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>Original Language: {movie?.original_language}</Text>
+
+        <Similar id={movie?.id} type={type as "movie" | "tv"} />
 
         <View style={{ padding: 20, justifyContent: "center", height: 100 }}>
           <Text style={{ color: "gray", textAlign: "center" }}>Movies povered by The Movie Database API</Text>

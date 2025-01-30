@@ -49,6 +49,10 @@ export const movieApi = createApi({
     getFeatured: builder.query<Movie, void>({
       query: () => `/landing/featured`,
     }),
+
+    getSimilar: builder.query<{ name: string; results: Movie[] }, { id: number; type: "movie" | "tv"; page: number }>({
+      query: ({ id, type, page }) => `/similar/${type}/${id}?page=${page || 1}`,
+    }),
   }),
 });
 
@@ -65,4 +69,8 @@ export const {
   useLazyGetSectionMoviesQuery,
 
   useGetFeaturedQuery,
+
+  useGetSimilarQuery,
+
+  useLazyGetSimilarQuery,
 } = movieApi;
