@@ -181,10 +181,11 @@ interface SectionProps {
 }
 
 const sectionStyles = StyleSheet.create({
-  container: { marginBottom: 20, padding: 15 },
+  container: { marginBottom: 20, padding: 15, height: height * 0.275 + 100 },
   title: { color: "#fff", fontSize: 45, marginBottom: 20, fontFamily: "Bebas" },
   list: {
     flex: 1,
+    height: height * 0.275,
   },
   listContainer: {
     justifyContent: "flex-start",
@@ -209,22 +210,21 @@ const Section = memo(({ group }: SectionProps) => {
   const [page, setPage] = useState(1);
   const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
 
-  const [movies, setSectionMovies] = useState(group.results);
+  const [movies, setSectionMovies] = useState<Movie[]>(() => group.results);
 
-  const onEndReached = () => {
-    if (state.isLoading || !!state.error) {
-      return;
-    }
+  const onEndReached = useCallback(() => {
+    if (state.isLoading || !!state.error) return;
     setPage((prev) => prev + 1);
-  };
+  }, [state.isLoading, state.error]);
 
   useEffect(() => {
-    if (page > 1)
-      getSectionMovies({ name: group.name, page }).then((response) => {
-        if (response.data && Array.isArray(response.data.results)) {
-          setSectionMovies((prev) => prev.concat(response?.data?.results || []));
-        }
-      });
+    if (page === 1) return;
+
+    getSectionMovies({ name: group.name, page }).then((response) => {
+      if (response.data && Array.isArray(response.data.results)) {
+        setSectionMovies((prev) => prev.concat(response?.data?.results || []));
+      }
+    });
   }, [page]);
 
   const snapToOffsets = useMemo(() => movies.map((_, index) => index * width * 0.375 + index * 20 - 5), [movies.length]);
@@ -262,8 +262,10 @@ const Section = memo(({ group }: SectionProps) => {
     <View style={sectionStyles.container}>
       <Text style={sectionStyles.title}>{group.name}</Text>
       <VirtualizedList
-        maxToRenderPerBatch={5}
-        windowSize={3}
+        initialNumToRender={5} // Increased from 3
+        maxToRenderPerBatch={3} // Reduced from 5
+        updateCellsBatchingPeriod={50} // Add this
+        windowSize={2}
         removeClippedSubviews={true}
         getItem={getSectionItem}
         getItemCount={getSectionItemCount}
@@ -274,12 +276,16 @@ const Section = memo(({ group }: SectionProps) => {
         keyExtractor={keySectionExtractor}
         style={sectionStyles.list}
         contentContainerStyle={sectionStyles.listContainer}
-        initialNumToRender={3}
         snapToOffsets={snapToOffsets}
         snapToAlignment="start"
         decelerationRate="fast"
         renderItem={renderItem}
         onEndReachedThreshold={0.5}
+        maintainVisibleContentPosition={{
+          // Add this
+          minIndexForVisible: 0,
+          autoscrollToTopThreshold: 10,
+        }}
       />
     </View>
   );
