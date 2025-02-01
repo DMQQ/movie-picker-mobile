@@ -5,10 +5,10 @@
     "slug": "qr-mobile",
     "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/movie-picker-icon.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/movie-picker-icon.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#000"
     },
@@ -23,6 +23,16 @@
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "icon": "./assets/output-icon.png",
+      "alternateIcons": {
+        "light": {
+          "image": "./assets/icon.png"
+        },
+        "monochrome": {
+          "image": "./assets/icon-monochrome.png",
+          "prerendered": false
+        }
+      },
       "buildNumber": "20250102",
       "supportsTablet": false,
       "infoPlist": {
@@ -34,7 +44,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/movie-picker-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
