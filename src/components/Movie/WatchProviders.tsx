@@ -19,9 +19,9 @@ const WatchProviders = ({ providers, hideLabel = false, style }: { providers: an
 
   return (
     <View style={[{ marginVertical: 10, marginTop: 20 }, style]}>
-      {!hideLabel && <Text style={{ fontSize: 20, fontWeight: "bold" }}>Streaming services (PL)</Text>}
+      {!hideLabel && <Text style={{ fontSize: 35, fontFamily: "Bebas", lineHeight: 35 }}>Streaming services (PL)</Text>}
 
-      <ScrollView horizontal>
+      <ScrollView horizontal style={{ marginVertical: 7.5 }}>
         {providersList.map((provider) => (
           <Image
             key={provider as string}
@@ -30,7 +30,6 @@ const WatchProviders = ({ providers, hideLabel = false, style }: { providers: an
               height: 50,
               borderRadius: 5,
               marginRight: 10,
-              marginVertical: 15,
             }}
             resizeMode="cover"
             source={{
@@ -40,7 +39,7 @@ const WatchProviders = ({ providers, hideLabel = false, style }: { providers: an
         ))}
       </ScrollView>
 
-      <Text style={{ color: "rgba(255,255,255,0.4)" }}>The movie availabilities are powered by JustWatch</Text>
+      <Text style={{ color: "rgba(255,255,255,0.8)" }}>The movie availabilities are powered by JustWatch</Text>
     </View>
   );
 };

@@ -17,6 +17,12 @@ export interface Movie {
   vote_count: number;
 
   first_air_date?: string;
+
+  genres?: string[];
+
+  type?: "movie" | "tv";
+
+  original_name?: string;
 }
 
 export interface TVShow {}

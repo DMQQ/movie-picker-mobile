@@ -58,8 +58,6 @@ export default function App() {
           <PaperProvider theme={theme}>
             <NavigationContainer theme={DarkTheme} fallback={<Fallback />}>
               <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
-                <StatusBar backgroundColor="#000" />
-
                 <Stack.Navigator initialRouteName="Landing" screenOptions={{ headerShown: false }}>
                   <Stack.Screen name="Settings" component={SettingsScreen} />
 

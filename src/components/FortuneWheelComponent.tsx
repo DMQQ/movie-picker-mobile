@@ -108,13 +108,11 @@ const Wheel = ({
     <View style={styles.container}>
       <Animated.View
         style={[
-          {
-            transform: [{ translateX: width / 2.5 - 10 }, { translateY: -50 }],
-            position: "absolute",
-          },
           useAnimatedStyle(() => ({
             opacity: isSpinning.value ? withTiming(1) : withTiming(0),
           })),
+
+          styles.center,
         ]}
       >
         <MaterialCommunityIcons
@@ -124,6 +122,23 @@ const Wheel = ({
           style={{ transform: [{ rotate: "180deg" }] }}
         />
       </Animated.View>
+
+      <Animated.Text
+        style={[
+          useAnimatedStyle(() => ({
+            opacity: isSpinning.value ? withTiming(0) : withTiming(1),
+          })),
+          {
+            color: "#fff",
+            fontFamily: "Bebas",
+            fontSize: 18,
+          },
+          styles.center,
+        ]}
+      >
+        Drag up to spin
+      </Animated.Text>
+
       <GestureDetector gesture={gesture}>
         <Animated.View entering={SlideInDown.duration(350)} exiting={SlideOutDown.duration(350)}>
           <Animated.View style={[styles.wheelContainer, animatedStyle]}>
@@ -223,6 +238,8 @@ const styles = StyleSheet.create({
   image: {
     position: "absolute",
   },
+
+  center: { transform: [{ translateX: width / 2.5 - 10 }, { translateY: -60 }], position: "absolute" },
 });
 
 export default memo(Wheel, () => true);

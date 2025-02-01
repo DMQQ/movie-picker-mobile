@@ -85,15 +85,15 @@ export default function QRCodePage({ navigation }: any) {
         <Appbar.Content title="Join game" />
       </Appbar>
       <View style={{ position: "relative", flex: 1, padding: 15 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold" }}>Scan to join!</Text>
+        <Text style={{ fontSize: 45, fontFamily: "Bebas", lineHeight: 45 }}>Scan to join!</Text>
 
         <Text
           style={{
             fontSize: 16,
-            color: "gray",
+            color: "rgba(255,255,255,0.9)",
           }}
         >
-          Share this code with your friends to join the room and start playing together
+          Share this code with your friends to join the game
         </Text>
 
         <QrCodeBox code={qrCode} />
@@ -122,8 +122,6 @@ export default function QRCodePage({ navigation }: any) {
                   }}
                 >
                   <Avatar.Text size={25} label={nick[0].toUpperCase()} style={{ backgroundColor: AVATAR_COLORS[index % 5] }} />
-
-                  <Text>{nick}</Text>
                 </View>
               ))}
             </View>

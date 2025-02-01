@@ -46,8 +46,13 @@ export default function ChoosePageRange({ navigation }: any) {
         <Appbar.Content title="Randomize search" />
       </Appbar>
       <View style={{ padding: 15, flex: 1 }}>
-        <View style={{ flex: 1 }}>
-          <TextInput
+        <Text style={{ fontSize: 45, lineHeight: 45, fontFamily: "Bebas" }}>Randomize search</Text>
+        <Text style={{ fontSize: 14, color: "rgba(255,255,255,0.95)", fontWeight: "500" }}>
+          Tired of the same old movies? Increase your chances of finding something new by randomizing your search.
+        </Text>
+
+        <View style={{ flex: 1, marginTop: 15 }}>
+          {/* <TextInput
             keyboardType="numeric"
             mode="outlined"
             label={"Page Range"}
@@ -63,9 +68,9 @@ export default function ChoosePageRange({ navigation }: any) {
             }}
           >
             Next
-          </Button>
+          </Button> */}
 
-          <Text style={{ marginTop: 10, marginHorizontal: 5, marginBottom: 25 }}>Max page</Text>
+          <Text style={{ fontFamily: "Bebas", color: "#fff", fontSize: 20, marginVertical: 15 }}>Select the number of pages to search</Text>
 
           {!loading ? (
             nums.map((n, index) => (

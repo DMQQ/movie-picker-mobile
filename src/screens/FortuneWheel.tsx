@@ -4,10 +4,10 @@ import SafeIOSContainer from "../components/SafeIOSContainer";
 import { Dimensions, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
 import { useGetMovieProvidersQuery, useGetMovieQuery, useLazyGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
 import { Movie } from "../../types";
-import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, SlideInUp, SlideOutDown, SlideOutUp } from "react-native-reanimated";
+import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown, SlideInUp, SlideOutDown, SlideOutUp } from "react-native-reanimated";
 import ScoreRing from "../components/ScoreRing";
 import { LinearGradient } from "expo-linear-gradient";
-import { Appbar, Button, IconButton, Text } from "react-native-paper";
+import { Appbar, Button, IconButton, Menu, Text } from "react-native-paper";
 import WatchProviders from "../components/Movie/WatchProviders";
 import { ScreenProps } from "./types";
 import { FancySpinner } from "../components/FancySpinner";
@@ -85,14 +85,14 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
   return (
     <SafeIOSContainer>
       {!selectedItem && (
-        <View style={{ padding: 10, top: 0, position: "absolute", left: 0, zIndex: 100 }}>
+        <Appbar.Header style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
           <Appbar.BackAction onPress={() => navigation.goBack()} color="#fff" />
-        </View>
+        </Appbar.Header>
       )}
       {selectedItem && selectedItem?.id === data?.id ? (
         <AnimatedBackgroundImage
-          entering={FadeIn.duration(350)}
-          exiting={FadeOut.duration(350)}
+          entering={FadeInDown.duration(350)}
+          exiting={FadeOutDown.duration(350)}
           style={{
             width,
             height: height,
@@ -130,13 +130,21 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
             colors={["transparent", "rgba(0,0,0,0.5)", "#000000"]}
           >
             <View style={{ marginBottom: Platform.OS === "ios" ? 80 : 10, padding: 10, gap: 0 }}>
-              <Text style={{ fontSize: 50, fontFamily: "Bebas", width: width - 80 }}>{data?.title || data?.name}</Text>
+              <Text style={{ fontSize: 50, fontFamily: "Bebas", lineHeight: 50 }}>{data?.title || data?.name}</Text>
+
+              <Text style={{ color: "rgba(255,255,255,0.8)", marginBottom: 10 }}>
+                {data?.release_date || data?.first_air_date} |{" "}
+                {(data?.title || data?.name) === (data?.original_title || data?.original_name)
+                  ? ""
+                  : data?.original_title || data?.original_name}{" "}
+                | {(data?.genres as { id: number; name: string }[]).map((d) => d.name)?.join(" | ")}
+              </Text>
 
               <Text style={{ fontSize: 16 }}>{data?.overview}</Text>
 
               <WatchProviders hideLabel providers={providers} style={{ marginTop: 0 }} />
 
-              <View style={{ flexDirection: "row", gap: 10, alignItems: "center", marginTop: 30 }}>
+              <View style={{ flexDirection: "row", gap: 10, alignItems: "center", marginTop: 10 }}>
                 <Button
                   mode="contained"
                   onPress={() => {

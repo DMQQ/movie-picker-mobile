@@ -114,7 +114,7 @@ const List = ({
   const theme = useTheme();
   return (
     <View style={{ flex: 1 }}>
-      <Text style={{ fontSize: 20, fontWeight: "bold" }}>{title}</Text>
+      <Text style={{ fontSize: 45, lineHeight: 45, fontWeight: "bold", fontFamily: "Bebas" }}>{title}</Text>
 
       <FlatList
         data={data}
@@ -135,7 +135,7 @@ const List = ({
               onPress(c);
             }}
           >
-            {["/discover/movie", "/discover/tv"].includes(c.path) && <Icon source={"crown"} size={16} />} {c.label}
+            {["/discover/movie", "/discover/tv"].includes(c.path) && <Icon source={"crown"} color="gold" size={16} />} {c.label}
           </Button>
         )}
       />

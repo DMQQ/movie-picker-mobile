@@ -38,6 +38,9 @@ export default function ChooseGenre({ navigation }: any) {
             <ListEmptyComponent />
           ) : (
             <FlatList
+              ListHeaderComponent={
+                <Text style={{ fontSize: 45, lineHeight: 45, fontWeight: "bold", fontFamily: "Bebas", marginBottom: 15 }}>Genres</Text>
+              }
               initialNumToRender={12}
               style={{ flex: 1, paddingBottom: 25 }}
               data={genres as { id: number; name: string }[]}

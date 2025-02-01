@@ -2,7 +2,6 @@ import { useWindowDimensions, View } from "react-native";
 import { MovieDetails as MovieDetailsType } from "../../types";
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { ScreenProps } from "./types";
-import { useAppSelector } from "../redux/store";
 import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
 import MovieDetails from "../components/Movie/MovieDetails";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
@@ -11,9 +10,6 @@ import Favourite from "../components/Favourite";
 
 export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"MovieDetails">) {
   const { width, height } = useWindowDimensions();
-  const {
-    room: { type },
-  } = useAppSelector((state) => state.room);
 
   const scrollOffset = useSharedValue(0);
   const scrollhandler = useAnimatedScrollHandler({
@@ -37,7 +33,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
     };
   });
 
-  const typeOfContent = type || route.params.type;
+  const typeOfContent = route?.params?.type;
 
   const { data: movie = {} as MovieDetailsType, isLoading: loading } = useGetMovieQuery({
     id: route.params.id,

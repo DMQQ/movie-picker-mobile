@@ -21,13 +21,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
-    marginTop: Platform.OS === "ios" ? 40 : 0,
+    paddingHorizontal: 10,
+    padding: 5,
   },
 
   featuredImage: {
     width,
-    height: height / 1.25,
+    height: height / 1.3,
     position: "relative",
     marginBottom: 35,
   },
@@ -85,7 +85,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const renderItem = useCallback(({ item: group }: { item: { name: string; results: Movie[] } }) => <Section group={group} />, []);
 
   return (
-    <SafeIOSContainer style={{ marginTop: 0 }}>
+    <SafeIOSContainer>
       <AppLoadingOverlay />
 
       <VirtualizedList
@@ -121,6 +121,8 @@ const FeaturedSection = memo(
         source={{
           uri: "https://image.tmdb.org/t/p/w500" + featured?.poster_path,
         }}
+        resizeMode="cover"
+        resizeMethod="scale"
       >
         <View style={[styles.header]}>
           <Pressable onPress={() => props.navigate("Settings")} style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
@@ -128,15 +130,22 @@ const FeaturedSection = memo(
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>Hello {nickname}.</Text>
           </Pressable>
 
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-            <IconButton icon="heart" iconColor="#fff" size={28} onPress={() => props.navigate("Favourites")} />
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <IconButton icon="heart" iconColor="red" size={32} onPress={() => props.navigate("Favourites")} />
             <ScoreRing score={featured?.vote_average || 0} />
           </View>
         </View>
 
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
-          <Text style={{ fontSize: 50, fontFamily: "Bebas" }} numberOfLines={2}>
+          <Text style={{ fontSize: 50, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
             {featured?.title || featured?.name}
+          </Text>
+          <Text style={{ color: "rgba(255,255,255,0.8)", marginBottom: 10 }}>
+            {featured?.release_date || featured?.first_air_date} |{" "}
+            {(featured?.title || featured?.name) === (featured?.original_title || featured?.original_name)
+              ? ""
+              : featured?.original_title || featured?.original_name}{" "}
+            | {featured?.genres?.join(" | ")}
           </Text>
           <Text numberOfLines={8} style={styles.overview}>
             {featured?.overview}
@@ -165,7 +174,7 @@ const BottomTab = memo(
           <IconButton
             size={30}
             onPress={() => navigate("FortuneWheel")}
-            icon={"dice-6"}
+            icon={"gamepad-variant-outline"}
             style={{ backgroundColor: MD2DarkTheme.colors.primary }}
           />
           <IconButton size={30} onPress={() => navigate("QRCode")} icon={"plus"} style={{ backgroundColor: MD2DarkTheme.colors.primary }} />
@@ -250,7 +259,7 @@ const Section = memo(({ group }: SectionProps) => {
             uri: "https://image.tmdb.org/t/p/w200" + item.poster_path,
           }}
         />
-        <View style={{ position: "absolute", right: 25, bottom: 5 }}>
+        <View style={{ position: "absolute", right: 30, bottom: 10 }}>
           <ScoreRing score={item.vote_average} />
         </View>
       </Pressable>

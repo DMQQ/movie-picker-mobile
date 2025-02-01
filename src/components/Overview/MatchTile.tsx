@@ -4,7 +4,8 @@ import { Image } from "react-native";
 import Animated from "react-native-reanimated";
 import { sharedElementTransition } from "../../service/utils/SharedElementTransition";
 
-const MatchTile = ({ match, type, navigation }: { match: Movie; type: string; navigation: any; index: number }) => {
+const MatchTile = ({ match, type: _type, navigation }: { match: Movie; type: string; navigation: any; index: number }) => {
+  const type = (match?.type || _type).includes("movie") ? "movie" : "tv";
   return (
     <TouchableRipple
       style={{
