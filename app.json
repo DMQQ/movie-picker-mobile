@@ -3,7 +3,7 @@
     "newArchEnabled": true,
     "name": "Movie Picker",
     "slug": "qr-mobile",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/movie-picker-icon.png",
     "userInterfaceStyle": "dark",
@@ -23,6 +23,7 @@
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "buildNumber": "20250102",
       "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
