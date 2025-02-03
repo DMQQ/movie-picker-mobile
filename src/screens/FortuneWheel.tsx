@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import FortuneWheelComponent from "../components/FortuneWheelComponent";
 import SafeIOSContainer from "../components/SafeIOSContainer";
-import { Dimensions, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
-import { useGetMovieProvidersQuery, useGetMovieQuery, useLazyGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
+import { Dimensions, FlatList, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
+import {
+  useGetLandingPageMoviesQuery,
+  useGetMovieProvidersQuery,
+  useGetMovieQuery,
+  useLazyGetLandingPageMoviesQuery,
+} from "../redux/movie/movieApi";
 import { Movie } from "../../types";
 import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown, SlideInUp, SlideOutDown, SlideOutUp } from "react-native-reanimated";
 import ScoreRing from "../components/ScoreRing";
 import { LinearGradient } from "expo-linear-gradient";
-import { Appbar, Button, IconButton, Menu, Text } from "react-native-paper";
+import { Appbar, Button, IconButton, MD2DarkTheme, Menu, Modal, Text, TouchableRipple } from "react-native-paper";
 import WatchProviders from "../components/Movie/WatchProviders";
 import { ScreenProps } from "./types";
 import { FancySpinner } from "../components/FancySpinner";
@@ -82,9 +87,11 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
 
   const { width, height } = useWindowDimensions();
 
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+
   return (
     <SafeIOSContainer>
-      {!selectedItem && (
+      {!selectedItem && !categoryModalVisible && (
         <Appbar.Header style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
           <Appbar.BackAction onPress={() => navigation.goBack()} color="#fff" />
         </Appbar.Header>
@@ -171,10 +178,16 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
 
           {!isSpin && (
             <>
-              <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>Spin the wheel!</Text>
-              <Button rippleColor={"#fff"} onPress={throttle(handleThrowDice, 500)}>
-                Change movies!
-              </Button>
+              <Text style={{ fontSize: 70, fontFamily: "Bebas" }}>Spin the wheel!</Text>
+              <View style={{ flexDirection: "row" }}>
+                <Button rippleColor={"#fff"} onPress={throttle(handleThrowDice, 200)}>
+                  Random Category
+                </Button>
+
+                <Button rippleColor={"#fff"} onPress={throttle(() => setCategoryModalVisible((p) => !p), 500)}>
+                  Pick a Category
+                </Button>
+              </View>
             </>
           )}
         </Animated.View>
@@ -196,6 +209,72 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
           items={selectedCards as any}
         />
       )}
+
+      <Modal visible={categoryModalVisible}>
+        <View style={{ height: "100%", backgroundColor: "rgba(0,0,0,0.8)", marginTop: 200 }}>
+          <SectionSelector
+            onSelectItem={(data) => {
+              setSelectedCards(data.slice(0, 12));
+
+              setSignatures(data.map(({ id }) => id).join("-"));
+
+              setCategoryModalVisible(false);
+            }}
+          />
+        </View>
+      </Modal>
     </SafeIOSContainer>
   );
 }
+
+const SectionSelector = ({ onSelectItem }: { onSelectItem: (categoty: Movie[]) => void }) => {
+  const { data } = useGetLandingPageMoviesQuery({ skip: 0, take: 15 });
+
+  return (
+    <FlatList
+      numColumns={2}
+      data={data}
+      contentContainerStyle={{ gap: 10, padding: 10, paddingBottom: 50 }}
+      style={{ flex: 1, marginBottom: 200 }}
+      renderItem={({ item }) => (
+        <TouchableRipple
+          onPress={() => onSelectItem(item.results)}
+          style={{
+            marginRight: 10,
+            width: Dimensions.get("window").width / 2 - 15,
+            backgroundColor: MD2DarkTheme.colors.surface,
+            height: 100,
+          }}
+        >
+          <ImageBackground
+            blurRadius={2}
+            source={{
+              uri: "https://image.tmdb.org/t/p/w200" + item.results[0].poster_path,
+            }}
+            style={{
+              width: "100%",
+              height: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            borderRadius={10}
+          >
+            <Text
+              style={{
+                fontSize: 25,
+                fontFamily: "Bebas",
+                color: "#fff",
+                textShadowColor: "rgba(0, 0, 0, 0.75)",
+                textShadowOffset: { width: 1, height: 2 },
+                textShadowRadius: 3,
+              }}
+            >
+              {item.name}
+            </Text>
+          </ImageBackground>
+        </TouchableRipple>
+      )}
+      keyExtractor={(item) => item.name}
+    />
+  );
+};

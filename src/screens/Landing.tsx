@@ -111,7 +111,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
 const FeaturedSection = memo(
   (props: { navigate: any }) => {
-    const { data: featured } = useGetFeaturedQuery();
+    const { data: featured, error } = useGetFeaturedQuery();
 
     const { nickname } = useAppSelector((state) => state.room);
 

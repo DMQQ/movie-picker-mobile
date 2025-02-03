@@ -7,6 +7,7 @@ import { ScrollView, View } from "react-native";
 
 import { BlurView } from "expo-blur";
 import Similar from "../Similar";
+import MovieReviews from "../MovieReviews";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
@@ -81,6 +82,8 @@ export default function MovieDetails({ movie, providers, width, type }: { movie:
       <LastEpisodeToAir lastEpisode={movie?.last_episode_to_air || {}} />
 
       <Seasons seasons={movie?.seasons || []} />
+
+      {/* <MovieReviews movieId={movie?.id} type={type as "movie" | "tv"} /> */}
 
       <Similar id={movie?.id} type={type as "movie" | "tv"} />
 

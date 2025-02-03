@@ -12,9 +12,16 @@ interface SectionParams {
   page?: number;
 }
 
+console.log(API_BASE_ENDPOINT, process.env.EXPO_PUBLIC_API_KEY);
+
 export const movieApi = createApi({
   reducerPath: "movieApi",
-  baseQuery: fetchBaseQuery({ baseUrl: API_BASE_ENDPOINT }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: API_BASE_ENDPOINT,
+    headers: {
+      authorization: `Bearer ${(process.env as any).EXPO_PUBLIC_API_KEY as string}`,
+    },
+  }),
   endpoints: (builder) => ({
     getLandingPageMovies: builder.query<{ name: string; results: Movie[] }[], LandingPageParams>({
       query: (params = { skip: 0, take: 5 }) => `/landing?skip=${params.skip}&take=${params.take}`,
@@ -53,6 +60,10 @@ export const movieApi = createApi({
     getSimilar: builder.query<{ name: string; results: Movie[] }, { id: number; type: "movie" | "tv"; page: number }>({
       query: ({ id, type, page }) => `/similar/${type}/${id}?page=${page || 1}`,
     }),
+
+    getReviews: builder.query<any[], { id: number; type: "movie" | "tv" }>({
+      query: ({ id, type }) => `/reviews/${type}/${id}`,
+    }),
   }),
 });
 
@@ -73,4 +84,6 @@ export const {
   useGetSimilarQuery,
 
   useLazyGetSimilarQuery,
+
+  useGetReviewsQuery,
 } = movieApi;
