@@ -3,7 +3,7 @@ import { ToastAndroid } from "react-native";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import { useAppSelector } from "../redux/store";
 
-const isDev = true;
+const isDev = false;
 
 export const url = isDev ? "http://192.168.0.16:3000" : "https://movie.dmqq.dev"; //
 

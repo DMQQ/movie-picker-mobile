@@ -48,7 +48,9 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
   const [data, setData] = useState<{ name: string; results: Movie[] }[]>([]);
 
-  const [getLandingMovies] = useLazyGetLandingPageMoviesQuery();
+  const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
+
+  console.log(error);
 
   useEffect(() => {
     getLandingMovies({ skip: page * 3, take: 5 }).then((response) => {
