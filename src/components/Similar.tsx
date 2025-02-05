@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Movie } from "../../types";
 import { useLazyGetSimilarQuery } from "../redux/movie/movieApi";
 import ScoreRing from "./ScoreRing";
+import useTranslation from "../service/useTranslation";
 
 const { width, height } = Dimensions.get("window");
 
@@ -57,9 +58,11 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
     []
   );
 
+  const t = useTranslation();
+
   return (
     <View style={sectionStyles.container}>
-      <Text style={sectionStyles.title}>{type === "movie" ? "Similar Movies" : "Similar TV Shows"}</Text>
+      <Text style={sectionStyles.title}>{type === "movie" ? t("movie.details.similar-movies") : t("movie.details.similar-series")}</Text>
       <VirtualizedList
         initialNumToRender={5} // Increased from 3
         maxToRenderPerBatch={3} // Reduced from 5

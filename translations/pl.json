@@ -1,0 +1,117 @@
+{
+  "dialogs": {
+    "scan-code": {
+      "title": "Zeskanuj kod QR",
+      "message": "Zeskanuj kod QR, aby uzyskać szczegóły filmu",
+      "close": "Zamknij",
+      "cancel": "Anuluj",
+      "leave": "Opuść"
+    },
+    "leave-room": {
+      "message": "Czy na pewno chcesz opuścić pokój?",
+      "title": "Opuść Pokój",
+      "cancel": "Anuluj",
+      "leave": "Opuść"
+    },
+    "qr": {
+      "error": "Coś poszło nie tak!",
+      "error-desc": "Nieprawidłowy kod QR",
+      "close": "Zamknij",
+      "manual": "Dołącz do pokoju ręcznie"
+    }
+  },
+  "movie": {
+    "details": {
+      "lastEpisode": "Ostatni Odcinek",
+      "episode": "Odcinek",
+      "season": "Sezon",
+      "runtime": "Czas trwania",
+      "releaseDate": "Data premiery",
+      "status": "Status",
+      "minutes": "minut",
+      "similar-movies": "Podobne Filmy",
+      "similar-series": "Podobne Seriale"
+    }
+  },
+  "match": {
+    "title": "To jest mecz!",
+    "view-matches": "Wyświetl Dopasowania"
+  },
+  "room": {
+    "join-game": "Dołącz do gry",
+    "waiting": "Oczekiwanie na innych graczy",
+    "choose-category": "Wybierz kategorię",
+    "movie": "Film",
+    "series": "Serial",
+    "randomize": "Losuj",
+    "genre": "Gatunki",
+    "next": "Dalej",
+    "randomize-search": "Losowe wyszukiwanie",
+    "page-range-desc": "Wybierz liczbę stron do przeszukania",
+    "qr-title": "Zeskanuj, aby dołączyć!",
+    "active": "Aktywni użytkownicy",
+    "qr-subtitle": "Udostępnij ten kod znajomym, aby dołączyli do gry",
+    "page-range": "Znudziły ci się te same stare filmy? Zwiększ swoje szanse na znalezienie czegoś nowego, losując wyszukiwanie.",
+    "genres": {
+      "all_movies": "Wszystkie filmy",
+      "now_playing": "Aktualnie w kinach",
+      "popular": "Popularne",
+      "top_rated": "Najlepiej oceniane",
+      "upcoming": "Nadchodzące",
+      "all_tv": "Wszystkie seriale",
+      "top_rated_tv": "Najlepiej oceniane seriale",
+      "popular_tv": "Popularne seriale",
+      "airing_today": "Emitowane dzisiaj",
+      "on_the_air": "Aktualnie nadawane"
+    },
+    "titles": {
+      "category": "Wybierz Kategorię",
+      "genre": "Wybierz Gatunek",
+      "page-range": "Wybierz Zakres Stron",
+      "qr-code": "Zeskanuj kod QR",
+      "randomize": "Losuj wyniki"
+    }
+  },
+  "fortune-wheel": {
+    "drag": "Pociągnij w górę, aby zakręcić",
+    "roll": "Zakręć ponownie",
+    "random-category": "Losowa Kategoria",
+    "pick-category": "Wybierz Kategorię",
+    "pick-a-movie": "Zakręć kołem!"
+  },
+  "likes": {
+    "title": "Twoje polubienia",
+    "empty": "Jeszcze nie polubiłeś żadnych filmów",
+    "close": "Zamknij dopasowanie",
+    "no-matches": "Nie znaleziono dopasowań",
+    "random": "Losuj"
+  },
+  "matched": {
+    "title": "Dopasowani z twoimi znajomymi"
+  },
+  "favourites": {
+    "title": "Ulubione",
+    "empty": "Jeszcze nie dodałeś żadnych filmów do ulubionych"
+  },
+  "global": {
+    "justwatch": "Dostępność filmów wspierana przez JustWatch",
+    "attributions": "Filmy dostarczone przez The Movie Database API i JustWatch"
+  },
+  "overview": {
+    "matches": "Dopasowane",
+    "likes": "Polubienia"
+  },
+  "scanner": {
+    "request-permission": "Poproś o pozwolenie",
+    "heading": "Zeskanuj kod QR",
+    "join": "Dołącz do gry"
+  },
+  "settings": {
+    "hello": "Cześć",
+    "heading": "Ustawienia",
+    "nickname-info": "Tutaj możesz zmienić swój pseudonim. Będzie on wyświetlany innym użytkownikom w pokoju.",
+    "language-info": "Zmiana tej wartości zmieni język docelowy dla utworzonego pokoju, co oznacza, że filmy będą w wybranym języku, ale nie kontrolki i inne teksty. Więcej języków zostanie dodanych w przyszłości.",
+    "about": "Jest to prosta aplikacja, która pozwala utworzyć pokój i wybierać filmy ze znajomymi. Możesz utworzyć pokój i zaprosić znajomych do dołączenia. Możesz również dołączyć do pokoju, wprowadzając kod pokoju. Następnie możesz dodawać filmy do pokoju i oglądać je razem. Aplikacja korzysta z The Movie Database API, aby pobierać filmy, oraz JustWatch API, aby uzyskać informacje o dostępności.",
+    "security": "Żadne dane nie są przechowywane na serwerze. Pokój jest tworzony w pamięci i jest niszczony, gdy ostatni użytkownik go opuszcza. Żadne dodatkowe dane nie są przechowywane na serwerze. Kod pokoju jest generowany losowo, a ulubione filmy są przechowywane lokalnie w pamięci. Aplikacja nie przechowuje żadnych danych użytkownika, a jedynie pseudonim, który jest wyświetlany w pokoju. Nie zarabiam na niej"
+  }
+}

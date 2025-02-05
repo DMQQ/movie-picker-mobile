@@ -6,6 +6,7 @@ import { View } from "react-native";
 import MatchModal from "../../components/Movie/MatchModal";
 import { Button, Portal } from "react-native-paper";
 import Modal from "./Modal";
+import useTranslation from "../../service/useTranslation";
 
 export default function MatchesScreen() {
   const {
@@ -19,9 +20,11 @@ export default function MatchesScreen() {
     setMatch(matches[Math.floor(Math.random() * matches.length)]);
   };
 
+  const t = useTranslation();
+
   return (
     <View style={{ flex: 1, padding: 15, position: "relative" }}>
-      <TilesList label="Matched with your friends" data={matches} />
+      <TilesList label={t("matched.title")} data={matches} />
 
       {match && <Modal match={match} />}
 
@@ -39,7 +42,7 @@ export default function MatchesScreen() {
         }}
         contentStyle={{ padding: 7.5 }}
       >
-        {match ? "Close match" : "Random match"}
+        {match ? t("likes.close") : t("likes.random")}
       </Button>
     </View>
   );

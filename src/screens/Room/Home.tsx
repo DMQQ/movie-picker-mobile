@@ -1,15 +1,16 @@
 import { StyleSheet, View } from "react-native";
 import { ActivityIndicator, Text } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
-import SwipeTile from "../components/Movie/SwipeTiles";
-import useRoom from "../service/useRoom";
-import { ScreenProps } from "./types";
-import { Movie } from "../../types";
+import SwipeTile from "../../components/Movie/SwipeTiles";
+import useRoom from "../../service/useRoom";
+import { ScreenProps } from "../types";
+import { Movie } from "../../../types";
 import { useEffect, useRef, useState } from "react";
-import MatchModal from "../components/Movie/MatchModal";
-import DialogModals from "../components/Home/DialogModals";
-import HomeAppbar from "../components/Home/Appbar";
+import MatchModal from "../../components/Movie/MatchModal";
+import DialogModals from "../../components/Home/DialogModals";
+import HomeAppbar from "../../components/Home/Appbar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useTranslation from "../../service/useTranslation";
 
 export function throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
   let inThrottle = false;
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Home({ route, navigation }: ScreenProps<"Home">) {
+export default function Home({ route, navigation }: any) {
   const { cards, dislikeCard, likeCard, match, showLeaveModal, toggleLeaveModal, hideMatchModal } = useRoom(route.params?.roomId);
   const isFocused = useIsFocused();
   const [showQRModal, setShowQRModal] = useState(false);
@@ -54,6 +55,8 @@ export default function Home({ route, navigation }: ScreenProps<"Home">) {
   };
 
   const insets = useSafeAreaInsets();
+
+  const t = useTranslation();
 
   return (
     <View style={{ flex: 1, marginBottom: insets.bottom }}>
@@ -75,7 +78,7 @@ export default function Home({ route, navigation }: ScreenProps<"Home">) {
 
       {cards.length === 0 && (
         <View style={styles.emptyListContainer}>
-          <Text style={{ fontSize: 20 }}>Waiting for other players</Text>
+          <Text style={{ fontSize: 20 }}>{t("room.waiting")}</Text>
         </View>
       )}
 

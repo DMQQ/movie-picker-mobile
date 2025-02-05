@@ -4,14 +4,14 @@ import WatchProviders from "./WatchProviders";
 import LastEpisodeToAir from "./LastEpisodeDetails";
 import Seasons from "./SeasonsList";
 import { ScrollView, View } from "react-native";
-
 import { BlurView } from "expo-blur";
 import Similar from "../Similar";
-import MovieReviews from "../MovieReviews";
+import useTranslation from "../../service/useTranslation";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 export default function MovieDetails({ movie, providers, width, type }: { movie: any; providers: any; width: number; type: string }) {
+  const t = useTranslation();
   return (
     <AnimatedBlurView
       entering={FadeInDown}
@@ -71,11 +71,17 @@ export default function MovieDetails({ movie, providers, width, type }: { movie:
         {movie?.overview}
       </Text>
 
-      {movie?.runtime && (
-        <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>Runtime: {movie?.runtime} minutes</Text>
-      )}
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        {movie?.runtime && (
+          <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>
+            {t("movie.details.runtime")}: {movie?.runtime} {t("movie.details.minutes")}
+          </Text>
+        )}
 
-      <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>Status: {movie?.status}</Text>
+        <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>
+          {t("movie.details.status")}: {movie?.status}
+        </Text>
+      </View>
 
       <WatchProviders providers={providers || []} />
 
@@ -88,7 +94,7 @@ export default function MovieDetails({ movie, providers, width, type }: { movie:
       <Similar id={movie?.id} type={type as "movie" | "tv"} />
 
       <View style={{ padding: 20, justifyContent: "center", height: 100 }}>
-        <Text style={{ color: "gray", textAlign: "center" }}>Movies povered by The Movie Database API And JustWatch</Text>
+        <Text style={{ color: "gray", textAlign: "center" }}>{t("global.attributions")}</Text>
       </View>
     </AnimatedBlurView>
   );

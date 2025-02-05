@@ -7,6 +7,7 @@ import LikesScreen from "./Overview/Likes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import { StatusBar } from "expo-status-bar";
+import useTranslation from "../service/useTranslation";
 
 const OverviewTopTabs = createMaterialTopTabNavigator();
 
@@ -14,6 +15,8 @@ function Overview() {
   const theme = useTheme();
 
   const insets = useSafeAreaInsets();
+
+  const t = useTranslation();
 
   return (
     <SafeIOSContainer>
@@ -38,10 +41,10 @@ function Overview() {
           },
         }}
       >
-        <OverviewTopTabs.Screen name="Matches" component={MatchesScreen} />
+        <OverviewTopTabs.Screen name={t("overview.matches")} component={MatchesScreen} />
         <OverviewTopTabs.Screen
           options={{
-            tabBarLabel: "Likes",
+            tabBarLabel: t("overview.likes"),
           }}
           name="YourLikes"
           component={LikesScreen}

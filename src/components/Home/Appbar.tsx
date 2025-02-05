@@ -4,6 +4,7 @@ import { useContext } from "react";
 import { SocketContext } from "../../service/SocketContext";
 import { useNavigation } from "@react-navigation/native";
 import { useAppSelector } from "../../redux/store";
+import useTranslation from "../../service/useTranslation";
 
 export default function HomeAppbar({
   toggleLeaveModal,
@@ -25,9 +26,11 @@ export default function HomeAppbar({
     room: { isFinished, users },
   } = useAppSelector((state) => state.room);
 
+  const t = useTranslation();
+
   return (
     <Appbar.Header style={{ backgroundColor: "#000" }}>
-      <Button onPress={toggleLeaveModal}>Leave</Button>
+      <Button onPress={toggleLeaveModal}>{t("dialogs.scan-code.leave")}</Button>
 
       <ActiveUsers data={users} />
 

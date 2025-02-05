@@ -6,6 +6,7 @@ import Skeleton from "../../components/Skeleton/Skeleton";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useGetGenresQuery } from "../../redux/movie/movieApi";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
+import useTranslation from "../../service/useTranslation";
 
 const ListEmptyComponent = () => {
   const { width } = useWindowDimensions();
@@ -26,11 +27,13 @@ export default function ChooseGenre({ navigation }: any) {
     type: category.includes("tv") ? "tv" : "movie",
   });
 
+  const t = useTranslation();
+
   return (
     <SafeIOSContainer>
       <Appbar style={{ backgroundColor: "#000" }}>
         <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
-        <Appbar.Content title="Genres" />
+        <Appbar.Content title={t("room.genre")} />
       </Appbar>
       <View style={{ flex: 1, padding: 15 }}>
         <View style={{ flex: 1 }}>
@@ -61,7 +64,7 @@ export default function ChooseGenre({ navigation }: any) {
           contentStyle={{ padding: 7.5 }}
           onPress={() => navigation.navigate("ChoosePage")}
         >
-          Next
+          {t("room.next")}
         </Button>
       </View>
     </SafeIOSContainer>

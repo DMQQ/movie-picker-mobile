@@ -1,0 +1,118 @@
+{
+  "dialogs": {
+    "scan-code": {
+      "title": "Scan QR code",
+      "message": "Scan the QR code to get the movie details",
+      "close": "Close",
+      "cancel": "Cancel",
+      "leave": "Leave"
+    },
+    "leave-room": {
+      "message": "Are you sure you want to leave the room?",
+      "title": "Leave Room",
+      "cancel": "Cancel",
+      "leave": "Leave"
+    },
+    "qr": {
+      "error": "Something went wrong!",
+      "error-desc": "Invalid QR code",
+      "close": "Close",
+      "manual": "Join room manually"
+    }
+  },
+  "movie": {
+    "details": {
+      "lastEpisode": "Last Episode",
+      "episode": "Episode",
+      "season": "Season",
+      "runtime": "Runtime",
+      "releaseDate": "Release Date",
+      "status": "Status",
+      "minutes": "minutes",
+      "similar-movies": "Similar Movies",
+      "similar-series": "Similar Series"
+    }
+  },
+  "match": {
+    "title": "It's a match!",
+    "view-matches": "View Matches"
+  },
+  "room": {
+    "join-game": "Join game",
+    "waiting": "Waiting for other players",
+    "choose-category": "Choose category",
+    "movie": "Movie",
+    "series": "Series",
+    "randomize": "Randomize",
+    "genre": "Genres",
+    "next": "Next",
+    "randomize-search": "Randomize search",
+    "page-range-desc": "Select the number of pages to search",
+    "qr-title": "Scan to join!",
+    "active": "Active users",
+    "qr-subtitle": "Share this code with your friends to join the game",
+    "page-range": "Tired of the same old movies? Increase your chances of finding something new by randomizing your search.",
+    "genres": {
+      "all_movies": "All movies",
+      "now_playing": "Now playing",
+      "popular": "Popular",
+      "top_rated": "Top rated",
+      "upcoming": "Upcoming",
+      "all_tv": "All TV",
+      "top_rated_tv": "Top rated TV",
+      "popular_tv": "Popular TV",
+      "airing_today": "Airing today",
+      "on_the_air": "On the air"
+    },
+    "titles": {
+      "category": "Choose Category",
+      "genre": "Choose Genre",
+      "page-range": "Choose Page Range",
+      "qr-code": "Scan QR code",
+      "randomize": "Randomize Search"
+    }
+  },
+  "fortune-wheel": {
+    "drag": "Drag up to spin",
+    "roll": "Roll again",
+    "random-category": "Random Category",
+    "pick-category": "Pick Category",
+    "pick-a-movie": "Spin the wheel!"
+  },
+  "likes": {
+    "title": "Your likes",
+    "empty": "You haven't liked any movies yet",
+    "close": "Close match",
+    "no-matches": "No matches found",
+    "random": "Randomize"
+  },
+  "matched": {
+    "title": "Matched with your friends"
+  },
+  "favourites": {
+    "title": "Favorites",
+    "empty": "You haven't added any movies to your favorites yet"
+  },
+
+  "global": {
+    "justwatch": "The movie availabilities are powered by JustWatch",
+    "attributions": "Movies povered by The Movie Database API And JustWatch"
+  },
+  "overview": {
+    "matches": "Matched",
+    "likes": "Likes"
+  },
+  "scanner": {
+    "request-permission": "Request permission",
+    "heading": "Scan QR code",
+    "join": "Join the game"
+  },
+  "settings": {
+    "hello": "Hello",
+    "heading": "Settings",
+    "nickname-info": "Here you can change your nickname. This will be displayed to other users in the room.",
+    "language-info": "Changing this value will change the language target for created room, meaning the movies will be in choosen language but not the controls and other texts. More languages will be added in the future.",
+    "about": " This is a simple app that allows you to create a room and pick movies with your friends. You can create a room and invite your friends to join you. You can also join a room by entering the room code. You can then add movies to the room and watch them together. App uses The Movie Database API to get the movies and JustWatch API to get the availabilities.",
+    "security": " None of the data is stored on the server. The room is created in memory and is destroyed when the last user leaves the room. No additional data is stored on the server. The room code is generated randomly and the fav movies are stored locally in storage. Currently the backend is hosted in Europe so there might be some slower response times for users outside of Europe. The app is still in development and more features will be added in the future. I dont profit anything from this app and it is made for educational purposes."
+  }
+}

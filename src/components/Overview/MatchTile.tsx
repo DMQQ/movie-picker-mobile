@@ -30,7 +30,7 @@ const MatchTile = ({ match, type: _type, navigation }: { match: Movie; type: str
         source={{
           uri: "https://image.tmdb.org/t/p/w500" + match.poster_path,
         }}
-        style={{ width: "100%", height: 250, borderRadius: 10 }}
+        style={{ width: "100%", height: 300, borderRadius: 10 }}
       />
     </TouchableRipple>
   );

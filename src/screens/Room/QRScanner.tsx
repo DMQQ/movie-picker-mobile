@@ -3,11 +3,12 @@ import { useCameraPermissions, CameraView } from "expo-camera";
 import { useContext, useEffect, useState } from "react";
 import { ToastAndroid, View, Vibration } from "react-native";
 import { Appbar, Button, Dialog, FAB, Portal, Text, TextInput, useTheme } from "react-native-paper";
-import { SocketContext } from "../service/SocketContext";
-import { useAppSelector } from "../redux/store";
-import { ScreenProps } from "./types";
+import { SocketContext } from "../../service/SocketContext";
+import { useAppSelector } from "../../redux/store";
+import { ScreenProps } from "../types";
+import useTranslation from "../../service/useTranslation";
 
-export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
+export default function QRScanner({ navigation }: any) {
   const [hasPermission, request] = useCameraPermissions();
   const [isManual, setIsManual] = useState(false);
   const theme = useTheme();
@@ -33,6 +34,7 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
     try {
       await joinRoom(parsed.roomId);
     } catch (error) {
+      console.error(error);
       ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
     }
   };
@@ -41,6 +43,8 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
     return new Promise(async (resolve, reject) => {
       try {
         const response = await socket?.emitWithAck("join-room", code, nickname);
+
+        console.log(response);
 
         if (response.joined) {
           navigation.dispatch(
@@ -74,13 +78,15 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
     !hasPermission?.granted && request();
   }, []);
 
+  const t = useTranslation();
+
   if (hasPermission === null) {
     return (
       <View style={{ flex: 1 }}>
         <Text style={{ marginTop: 25, fontWeight: "bold", fontSize: 25 }}>Requesting camera permission</Text>
 
         <Button mode="contained" onPress={() => request()}>
-          Request permission
+          {t("scanner.request-permission")}
         </Button>
       </View>
     );
@@ -90,7 +96,7 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
     <View style={{ flex: 1 }}>
       <Appbar.Header style={{ backgroundColor: "#000" }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
-        <Appbar.Content title="Scan QR code" />
+        <Appbar.Content title={t("scanner.heading")} />
       </Appbar.Header>
       <CameraView
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
@@ -118,14 +124,14 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
             visible={isScannError}
             style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
           >
-            <Dialog.Title>Something went wrong!</Dialog.Title>
+            <Dialog.Title>{t("dialogs.qr.error")}</Dialog.Title>
 
             <Dialog.Content>
-              <Text>Invalid QR code</Text>
+              <Text>{t("dialogs.qr.error-desc")}</Text>
             </Dialog.Content>
 
             <Dialog.Actions>
-              <Button onPress={() => setIsScanError(false)}>Close</Button>
+              <Button onPress={() => setIsScanError(false)}>{t("dialogs.qr.close")}</Button>
             </Dialog.Actions>
           </Dialog>
 
@@ -135,7 +141,7 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
             visible={isManual}
             style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
           >
-            <Dialog.Title>Join room manually</Dialog.Title>
+            <Dialog.Title>{t("dialogs.qr.manual")}</Dialog.Title>
 
             <Dialog.Actions>
               <ManualCodeInput joinRoom={joinRoom} />
@@ -146,7 +152,7 @@ export default function QRScanner({ navigation }: ScreenProps<"QRScanner">) {
 
       <FAB
         theme={{ colors: { accent: theme.colors.primary } }}
-        label="Join manually"
+        label={t("dialogs.qr.manual")}
         onPress={() => setIsManual(true)}
         style={{
           position: "absolute",
@@ -170,12 +176,14 @@ const ManualCodeInput = ({ joinRoom }: { joinRoom: (code: string) => Promise<any
     }
   };
 
+  const t = useTranslation();
+
   return (
     <View style={{ flex: 1, paddingHorizontal: 10 }}>
       <TextInput mode="outlined" label="Enter code" value={code} onChangeText={setCode} style={{ marginBottom: 10, borderRadius: 20 }} />
 
       <Button mode="text" onPress={onManualPress} style={{ marginTop: 10 }}>
-        Join room
+        {t("scanner.join")}
       </Button>
     </View>
   );

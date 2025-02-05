@@ -2,54 +2,8 @@ import { FlatList, View } from "react-native";
 import { Appbar, Button, Icon, Text, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
-
-const movies = [
-  {
-    label: "All movies",
-    path: "/discover/movie",
-  },
-  {
-    label: "Now playing",
-    path: "/movie/now_playing",
-  },
-  {
-    label: "Popular",
-    path: "/movie/popular",
-  },
-  {
-    label: "Top rated",
-    path: "/movie/top_rated",
-  },
-  {
-    label: "Upcoming",
-    path: "/movie/upcoming",
-  },
-];
-
-const series = [
-  {
-    label: "All TV",
-    path: "/discover/tv",
-  },
-  {
-    label: "Top rated TV",
-    path: "/tv/top_rated",
-  },
-  {
-    label: "Popular TV",
-    path: "/tv/popular",
-  },
-  {
-    label: "Airing today",
-    path: "/tv/airing_today",
-  },
-  {
-    label: "On the air",
-    path: "/tv/on_the_air",
-  },
-];
-
-const categories = movies.concat(series);
+import useTranslation from "../../service/useTranslation";
+import { useMemo } from "react";
 
 type Category = {
   label: string;
@@ -58,6 +12,28 @@ type Category = {
 
 export default function ChooseCategory({ navigation }: any) {
   const { setCategory, category } = useCreateRoom();
+
+  const t = useTranslation();
+
+  const movies = [
+    { label: t("room.genres.all_movies"), path: "/discover/movie" },
+    { label: t("room.genres.now_playing"), path: "/movie/now_playing" },
+    { label: t("room.genres.popular"), path: "/movie/popular" },
+    { label: t("room.genres.top_rated"), path: "/movie/top_rated" },
+    { label: t("room.genres.upcoming"), path: "/movie/upcoming" },
+  ];
+
+  const series = [
+    { label: t("room.genres.all_tv"), path: "/discover/tv" },
+    { label: t("room.genres.top_rated_tv"), path: "/tv/top_rated" },
+    { label: t("room.genres.popular_tv"), path: "/tv/popular" },
+    { label: t("room.genres.airing_today"), path: "/tv/airing_today" },
+    { label: t("room.genres.on_the_air"), path: "/tv/on_the_air" },
+  ];
+
+  const categories = useMemo(() => {
+    return [...movies, ...series];
+  }, []);
 
   const onPress = (category: Category) => {
     setCategory(category.path);
@@ -77,9 +53,9 @@ export default function ChooseCategory({ navigation }: any) {
         <Appbar.Content title="Categories" />
       </Appbar>
       <View style={{ padding: 15, flex: 1 }}>
-        <List category={category} data={movies} title="Movies" onPress={onPress} />
+        <List category={category} data={movies} title={t("room.movie")} onPress={onPress} />
 
-        <List category={category} data={series} title="Series" onPress={onPress} />
+        <List category={category} data={series} title={t("room.series")} onPress={onPress} />
 
         <Button
           icon="dice-4"
@@ -93,7 +69,7 @@ export default function ChooseCategory({ navigation }: any) {
             onPress(categories[Math.floor(Math.random() * categories.length)]);
           }}
         >
-          Randomize
+          {t("room.randomize")}
         </Button>
       </View>
     </SafeIOSContainer>

@@ -1,11 +1,13 @@
 import { Dimensions } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
-import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { store, useAppDispatch, useAppSelector } from "../../redux/store";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useContext } from "react";
 import { SocketContext } from "../../service/SocketContext";
+import useTranslation from "../../service/useTranslation";
+import { Provider } from "react-redux";
 
 export default function DialogModals({
   showLeaveModal,
@@ -37,19 +39,18 @@ export default function DialogModals({
     socket?.emit("leave-room", route.params?.roomId);
   };
 
+  const t = useTranslation();
+
   return (
     <Portal>
-      <Dialog
-        visible={showLeaveModal}
-        style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
-      >
-        <Dialog.Title>Leave Room</Dialog.Title>
+      <Dialog visible={showLeaveModal} style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}>
+        <Dialog.Title>{t("dialogs.leave-room.title")}</Dialog.Title>
         <Dialog.Content>
-          <Text>Are you sure you want to leave the room?</Text>
+          <Text>{t("dialogs.leave-room.message")}</Text>
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={toggleLeaveModal}>Cancel</Button>
-          <Button onPress={handleLeaveRoom}>Leave</Button>
+          <Button onPress={toggleLeaveModal}>{t("dialogs.leave-room.cancel")}</Button>
+          <Button onPress={handleLeaveRoom}>{t("dialogs.leave-room.leave")}</Button>
         </Dialog.Actions>
       </Dialog>
 
@@ -61,9 +62,9 @@ export default function DialogModals({
           paddingBottom: 10,
         }}
       >
-        <Dialog.Title>QR Code</Dialog.Title>
+        <Dialog.Title>{t("dialogs.scan-code.title")}</Dialog.Title>
         <Dialog.Content>
-          <Text>Scan this code to join the room</Text>
+          <Text>{t("dialogs.scan-code.message")}</Text>
         </Dialog.Content>
 
         <Dialog.Content>
@@ -90,7 +91,7 @@ export default function DialogModals({
         </Dialog.Content>
 
         <Dialog.Actions>
-          <Button onPress={() => setShowQRModal(false)}>Close</Button>
+          <Button onPress={() => setShowQRModal(false)}>{t("dialogs.scan-code.close")}</Button>
         </Dialog.Actions>
       </Dialog>
     </Portal>

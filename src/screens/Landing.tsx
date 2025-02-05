@@ -1,9 +1,7 @@
 import { Dimensions, Image, ImageBackground, Platform, Pressable, StyleSheet, View, VirtualizedList } from "react-native";
 import { Avatar, Button, IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppDispatch, useAppSelector } from "../redux/store";
-import { roomActions } from "../redux/room/roomSlice";
 import { ScreenProps } from "./types";
 import { useGetFeaturedQuery, useLazyGetLandingPageMoviesQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
 import SafeIOSContainer from "../components/SafeIOSContainer";
@@ -12,7 +10,7 @@ import { Movie } from "../../types";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
-import { loadFavorites } from "../redux/favourites/favourites";
+import useTranslation from "../service/useTranslation";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -65,19 +63,6 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     });
   }, [page]);
 
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    (async () => {
-      const nickname = (await AsyncStorage.getItem("nickname")) || "Guest";
-      const language = (await AsyncStorage.getItem("language")) || "en";
-
-      dispatch(roomActions.setSettings({ nickname, language }));
-
-      dispatch(loadFavorites());
-    })();
-  }, []);
-
   const onEndReached = useCallback(() => {
     setPage((prev) => prev + 1);
   }, []);
@@ -115,6 +100,8 @@ const FeaturedSection = memo(
 
     const { nickname } = useAppSelector((state) => state.room);
 
+    const t = useTranslation();
+
     return (
       <ImageBackground
         style={styles.featuredImage}
@@ -127,7 +114,9 @@ const FeaturedSection = memo(
         <View style={[styles.header]}>
           <Pressable onPress={() => props.navigate("Settings")} style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
             <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} color="#fff" />
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Hello {nickname}.</Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+              {t("settings.hello")} {nickname}.
+            </Text>
           </Pressable>
 
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
@@ -159,15 +148,20 @@ const FeaturedSection = memo(
 
 const BottomTab = memo(
   ({ navigate }: { navigate: any }) => {
+    const t = useTranslation();
     return (
       <View style={{ paddingHorizontal: 15, flexDirection: "row", alignItems: "center" }}>
         <Button
           mode="contained-tonal"
-          onPress={() => navigate("QRScanner")}
+          onPress={() =>
+            navigate("QRCode", {
+              screen: "QRScanner",
+            })
+          }
           style={{ marginTop: 15, borderRadius: 100, marginBottom: 15, flex: 1 }}
           contentStyle={{ padding: 7.5 }}
         >
-          Join a game
+          {t("room.join-game")}
         </Button>
 
         <View style={{ flexDirection: "row", gap: 5 }}>
@@ -190,11 +184,11 @@ interface SectionProps {
 }
 
 const sectionStyles = StyleSheet.create({
-  container: { marginBottom: 20, padding: 15, height: height * 0.275 + 100 },
+  container: { marginBottom: 20, padding: 15, minHeight: height * 0.275 + 100 },
   title: { color: "#fff", fontSize: 45, marginBottom: 20, fontFamily: "Bebas" },
   list: {
     flex: 1,
-    height: height * 0.275,
+    minHeight: height * 0.275,
   },
   listContainer: {
     justifyContent: "flex-start",

@@ -6,6 +6,7 @@ import { View } from "react-native";
 import MatchModal from "../../components/Movie/MatchModal";
 import { Button, Portal } from "react-native-paper";
 import Modal from "./Modal";
+import useTranslation from "../../service/useTranslation";
 
 export default function LikesScreen() {
   const { likes } = useAppSelector((state) => state.room.room);
@@ -17,9 +18,11 @@ export default function LikesScreen() {
     setMatch(likes[Math.floor(Math.random() * likes.length)]);
   };
 
+  const t = useTranslation();
+
   return (
     <View style={{ flex: 1, padding: 15 }}>
-      <TilesList label="Your Likes" data={likes} />
+      <TilesList label={t("likes.title")} data={likes} />
 
       {match && <Modal match={match} />}
 
@@ -37,7 +40,7 @@ export default function LikesScreen() {
         }}
         contentStyle={{ padding: 7.5 }}
       >
-        {match ? "Close match" : "Random match"}
+        {match ? t("likes.close") : t("likes.random")}
       </Button>
     </View>
   );

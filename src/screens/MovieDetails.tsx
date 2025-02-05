@@ -79,3 +79,21 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
     </Animated.ScrollView>
   );
 }
+
+// const Trailers = ({ movie }: { movie: MovieDetailsType }) => {
+//   return (
+//     <View>
+//       {movie?.videos?.results?.map((video) => (
+//         <View key={video.id} style={{ marginVertical: 10 }}>
+//           <Text style={{ color: "#fff", fontSize: 20, marginBottom: 10 }}>{video.name}</Text>
+//           <WebView
+//             style={{ height: 200 }}
+//             source={{
+//               uri: `https://www.youtube.com/embed/${video.key}`,
+//             }}
+//           />
+//         </View>
+//       ))}
+//     </View>
+//   );
+//  }

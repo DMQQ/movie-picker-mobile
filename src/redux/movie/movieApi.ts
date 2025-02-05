@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
 import { Movie, MovieDetails } from "../../../types";
+import { RootState } from "../store";
 
 interface LandingPageParams {
   skip?: number;
@@ -12,14 +13,32 @@ interface SectionParams {
   page?: number;
 }
 
-console.log(API_BASE_ENDPOINT, process.env.EXPO_PUBLIC_API_KEY);
-
 export const movieApi = createApi({
   reducerPath: "movieApi",
   baseQuery: fetchBaseQuery({
     baseUrl: API_BASE_ENDPOINT,
-    headers: {
-      authorization: `Bearer ${(process.env as any).EXPO_PUBLIC_API_KEY as string}`,
+    prepareHeaders: (headers, { getState }) => {
+      headers.set("authorization", `Bearer ${(process.env as any).EXPO_PUBLIC_API_KEY as string}`);
+
+      headers.set("X-User-Language", (getState() as RootState)?.room?.language || "en");
+
+      const state = getState() as RootState;
+
+      if (state?.room?.language === "pl") {
+        headers.set("x-user-language", "pl-PL");
+        headers.set("x-user-region", "PL");
+        headers.set("x-user-timezone", "Europe/Warsaw");
+        headers.set("x-user-watch-provider", "PL");
+        headers.set("x-user-watch-region", "PL");
+      } else {
+        headers.set("x-user-language", "en-US");
+        headers.set("x-user-region", "US");
+        headers.set("x-user-timezone", "America/New_York");
+        headers.set("x-user-watch-provider", "US");
+        headers.set("x-user-watch-region", "US");
+      }
+
+      return headers;
     },
   }),
   endpoints: (builder) => ({
@@ -64,6 +83,10 @@ export const movieApi = createApi({
     getReviews: builder.query<any[], { id: number; type: "movie" | "tv" }>({
       query: ({ id, type }) => `/reviews/${type}/${id}`,
     }),
+
+    getCategories: builder.query<any[], any>({
+      query: () => "/categories",
+    }),
   }),
 });
 
@@ -86,4 +109,6 @@ export const {
   useLazyGetSimilarQuery,
 
   useGetReviewsQuery,
+
+  useGetCategoriesQuery,
 } = movieApi;

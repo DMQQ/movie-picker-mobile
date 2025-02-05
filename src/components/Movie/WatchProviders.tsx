@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Image, ScrollView, StyleProp, View, ViewStyle } from "react-native";
 import { Surface, Text } from "react-native-paper";
+import useTranslation from "../../service/useTranslation";
 
 const WatchProviders = ({ providers, hideLabel = false, style }: { providers: any; hideLabel?: boolean; style?: StyleProp<ViewStyle> }) => {
   const providersList = useMemo(() => {
@@ -15,10 +16,12 @@ const WatchProviders = ({ providers, hideLabel = false, style }: { providers: an
     return [...list];
   }, [providers]);
 
+  const t = useTranslation();
+
   if (providersList.length === 0) return null;
 
   return (
-    <View style={[{ marginVertical: 10, marginTop: 20 }, style]}>
+    <View style={[{ marginVertical: 10, marginTop: 45 }, style]}>
       {!hideLabel && <Text style={{ fontSize: 35, fontFamily: "Bebas", lineHeight: 35 }}>Streaming services (PL)</Text>}
 
       <ScrollView horizontal style={{ marginVertical: 7.5 }}>
@@ -39,7 +42,7 @@ const WatchProviders = ({ providers, hideLabel = false, style }: { providers: an
         ))}
       </ScrollView>
 
-      <Text style={{ color: "rgba(255,255,255,0.8)" }}>The movie availabilities are powered by JustWatch</Text>
+      <Text style={{ color: "rgba(255,255,255,0.8)" }}>{t("global.justwatch")}</Text>
     </View>
   );
 };

@@ -25,9 +25,11 @@ export default function TilesList<T>(props: TileListProps) {
       numColumns={2}
       style={{ marginBottom: 50 }}
       ListHeaderComponent={
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={{ fontSize: 35, marginBottom: 15, fontFamily: "Bebas" }}>{props.label}</Text>
-        </View>
+        props.label ? (
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text style={{ fontSize: 35, marginBottom: 15, fontFamily: "Bebas" }}>{props.label}</Text>
+          </View>
+        ) : null
       }
       data={props.data}
       keyExtractor={(match) => match.id.toString()}

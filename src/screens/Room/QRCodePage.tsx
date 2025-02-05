@@ -10,6 +10,7 @@ import { SocketContext } from "../../service/SocketContext";
 import { roomActions } from "../../redux/room/roomSlice";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
+import useTranslation from "../../service/useTranslation";
 
 interface ISocketResponse {
   roomId: string;
@@ -78,6 +79,8 @@ export default function QRCodePage({ navigation }: any) {
     );
   };
 
+  const t = useTranslation();
+
   return (
     <SafeIOSContainer>
       <Appbar style={{ backgroundColor: "#000" }}>
@@ -85,7 +88,7 @@ export default function QRCodePage({ navigation }: any) {
         <Appbar.Content title="Join game" />
       </Appbar>
       <View style={{ position: "relative", flex: 1, padding: 15 }}>
-        <Text style={{ fontSize: 45, fontFamily: "Bebas", lineHeight: 45 }}>Scan to join!</Text>
+        <Text style={{ fontSize: 45, fontFamily: "Bebas", lineHeight: 45 }}>{t("room.qr-title")}</Text>
 
         <Text
           style={{
@@ -93,7 +96,7 @@ export default function QRCodePage({ navigation }: any) {
             color: "rgba(255,255,255,0.9)",
           }}
         >
-          Share this code with your friends to join the game
+          {t("room.qr-subtitle")}
         </Text>
 
         <QrCodeBox code={qrCode} />
@@ -108,7 +111,7 @@ export default function QRCodePage({ navigation }: any) {
               alignItems: "center",
             }}
           >
-            <Text style={{ fontSize: 16 }}>Active users:</Text>
+            <Text style={{ fontSize: 16 }}>{t("room.active")}:</Text>
             <View style={{ flexDirection: "row", gap: 5 }}>
               {users.map((nick, index) => (
                 <View
@@ -138,7 +141,7 @@ export default function QRCodePage({ navigation }: any) {
               onJoinOwnRoom(qrCode);
             }}
           >
-            Next
+            {t("room.next")}
           </Button>
         </View>
       </View>

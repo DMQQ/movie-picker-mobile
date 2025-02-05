@@ -5,6 +5,7 @@ import Poster from "./Poster";
 import { Dimensions, Easing, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, ZoomIn, withSpring, withTiming } from "react-native-reanimated";
+import useTranslation from "../../service/useTranslation";
 
 const styles = StyleSheet.create({
   matchModal: {
@@ -69,6 +70,8 @@ const CustomEnteringTransition = () => {
 export default function MatchModal({ match, hideMatchModal }: { match: any; hideMatchModal: any }) {
   const theme = useTheme();
 
+  const t = useTranslation();
+
   return (
     <Portal theme={DarkTheme}>
       <Modal dismissable dismissableBackButton visible={typeof match !== "undefined"} onDismiss={hideMatchModal} style={styles.matchModal}>
@@ -82,7 +85,7 @@ export default function MatchModal({ match, hideMatchModal }: { match: any; hide
             },
           ]}
         >
-          It's a match!
+          {t("match.title")}
         </Animated.Text>
 
         {typeof match !== "undefined" && (

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { ToastAndroid } from "react-native";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 
-const isDev = false;
+const isDev = true;
 
 export const url = isDev ? "http://192.168.0.16:3000" : "https://movie.dmqq.dev"; //
 

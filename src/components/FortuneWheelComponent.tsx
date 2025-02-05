@@ -13,6 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { MD2DarkTheme } from "react-native-paper";
+import useTranslation from "../service/useTranslation";
 
 const { width, height } = Dimensions.get("window");
 
@@ -33,6 +34,8 @@ const Wheel = ({
   const rotate = useSharedValue(0);
   const isSpinning = useSharedValue(false);
   const translateY = useSharedValue(0);
+
+  const t = useTranslation();
 
   const handleSpin = (velocity: number) => {
     if (isSpinning.value) return;
@@ -136,7 +139,7 @@ const Wheel = ({
           styles.center,
         ]}
       >
-        Drag up to spin
+        {t("fortune-wheel.drag")}
       </Animated.Text>
 
       <GestureDetector gesture={gesture}>
