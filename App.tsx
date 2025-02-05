@@ -1,6 +1,6 @@
 import "react-native-reanimated";
 
-import { ActivityIndicator, MD2DarkTheme, PaperProvider } from "react-native-paper";
+import { ActivityIndicator, Button, MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import QRScanner from "./src/screens/Room/QRScanner";
@@ -69,10 +69,18 @@ const Navigator = () => {
 
   const [loaded, setLoaded] = useState(false);
 
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
+
   useEffect(() => {
     (async () => {
       try {
-        const language = (await AsyncStorage.getItem("language")) || "en";
+        let language = await AsyncStorage.getItem("language");
+
+        if (!language) {
+          setShowLanguageSelector(true);
+
+          return;
+        }
 
         const nickname = (await AsyncStorage.getItem("nickname")) || language === "en" ? "Guest" : "Gość";
 
@@ -84,9 +92,34 @@ const Navigator = () => {
         setLoaded(true);
       }
     })();
-  }, []);
+  }, [showLanguageSelector]);
 
   if (!loaded) return <Fallback />;
+
+  if (showLanguageSelector) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          <Button
+            onPress={async () => {
+              await AsyncStorage.setItem("language", "en");
+              setShowLanguageSelector(false);
+            }}
+          >
+            English
+          </Button>
+          <Button
+            onPress={async () => {
+              await AsyncStorage.setItem("language", "pl");
+              setShowLanguageSelector(false);
+            }}
+          >
+            Polski
+          </Button>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer theme={DarkTheme} fallback={<Fallback />}>

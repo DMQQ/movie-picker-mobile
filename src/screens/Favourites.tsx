@@ -11,8 +11,6 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
 
   const t = useTranslation();
 
-  console.log(t("favourites.title"));
-
   return (
     <SafeIOSContainer style={{ marginTop: 0 }}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>

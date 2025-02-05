@@ -29,11 +29,11 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
 
   const handleSaveLanguage = async () => {
     if (language === lg) return;
-    AsyncStorage.setItem("language", language);
-
-    dispatch(roomActions.setSettings({ nickname, language }));
+    await AsyncStorage.setItem("language", language);
 
     await Updates.reloadAsync();
+
+    dispatch(roomActions.setSettings({ nickname, language }));
   };
 
   useEffect(() => {
@@ -88,10 +88,10 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
             style={{ marginTop: 10 }}
           />
 
-          <Text style={{ fontSize: 16, marginTop: 5, padding: 5, color: "gray" }}>{t("settings.language-info")}</Text>
+          {/* <Text style={{ fontSize: 16, marginTop: 5, padding: 5, color: "gray" }}>{t("settings.language-info")}</Text> */}
         </View>
 
-        <View style={{ marginTop: 35 }}>
+        {/* <View style={{ marginTop: 35 }}>
           <Text style={{ fontSize: 18, fontWeight: "bold", padding: 2.5 }}>About</Text>
 
           <Text style={{ fontSize: 16, marginTop: 5, padding: 5, color: "gray" }}>{t("settings.about")}</Text>
@@ -107,7 +107,7 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
           >
             {t("settings.security")}
           </Text>
-        </View>
+        </View> */}
       </View>
     </SafeIOSContainer>
   );

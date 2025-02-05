@@ -34,7 +34,6 @@ export default function QRScanner({ navigation }: any) {
     try {
       await joinRoom(parsed.roomId);
     } catch (error) {
-      console.error(error);
       ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
     }
   };
@@ -43,8 +42,6 @@ export default function QRScanner({ navigation }: any) {
     return new Promise(async (resolve, reject) => {
       try {
         const response = await socket?.emitWithAck("join-room", code, nickname);
-
-        console.log(response);
 
         if (response.joined) {
           navigation.dispatch(
@@ -169,8 +166,8 @@ const ManualCodeInput = ({ joinRoom }: { joinRoom: (code: string) => Promise<any
   const [code, setCode] = useState("");
 
   const onManualPress = async () => {
-    if (code && code.length > 15) {
-      joinRoom(code).catch(() => {});
+    if (code) {
+      joinRoom(code.toUpperCase()).catch(() => {});
     } else {
       ToastAndroid.show("Invalid code", ToastAndroid.SHORT);
     }
@@ -180,7 +177,13 @@ const ManualCodeInput = ({ joinRoom }: { joinRoom: (code: string) => Promise<any
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 10 }}>
-      <TextInput mode="outlined" label="Enter code" value={code} onChangeText={setCode} style={{ marginBottom: 10, borderRadius: 20 }} />
+      <TextInput
+        mode="outlined"
+        label="Enter code"
+        value={code.toUpperCase()}
+        onChangeText={setCode}
+        style={{ marginBottom: 10, borderRadius: 20 }}
+      />
 
       <Button mode="text" onPress={onManualPress} style={{ marginTop: 10 }}>
         {t("scanner.join")}

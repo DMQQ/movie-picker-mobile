@@ -1,4 +1,4 @@
-import { Dimensions, Share, ToastAndroid, View } from "react-native";
+import { Dimensions, Platform, Share, ToastAndroid, View } from "react-native";
 import { Appbar, Avatar, Button, Text, useTheme } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import QRCode from "react-native-qrcode-svg";
@@ -37,6 +37,7 @@ export default function QRCodePage({ navigation }: any) {
   useEffect(() => {
     (async () => {
       try {
+        console.log("QRCodePage", { category, pageRange, genre, nickname });
         const response = (await socket?.emitWithAck("create-room", {
           type: category,
           pageRange,
@@ -153,6 +154,23 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
   const { nickname } = useAppSelector((state) => state.room);
   const theme = useTheme();
 
+  const shareCode = async (code: string) => {
+    try {
+      if (Platform.OS === "ios") {
+        await Share.share({
+          message: code,
+          url: `qr-mobile://home/${code}`,
+        });
+      } else {
+        await Share.share({
+          message: `${code}\nqr-mobile://home/${code}`,
+        });
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+    }
+  };
+
   return (
     <View
       style={{
@@ -164,38 +182,31 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
       <View
         style={{
           padding: 10,
-          borderWidth: 2,
           borderColor: theme.colors.primary,
+          borderWidth: 5,
         }}
       >
         <QRCode
-          backgroundColor="#000"
-          color={theme.colors.primary}
+          backgroundColor={theme.colors.primary}
           value={JSON.stringify({
             roomId: code,
             host: nickname,
             type: "movie-picker",
           })}
-          size={Dimensions.get("screen").width * 0.65}
+          size={Dimensions.get("screen").width * 0.6}
         />
       </View>
 
       <Button
         onLongPress={async () => {
-          try {
-            await Share.share({
-              message: code,
-              url: `qr-mobile://home/${code}`,
-              title: "Share Room Code",
-            });
-          } catch (error) {}
+          shareCode(code);
         }}
         onPress={async () => {
           await Clipboard.setStringAsync(code);
           ToastAndroid.show("Copied to clipboard", ToastAndroid.SHORT);
         }}
       >
-        {code}
+        <Text style={{ fontSize: 25, letterSpacing: 1, color: theme.colors.primary }}>{code}</Text>
       </Button>
     </View>
   );

@@ -230,8 +230,6 @@ const Section = memo(({ group }: SectionProps) => {
     });
   }, [page]);
 
-  const snapToOffsets = useMemo(() => movies.map((_, index) => index * width * 0.375 + index * 20 - 5), [movies.length]);
-
   const renderItem = useCallback(
     ({ item }: { item: Movie & { type: string } }) => (
       <Pressable
@@ -279,9 +277,6 @@ const Section = memo(({ group }: SectionProps) => {
         keyExtractor={keySectionExtractor}
         style={sectionStyles.list}
         contentContainerStyle={sectionStyles.listContainer}
-        snapToOffsets={snapToOffsets}
-        snapToAlignment="start"
-        decelerationRate="fast"
         renderItem={renderItem}
         onEndReachedThreshold={0.5}
         maintainVisibleContentPosition={{

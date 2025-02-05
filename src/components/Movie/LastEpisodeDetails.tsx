@@ -9,7 +9,7 @@ const LastEpisodeToAir = ({ lastEpisode }: { lastEpisode: any }) => {
   return (
     <View style={{ marginTop: 15 }}>
       <Text style={{ fontSize: 35, fontFamily: "Bebas", lineHeight: 35 }}>{t("movie.details.lastEpisode")}</Text>
-      <Surface style={{ borderRadius: 10, marginTop: 10, backgroundColor: "#000" }}>
+      <View style={{ borderRadius: 10, marginTop: 10 }}>
         <Image
           style={{
             width: "100%",
@@ -38,7 +38,7 @@ const LastEpisodeToAir = ({ lastEpisode }: { lastEpisode: any }) => {
             {t("movie.details.episode")} {lastEpisode.episode_number} {t("movie.details.season")} {lastEpisode.season_number}
           </Text>
         </View>
-      </Surface>
+      </View>
     </View>
   );
 };

@@ -16,13 +16,12 @@ const Seasons = ({ seasons }: { seasons: any[] }) => {
         data={seasons}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <Surface
+          <View
             style={{
               borderRadius: 12.5,
               marginRight: 15,
               flexDirection: "row",
               gap: 10,
-              backgroundColor: "#000",
             }}
           >
             {item.poster_path?.length > 0 && (
@@ -45,7 +44,7 @@ const Seasons = ({ seasons }: { seasons: any[] }) => {
                 {t("movie.details.episode")} ({item.episode_count})
               </Text>
             </View>
-          </Surface>
+          </View>
         )}
       />
     </View>

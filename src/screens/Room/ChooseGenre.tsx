@@ -42,7 +42,9 @@ export default function ChooseGenre({ navigation }: any) {
           ) : (
             <FlatList
               ListHeaderComponent={
-                <Text style={{ fontSize: 45, lineHeight: 45, fontWeight: "bold", fontFamily: "Bebas", marginBottom: 15 }}>Genres</Text>
+                <Text style={{ fontSize: 45, lineHeight: 45, fontWeight: "bold", fontFamily: "Bebas", marginBottom: 15 }}>
+                  {t("room.genre")}
+                </Text>
               }
               initialNumToRender={12}
               style={{ flex: 1, paddingBottom: 25 }}
