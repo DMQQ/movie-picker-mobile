@@ -18,6 +18,8 @@ export type RootStackParamList = {
   Favourites: undefined;
 
   SectionSelector: undefined;
+
+  Group: { group: { id: string; name: string } };
 };
 
 export type ScreenProps<Key extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, Key>;

@@ -24,6 +24,7 @@ import Favourites from "./src/screens/Favourites";
 import { loadFavorites } from "./src/redux/favourites/favourites";
 import { roomActions } from "./src/redux/room/roomSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Group from "./src/screens/Group";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -85,13 +86,12 @@ const Navigator = () => {
         const nickname = (await AsyncStorage.getItem("nickname")) || language === "en" ? "Guest" : "Gość";
 
         dispatch(roomActions.setSettings({ nickname, language }));
-
-        dispatch(loadFavorites());
       } catch (error) {
       } finally {
         setLoaded(true);
       }
     })();
+    dispatch(loadFavorites());
   }, [showLanguageSelector]);
 
   if (!loaded) return <Fallback />;
@@ -103,6 +103,7 @@ const Navigator = () => {
           <Button
             onPress={async () => {
               await AsyncStorage.setItem("language", "en");
+              dispatch(roomActions.setLanguage("en"));
               setShowLanguageSelector(false);
             }}
           >
@@ -111,6 +112,7 @@ const Navigator = () => {
           <Button
             onPress={async () => {
               await AsyncStorage.setItem("language", "pl");
+              dispatch(roomActions.setLanguage("pl"));
               setShowLanguageSelector(false);
             }}
           >
@@ -176,6 +178,15 @@ const Navigator = () => {
             }}
           />
 
+          <Stack.Screen
+            name="Group"
+            component={Group}
+            options={{
+              headerShown: false,
+              title: "",
+              presentation: "modal",
+            }}
+          />
           <Stack.Screen
             name="SectionSelector"
             component={SectionSelector}

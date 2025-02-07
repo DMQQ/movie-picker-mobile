@@ -57,6 +57,10 @@ const roomSlice = createSlice({
       state.room.movies = [];
     },
 
+    setLanguage(state, action) {
+      state.language = action.payload;
+    },
+
     setSettings(
       state,
       {

@@ -1,9 +1,9 @@
 {
   "expo": {
     "newArchEnabled": true,
-    "name": "Movie Picker",
+    "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "1.0.3",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -33,7 +33,7 @@
           "prerendered": false
         }
       },
-      "buildNumber": "20250302",
+      "buildNumber": "20250702",
       "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
