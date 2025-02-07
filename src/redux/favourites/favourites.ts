@@ -90,11 +90,11 @@ export const addToGroup = createAsyncThunk("favorites/addToGroup", async ({ item
         const exists = group.movies.some((movie) => movie.id === item.id);
         if (!exists) {
           // Update posterPath if it's the first movie
-          const posterPath = !group.posterPath ? item.imageUrl : group.posterPath;
+          const posterPath = item?.imageUrl || "";
           return {
             ...group,
             posterPath,
-            movies: [...group.movies, item],
+            movies: [item, ...group.movies],
           };
         }
       }

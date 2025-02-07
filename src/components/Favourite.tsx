@@ -12,6 +12,28 @@ export default function CustomFavourite({ movie }: { movie: Movie }) {
 
   const isFavorite = favourites?.groups.some((group) => group.movies.some((m) => m.id === movie.id));
 
+  const onPress = (group: (typeof favourites.groups)[number]) => {
+    group.movies.find((m) => m.id === movie.id)
+      ? dispatch(
+          removeFromGroup({
+            groupId: group.id,
+            movieId: movie.id,
+          })
+        )
+      : dispatch(
+          addToGroup({
+            item: {
+              id: movie.id,
+              imageUrl: movie.poster_path,
+              type: movie.type || (movie?.title !== undefined ? "movie" : "tv"),
+            },
+            groupId: group.id,
+          })
+        );
+
+    setTimeout(() => setVisible(false), 500);
+  };
+
   return (
     <View>
       <IconButton
@@ -46,26 +68,7 @@ export default function CustomFavourite({ movie }: { movie: Movie }) {
                       : MD2DarkTheme.colors.background,
                   },
                 ]}
-                onPress={() => {
-                  group.movies.find((m) => m.id === movie.id)
-                    ? dispatch(
-                        removeFromGroup({
-                          groupId: group.id,
-                          movieId: movie.id,
-                        })
-                      )
-                    : dispatch(
-                        addToGroup({
-                          item: {
-                            id: movie.id,
-                            imageUrl: movie.poster_path,
-                            type: movie.type || (movie?.title !== undefined ? "movie" : "tv"),
-                          },
-                          groupId: group.id,
-                        })
-                      );
-                  setVisible(false);
-                }}
+                onPress={() => onPress(group)}
               >
                 <Text style={styles.itemText}>{group.name}</Text>
               </TouchableOpacity>

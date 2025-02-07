@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from "react";
-import { ToastAndroid } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import { useAppSelector } from "../redux/store";
 
@@ -55,17 +54,24 @@ const makeHeaders = (language: string) => {
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const language = useAppSelector((st) => st.room.language);
 
-  const socket = useRef(
-    socketIOClient(url, {
+  const [socket, setSocket] = useState<{ current: Socket }>({
+    current: null as any,
+  });
+
+  useEffect(() => {
+    const socket = socketIOClient(url, {
       ...connectionConfig,
       extraHeaders: {
         "user-id": userId,
         ...makeHeaders(language),
       },
-    })
-  );
+    });
+    setSocket({ current: socket });
+  }, []);
 
   useEffect(() => {
+    if (!socket.current) return;
+
     socket.current.on("connection", (ev) => {
       console.log("connected", ev);
     });
@@ -81,7 +87,11 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
       socket?.current?.close();
     };
-  }, []);
+  }, [socket?.current]);
+
+  if (!socket.current) {
+    return null;
+  }
 
   return <SocketContext.Provider value={{ socket: socket.current, userId }}>{children}</SocketContext.Provider>;
 };

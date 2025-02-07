@@ -27,14 +27,18 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
           data={groups}
           keyExtractor={(k) => k.id}
           renderItem={({ item }) => (
-            <TouchableRipple disabled={item?.movies?.length === 0} onPress={() => navigation.navigate("Group", { group: item })}>
+            <TouchableRipple
+              rippleColor={"#000"}
+              disabled={item?.movies?.length === 0}
+              onPress={() => navigation.navigate("Group", { group: item })}
+            >
               <>
                 <ImageBackground
                   borderRadius={10}
                   blurRadius={10}
                   style={{
-                    width: Dimensions.get("window").width / 2 - 20,
-                    height: Dimensions.get("window").width / 2 - 20,
+                    width: Dimensions.get("window").width - 30,
+                    height: Dimensions.get("window").width / 2 - 30,
                     borderRadius: 15,
                     justifyContent: "center",
                     alignItems: "center",
@@ -51,8 +55,8 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
                       <Text style={{ fontSize: 11, textAlign: "center" }}>{t("favourites.empty")}</Text>
                     </View>
                   )}
-                  <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-                    {item.movies.slice(0, 2).map((m) => (
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 5 }}>
+                    {item.movies.slice(0, 4).map((m) => (
                       <Image
                         key={m.id}
                         resizeMode="contain"
@@ -72,7 +76,6 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
               </>
             </TouchableRipple>
           )}
-          numColumns={2}
         />
       </View>
 

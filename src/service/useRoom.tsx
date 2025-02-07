@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 import { Movie } from "../../types";
 import { Image } from "react-native";
-import { addToGroup } from "../redux/favourites/favourites";
 
 export default function useRoom(room: string) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
@@ -64,8 +63,6 @@ export default function useRoom(room: string) {
     })();
 
     return () => {
-      socket?.emit("leave-room", room);
-
       socket?.off("movies");
       socket?.off("matched");
       socket?.off("room-details");

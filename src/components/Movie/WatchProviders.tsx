@@ -22,7 +22,7 @@ const WatchProviders = ({ providers, hideLabel = false, style }: { providers: an
 
   return (
     <View style={[{ marginVertical: 10, marginTop: 45 }, style]}>
-      {!hideLabel && <Text style={{ fontSize: 35, fontFamily: "Bebas", lineHeight: 35 }}>Streaming services (PL)</Text>}
+      {!hideLabel && <Text style={{ fontSize: 35, fontFamily: "Bebas", lineHeight: 35 }}>Streaming</Text>}
 
       <ScrollView horizontal style={{ marginVertical: 7.5 }}>
         {providersList.map((provider) => (

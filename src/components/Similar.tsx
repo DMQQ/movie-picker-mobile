@@ -60,6 +60,8 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
 
   const t = useTranslation();
 
+  if (!movies.length) return null;
+
   return (
     <View style={sectionStyles.container}>
       <Text style={sectionStyles.title}>{type === "movie" ? t("movie.details.similar-movies") : t("movie.details.similar-series")}</Text>
