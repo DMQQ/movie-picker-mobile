@@ -9,7 +9,7 @@ import {
   useLazyGetLandingPageMoviesQuery,
 } from "../redux/movie/movieApi";
 import { Movie } from "../../types";
-import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown, SlideInUp, SlideOutDown, SlideOutUp } from "react-native-reanimated";
+import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown } from "react-native-reanimated";
 import ScoreRing from "../components/ScoreRing";
 import { LinearGradient } from "expo-linear-gradient";
 import { Appbar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
@@ -244,7 +244,7 @@ export const SectionSelector = ({ navigation }: any) => {
             }}
           >
             <ImageBackground
-              blurRadius={4}
+              blurRadius={5}
               source={{
                 uri: "https://image.tmdb.org/t/p/w200" + item.results[0].poster_path,
               }}
@@ -264,6 +264,8 @@ export const SectionSelector = ({ navigation }: any) => {
                   textShadowColor: "rgba(0, 0, 0, 0.75)",
                   textShadowOffset: { width: 0, height: 1 },
                   textShadowRadius: 3,
+                  textAlign: "center",
+                  padding: 5,
                 }}
               >
                 {item.name}

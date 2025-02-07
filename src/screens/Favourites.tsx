@@ -27,7 +27,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
           data={groups}
           keyExtractor={(k) => k.id}
           renderItem={({ item }) => (
-            <TouchableRipple onPress={() => navigation.navigate("Group", { group: item })}>
+            <TouchableRipple disabled={item?.movies?.length === 0} onPress={() => navigation.navigate("Group", { group: item })}>
               <>
                 <ImageBackground
                   borderRadius={10}

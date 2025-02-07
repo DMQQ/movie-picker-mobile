@@ -54,6 +54,7 @@ const makeHeaders = (language: string) => {
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const language = useAppSelector((st) => st.room.language);
+
   const socket = useRef(
     socketIOClient(url, {
       ...connectionConfig,
@@ -74,15 +75,13 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => {
-      if (socket && socket.current) {
-        socket?.current?.removeAllListeners();
+      socket?.current?.removeAllListeners();
 
-        socket.current?.disconnect();
+      socket.current?.disconnect();
 
-        socket?.current?.close();
-      }
+      socket?.current?.close();
     };
-  }, [language]);
+  }, []);
 
   return <SocketContext.Provider value={{ socket: socket.current, userId }}>{children}</SocketContext.Provider>;
 };

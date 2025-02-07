@@ -11,7 +11,7 @@ import { Provider } from "react-redux";
 import { store, useAppDispatch } from "./src/redux/store";
 import Overview from "./src/screens/Overview";
 import { SocketProvider } from "./src/service/SocketContext";
-import { Alert, StatusBar, View } from "react-native";
+import { Alert, Platform, StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MovieDetails from "./src/screens/MovieDetails";
 import { RootStackParamList } from "./src/screens/types";
@@ -138,7 +138,7 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-              presentation: "modal",
+              ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
           <Stack.Screen
@@ -147,10 +147,8 @@ const Navigator = () => {
             options={{
               headerTransparent: true,
               headerTitleAlign: "center",
-              headerTitle: "Movie Details",
-              // animation: "fade",
-              presentation: "modal",
-
+              headerTitle: "",
+              ...(Platform.OS === "ios" && { presentation: "modal" }),
               title: "",
             }}
             initialParams={{
@@ -165,7 +163,7 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-              presentation: "modal",
+              ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
           <Stack.Screen
@@ -174,7 +172,7 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-              presentation: "modal",
+              ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
 
@@ -184,7 +182,7 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-              presentation: "modal",
+              ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
           <Stack.Screen
@@ -193,7 +191,7 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-              presentation: "modal",
+              ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
         </Stack.Navigator>
