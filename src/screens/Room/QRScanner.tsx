@@ -1,7 +1,7 @@
 import { CommonActions } from "@react-navigation/native";
 import { useCameraPermissions, CameraView } from "expo-camera";
 import { useContext, useEffect, useState } from "react";
-import { ToastAndroid, View, Vibration } from "react-native";
+import { ToastAndroid, View, Vibration, Platform } from "react-native";
 import { Appbar, Button, Dialog, FAB, Portal, Text, TextInput, useTheme } from "react-native-paper";
 import { SocketContext } from "../../service/SocketContext";
 import { useAppSelector } from "../../redux/store";
@@ -21,7 +21,6 @@ export default function QRScanner({ navigation }: any) {
 
   const onBarcodeScanned = async (barCodeScannerResult: any) => {
     setIsScanned(true);
-    Vibration.vibrate();
 
     const isValid = !barCodeScannerResult?.data?.startsWith("https://") && barCodeScannerResult.data.includes("roomId");
 
@@ -29,12 +28,16 @@ export default function QRScanner({ navigation }: any) {
 
     const parsed = JSON.parse(barCodeScannerResult?.data);
 
-    if (!parsed.roomId) return ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
+    if (!parsed.roomId && Platform.OS === "android") return ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
 
     try {
+      Vibration.vibrate();
+
       await joinRoom(parsed.roomId);
     } catch (error) {
-      ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
+      if (Platform.OS === "android") ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
+    } finally {
+      setIsScanned(false);
     }
   };
 

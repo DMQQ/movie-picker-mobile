@@ -50,8 +50,6 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
   const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
 
-  console.log(error);
-
   useEffect(() => {
     getLandingMovies({ skip: page * 3, take: 5 }).then((response) => {
       if (response.data && Array.isArray(response.data)) {

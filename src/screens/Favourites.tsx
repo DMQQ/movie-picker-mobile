@@ -1,8 +1,7 @@
-import { ActionSheetIOS, View, Alert, FlatList, Dimensions, Image, ImageBackground } from "react-native";
+import { View, Alert, FlatList, Dimensions, Image, ImageBackground } from "react-native";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import SafeIOSContainer from "../components/SafeIOSContainer";
-import TilesList from "../components/Overview/TilesList";
-import { Appbar, Button, FAB, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import { FAB, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { ScreenProps } from "./types";
 import useTranslation from "../service/useTranslation";
 import { createGroup } from "../redux/favourites/favourites";
@@ -12,8 +11,6 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const { groups } = useAppSelector((state) => state.favourite);
   const dispatch = useAppDispatch();
   const t = useTranslation();
-
-  console.log(groups);
 
   return (
     <SafeIOSContainer style={{ marginTop: 0 }}>

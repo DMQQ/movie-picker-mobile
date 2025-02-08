@@ -2,7 +2,7 @@ import { Dimensions, Platform, Share, ToastAndroid, View } from "react-native";
 import { Appbar, Avatar, Button, Text, useTheme } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import QRCode from "react-native-qrcode-svg";
-import { CommonActions } from "@react-navigation/native";
+import { CommonActions, useIsFocused } from "@react-navigation/native";
 import { useCreateRoom } from "./ContextProvider";
 import * as Clipboard from "expo-clipboard";
 import { memo, useContext, useEffect } from "react";
@@ -25,7 +25,7 @@ interface ISocketResponse {
 }
 
 export default function QRCodePage({ navigation }: any) {
-  const { category, pageRange, genre } = useCreateRoom();
+  const { category, pageRange, genre, providers } = useCreateRoom();
   const { qrCode, nickname } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
@@ -37,12 +37,12 @@ export default function QRCodePage({ navigation }: any) {
   useEffect(() => {
     (async () => {
       try {
-        console.log("QRCodePage", { category, pageRange, genre, nickname });
         const response = (await socket?.emitWithAck("create-room", {
           type: category,
           pageRange,
           genre: genre.map((g) => g.id),
           nickname,
+          providers,
         })) as ISocketResponse;
 
         if (response) {
@@ -55,9 +55,7 @@ export default function QRCodePage({ navigation }: any) {
             dispatch(roomActions.setActiveUsers(users));
           });
         }
-      } catch (error) {
-        ToastAndroid.show("Error creating room", ToastAndroid.SHORT);
-      }
+      } catch (error) {}
     })();
   }, [category, pageRange, genre]);
 

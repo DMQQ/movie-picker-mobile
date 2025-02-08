@@ -21,6 +21,8 @@ const initialState = {
     page: 1,
     name: "",
 
+    isGameFinished: false,
+
     isFinished: false,
 
     match: undefined as Movie | undefined,
@@ -55,12 +57,14 @@ const roomSlice = createSlice({
       state.room.type = action.payload.type;
       state.room.page = action.payload.page;
       state.room.users = action.payload.users;
-      state.room.matches = [];
-      state.room.movies = [];
     },
 
     start(state) {
       state.room.isRunning = true;
+    },
+
+    setGameFinished(state) {
+      state.room.isGameFinished = true;
     },
 
     setPlaying(state, action) {

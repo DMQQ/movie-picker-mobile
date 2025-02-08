@@ -41,7 +41,9 @@ export default function useRoom(room: string) {
       }
 
       socket?.on("movies", async (_cards) => {
-        console.log("getting movies");
+        if (_cards.movies.length === 0) {
+          dispatch(roomActions.setGameFinished());
+        }
         setCards(_cards.movies);
         await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)));
       });
@@ -68,7 +70,6 @@ export default function useRoom(room: string) {
   useEffect(() => {
     if (isPlaying && runOnce.current === false && cards.length === 0) {
       runOnce.current = true;
-      console.log("getting movies");
       socket?.emit("get-movies", room);
     }
   }, [isPlaying, cards.length, room]);

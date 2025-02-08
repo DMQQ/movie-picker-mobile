@@ -64,7 +64,7 @@ export default function ChooseGenre({ navigation }: any) {
             marginTop: 10,
           }}
           contentStyle={{ padding: 7.5 }}
-          onPress={() => navigation.navigate("ChoosePage")}
+          onPress={() => navigation.navigate("ExtraSettings")}
         >
           {t("room.next")}
         </Button>

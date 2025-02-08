@@ -12,6 +12,7 @@ import HomeAppbar from "../../components/Home/Appbar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useTranslation from "../../service/useTranslation";
 import { FancySpinner } from "../../components/FancySpinner";
+import { useAppSelector } from "../../redux/store";
 
 export function throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
   let inThrottle = false;
@@ -46,7 +47,7 @@ export default function Home({ route, navigation }: any) {
   );
   const isFocused = useIsFocused();
   const [showQRModal, setShowQRModal] = useState(false);
-
+  const { isGameFinished } = useAppSelector((state) => state.room.room);
   const originalLength = useRef(cards.length);
 
   const handleNavigateDetails = (card: Movie) => {
@@ -60,8 +61,6 @@ export default function Home({ route, navigation }: any) {
   const insets = useSafeAreaInsets();
 
   const t = useTranslation();
-
-  console.log({ isPlaying });
 
   return (
     <View style={{ flex: 1, marginBottom: insets.bottom }}>
@@ -97,7 +96,7 @@ export default function Home({ route, navigation }: any) {
 
           {cards.length === 0 && (
             <View style={styles.emptyListContainer}>
-              <Text style={{ fontSize: 20 }}>{t("room.waiting")}</Text>
+              <Text style={{ fontSize: 20 }}>{isGameFinished ? t("room.finished") : t("room.waiting")}</Text>
             </View>
           )}
         </>

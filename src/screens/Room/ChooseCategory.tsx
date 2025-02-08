@@ -10,26 +10,44 @@ type Category = {
   path: string;
 };
 
+const getFormattedDate = (offset = 0) => {
+  const date = new Date();
+  date.setDate(date.getDate() + offset);
+  return date.toISOString().split("T")[0];
+};
+
 export default function ChooseCategory({ navigation }: any) {
   const { setCategory, category } = useCreateRoom();
 
   const t = useTranslation();
 
-  const movies = [
-    { label: t("room.genres.all_movies"), path: "/discover/movie" },
-    { label: t("room.genres.now_playing"), path: "/movie/now_playing" },
-    { label: t("room.genres.popular"), path: "/movie/popular" },
-    { label: t("room.genres.top_rated"), path: "/movie/top_rated" },
-    { label: t("room.genres.upcoming"), path: "/movie/upcoming" },
-  ];
+  const movies = useMemo(
+    () => [
+      { label: t("room.genres.all_movies"), path: "/discover/movie" },
+      {
+        label: t("room.genres.now_playing"),
+        path: `/discover/movie?primary_release_date.gte=${getFormattedDate(-30)}&primary_release_date.lte=${getFormattedDate()}`,
+      },
+      { label: t("room.genres.popular"), path: `/discover/movie?sort_by=popularity.desc` },
+      { label: t("room.genres.top_rated"), path: `/discover/movie?sort_by=vote_average.desc&vote_count.gte=300` },
+      {
+        label: t("room.genres.upcoming"),
+        path: `/discover/movie?primary_release_date.gte=${getFormattedDate()}&primary_release_date.lte=${getFormattedDate(90)}`,
+      },
+    ],
+    []
+  );
 
-  const series = [
-    { label: t("room.genres.all_tv"), path: "/discover/tv" },
-    { label: t("room.genres.top_rated_tv"), path: "/tv/top_rated" },
-    { label: t("room.genres.popular_tv"), path: "/tv/popular" },
-    { label: t("room.genres.airing_today"), path: "/tv/airing_today" },
-    { label: t("room.genres.on_the_air"), path: "/tv/on_the_air" },
-  ];
+  const series = useMemo(
+    () => [
+      { label: t("room.genres.all_tv"), path: "/discover/tv" },
+      { label: t("room.genres.top_rated_tv"), path: `/discover/tv?sort_by=vote_average.desc&vote_count.gte=300` },
+      { label: t("room.genres.popular_tv"), path: `/discover/tv?sort_by=popularity.desc` },
+      { label: t("room.genres.airing_today"), path: `/discover/tv?air_date.gte=${getFormattedDate()}&air_date.lte=${getFormattedDate()}` },
+      { label: t("room.genres.on_the_air"), path: `/discover/tv?air_date.gte=${getFormattedDate()}&air_date.lte=${getFormattedDate(7)}` },
+    ],
+    []
+  );
 
   const categories = useMemo(() => {
     return [...movies, ...series];
@@ -38,12 +56,7 @@ export default function ChooseCategory({ navigation }: any) {
   const onPress = (category: Category) => {
     setCategory(category.path);
 
-    if (category.path === "/discover/movie" || category.path === "/discover/tv") {
-      navigation.navigate("ChooseGenre");
-      return;
-    }
-
-    navigation.navigate("ChoosePage");
+    navigation.navigate("ChooseGenre");
   };
 
   return (
@@ -111,7 +124,7 @@ const List = ({
               onPress(c);
             }}
           >
-            {["/discover/movie", "/discover/tv"].includes(c.path) && <Icon source={"crown"} color="gold" size={16} />} {c.label}
+            {c.label}
           </Button>
         )}
       />

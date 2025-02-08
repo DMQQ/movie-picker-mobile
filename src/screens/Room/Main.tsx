@@ -8,6 +8,7 @@ import useTranslation from "../../service/useTranslation";
 import { SocketProvider } from "../../service/SocketContext";
 import Home from "./Home";
 import QRScanner from "./QRScanner";
+import ExtraSettings from "./ExtraSettings";
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +42,16 @@ export default function QRCode({ navigation }: any) {
               headerTitleAlign: "center",
             }}
           />
+
+          <Stack.Screen
+            name="ExtraSettings"
+            component={ExtraSettings}
+            options={{
+              title: t("room.titles.extra-settings"),
+              headerTitleAlign: "center",
+            }}
+          />
+
           <Stack.Screen
             name="CreateQRCode"
             component={QRCodePage}

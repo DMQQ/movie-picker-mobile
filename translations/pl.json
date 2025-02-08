@@ -38,6 +38,7 @@
     "view-matches": "Wyświetl Dopasowania"
   },
   "room": {
+    "providers": "Wybierz platformy streamingowe",
     "join-game": "Dołącz do gry",
     "waiting": "Oczekiwanie na innych graczy",
     "choose-category": "Wybierz kategorię",
@@ -46,6 +47,7 @@
     "randomize": "Losuj",
     "genre": "Gatunki",
     "next": "Dalej",
+    "finished": "Gra zakończona, nie ma więcej w tej kategorii",
     "randomize-search": "Losowe wyszukiwanie",
     "page-range-desc": "Wybierz liczbę stron do przeszukania",
     "qr-title": "Zeskanuj, aby dołączyć!",
@@ -69,7 +71,8 @@
       "genre": "Wybierz Gatunek",
       "page-range": "Wybierz Zakres Stron",
       "qr-code": "Zeskanuj kod QR",
-      "randomize": "Losuj wyniki"
+      "randomize": "Losuj wyniki",
+      "extra-settings": "Dodatkowe ustawienia"
     }
   },
   "fortune-wheel": {

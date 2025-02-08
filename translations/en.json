@@ -38,6 +38,7 @@
     "view-matches": "View Matches"
   },
   "room": {
+    "providers": "Pick your providers",
     "join-game": "Join game",
     "waiting": "Waiting for other players",
     "choose-category": "Choose category",
@@ -46,6 +47,7 @@
     "randomize": "Randomize",
     "genre": "Genres",
     "next": "Next",
+    "finished": "Game ended no more movies to show",
     "randomize-search": "Randomize search",
     "page-range-desc": "Select the number of pages to search",
     "qr-title": "Scan to join!",
@@ -69,7 +71,8 @@
       "genre": "Choose Genre",
       "page-range": "Choose Page Range",
       "qr-code": "Scan QR code",
-      "randomize": "Randomize Search"
+      "randomize": "Randomize Search",
+      "extra-settings": "Extra Settings"
     }
   },
   "fortune-wheel": {

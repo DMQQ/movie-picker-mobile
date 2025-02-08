@@ -1,12 +1,5 @@
 import { createContext, useContext, useState } from "react";
 
-const stages = [
-  "ChooseCategory",
-  "ChooseGenre",
-  "ChoosePage",
-  "QRCode",
-] as const;
-
 export const useCreateRoom = () => useContext(CreateRoomContext);
 
 const CreateRoomContext = createContext<{
@@ -32,7 +25,9 @@ const CreateRoomContext = createContext<{
 
   onJoinOwnRoom: () => void;
 
-  stage: string;
+  providers: number[];
+
+  setProviders: React.Dispatch<React.SetStateAction<number[]>>;
 }>({
   category: "",
   setCategory: () => {},
@@ -42,16 +37,12 @@ const CreateRoomContext = createContext<{
   setGenre: ((genre: { id: number; name: string }) => {}) as any,
   onJoinOwnRoom: () => {},
 
-  stage: "category",
+  providers: [],
+
+  setProviders: () => {},
 });
 
-export default function ContextProvider({
-  children,
-  navigation,
-}: {
-  children: React.ReactNode;
-  navigation: any;
-}) {
+export default function ContextProvider({ children, navigation }: { children: React.ReactNode; navigation: any }) {
   const [category, setCategory] = useState("");
   const [pageRange, setPageRange] = useState("1");
   const [genre, setGenre] = useState<
@@ -60,7 +51,8 @@ export default function ContextProvider({
       name: string;
     }[]
   >([]);
-  const [stage, setStage] = useState(stages[0]);
+
+  const [providers, setProviders] = useState<number[]>([]);
 
   return (
     <CreateRoomContext.Provider
@@ -72,7 +64,10 @@ export default function ContextProvider({
         genre,
         setGenre,
         onJoinOwnRoom: () => {},
-        stage,
+
+        providers,
+
+        setProviders,
       }}
     >
       {children}

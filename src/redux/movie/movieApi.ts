@@ -87,6 +87,10 @@ export const movieApi = createApi({
     getCategories: builder.query<any[], any>({
       query: () => "/categories",
     }),
+
+    getAllProviders: builder.query<any[], any>({
+      query: () => "/providers",
+    }),
   }),
 });
 
@@ -111,4 +115,6 @@ export const {
   useGetReviewsQuery,
 
   useGetCategoriesQuery,
+
+  useGetAllProvidersQuery,
 } = movieApi;
