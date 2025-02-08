@@ -28,7 +28,7 @@ const initialState: FavoritesState = {
   error: null,
 };
 
-const STORAGE_KEY = "favorites";
+const STORAGE_KEY = "favorites_groups";
 
 const makeDefaultGroups = () => {
   return [

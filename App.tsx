@@ -10,7 +10,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { store, useAppDispatch } from "./src/redux/store";
 import Overview from "./src/screens/Overview";
-import { SocketProvider } from "./src/service/SocketContext";
 import { Alert, Platform, StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MovieDetails from "./src/screens/MovieDetails";

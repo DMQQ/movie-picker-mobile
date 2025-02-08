@@ -29,40 +29,41 @@ export default function useRoom(room: string) {
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
-    (async () => {
-      // this causes issue with the room connection
+    if (!socket) return;
 
-      if (!isHost) {
-        socket?.emit("join-room", room, nickname);
-      } else {
-        socket?.emit("get-movies", room);
+    const handleMovies = async (_cards: { movies: Movie[] }) => {
+      setCards(_cards.movies);
+      await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)));
+    };
+
+    // Setup listeners once
+    socket.on("movies", handleMovies);
+    socket.on("room:state", (data) => {
+      if (data) {
+        dispatch(roomActions.setRoom(data));
+        dispatch(roomActions.setPlaying(data.isStarted));
       }
+    });
+    socket?.on("matched", (data: Movie) => {
+      setMatch(data);
+      dispatch(roomActions.addMatch(data));
+    });
+    socket.on("active", (users) => dispatch(roomActions.setActiveUsers(users)));
 
-      socket?.on("movies", async (_cards) => {
-        if (_cards.movies.length === 0) {
-          dispatch(roomActions.setGameFinished());
-        }
-        setCards(_cards.movies);
-        await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)));
-      });
+    // Initial room setup
+    if (!isHost) {
+      socket.emit("join-room", room, nickname);
+    } else {
+      socket.emit("get-movies", room);
+    }
 
-      socket?.on("room:state", (data) => {
-        if (data !== undefined) {
-          dispatch(roomActions.setRoom(data));
-          dispatch(roomActions.setPlaying(data.isStarted));
-        }
-      });
-
-      socket?.on("matched", (data: Movie) => {
-        setMatch(data);
-        dispatch(roomActions.addMatch(data));
-      });
-
-      socket?.on("active", (users: number[]) => {
-        dispatch(roomActions.setActiveUsers(users));
-      });
-    })();
-  }, []);
+    return () => {
+      socket.off("movies", handleMovies);
+      socket.off("room:state");
+      socket.off("matched");
+      socket.off("active");
+    };
+  }, [socket, room, nickname, isHost]);
 
   const runOnce = useRef(false);
   useEffect(() => {

@@ -3,7 +3,7 @@ import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io
 import { useAppSelector } from "../redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const isDev = true;
+const isDev = false;
 
 export const url = isDev ? "http://192.168.0.26:3000" : "https://movie.dmqq.dev"; //
 

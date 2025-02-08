@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
 import useTranslation from "../service/useTranslation";
+import { StatusBar } from "expo-status-bar";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -70,7 +71,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const renderItem = useCallback(({ item: group }: { item: { name: string; results: Movie[] } }) => <Section group={group} />, []);
 
   return (
-    <SafeIOSContainer>
+    <View style={{ flex: 1 }}>
       <AppLoadingOverlay />
 
       <VirtualizedList
@@ -90,7 +91,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
       />
 
       <BottomTab navigate={navigation.navigate} />
-    </SafeIOSContainer>
+    </View>
   );
 }
 
@@ -99,8 +100,16 @@ const FeaturedSection = memo(
     const { data: featured, error } = useGetFeaturedQuery();
 
     const { nickname } = useAppSelector((state) => state.room);
-
+    const navigation = useNavigation<any>();
     const t = useTranslation();
+
+    const onPress = () => {
+      navigation.navigate("MovieDetails", {
+        id: featured?.id,
+        type: featured?.type,
+        img: featured?.poster_path,
+      });
+    };
 
     return (
       <ImageBackground
@@ -120,25 +129,27 @@ const FeaturedSection = memo(
           </Pressable>
 
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <IconButton icon="heart" iconColor="red" size={32} onPress={() => props.navigate("Favourites")} />
-            <ScoreRing score={featured?.vote_average || 0} />
+            <IconButton icon="heart" iconColor="red" size={30} onPress={() => props.navigate("Favourites")} />
+            {/* <ScoreRing score={featured?.vote_average || 0} /> */}
           </View>
         </View>
 
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
-          <Text style={{ fontSize: 50, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
-            {featured?.title || featured?.name}
-          </Text>
-          <Text style={{ color: "rgba(255,255,255,0.8)", marginBottom: 10 }}>
-            {featured?.release_date || featured?.first_air_date} |{" "}
-            {(featured?.title || featured?.name) === (featured?.original_title || featured?.original_name)
-              ? ""
-              : featured?.original_title || featured?.original_name}{" "}
-            | {featured?.genres?.join(" | ")}
-          </Text>
-          <Text numberOfLines={8} style={styles.overview}>
-            {featured?.overview}
-          </Text>
+          <Pressable onPress={onPress}>
+            <Text style={{ fontSize: 50, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
+              {featured?.title || featured?.name}
+            </Text>
+            <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>
+              {featured?.vote_average.toFixed(1)}/10 |{featured?.release_date || featured?.first_air_date} |{" "}
+              {(featured?.title || featured?.name) === (featured?.original_title || featured?.original_name)
+                ? ""
+                : featured?.original_title || featured?.original_name}{" "}
+              | {featured?.genres?.join(" | ")}
+            </Text>
+            <Text numberOfLines={8} style={styles.overview}>
+              {featured?.overview}
+            </Text>
+          </Pressable>
         </LinearGradient>
       </ImageBackground>
     );

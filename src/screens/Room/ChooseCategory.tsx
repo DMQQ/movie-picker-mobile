@@ -34,9 +34,7 @@ export default function ChooseCategory({ navigation }: any) {
       { label: t("room.genres.top_rated"), path: `/discover/movie?sort_by=vote_average.desc&vote_count.gte=300` },
       {
         label: t("room.genres.upcoming"),
-        path: `/discover/movie?primary_release_date.gte=${getFormattedDate()}&primary_release_date.lte=${getFormattedDate(
-          90
-        )}&sort_by=popularity.desc`,
+        path: `/movie/upcoming`,
       },
     ],
     []
@@ -53,7 +51,9 @@ export default function ChooseCategory({ navigation }: any) {
       },
       {
         label: t("room.genres.on_the_air"),
-        path: `/discover/tv?first_air_date.gte=${getFormattedDate(-7)}&first_air_date.lte=${getFormattedDate(7)}&sort_by=popularity.desc`,
+        path: `/tv/airing_today?first_air_date.gte=${getFormattedDate(-7)}&first_air_date.lte=${getFormattedDate(
+          7
+        )}&sort_by=popularity.desc`,
       },
     ],
     []

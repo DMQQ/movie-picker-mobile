@@ -2,10 +2,12 @@ import { DarkTheme } from "@react-navigation/native";
 import { Modal, Portal, Text, useTheme } from "react-native-paper";
 import Card from "./Card";
 import Poster from "./Poster";
-import { Dimensions, Easing, StyleSheet } from "react-native";
+import { Dimensions, Easing, Platform, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, ZoomIn, withSpring, withTiming } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
+import LottieView from "lottie-react-native";
+import { useEffect, useRef } from "react";
 
 const styles = StyleSheet.create({
   matchModal: {
@@ -72,9 +74,35 @@ export default function MatchModal({ match, hideMatchModal }: { match: any; hide
 
   const t = useTranslation();
 
+  const animation = useRef<LottieView>(null);
+  const hasAnimationPlayed = useRef(false);
+
+  useEffect(() => {
+    if (match !== undefined && !hasAnimationPlayed.current) {
+      // Small delay to ensure modal is visible
+
+      animation.current?.play();
+      hasAnimationPlayed.current = true;
+    }
+
+    // Reset flag when modal closes
+    if (match === undefined) {
+      hasAnimationPlayed.current = false;
+    }
+  }, [match]);
+
   return (
     <Portal theme={DarkTheme}>
-      <Modal dismissable dismissableBackButton visible={typeof match !== "undefined"} onDismiss={hideMatchModal} style={styles.matchModal}>
+      <Modal
+        dismissable
+        dismissableBackButton
+        visible={typeof match !== "undefined"}
+        onDismiss={() => {
+          hideMatchModal();
+          hasAnimationPlayed.current = false;
+        }}
+        style={styles.matchModal}
+      >
         <Animated.Text
           entering={FadeIn.delay(200)}
           style={[
@@ -87,6 +115,27 @@ export default function MatchModal({ match, hideMatchModal }: { match: any; hide
         >
           {t("match.title")}
         </Animated.Text>
+
+        <LottieView
+          ref={animation}
+          style={{
+            position: "absolute",
+            width: Dimensions.get("window").width,
+            height: Dimensions.get("window").height,
+            top: -50,
+            left: 0,
+            zIndex: 10,
+            pointerEvents: "none",
+          }}
+          autoPlay={false}
+          loop={false}
+          speed={1.25}
+          resizeMode="cover"
+          source={require("../../assets/confetti.json")}
+          onAnimationFinish={() => {
+            hasAnimationPlayed.current = true;
+          }}
+        />
 
         {typeof match !== "undefined" && (
           <Animated.View entering={CustomEnteringTransition}>

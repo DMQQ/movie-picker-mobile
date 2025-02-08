@@ -3,12 +3,12 @@
     "newArchEnabled": true,
     "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#000"
     },
@@ -23,17 +23,8 @@
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "icon": "./assets/output-icon.png",
-      "alternateIcons": {
-        "light": {
-          "image": "./assets/icon.png"
-        },
-        "monochrome": {
-          "image": "./assets/icon-monochrome.png",
-          "prerendered": false
-        }
-      },
-      "buildNumber": "20250702",
+      "icon": "./assets/icon.png",
+      "buildNumber": "20250802",
       "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",

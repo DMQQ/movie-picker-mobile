@@ -61,6 +61,7 @@ export default function QRCodePage({ navigation }: any) {
 
   const onJoinOwnRoom = (code: string) => {
     socket?.emit("room:start", roomId);
+    dispatch(roomActions.setPlaying(true));
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
