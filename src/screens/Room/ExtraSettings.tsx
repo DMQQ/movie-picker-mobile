@@ -8,10 +8,10 @@ import { useCreateRoom } from "./ContextProvider";
 
 export default function ExtraSettings({ navigation }: any) {
   const t = useTranslation();
-  const [selectedProviders, setSelectedProviders] = useState<number[]>([]);
-  const { data } = useGetAllProvidersQuery({});
+  const { setProviders, providers } = useCreateRoom();
 
-  const { setProviders } = useCreateRoom();
+  const [selectedProviders, setSelectedProviders] = useState<number[]>(providers);
+  const { data } = useGetAllProvidersQuery({});
 
   const toggleProvider = (providerId: number) => {
     setSelectedProviders((prev) => (prev.includes(providerId) ? prev.filter((id) => id !== providerId) : [...prev, providerId]));

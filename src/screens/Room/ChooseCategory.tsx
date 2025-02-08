@@ -23,16 +23,20 @@ export default function ChooseCategory({ navigation }: any) {
 
   const movies = useMemo(
     () => [
-      { label: t("room.genres.all_movies"), path: "/discover/movie" },
+      { label: t("room.genres.all_movies"), path: "/discover/movie?sort_by=popularity.desc&vote_count.gte=100" },
       {
         label: t("room.genres.now_playing"),
-        path: `/discover/movie?primary_release_date.gte=${getFormattedDate(-30)}&primary_release_date.lte=${getFormattedDate()}`,
+        path: `/discover/movie?primary_release_date.gte=${getFormattedDate(
+          -30
+        )}&primary_release_date.lte=${getFormattedDate()}&sort_by=release_date.desc`,
       },
-      { label: t("room.genres.popular"), path: `/discover/movie?sort_by=popularity.desc` },
+      { label: t("room.genres.popular"), path: `/discover/movie?sort_by=popularity.desc&vote_count.gte=200` },
       { label: t("room.genres.top_rated"), path: `/discover/movie?sort_by=vote_average.desc&vote_count.gte=300` },
       {
         label: t("room.genres.upcoming"),
-        path: `/discover/movie?primary_release_date.gte=${getFormattedDate()}&primary_release_date.lte=${getFormattedDate(90)}`,
+        path: `/discover/movie?primary_release_date.gte=${getFormattedDate()}&primary_release_date.lte=${getFormattedDate(
+          90
+        )}&sort_by=popularity.desc`,
       },
     ],
     []
@@ -40,11 +44,17 @@ export default function ChooseCategory({ navigation }: any) {
 
   const series = useMemo(
     () => [
-      { label: t("room.genres.all_tv"), path: "/discover/tv" },
+      { label: t("room.genres.all_tv"), path: "/discover/tv?sort_by=popularity.desc&vote_count.gte=100" },
       { label: t("room.genres.top_rated_tv"), path: `/discover/tv?sort_by=vote_average.desc&vote_count.gte=300` },
-      { label: t("room.genres.popular_tv"), path: `/discover/tv?sort_by=popularity.desc` },
-      { label: t("room.genres.airing_today"), path: `/discover/tv?air_date.gte=${getFormattedDate()}&air_date.lte=${getFormattedDate()}` },
-      { label: t("room.genres.on_the_air"), path: `/discover/tv?air_date.gte=${getFormattedDate()}&air_date.lte=${getFormattedDate(7)}` },
+      { label: t("room.genres.popular_tv"), path: `/discover/tv?sort_by=popularity.desc&vote_count.gte=200` },
+      {
+        label: t("room.genres.airing_today"),
+        path: `/discover/tv?air_date.gte=${getFormattedDate()}&air_date.lte=${getFormattedDate()}&sort_by=popularity.desc`,
+      },
+      {
+        label: t("room.genres.on_the_air"),
+        path: `/discover/tv?first_air_date.gte=${getFormattedDate(-7)}&first_air_date.lte=${getFormattedDate(7)}&sort_by=popularity.desc`,
+      },
     ],
     []
   );

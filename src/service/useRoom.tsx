@@ -13,7 +13,7 @@ export default function useRoom(room: string) {
   const {
     nickname,
     isHost,
-    room: { movies: cards, match, roomId, isFinished },
+    room: { movies: cards, match, roomId, isFinished, users },
     isPlaying,
   } = useAppSelector((state) => state.room);
 
@@ -33,10 +33,8 @@ export default function useRoom(room: string) {
       // this causes issue with the room connection
 
       if (!isHost) {
-        console.log("joining room", room, nickname);
         socket?.emit("join-room", room, nickname);
       } else {
-        console.log("hosting room", room, nickname);
         socket?.emit("get-movies", room);
       }
 
@@ -80,7 +78,6 @@ export default function useRoom(room: string) {
 
   useEffect(() => {
     if (isFinished) {
-      console.log("finished");
       socket?.emit("finish", room);
       socket?.emit("get-buddy-status", room);
     }
