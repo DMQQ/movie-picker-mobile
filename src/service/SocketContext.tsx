@@ -1,17 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import { useAppSelector } from "../redux/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const isDev = false;
+const isDev = true;
 
-export const url = isDev ? "http://192.168.0.16:3000" : "https://movie.dmqq.dev"; //
-
-const userId = Math.random().toString(36).substring(7);
+export const url = isDev ? "http://192.168.0.26:3000" : "https://movie.dmqq.dev"; //
 
 export const SocketContext = React.createContext<{
   socket: Socket | null;
-  userId: string;
-}>({ socket: null, userId: "" });
+}>({ socket: null });
 
 const connectionConfig = {
   transports: ["websocket"],
@@ -19,7 +17,7 @@ const connectionConfig = {
     token: `Bearer ${(process.env as any).EXPO_PUBLIC_API_KEY}`,
   },
   extraHeaders: {
-    "user-id": userId,
+    "user-id": "",
   },
   path: "/socket.io",
   reconnection: true,
@@ -59,14 +57,20 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   useEffect(() => {
-    const socket = socketIOClient(url, {
-      ...connectionConfig,
-      extraHeaders: {
-        "user-id": userId,
-        ...makeHeaders(language),
-      },
-    });
-    setSocket({ current: socket });
+    (async () => {
+      const userId = (await AsyncStorage.getItem("userId")) || Math.random().toString(36).substring(7);
+
+      const socket = socketIOClient(url, {
+        ...connectionConfig,
+        extraHeaders: {
+          "user-id": userId,
+          ...makeHeaders(language),
+        },
+      });
+      setSocket({ current: socket });
+
+      await AsyncStorage.setItem("userId", userId);
+    })();
   }, []);
 
   useEffect(() => {
@@ -93,5 +97,5 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     return null;
   }
 
-  return <SocketContext.Provider value={{ socket: socket.current, userId }}>{children}</SocketContext.Provider>;
+  return <SocketContext.Provider value={{ socket: socket.current }}>{children}</SocketContext.Provider>;
 };

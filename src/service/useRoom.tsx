@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "./SocketContext";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
@@ -14,6 +14,7 @@ export default function useRoom(room: string) {
     nickname,
     isHost,
     room: { movies: cards, match, roomId, isFinished },
+    isPlaying,
   } = useAppSelector((state) => state.room);
 
   const setCards = (_movies: Movie[]) => {
@@ -32,25 +33,25 @@ export default function useRoom(room: string) {
       // this causes issue with the room connection
 
       if (!isHost) {
+        console.log("joining room", room, nickname);
         socket?.emit("join-room", room, nickname);
       } else {
+        console.log("hosting room", room, nickname);
         socket?.emit("get-movies", room);
       }
 
       socket?.on("movies", async (_cards) => {
+        console.log("getting movies");
         setCards(_cards.movies);
         await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)));
       });
 
-      if (!isHost) {
-        socket?.on("room-details", (data) => {
-          if (data !== undefined) {
-            dispatch(roomActions.setRoom(data));
-
-            socket.off("room-details");
-          }
-        });
-      }
+      socket?.on("room:state", (data) => {
+        if (data !== undefined) {
+          dispatch(roomActions.setRoom(data));
+          dispatch(roomActions.setPlaying(data.isStarted));
+        }
+      });
 
       socket?.on("matched", (data: Movie) => {
         setMatch(data);
@@ -61,14 +62,16 @@ export default function useRoom(room: string) {
         dispatch(roomActions.setActiveUsers(users));
       });
     })();
-
-    return () => {
-      socket?.off("movies");
-      socket?.off("matched");
-      socket?.off("room-details");
-      socket?.off("active");
-    };
   }, []);
+
+  const runOnce = useRef(false);
+  useEffect(() => {
+    if (isPlaying && runOnce.current === false && cards.length === 0) {
+      runOnce.current = true;
+      console.log("getting movies");
+      socket?.emit("get-movies", room);
+    }
+  }, [isPlaying, cards.length, room]);
 
   const removeCardLocally = (index: number) => {
     removeCard(index);
@@ -76,10 +79,11 @@ export default function useRoom(room: string) {
 
   useEffect(() => {
     if (isFinished) {
+      console.log("finished");
       socket?.emit("finish", room);
       socket?.emit("get-buddy-status", room);
     }
-  }, [isFinished]);
+  }, [isFinished, room]);
 
   const likeCard = (card: Movie, index: number) => {
     socket?.emit("pick-movie", {
@@ -116,5 +120,6 @@ export default function useRoom(room: string) {
     match,
     hideMatchModal,
     toggleLeaveModal,
+    isPlaying,
   };
 }

@@ -64,6 +64,7 @@ export default function QRScanner({ navigation }: any) {
         }
       } catch (error) {
         reject(error);
+        setIsScanned(false);
         setIsScanError(true);
       } finally {
         setIsManual(false);

@@ -31,7 +31,7 @@ export default function QRCodePage({ navigation }: any) {
   const { socket } = useContext(SocketContext);
 
   const {
-    room: { users },
+    room: { users, roomId },
   } = useAppSelector((state) => state.room);
 
   useEffect(() => {
@@ -53,8 +53,6 @@ export default function QRCodePage({ navigation }: any) {
 
           socket?.on("active", (users: string[]) => {
             dispatch(roomActions.setActiveUsers(users));
-
-            users.length > 1 && onJoinOwnRoom(response.roomId);
           });
         }
       } catch (error) {
@@ -64,6 +62,7 @@ export default function QRCodePage({ navigation }: any) {
   }, [category, pageRange, genre]);
 
   const onJoinOwnRoom = (code: string) => {
+    socket?.emit("room:start", roomId);
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -142,7 +141,7 @@ export default function QRCodePage({ navigation }: any) {
               onJoinOwnRoom(qrCode);
             }}
           >
-            {t("room.next")}
+            start
           </Button>
         </View>
       </View>

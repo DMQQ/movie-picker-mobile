@@ -11,6 +11,7 @@ import DialogModals from "../../components/Home/DialogModals";
 import HomeAppbar from "../../components/Home/Appbar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useTranslation from "../../service/useTranslation";
+import { FancySpinner } from "../../components/FancySpinner";
 
 export function throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
   let inThrottle = false;
@@ -40,7 +41,9 @@ const styles = StyleSheet.create({
 });
 
 export default function Home({ route, navigation }: any) {
-  const { cards, dislikeCard, likeCard, match, showLeaveModal, toggleLeaveModal, hideMatchModal } = useRoom(route.params?.roomId);
+  const { cards, dislikeCard, likeCard, match, showLeaveModal, toggleLeaveModal, hideMatchModal, isPlaying } = useRoom(
+    route.params?.roomId
+  );
   const isFocused = useIsFocused();
   const [showQRModal, setShowQRModal] = useState(false);
 
@@ -57,6 +60,8 @@ export default function Home({ route, navigation }: any) {
   const insets = useSafeAreaInsets();
 
   const t = useTranslation();
+
+  console.log({ isPlaying });
 
   return (
     <View style={{ flex: 1, marginBottom: insets.bottom }}>
@@ -76,23 +81,32 @@ export default function Home({ route, navigation }: any) {
         setShowQRModal={setShowQRModal}
       />
 
-      {cards.length === 0 && (
+      {isPlaying ? (
+        <>
+          {cards.map((card, index) => (
+            <SwipeTile
+              onPress={() => handleNavigateDetails(card)}
+              length={originalLength.current}
+              key={card.id}
+              card={card}
+              index={index}
+              likeCard={throttle(() => likeCard(card, index), 500)}
+              removeCard={throttle(() => dislikeCard(index), 500)}
+            />
+          ))}
+
+          {cards.length === 0 && (
+            <View style={styles.emptyListContainer}>
+              <Text style={{ fontSize: 20 }}>{t("room.waiting")}</Text>
+            </View>
+          )}
+        </>
+      ) : (
         <View style={styles.emptyListContainer}>
-          <Text style={{ fontSize: 20 }}>{t("room.waiting")}</Text>
+          <FancySpinner />
+          <Text style={{ fontSize: 20, marginTop: 15 }}>Wait for start</Text>
         </View>
       )}
-
-      {cards.map((card, index) => (
-        <SwipeTile
-          onPress={() => handleNavigateDetails(card)}
-          length={originalLength.current}
-          key={card.id}
-          card={card}
-          index={index}
-          likeCard={throttle(() => likeCard(card, index), 500)}
-          removeCard={throttle(() => dislikeCard(index), 500)}
-        />
-      ))}
 
       {isFocused && <MatchModal hideMatchModal={hideMatchModal} match={match} />}
     </View>
