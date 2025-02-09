@@ -117,5 +117,65 @@
     "language-info": "Changing this value will change the language target for created room, meaning the movies will be in choosen language but not the controls and other texts. More languages will be added in the future.",
     "about": " This is a simple app that allows you to create a room and pick movies with your friends. You can create a room and invite your friends to join you. You can also join a room by entering the room code. You can then add movies to the room and watch them together. App uses The Movie Database API to get the movies and JustWatch API to get the availabilities.",
     "security": " None of the data is stored on the server. The room is created in memory and is destroyed when the last user leaves the room. No additional data is stored on the server. The room code is generated randomly and the fav movies are stored locally in storage. Currently the backend is hosted in Europe so there might be some slower response times for users outside of Europe. The app is still in development and more features will be added in the future. I dont profit anything from this app and it is made for educational purposes."
+  },
+  "voter": {
+    "title": "Vote for the movies",
+    "swipe": "Swipe to vote",
+    "games": "Games",
+    "rate": "Your rating",
+    "home": {
+      "title": "Movie voting",
+      "description": "Start a new session or join an existing one to vote for the movies you want to watch.",
+      "howtotitle": "What is it about?",
+      "howto": "One of the players creates a session and invites others to join. The players then vote for the movies they want to watch. The movies with the most votes are then shown to the players. The players can then rate the movies and decide which one to watch.",
+      "create": "Create a new session",
+      "waiting": "Waiting for other players",
+      "waiting-initial": "Waiting for partner to join...",
+      "ready": "Ready to start",
+      "you": "You",
+      "user": "Partner",
+      "ready-status": "Ready",
+      "ready-cancel": "Cancel ready",
+      "start": "Start voting",
+      "rate": "Rate",
+      "left": "left",
+      "quit": "Quit"
+    },
+
+    "ratings": {
+      "interest": {
+        "label": "Interest",
+        "options": {
+          "1": "Don't want to watch",
+          "2": "Not sure",
+          "3": "Maybe",
+          "4": "Would like to watch",
+          "5": "Will definitely watch"
+        }
+      },
+      "mood": {
+        "label": "Mood",
+        "options": {
+          "1": "Don't want to watch",
+          "2": "Maybe",
+          "3": "Would like to watch"
+        }
+      },
+      "uniqueness": {
+        "label": "New?",
+        "options": {
+          "1": "Don't want to watch",
+          "2": "Not sure",
+          "3": "Maybe",
+          "4": "Would like to watch",
+          "5": "Will definitely watch"
+        }
+      },
+      "submit": "Submit rating"
+    },
+    "overview": {
+      "title": "Top picks",
+      "h2": "Other picks"
+    }
   }
 }

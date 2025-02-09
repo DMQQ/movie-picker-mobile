@@ -116,5 +116,64 @@
     "language-info": "Zmiana tej wartości zmieni język docelowy dla utworzonego pokoju, co oznacza, że filmy będą w wybranym języku, ale nie kontrolki i inne teksty. Więcej języków zostanie dodanych w przyszłości.",
     "about": "Jest to prosta aplikacja, która pozwala utworzyć pokój i wybierać filmy ze znajomymi. Możesz utworzyć pokój i zaprosić znajomych do dołączenia. Możesz również dołączyć do pokoju, wprowadzając kod pokoju. Następnie możesz dodawać filmy do pokoju i oglądać je razem. Aplikacja korzysta z The Movie Database API, aby pobierać filmy, oraz JustWatch API, aby uzyskać informacje o dostępności.",
     "security": "Żadne dane nie są przechowywane na serwerze. Pokój jest tworzony w pamięci i jest niszczony, gdy ostatni użytkownik go opuszcza. Żadne dodatkowe dane nie są przechowywane na serwerze. Kod pokoju jest generowany losowo, a ulubione filmy są przechowywane lokalnie w pamięci. Aplikacja nie przechowuje żadnych danych użytkownika, a jedynie pseudonim, który jest wyświetlany w pokoju. Nie zarabiam na niej"
+  },
+  "voter": {
+    "games": "Gry",
+    "title": "Głosowanie w parach",
+    "swipe": "Matchowanie ze znajomymi",
+    "rate": "Twoja ocena",
+    "home": {
+      "title": "Głosowanie w parach",
+      "description": "Głosowanie w parach to zabawa, w której możesz głosować na filmy i seriale, aby znaleźć wspólne zainteresowania ze znajomym.",
+      "howtotitle": "Jak to działa?",
+      "howto": "Jeden uzytkownik tworzy sesję, a drugi dołącza do niej. Następnie obaj użytkownicy oceniają filmy i seriale, aby znaleźć wspólne zainteresowania. Gdy obaj użytkownicy ocenią, sesja zostanie zakończona, a wyniki zostaną wyświetlone.",
+      "create": "Utwórz nową sesję",
+      "waiting": "Oczekiwanie na innych graczy",
+      "waiting-initial": "Oczekwianie na partnera...",
+      "ready": "Gotowy do głosowania",
+      "you": "Ty",
+      "user": "Partner",
+      "ready-status": "Gotowy?",
+      "ready-cancel": "Anuluj gotowość",
+      "start": "Rozpocznij głosowanie",
+      "rate": "Oceń",
+      "left": "pozostało",
+      "quit": "Opuść grę"
+    },
+    "ratings": {
+      "interest": {
+        "label": "Zainteresowanie",
+        "options": {
+          "1": "Nie chcę oglądać",
+          "2": "Nie jestem pewien",
+          "3": "Może być",
+          "4": "Chętnie obejrzę",
+          "5": "Na pewno obejrzę"
+        }
+      },
+      "mood": {
+        "label": "Nastrój",
+        "options": {
+          "1": "Nie chcę oglądać",
+          "2": "Może być",
+          "3": "Chętnie obejrzę"
+        }
+      },
+      "uniqueness": {
+        "label": "Nowy?",
+        "options": {
+          "1": "Nie chcę oglądać",
+          "2": "Nie jestem pewien",
+          "3": "Może być",
+          "4": "Chętnie obejrzę",
+          "5": "Na pewno obejrzę"
+        }
+      },
+      "submit": "Wyślij ocenę"
+    },
+    "overview": {
+      "title": "Najlepszy wybór",
+      "h2": "Inne pasujące"
+    }
   }
 }

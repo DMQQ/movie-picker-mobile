@@ -59,10 +59,10 @@ export default function Home({ navigation, route }: any) {
         <Text style={{ fontSize: 35, fontFamily: "Bebas", textAlign: "center", width: "70%" }}>{t("voter.home.title")}</Text>
       </View>
       <View style={{ flex: 1, justifyContent: "space-between", padding: 15 }}>
-        <View>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <View style={{ marginTop: 15 }}>
-            <Text style={{ fontSize: 22, fontFamily: "Bebas" }}>{t("voter.home.howtotitle")}</Text>
-            <Text>{t("voter.home.howto")}</Text>
+            <Text style={{ fontSize: 35, fontFamily: "Bebas", marginBottom: 15 }}>{t("voter.home.howtotitle")}</Text>
+            <Text style={{ fontSize: 18 }}>{t("voter.home.howto")}</Text>
           </View>
         </View>
 
@@ -78,56 +78,62 @@ export default function Home({ navigation, route }: any) {
     const currentUserReady = users.find((u) => u.userId === currentUserId)?.ready;
 
     return (
-      <Animated.View style={styles.section}>
-        <Text style={{ fontSize: 35, fontFamily: "Bebas" }}>
-          {users.length > 1 ? t("voter.home.ready") : t("voter.home.waiting-initial")}
-        </Text>
-        <Text>
-          {t("voter.home.waiting")}... ({users.length}/2)
-        </Text>
-        <View style={styles.usersContainer}>
-          {users.map((user) => (
-            <Chip
-              key={user.userId}
-              icon={user.ready ? "check" : "clock"}
-              style={[styles.userChip, user.userId === currentUserId && styles.currentUserChip]}
-            >
-              {user.userId === currentUserId ? t("voter.home.you") : t("voter.home.user")}
-              {user.ready ? " (Ready)" : ""}
-            </Chip>
-          ))}
+      <Animated.View style={{ flex: 1 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+          <IconButton icon="chevron-left" onPress={() => navigation.navigate("Landing")} size={35} />
+          <Text style={{ fontSize: 33, fontFamily: "Bebas", width: "70%" }}>
+            {users.length > 1 ? t("voter.home.ready") : t("voter.home.waiting-initial")}
+          </Text>
         </View>
 
-        {sessionId && (
-          <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
-            <QRCodeComponent sessionId={sessionId} type="voter" safetyCode="1234" size={Dimensions.get("screen").width / 2} />
-            <Text style={{ fontSize: 30, letterSpacing: 3, fontFamily: "Bebas", color: MD2DarkTheme.colors.primary, marginTop: 10 }}>
-              {sessionId}
-            </Text>
+        <View style={{ padding: 15, flex: 1 }}>
+          <Text>
+            {t("voter.home.waiting")}... ({users.length}/2)
+          </Text>
+          <View style={styles.usersContainer}>
+            {users.map((user) => (
+              <Chip
+                key={user.userId}
+                icon={user.ready ? "check" : "clock"}
+                style={[styles.userChip, user.userId === currentUserId && styles.currentUserChip]}
+              >
+                {user.userId === currentUserId ? t("voter.home.you") : t("voter.home.user")}
+                {user.ready ? " (Ready)" : ""}
+              </Chip>
+            ))}
           </View>
-        )}
 
-        <Button mode="contained" onPress={handleReady} style={styles.button} contentStyle={{ padding: 7.5 }}>
-          {currentUserReady ? t("voter.home.ready-cancel") : t("voter.home.ready-status")}
-        </Button>
+          {sessionId && (
+            <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+              <QRCodeComponent sessionId={sessionId} type="voter" safetyCode="1234" size={Dimensions.get("screen").width / 2} />
+              <Text style={{ fontSize: 30, letterSpacing: 3, fontFamily: "Bebas", color: MD2DarkTheme.colors.primary, marginTop: 10 }}>
+                {sessionId}
+              </Text>
+            </View>
+          )}
 
-        {allReady && isHost && (
-          <Button
-            mode="contained"
-            onPress={actions.startSession}
-            style={[
-              styles.button,
-              {
-                backgroundColor: MD2DarkTheme.colors.accent,
-              },
-            ]}
-            contentStyle={{
-              padding: 7.5,
-            }}
-          >
-            {t("voter.home.start")}
+          <Button mode="contained" onPress={handleReady} style={styles.button} contentStyle={{ padding: 7.5 }}>
+            {currentUserReady ? t("voter.home.ready-cancel") : t("voter.home.ready-status")}
           </Button>
-        )}
+
+          {allReady && isHost && (
+            <Button
+              mode="contained"
+              onPress={actions.startSession}
+              style={[
+                styles.button,
+                {
+                  backgroundColor: MD2DarkTheme.colors.accent,
+                },
+              ]}
+              contentStyle={{
+                padding: 7.5,
+              }}
+            >
+              {t("voter.home.start")}
+            </Button>
+          )}
+        </View>
       </Animated.View>
     );
   };
@@ -168,7 +174,7 @@ export default function Home({ navigation, route }: any) {
                     fontFamily: "Bebas",
                   }}
                 >
-                  {card?.title}
+                  {card?.title || card?.name}
                 </Text>
                 <Text style={{ width: "100%" }}>★{card?.vote_average.toFixed(2)}/10 </Text>
 
@@ -343,13 +349,22 @@ function Results({ navigation }: any) {
       }}
       style={{ flex: 1, ...StyleSheet.absoluteFillObject }}
     >
+      <View
+        style={{
+          padding: 10,
+          flexDirection: "row",
+          alignItems: "center",
+          paddingVertical: 10,
+          backgroundColor: "rgba(0,0,0,0.2)",
+        }}
+      >
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={35} />
+        <Text style={{ fontSize: 40, fontFamily: "Bebas", width: "70%" }}>{t("voter.overview.title")} 🎬</Text>
+      </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)", paddingHorizontal: 15, paddingBottom: 15 }}
       >
-        <View style={{ padding: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 10 }}>
-          <Text style={{ fontSize: 40, fontFamily: "Bebas" }}>{t("voter.overview.title")} 🎬</Text>
-        </View>
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: "row", gap: 15 }}>
             <Image
@@ -367,7 +382,7 @@ function Results({ navigation }: any) {
                   fontFamily: "Bebas",
                 }}
               >
-                {card?.title}
+                {card?.title || card?.name}
               </Text>
               <Text style={{ width: "100%" }}>★{card?.vote_average.toFixed(2)}/10 </Text>
 
@@ -386,7 +401,7 @@ function Results({ navigation }: any) {
               <TouchableRipple
                 disabled={!item.movie.id}
                 key={item.movie.id}
-                style={{ marginBottom: 15, width: Dimensions.get("screen").width - 30 }}
+                style={{ marginBottom: 15, width: Dimensions.get("screen").width - 30, overflow: "hidden" }}
                 onPress={() => {
                   navigation.navigate("MovieDetails", {
                     id: item.movie.id,
@@ -405,22 +420,26 @@ function Results({ navigation }: any) {
                     }}
                   />
                   <View>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", height: 45 }}
+                    >
                       <Text
                         style={{
                           fontSize: 30,
                           fontFamily: "Bebas",
                         }}
                       >
-                        {item.movie.title}
+                        {item?.movie?.title || item?.movie?.name}
                       </Text>
                       <CustomFavourite movie={item.movie} />
                     </View>
-                    <Text style={{ width: "100%" }}>★{item.movie.vote_average.toFixed(2)}/10 </Text>
+                    <View>
+                      <Text>★ {item.movie.vote_average.toFixed(2)}/10 </Text>
 
-                    <Text style={{ width: "100%" }}>
-                      {item.movie.release_date} | {item.movie.original_language}
-                    </Text>
+                      <Text numberOfLines={3} textBreakStrategy="simple">
+                        {item.movie.release_date} | {item.movie.original_language} | {item?.movie?.overview}
+                      </Text>
+                    </View>
                   </View>
                 </View>
               </TouchableRipple>
@@ -428,7 +447,12 @@ function Results({ navigation }: any) {
           </View>
         </View>
 
-        <Button mode="contained" onPress={() => navigation.navigate("Landing")} style={styles.button} contentStyle={{ padding: 7.5 }}>
+        <Button
+          mode="contained"
+          onPress={() => navigation.navigate("Landing")}
+          style={[styles.button, { marginBottom: 15 }]}
+          contentStyle={{ padding: 7.5 }}
+        >
           {t("voter.home.quit")}
         </Button>
       </ScrollView>
