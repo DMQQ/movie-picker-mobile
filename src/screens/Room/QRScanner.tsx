@@ -22,18 +22,18 @@ export default function QRScanner({ navigation }: any) {
   const onBarcodeScanned = async (barCodeScannerResult: any) => {
     setIsScanned(true);
 
-    const isValid = !barCodeScannerResult?.data?.startsWith("https://") && barCodeScannerResult.data.includes("roomId");
+    const isValid = barCodeScannerResult.data.includes("sessionId") || barCodeScannerResult.data.includes("roomId");
+
+    console.log("isValid", isValid, barCodeScannerResult.data);
 
     if (!isValid) return;
 
     const parsed = JSON.parse(barCodeScannerResult?.data);
 
-    if (!parsed.roomId && Platform.OS === "android") return ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
-
     try {
       Vibration.vibrate();
 
-      await joinRoom(parsed.roomId);
+      await joinRoom(parsed);
     } catch (error) {
       if (Platform.OS === "android") ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
     } finally {
@@ -41,9 +41,35 @@ export default function QRScanner({ navigation }: any) {
     }
   };
 
-  const joinRoom = async (code: string) => {
+  const joinRoom = async (c: any) => {
     return new Promise(async (resolve, reject) => {
+      //@ts-ignore
+      const code = c?.roomId || c?.sessionId || c;
+
+      if (code[0] === "V") {
+        return navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: "Voter",
+                state: {
+                  routes: [
+                    {
+                      name: "Home",
+                      params: { sessionId: code },
+                    },
+                  ],
+                },
+              },
+            ],
+          })
+        );
+      }
+
       try {
+        //@ts-ignore
+
         const response = await socket?.emitWithAck("join-room", code, nickname);
 
         if (response.joined) {

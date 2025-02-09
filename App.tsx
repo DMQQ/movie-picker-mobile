@@ -24,6 +24,8 @@ import { loadFavorites } from "./src/redux/favourites/favourites";
 import { roomActions } from "./src/redux/room/roomSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Group from "./src/screens/Group";
+import Main from "./src/screens/Voter/Main";
+import GameList from "./src/screens/GameList";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -184,6 +186,16 @@ const Navigator = () => {
               ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
+
+          <Stack.Screen
+            name="Voter"
+            component={Main}
+            options={{
+              headerShown: false,
+              title: "",
+            }}
+          />
+
           <Stack.Screen
             name="SectionSelector"
             component={SectionSelector}
@@ -191,6 +203,14 @@ const Navigator = () => {
               headerShown: false,
               title: "",
               ...(Platform.OS === "ios" && { presentation: "modal" }),
+            }}
+          />
+
+          <Stack.Screen
+            name="Games"
+            component={GameList}
+            options={{
+              headerShown: false,
             }}
           />
         </Stack.Navigator>

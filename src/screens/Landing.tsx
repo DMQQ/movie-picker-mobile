@@ -182,7 +182,7 @@ const BottomTab = memo(
             icon={"gamepad-variant-outline"}
             style={{ backgroundColor: MD2DarkTheme.colors.primary }}
           />
-          <IconButton size={30} onPress={() => navigate("QRCode")} icon={"plus"} style={{ backgroundColor: MD2DarkTheme.colors.primary }} />
+          <IconButton size={30} onPress={() => navigate("Games")} icon={"plus"} style={{ backgroundColor: MD2DarkTheme.colors.primary }} />
         </View>
       </View>
     );

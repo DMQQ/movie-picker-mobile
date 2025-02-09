@@ -15,7 +15,7 @@ const Stack = createNativeStackNavigator();
 export default function QRCode({ navigation }: any) {
   const t = useTranslation();
   return (
-    <SocketProvider>
+    <SocketProvider namespace="/swipe">
       <ContextProvider navigation={navigation}>
         <Stack.Navigator initialRouteName="ChooseCategory" screenOptions={{ headerShown: false }}>
           <Stack.Screen
