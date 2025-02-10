@@ -22,7 +22,7 @@ export default function TilesList<T>(props: TileListProps) {
 
   return (
     <Animated.FlatList
-      numColumns={2}
+      numColumns={3}
       style={{ marginBottom: 50 }}
       ListHeaderComponent={
         props.label ? (

@@ -137,7 +137,7 @@
       "ready-cancel": "Anuluj gotowość",
       "start": "Rozpocznij głosowanie",
       "rate": "Oceń",
-      "left": "pozostało",
+      "left": "pozostało w tej kolejce",
       "quit": "Opuść grę"
     },
     "ratings": {
@@ -160,13 +160,13 @@
         }
       },
       "uniqueness": {
-        "label": "Nowy?",
+        "label": "Wyjątkowość",
         "options": {
-          "1": "Nie chcę oglądać",
-          "2": "Nie jestem pewien",
-          "3": "Może być",
-          "4": "Chętnie obejrzę",
-          "5": "Na pewno obejrzę"
+          "1": "Ani troche",
+          "2": "Raczej nie",
+          "3": "Może",
+          "4": "Raczej tak",
+          "5": "Napewno"
         }
       },
       "submit": "Wyślij ocenę"

@@ -13,7 +13,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const t = useTranslation();
 
   return (
-    <SafeIOSContainer style={{ marginTop: 0 }}>
+    <SafeIOSContainer style={{ marginTop: 0, paddingBottom: 50 }}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={35} />
 
@@ -21,6 +21,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
       </View>
       <View style={{ padding: 15 }}>
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={groups}
           keyExtractor={(k) => k.id}
           renderItem={({ item }) => (
@@ -28,6 +29,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
               rippleColor={"#000"}
               disabled={item?.movies?.length === 0}
               onPress={() => navigation.navigate("Group", { group: item })}
+              style={{ marginBottom: 15 }}
             >
               <>
                 <ImageBackground

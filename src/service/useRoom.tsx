@@ -32,6 +32,7 @@ export default function useRoom(room: string) {
     if (!socket) return;
 
     const handleMovies = async (_cards: { movies: Movie[] }) => {
+      console.log("Received movies", _cards.movies.length);
       setCards(_cards.movies);
       await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)));
     };
@@ -110,6 +111,16 @@ export default function useRoom(room: string) {
   const toggleLeaveModal = () => {
     setShowLeaveModal((p) => !p);
   };
+
+  console.log({
+    isPlaying,
+    isHost,
+    name: nickname,
+    room,
+    users,
+    cards: cards.length,
+    match: !!match,
+  });
 
   return {
     cards,

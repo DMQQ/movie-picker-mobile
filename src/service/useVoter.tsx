@@ -3,6 +3,7 @@ import { Socket } from "socket.io-client";
 import { SocketContext } from "./SocketContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Movie } from "../../types";
+import * as Haptics from "expo-haptics";
 
 interface MovieVoterContextValue {
   sessionId: string | null;
@@ -56,6 +57,8 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   const [sessionResults, setSessionResults] = useState<MovieVoterContextValue["sessionResults"]>(null);
 
   const createSession = useCallback(async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     if (!socket) return;
 
     const { sessionId, error } = await socket.emitWithAck("voter:session:create", {});
@@ -105,6 +108,8 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
 
   const setReady = useCallback(
     (ready: boolean) => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
       if (!socket || !sessionId) return;
       socket.emit("voter:session:ready", { sessionId, ready });
     },
@@ -112,6 +117,8 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const startSession = useCallback(async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     if (!socket || !sessionId || !isHost) return;
 
     const response = await socket.emitWithAck("voter:session:start", { sessionId });
@@ -123,6 +130,8 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
 
   const submitRating = useCallback(
     (movieId: string, ratings: RatingCriteria) => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
       if (!socket || !sessionId) return;
 
       socket.emit("voter:rating:submit", {

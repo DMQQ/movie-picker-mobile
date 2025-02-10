@@ -1,12 +1,50 @@
-import { Dimensions, Platform, View } from "react-native";
-import { ActivityIndicator, MD2DarkTheme } from "react-native-paper";
-import ScratchCard from "../../components/ScratchCard";
-import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from "react-native-reanimated";
-import { useEffect, useRef, useState } from "react";
 import LottieView from "lottie-react-native";
+import { useEffect, useRef, useState } from "react";
+import { Dimensions, Platform } from "react-native";
+import { ActivityIndicator, MD2DarkTheme } from "react-native-paper";
+import Animated, { FadeIn, FadeOut, withSpring, withTiming } from "react-native-reanimated";
+import ScratchCard from "../../components/ScratchCard";
+
+const ModalEnteringTransition = () => {
+  "worklet";
+  return {
+    initialValues: {
+      opacity: 0,
+      transform: [{ scale: 0.8 }, { translateY: 100 }],
+    },
+    animations: {
+      opacity: withSpring(1),
+      transform: [
+        { scale: withSpring(1) },
+        {
+          translateY: withSpring(0, {
+            damping: 12,
+            stiffness: 90,
+          }),
+        },
+      ],
+    },
+  };
+};
+
+const ModalExitingTransition = () => {
+  "worklet";
+  return {
+    initialValues: {
+      opacity: 1,
+      transform: [{ scale: 1 }, { translateY: 0 }],
+    },
+    animations: {
+      opacity: withTiming(0, { duration: 200 }),
+      transform: [{ scale: withTiming(0.9) }, { translateY: withTiming(-50) }],
+    },
+  };
+};
 
 export default function Modal({ match }: any) {
   const [isLoading, setIsLoading] = useState(true);
+  const animation = useRef<LottieView>(null);
+  const hasAnimationPlayed = useRef(false);
 
   useEffect(() => {
     let timeout = setTimeout(() => {
@@ -18,13 +56,10 @@ export default function Modal({ match }: any) {
     return () => clearTimeout(timeout);
   }, []);
 
-  const animation = useRef<LottieView>(null);
-  const hasAnimationPlayed = useRef(false);
-
   return (
     <Animated.View
-      entering={FadeInDown}
-      exiting={FadeOutDown}
+      entering={FadeIn}
+      exiting={FadeOut.delay(200)}
       style={{
         ...Dimensions.get("window"),
         backgroundColor: "rgba(0, 0, 0, 0.9)",
@@ -54,7 +89,9 @@ export default function Modal({ match }: any) {
           hasAnimationPlayed.current = true;
         }}
       />
-      <View
+      <Animated.View
+        entering={ModalEnteringTransition}
+        exiting={ModalExitingTransition}
         style={{
           borderWidth: 2,
           borderColor: MD2DarkTheme.colors.primary,
@@ -88,7 +125,7 @@ export default function Modal({ match }: any) {
             height: Dimensions.get("window").height / 1.5 - 50,
           }}
         />
-      </View>
+      </Animated.View>
     </Animated.View>
   );
 }

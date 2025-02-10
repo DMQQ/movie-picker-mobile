@@ -1,22 +1,13 @@
 import { Dimensions, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Movie } from "../../../types";
-import Animated, {
-  Easing,
-  Extrapolation,
-  FadeInDown,
-  interpolate,
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { Extrapolation, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Poster from "./Poster";
 import { Text } from "react-native-paper";
 import { memo } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import TabBar from "../Home/TabBar";
+import * as Haptics from "expo-haptics";
 
 const { width } = Dimensions.get("screen");
 
@@ -139,6 +130,8 @@ const SwipeTile = ({
         position.value = withSpring({ x: width + 100, y: 100 });
       }
       fn();
+
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     };
   };
 

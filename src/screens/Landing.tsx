@@ -140,7 +140,7 @@ const FeaturedSection = memo(
               {featured?.title || featured?.name}
             </Text>
             <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>
-              {featured?.vote_average.toFixed(1)}/10 |{featured?.release_date || featured?.first_air_date} |{" "}
+              {featured?.vote_average.toFixed(1)}/10 | {featured?.release_date || featured?.first_air_date} |{" "}
               {(featured?.title || featured?.name) === (featured?.original_title || featured?.original_name)
                 ? ""
                 : featured?.original_title || featured?.original_name}{" "}

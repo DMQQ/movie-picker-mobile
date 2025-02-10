@@ -44,6 +44,12 @@ const makeDefaultGroups = () => {
       movies: [],
       posterPath: undefined,
     },
+    {
+      id: "3",
+      name: "Watched",
+      movies: [],
+      posterPath: undefined,
+    },
   ] as FavoriteGroup[];
 };
 

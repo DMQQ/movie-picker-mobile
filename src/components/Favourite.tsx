@@ -4,6 +4,7 @@ import { IconButton, MD2DarkTheme } from "react-native-paper";
 import { Movie } from "../../types";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
+import * as Haptics from "expo-haptics";
 
 export default function CustomFavourite({ movie }: { movie: Movie }) {
   const dispatch = useAppDispatch<any>();
@@ -68,7 +69,10 @@ export default function CustomFavourite({ movie }: { movie: Movie }) {
                       : MD2DarkTheme.colors.background,
                   },
                 ]}
-                onPress={() => onPress(group)}
+                onPress={() => {
+                  onPress(group);
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
               >
                 <Text style={styles.itemText}>{group.name}</Text>
               </TouchableOpacity>

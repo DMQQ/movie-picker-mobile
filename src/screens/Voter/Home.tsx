@@ -4,11 +4,14 @@ import { Button, Text, Chip, MD2DarkTheme, TouchableRipple, IconButton } from "r
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useMovieVoter } from "../../service/useVoter";
 import RangeSlider from "../../components/RangeSlidePicker";
-import Animated from "react-native-reanimated";
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from "react-native-reanimated";
 import CustomFavourite from "../../components/Favourite";
 import QRCodeComponent from "../../components/Voter/QRCode";
 import { FancySpinner } from "../../components/FancySpinner";
 import useTranslation from "../../service/useTranslation";
+import QuickActions from "../../components/QuickActions";
+
+import * as Haptics from "expo-haptics";
 
 export default function Home({ navigation, route }: any) {
   const { sessionId, status, users, currentMovies, currentUserId, actions, isHost } = useMovieVoter();
@@ -27,12 +30,13 @@ export default function Home({ navigation, route }: any) {
 
   useEffect(() => {
     if (route?.params?.sessionId) {
-      console.log("Joining session ", route?.params?.sessionId);
       actions.joinSession(route?.params?.sessionId);
     }
   }, [route?.params?.sessionId]);
 
   const handleSubmitRating = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     if (currentMovies?.[0]?.id) {
       actions.submitRating(currentMovies[0].id as any, localRatings);
 
@@ -48,7 +52,18 @@ export default function Home({ navigation, route }: any) {
     const newReadyState = !localReady;
     setLocalReady(newReadyState);
     actions.setReady(newReadyState);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
+
+  useEffect(() => {
+    Promise.any([
+      Image.prefetch("https://image.tmdb.org/t/p/w500" + currentMovies[0]?.backdrop_path),
+      Image.prefetch("https://image.tmdb.org/t/p/w500" + currentMovies[0]?.poster_path),
+
+      Image.prefetch("https://image.tmdb.org/t/p/w500" + currentMovies[1]?.backdrop_path),
+      Image.prefetch("https://image.tmdb.org/t/p/w500" + currentMovies[1]?.poster_path),
+    ]);
+  }, [currentMovies.length]);
 
   const t = useTranslation();
 
@@ -142,154 +157,165 @@ export default function Home({ navigation, route }: any) {
 
   const renderRatingState = () =>
     card ? (
-      <ImageBackground
-        blurRadius={5}
-        source={{
-          uri: "https://image.tmdb.org/t/p/w500" + card?.backdrop_path,
-        }}
-        style={{ flex: 1, ...StyleSheet.absoluteFillObject }}
-      >
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)", paddingHorizontal: 15, paddingBottom: 15 }}>
-          <View style={{ padding: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-            <Text style={{ fontSize: 40, fontFamily: "Bebas" }}>{t("voter.home.rate")} 🎬</Text>
+      <Animated.View style={[{ flex: 1 }]} key={card.id} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
+        <ImageBackground
+          blurRadius={5}
+          source={{
+            uri: "https://image.tmdb.org/t/p/w500" + card?.backdrop_path,
+          }}
+          style={{ flex: 1, ...StyleSheet.absoluteFillObject }}
+        >
+          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)", paddingHorizontal: 15, paddingBottom: 15 }}>
+            <View style={{ padding: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+              <Text style={{ fontSize: 40, fontFamily: "Bebas" }}>{t("voter.home.rate")} 🎬</Text>
 
-            <Text style={{ fontFamily: "Bebas", fontSize: 20 }}>
-              {currentMovies.length} {t("voter.home.left")}
-            </Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <View style={{ flexDirection: "row", gap: 15 }}>
-              <Image
-                source={{ uri: "https://image.tmdb.org/t/p/w500" + card?.poster_path }}
-                style={{
-                  width: (Dimensions.get("window").width - 30) / 2 - 60,
-                  height: 215,
-                  borderRadius: 10,
-                }}
-              />
-              <View style={{ flex: 1, gap: 10, justifyContent: "flex-end" }}>
+              <Text style={{ fontFamily: "Bebas", fontSize: 20 }}>
+                {currentMovies.length} {t("voter.home.left")}
+              </Text>
+            </View>
+            <View style={{ flex: 1, marginTop: 10 }}>
+              <View style={{ flexDirection: "row", gap: 15 }}>
+                <Animated.Image
+                  entering={FadeInDown.duration(300)}
+                  exiting={FadeOutDown.duration(300)}
+                  source={{ uri: "https://image.tmdb.org/t/p/w500" + card?.poster_path }}
+                  style={{
+                    width: (Dimensions.get("window").width - 30) / 2 - 60,
+                    height: 215,
+                    borderRadius: 10,
+                  }}
+                />
+                <View style={{ flex: 1, gap: 10, paddingVertical: 10, justifyContent: "space-between" }}>
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 40,
+                        fontFamily: "Bebas",
+                      }}
+                    >
+                      {card?.title || card?.name}
+                    </Text>
+
+                    <Text style={{ width: "100%" }}>
+                      ★{card?.vote_average.toFixed(2)} / 10{" "}
+                      {[card?.release_date, `(${card?.original_language.toUpperCase()})`].filter((v) => v !== undefined).join(" | ")}
+                    </Text>
+                  </View>
+
+                  <QuickActions movie={card} />
+                </View>
+              </View>
+              <Animated.Text
+                entering={FadeInDown}
+                exiting={FadeOutDown}
+                numberOfLines={9}
+                style={{ marginTop: 10, color: "rgba(255,255,255,0.9)", fontSize: 15, fontWeight: "500" }}
+              >
+                {card?.overview}
+              </Animated.Text>
+            </View>
+
+            <View style={{ flex: 1, marginTop: 30, justifyContent: "space-between" }}>
+              <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>{t("voter.rate")}</Text>
+
+              <View style={{ gap: 10, marginTop: 15, height: 60 }}>
                 <Text
                   style={{
-                    fontSize: 35,
+                    fontSize: 20,
                     fontFamily: "Bebas",
                   }}
                 >
-                  {card?.title || card?.name}
+                  {t("voter.ratings.interest.label")}: (
+                  {
+                    [
+                      t("voter.ratings.interest.options.1"),
+                      t("voter.ratings.interest.options.2"),
+                      t("voter.ratings.interest.options.3"),
+                      t("voter.ratings.interest.options.4"),
+                      t("voter.ratings.interest.options.5"),
+                    ][localRatings.interest]
+                  }
+                  )
                 </Text>
-                <Text style={{ width: "100%" }}>★{card?.vote_average.toFixed(2)}/10 </Text>
-
-                <Text style={{ width: "100%" }}>
-                  {card?.release_date} | {card?.original_language}
-                </Text>
-
-                <CustomFavourite movie={card} />
+                <RangeSlider
+                  value={localRatings.interest}
+                  width={Dimensions.get("window").width - 30}
+                  steps={5}
+                  barHeight={30}
+                  barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
+                  handleSize={30}
+                  handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
+                  onChange={(value) => setLocalRatings((p) => ({ ...p, interest: value }))}
+                />
               </View>
+
+              <View style={{ gap: 10, marginTop: 15, height: 60 }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontFamily: "Bebas",
+                  }}
+                >
+                  {t("voter.ratings.mood.label")}: (
+                  {
+                    [t("voter.ratings.mood.options.1"), t("voter.ratings.mood.options.2"), t("voter.ratings.mood.options.3")][
+                      localRatings.mood
+                    ]
+                  }
+                  )
+                </Text>
+                <RangeSlider
+                  value={localRatings.mood}
+                  width={Dimensions.get("window").width - 30}
+                  steps={3}
+                  barHeight={30}
+                  barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
+                  handleSize={30}
+                  handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
+                  onChange={(value) => setLocalRatings((p) => ({ ...p, mood: value }))}
+                />
+              </View>
+
+              <View style={{ gap: 10, marginTop: 15, height: 60 }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontFamily: "Bebas",
+                  }}
+                >
+                  {t("voter.ratings.uniqueness.label")}: (
+                  {
+                    [
+                      t("voter.ratings.uniqueness.options.1"),
+                      t("voter.ratings.uniqueness.options.2"),
+                      t("voter.ratings.uniqueness.options.3"),
+                      t("voter.ratings.uniqueness.options.4"),
+                      t("voter.ratings.uniqueness.options.5"),
+                    ][localRatings.uniqueness]
+                  }
+                  )
+                </Text>
+                <RangeSlider
+                  value={localRatings.uniqueness}
+                  width={Dimensions.get("window").width - 30}
+                  steps={5}
+                  barHeight={30}
+                  barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
+                  handleSize={30}
+                  handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
+                  onChange={(value) => setLocalRatings((p) => ({ ...p, uniqueness: value }))}
+                />
+              </View>
+
+              <Button onPress={handleSubmitRating} mode="contained" style={styles.button} contentStyle={{ padding: 10 }}>
+                {t("voter.ratings.submit")}
+              </Button>
             </View>
-            <Text numberOfLines={9} style={{ marginTop: 10, color: "rgba(255,255,255,0.9)", fontSize: 15, fontWeight: "500" }}>
-              {card?.overview}
-            </Text>
           </View>
-
-          <View style={{ flex: 1, marginTop: 30, justifyContent: "space-between" }}>
-            <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>{t("voter.rate")}</Text>
-
-            <View style={{ gap: 10, marginTop: 15, height: 60 }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontFamily: "Bebas",
-                }}
-              >
-                {t("voter.ratings.interest.label")}: (
-                {
-                  [
-                    t("voter.ratings.interest.options.1"),
-                    t("voter.ratings.interest.options.2"),
-                    t("voter.ratings.interest.options.3"),
-                    t("voter.ratings.interest.options.4"),
-                    t("voter.ratings.interest.options.5"),
-                  ][localRatings.interest]
-                }
-                )
-              </Text>
-              <RangeSlider
-                value={localRatings.interest}
-                width={Dimensions.get("window").width - 30}
-                steps={5}
-                barHeight={30}
-                barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
-                handleSize={30}
-                handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
-                onChange={(value) => setLocalRatings((p) => ({ ...p, interest: value }))}
-              />
-            </View>
-
-            <View style={{ gap: 10, marginTop: 15, height: 60 }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontFamily: "Bebas",
-                }}
-              >
-                {t("voter.ratings.mood.label")}: (
-                {
-                  [t("voter.ratings.mood.options.1"), t("voter.ratings.mood.options.2"), t("voter.ratings.mood.options.3")][
-                    localRatings.mood
-                  ]
-                }
-                )
-              </Text>
-              <RangeSlider
-                value={localRatings.mood}
-                width={Dimensions.get("window").width - 30}
-                steps={3}
-                barHeight={30}
-                barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
-                handleSize={30}
-                handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
-                onChange={(value) => setLocalRatings((p) => ({ ...p, mood: value }))}
-              />
-            </View>
-
-            <View style={{ gap: 10, marginTop: 15, height: 60 }}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontFamily: "Bebas",
-                }}
-              >
-                {t("voter.ratings.uniqueness.label")}: (
-                {
-                  [
-                    t("voter.ratings.uniqueness.options.1"),
-                    t("voter.ratings.uniqueness.options.2"),
-                    t("voter.ratings.uniqueness.options.3"),
-                    t("voter.ratings.uniqueness.options.4"),
-                    t("voter.ratings.uniqueness.options.5"),
-                  ][localRatings.uniqueness]
-                }
-                )
-              </Text>
-              <RangeSlider
-                value={localRatings.uniqueness}
-                width={Dimensions.get("window").width - 30}
-                steps={5}
-                barHeight={30}
-                barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
-                handleSize={30}
-                handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
-                onChange={(value) => setLocalRatings((p) => ({ ...p, uniqueness: value }))}
-              />
-            </View>
-
-            <Button onPress={handleSubmitRating} mode="contained" style={styles.button} contentStyle={{ padding: 10 }}>
-              {t("voter.ratings.submit")}
-            </Button>
-          </View>
-        </View>
-      </ImageBackground>
+        </ImageBackground>
+      </Animated.View>
     ) : (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 10 }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 15 }}>
         <FancySpinner />
 
         <Text>{t("voter.home.waiting")}</Text>
@@ -375,7 +401,7 @@ function Results({ navigation }: any) {
                 borderRadius: 10,
               }}
             />
-            <View style={{ flex: 1, gap: 10, justifyContent: "flex-end" }}>
+            <View style={{ flex: 1, gap: 10, justifyContent: "space-between", paddingVertical: 15 }}>
               <Text
                 style={{
                   fontSize: 35,
@@ -384,13 +410,11 @@ function Results({ navigation }: any) {
               >
                 {card?.title || card?.name}
               </Text>
-              <Text style={{ width: "100%" }}>★{card?.vote_average.toFixed(2)}/10 </Text>
-
-              <Text style={{ width: "100%" }}>
-                {card?.release_date} | {card?.original_language}
+              <Text style={{ width: "100%", marginBottom: 10 }}>
+                ★{card?.vote_average.toFixed(2)}/10 {card?.release_date} | {card?.original_language}
               </Text>
 
-              {card && <CustomFavourite movie={card} />}
+              {card && <QuickActions movie={card} />}
             </View>
           </View>
           <Text style={{ marginTop: 10, color: "rgba(255,255,255,0.9)", fontSize: 15, fontWeight: "500" }}>{card?.overview}</Text>
