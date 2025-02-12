@@ -1,4 +1,4 @@
-import { useWindowDimensions, View } from "react-native";
+import { Platform, useWindowDimensions, View } from "react-native";
 import { MovieDetails as MovieDetailsType } from "../../types";
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { ScreenProps } from "./types";
@@ -21,16 +21,20 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
   const IMG_HEIGHT = height * 0.75;
 
   const imageStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]),
-        },
-        {
-          scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
-        },
-      ],
-    };
+    return Platform.OS === "ios"
+      ? {
+          transform: [
+            {
+              translateY: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]),
+            },
+            {
+              scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
+            },
+          ],
+        }
+      : {
+          transform: [{ translateY: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [-IMG_HEIGHT / 3, 0, IMG_HEIGHT / 3]) }],
+        };
   });
 
   const typeOfContent = route?.params?.type;
@@ -61,6 +65,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
       </View>
 
       <Animated.Image
+        resizeMethod={"resize"}
         //sharedTransitionStyle={sharedElementTransition}
         // sharedTransitionTag={`movie-poster-image-${route.params.img}`}
         style={[

@@ -57,7 +57,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export default function Modal({ match, onClose }: any) {
+export default function Modal({ match, onClose, styles }: any) {
   const [isLoading, setIsLoading] = useState(true);
   const animation = useRef<LottieView>(null);
   const hasAnimationPlayed = useRef(false);
@@ -78,14 +78,17 @@ export default function Modal({ match, onClose }: any) {
         onPress={onClose}
         entering={FadeIn}
         exiting={FadeOut.delay(200)}
-        style={{
-          ...Dimensions.get("window"),
-          backgroundColor: "rgba(0, 0, 0, 0.9)",
-          alignItems: "center",
-          position: "absolute",
-          top: 0,
-          left: 0,
-        }}
+        style={[
+          {
+            ...Dimensions.get("window"),
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
+            alignItems: "center",
+            position: "absolute",
+            top: 0,
+            left: 0,
+          },
+          styles,
+        ]}
       >
         <LottieView
           ref={animation}

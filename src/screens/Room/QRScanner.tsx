@@ -217,10 +217,19 @@ const ManualCodeInput = ({ joinRoom }: { joinRoom: (code: string) => Promise<any
         autoFocus
         textAlign="center"
         onSubmitEditing={onManualPress}
-        onChangeText={(text) => {
-          setCode(text.toUpperCase().trim());
+        onChangeText={setCode}
+        // Add these props to help prevent double input
+        autoCapitalize="characters"
+        autoComplete="off"
+        autoCorrect={false}
+        style={{
+          marginBottom: 10,
+          borderRadius: 20,
+          textTransform: "uppercase",
+          textAlign: "center",
+          fontSize: 20,
+          letterSpacing: 1,
         }}
-        style={{ marginBottom: 10, borderRadius: 20, textTransform: "uppercase", textAlign: "center", fontSize: 20, letterSpacing: 1 }}
       />
 
       <Button mode="text" onPress={onManualPress} style={{ marginTop: 10 }}>

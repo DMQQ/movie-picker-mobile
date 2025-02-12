@@ -1,7 +1,7 @@
 import { Text, useTheme } from "react-native-paper";
 import Card from "./Card";
 import Poster from "./Poster";
-import { Dimensions, Pressable, StyleSheet } from "react-native";
+import { Dimensions, Platform, Pressable, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeOut, SlideInUp, SlideOutUp, withSpring, withTiming } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     fontSize: 55,
     fontFamily: "Bebas",
     color: "#fff",
-    marginBottom: 20,
+    marginTop: Platform.OS === "ios" ? 0 : 30,
   },
   matchCard: {
     justifyContent: "flex-start",
@@ -108,7 +108,7 @@ export default function MatchModal({ match, hideMatchModal }: { match: any; hide
   return (
     <Animated.View entering={FadeIn} exiting={FadeOut.delay(200)} style={styles.matchModal}>
       <Pressable onPress={hideMatchModal}>
-        <Animated.Text style={[styles.matchText]} entering={SlideInUp} exiting={SlideOutUp}>
+        <Animated.Text style={[styles.matchText]} entering={SlideInUp.delay(100)} exiting={SlideOutUp}>
           {t("match.title")} 🎉
         </Animated.Text>
 
@@ -130,13 +130,14 @@ export default function MatchModal({ match, hideMatchModal }: { match: any; hide
           source={require("../../assets/confetti.json")}
         />
 
-        <Animated.View entering={ModalEnteringTransition} exiting={ModalExitingTransition}>
-          <Card
-            onPress={hideMatchModal}
-            style={{
-              transform: [{ translateY: -10 }],
-            }}
-          >
+        <Animated.View
+          entering={ModalEnteringTransition}
+          exiting={ModalExitingTransition}
+          style={{
+            marginTop: Platform.OS === "ios" ? 0 : 20,
+          }}
+        >
+          <Card onPress={hideMatchModal}>
             <LinearGradient colors={["transparent", "transparent", theme.colors.primary]} style={styles.gradient}>
               <Text
                 style={{

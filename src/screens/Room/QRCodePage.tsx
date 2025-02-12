@@ -185,7 +185,8 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         }}
       >
         <QRCode
-          backgroundColor={theme.colors.primary}
+          backgroundColor={theme.colors.surface}
+          color={theme.colors.primary}
           value={JSON.stringify({
             roomId: code,
             host: nickname,

@@ -35,6 +35,7 @@ const Fallback = () => (
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
+      backgroundColor: "#000",
     }}
   >
     <FancySpinner size={100} />
@@ -99,7 +100,7 @@ const Navigator = () => {
 
   if (showLanguageSelector) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000" }}>
         <View style={{ flexDirection: "row", gap: 10 }}>
           <Button
             onPress={async () => {

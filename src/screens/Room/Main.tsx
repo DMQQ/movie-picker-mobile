@@ -63,7 +63,7 @@ export default function QRCode({ navigation }: any) {
 
           <Stack.Screen name="Home" component={Home} />
 
-          <Stack.Screen name="QRScanner" component={QRScanner} options={{ headerShown: false, title: "Scan QR Code" }} />
+          <Stack.Screen name="QRScanner" component={QRScanner} options={{ headerShown: false, title: "", headerTransparent: true }} />
         </Stack.Navigator>
       </ContextProvider>
     </SocketProvider>
