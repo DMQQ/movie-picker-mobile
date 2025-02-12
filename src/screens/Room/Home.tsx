@@ -13,20 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useTranslation from "../../service/useTranslation";
 import { FancySpinner } from "../../components/FancySpinner";
 import { useAppSelector } from "../../redux/store";
-
-export function throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
-  let inThrottle = false;
-
-  return function (...args: Parameters<T>): void {
-    if (!inThrottle) {
-      func.apply(null, args);
-      inThrottle = true;
-      setTimeout(() => {
-        inThrottle = false;
-      }, limit);
-    }
-  };
-}
+import { throttle } from "../../utils/throttle";
 
 const styles = StyleSheet.create({
   navigation: {

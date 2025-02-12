@@ -14,13 +14,11 @@ const OverviewTopTabs = createMaterialTopTabNavigator();
 function Overview() {
   const theme = useTheme();
 
-  const insets = useSafeAreaInsets();
-
   const t = useTranslation();
 
   return (
     <SafeIOSContainer>
-      <StatusBar translucent={false} backgroundColor={theme.colors.primary} />
+      <StatusBar translucent={true} backgroundColor={theme.colors.surface} />
       <OverviewTopTabs.Navigator
         initialLayout={{ width: Dimensions.get("window").width }}
         initialRouteName="Matches"

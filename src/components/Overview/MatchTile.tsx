@@ -10,7 +10,6 @@ const MatchTile = ({ match, type: _type, navigation }: { match: Movie; type: str
       style={{
         margin: 5,
         flex: 1,
-        maxWidth: "33.3%",
       }}
       onPress={() =>
         navigation.navigate("MovieDetails", {

@@ -3,7 +3,7 @@ import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import WatchProviders from "./WatchProviders";
 import LastEpisodeToAir from "./LastEpisodeDetails";
 import Seasons from "./SeasonsList";
-import { ScrollView, View } from "react-native";
+import { Platform, ScrollView, View } from "react-native";
 import { BlurView } from "expo-blur";
 import Similar from "../Similar";
 import useTranslation from "../../service/useTranslation";
@@ -14,12 +14,13 @@ export default function MovieDetails({ movie, providers, width, type }: { movie:
   const t = useTranslation();
   return (
     <AnimatedBlurView
+      blurReductionFactor={0.25}
       entering={FadeInDown}
-      intensity={30}
+      intensity={Platform.OS === "ios" ? 30 : 100}
       tint="dark"
       style={{
         padding: 20,
-        backgroundColor: "rgba(0,0,0,0.5)", // Adjust opacity for glass effect
+        backgroundColor: `rgba(0,0,0,${Platform.OS === "ios" ? 0.5 : 0.8})`, // Adjust opacity for glass effect
         width,
 
         overflow: "hidden",

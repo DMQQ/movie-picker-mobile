@@ -16,9 +16,9 @@ import { Appbar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from 
 import WatchProviders from "../components/Movie/WatchProviders";
 import { ScreenProps } from "./types";
 import { FancySpinner } from "../components/FancySpinner";
-import { throttle } from "./Room/Home";
 import Favourite from "../components/Favourite";
 import useTranslation from "../service/useTranslation";
+import { throttle } from "../utils/throttle";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
 

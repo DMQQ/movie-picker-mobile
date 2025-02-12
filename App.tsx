@@ -127,7 +127,16 @@ const Navigator = () => {
   return (
     <NavigationContainer theme={DarkTheme} fallback={<Fallback />}>
       <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
-        <Stack.Navigator initialRouteName="Landing" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator
+          initialRouteName="Landing"
+          screenOptions={{
+            headerShown: false,
+
+            ...(Platform.OS === "android" && {
+              animation: "fade_from_bottom",
+            }),
+          }}
+        >
           <Stack.Screen name="Settings" component={SettingsScreen} />
 
           <Stack.Screen name="Landing" component={Landing} />

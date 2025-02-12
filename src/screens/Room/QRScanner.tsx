@@ -7,6 +7,7 @@ import { SocketContext } from "../../service/SocketContext";
 import { useAppSelector } from "../../redux/store";
 import { ScreenProps } from "../types";
 import useTranslation from "../../service/useTranslation";
+import { throttle } from "../../utils/throttle";
 
 export default function QRScanner({ navigation }: any) {
   const [hasPermission, request] = useCameraPermissions();
@@ -20,6 +21,7 @@ export default function QRScanner({ navigation }: any) {
   const { socket } = useContext(SocketContext);
 
   const onBarcodeScanned = async (barCodeScannerResult: any) => {
+    console.log("onBarcodeScanned", barCodeScannerResult);
     setIsScanned(true);
 
     const isValid = barCodeScannerResult.data.includes("sessionId") || barCodeScannerResult.data.includes("roomId");
@@ -109,7 +111,7 @@ export default function QRScanner({ navigation }: any) {
 
   if (hasPermission === null) {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
         <Text style={{ marginTop: 25, fontWeight: "bold", fontSize: 25 }}>Requesting camera permission</Text>
 
         <Button mode="contained" onPress={() => request()}>
@@ -120,7 +122,7 @@ export default function QRScanner({ navigation }: any) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
       <Appbar.Header style={{ backgroundColor: "#000" }}>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title={t("scanner.heading")} />
@@ -128,7 +130,7 @@ export default function QRScanner({ navigation }: any) {
       <CameraView
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         facing="back"
-        onBarcodeScanned={isScanned ? undefined : onBarcodeScanned}
+        onBarcodeScanned={isScanned ? undefined : throttle(onBarcodeScanned, 1000)}
         mute
       >
         <View
@@ -210,9 +212,15 @@ const ManualCodeInput = ({ joinRoom }: { joinRoom: (code: string) => Promise<any
       <TextInput
         mode="outlined"
         label="Enter code"
-        value={code.toUpperCase()}
-        onChangeText={setCode}
-        style={{ marginBottom: 10, borderRadius: 20 }}
+        value={code}
+        maxLength={7}
+        autoFocus
+        textAlign="center"
+        onSubmitEditing={onManualPress}
+        onChangeText={(text) => {
+          setCode(text.toUpperCase().trim());
+        }}
+        style={{ marginBottom: 10, borderRadius: 20, textTransform: "uppercase", textAlign: "center", fontSize: 20, letterSpacing: 1 }}
       />
 
       <Button mode="text" onPress={onManualPress} style={{ marginTop: 10 }}>

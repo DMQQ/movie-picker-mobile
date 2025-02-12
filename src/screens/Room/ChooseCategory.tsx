@@ -113,7 +113,7 @@ const List = ({
   const theme = useTheme();
   return (
     <View style={{ flex: 1 }}>
-      <Text style={{ fontSize: 45, lineHeight: 45, fontWeight: "bold", fontFamily: "Bebas" }}>{title}</Text>
+      <Text style={{ fontSize: 45, lineHeight: 45, fontFamily: "Bebas" }}>{title}</Text>
 
       <FlatList
         data={data}
