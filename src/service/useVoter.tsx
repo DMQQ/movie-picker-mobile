@@ -1,9 +1,16 @@
 import React, { createContext, useContext, useEffect, useCallback, useState, ReactNode } from "react";
-import { Socket } from "socket.io-client";
 import { SocketContext } from "./SocketContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Movie } from "../../types";
 import * as Haptics from "expo-haptics";
+
+interface Settings {
+  language: string;
+  region: string;
+  providers: never[];
+  genres: never[];
+  category: "movie" | "tv" | "mixed";
+}
 
 interface MovieVoterContextValue {
   sessionId: string | null;
@@ -16,11 +23,14 @@ interface MovieVoterContextValue {
   currentUserId: string | null;
   actions: {
     createSession: () => void;
-    joinSession: (sessionId: string) => void;
+    joinSession: (sessionId: string) => Promise<void>;
     setReady: (ready: boolean) => void;
     startSession: () => void;
     submitRating: (movieId: string, ratings: RatingCriteria) => void;
+    setSessionSettings: React.Dispatch<React.SetStateAction<Settings>>;
   };
+
+  sessionSettings: Settings;
 
   sessionResults: {
     topPicks: Array<{
@@ -54,6 +64,14 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   const [isHost, setIsHost] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
+  const [sessionSettings, setSessionSettings] = useState({
+    language: "en",
+    region: "US",
+    providers: [],
+    genres: [],
+    category: "movie" as "movie" | "tv" | "mixed",
+  });
+
   const [sessionResults, setSessionResults] = useState<MovieVoterContextValue["sessionResults"]>(null);
 
   const createSession = useCallback(async () => {
@@ -61,7 +79,11 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
 
     if (!socket) return;
 
-    const { sessionId, error } = await socket.emitWithAck("voter:session:create", {});
+    const { sessionId, error } = await socket.emitWithAck("voter:session:create", {
+      category: sessionSettings.category,
+      genres: sessionSettings.genres,
+      providers: sessionSettings.providers,
+    });
 
     if (error) {
       setError(error);
@@ -74,7 +96,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     setStatus("waiting");
     setIsHost(true);
     AsyncStorage.setItem("voterSessionId", sessionId);
-  }, [socket]);
+  }, [socket, sessionSettings]);
 
   const joinSession = useCallback(
     async (joinSessionId: string) => {
@@ -82,8 +104,6 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
 
       try {
         const { error } = await socket.emitWithAck("voter:session:join", { sessionId: joinSessionId });
-
-        console.log("joinSessionId", joinSessionId, error);
 
         if (error) {
           setError(error);
@@ -96,6 +116,8 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
         setIsHost(false);
       } catch (error) {
         console.error("joinSession error", error);
+
+        throw error;
       }
     },
     [socket]
@@ -122,6 +144,8 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     if (!socket || !sessionId || !isHost) return;
 
     const response = await socket.emitWithAck("voter:session:start", { sessionId });
+
+    console.log("startSession", response);
 
     if (response?.error) {
       setError(response.error);
@@ -158,7 +182,12 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    const handleMoviesReceive = ({ movies, setId }: any) => {
+    const handleMoviesReceive = async ({ movies, setId }: any) => {
+      console.log(currentUserId, movies.length, setId);
+      if (movies.length === 0) {
+        console.log("refetching movies");
+        await socket.emitWithAck("voter:movies:refetch", { sessionId });
+      }
       setCurrentMovies(movies);
       setCurrentSetId(setId);
       setStatus("rating");
@@ -207,8 +236,10 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       setReady,
       startSession,
       submitRating,
+      setSessionSettings,
     },
     sessionResults,
+    sessionSettings,
   };
 
   return <MovieVoterContext.Provider value={value}>{children}</MovieVoterContext.Provider>;

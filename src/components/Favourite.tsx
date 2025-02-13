@@ -17,7 +17,9 @@ export default function CustomFavourite({ movie }: { movie: Movie }) {
   const favourites = useAppSelector((state) => state.favourite);
   const [visible, setVisible] = useState(false);
 
-  const isFavorite = favourites?.groups.some((group) => group.movies.some((m) => m.id === movie.id));
+  if (!movie) return null;
+
+  const isFavorite = favourites?.groups?.some((group) => group.movies.some((m) => m?.id === movie?.id));
 
   const onPress = (group: (typeof favourites.groups)[number]) => {
     group.movies.find((m) => m.id === movie.id)

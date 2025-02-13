@@ -117,4 +117,6 @@ export const {
   useGetCategoriesQuery,
 
   useGetAllProvidersQuery,
+
+  useLazyGetGenresQuery,
 } = movieApi;

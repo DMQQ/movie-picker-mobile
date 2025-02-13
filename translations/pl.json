@@ -175,5 +175,10 @@
       "title": "Najlepszy wybór",
       "h2": "Inne pasujące"
     }
+  },
+  "quick-actions": {
+    "watch-later": "Na później",
+    "watched": "Obejrzane",
+    "favourite": "Ulubione"
   }
 }

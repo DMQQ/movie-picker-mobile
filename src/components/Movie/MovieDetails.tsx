@@ -26,7 +26,7 @@ export default function MovieDetails({
   const t = useTranslation();
 
   const data = [
-    `${movie?.vote_average.toFixed(2)}/10`,
+    `${movie?.vote_average?.toFixed(2)}/10`,
     movie?.release_date || movie?.first_air_date,
     (movie?.title || movie?.name) === (movie?.original_title || movie?.original_name) ? "" : movie?.original_title || movie?.original_name,
     ...(movie?.genres || [])?.map((g: any) => g.name),

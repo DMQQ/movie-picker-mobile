@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { View, ScrollView, StyleSheet, Dimensions, ImageBackground, Image } from "react-native";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { View, ScrollView, StyleSheet, Dimensions, ImageBackground, Image, FlatList } from "react-native";
 import { Button, Text, Chip, MD2DarkTheme, TouchableRipple, IconButton } from "react-native-paper";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useMovieVoter } from "../../service/useVoter";
@@ -12,9 +12,17 @@ import useTranslation from "../../service/useTranslation";
 import QuickActions from "../../components/QuickActions";
 
 import * as Haptics from "expo-haptics";
+import { useGetAllProvidersQuery, useGetGenresQuery, useLazyGetGenresQuery } from "../../redux/movie/movieApi";
+import { throttle } from "../../utils/throttle";
+
+const scaleTitle = (title: string, size = 30) => {
+  if (title.length > 30) return size * 0.75;
+
+  return size;
+};
 
 export default function Home({ navigation, route }: any) {
-  const { sessionId, status, users, currentMovies, currentUserId, actions, isHost } = useMovieVoter();
+  const { sessionId, status, users, currentMovies, currentUserId, actions, isHost, sessionSettings } = useMovieVoter();
   const [localReady, setLocalReady] = useState(false);
   const [localRatings, setLocalRatings] = useState({
     interest: 2,
@@ -30,23 +38,30 @@ export default function Home({ navigation, route }: any) {
 
   useEffect(() => {
     if (route?.params?.sessionId) {
-      actions.joinSession(route?.params?.sessionId);
+      actions.joinSession(route?.params?.sessionId).catch((err) => {
+        if (err.message === "Session not found") {
+          navigation.goBack();
+        }
+      });
     }
   }, [route?.params?.sessionId]);
 
-  const handleSubmitRating = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  const handleSubmitRating = useCallback(
+    throttle(() => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    if (currentMovies?.[0]?.id) {
-      actions.submitRating(currentMovies[0].id as any, localRatings);
+      if (currentMovies?.[0]?.id) {
+        actions.submitRating(currentMovies[0].id as any, localRatings);
 
-      setLocalRatings({
-        interest: 2,
-        mood: 1,
-        uniqueness: 2,
-      });
-    }
-  }, [currentMovies, localRatings, actions]);
+        setLocalRatings({
+          interest: 2,
+          mood: 1,
+          uniqueness: 2,
+        });
+      }
+    }, 1000),
+    [currentMovies, localRatings, actions]
+  );
 
   const handleReady = () => {
     const newReadyState = !localReady;
@@ -68,17 +83,38 @@ export default function Home({ navigation, route }: any) {
   const t = useTranslation();
 
   const renderInitialState = () => (
-    <Animated.View style={{ flex: 1 }}>
+    <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={35} />
+        <IconButton icon="chevron-left" onPress={() => navigation.navigate("Games")} size={35} />
         <Text style={{ fontSize: 35, fontFamily: "Bebas", textAlign: "center", width: "70%" }}>{t("voter.home.title")}</Text>
       </View>
-      <View style={{ flex: 1, justifyContent: "space-between", padding: 15 }}>
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, paddingHorizontal: 15, paddingBottom: 15 }}>
+        <View style={{ flex: 1 }}>
           <View style={{ marginTop: 15 }}>
-            <Text style={{ fontSize: 35, fontFamily: "Bebas", marginBottom: 15 }}>{t("voter.home.howtotitle")}</Text>
+            <Text style={{ fontSize: 35, fontFamily: "Bebas", marginBottom: 5 }}>{t("voter.home.howtotitle")}</Text>
             <Text style={{ fontSize: 18 }}>{t("voter.home.howto")}</Text>
           </View>
+          <PickCategory
+            category={sessionSettings.category}
+            setCategory={(category: string) => {
+              actions.setSessionSettings((p) => ({ ...p, category } as any));
+            }}
+          />
+          <PickGenres
+            genres={sessionSettings.genres}
+            setGenres={(genres: any) => {
+              actions.setSessionSettings((p) => ({ ...p, genres: genres(p.genres) }));
+            }}
+          />
+          <PickProviders
+            setProviders={(providers: any) => {
+              actions.setSessionSettings((p) => ({
+                ...p,
+                providers: providers(p.providers),
+              }));
+            }}
+            providers={sessionSettings.providers}
+          />
         </View>
 
         <Button mode="contained" onPress={actions.createSession} style={styles.button} contentStyle={{ padding: 7.5 }}>
@@ -93,10 +129,10 @@ export default function Home({ navigation, route }: any) {
     const currentUserReady = users.find((u) => u.userId === currentUserId)?.ready;
 
     return (
-      <Animated.View style={{ flex: 1 }}>
+      <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
         <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
           <IconButton icon="chevron-left" onPress={() => navigation.navigate("Landing")} size={35} />
-          <Text style={{ fontSize: 33, fontFamily: "Bebas", width: "70%" }}>
+          <Text style={{ fontSize: 30, fontFamily: "Bebas", width: "70%" }}>
             {users.length > 1 ? t("voter.home.ready") : t("voter.home.waiting-initial")}
           </Text>
         </View>
@@ -121,7 +157,7 @@ export default function Home({ navigation, route }: any) {
           {sessionId && (
             <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
               <QRCodeComponent sessionId={sessionId} type="voter" safetyCode="1234" size={Dimensions.get("screen").width / 2} />
-              <Text style={{ fontSize: 30, letterSpacing: 3, fontFamily: "Bebas", color: MD2DarkTheme.colors.primary, marginTop: 10 }}>
+              <Text style={{ fontSize: 30, letterSpacing: 3, fontWeight: "bold", color: MD2DarkTheme.colors.primary, marginTop: 10 }}>
                 {sessionId}
               </Text>
             </View>
@@ -167,7 +203,7 @@ export default function Home({ navigation, route }: any) {
         >
           <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)", paddingHorizontal: 15, paddingBottom: 15 }}>
             <View style={{ padding: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <Text style={{ fontSize: 40, fontFamily: "Bebas" }}>{t("voter.home.rate")} 🎬</Text>
+              <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>{t("voter.home.rate")} 🎬</Text>
 
               <Text style={{ fontFamily: "Bebas", fontSize: 20 }}>
                 {currentMovies.length} {t("voter.home.left")}
@@ -189,7 +225,7 @@ export default function Home({ navigation, route }: any) {
                   <View>
                     <Text
                       style={{
-                        fontSize: 40,
+                        fontSize: scaleTitle((card?.title || card?.name)! as string, 40),
                         fontFamily: "Bebas",
                       }}
                     >
@@ -384,7 +420,7 @@ function Results({ navigation }: any) {
           backgroundColor: "rgba(0,0,0,0.2)",
         }}
       >
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={35} />
+        <IconButton icon="chevron-left" onPress={() => navigation.navigate("Games")} size={35} />
         <Text style={{ fontSize: 40, fontFamily: "Bebas", width: "70%" }}>{t("voter.overview.title")} 🎬</Text>
       </View>
       <ScrollView
@@ -404,7 +440,7 @@ function Results({ navigation }: any) {
             <View style={{ flex: 1, gap: 10, justifyContent: "space-between", paddingVertical: 15 }}>
               <Text
                 style={{
-                  fontSize: 35,
+                  fontSize: scaleTitle((card?.title || card?.name)! as string, 30),
                   fontFamily: "Bebas",
                 }}
               >
@@ -455,7 +491,6 @@ function Results({ navigation }: any) {
                       >
                         {item?.movie?.title || item?.movie?.name}
                       </Text>
-                      <CustomFavourite movie={item.movie} />
                     </View>
                     <View>
                       <Text>★ {item.movie.vote_average.toFixed(2)}/10 </Text>
@@ -483,6 +518,114 @@ function Results({ navigation }: any) {
     </ImageBackground>
   );
 }
+
+const PickGenres = ({ genres, setGenres }: { genres: number[]; setGenres: any }) => {
+  const { data: movies } = useGetGenresQuery({ type: "movie" });
+  const { data: tv } = useGetGenresQuery({ type: "tv" });
+
+  const combined = useMemo(() => {
+    if (!movies?.length && !tv?.length) return [];
+
+    const genresMap = new Map();
+
+    movies?.forEach((genre) => {
+      genresMap.set(genre.id, { ...genre, types: ["movie"] });
+    });
+
+    tv?.forEach((genre) => {
+      if (genresMap.has(genre.id)) {
+        const existing = genresMap.get(genre.id);
+        genresMap.set(genre.id, {
+          ...existing,
+          types: [...existing.types, "tv"],
+        });
+      } else {
+        genresMap.set(genre.id, { ...genre, types: ["tv"] });
+      }
+    });
+
+    return Array.from(genresMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }, [movies?.length, tv?.length]);
+
+  if (!combined.length) return null;
+
+  return (
+    <View style={{ marginVertical: 15 }}>
+      <FlatList
+        showsHorizontalScrollIndicator={false}
+        horizontal
+        data={combined}
+        keyExtractor={(i) => i.id.toString()}
+        renderItem={({ item }) => (
+          <Button
+            onPress={() => {
+              setGenres((p: number[]) => (p.includes(item.id) ? p.filter((i) => i !== item.id) : [...p, item.id]));
+            }}
+            mode={genres.includes(item.id) ? "contained" : "outlined"}
+            style={{ borderRadius: 10, marginRight: 15, height: 35 }}
+          >
+            {item.name}
+          </Button>
+        )}
+      />
+    </View>
+  );
+};
+
+const PickCategory = ({ setCategory, category }: { setCategory: any; category: string }) => {
+  const t = useTranslation();
+
+  return (
+    <View style={{ flexDirection: "row", paddingVertical: 10, gap: 15, marginTop: 15 }}>
+      {["movie", "Series", "Mixed"].map((item, index) => (
+        <Button
+          key={index}
+          onPress={() => {
+            setCategory(item);
+          }}
+          mode={category === item ? "contained" : "outlined"}
+          style={{ flex: 1, borderRadius: 10 }}
+        >
+          {item}
+        </Button>
+      ))}
+    </View>
+  );
+};
+
+const PickProviders = ({ providers, setProviders }: { setProviders: any; providers: number[] }) => {
+  const { data } = useGetAllProvidersQuery({});
+  const size = (Dimensions.get("screen").width - 15) / 5 - 5 * 4;
+
+  return (
+    <FlatList
+      style={{ marginTop: 15 }}
+      numColumns={5}
+      keyExtractor={(i) => i.provider_id.toString()}
+      data={data}
+      renderItem={({ item }) => (
+        <TouchableRipple
+          onPress={() =>
+            setProviders((p: number[]) =>
+              p.includes(item.provider_id) ? p.filter((i) => i !== item.provider_id) : [...p, item.provider_id]
+            )
+          }
+          style={{
+            borderWidth: 2,
+            borderColor: providers.includes(item.provider_id) ? MD2DarkTheme.colors.primary : "transparent",
+            borderRadius: 10,
+            margin: 5,
+          }}
+        >
+          <Image
+            source={{ uri: `https://image.tmdb.org/t/p/w200${item?.logo_path}` }}
+            style={{ width: size, height: size, borderRadius: 7.5 }}
+          />
+        </TouchableRipple>
+      )}
+    />
+  );
+};
 
 const styles = StyleSheet.create({
   section: {

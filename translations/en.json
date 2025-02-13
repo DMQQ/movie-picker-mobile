@@ -177,5 +177,10 @@
       "title": "Top picks",
       "h2": "Other picks"
     }
+  },
+  "quick-actions": {
+    "watch-later": "Watch later",
+    "watched": "Watched",
+    "favourite": "Favourites"
   }
 }

@@ -1,8 +1,9 @@
 import { View } from "react-native";
-import { MD2DarkTheme } from "react-native-paper";
+import { MD2DarkTheme, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 
 export default function QRCodeComponent(props: { sessionId: string; type: string; safetyCode: string; size: number }) {
+  const theme = useTheme();
   return (
     <View
       style={{
@@ -14,7 +15,8 @@ export default function QRCodeComponent(props: { sessionId: string; type: string
       }}
     >
       <QRCode
-        backgroundColor={MD2DarkTheme.colors.primary}
+        backgroundColor={theme.colors.surface}
+        color={theme.colors.primary}
         value={JSON.stringify({
           sessionId: props.sessionId,
           type: props.type,

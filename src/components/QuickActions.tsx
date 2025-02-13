@@ -6,6 +6,7 @@ import { Movie } from "../../types";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 
 import * as Haptics from "expo-haptics";
+import useTranslation from "../service/useTranslation";
 
 export default function QuickActions(props: { movie: Movie }) {
   const dispatch = useAppDispatch();
@@ -34,6 +35,8 @@ export default function QuickActions(props: { movie: Movie }) {
     return group.movies.some((m) => m.id === props.movie.id);
   };
 
+  const t = useTranslation();
+
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
@@ -41,7 +44,7 @@ export default function QuickActions(props: { movie: Movie }) {
           <>
             <AntDesign name={isInGroup("2") ? "clockcircle" : "clockcircleo"} size={35} color="#fff" />
 
-            <Text style={styles.iconText}>Watch Later</Text>
+            <Text style={styles.iconText}>{t("quick-actions.watch-later")}</Text>
           </>
         </TouchableOpacity>
       </View>
@@ -49,7 +52,7 @@ export default function QuickActions(props: { movie: Movie }) {
         <TouchableOpacity style={styles.iconButton} onPress={() => onPress("1")}>
           <>
             <FontAwesome name={isInGroup("1") ? "star" : "star-o"} size={35} color="#fff" />
-            <Text style={styles.iconText}>Favourites</Text>
+            <Text style={styles.iconText}>{t("quick-actions.favourite")}</Text>
           </>
         </TouchableOpacity>
       </View>
@@ -57,7 +60,7 @@ export default function QuickActions(props: { movie: Movie }) {
         <TouchableOpacity style={styles.iconButton} onPress={() => onPress("3")}>
           <>
             <AntDesign name={isInGroup("3") ? "eye" : "eyeo"} size={35} color="#fff" />
-            <Text style={styles.iconText}>Watched</Text>
+            <Text style={styles.iconText}>{t("quick-actions.watched")}</Text>
           </>
         </TouchableOpacity>
       </View>
@@ -70,19 +73,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
+    gap: 10,
   },
 
   iconButton: {
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 100,
     gap: 10,
+    overflow: "hidden",
   },
   iconText: {
     fontFamily: "Bebas",
     fontSize: 20,
   },
-  iconContainer: {
-    gap: 10,
-  },
+  iconContainer: {},
 });
