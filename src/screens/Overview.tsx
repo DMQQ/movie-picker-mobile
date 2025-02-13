@@ -1,12 +1,9 @@
-import { Dimensions } from "react-native";
+import { Dimensions, Platform } from "react-native";
 import { ThemeProvider, useTheme } from "react-native-paper";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import MatchesScreen from "./Overview/Matches";
 import LikesScreen from "./Overview/Likes";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import SafeIOSContainer from "../components/SafeIOSContainer";
-import { StatusBar } from "expo-status-bar";
 import useTranslation from "../service/useTranslation";
 
 const OverviewTopTabs = createMaterialTopTabNavigator();
@@ -17,8 +14,7 @@ function Overview() {
   const t = useTranslation();
 
   return (
-    <SafeIOSContainer>
-      <StatusBar translucent={true} backgroundColor={theme.colors.surface} />
+    <>
       <OverviewTopTabs.Navigator
         initialLayout={{ width: Dimensions.get("window").width }}
         initialRouteName="Matches"
@@ -48,7 +44,7 @@ function Overview() {
           component={LikesScreen}
         />
       </OverviewTopTabs.Navigator>
-    </SafeIOSContainer>
+    </>
   );
 }
 

@@ -595,12 +595,26 @@ const PickCategory = ({ setCategory, category }: { setCategory: any; category: s
 
 const PickProviders = ({ providers, setProviders }: { setProviders: any; providers: number[] }) => {
   const { data } = useGetAllProvidersQuery({});
-  const size = (Dimensions.get("screen").width - 15) / 5 - 5 * 4;
+  // Calculate margins and container padding
+  const MARGIN = 8;
+  const CONTAINER_PADDING = 16;
+  const NUM_COLUMNS = 5;
+
+  // Calculate size accounting for all spacing
+  const totalHorizontalPadding = CONTAINER_PADDING * 2;
+  const totalMargins = MARGIN * (NUM_COLUMNS - 1);
+  const size = Math.floor((Dimensions.get("screen").width - totalHorizontalPadding - totalMargins) / NUM_COLUMNS);
 
   return (
     <FlatList
-      style={{ marginTop: 15 }}
-      numColumns={5}
+      style={{
+        marginTop: 15,
+        paddingHorizontal: CONTAINER_PADDING,
+      }}
+      contentContainerStyle={{
+        alignItems: "center",
+      }}
+      numColumns={NUM_COLUMNS}
       keyExtractor={(i) => i.provider_id.toString()}
       data={data}
       renderItem={({ item }) => (
@@ -614,12 +628,21 @@ const PickProviders = ({ providers, setProviders }: { setProviders: any; provide
             borderWidth: 2,
             borderColor: providers.includes(item.provider_id) ? MD2DarkTheme.colors.primary : "transparent",
             borderRadius: 10,
-            margin: 5,
+            margin: MARGIN / 2,
+            width: size,
+            height: size,
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <Image
             source={{ uri: `https://image.tmdb.org/t/p/w200${item?.logo_path}` }}
-            style={{ width: size, height: size, borderRadius: 7.5 }}
+            style={{
+              width: size - 4, // Account for border width
+              height: size - 4,
+              borderRadius: 7.5,
+            }}
+            resizeMode="contain"
           />
         </TouchableRipple>
       )}
