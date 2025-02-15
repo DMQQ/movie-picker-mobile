@@ -179,6 +179,8 @@
   "quick-actions": {
     "watch-later": "Na później",
     "watched": "Obejrzane",
-    "favourite": "Ulubione"
+    "favourite": "Ulubione",
+    "my-lists": "Moje listy",
+    "modal": "Wybierz grupę do dodania"
   }
 }

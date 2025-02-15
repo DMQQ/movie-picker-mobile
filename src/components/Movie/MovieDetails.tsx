@@ -9,6 +9,7 @@ import Similar from "../Similar";
 import useTranslation from "../../service/useTranslation";
 import { Movie } from "../../../types";
 import QuickActions from "../QuickActions";
+import CustomFavourite from "../Favourite";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
@@ -73,7 +74,9 @@ export default function MovieDetails({
       )}
 
       <View style={{ padding: 10, paddingVertical: 20 }}>
-        <QuickActions movie={movie} />
+        <QuickActions movie={movie}>
+          <CustomFavourite movie={movie} />
+        </QuickActions>
       </View>
 
       {movie?.overview && (

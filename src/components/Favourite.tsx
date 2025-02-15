@@ -5,6 +5,9 @@ import { Movie } from "../../types";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import * as Haptics from "expo-haptics";
+import useTranslation from "../service/useTranslation";
+import Fontisto from "@expo/vector-icons/Fontisto";
+import { FontAwesome } from "@expo/vector-icons";
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   if (Platform.OS === "android") return <Portal>{children}</Portal>;
@@ -12,10 +15,11 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   return <Fragment>{children}</Fragment>;
 };
 
-export default function CustomFavourite({ movie }: { movie: Movie }) {
+export default function CustomFavourite({ movie, showLabel = true }: { movie: Movie; showLabel?: boolean }) {
   const dispatch = useAppDispatch<any>();
   const favourites = useAppSelector((state) => state.favourite);
   const [visible, setVisible] = useState(false);
+  const t = useTranslation();
 
   if (!movie) return null;
 
@@ -45,12 +49,12 @@ export default function CustomFavourite({ movie }: { movie: Movie }) {
 
   return (
     <View>
-      <IconButton
-        icon={isFavorite ? "heart" : "heart-outline"}
-        iconColor={isFavorite ? "red" : "white"}
-        size={30}
-        onPress={() => setVisible(true)}
-      />
+      <TouchableOpacity style={styles.iconButton} onPress={() => setVisible(true)}>
+        <>
+          <FontAwesome name={isFavorite ? "bookmark" : "bookmark-o"} size={30} color="#fff" />
+          {showLabel && <Text style={styles.iconText}>{t("quick-actions.my-lists")}</Text>}
+        </>
+      </TouchableOpacity>
 
       <Wrapper>
         <Modal visible={visible} transparent animationType="fade" onRequestClose={() => setVisible(false)}>
@@ -64,8 +68,8 @@ export default function CustomFavourite({ movie }: { movie: Movie }) {
                   marginBottom: 20,
                 }}
               >
-                Choose a group to add{" "}
-                <Text style={{ fontWeight: "bold", color: MD2DarkTheme.colors.primary }}>{movie.title || movie.name}</Text> to:
+                {t("quick-actions.modal")}{" "}
+                <Text style={{ fontWeight: "bold", color: MD2DarkTheme.colors.primary }}>{movie.title || movie.name}</Text>
               </Text>
               {favourites.groups.map((group) => (
                 <TouchableOpacity
@@ -119,5 +123,16 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 16,
     color: MD2DarkTheme.colors.text,
+  },
+  iconText: {
+    fontFamily: "Bebas",
+    fontSize: 20,
+    color: "#fff",
+  },
+  iconButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+    overflow: "hidden",
   },
 });

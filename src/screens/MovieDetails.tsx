@@ -60,10 +60,6 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
         <Appbar.BackAction color="#fff" onPress={() => navigation.goBack()} />
       </View>
 
-      <View style={{ position: "absolute", top: 10, right: 10, zIndex: 100 }}>
-        <Favourite movie={movie} />
-      </View>
-
       <Animated.Image
         resizeMethod={"resize"}
         //sharedTransitionStyle={sharedElementTransition}

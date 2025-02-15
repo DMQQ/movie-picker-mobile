@@ -181,6 +181,8 @@
   "quick-actions": {
     "watch-later": "Watch later",
     "watched": "Watched",
-    "favourite": "Favourites"
+    "favourite": "Favourites",
+    "my-lists": "My lists",
+    "modal": "Choose a group to add"
   }
 }

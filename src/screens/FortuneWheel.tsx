@@ -165,7 +165,9 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
                   {t("fortune-wheel.roll")}
                 </Button>
 
-                <Favourite movie={data as Movie} />
+                <View style={{ padding: 10, paddingHorizontal: 15 }}>
+                  <Favourite showLabel={false} movie={data as Movie} />
+                </View>
               </View>
             </View>
           </LinearGradient>

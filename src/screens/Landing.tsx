@@ -1,5 +1,5 @@
 import { Dimensions, Image, ImageBackground, Platform, Pressable, StyleSheet, View, VirtualizedList } from "react-native";
-import { Avatar, Button, IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { Avatar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { ScreenProps } from "./types";
@@ -11,7 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
 import useTranslation from "../service/useTranslation";
-import { StatusBar } from "expo-status-bar";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -31,12 +31,12 @@ const styles = StyleSheet.create({
     marginBottom: 35,
   },
 
-  gradientContainer: { flex: 1, padding: 10, position: "absolute", bottom: 0, width },
+  gradientContainer: { flex: 1, padding: 10, position: "absolute", bottom: 0, width, paddingTop: 30 },
 
-  overview: { fontSize: 14, color: "rgba(255,255,255,0.95)", fontWeight: "500" },
+  overview: { fontSize: 16, color: "rgba(255,255,255,0.95)", fontWeight: "500" },
 });
 
-const gradient = ["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"] as any;
+const gradient = ["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"] as any;
 
 const keyExtractor = (item: { name: string }) => item.name;
 
@@ -111,6 +111,16 @@ const FeaturedSection = memo(
       });
     };
 
+    const details = [
+      featured?.vote_average && featured?.vote_average?.toFixed(1) + "/10",
+      featured?.release_date || featured?.first_air_date,
+      ((featured?.title || featured?.name) === (featured?.original_title || featured?.original_name) && featured?.original_title) ||
+        featured?.original_name,
+      ...(featured?.genres || []),
+    ]
+      .filter(Boolean)
+      .join(" | ");
+
     return (
       <ImageBackground
         style={styles.featuredImage}
@@ -120,7 +130,7 @@ const FeaturedSection = memo(
         resizeMode="cover"
         resizeMethod="scale"
       >
-        <View style={[styles.header]}>
+        <View style={[styles.header, { padding: 15 }]}>
           <Pressable onPress={() => props.navigate("Settings")} style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
             <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} color="#fff" />
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>
@@ -129,24 +139,32 @@ const FeaturedSection = memo(
           </Pressable>
 
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <IconButton icon="heart" iconColor="red" size={30} onPress={() => props.navigate("Favourites")} />
-            {/* <ScoreRing score={featured?.vote_average || 0} /> */}
+            <TouchableRipple
+              onPress={() => navigation.navigate("Favourites")}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                padding: 7.5,
+                backgroundColor: "rgba(0,0,0,0.35)",
+                borderRadius: 100,
+                paddingHorizontal: 15,
+              }}
+            >
+              <>
+                <FontAwesome name="bookmark" size={20} color="#fff" style={{ marginRight: 10 }} />
+                <Text style={{ color: "#fff", fontWeight: "500" }}>{t("quick-actions.my-lists")}</Text>
+              </>
+            </TouchableRipple>
           </View>
         </View>
 
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
           <Pressable onPress={onPress}>
-            <Text style={{ fontSize: 50, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
+            <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
               {featured?.title || featured?.name}
             </Text>
-            <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>
-              {featured?.vote_average.toFixed(1)}/10 | {featured?.release_date || featured?.first_air_date} |{" "}
-              {(featured?.title || featured?.name) === (featured?.original_title || featured?.original_name)
-                ? ""
-                : featured?.original_title || featured?.original_name}{" "}
-              | {featured?.genres?.join(" | ")}
-            </Text>
-            <Text numberOfLines={8} style={styles.overview}>
+            <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>{details}</Text>
+            <Text numberOfLines={7} style={styles.overview}>
               {featured?.overview}
             </Text>
           </Pressable>

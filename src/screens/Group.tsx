@@ -19,7 +19,7 @@ export default function Group({ navigation, route }: any) {
   const [match, setMatch] = useState<Movie | undefined>(undefined);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingBottom: 15 }}>
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
         <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={35} />
 

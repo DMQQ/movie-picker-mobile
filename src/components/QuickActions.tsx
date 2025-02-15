@@ -7,8 +7,9 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 
 import * as Haptics from "expo-haptics";
 import useTranslation from "../service/useTranslation";
+import { ReactNode } from "react";
 
-export default function QuickActions(props: { movie: Movie }) {
+export default function QuickActions(props: { movie: Movie; children?: ReactNode }) {
   const dispatch = useAppDispatch();
   const { groups } = useAppSelector((state) => state.favourite);
 
@@ -64,6 +65,7 @@ export default function QuickActions(props: { movie: Movie }) {
           </>
         </TouchableOpacity>
       </View>
+      {props.children}
     </View>
   );
 }
