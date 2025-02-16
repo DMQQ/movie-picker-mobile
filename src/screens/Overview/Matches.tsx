@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useAppSelector } from "../../redux/store";
 import { Movie } from "../../../types";
 import TilesList from "../../components/Overview/TilesList";
@@ -22,9 +22,13 @@ export default function MatchesScreen() {
 
   const t = useTranslation();
 
+  const data = useMemo(() => {
+    return [...matches].reverse();
+  }, [matches.length]);
+
   return (
     <View style={{ flex: 1, padding: 15, position: "relative" }}>
-      <TilesList label={t("matched.title")} data={matches} />
+      <TilesList label={t("matched.title")} data={data} />
 
       {match && <Modal onClose={() => setMatch(undefined)} match={match} />}
 

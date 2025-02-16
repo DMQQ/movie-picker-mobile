@@ -132,9 +132,9 @@ const FeaturedSection = memo(
       >
         <View style={[styles.header, { padding: 15 }]}>
           <Pressable onPress={() => props.navigate("Settings")} style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
-            <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} color="#fff" />
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-              {t("settings.hello")} {nickname}.
+            <Avatar.Text size={35} label={nickname?.[0]?.toUpperCase()} color="#fff" />
+            <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>
+              {t("settings.hello")} {nickname}
             </Text>
           </Pressable>
 

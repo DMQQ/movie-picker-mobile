@@ -45,7 +45,7 @@ const makeDefaultGroups = () => {
       posterPath: undefined,
     },
     {
-      id: "3",
+      id: "999",
       name: "Watched",
       movies: [],
       posterPath: undefined,

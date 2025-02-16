@@ -1,12 +1,13 @@
 import { Text, useTheme } from "react-native-paper";
 import Card from "./Card";
 import Poster from "./Poster";
-import { Dimensions, Platform, Pressable, StyleSheet } from "react-native";
+import { Dimensions, Platform, Pressable, StyleSheet, Vibration } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeOut, SlideInUp, SlideOutUp, withSpring, withTiming } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
 import LottieView from "lottie-react-native";
 import { useEffect, useRef, useState } from "react";
+import * as Haptics from "expo-haptics";
 
 const styles = StyleSheet.create({
   matchModal: {
@@ -99,7 +100,15 @@ export default function MatchModal({ match, hideMatchModal }: { match: any; hide
 
   useEffect(() => {
     if (match) {
-      setTimeout(() => animation.current?.play(), 100);
+      let timeout = setTimeout(() => {
+        animation.current?.play();
+        Vibration.vibrate([100]);
+      }, 100);
+
+      return () => {
+        clearTimeout(timeout);
+        Vibration.cancel();
+      };
     }
   }, [match]);
 

@@ -13,7 +13,7 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
   const dispatch = useAppDispatch();
   const { groups } = useAppSelector((state) => state.favourite);
 
-  const onPress = (groupId: "1" | "2" | "3") => {
+  const onPress = (groupId: "1" | "2" | "999") => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (!props.movie) return;
     dispatch(
@@ -28,7 +28,7 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
     );
   };
 
-  const isInGroup = (groupId: "1" | "2" | "3") => {
+  const isInGroup = (groupId: "1" | "2" | "999") => {
     const group = groups.find((g) => g.id === groupId);
 
     if (!group) return false;
@@ -58,9 +58,9 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
         </TouchableOpacity>
       </View>
       <View style={styles.iconContainer}>
-        <TouchableOpacity style={styles.iconButton} onPress={() => onPress("3")}>
+        <TouchableOpacity style={styles.iconButton} onPress={() => onPress("999")}>
           <>
-            <AntDesign name={isInGroup("3") ? "eye" : "eyeo"} size={35} color="#fff" />
+            <AntDesign name={isInGroup("999") ? "eye" : "eyeo"} size={35} color="#fff" />
             <Text style={styles.iconText}>{t("quick-actions.watched")}</Text>
           </>
         </TouchableOpacity>
