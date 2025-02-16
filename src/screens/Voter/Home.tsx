@@ -648,18 +648,35 @@ const PickGenres = ({ genres, setGenres }: { genres: number[]; setGenres: any })
 const PickCategory = ({ setCategory, category }: { setCategory: any; category: string }) => {
   const t = useTranslation();
 
+  const categories = useMemo(() => {
+    return [
+      {
+        label: t("voter.types.movie"),
+        value: "movie",
+      },
+      {
+        label: t("voter.types.series"),
+        value: "Series",
+      },
+      {
+        label: t("voter.types.mixed"),
+        value: "Mixed",
+      },
+    ];
+  }, []);
+
   return (
     <View style={{ flexDirection: "row", paddingVertical: 10, gap: 15, marginTop: 15 }}>
-      {["movie", "Series", "Mixed"].map((item, index) => (
+      {categories.map((item, index) => (
         <Button
           key={index}
           onPress={() => {
-            setCategory(item);
+            setCategory(item.value);
           }}
-          mode={category === item ? "contained" : "outlined"}
+          mode={category === item.value ? "contained" : "outlined"}
           style={{ flex: 1, borderRadius: 10 }}
         >
-          {item}
+          {item.label}
         </Button>
       ))}
     </View>

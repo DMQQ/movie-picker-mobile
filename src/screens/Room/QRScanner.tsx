@@ -21,12 +21,9 @@ export default function QRScanner({ navigation }: any) {
   const { socket } = useContext(SocketContext);
 
   const onBarcodeScanned = async (barCodeScannerResult: any) => {
-    console.log("onBarcodeScanned", barCodeScannerResult);
     setIsScanned(true);
 
     const isValid = barCodeScannerResult.data.includes("sessionId") || barCodeScannerResult.data.includes("roomId");
-
-    console.log("isValid", isValid, barCodeScannerResult.data);
 
     if (!isValid) return;
 

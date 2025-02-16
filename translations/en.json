@@ -123,6 +123,11 @@
     "swipe": "Swipe to vote",
     "games": "Games",
     "rate": "Your rating",
+    "types": {
+      "movie": "Movies",
+      "series": "Series",
+      "mixed": "Both"
+    },
     "home": {
       "title": "Movie voting",
       "description": "Start a new session or join an existing one to vote for the movies you want to watch.",

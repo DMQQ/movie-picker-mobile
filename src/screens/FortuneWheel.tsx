@@ -180,7 +180,7 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
                   onPress={() => {
                     setSelectedItem(undefined);
                   }}
-                  contentStyle={{ padding: 5 }}
+                  contentStyle={{ padding: 7.5 }}
                   style={{ borderRadius: 100, flex: 1 }}
                 >
                   {t("fortune-wheel.roll")}

@@ -122,6 +122,11 @@
     "title": "Głosowanie w parach",
     "swipe": "Matchowanie ze znajomymi",
     "rate": "Twoja ocena",
+    "types": {
+      "movie": "Filmy",
+      "series": "Seriale",
+      "mixed": "Wszystko"
+    },
     "home": {
       "title": "Głosowanie w parach",
       "description": "Głosowanie w parach to zabawa, w której możesz głosować na filmy i seriale, aby znaleźć wspólne zainteresowania ze znajomym.",
