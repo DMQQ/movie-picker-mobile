@@ -21,6 +21,8 @@ interface MovieVoterContextValue {
   error: string | null;
   isHost: boolean;
   currentUserId: string | null;
+
+  loadingInitialContent: boolean;
   actions: {
     createSession: () => void;
     joinSession: (sessionId: string) => Promise<void>;
@@ -138,8 +140,12 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     [socket, sessionId]
   );
 
+  const [loadingInitialContent, setLoadingInitialContent] = useState(false);
+
   const startSession = useCallback(async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    setLoadingInitialContent(true);
 
     if (!socket || !sessionId || !isHost) return;
 
@@ -149,6 +155,8 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
 
     if (response?.error) {
       setError(response.error);
+    } else {
+      setLoadingInitialContent(false);
     }
   }, [socket, sessionId, isHost]);
 
@@ -240,6 +248,8 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     },
     sessionResults,
     sessionSettings,
+
+    loadingInitialContent,
   };
 
   return <MovieVoterContext.Provider value={value}>{children}</MovieVoterContext.Provider>;

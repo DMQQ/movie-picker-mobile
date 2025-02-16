@@ -12,6 +12,7 @@ import { ReactNode } from "react";
 export default function QuickActions(props: { movie: Movie; children?: ReactNode }) {
   const dispatch = useAppDispatch();
   const { groups } = useAppSelector((state) => state.favourite);
+  const t = useTranslation();
 
   const onPress = (groupId: "1" | "2" | "999") => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -29,14 +30,12 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
   };
 
   const isInGroup = (groupId: "1" | "2" | "999") => {
-    const group = groups.find((g) => g.id === groupId);
+    const group = groups.find((g) => g?.id === groupId);
 
     if (!group) return false;
 
-    return group.movies.some((m) => m.id === props.movie.id);
+    return group.movies.some((m) => m?.id === props?.movie?.id);
   };
-
-  const t = useTranslation();
 
   return (
     <View style={styles.container}>

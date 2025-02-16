@@ -1,5 +1,15 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { View, ScrollView, StyleSheet, Dimensions, ImageBackground, Image, FlatList } from "react-native";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  ImageBackground,
+  Image,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { Button, Text, Chip, MD2DarkTheme, TouchableRipple, IconButton } from "react-native-paper";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useMovieVoter } from "../../service/useVoter";
@@ -14,6 +24,7 @@ import QuickActions from "../../components/QuickActions";
 import * as Haptics from "expo-haptics";
 import { useGetAllProvidersQuery, useGetGenresQuery, useLazyGetGenresQuery } from "../../redux/movie/movieApi";
 import { throttle } from "../../utils/throttle";
+import { CommonActions } from "@react-navigation/native";
 
 const scaleTitle = (title: string, size = 30) => {
   if (title.length > 30) return size * 0.75;
@@ -22,7 +33,8 @@ const scaleTitle = (title: string, size = 30) => {
 };
 
 export default function Home({ navigation, route }: any) {
-  const { sessionId, status, users, currentMovies, currentUserId, actions, isHost, sessionSettings } = useMovieVoter();
+  const { sessionId, status, users, currentMovies, currentUserId, actions, isHost, sessionSettings, loadingInitialContent } =
+    useMovieVoter();
   const [localReady, setLocalReady] = useState(false);
   const [localRatings, setLocalRatings] = useState({
     interest: 2,
@@ -70,14 +82,20 @@ export default function Home({ navigation, route }: any) {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
+  const imagesPrefetched = useRef(false);
   useEffect(() => {
-    Promise.any([
-      Image.prefetch("https://image.tmdb.org/t/p/w500" + currentMovies[0]?.backdrop_path),
-      Image.prefetch("https://image.tmdb.org/t/p/w500" + currentMovies[0]?.poster_path),
+    if (currentMovies?.length === 0 || imagesPrefetched.current) return;
 
-      Image.prefetch("https://image.tmdb.org/t/p/w500" + currentMovies[1]?.backdrop_path),
-      Image.prefetch("https://image.tmdb.org/t/p/w500" + currentMovies[1]?.poster_path),
-    ]);
+    Promise.any(
+      currentMovies
+        .map((movie) => [
+          Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path),
+          Image.prefetch("https://image.tmdb.org/t/p/w500" + movie?.backdrop_path),
+        ])
+        .flat()
+    ).finally(() => {
+      imagesPrefetched.current = true;
+    });
   }, [currentMovies.length]);
 
   const t = useTranslation();
@@ -85,7 +103,18 @@ export default function Home({ navigation, route }: any) {
   const renderInitialState = () => (
     <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.navigate("Games")} size={35} />
+        <IconButton
+          icon="chevron-left"
+          onPress={() =>
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 1,
+                routes: [{ name: "Landing" }, { name: "Games" }],
+              })
+            )
+          }
+          size={35}
+        />
         <Text style={{ fontSize: 35, fontFamily: "Bebas", textAlign: "center", width: "70%" }}>{t("voter.home.title")}</Text>
       </View>
       <View style={{ flex: 1, paddingHorizontal: 15, paddingBottom: 15 }}>
@@ -163,27 +192,36 @@ export default function Home({ navigation, route }: any) {
             </View>
           )}
 
-          <Button mode="contained" onPress={handleReady} style={styles.button} contentStyle={{ padding: 7.5 }}>
-            {currentUserReady ? t("voter.home.ready-cancel") : t("voter.home.ready-status")}
-          </Button>
+          <View style={{ height: 100, justifyContent: "flex-end" }}>
+            {!currentUserReady && (
+              <Button mode="contained" onPress={handleReady} style={styles.button} contentStyle={{ padding: 7.5 }}>
+                {t("voter.home.ready-status")}
+              </Button>
+            )}
 
-          {allReady && isHost && (
-            <Button
-              mode="contained"
-              onPress={actions.startSession}
-              style={[
-                styles.button,
-                {
-                  backgroundColor: MD2DarkTheme.colors.accent,
-                },
-              ]}
-              contentStyle={{
-                padding: 7.5,
-              }}
-            >
-              {t("voter.home.start")}
-            </Button>
-          )}
+            {allReady && isHost && (
+              <Button
+                disabled={loadingInitialContent}
+                mode="contained"
+                onPress={actions.startSession}
+                style={[
+                  styles.button,
+                  {
+                    backgroundColor: MD2DarkTheme.colors.accent,
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  },
+                ]}
+                contentStyle={{
+                  padding: 7.5,
+                }}
+              >
+                {loadingInitialContent && <ActivityIndicator style={{ marginHorizontal: 10 }} size={15} color="#fff" />}
+                {t("voter.home.start")}
+              </Button>
+            )}
+          </View>
         </View>
       </Animated.View>
     );
@@ -211,16 +249,28 @@ export default function Home({ navigation, route }: any) {
             </View>
             <View style={{ flex: 1, marginTop: 10 }}>
               <View style={{ flexDirection: "row", gap: 15 }}>
-                <Animated.Image
-                  entering={FadeInDown.duration(300)}
-                  exiting={FadeOutDown.duration(300)}
-                  source={{ uri: "https://image.tmdb.org/t/p/w500" + card?.poster_path }}
-                  style={{
-                    width: (Dimensions.get("window").width - 30) / 2 - 60,
-                    height: 215,
-                    borderRadius: 10,
+                <TouchableOpacity
+                  disabled={typeof card?.id === "undefined"}
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    navigation.navigate("MovieDetails", {
+                      id: card?.id,
+                      type: card?.title ? "movie" : "tv",
+                      img: card?.poster_path,
+                    });
                   }}
-                />
+                >
+                  <Animated.Image
+                    entering={FadeInDown.duration(300)}
+                    exiting={FadeOutDown.duration(300)}
+                    source={{ uri: "https://image.tmdb.org/t/p/w200" + card?.poster_path }}
+                    style={{
+                      width: (Dimensions.get("window").width - 30) / 2 - 60,
+                      height: 215,
+                      borderRadius: 10,
+                    }}
+                  />
+                </TouchableOpacity>
                 <View style={{ flex: 1, gap: 10, paddingVertical: 10, justifyContent: "space-between" }}>
                   <View>
                     <Text
@@ -281,7 +331,11 @@ export default function Home({ navigation, route }: any) {
                   barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
                   handleSize={30}
                   handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
-                  onChange={(value) => setLocalRatings((p) => ({ ...p, interest: value }))}
+                  onChange={(value) => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+                    setLocalRatings((p) => ({ ...p, interest: value }));
+                  }}
                 />
               </View>
 
@@ -308,7 +362,10 @@ export default function Home({ navigation, route }: any) {
                   barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
                   handleSize={30}
                   handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
-                  onChange={(value) => setLocalRatings((p) => ({ ...p, mood: value }))}
+                  onChange={(value) => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setLocalRatings((p) => ({ ...p, mood: value }));
+                  }}
                 />
               </View>
 
@@ -339,7 +396,11 @@ export default function Home({ navigation, route }: any) {
                   barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
                   handleSize={30}
                   handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
-                  onChange={(value) => setLocalRatings((p) => ({ ...p, uniqueness: value }))}
+                  onChange={(value) => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+                    setLocalRatings((p) => ({ ...p, uniqueness: value }));
+                  }}
                 />
               </View>
 
@@ -420,7 +481,18 @@ function Results({ navigation }: any) {
           backgroundColor: "rgba(0,0,0,0.2)",
         }}
       >
-        <IconButton icon="chevron-left" onPress={() => navigation.navigate("Games")} size={35} />
+        <IconButton
+          icon="chevron-left"
+          onPress={() =>
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 1,
+                routes: [{ name: "Landing" }, { name: "Games" }],
+              })
+            )
+          }
+          size={35}
+        />
         <Text style={{ fontSize: 40, fontFamily: "Bebas", width: "70%" }}>{t("voter.overview.title")} 🎬</Text>
       </View>
       <ScrollView
@@ -458,7 +530,8 @@ function Results({ navigation }: any) {
           <View style={{ marginTop: 30 }}>
             <Text style={{ fontSize: 30, fontFamily: "Bebas", marginBottom: 15 }}>{t("voter.overview.h2")}</Text>
             {sessionResults?.topPicks?.slice(1).map((item) => (
-              <TouchableRipple
+              <TouchableOpacity
+                activeOpacity={0.9}
                 disabled={!item.movie.id}
                 key={item.movie.id}
                 style={{ marginBottom: 15, width: Dimensions.get("screen").width - 30, overflow: "hidden" }}
@@ -501,7 +574,7 @@ function Results({ navigation }: any) {
                     </View>
                   </View>
                 </View>
-              </TouchableRipple>
+              </TouchableOpacity>
             ))}
           </View>
         </View>

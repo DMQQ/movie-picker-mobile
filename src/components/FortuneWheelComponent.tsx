@@ -10,10 +10,12 @@ import Animated, {
   clamp,
   SlideInDown,
   SlideOutDown,
+  useAnimatedReaction,
 } from "react-native-reanimated";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { MD2DarkTheme } from "react-native-paper";
 import useTranslation from "../service/useTranslation";
+import * as Haptics from "expo-haptics";
 
 const { width, height } = Dimensions.get("window");
 
@@ -34,8 +36,42 @@ const Wheel = ({
   const rotate = useSharedValue(0);
   const isSpinning = useSharedValue(false);
   const translateY = useSharedValue(0);
+  const lastHapticSegment = useSharedValue(-1);
+  const lastHapticTime = useSharedValue(0);
 
   const t = useTranslation();
+
+  const triggerItemHaptic = () => {
+    // Use selectionAsync for a more premium feel than impact
+    Haptics.selectionAsync();
+  };
+
+  useAnimatedReaction(
+    () => rotate.value,
+    (currentRotation) => {
+      if (!isSpinning.value) return;
+
+      const normalizedRotation = ((currentRotation % 360) + 360) % 360;
+      const invertedAngle = (360 - normalizedRotation) % 360;
+      const segmentCenter = Math.floor(invertedAngle / segmentAngle);
+      const centerAngle = segmentCenter * segmentAngle + segmentAngle / 2;
+      const distanceFromCenter = Math.abs(invertedAngle - centerAngle);
+
+      // Only trigger if we're at the center and enough time has passed since last haptic
+      if (distanceFromCenter < 5 && segmentCenter !== lastHapticSegment.value) {
+        const currentTime = Date.now();
+        if (currentTime - lastHapticTime.value > 100) {
+          // Minimum 100ms between haptics
+          lastHapticTime.value = currentTime;
+          lastHapticSegment.value = segmentCenter;
+          const rotationDelta = Math.abs(currentRotation - rotate.value);
+          if (rotationDelta < 50) {
+            runOnJS(triggerItemHaptic)();
+          }
+        }
+      }
+    }
+  );
 
   const handleSpin = (velocity: number) => {
     if (isSpinning.value) return;
@@ -45,6 +81,11 @@ const Wheel = ({
     }
 
     isSpinning.value = true;
+    lastHapticSegment.value = -1;
+    lastHapticTime.value = 0;
+
+    // Initial spin feedback
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
     const rotations = Math.min(Math.max(Math.abs(velocity / 500), 1), 6);
     const randomOffset = Math.random() * 360;
@@ -81,7 +122,8 @@ const Wheel = ({
             isSpinning.value = false;
             if (onSelectedItem) {
               runOnJS(onSelectedItem)(items[selectedIndex]);
-              runOnJS(Vibration.vibrate)(100);
+              // Final selection uses notification type for distinct feedback
+              runOnJS(Haptics.notificationAsync)(Haptics.NotificationFeedbackType.Success);
             }
           }
         );
@@ -98,7 +140,7 @@ const Wheel = ({
     .onEnd((event) => {
       if (event.velocityY < -100) {
         runOnJS(handleSpin)(event.velocityY);
-        runOnJS(Vibration.vibrate)(100);
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
       }
       translateY.value = withTiming(0);
     });
