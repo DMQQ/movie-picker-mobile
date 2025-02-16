@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import FortuneWheelComponent from "../components/FortuneWheelComponent";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import { Dimensions, FlatList, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
@@ -19,6 +19,7 @@ import { FancySpinner } from "../components/FancySpinner";
 import Favourite from "../components/Favourite";
 import useTranslation from "../service/useTranslation";
 import { throttle } from "../utils/throttle";
+import { useIsFocused } from "@react-navigation/native";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
 
@@ -60,32 +61,52 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
 
   const [selectedCards, setSelectedCards] = useState<Movie[]>([]);
 
-  const handleThrowDice = (value: number | string) => {
-    getLazyMovies({ skip: 0, take: 17 }).then(async (response) => {
-      if (response.data && Array.isArray(response.data)) {
-        const index = typeof value === "number" ? value : response?.data?.findIndex((d) => d.name === value);
-        const randomSection = response.data[index];
+  const handleThrowDice = useCallback(
+    (value: number | string) => {
+      getLazyMovies({ skip: 0, take: 26 }).then(async (response) => {
+        if (response.data && Array.isArray(response.data)) {
+          const index = typeof value === "number" ? value : response?.data?.findIndex((d) => d.name === value);
+          const randomSection = response.data[index];
 
-        const movies = randomSection.results;
+          if (!randomSection?.results) return;
 
-        Promise.any(
-          movies.map((movie) => {
-            return Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path);
-          })
-        );
+          const movies = randomSection.results;
+          await Promise.any(
+            movies.map((movie) => {
+              return Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path);
+            })
+          );
 
-        setSelectedCards(movies.slice(0, 12));
+          const pos = Math.random() > 5 ? movies.slice(0, 12) : movies.slice(8, 20);
 
-        setSignatures(movies.map(({ id }) => id).join("-"));
-      }
-    });
-  };
+          setSelectedCards(pos);
+          setSignatures(movies.map(({ id }) => id).join("-"));
+        }
+      });
+    },
+    [getLazyMovies]
+  );
 
   const [isSpin, setIsSpin] = useState(false);
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    handleThrowDice(route?.params?.category || Math.floor(Math.random() * 17));
-  }, [route?.params?.category]);
+    if (route?.params?.category) {
+      console.log("line 93");
+
+      handleThrowDice(route.params.category);
+    }
+  }, [route?.params?.category, handleThrowDice]);
+
+  // Separate useEffect for initial load and focus changes
+  useEffect(() => {
+    if (!route?.params?.category && isFocused) {
+      console.log("line 101");
+
+      handleThrowDice(Math.floor(Math.random() * 17));
+    }
+  }, [isFocused, handleThrowDice, route?.params?.category]);
 
   const { width, height } = useWindowDimensions();
 
@@ -246,7 +267,7 @@ export const SectionSelector = ({ navigation }: any) => {
             }}
           >
             <ImageBackground
-              blurRadius={5}
+              blurRadius={10}
               source={{
                 uri: "https://image.tmdb.org/t/p/w200" + item.results[0].poster_path,
               }}
@@ -265,7 +286,7 @@ export const SectionSelector = ({ navigation }: any) => {
                   color: "#fff",
                   textShadowColor: "rgba(0, 0, 0, 0.75)",
                   textShadowOffset: { width: 0, height: 1 },
-                  textShadowRadius: 3,
+                  textShadowRadius: 5,
                   textAlign: "center",
                   padding: 5,
                 }}
