@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { View, VirtualizedList, StyleSheet, ScrollView, Dimensions, Image, Pressable } from "react-native";
 import { Chip, Text, ActivityIndicator, Portal, Modal, Button, Divider, MD2DarkTheme } from "react-native-paper";
 import { useLazySearchQuery } from "../redux/movie/movieApi";
@@ -33,9 +33,13 @@ const MovieCard = ({ item }: { item: any }) => {
         height: ITEM_HEIGHT,
         borderRadius: 10,
         backgroundColor: MD2DarkTheme.colors.surface,
+        marginBottom: 10,
       }}
     >
-      <Image source={{ uri: "https://image.tmdb.org/t/p/w200" + item?.poster_path }} style={styles.cardImage} />
+      <Image
+        source={{ uri: item?.poster_path ? "https://image.tmdb.org/t/p/w200" + item.poster_path : "https://via.placeholder.com/120x180" }}
+        style={styles.cardImage}
+      />
 
       <View style={{ flex: 1, padding: 10, overflow: "hidden" }}>
         <Text
@@ -67,42 +71,106 @@ const SearchScreen = () => {
     genres: [] as number[],
     minRating: undefined as number | undefined,
   });
-  const [page, setPage] = useState(1);
 
-  const [search, { data, isLoading, isFetching }] = useLazySearchQuery();
+  // Maintain our own accumulating results
+  const [allResults, setAllResults] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const isFirstLoad = useRef(true);
+
+  const [search, { data, isLoading, isFetching, isError }] = useLazySearchQuery();
 
   const searchTimeout = React.useRef<NodeJS.Timeout>();
 
+  useEffect(() => {
+    if (!isFirstLoad.current) {
+      setCurrentPage(1);
+      setAllResults([]);
+      setHasNextPage(false);
+    }
+    isFirstLoad.current = false;
+  }, [searchQuery, filters.type, filters.genres, filters.minRating]);
+
+  // Process search results
+  useEffect(() => {
+    if (data) {
+      if (currentPage === 1) {
+        // Replace results on first page
+        setAllResults(data.results || []);
+      } else {
+        // Append results for subsequent pages
+        setAllResults((prev) => [...prev, ...(data.results || [])]);
+      }
+
+      // Update pagination state
+      setHasNextPage(data.page < data.total_pages);
+    }
+  }, [data, currentPage]);
+
+  // Handle search query
   useEffect(() => {
     if (searchTimeout.current) {
       clearTimeout(searchTimeout.current);
     }
 
-    searchTimeout.current = setTimeout(() => {
-      search({
-        query: searchQuery,
-        page,
-        type: filters.type,
-        with_genres: filters.genres,
-        vote_average_gte: filters.minRating,
-      });
-    }, 500);
+    if (searchQuery.trim().length > 0) {
+      searchTimeout.current = setTimeout(() => {
+        search({
+          query: searchQuery,
+          page: currentPage,
+          type: filters.type,
+          with_genres: filters.genres.length > 0 ? filters.genres : undefined,
+          vote_average_gte: filters.minRating,
+        });
+      }, 500);
+    } else {
+      // Clear results if search query is empty
+      setAllResults([]);
+      setHasNextPage(false);
+    }
 
     return () => {
       if (searchTimeout.current) {
         clearTimeout(searchTimeout.current);
       }
     };
-  }, [filters, searchQuery, page]);
+  }, [filters, searchQuery, currentPage, search]);
 
-  const handleEndReached = () => {
-    if (!isFetching && data?.total_pages > page) {
-      setPage((prev) => prev + 1);
+  const handleEndReached = useCallback(() => {
+    if (!isFetching && hasNextPage) {
+      setCurrentPage((prev) => prev + 1);
     }
-  };
+  }, [isFetching, hasNextPage, currentPage, allResults.length]);
 
-  const getItem = (_data: any, index: number) => data?.results[index];
-  const getItemCount = () => data?.results?.length || 0;
+  const getItem = (_data: any, index: number) => allResults[index];
+  const getItemCount = () => allResults.length || 0;
+
+  const handleFilterChange = useCallback((type: "movie" | "tv" | "both") => {
+    setFilters((f) => ({ ...f, type }));
+  }, []);
+
+  const renderEmptyComponent = useCallback(() => {
+    if (isLoading && currentPage === 1)
+      return <ActivityIndicator style={[styles.loader, { marginTop: 50 }]} animating={true} color={MD2DarkTheme.colors.primary} />;
+
+    if (searchQuery.trim().length === 0) {
+      return (
+        <Text style={styles.emptyText} variant="bodyLarge">
+          Enter a search term to begin
+        </Text>
+      );
+    }
+
+    if (!isLoading && searchQuery.trim().length > 0) {
+      return (
+        <Text style={styles.emptyText} variant="bodyLarge">
+          No results found for "{searchQuery}"
+        </Text>
+      );
+    }
+
+    return null;
+  }, [isLoading, searchQuery, currentPage]);
 
   return (
     <View style={styles.container}>
@@ -110,61 +178,47 @@ const SearchScreen = () => {
 
       <View style={styles.chipContainer}>
         <ScrollView style={{ paddingHorizontal: 10 }} horizontal showsHorizontalScrollIndicator={false}>
-          <Chip
-            selected={filters.type === "both"}
-            onPress={() => setFilters((f) => ({ ...f, type: "both" }))}
-            style={styles.chip}
-            theme={MD2DarkTheme}
-          >
+          <Chip selected={filters.type === "both"} onPress={() => handleFilterChange("both")} style={styles.chip} theme={MD2DarkTheme}>
             All
           </Chip>
-          <Chip
-            selected={filters.type === "movie"}
-            onPress={() => setFilters((f) => ({ ...f, type: "movie" }))}
-            style={styles.chip}
-            theme={MD2DarkTheme}
-          >
+          <Chip selected={filters.type === "movie"} onPress={() => handleFilterChange("movie")} style={styles.chip} theme={MD2DarkTheme}>
             Movies
           </Chip>
-          <Chip
-            selected={filters.type === "tv"}
-            onPress={() => setFilters((f) => ({ ...f, type: "tv" }))}
-            style={styles.chip}
-            theme={MD2DarkTheme}
-          >
+          <Chip selected={filters.type === "tv"} onPress={() => handleFilterChange("tv")} style={styles.chip} theme={MD2DarkTheme}>
             TV Shows
           </Chip>
         </ScrollView>
       </View>
 
-      <VirtualizedList
-        data={data?.results}
-        getItem={getItem}
-        getItemCount={getItemCount}
-        renderItem={({ item }) => <MovieCard item={item} />}
-        keyExtractor={(item) => item.id.toString()}
-        getItemLayout={(data, index) => ({
-          length: ITEM_HEIGHT,
-          offset: ITEM_HEIGHT * index,
-          index,
-        })}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.5}
-        contentContainerStyle={styles.listContent}
-        ListFooterComponent={() =>
-          isFetching ? <ActivityIndicator style={styles.loader} animating={true} color={MD2DarkTheme.colors.primary} /> : null
-        }
-        ListEmptyComponent={() =>
-          !isLoading && (
-            <Text style={styles.emptyText} variant="bodyLarge">
-              No results found
-            </Text>
-          )
-        }
-        initialNumToRender={6}
-        maxToRenderPerBatch={10}
-        windowSize={5}
-      />
+      {isError ? (
+        <Text style={styles.errorText}>Something went wrong. Please try again.</Text>
+      ) : (
+        <VirtualizedList
+          data={allResults}
+          getItem={getItem}
+          getItemCount={getItemCount}
+          renderItem={({ item }) => <MovieCard item={item} />}
+          keyExtractor={(item) => `${item.id}-${item.media_type || filters.type}`}
+          getItemLayout={(data, index) => ({
+            length: ITEM_HEIGHT + 10, // Include margin
+            offset: (ITEM_HEIGHT + 10) * index,
+            index,
+          })}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+          contentContainerStyle={[styles.listContent, allResults.length === 0 && { flex: 1, justifyContent: "center" }]}
+          ListFooterComponent={() =>
+            isFetching && currentPage > 1 ? (
+              <ActivityIndicator style={styles.loader} animating={true} color={MD2DarkTheme.colors.primary} />
+            ) : null
+          }
+          ListEmptyComponent={renderEmptyComponent}
+          initialNumToRender={6}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={true}
+        />
+      )}
 
       <Portal>
         <Modal visible={showFilters} onDismiss={() => setShowFilters(false)} contentContainerStyle={styles.modal} theme={MD2DarkTheme}>
@@ -185,69 +239,53 @@ const SearchScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 5,
-    backgroundColor: "#000",
-  },
-  searchBar: {
-    marginBottom: 10,
-    backgroundColor: MD2DarkTheme.colors.surface,
-    borderRadius: 100,
-    paddingHorizontal: 5,
   },
   chipContainer: {
-    marginBottom: 10,
+    marginVertical: 10,
   },
   chip: {
-    marginRight: 10,
-    backgroundColor: MD2DarkTheme.colors.surface,
+    marginHorizontal: 4,
   },
   listContent: {
-    gap: 15,
-    padding: 15,
-  },
-  card: {
-    backgroundColor: MD2DarkTheme.colors.surface,
-    marginBottom: 15,
+    paddingHorizontal: 10,
+    paddingBottom: 20,
+    minHeight: 100,
   },
   cardImage: {
     width: 120,
-    height: 180,
-    borderRadius: 10,
-  },
-  cardContent: {
-    padding: 10,
-  },
-  title: {
-    color: "#fff",
-  },
-  rating: {
-    color: MD2DarkTheme.colors.primary,
-    marginTop: 5,
+    height: ITEM_HEIGHT,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    backgroundColor: "#2a2a2a",
   },
   loader: {
-    padding: 15,
+    marginVertical: 20,
   },
   emptyText: {
     textAlign: "center",
-    padding: 15,
-    color: "#fff",
+    marginTop: 40,
+    opacity: 0.7,
+  },
+  errorText: {
+    textAlign: "center",
+    marginTop: 40,
+    color: "#ff6b6b",
+    fontSize: 16,
   },
   modal: {
+    backgroundColor: "#1e1e1e",
     margin: 20,
-    borderRadius: 8,
-    padding: 15,
-    backgroundColor: MD2DarkTheme.colors.surface,
+    padding: 20,
+    borderRadius: 10,
   },
   modalTitle: {
-    color: "#fff",
-    marginBottom: 15,
+    marginBottom: 10,
   },
   divider: {
-    marginVertical: 15,
-    backgroundColor: MD2DarkTheme.colors.primary,
+    marginVertical: 10,
   },
   applyButton: {
-    marginTop: 15,
+    marginTop: 20,
   },
 });
 

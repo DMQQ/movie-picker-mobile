@@ -29,6 +29,13 @@ interface SectionParams {
   page?: number;
 }
 
+interface SearchResults {
+  page: number;
+  total_pages: number;
+  total_results: number;
+  results: any[]; // Replace with your actual movie/show type
+}
+
 export const movieApi = createApi({
   reducerPath: "movieApi",
   tagTypes: ["Search"],
@@ -109,7 +116,7 @@ export const movieApi = createApi({
       query: () => "/providers",
     }),
 
-    search: builder.query<any, SearchParams>({
+    search: builder.query<SearchResults, SearchParams>({
       query: (params) => {
         const queryParams = new URLSearchParams();
 
@@ -128,13 +135,13 @@ export const movieApi = createApi({
           method: "GET",
         };
       },
-      // Add data transformation if needed
+
       transformResponse: (response: any) => {
         return {
           ...response,
-          results: response.results.map((item: any) => ({
+          results: (response.results || []).map((item: any) => ({
             ...item,
-            key: item.id.toString(), // For FlatList
+            key: item.id.toString(),
           })),
         };
       },
