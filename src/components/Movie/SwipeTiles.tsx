@@ -99,10 +99,10 @@ const SwipeTile = ({
       }
     })
     .onEnd(() => {
-      if (position.value.x > width * 0.4) {
+      if (position.value.x > width * 0.25) {
         runOnJS(likeCard)();
         position.value = withSpring({ x: width + 100, y: 100 });
-      } else if (position.value.x < -width * 0.4) {
+      } else if (position.value.x < -width * 0.25) {
         runOnJS(removeCard)();
         position.value = withSpring({ x: -width - 100, y: 100 });
       } else {

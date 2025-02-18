@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import FortuneWheelComponent from "../components/FortuneWheelComponent";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import { Dimensions, FlatList, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
@@ -33,6 +33,8 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
   const [getLazyMovies] = useLazyGetLandingPageMoviesQuery();
 
   const type = selectedItem?.type === "tv" ? "tv" : "movie";
+
+  const wheelRef = useRef<{ spin: Function }>(null);
 
   const { data, refetch, isLoading: isMovieLoading } = useGetMovieQuery({ id: selectedItem?.id!, type });
 
@@ -93,8 +95,6 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
 
   useEffect(() => {
     if (route?.params?.category) {
-      console.log("line 93");
-
       handleThrowDice(route.params.category);
     }
   }, [route?.params?.category, handleThrowDice]);
@@ -102,8 +102,6 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
   // Separate useEffect for initial load and focus changes
   useEffect(() => {
     if (!route?.params?.category && isFocused) {
-      console.log("line 101");
-
       handleThrowDice(Math.floor(Math.random() * 17));
     }
   }, [isFocused, handleThrowDice, route?.params?.category]);
@@ -179,6 +177,10 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
                   mode="contained"
                   onPress={() => {
                     setSelectedItem(undefined);
+
+                    setTimeout(() => {
+                      wheelRef.current?.spin();
+                    }, 400);
                   }}
                   contentStyle={{ padding: 7.5 }}
                   style={{ borderRadius: 100, flex: 1 }}
@@ -205,7 +207,7 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
             <>
               <Text style={{ fontSize: 70, fontFamily: "Bebas" }}>{t("fortune-wheel.pick-a-movie")}</Text>
               <View style={{ flexDirection: "row" }}>
-                <Button rippleColor={"#fff"} onPress={throttle(() => handleThrowDice(Math.floor(Math.random() * 17)), 200)}>
+                <Button rippleColor={"#fff"} onPress={throttle(() => handleThrowDice(Math.floor(Math.random() * 26)), 200)}>
                   {t("fortune-wheel.random-category")}
                 </Button>
 
@@ -225,6 +227,7 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
 
       {selectedCards.length > 0 && (
         <FortuneWheelComponent
+          ref={wheelRef}
           style={{}}
           key={signatures}
           onSpinStart={() => {

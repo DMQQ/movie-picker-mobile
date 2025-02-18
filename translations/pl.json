@@ -187,5 +187,23 @@
     "favourite": "Ulubione",
     "my-lists": "Moje listy",
     "modal": "Wybierz grupę do dodania"
+  },
+  "games": {
+    "categories": {
+      "all": "Wszystkie Gry",
+      "popular": "Popularne",
+      "new": "Nowe Gry"
+    },
+    "voter": {
+      "games": "Gry Imprezowe",
+      "title": "Ranking w parach",
+      "swipe": "Przesuwaj i paruj!",
+      "swipeDescription": "Szybka i prosta gra grupowa, dla par i znajomych, przesuń w prawo lub w lewo aby głosować na filmy i seriale.",
+      "description": "Ułatw podejmowanie decyzji! Głosuj na filmy lub seriale w 3 kategoriach aby znaleźć wspólne TOP propozycje."
+    },
+    "fortunewheel": {
+      "title": "Koło Fortuny",
+      "description": "Zakręć kołem fortuny i losuj! Idealne dla niezdecydowanych lub szybkich decyzji!"
+    }
   }
 }

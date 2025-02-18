@@ -1,10 +1,9 @@
-import { Dimensions, Image, ImageBackground, Platform, Pressable, StyleSheet, View, VirtualizedList } from "react-native";
-import { Avatar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../redux/store";
+import { Dimensions, Image, ImageBackground, Pressable, StyleSheet, TouchableHighlight, View, VirtualizedList } from "react-native";
+import { Avatar, MD2DarkTheme, Text } from "react-native-paper";
+import { memo, useCallback, useEffect, useState } from "react";
+import { useAppSelector } from "../redux/store";
 import { ScreenProps } from "./types";
 import { useGetFeaturedQuery, useLazyGetLandingPageMoviesQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
-import SafeIOSContainer from "../components/SafeIOSContainer";
 import ScoreRing from "../components/ScoreRing";
 import { Movie } from "../../types";
 import { useNavigation } from "@react-navigation/native";
@@ -131,30 +130,11 @@ const FeaturedSection = memo(
         resizeMethod="scale"
       >
         <View style={[styles.header, { padding: 15 }]}>
-          <Pressable onPress={() => props.navigate("Settings")} style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
+          <View style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
             <Avatar.Text size={35} label={nickname?.[0]?.toUpperCase()} color="#fff" />
             <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>
               {t("settings.hello")} {nickname}
             </Text>
-          </Pressable>
-
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <TouchableRipple
-              onPress={() => navigation.navigate("Favourites")}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                padding: 7.5,
-                backgroundColor: "rgba(0,0,0,0.35)",
-                borderRadius: 100,
-                paddingHorizontal: 15,
-              }}
-            >
-              <>
-                <FontAwesome name="bookmark" size={20} color="#fff" style={{ marginRight: 10 }} />
-                <Text style={{ color: "#fff", fontWeight: "500" }}>{t("quick-actions.my-lists")}</Text>
-              </>
-            </TouchableRipple>
           </View>
         </View>
 
@@ -175,33 +155,78 @@ const FeaturedSection = memo(
   () => true
 );
 
+const tabStyles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 15,
+    padding: 10,
+    paddingTop: 10,
+  },
+  button: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    borderRadius: 100,
+  },
+});
+
 const BottomTab = memo(
   ({ navigate }: { navigate: any }) => {
     const t = useTranslation();
+
     return (
-      <View style={{ paddingHorizontal: 15, flexDirection: "row", alignItems: "center" }}>
-        <Button
-          mode="contained-tonal"
+      <View style={tabStyles.container}>
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          onPress={() => navigate("Settings")}
+          style={tabStyles.button}
+        >
+          <FontAwesome name="gear" size={25} color="#fff" />
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          style={tabStyles.button}
+          onPress={() => navigate("Favourites")}
+        >
+          <FontAwesome name="bookmark" size={25} color="#fff" />
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          style={[tabStyles.button, { backgroundColor: MD2DarkTheme.colors.primary, borderRadius: 10, padding: 5, paddingVertical: 10 }]}
           onPress={() =>
             navigate("QRCode", {
               screen: "QRScanner",
             })
           }
-          style={{ marginTop: 15, borderRadius: 100, marginBottom: 15, flex: 1 }}
-          contentStyle={{ padding: 7.5 }}
         >
-          {t("room.join-game")}
-        </Button>
+          <FontAwesome name="qrcode" size={30} color={"#fff"} />
+        </TouchableHighlight>
 
-        <View style={{ flexDirection: "row", gap: 5 }}>
-          <IconButton
-            size={30}
-            onPress={() => navigate("FortuneWheel")}
-            icon={"gamepad-variant-outline"}
-            style={{ backgroundColor: MD2DarkTheme.colors.primary }}
-          />
-          <IconButton size={30} onPress={() => navigate("Games")} icon={"plus"} style={{ backgroundColor: MD2DarkTheme.colors.primary }} />
-        </View>
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          style={tabStyles.button}
+          onPress={() => navigate("Games")}
+        >
+          <FontAwesome name="gamepad" size={25} color="#fff" />
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          onPress={() => navigate("Search")}
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          style={tabStyles.button}
+        >
+          <FontAwesome name="search" size={25} color="#fff" />
+        </TouchableHighlight>
       </View>
     );
   },

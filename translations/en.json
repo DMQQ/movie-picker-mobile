@@ -189,5 +189,23 @@
     "favourite": "Favourites",
     "my-lists": "My lists",
     "modal": "Choose a group to add"
+  },
+  "games": {
+    "categories": {
+      "all": "All Games",
+      "popular": "Popular",
+      "new": "New Games"
+    },
+    "voter": {
+      "games": "Party Games",
+      "title": "Group Voter",
+      "swipe": "Swipe to Match!",
+      "swipeDescription": "Quick and fun party game where players swipe left or right to vote on movies or series to match with other players.",
+      "description": "Picking movies easy and fun! Vote on movies or series in three categories to get your top picks."
+    },
+    "fortunewheel": {
+      "title": "Fortune Wheel",
+      "description": "Spin the wheel of fortune to make random selections or decisions. Perfect for undecided or making quick picks!"
+    }
   }
 }

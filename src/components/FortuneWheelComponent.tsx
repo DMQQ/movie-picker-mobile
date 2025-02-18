@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { forwardRef, memo, useEffect, useImperativeHandle } from "react";
 import { View, StyleSheet, Image, Dimensions, ImageBackground, Vibration, StyleProp, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -19,19 +19,16 @@ import * as Haptics from "expo-haptics";
 
 const { width, height } = Dimensions.get("window");
 
-const Wheel = ({
-  size = 300,
-  items,
-  style,
-  onSelectedItem,
-  onSpinStart,
-}: {
-  size?: number;
-  items: { image: any }[];
-  onSelectedItem?: (item: any) => void;
-  onSpinStart?: () => void;
-  style: StyleProp<ViewStyle>;
-}) => {
+const Wheel = forwardRef<
+  any,
+  {
+    size?: number;
+    items: { image: any }[];
+    onSelectedItem?: (item: any) => void;
+    onSpinStart?: () => void;
+    style: StyleProp<ViewStyle>;
+  }
+>(({ size = 300, items, style, onSelectedItem, onSpinStart }, ref) => {
   const segmentAngle = 360 / items.length;
   const rotate = useSharedValue(0);
   const isSpinning = useSharedValue(false);
@@ -87,7 +84,7 @@ const Wheel = ({
     // Initial spin feedback
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
-    const rotations = Math.min(Math.max(Math.abs(velocity / 500), 1), 6);
+    const rotations = Math.min(Math.max(Math.abs(velocity / 500), 1), 7);
     const randomOffset = Math.random() * 360;
     const initialTargetAngle = rotate.value + 360 * rotations + randomOffset;
 
@@ -147,6 +144,14 @@ const Wheel = ({
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],
+  }));
+
+  useImperativeHandle(ref, () => ({
+    spin: () => {
+      "worklet";
+      runOnJS(handleSpin)(-1750);
+      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
+    },
   }));
 
   return (
@@ -213,7 +218,7 @@ const Wheel = ({
       </GestureDetector>
     </View>
   );
-};
+});
 
 const Segment = memo(({ item, index, segmentAngle, wheelSize }: { item: any; index: number; segmentAngle: number; wheelSize: number }) => {
   const radius = wheelSize / 2;

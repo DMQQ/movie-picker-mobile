@@ -106,12 +106,14 @@ export default function Home({ navigation, route }: any) {
         <IconButton
           icon="chevron-left"
           onPress={() =>
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 1,
-                routes: [{ name: "Landing" }, { name: "Games" }],
-              })
-            )
+            navigation.canGoBack()
+              ? navigation.goBack()
+              : navigation.dispatch(
+                  CommonActions.reset({
+                    index: 1,
+                    routes: [{ name: "Landing" }, { name: "Games" }],
+                  })
+                )
           }
           size={35}
         />
@@ -265,10 +267,11 @@ export default function Home({ navigation, route }: any) {
                     exiting={FadeOutDown.duration(300)}
                     source={{ uri: "https://image.tmdb.org/t/p/w200" + card?.poster_path }}
                     style={{
-                      width: (Dimensions.get("window").width - 30) / 2 - 60,
-                      height: 215,
+                      width: (Dimensions.get("window").width - 30) / 2 - 50,
+                      height: 210,
                       borderRadius: 10,
                     }}
+                    resizeMode="contain"
                   />
                 </TouchableOpacity>
                 <View style={{ flex: 1, gap: 10, paddingVertical: 10, justifyContent: "space-between" }}>
@@ -493,7 +496,7 @@ function Results({ navigation }: any) {
           }
           size={35}
         />
-        <Text style={{ fontSize: 40, fontFamily: "Bebas", width: "70%" }}>{t("voter.overview.title")} 🎬</Text>
+        <Text style={{ fontSize: 30, fontFamily: "Bebas", width: "100%" }}>{t("voter.overview.title")} 🎬</Text>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
