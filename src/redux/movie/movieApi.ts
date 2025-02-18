@@ -3,6 +3,22 @@ import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
 import { Movie, MovieDetails } from "../../../types";
 import { RootState } from "../store";
 
+interface SearchParams {
+  query?: string;
+  page?: number;
+  type?: "movie" | "tv" | "both";
+  year?: number;
+  with_genres?: number[];
+  without_genres?: number[];
+  with_watch_providers?: number[];
+  vote_average_gte?: number;
+  vote_count_gte?: number;
+  similarToId?: number;
+  discover?: boolean;
+  language?: string;
+  region?: string;
+}
+
 interface LandingPageParams {
   skip?: number;
   take?: number;
@@ -15,6 +31,7 @@ interface SectionParams {
 
 export const movieApi = createApi({
   reducerPath: "movieApi",
+  tagTypes: ["Search"],
   baseQuery: fetchBaseQuery({
     baseUrl: API_BASE_ENDPOINT,
     prepareHeaders: (headers, { getState }) => {
@@ -91,6 +108,37 @@ export const movieApi = createApi({
     getAllProviders: builder.query<any[], any>({
       query: () => "/providers",
     }),
+
+    search: builder.query<any, SearchParams>({
+      query: (params) => {
+        const queryParams = new URLSearchParams();
+
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            if (Array.isArray(value)) {
+              queryParams.append(key, value.join(","));
+            } else {
+              queryParams.append(key, value.toString());
+            }
+          }
+        });
+
+        return {
+          url: `unified-search?${queryParams.toString()}`,
+          method: "GET",
+        };
+      },
+      // Add data transformation if needed
+      transformResponse: (response: any) => {
+        return {
+          ...response,
+          results: response.results.map((item: any) => ({
+            ...item,
+            key: item.id.toString(), // For FlatList
+          })),
+        };
+      },
+    }),
   }),
 });
 
@@ -119,4 +167,8 @@ export const {
   useGetAllProvidersQuery,
 
   useLazyGetGenresQuery,
+
+  useSearchQuery,
+
+  useLazySearchQuery,
 } = movieApi;

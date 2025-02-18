@@ -4,10 +4,10 @@ import { useAppSelector } from "../redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState, AppStateStatus, Platform } from "react-native";
 
-const isDev = false;
+const isDev = true;
 const BACKGROUND_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 
-export const url = isDev ? "http://192.168.0.11:3000" : "https://movie.dmqq.dev";
+export const url = isDev ? "http://192.168.0.26:3000" : "https://movie.dmqq.dev";
 
 export const SocketContext = React.createContext<{
   socket: Socket | null;
