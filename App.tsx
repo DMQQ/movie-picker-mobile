@@ -1,16 +1,15 @@
 import "react-native-reanimated";
 
-import { ActivityIndicator, Button, MD2DarkTheme, PaperProvider } from "react-native-paper";
+import { Button, MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import QRScanner from "./src/screens/Room/QRScanner";
 import Landing from "./src/screens/Landing";
 import QRCode from "./src/screens/Room/Main";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { store, useAppDispatch } from "./src/redux/store";
 import Overview from "./src/screens/Overview";
-import { Alert, Platform, StatusBar, View } from "react-native";
+import { Alert, Linking, Platform, StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MovieDetails from "./src/screens/MovieDetails";
 import { RootStackParamList } from "./src/screens/types";
@@ -29,6 +28,35 @@ import GameList from "./src/screens/GameList";
 import Search from "./src/screens/Search";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+import { LinkingOptions } from "@react-navigation/native";
+
+const linking: LinkingOptions<RootStackParamList> = {
+  prefixes: ["flickmate://", "https://movie.dmqq.dev"],
+  config: {
+    screens: {
+      Voter: {
+        screens: {
+          Home: "voter/:sessionId",
+        },
+      },
+
+      QRCode: {
+        screens: {
+          Home: "swipe/:roomId",
+        },
+      },
+
+      MovieDetails: {
+        path: "movie/:type/:id",
+        parse: {
+          id: (movieId: string) => movieId,
+          type: (type: string) => type,
+        },
+      },
+    },
+  },
+};
 
 const Fallback = () => (
   <View
@@ -74,6 +102,28 @@ const Navigator = () => {
   const [loaded, setLoaded] = useState(false);
 
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
+
+  useEffect(() => {
+    // Handle deep links when app is already open
+    const subscription = Linking.addEventListener("url", handleDeepLink);
+
+    // Handle deep link that launched the app
+    (async () => {
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        handleDeepLink({ url: initialUrl });
+      }
+    })();
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const handleDeepLink = ({ url }: { url: string }) => {
+    console.log("Received URL:", url);
+    // You can add custom handling here if needed
+  };
 
   useEffect(() => {
     (async () => {
@@ -127,7 +177,7 @@ const Navigator = () => {
   }
 
   return (
-    <NavigationContainer theme={DarkTheme} fallback={<Fallback />}>
+    <NavigationContainer theme={DarkTheme} fallback={<Fallback />} linking={linking}>
       <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
         <Stack.Navigator
           initialRouteName="Landing"

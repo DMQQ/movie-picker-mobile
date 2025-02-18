@@ -50,6 +50,7 @@ export default function Home({ navigation, route }: any) {
 
   useEffect(() => {
     if (route?.params?.sessionId) {
+      actions.setWaiting();
       actions.joinSession(route?.params?.sessionId).catch((err) => {
         if (err.message === "Session not found") {
           navigation.goBack();
@@ -188,9 +189,6 @@ export default function Home({ navigation, route }: any) {
           {sessionId && (
             <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
               <QRCodeComponent sessionId={sessionId} type="voter" safetyCode="1234" size={Dimensions.get("screen").width / 2} />
-              <Text style={{ fontSize: 30, letterSpacing: 3, fontWeight: "bold", color: MD2DarkTheme.colors.primary, marginTop: 10 }}>
-                {sessionId}
-              </Text>
             </View>
           )}
 

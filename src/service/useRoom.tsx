@@ -112,15 +112,15 @@ export default function useRoom(room: string) {
     setShowLeaveModal((p) => !p);
   };
 
-  console.log({
-    isPlaying,
-    isHost,
-    name: nickname,
-    room,
-    users,
-    cards: cards.length,
-    match: !!match,
-  });
+  const joinGame = async (code: string) => {
+    const response = await socket?.emitWithAck("join-room", code, nickname);
+
+    if (response.joined) {
+      console.log("Joined room", response);
+      dispatch(roomActions.setRoom(response.room));
+      dispatch(roomActions.setPlaying(response.room.isStarted));
+    }
+  };
 
   return {
     cards,
@@ -131,5 +131,6 @@ export default function useRoom(room: string) {
     hideMatchModal,
     toggleLeaveModal,
     isPlaying,
+    joinGame,
   };
 }

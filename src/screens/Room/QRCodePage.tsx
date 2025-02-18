@@ -153,20 +153,11 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
   const theme = useTheme();
 
   const shareCode = async (code: string) => {
-    try {
-      if (Platform.OS === "ios") {
-        await Share.share({
-          message: code,
-          url: `qr-mobile://home/${code}`,
-        });
-      } else {
-        await Share.share({
-          message: `${code}\nqr-mobile://home/${code}`,
-        });
-      }
-    } catch (error) {
-      console.error("Error sharing:", error);
-    }
+    Share.share({
+      message: "Hey! Join my room on Movie Picker: " + code,
+      title: "Join my room on Movie Picker",
+      url: "https://movie.dmqq.dev/swipe/" + code.toUpperCase(),
+    });
   };
 
   return (

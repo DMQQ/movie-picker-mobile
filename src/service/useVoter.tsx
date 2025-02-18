@@ -30,6 +30,7 @@ interface MovieVoterContextValue {
     startSession: () => void;
     submitRating: (movieId: string, ratings: RatingCriteria) => void;
     setSessionSettings: React.Dispatch<React.SetStateAction<Settings>>;
+    setWaiting: () => void;
   };
 
   sessionSettings: Settings;
@@ -229,6 +230,10 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [socket, sessionId, joinSession]);
 
+  const setWaiting = useCallback(() => {
+    setStatus("waiting");
+  }, []);
+
   const value: MovieVoterContextValue = {
     sessionId,
     status,
@@ -245,6 +250,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       startSession,
       submitRating,
       setSessionSettings,
+      setWaiting,
     },
     sessionResults,
     sessionSettings,

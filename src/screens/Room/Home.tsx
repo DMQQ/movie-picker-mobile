@@ -29,13 +29,22 @@ const styles = StyleSheet.create({
 });
 
 export default function Home({ route, navigation }: any) {
-  const { cards, dislikeCard, likeCard, match, showLeaveModal, toggleLeaveModal, hideMatchModal, isPlaying } = useRoom(
+  const { cards, dislikeCard, likeCard, match, showLeaveModal, toggleLeaveModal, hideMatchModal, isPlaying, joinGame } = useRoom(
     route.params?.roomId
   );
   const isFocused = useIsFocused();
   const [showQRModal, setShowQRModal] = useState(false);
   const { isGameFinished } = useAppSelector((state) => state.room.room);
   const originalLength = useRef(cards.length);
+
+  useEffect(() => {
+    if (route?.params?.roomId) {
+      navigation.setParams({
+        roomId: route?.params?.roomId,
+      });
+      joinGame(route?.params?.roomId);
+    }
+  }, [route?.params?.roomId]);
 
   const handleNavigateDetails = (card: Movie) => {
     navigation.navigate("MovieDetails", {

@@ -7,6 +7,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
+    "scheme": "flickmate",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -31,7 +32,8 @@
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
         "UIViewControllerBasedStatusBarAppearance": true
       },
-      "bundleIdentifier": "pl.dmq.movie-picker"
+      "bundleIdentifier": "pl.dmq.movie-picker",
+      "associatedDomains": ["applinks:movie.dmqq.dev"]
     },
     "android": {
       "adaptiveIcon": {
@@ -40,7 +42,24 @@
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 20251702
+      "versionCode": 20251702,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "flickmate",
+              "host": "*"
+            },
+            {
+              "scheme": "https",
+              "host": "movie.dmqq.dev",
+              "pathPrefix": "/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
