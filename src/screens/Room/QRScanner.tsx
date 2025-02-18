@@ -2,7 +2,7 @@ import { CommonActions } from "@react-navigation/native";
 import { useCameraPermissions, CameraView } from "expo-camera";
 import { useContext, useEffect, useState } from "react";
 import { ToastAndroid, View, Vibration, Platform } from "react-native";
-import { Appbar, Button, Dialog, FAB, Portal, Text, TextInput, useTheme } from "react-native-paper";
+import { Appbar, Button, Dialog, FAB, IconButton, Portal, Text, TextInput, useTheme } from "react-native-paper";
 import { SocketContext } from "../../service/SocketContext";
 import { useAppSelector } from "../../redux/store";
 import { ScreenProps } from "../types";
@@ -121,7 +121,8 @@ export default function QRScanner({ navigation }: any) {
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       <Appbar.Header style={{ backgroundColor: "#000" }}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
+
         <Appbar.Content title={t("scanner.heading")} />
       </Appbar.Header>
       <CameraView

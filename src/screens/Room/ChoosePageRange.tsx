@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet, View } from "react-native";
-import { Appbar, Button, Text, TextInput, useTheme } from "react-native-paper";
+import { Appbar, Button, IconButton, Text, TextInput, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
 import { useEffect, useMemo, useState } from "react";
 import { url } from "../../service/SocketContext";
@@ -45,7 +45,11 @@ export default function ChoosePageRange({ navigation }: any) {
   return (
     <SafeIOSContainer>
       <Appbar style={{ backgroundColor: "#000" }}>
-        <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
+        <IconButton
+          icon="chevron-left"
+          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
+          size={28}
+        />
         <Appbar.Content title={t("room.randomize-search")} />
       </Appbar>
       <View style={{ padding: 15, flex: 1 }}>

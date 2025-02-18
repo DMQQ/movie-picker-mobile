@@ -168,7 +168,7 @@ const tabStyles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 10,
+    padding: 7.5,
     borderRadius: 100,
   },
 });

@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, View, useWindowDimensions } from "react-native";
-import { Appbar, Button, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { Appbar, Button, IconButton, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
 import useFetch from "../../service/useFetch";
 import Skeleton from "../../components/Skeleton/Skeleton";
@@ -32,7 +32,12 @@ export default function ChooseGenre({ navigation }: any) {
   return (
     <SafeIOSContainer>
       <Appbar style={{ backgroundColor: "#000" }}>
-        <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
+        <IconButton
+          icon="chevron-left"
+          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
+          size={28}
+        />
+
         <Appbar.Content title={t("room.genre")} />
       </Appbar>
       <View style={{ flex: 1, padding: 15 }}>

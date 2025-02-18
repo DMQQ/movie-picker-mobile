@@ -1,5 +1,5 @@
 import { FlatList, Image, View, StyleSheet, Dimensions } from "react-native";
-import { Appbar, Button, Text, TouchableRipple } from "react-native-paper";
+import { Appbar, Button, IconButton, Text, TouchableRipple } from "react-native-paper";
 import { useMemo, useState } from "react";
 import useTranslation from "../../service/useTranslation";
 import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
@@ -28,7 +28,11 @@ export default function ExtraSettings({ navigation }: any) {
   return (
     <SafeIOSContainer style={styles.container}>
       <Appbar style={styles.appbar}>
-        <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
+        <IconButton
+          icon="chevron-left"
+          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
+          size={28}
+        />
         <Appbar.Content title={t("room.titles.extra-settings")} />
       </Appbar>
 

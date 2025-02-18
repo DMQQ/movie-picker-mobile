@@ -15,7 +15,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   return (
     <SafeIOSContainer style={{ marginTop: 0, paddingBottom: 50 }}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={35} />
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
 
         <Text style={{ fontFamily: "Bebas", fontSize: 40, textAlign: "center", width: "70%" }}>{t("favourites.title")}</Text>
       </View>

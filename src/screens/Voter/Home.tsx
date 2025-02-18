@@ -116,7 +116,7 @@ export default function Home({ navigation, route }: any) {
                   })
                 )
           }
-          size={35}
+          size={28}
         />
         <Text style={{ fontSize: 35, fontFamily: "Bebas", textAlign: "center", width: "70%" }}>{t("voter.home.title")}</Text>
       </View>
@@ -163,7 +163,7 @@ export default function Home({ navigation, route }: any) {
     return (
       <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
         <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
-          <IconButton icon="chevron-left" onPress={() => navigation.navigate("Landing")} size={35} />
+          <IconButton icon="chevron-left" onPress={() => navigation.navigate("Landing")} size={28} />
           <Text style={{ fontSize: 30, fontFamily: "Bebas", width: "70%" }}>
             {users.length > 1 ? t("voter.home.ready") : t("voter.home.waiting-initial")}
           </Text>
@@ -492,7 +492,7 @@ function Results({ navigation }: any) {
               })
             )
           }
-          size={35}
+          size={28}
         />
         <Text style={{ fontSize: 30, fontFamily: "Bebas", width: "100%" }}>{t("voter.overview.title")} 🎬</Text>
       </View>

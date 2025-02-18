@@ -1,5 +1,5 @@
 import { FlatList, View } from "react-native";
-import { Appbar, Button, Icon, Text, useTheme } from "react-native-paper";
+import { Appbar, Button, Icon, IconButton, Text, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
@@ -72,7 +72,12 @@ export default function ChooseCategory({ navigation }: any) {
   return (
     <SafeIOSContainer>
       <Appbar style={{ backgroundColor: "#000" }}>
-        <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
+        <IconButton
+          icon="chevron-left"
+          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
+          size={28}
+        />
+
         <Appbar.Content title="Categories" />
       </Appbar>
       <View style={{ padding: 15, flex: 1 }}>

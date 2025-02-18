@@ -114,7 +114,7 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
     <SafeIOSContainer>
       {!selectedItem && (
         <Appbar.Header style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
-          <Appbar.BackAction onPress={() => navigation.goBack()} color="#fff" />
+          <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
         </Appbar.Header>
       )}
       {selectedItem && selectedItem?.id === data?.id ? (
@@ -252,7 +252,7 @@ export const SectionSelector = ({ navigation }: any) => {
   return (
     <View style={{ flex: 1 }}>
       <Appbar.Header style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="#fff" />
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
       </Appbar.Header>
       <FlatList
         numColumns={2}

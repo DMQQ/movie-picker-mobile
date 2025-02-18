@@ -15,7 +15,7 @@ const CustomSearchBar = ({ value, onChangeText, placeholder = "Search movies and
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <IconButton icon="arrow-left" size={24} iconColor="#fff" onPress={() => navigation.goBack()} style={styles.backButton} />
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} style={styles.backButton} />
 
         <TextInput
           placeholder={placeholder}

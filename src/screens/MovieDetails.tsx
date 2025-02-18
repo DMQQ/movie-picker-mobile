@@ -57,7 +57,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
       style={{ flex: 1, height }}
     >
       <View style={{ position: "absolute", top: 10, left: 10, zIndex: 100 }}>
-        <Appbar.BackAction color="#fff" onPress={() => navigation.goBack()} />
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
       </View>
 
       <Animated.Image

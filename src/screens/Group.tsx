@@ -21,7 +21,7 @@ export default function Group({ navigation, route }: any) {
   return (
     <View style={{ flex: 1, paddingBottom: 15 }}>
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={35} />
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
 
         <Text style={{ fontFamily: "Bebas", fontSize: 40, textAlign: "center", width: "70%", color: "#fff" }}>{data?.name}</Text>
       </View>

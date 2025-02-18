@@ -1,5 +1,5 @@
 import { Dimensions, Platform, Share, ToastAndroid, View } from "react-native";
-import { Appbar, Avatar, Button, Text, useTheme } from "react-native-paper";
+import { Appbar, Avatar, Button, IconButton, Text, useTheme } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import QRCode from "react-native-qrcode-svg";
 import { CommonActions, useIsFocused } from "@react-navigation/native";
@@ -83,7 +83,11 @@ export default function QRCodePage({ navigation }: any) {
   return (
     <SafeIOSContainer>
       <Appbar style={{ backgroundColor: "#000" }}>
-        <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
+        <IconButton
+          icon="chevron-left"
+          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
+          size={28}
+        />
         <Appbar.Content title="Join game" />
       </Appbar>
       <View style={{ position: "relative", flex: 1, padding: 15 }}>
