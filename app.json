@@ -7,7 +7,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
-    "scheme": "flickmate",
+    "scheme": ["flickmate", "pl.dmq.moviepicker"],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
