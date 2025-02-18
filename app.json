@@ -39,7 +39,8 @@
         "backgroundColor": "#000"
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
-      "package": "pl.dmq.moviepicker"
+      "package": "pl.dmq.moviepicker",
+      "versionCode": 20251702
     },
     "web": {
       "favicon": "./assets/favicon.png"

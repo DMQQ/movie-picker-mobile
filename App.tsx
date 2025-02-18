@@ -26,6 +26,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Group from "./src/screens/Group";
 import Main from "./src/screens/Voter/Main";
 import GameList from "./src/screens/GameList";
+import Search from "./src/screens/Search";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -174,7 +175,6 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-              ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
           <Stack.Screen
@@ -183,7 +183,6 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-              ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
 
@@ -219,6 +218,14 @@ const Navigator = () => {
           <Stack.Screen
             name="Games"
             component={GameList}
+            options={{
+              headerShown: false,
+            }}
+          />
+
+          <Stack.Screen
+            name="Search"
+            component={Search}
             options={{
               headerShown: false,
             }}
