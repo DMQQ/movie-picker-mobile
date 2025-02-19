@@ -105,16 +105,16 @@ export default function SearchFilters({ navigation, route }: any) {
           <Divider style={styles.divider} />
 
           {/* Genres */}
-          <Section title="Genres">
+          <Section title={t("search.genres")}>
             <View style={styles.genreTabsContainer}>
               <TouchableRipple
                 onPress={() => setActiveTab("movie")}
                 style={[styles.genreTab, activeTab === "movie" && styles.activeGenreTab]}
               >
-                <Text style={[styles.genreTabText, activeTab === "movie" && styles.activeGenreTabText]}>Movies</Text>
+                <Text style={[styles.genreTabText, activeTab === "movie" && styles.activeGenreTabText]}>{t("voter.types.movie")}</Text>
               </TouchableRipple>
               <TouchableRipple onPress={() => setActiveTab("tv")} style={[styles.genreTab, activeTab === "tv" && styles.activeGenreTab]}>
-                <Text style={[styles.genreTabText, activeTab === "tv" && styles.activeGenreTabText]}>TV Shows</Text>
+                <Text style={[styles.genreTabText, activeTab === "tv" && styles.activeGenreTabText]}>{t("voter.types.series")}</Text>
               </TouchableRipple>
             </View>
 
@@ -140,7 +140,7 @@ export default function SearchFilters({ navigation, route }: any) {
 
         <Surface style={styles.bottomBar}>
           <Button mode="contained" onPress={applyFilters} style={styles.applyButton} contentStyle={styles.buttonContent}>
-            {getFilterCount() > 0 ? "Apply Filters (" + getFilterCount() + ")" : "Apply Filters"}
+            {getFilterCount() > 0 ? `${t("search.apply")} (` + getFilterCount() + ")" : t("search.apply")}
           </Button>
         </Surface>
       </View>
@@ -191,6 +191,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flex: 1,
     paddingHorizontal: 15,
+    marginTop: 15,
   },
   scrollContentContainer: {
     paddingBottom: 100,
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   sectionTitle: {
-    fontSize: 26,
+    fontSize: 30,
     lineHeight: 30,
     fontFamily: "Bebas",
     marginBottom: 10,

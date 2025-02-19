@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useTransition } from "react";
 import { StyleSheet, View, FlatList, Image, TouchableOpacity, Animated, ListRenderItem } from "react-native";
 import { Text, TextInput, TouchableRipple, Surface, ActivityIndicator, MD2DarkTheme, Chip, Avatar } from "react-native-paper";
 import { useLazySearchPeopleQuery } from "../redux/person/personApi";
+import useTranslation from "../service/useTranslation";
 
 interface Person {
   id: number;
@@ -33,6 +34,8 @@ const DropdownPersonSearch: React.FC<DropdownPersonSearchProps> = ({
   const [search, { data, isLoading }] = useLazySearchPeopleQuery();
   const [selectedPeople, setSelectedPeople] = useState<Person[]>([]);
   const dropdownOpacity = useRef(new Animated.Value(0)).current;
+
+  const t = useTranslation();
 
   // Handle search with debounce
   useEffect(() => {
@@ -132,7 +135,7 @@ const DropdownPersonSearch: React.FC<DropdownPersonSearchProps> = ({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Cast & Crew</Text>
+      <Text style={styles.title}>{t("cast.heading")}</Text>
 
       <View style={styles.searchContainer}>
         <TextInput
@@ -165,9 +168,11 @@ const DropdownPersonSearch: React.FC<DropdownPersonSearchProps> = ({
                 keyboardShouldPersistTaps="handled"
                 ListHeaderComponent={() => (
                   <View style={styles.resultsHeaderContainer}>
-                    <Text style={styles.resultsHeader}>Results for "{query}"</Text>
+                    <Text style={styles.resultsHeader}>
+                      {t("search.query-for")} "{query}"
+                    </Text>
                     <TouchableOpacity onPress={hideDropdown}>
-                      <Text style={styles.closeText}>Close</Text>
+                      <Text style={styles.closeText}>{t("search.close")}</Text>
                     </TouchableOpacity>
                   </View>
                 )}

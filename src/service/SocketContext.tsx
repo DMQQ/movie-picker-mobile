@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState, AppStateStatus, Platform } from "react-native";
 
 const isDev = true;
-const BACKGROUND_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
+const BACKGROUND_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
 export const url = isDev ? "http://192.168.0.26:3000" : "https://movie.dmqq.dev";
 
@@ -58,7 +58,8 @@ const makeHeaders = (language: string) => {
 
 export const SocketProvider = ({ children, namespace }: { children: React.ReactNode; namespace: "/swipe" | "/voter" }) => {
   const language = useAppSelector((st) => st.room.language);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null); // ✅ Fix: Use ref instead of state
+  const [isSocketInitialized, setIsSocketInitialized] = useState(false); // To track initialization
   const appState = useRef(AppState.currentState);
   const reconnectTimeout = useRef<NodeJS.Timeout>();
   const backgroundTimer = useRef<NodeJS.Timeout>();
@@ -67,6 +68,7 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
 
   const initializeSocket = async () => {
     try {
+      console.log("🚀 Initializing socket...");
       const userId = (await AsyncStorage.getItem("userId")) || Math.random().toString(36).substring(7);
       await AsyncStorage.setItem("userId", userId);
 
@@ -79,23 +81,24 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
       });
 
       newSocket.on("connect", () => {
-        console.log("Socket connected");
+        console.log("✅ Socket connected");
         wasConnected.current = true;
       });
 
       newSocket.on("disconnect", (reason) => {
-        console.log("Socket disconnected:", reason);
+        console.log("⚠️ Socket disconnected:", reason);
         if (wasConnected.current && reason === "transport close") {
           scheduleReconnect();
         }
       });
 
       newSocket.on("connect_error", (error) => {
-        console.log("Connection error:", error);
+        console.log("❌ Connection error:", error);
         scheduleReconnect();
       });
 
-      setSocket(newSocket);
+      socketRef.current = newSocket;
+      setIsSocketInitialized(true);
     } catch (error) {
       console.error("Socket initialization error:", error);
     }
@@ -106,8 +109,8 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
       clearTimeout(reconnectTimeout.current);
     }
     reconnectTimeout.current = setTimeout(() => {
-      if (socket) {
-        socket.connect();
+      if (socketRef.current) {
+        socketRef.current.connect();
       } else {
         initializeSocket();
       }
@@ -116,35 +119,30 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
 
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (appState.current.match(/inactive|background/) && nextAppState === "active") {
-      // App has come to foreground
       if (backgroundTimer.current) {
         clearTimeout(backgroundTimer.current);
         backgroundTimer.current = undefined;
       }
 
-      // Check if we exceeded background time limit
       if (backgroundStartTime.current) {
         const timeInBackground = Date.now() - backgroundStartTime.current;
         if (timeInBackground >= BACKGROUND_TIMEOUT) {
-          // Reconnect if we exceeded the time limit
           reconnect();
         }
       }
 
       backgroundStartTime.current = null;
     } else if (nextAppState.match(/inactive|background/)) {
-      // App has gone to background
       backgroundStartTime.current = Date.now();
 
       if (Platform.OS === "ios") {
-        socket?.emit("background");
+        socketRef.current?.emit("background");
       }
 
-      // Set timer to disconnect after 5 minutes
       backgroundTimer.current = setTimeout(() => {
-        if (socket?.connected) {
-          console.log("Disconnecting socket after background timeout");
-          socket.disconnect();
+        if (socketRef.current?.connected) {
+          console.log("🔌 Disconnecting socket after background timeout");
+          socketRef.current.disconnect();
         }
       }, BACKGROUND_TIMEOUT);
     }
@@ -153,36 +151,43 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   };
 
   useEffect(() => {
-    initializeSocket();
+    initializeSocket().then(() => {
+      console.log("✅ Socket initialized");
+    });
 
     const subscription = AppState.addEventListener("change", handleAppStateChange);
 
     return () => {
+      console.log("🔄 Running cleanup function...");
       subscription.remove();
-      if (reconnectTimeout.current) {
-        clearTimeout(reconnectTimeout.current);
-      }
-      if (backgroundTimer.current) {
-        clearTimeout(backgroundTimer.current);
-      }
-      if (socket) {
-        socket.removeAllListeners();
-        socket.close();
+      clearTimeout(reconnectTimeout.current);
+      clearTimeout(backgroundTimer.current);
+
+      console.log("Cleaning up socket", !!socketRef.current);
+
+      if (socketRef.current) {
+        console.log("🧹 Cleaning up socket...");
+        socketRef.current.removeAllListeners();
+        socketRef.current.emit("client_cleanup");
+        socketRef.current.disconnect();
+        socketRef.current.close();
+      } else {
+        console.log("⚠️ No socket to clean up");
       }
     };
   }, []);
 
   const reconnect = () => {
-    if (socket) {
-      socket.connect();
+    if (socketRef.current) {
+      socketRef.current.connect();
     } else {
       initializeSocket();
     }
   };
 
-  if (!socket) {
-    return null;
-  }
-
-  return <SocketContext.Provider value={{ socket, reconnect }}>{children}</SocketContext.Provider>;
+  return (
+    <SocketContext.Provider value={{ socket: socketRef.current, reconnect }}>
+      {isSocketInitialized ? children : null}
+    </SocketContext.Provider>
+  );
 };

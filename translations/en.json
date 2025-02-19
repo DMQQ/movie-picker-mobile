@@ -212,7 +212,11 @@
     "error": "Something went wrong. Please try again.",
     "no-results": "No results for: ",
     "begin": "Start typing to search for movies or series",
-    "search-placeholder": "Search movies and tv series"
+    "search-placeholder": "Search movies and tv series",
+    "genres": "Genres",
+    "query-for": "Results for",
+    "close": "Close",
+    "apply": "Apply filters"
   },
   "cast": {
     "heading": "Cast"

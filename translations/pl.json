@@ -210,7 +210,11 @@
     "error": "Oops, coś poszło nie tak, spróbuj ponownie.",
     "no-results": "Brak wyników dla frazy: ",
     "begin": "Zacznij pisać, aby wyszukać",
-    "search-placeholder": "Wyszukaj filmy i seriale"
+    "search-placeholder": "Wyszukaj filmy i seriale",
+    "genres": "Gatunki",
+    "query-for": "Wyniki dla",
+    "close": "Zamknij",
+    "apply": "Zastosuj filtry"
   },
   "cast": {
     "heading": "Obsada"
