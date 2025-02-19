@@ -32,7 +32,8 @@ const SwiperAnimation = () => {
     swipeDirection.value *= -1;
 
     // Color value based on direction
-    const colorValue = direction === 1 ? 1 : 2; // 1=green, 2=red
+    // If swiping right (direction = 1), show green; if swiping left (direction = -1), show red
+    const colorValue = direction === 1 ? 1 : -1; // 1 for green, -1 for red
 
     // Get frontmost card (card with highest z-index should be at index 0)
     // Only animate this card
@@ -53,16 +54,6 @@ const SwiperAnimation = () => {
 
     // After animation completes
     setTimeout(() => {
-      // 1. Save properties of the swiped card
-      const topCardProps = {
-        x: cards[0].x.value,
-        y: cards[0].y.value,
-        rotate: cards[0].rotate.value,
-        scale: cards[0].scale.value,
-        colorProgress: cards[0].colorProgress.value,
-        zIndex: cards[0].zIndex.value,
-      };
-
       // 2. Shift all cards up in the stack (move properties from i+1 to i)
       for (let i = 0; i < numCards - 1; i++) {
         // Move values up the stack
@@ -106,7 +97,8 @@ const SwiperAnimation = () => {
   // Create animated styles for cards
   const cardStyles = cards.map((card) => {
     return useAnimatedStyle(() => {
-      const backgroundColor = interpolateColor(card.colorProgress.value, [0, 1, 2], ["#4A4A4A", "#4CAF50", "#FF5252"]);
+      // Fixed interpolation that properly handles positive and negative values
+      const backgroundColor = interpolateColor(card.colorProgress.value, [-1, 0, 1], ["#FF5252", "#4A4A4A", "#4CAF50"]);
 
       return {
         transform: [
