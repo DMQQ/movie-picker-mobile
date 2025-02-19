@@ -129,15 +129,6 @@ const FeaturedSection = memo(
         resizeMode="cover"
         resizeMethod="scale"
       >
-        <View style={[styles.header, { padding: 15 }]}>
-          <View style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
-            <Avatar.Text size={35} label={nickname?.[0]?.toUpperCase()} color="#fff" />
-            <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>
-              {t("settings.hello")} {nickname}
-            </Text>
-          </View>
-        </View>
-
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
           <Pressable onPress={onPress}>
             <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
