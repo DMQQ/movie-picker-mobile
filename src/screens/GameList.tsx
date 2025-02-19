@@ -108,6 +108,7 @@ export default function GameList() {
       players: "2-8",
       duration: "5-10 min",
       category: "popular",
+      index: 0,
     },
     {
       title: t("games.voter.title"),
@@ -119,6 +120,7 @@ export default function GameList() {
       players: "2",
       duration: "10-15 min",
       category: "new",
+      index: 1,
     },
     {
       title: "FortuneWheel",
@@ -128,6 +130,7 @@ export default function GameList() {
       players: "1",
       duration: "5 min",
       category: "popular",
+      index: 2,
     },
   ];
 
@@ -157,8 +160,8 @@ export default function GameList() {
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {filteredGames.map((game, index) => (
           <GameCard
-            index={index}
-            key={index}
+            index={game.index}
+            key={game.index}
             title={game.title}
             description={game.description}
             onPress={() => navigation.navigate(game.route, game.params)}
