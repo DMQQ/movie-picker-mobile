@@ -207,5 +207,11 @@
       "title": "Fortune Wheel",
       "description": "Spin the wheel of fortune to make random selections or decisions. Perfect for undecided or making quick picks!"
     }
+  },
+  "search": {
+    "error": "Something went wrong. Please try again.",
+    "no-results": "No results for: ",
+    "begin": "Start typing to search for movies or series",
+    "search-placeholder": "Search movies and tv series"
   }
 }

@@ -5,6 +5,7 @@ import { useLazySearchQuery } from "../redux/movie/movieApi";
 import { useNavigation } from "@react-navigation/native";
 import CustomSearchBar from "../components/SearchBar";
 import { removeDuplicateResults } from "../utils/deduplicates";
+import useTranslation from "../service/useTranslation";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const ITEM_HEIGHT = 180;
@@ -195,7 +196,7 @@ const SearchScreen = () => {
     if (searchQuery.trim().length === 0) {
       return (
         <Text style={styles.emptyText} variant="bodyLarge">
-          Enter a search term to begin
+          {t("search.begin")}
         </Text>
       );
     }
@@ -203,7 +204,7 @@ const SearchScreen = () => {
     if (!isLoading && searchQuery.trim().length > 0) {
       return (
         <Text style={styles.emptyText} variant="bodyLarge">
-          No results found for "{searchQuery}"
+          {t("search.no-results")} "{searchQuery}"
         </Text>
       );
     }
@@ -211,15 +212,17 @@ const SearchScreen = () => {
     return null;
   }, [isLoading, searchQuery, currentPage]);
 
+  const t = useTranslation();
+
   const categories = [
-    { id: "both", label: "Both" },
-    { id: "movie", label: "Movies" },
-    { id: "tv", label: "TV Shows" },
+    { id: "both", label: t("voter.types.mixed") },
+    { id: "movie", label: t("voter.types.movie") },
+    { id: "tv", label: t("voter.types.series") },
   ] as { id: "movie" | "tv" | "both"; label: string }[];
 
   return (
     <View style={styles.container}>
-      <CustomSearchBar value={searchQuery} onChangeText={setSearchQuery} />
+      <CustomSearchBar value={searchQuery} onChangeText={setSearchQuery} placeholder={t("search.search-placeholder")} />
 
       <View style={styles.chipContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
@@ -233,14 +236,14 @@ const SearchScreen = () => {
             </TouchableRipple>
           ))}
 
-          <TouchableRipple onPress={() => {}} style={[styles.categoryChip]}>
+          {/* <TouchableRipple onPress={() => {}} style={[styles.categoryChip]}>
             <Text style={[styles.categoryText]}>Filters</Text>
-          </TouchableRipple>
+          </TouchableRipple> */}
         </ScrollView>
       </View>
 
       {isError ? (
-        <Text style={styles.errorText}>Something went wrong. Please try again.</Text>
+        <Text style={styles.errorText}>{t("search.error")}</Text>
       ) : (
         <VirtualizedList
           style={{ marginTop: 30 }}

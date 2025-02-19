@@ -205,5 +205,11 @@
       "title": "Koło Fortuny",
       "description": "Zakręć kołem fortuny i losuj! Idealne dla niezdecydowanych lub szybkich decyzji!"
     }
+  },
+  "search": {
+    "error": "Oops, coś poszło nie tak, spróbuj ponownie.",
+    "no-results": "Brak wyników dla frazy: ",
+    "begin": "Zacznij pisać, aby wyszukać",
+    "search-placeholder": "Wyszukaj filmy i seriale"
   }
 }
