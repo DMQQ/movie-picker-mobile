@@ -26,6 +26,8 @@ export type RootStackParamList = {
   Games: undefined;
 
   Search: undefined;
+
+  SearchFilters: undefined;
 };
 
 export type ScreenProps<Key extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, Key>;

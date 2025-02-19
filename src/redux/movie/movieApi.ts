@@ -38,7 +38,7 @@ interface SearchResults {
 
 export const movieApi = createApi({
   reducerPath: "movieApi",
-  tagTypes: ["Search"],
+  tagTypes: ["Search", "SearchResults"],
   baseQuery: fetchBaseQuery({
     baseUrl: API_BASE_ENDPOINT,
     prepareHeaders: (headers, { getState }) => {
@@ -116,11 +116,13 @@ export const movieApi = createApi({
       query: () => "/providers",
     }),
 
-    search: builder.query<SearchResults, SearchParams>({
+    search: builder.query<SearchResults, SearchParams & { operation?: "replace" | "append" }>({
       query: (params) => {
+        // Remove operation parameter from API request
+        const { operation, ...apiParams } = params;
         const queryParams = new URLSearchParams();
 
-        Object.entries(params).forEach(([key, value]) => {
+        Object.entries(apiParams).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
             if (Array.isArray(value)) {
               queryParams.append(key, value.join(","));
@@ -135,6 +137,9 @@ export const movieApi = createApi({
           method: "GET",
         };
       },
+
+      // Add cache tag which we can use for invalidation
+      providesTags: ["SearchResults"],
 
       transformResponse: (response: any) => {
         return {

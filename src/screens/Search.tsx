@@ -4,7 +4,7 @@ import { Chip, Text, ActivityIndicator, Portal, Modal, Button, Divider, MD2DarkT
 import { useLazySearchQuery } from "../redux/movie/movieApi";
 import { useNavigation } from "@react-navigation/native";
 import CustomSearchBar from "../components/SearchBar";
-import { removeDuplicateResults } from "../utils/deduplicates";
+
 import useTranslation from "../service/useTranslation";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -65,9 +65,8 @@ const MovieCard = ({ item }: { item: any }) => {
   );
 };
 
-const SearchScreen = () => {
+const SearchScreen = ({ navigation, route }: any) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
     type: "both" as "movie" | "tv" | "both",
     genres: [] as number[],
@@ -77,93 +76,28 @@ const SearchScreen = () => {
   const [allResults, setAllResults] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
-  const isFirstLoad = useRef(true);
-
-  const [search, { data, isLoading, isFetching, isError }] = useLazySearchQuery();
 
   const searchTimeout = React.useRef<NodeJS.Timeout>();
-
-  useEffect(() => {
-    if (!isFirstLoad.current) {
-      setCurrentPage(1);
-      setAllResults([]);
-      setHasNextPage(false);
-      lastReceivedApiPage.current = 0;
-      isLoadingNextPage.current = false;
-    }
-    isFirstLoad.current = false;
-  }, [searchQuery, filters.type, filters.genres, filters.minRating]);
-
   const lastReceivedApiPage = useRef(0);
+  const isLoadingNextPage = useRef(false);
+  const routeParamsRef = useRef(route.params);
+
+  const [search, { data, isLoading, isFetching, isError }] = useLazySearchQuery();
+  const t = useTranslation();
 
   useEffect(() => {
-    if (!data) return;
-
-    if (currentPage > 1 && data.page < currentPage && data.page <= lastReceivedApiPage.current) {
-      return;
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
     }
 
-    lastReceivedApiPage.current = data.page;
-
-    let newResults;
-    if (currentPage === 1 || data.page === 1) {
-      newResults = data.results || [];
-    } else {
-      newResults = [...allResults, ...(data.results || [])];
-    }
-
-    const newHasNextPage = data.page < data.total_pages;
-
-    setAllResults(newResults);
-    setHasNextPage(newHasNextPage);
-  }, [data, currentPage]);
-
-  useEffect(() => {
-    const fetchResults = async () => {
-      if (searchTimeout.current) {
-        clearTimeout(searchTimeout.current);
-      }
-
-      if (searchQuery.trim().length === 0) {
-        setAllResults([]);
-        setHasNextPage(false);
-        lastReceivedApiPage.current = 0;
-        return;
-      }
-
-      try {
-        const response = await search({
-          query: searchQuery,
-          page: currentPage,
-          type: filters.type,
-          with_genres: filters.genres.length > 0 ? filters.genres : undefined,
-          vote_average_gte: filters.minRating,
-        }).unwrap();
-
-        lastReceivedApiPage.current = response.page;
-
-        let newResults;
-        if (response.page === 1) {
-          newResults = removeDuplicateResults(response.results || []);
-        } else {
-          const combinedResults = [...allResults, ...(response.results || [])];
-          newResults = removeDuplicateResults(combinedResults);
-        }
-
-        setAllResults(newResults);
-
-        const hasMore = response.page < response.total_pages;
-
-        setHasNextPage(hasMore);
-
-        isLoadingNextPage.current = false;
-      } catch (error) {
-        isLoadingNextPage.current = false;
-      }
-    };
+    setCurrentPage(1);
+    setAllResults([]);
+    setHasNextPage(false);
+    lastReceivedApiPage.current = 0;
+    isLoadingNextPage.current = false;
 
     searchTimeout.current = setTimeout(() => {
-      fetchResults();
+      performSearch(1);
     }, 500);
 
     return () => {
@@ -171,14 +105,83 @@ const SearchScreen = () => {
         clearTimeout(searchTimeout.current);
       }
     };
-  }, [search, searchQuery, currentPage, filters]);
+  }, [searchQuery]);
 
-  const isLoadingNextPage = useRef(false);
+  // Monitor route params changes
+  useEffect(() => {
+    if (JSON.stringify(routeParamsRef.current) !== JSON.stringify(route.params)) {
+      routeParamsRef.current = route.params;
 
+      setCurrentPage(1);
+      setAllResults([]);
+      setHasNextPage(false);
+      lastReceivedApiPage.current = 0;
+      isLoadingNextPage.current = false;
+
+      performSearch(1);
+    }
+  }, [route.params]);
+
+  // Main search function
+  const performSearch = async (page: number) => {
+    if (searchQuery.trim().length === 0 && !route?.params) {
+      setAllResults([]);
+      setHasNextPage(false);
+      return;
+    }
+
+    try {
+      const params = {
+        page: page,
+        type: filters.type,
+        with_genres: route?.params?.genres,
+        with_watch_providers: route?.params?.providers,
+        with_people: route?.params?.people,
+      } as any;
+
+      if (searchQuery.trim().length > 0) {
+        params["query"] = searchQuery;
+      } else {
+        params["discover"] = true;
+      }
+
+      const response = await search(params).unwrap();
+
+      console.log(response.total_pages, response.total_results, response.page);
+
+      if (response.page === page) {
+        lastReceivedApiPage.current = page;
+
+        if (page === 1) {
+          setAllResults(response.results || []);
+        } else {
+          setAllResults((prevResults) => {
+            const existingIds = new Set(prevResults.map((item) => item.id));
+            const newResults = response.results.filter((item) => !existingIds.has(item.id));
+            return [...prevResults, ...newResults];
+          });
+        }
+
+        setHasNextPage(response.page < response.total_pages);
+      }
+
+      isLoadingNextPage.current = false;
+    } catch (error) {
+      isLoadingNextPage.current = false;
+    }
+  };
+
+  // Load next page
   const handleEndReached = useCallback(() => {
     if (!isFetching && hasNextPage && !isLoadingNextPage.current) {
+      const nextPage = currentPage + 1;
+
       isLoadingNextPage.current = true;
-      setCurrentPage((prev) => prev + 1);
+      setCurrentPage(nextPage);
+
+      setTimeout(() => {
+        performSearch(nextPage);
+      }, 100);
     }
   }, [isFetching, hasNextPage, currentPage]);
 
@@ -193,7 +196,7 @@ const SearchScreen = () => {
     if (isLoading && currentPage === 1)
       return <ActivityIndicator style={[styles.loader, { marginTop: 50 }]} animating={true} color={MD2DarkTheme.colors.primary} />;
 
-    if (searchQuery.trim().length === 0) {
+    if (searchQuery.trim().length === 0 && !route?.params) {
       return (
         <Text style={styles.emptyText} variant="bodyLarge">
           {t("search.begin")}
@@ -201,18 +204,16 @@ const SearchScreen = () => {
       );
     }
 
-    if (!isLoading && searchQuery.trim().length > 0) {
+    if (!isLoading && (searchQuery.trim().length > 0 || route?.params)) {
       return (
         <Text style={styles.emptyText} variant="bodyLarge">
-          {t("search.no-results")} "{searchQuery}"
+          {t("search.no-results")} {searchQuery ? `"${searchQuery}"` : ""}
         </Text>
       );
     }
 
     return null;
-  }, [isLoading, searchQuery, currentPage]);
-
-  const t = useTranslation();
+  }, [isLoading, searchQuery, currentPage, route?.params]);
 
   const categories = [
     { id: "both", label: t("voter.types.mixed") },
@@ -229,17 +230,26 @@ const SearchScreen = () => {
           {categories.map((category) => (
             <TouchableRipple
               key={category.id}
-              onPress={() => setFilters((p) => ({ ...p, type: category.id }))}
+              onPress={() => handleFilterChange(category.id)}
               style={[styles.categoryChip, filters.type === category.id && styles.categoryChipActive]}
             >
               <Text style={[styles.categoryText, filters.type === category.id && styles.categoryTextActive]}>{category.label}</Text>
             </TouchableRipple>
           ))}
-
-          {/* <TouchableRipple onPress={() => {}} style={[styles.categoryChip]}>
-            <Text style={[styles.categoryText]}>Filters</Text>
-          </TouchableRipple> */}
         </ScrollView>
+        <TouchableRipple
+          onPress={() => {
+            navigation.navigate("SearchFilters", { ...route?.params });
+          }}
+          style={[
+            styles.categoryChip,
+            route?.params && {
+              backgroundColor: MD2DarkTheme.colors.primary,
+            },
+          ]}
+        >
+          <Text style={[styles.categoryText]}>Filters</Text>
+        </TouchableRipple>
       </View>
 
       {isError ? (
@@ -276,19 +286,6 @@ const SearchScreen = () => {
           removeClippedSubviews={true}
         />
       )}
-
-      <Portal>
-        <Modal visible={showFilters} onDismiss={() => setShowFilters(false)} contentContainerStyle={styles.modal} theme={MD2DarkTheme}>
-          <Text variant="titleLarge" style={styles.modalTitle}>
-            Filters
-          </Text>
-          <Divider style={styles.divider} />
-
-          <Button mode="contained" onPress={() => setShowFilters(false)} style={styles.applyButton} theme={MD2DarkTheme}>
-            Apply Filters
-          </Button>
-        </Modal>
-      </Portal>
     </View>
   );
 };
@@ -301,6 +298,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
     paddingBottom: 15,
+    flexDirection: "row",
   },
   chip: {
     marginHorizontal: 4,

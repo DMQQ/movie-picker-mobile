@@ -213,5 +213,8 @@
     "no-results": "No results for: ",
     "begin": "Start typing to search for movies or series",
     "search-placeholder": "Search movies and tv series"
+  },
+  "cast": {
+    "heading": "Cast"
   }
 }

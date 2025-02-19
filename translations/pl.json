@@ -197,7 +197,7 @@
     "voter": {
       "games": "Gry Imprezowe",
       "title": "Ranking w parach",
-      "swipe": "Przesuwaj i paruj!",
+      "swipe": "Przesuwaj i matchuj!",
       "swipeDescription": "Szybka i prosta gra grupowa, dla par i znajomych, przesuń w prawo lub w lewo aby głosować na filmy i seriale.",
       "description": "Ułatw podejmowanie decyzji! Głosuj na filmy lub seriale w 3 kategoriach aby znaleźć wspólne TOP propozycje."
     },
@@ -211,5 +211,8 @@
     "no-results": "Brak wyników dla frazy: ",
     "begin": "Zacznij pisać, aby wyszukać",
     "search-placeholder": "Wyszukaj filmy i seriale"
+  },
+  "cast": {
+    "heading": "Obsada"
   }
 }

@@ -10,6 +10,7 @@ import useTranslation from "../../service/useTranslation";
 import { Movie } from "../../../types";
 import QuickActions from "../QuickActions";
 import CustomFavourite from "../Favourite";
+import Cast from "./Cast";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
@@ -110,6 +111,8 @@ export default function MovieDetails({
       <Seasons seasons={(movie?.seasons as any) || []} />
 
       {/* <MovieReviews movieId={movie?.id} type={type as "movie" | "tv"} /> */}
+
+      <Cast id={movie?.id} type={type as "movie" | "tv"} />
 
       <Similar id={movie?.id} type={type as "movie" | "tv"} />
 

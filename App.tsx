@@ -30,6 +30,7 @@ import Search from "./src/screens/Search";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 import { LinkingOptions } from "@react-navigation/native";
+import SearchFilters from "./src/screens/SearchFilters";
 
 const linking: LinkingOptions<RootStackParamList> = {
   prefixes: ["flickmate://", "https://movie.dmqq.dev"],
@@ -280,6 +281,7 @@ const Navigator = () => {
               headerShown: false,
             }}
           />
+          <Stack.Screen name="SearchFilters" component={SearchFilters} options={{ presentation: "modal" }} />
         </Stack.Navigator>
       </GestureHandlerRootView>
     </NavigationContainer>
