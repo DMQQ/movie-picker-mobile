@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { View, VirtualizedList, StyleSheet, ScrollView, Dimensions, Image, Pressable } from "react-native";
-import { Chip, Text, ActivityIndicator, Portal, Modal, Button, Divider, MD2DarkTheme } from "react-native-paper";
+import { Chip, Text, ActivityIndicator, Portal, Modal, Button, Divider, MD2DarkTheme, TouchableRipple } from "react-native-paper";
 import { useLazySearchQuery } from "../redux/movie/movieApi";
 import { useNavigation } from "@react-navigation/native";
 import CustomSearchBar from "../components/SearchBar";
+import { removeDuplicateResults } from "../utils/deduplicates";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const ITEM_HEIGHT = 180;
@@ -33,7 +34,7 @@ const MovieCard = ({ item }: { item: any }) => {
         height: ITEM_HEIGHT,
         borderRadius: 10,
         backgroundColor: MD2DarkTheme.colors.surface,
-        marginBottom: 10,
+        marginBottom: 15,
       }}
     >
       <Image
@@ -72,7 +73,6 @@ const SearchScreen = () => {
     minRating: undefined as number | undefined,
   });
 
-  // Maintain our own accumulating results
   const [allResults, setAllResults] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -87,60 +87,99 @@ const SearchScreen = () => {
       setCurrentPage(1);
       setAllResults([]);
       setHasNextPage(false);
+      lastReceivedApiPage.current = 0;
+      isLoadingNextPage.current = false;
     }
     isFirstLoad.current = false;
   }, [searchQuery, filters.type, filters.genres, filters.minRating]);
 
-  // Process search results
-  useEffect(() => {
-    if (data) {
-      if (currentPage === 1) {
-        // Replace results on first page
-        setAllResults(data.results || []);
-      } else {
-        // Append results for subsequent pages
-        setAllResults((prev) => [...prev, ...(data.results || [])]);
-      }
+  const lastReceivedApiPage = useRef(0);
 
-      // Update pagination state
-      setHasNextPage(data.page < data.total_pages);
+  useEffect(() => {
+    if (!data) return;
+
+    if (currentPage > 1 && data.page < currentPage && data.page <= lastReceivedApiPage.current) {
+      return;
     }
+
+    lastReceivedApiPage.current = data.page;
+
+    let newResults;
+    if (currentPage === 1 || data.page === 1) {
+      newResults = data.results || [];
+    } else {
+      newResults = [...allResults, ...(data.results || [])];
+    }
+
+    const newHasNextPage = data.page < data.total_pages;
+
+    setAllResults(newResults);
+    setHasNextPage(newHasNextPage);
   }, [data, currentPage]);
 
-  // Handle search query
   useEffect(() => {
-    if (searchTimeout.current) {
-      clearTimeout(searchTimeout.current);
-    }
+    const fetchResults = async () => {
+      if (searchTimeout.current) {
+        clearTimeout(searchTimeout.current);
+      }
 
-    if (searchQuery.trim().length > 0) {
-      searchTimeout.current = setTimeout(() => {
-        search({
+      if (searchQuery.trim().length === 0) {
+        setAllResults([]);
+        setHasNextPage(false);
+        lastReceivedApiPage.current = 0;
+        return;
+      }
+
+      try {
+        const response = await search({
           query: searchQuery,
           page: currentPage,
           type: filters.type,
           with_genres: filters.genres.length > 0 ? filters.genres : undefined,
           vote_average_gte: filters.minRating,
-        });
-      }, 500);
-    } else {
-      // Clear results if search query is empty
-      setAllResults([]);
-      setHasNextPage(false);
-    }
+        }).unwrap();
+
+        lastReceivedApiPage.current = response.page;
+
+        let newResults;
+        if (response.page === 1) {
+          newResults = removeDuplicateResults(response.results || []);
+        } else {
+          const combinedResults = [...allResults, ...(response.results || [])];
+          newResults = removeDuplicateResults(combinedResults);
+        }
+
+        setAllResults(newResults);
+
+        const hasMore = response.page < response.total_pages;
+
+        setHasNextPage(hasMore);
+
+        isLoadingNextPage.current = false;
+      } catch (error) {
+        isLoadingNextPage.current = false;
+      }
+    };
+
+    searchTimeout.current = setTimeout(() => {
+      fetchResults();
+    }, 500);
 
     return () => {
       if (searchTimeout.current) {
         clearTimeout(searchTimeout.current);
       }
     };
-  }, [filters, searchQuery, currentPage, search]);
+  }, [search, searchQuery, currentPage, filters]);
+
+  const isLoadingNextPage = useRef(false);
 
   const handleEndReached = useCallback(() => {
-    if (!isFetching && hasNextPage) {
+    if (!isFetching && hasNextPage && !isLoadingNextPage.current) {
+      isLoadingNextPage.current = true;
       setCurrentPage((prev) => prev + 1);
     }
-  }, [isFetching, hasNextPage, currentPage, allResults.length]);
+  }, [isFetching, hasNextPage, currentPage]);
 
   const getItem = (_data: any, index: number) => allResults[index];
   const getItemCount = () => allResults.length || 0;
@@ -172,21 +211,31 @@ const SearchScreen = () => {
     return null;
   }, [isLoading, searchQuery, currentPage]);
 
+  const categories = [
+    { id: "both", label: "Both" },
+    { id: "movie", label: "Movies" },
+    { id: "tv", label: "TV Shows" },
+  ] as { id: "movie" | "tv" | "both"; label: string }[];
+
   return (
     <View style={styles.container}>
       <CustomSearchBar value={searchQuery} onChangeText={setSearchQuery} />
 
       <View style={styles.chipContainer}>
-        <ScrollView style={{ paddingHorizontal: 10 }} horizontal showsHorizontalScrollIndicator={false}>
-          <Chip selected={filters.type === "both"} onPress={() => handleFilterChange("both")} style={styles.chip} theme={MD2DarkTheme}>
-            All
-          </Chip>
-          <Chip selected={filters.type === "movie"} onPress={() => handleFilterChange("movie")} style={styles.chip} theme={MD2DarkTheme}>
-            Movies
-          </Chip>
-          <Chip selected={filters.type === "tv"} onPress={() => handleFilterChange("tv")} style={styles.chip} theme={MD2DarkTheme}>
-            TV Shows
-          </Chip>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
+          {categories.map((category) => (
+            <TouchableRipple
+              key={category.id}
+              onPress={() => setFilters((p) => ({ ...p, type: category.id }))}
+              style={[styles.categoryChip, filters.type === category.id && styles.categoryChipActive]}
+            >
+              <Text style={[styles.categoryText, filters.type === category.id && styles.categoryTextActive]}>{category.label}</Text>
+            </TouchableRipple>
+          ))}
+
+          <TouchableRipple onPress={() => {}} style={[styles.categoryChip]}>
+            <Text style={[styles.categoryText]}>Filters</Text>
+          </TouchableRipple>
         </ScrollView>
       </View>
 
@@ -194,13 +243,18 @@ const SearchScreen = () => {
         <Text style={styles.errorText}>Something went wrong. Please try again.</Text>
       ) : (
         <VirtualizedList
+          style={{ marginTop: 30 }}
           data={allResults}
           getItem={getItem}
           getItemCount={getItemCount}
           renderItem={({ item }) => <MovieCard item={item} />}
-          keyExtractor={(item) => `${item.id}-${item.media_type || filters.type}`}
+          keyExtractor={(item, index) => {
+            const mediaType = item.media_type || filters.type;
+            const uniqueId = `${item.id}-${mediaType}-${index}`;
+            return uniqueId;
+          }}
           getItemLayout={(data, index) => ({
-            length: ITEM_HEIGHT + 10, // Include margin
+            length: ITEM_HEIGHT + 10,
             offset: (ITEM_HEIGHT + 10) * index,
             index,
           })}
@@ -241,10 +295,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   chipContainer: {
-    marginVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.1)",
+    paddingBottom: 15,
   },
   chip: {
     marginHorizontal: 4,
+    backgroundColor: "rgba(255,255,255,0.1)",
   },
   listContent: {
     paddingHorizontal: 10,
@@ -286,6 +343,27 @@ const styles = StyleSheet.create({
   },
   applyButton: {
     marginTop: 20,
+  },
+  categoryChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    marginRight: 8,
+  },
+  categoryChipActive: {
+    backgroundColor: "#fff",
+  },
+  categoryText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  categoryTextActive: {
+    color: "#000",
+  },
+  categoriesContainer: {
+    paddingHorizontal: 15,
   },
 });
 
