@@ -4,7 +4,7 @@ import { useAppSelector } from "../redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState, AppStateStatus, Platform } from "react-native";
 
-const isDev = true;
+const isDev = false;
 const BACKGROUND_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
 export const url = isDev ? "http://192.168.0.26:3000" : "https://movie.dmqq.dev";
