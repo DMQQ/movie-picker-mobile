@@ -7,20 +7,29 @@ import SafeIOSContainer from "../components/SafeIOSContainer";
 import useTranslation from "../service/useTranslation";
 import { useState, useRef } from "react";
 
+import CardSwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
+import SwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
+import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
+import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
+// import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
+
 const { width } = Dimensions.get("screen");
 const CARD_HEIGHT = 280;
 
 interface GameCardProps {
   title: string;
   description: string;
-  images: any[];
   onPress: () => void;
   beta?: boolean;
   players?: string;
   duration?: string;
+
+  index: number;
 }
 
-const GameCard = ({ title, description, images, onPress, beta, players, duration }: GameCardProps) => {
+const Animations = [<SwiperAnimation />, <VoterAnimation />, <FortuneWheelAnimation />];
+
+const GameCard = ({ title, description, onPress, beta, players, duration, index }: GameCardProps) => {
   const scale = useRef(new Animated.Value(1)).current;
   const theme = useTheme();
 
@@ -41,7 +50,7 @@ const GameCard = ({ title, description, images, onPress, beta, players, duration
   return (
     <TouchableRipple onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut} style={styles.cardContainer}>
       <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
-        <Image source={images[0]} style={styles.cardImage} resizeMode="cover" />
+        {Animations[index]}
 
         <LinearGradient colors={["transparent", "rgba(0,0,0,0.8)"]} style={styles.cardGradient}>
           <BlurView intensity={20} style={styles.cardContent}>
@@ -93,7 +102,7 @@ export default function GameList() {
     {
       title: t("games.voter.swipe"),
       description: t("games.voter.swipeDescription"),
-      images: [require("../assets/qr2.png")],
+
       route: "QRCode",
       players: "2-8",
       duration: "5-10 min",
@@ -102,7 +111,7 @@ export default function GameList() {
     {
       title: t("games.voter.title"),
       description: t("games.voter.description"),
-      images: [require("../assets/voter1.png")],
+
       route: "Voter",
       params: { screen: "Home" },
       beta: true,
@@ -113,7 +122,7 @@ export default function GameList() {
     {
       title: "FortuneWheel",
       description: t("games.fortunewheel.description"),
-      images: [require("../assets/fortunewheel.png")],
+
       route: "FortuneWheel",
       players: "1",
       duration: "5 min",
@@ -147,10 +156,10 @@ export default function GameList() {
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {filteredGames.map((game, index) => (
           <GameCard
+            index={index}
             key={index}
             title={game.title}
             description={game.description}
-            images={game.images}
             onPress={() => navigation.navigate(game.route, game.params)}
             beta={game.beta}
             players={game.players}
@@ -236,7 +245,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: CARD_HEIGHT / 1.5,
+    height: CARD_HEIGHT / 1.6,
+    zIndex: 10,
   },
   cardContent: {
     flex: 1,
@@ -275,7 +285,7 @@ const styles = StyleSheet.create({
   },
   cardFooter: {
     flexDirection: "row",
-    marginTop: 12,
+    marginTop: 6,
   },
   cardDetail: {
     flexDirection: "row",
