@@ -56,32 +56,33 @@ const GameCard = ({ title, description, onPress, beta, players, duration, index 
           <BlurView intensity={20} style={styles.cardContent}>
             <View style={styles.cardHeader}>
               <View style={{ width: "100%" }}>
-                <Text style={styles.cardTitle}>{title}</Text>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                  <Text style={styles.cardTitle}>{title}</Text>
+                  <View style={styles.cardFooter}>
+                    {players && (
+                      <View style={styles.cardDetail}>
+                        <IconButton icon="account-group" size={20} />
+                        <Text style={styles.detailText}>{players}</Text>
+                      </View>
+                    )}
+                    {duration && (
+                      <View style={styles.cardDetail}>
+                        <IconButton icon="clock-outline" size={20} />
+                        <Text style={styles.detailText}>{duration}</Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
                 <Text style={styles.cardDescription}>{description}</Text>
               </View>
-              {beta && (
-                <View style={styles.betaBadge}>
-                  <Text style={styles.betaText}>BETA</Text>
-                </View>
-              )}
-            </View>
-
-            <View style={styles.cardFooter}>
-              {players && (
-                <View style={styles.cardDetail}>
-                  <IconButton icon="account-group" size={20} />
-                  <Text style={styles.detailText}>{players}</Text>
-                </View>
-              )}
-              {duration && (
-                <View style={styles.cardDetail}>
-                  <IconButton icon="clock-outline" size={20} />
-                  <Text style={styles.detailText}>{duration}</Text>
-                </View>
-              )}
             </View>
           </BlurView>
         </LinearGradient>
+        {beta && (
+          <View style={styles.betaBadge}>
+            <Text style={styles.betaText}>BETA</Text>
+          </View>
+        )}
       </Animated.View>
     </TouchableRipple>
   );
@@ -245,12 +246,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: CARD_HEIGHT / 1.6,
     zIndex: 10,
   },
   cardContent: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 15,
+    paddingVertical: 7.5,
     justifyContent: "flex-end",
   },
   cardHeader: {
@@ -262,7 +263,6 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     fontSize: 28,
     color: "#fff",
-    marginBottom: 4,
   },
   cardDescription: {
     color: "rgba(255,255,255,0.8)",
@@ -276,7 +276,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 4,
     position: "absolute",
-    right: 0,
+    top: 10,
+    left: 10,
   },
   betaText: {
     color: "#000",
@@ -285,12 +286,12 @@ const styles = StyleSheet.create({
   },
   cardFooter: {
     flexDirection: "row",
-    marginTop: 6,
+    marginTop: -5,
   },
   cardDetail: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 16,
+    marginRight: 8,
   },
   detailText: {
     color: "#fff",
