@@ -216,7 +216,9 @@
     "genres": "Genres",
     "query-for": "Results for",
     "close": "Close",
-    "apply": "Apply filters"
+    "apply": "Apply filters",
+    "more": "Show more",
+    "less": "Show less"
   },
   "cast": {
     "heading": "Cast"

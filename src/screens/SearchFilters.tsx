@@ -59,6 +59,8 @@ export default function SearchFilters({ navigation, route }: any) {
     return selectedProviders.length + genres.length + selectedPeople.length;
   };
 
+  const [limitProviders, setLimitProviders] = useState(18);
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["right", "left"]}>
       <View style={styles.container}>
@@ -78,10 +80,16 @@ export default function SearchFilters({ navigation, route }: any) {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
+          {route.params?.type !== "both" && (
+            <>
+              <DropdownPersonSearch onSelectPerson={handlePeopleSelection} maxSelections={5} />
+              <Divider style={styles.divider} />
+            </>
+          )}
           {/* Streaming Services */}
           <Section title={t("room.providers")}>
             <FlatList
-              data={providers}
+              data={(providers || []).slice(0, limitProviders)}
               keyExtractor={(item) => item.provider_id.toString()}
               horizontal={false}
               numColumns={6}
@@ -95,12 +103,15 @@ export default function SearchFilters({ navigation, route }: any) {
                   <Image source={{ uri: `https://image.tmdb.org/t/p/w200${item?.logo_path}` }} style={styles.providerLogo} />
                 </TouchableRipple>
               )}
+              ListFooterComponent={
+                <Button
+                  onPress={() => (limitProviders < (providers || [])?.length ? setLimitProviders((p) => p + 12) : setLimitProviders(18))}
+                >
+                  {limitProviders < (providers || [])?.length ? t("search.more") : t("search.less")}
+                </Button>
+              }
             />
           </Section>
-
-          <Divider style={styles.divider} />
-
-          <DropdownPersonSearch onSelectPerson={handlePeopleSelection} maxSelections={5} />
 
           <Divider style={styles.divider} />
 
@@ -134,8 +145,6 @@ export default function SearchFilters({ navigation, route }: any) {
               ))}
             </View>
           </Section>
-
-          {/* People Search */}
         </ScrollView>
 
         <Surface style={styles.bottomBar}>
@@ -148,7 +157,7 @@ export default function SearchFilters({ navigation, route }: any) {
   );
 }
 
-const Section = ({ title, children }) => (
+const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>{title}</Text>
     {children}
@@ -287,12 +296,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 15,
     paddingVertical: 15,
+    paddingBottom: 30,
     backgroundColor: "#0A0A0A",
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.08)",
     elevation: 8,
     position: "absolute",
-    bottom: 10,
+    bottom: 0,
     left: 0,
     right: 0,
   },

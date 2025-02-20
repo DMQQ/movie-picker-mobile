@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   card: {
-    backgroundColor: MD2DarkTheme.colors.surface,
     borderRadius: 12,
     marginRight: 12,
     width: 120,

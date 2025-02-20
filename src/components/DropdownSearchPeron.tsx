@@ -199,9 +199,7 @@ const DropdownPersonSearch: React.FC<DropdownPersonSearchProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 30,
-  },
+  container: {},
   title: {
     fontSize: 30,
     lineHeight: 30,

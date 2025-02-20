@@ -112,11 +112,34 @@ const SearchScreen = ({ navigation, route }: any) => {
     };
   }, [searchQuery]);
 
-  // Monitor route params changes
   useEffect(() => {
-    if (JSON.stringify(routeParamsRef.current) !== JSON.stringify(route.params)) {
+    // More robust comparison by checking individual properties
+    const currentParams = route.params || {};
+    const prevParams = routeParamsRef.current || {};
+
+    const hasParamsChanged =
+      JSON.stringify(currentParams.genres) !== JSON.stringify(prevParams.genres) ||
+      JSON.stringify(currentParams.providers) !== JSON.stringify(prevParams.providers) ||
+      JSON.stringify(currentParams.people) !== JSON.stringify(prevParams.people);
+
+    if (hasParamsChanged) {
+      console.log("Search params changed:", currentParams);
       routeParamsRef.current = route.params;
 
+      // Reset search state
+      setCurrentPage(1);
+      setAllResults([]);
+      setHasNextPage(false);
+      lastReceivedApiPage.current = 0;
+      isLoadingNextPage.current = false;
+
+      // Force immediate search
+      performSearch(1);
+    }
+  }, [route.params, filters.type]);
+
+  useEffect(() => {
+    if (lastReceivedApiPage.current > 0) {
       setCurrentPage(1);
       setAllResults([]);
       setHasNextPage(false);
@@ -125,7 +148,7 @@ const SearchScreen = ({ navigation, route }: any) => {
 
       performSearch(1);
     }
-  }, [route.params]);
+  }, [filters.type]);
 
   // Main search function
   const performSearch = async (page: number) => {
@@ -273,7 +296,7 @@ const SearchScreen = ({ navigation, route }: any) => {
         </ScrollView>
         <TouchableRipple
           onPress={() => {
-            navigation.navigate("SearchFilters", { ...route?.params });
+            navigation.navigate("SearchFilters", { ...route?.params, type: filters.type });
           }}
           style={[
             styles.categoryChip,
