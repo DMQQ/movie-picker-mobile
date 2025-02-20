@@ -6,13 +6,17 @@ import { useNavigation } from "@react-navigation/native";
 import CustomSearchBar from "../components/SearchBar";
 
 import useTranslation from "../service/useTranslation";
+import { Movie } from "../../types";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const ITEM_HEIGHT = 180;
 
-const MovieCard = ({ item }: { item: any }) => {
+const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
+  const t = useTranslation();
   const data = [
+    !!!item?.title ? t("voter.types.series") : t("voter.types.movie"),
     `${item?.vote_average?.toFixed(2)}/10`,
+    item?.adult ? "18+" : "All ages",
     item?.release_date || item?.first_air_date,
     (item?.title || item?.name) === (item?.original_title || item?.original_name) ? "" : item?.original_title || item?.original_name,
     ...(item?.genres || [])?.map((g: any) => g.name),
@@ -43,13 +47,12 @@ const MovieCard = ({ item }: { item: any }) => {
         style={styles.cardImage}
       />
 
-      <View style={{ flex: 1, padding: 10, overflow: "hidden" }}>
+      <View style={{ flex: 1, padding: 10, overflow: "hidden", gap: 2.5 }}>
         <Text
           numberOfLines={2}
           style={{
             fontFamily: "Bebas",
             fontSize: 28,
-            marginBottom: 5,
           }}
         >
           {item?.title || item?.name}
@@ -57,9 +60,11 @@ const MovieCard = ({ item }: { item: any }) => {
 
         <Text style={{ color: "rgba(255, 255, 255, 0.8)" }}>{data.join(" | ")}</Text>
 
-        <Text numberOfLines={3} style={{ marginTop: 5 }}>
-          {item.overview}
-        </Text>
+        <View style={{ flex: 1, overflow: "hidden" }}>
+          <Text numberOfLines={4} ellipsizeMode="tail" style={{ marginTop: 5 }}>
+            {item.overview}
+          </Text>
+        </View>
       </View>
     </Pressable>
   );
@@ -147,18 +152,47 @@ const SearchScreen = ({ navigation, route }: any) => {
 
       const response = await search(params).unwrap();
 
-      console.log(response.total_pages, response.total_results, response.page);
+      const sortSearchResults = (searchTerm: string, results: Movie[]) => {
+        const term = searchTerm.toLowerCase();
+
+        return [...results].sort((a, b) => {
+          const titleA = (a?.title || a?.name || "").toLowerCase();
+          const titleB = (b?.title || b?.name || "").toLowerCase();
+
+          // 1. Exact title matches come first
+          const exactMatchA = titleA === term;
+          const exactMatchB = titleB === term;
+          if (exactMatchA && !exactMatchB) return -1;
+          if (!exactMatchA && exactMatchB) return 1;
+
+          // 2. Title starts with search term
+          const startsWithA = titleA.startsWith(term);
+          const startsWithB = titleB.startsWith(term);
+          if (startsWithA && !startsWithB) return -1;
+          if (!startsWithA && startsWithB) return 1;
+
+          // 3. Consider franchise films (title contains search term as whole word)
+          const wordBoundaryRegex = new RegExp(`\\b${term}\\b`, "i");
+          const containsWordA = wordBoundaryRegex.test(titleA);
+          const containsWordB = wordBoundaryRegex.test(titleB);
+          if (containsWordA && !containsWordB) return -1;
+          if (!containsWordA && containsWordB) return 1;
+
+          // 4. For similar relevance, use popularity as tiebreaker
+          return (b?.popularity || 0) - (a?.popularity || 0);
+        });
+      };
 
       if (response.page === page) {
         lastReceivedApiPage.current = page;
 
         if (page === 1) {
-          setAllResults(response.results || []);
+          setAllResults(sortSearchResults(searchQuery, response.results));
         } else {
           setAllResults((prevResults) => {
             const existingIds = new Set(prevResults.map((item) => item.id));
             const newResults = response.results.filter((item) => !existingIds.has(item.id));
-            return [...prevResults, ...newResults];
+            return [...prevResults, ...sortSearchResults(searchQuery, newResults)];
           });
         }
 
