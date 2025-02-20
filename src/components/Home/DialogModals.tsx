@@ -7,7 +7,6 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { useContext } from "react";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
-import { Provider } from "react-redux";
 
 export default function DialogModals({
   showLeaveModal,
@@ -71,11 +70,7 @@ export default function DialogModals({
           <QRCode
             backgroundColor={theme.colors.surface}
             color={theme.colors.primary}
-            value={JSON.stringify({
-              roomId: qrCode,
-              host: "dmq",
-              type: "movies",
-            })}
+            value={`flickmate://swipe/${qrCode}`}
             size={Dimensions.get("screen").width / 1.35}
           />
           <Text

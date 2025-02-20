@@ -19,11 +19,7 @@ export default function QRCodeComponent(props: { sessionId: string; type: string
         <QRCode
           backgroundColor={theme.colors.surface}
           color={theme.colors.primary}
-          value={JSON.stringify({
-            sessionId: props.sessionId,
-            type: props.type,
-            safetyCode: props.safetyCode,
-          })}
+          value={`flickmate://voter/${props.sessionId}`}
           size={props.size}
         />
       </View>

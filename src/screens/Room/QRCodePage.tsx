@@ -182,11 +182,7 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         <QRCode
           backgroundColor={theme.colors.surface}
           color={theme.colors.primary}
-          value={JSON.stringify({
-            roomId: code,
-            host: nickname,
-            type: "movie-picker",
-          })}
+          value={`flickmate://swipe/${code}`}
           size={Dimensions.get("screen").width * 0.6}
         />
       </View>
