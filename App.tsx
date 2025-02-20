@@ -281,7 +281,7 @@ const Navigator = () => {
               headerShown: false,
             }}
           />
-          <Stack.Screen name="SearchFilters" component={SearchFilters} options={{ presentation: "modal" }} />
+          <Stack.Screen name="SearchFilters" component={SearchFilters} options={{ headerShown: false }} />
         </Stack.Navigator>
       </GestureHandlerRootView>
     </NavigationContainer>

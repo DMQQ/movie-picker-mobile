@@ -23,7 +23,7 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
         item: {
           id: props?.movie?.id,
           imageUrl: props?.movie?.poster_path,
-          type: props?.movie?.type || props.movie?.title ? "movie" : "tv",
+          type: props?.movie?.type || (props.movie?.title ? "movie" : "tv"),
         },
       })
     );
