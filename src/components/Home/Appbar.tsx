@@ -24,6 +24,7 @@ export default function HomeAppbar({
 
   const {
     room: { isFinished, users },
+    isPlaying,
   } = useAppSelector((state) => state.room);
 
   const t = useTranslation();
@@ -34,7 +35,7 @@ export default function HomeAppbar({
 
       <ActiveUsers data={users} />
 
-      {!(cards.length > 0) && !isFinished && (
+      {!(cards.length > 0) && !isFinished && isPlaying && (
         <Appbar.Action
           color={theme.colors.primary}
           size={22}

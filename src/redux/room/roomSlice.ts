@@ -8,7 +8,7 @@ const initialState = {
   qrCode: "",
   nickname: "",
   language: "en",
-
+  isPlaying: false,
   beenFired: false,
 
   room: {
@@ -21,6 +21,8 @@ const initialState = {
     page: 1,
     name: "",
 
+    isGameFinished: false,
+
     isFinished: false,
 
     match: undefined as Movie | undefined,
@@ -29,6 +31,8 @@ const initialState = {
     movies: [] as Movie[],
     matches: [] as Movie[],
     likes: [] as Movie[],
+
+    isRunning: false,
   },
 };
 
@@ -53,8 +57,18 @@ const roomSlice = createSlice({
       state.room.type = action.payload.type;
       state.room.page = action.payload.page;
       state.room.users = action.payload.users;
-      state.room.matches = [];
-      state.room.movies = [];
+    },
+
+    start(state) {
+      state.room.isRunning = true;
+    },
+
+    setGameFinished(state) {
+      state.room.isGameFinished = true;
+    },
+
+    setPlaying(state, action) {
+      state.isPlaying = action.payload;
     },
 
     setLanguage(state, action) {
@@ -161,6 +175,14 @@ const roomSlice = createSlice({
     setActiveUsers(state, { payload }) {
       state.room.usersCount = payload.length;
       state.room.users = payload;
+    },
+
+    setRoomState(state, { payload }) {
+      state.room.isFinished = false;
+      state.room = payload.room;
+      state.room.movies = payload.movies;
+      state.room.users = payload.room.users;
+      state.room.isRunning = payload.isRunning;
     },
 
     reset(state) {

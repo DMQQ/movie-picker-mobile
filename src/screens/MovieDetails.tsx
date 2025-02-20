@@ -1,4 +1,4 @@
-import { useWindowDimensions, View } from "react-native";
+import { Platform, useWindowDimensions, View } from "react-native";
 import { MovieDetails as MovieDetailsType } from "../../types";
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { ScreenProps } from "./types";
@@ -21,16 +21,20 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
   const IMG_HEIGHT = height * 0.75;
 
   const imageStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]),
-        },
-        {
-          scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
-        },
-      ],
-    };
+    return Platform.OS === "ios"
+      ? {
+          transform: [
+            {
+              translateY: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]),
+            },
+            {
+              scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
+            },
+          ],
+        }
+      : {
+          transform: [{ translateY: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [-IMG_HEIGHT / 3, 0, IMG_HEIGHT / 3]) }],
+        };
   });
 
   const typeOfContent = route?.params?.type;
@@ -53,14 +57,11 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
       style={{ flex: 1, height }}
     >
       <View style={{ position: "absolute", top: 10, left: 10, zIndex: 100 }}>
-        <Appbar.BackAction color="#fff" onPress={() => navigation.goBack()} />
-      </View>
-
-      <View style={{ position: "absolute", top: 10, right: 10, zIndex: 100 }}>
-        <Favourite movie={movie} />
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
       </View>
 
       <Animated.Image
+        resizeMethod={"resize"}
         //sharedTransitionStyle={sharedElementTransition}
         // sharedTransitionTag={`movie-poster-image-${route.params.img}`}
         style={[
@@ -79,21 +80,3 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
     </Animated.ScrollView>
   );
 }
-
-// const Trailers = ({ movie }: { movie: MovieDetailsType }) => {
-//   return (
-//     <View>
-//       {movie?.videos?.results?.map((video) => (
-//         <View key={video.id} style={{ marginVertical: 10 }}>
-//           <Text style={{ color: "#fff", fontSize: 20, marginBottom: 10 }}>{video.name}</Text>
-//           <WebView
-//             style={{ height: 200 }}
-//             source={{
-//               uri: `https://www.youtube.com/embed/${video.key}`,
-//             }}
-//           />
-//         </View>
-//       ))}
-//     </View>
-//   );
-//  }

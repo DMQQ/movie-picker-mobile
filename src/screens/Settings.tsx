@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ToastAndroid, View } from "react-native";
-import { Appbar, SegmentedButtons, Text, TextInput } from "react-native-paper";
+import { Appbar, IconButton, SegmentedButtons, Text, TextInput } from "react-native-paper";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppDispatch, useAppSelector } from "../redux/store";
@@ -57,7 +57,8 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
   return (
     <SafeIOSContainer>
       <Appbar style={{ backgroundColor: "#000" }}>
-        <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
+
         <Appbar.Content title={t("settings.heading")} />
       </Appbar>
       <View style={{ paddingHorizontal: 15, flex: 1 }}>

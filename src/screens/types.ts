@@ -20,6 +20,14 @@ export type RootStackParamList = {
   SectionSelector: undefined;
 
   Group: { group: { id: string; name: string } };
+
+  Voter: undefined;
+
+  Games: undefined;
+
+  Search: undefined;
+
+  SearchFilters: undefined;
 };
 
 export type ScreenProps<Key extends keyof RootStackParamList> = NativeStackScreenProps<RootStackParamList, Key>;

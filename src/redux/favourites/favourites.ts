@@ -28,7 +28,7 @@ const initialState: FavoritesState = {
   error: null,
 };
 
-const STORAGE_KEY = "favorites";
+const STORAGE_KEY = "favorites_groups";
 
 const makeDefaultGroups = () => {
   return [
@@ -41,6 +41,12 @@ const makeDefaultGroups = () => {
     {
       id: "2",
       name: "Watchlist",
+      movies: [],
+      posterPath: undefined,
+    },
+    {
+      id: "999",
+      name: "Watched",
       movies: [],
       posterPath: undefined,
     },

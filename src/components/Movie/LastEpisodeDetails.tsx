@@ -4,7 +4,7 @@ import useTranslation from "../../service/useTranslation";
 
 const LastEpisodeToAir = ({ lastEpisode }: { lastEpisode: any }) => {
   const t = useTranslation();
-  if (lastEpisode === undefined || lastEpisode === null || lastEpisode?.name === undefined) return null;
+  if (lastEpisode === undefined || lastEpisode === null || lastEpisode?.name === undefined || !lastEpisode?.still_path) return null;
 
   return (
     <View style={{ marginTop: 15 }}>

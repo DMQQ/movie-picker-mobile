@@ -1,17 +1,15 @@
 import "react-native-reanimated";
 
-import { ActivityIndicator, Button, MD2DarkTheme, PaperProvider } from "react-native-paper";
+import { Button, MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import QRScanner from "./src/screens/Room/QRScanner";
 import Landing from "./src/screens/Landing";
 import QRCode from "./src/screens/Room/Main";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { store, useAppDispatch } from "./src/redux/store";
 import Overview from "./src/screens/Overview";
-import { SocketProvider } from "./src/service/SocketContext";
-import { Alert, Platform, StatusBar, View } from "react-native";
+import { Alert, Linking, Platform, StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MovieDetails from "./src/screens/MovieDetails";
 import { RootStackParamList } from "./src/screens/types";
@@ -25,8 +23,41 @@ import { loadFavorites } from "./src/redux/favourites/favourites";
 import { roomActions } from "./src/redux/room/roomSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Group from "./src/screens/Group";
+import Main from "./src/screens/Voter/Main";
+import GameList from "./src/screens/GameList";
+import Search from "./src/screens/Search";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+import { LinkingOptions } from "@react-navigation/native";
+import SearchFilters from "./src/screens/SearchFilters";
+
+const linking: LinkingOptions<RootStackParamList> = {
+  prefixes: ["flickmate://", "https://movie.dmqq.dev"],
+  config: {
+    screens: {
+      Voter: {
+        screens: {
+          Home: "voter/:sessionId",
+        },
+      },
+
+      QRCode: {
+        screens: {
+          Home: "swipe/:roomId",
+        },
+      },
+
+      MovieDetails: {
+        path: "movie/:type/:id",
+        parse: {
+          id: (movieId: string) => movieId,
+          type: (type: string) => type,
+        },
+      },
+    },
+  },
+};
 
 const Fallback = () => (
   <View
@@ -34,6 +65,7 @@ const Fallback = () => (
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
+      backgroundColor: "#000",
     }}
   >
     <FancySpinner size={100} />
@@ -73,6 +105,28 @@ const Navigator = () => {
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
   useEffect(() => {
+    // Handle deep links when app is already open
+    const subscription = Linking.addEventListener("url", handleDeepLink);
+
+    // Handle deep link that launched the app
+    (async () => {
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        handleDeepLink({ url: initialUrl });
+      }
+    })();
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const handleDeepLink = ({ url }: { url: string }) => {
+    console.log("Received URL:", url);
+    // You can add custom handling here if needed
+  };
+
+  useEffect(() => {
     (async () => {
       try {
         let language = await AsyncStorage.getItem("language");
@@ -98,7 +152,7 @@ const Navigator = () => {
 
   if (showLanguageSelector) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000" }}>
         <View style={{ flexDirection: "row", gap: 10 }}>
           <Button
             onPress={async () => {
@@ -124,9 +178,18 @@ const Navigator = () => {
   }
 
   return (
-    <NavigationContainer theme={DarkTheme} fallback={<Fallback />}>
+    <NavigationContainer theme={DarkTheme} fallback={<Fallback />} linking={linking}>
       <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
-        <Stack.Navigator initialRouteName="Landing" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator
+          initialRouteName="Landing"
+          screenOptions={{
+            headerShown: false,
+
+            ...(Platform.OS === "android" && {
+              animation: "fade_from_bottom",
+            }),
+          }}
+        >
           <Stack.Screen name="Settings" component={SettingsScreen} />
 
           <Stack.Screen name="Landing" component={Landing} />
@@ -163,7 +226,6 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-              ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
           <Stack.Screen
@@ -172,7 +234,6 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-              ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
 
@@ -185,6 +246,16 @@ const Navigator = () => {
               ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
+
+          <Stack.Screen
+            name="Voter"
+            component={Main}
+            options={{
+              headerShown: false,
+              title: "",
+            }}
+          />
+
           <Stack.Screen
             name="SectionSelector"
             component={SectionSelector}
@@ -194,6 +265,23 @@ const Navigator = () => {
               ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
+
+          <Stack.Screen
+            name="Games"
+            component={GameList}
+            options={{
+              headerShown: false,
+            }}
+          />
+
+          <Stack.Screen
+            name="Search"
+            component={Search}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen name="SearchFilters" component={SearchFilters} options={{ headerShown: false }} />
         </Stack.Navigator>
       </GestureHandlerRootView>
     </NavigationContainer>

@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { Text } from "react-native-paper";
 import Animated from "react-native-reanimated";
 import MatchTile from "./MatchTile";
@@ -22,8 +22,8 @@ export default function TilesList<T>(props: TileListProps) {
 
   return (
     <Animated.FlatList
-      numColumns={2}
-      style={{ marginBottom: 50 }}
+      numColumns={3}
+      style={{ marginBottom: Platform.OS === "ios" ? 50 : 10 }}
       ListHeaderComponent={
         props.label ? (
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>

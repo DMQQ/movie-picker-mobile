@@ -3,23 +3,46 @@ import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import WatchProviders from "./WatchProviders";
 import LastEpisodeToAir from "./LastEpisodeDetails";
 import Seasons from "./SeasonsList";
-import { ScrollView, View } from "react-native";
+import { ImageBackground, Platform, ScrollView, View } from "react-native";
 import { BlurView } from "expo-blur";
 import Similar from "../Similar";
 import useTranslation from "../../service/useTranslation";
+import { Movie } from "../../../types";
+import QuickActions from "../QuickActions";
+import CustomFavourite from "../Favourite";
+import Cast from "./Cast";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
-export default function MovieDetails({ movie, providers, width, type }: { movie: any; providers: any; width: number; type: string }) {
+export default function MovieDetails({
+  movie,
+  providers,
+  width,
+  type,
+}: {
+  movie: Movie & Record<string, string>;
+  providers: any;
+  width: number;
+  type: string;
+}) {
   const t = useTranslation();
+
+  const data = [
+    `${movie?.vote_average?.toFixed(2)}/10`,
+    movie?.release_date || movie?.first_air_date,
+    (movie?.title || movie?.name) === (movie?.original_title || movie?.original_name) ? "" : movie?.original_title || movie?.original_name,
+    ...(movie?.genres || [])?.map((g: any) => g.name),
+  ].filter((v) => v !== undefined && v !== "") as any;
+
   return (
     <AnimatedBlurView
+      blurReductionFactor={0.25}
       entering={FadeInDown}
-      intensity={30}
+      intensity={Platform.OS === "ios" ? 30 : 100}
       tint="dark"
       style={{
         padding: 20,
-        backgroundColor: "rgba(0,0,0,0.5)", // Adjust opacity for glass effect
+        backgroundColor: `rgba(0,0,0,${Platform.OS === "ios" ? 0.5 : 0.8})`, // Adjust opacity for glass effect
         width,
 
         overflow: "hidden",
@@ -37,17 +60,7 @@ export default function MovieDetails({ movie, providers, width, type }: { movie:
         {movie?.title || movie?.name}
       </Text>
 
-      <Text style={{ color: "rgba(255,255,255,0.8)", marginBottom: 10 }}>
-        {movie?.release_date || movie?.first_air_date} |{" "}
-        {(movie?.title || movie?.name) === (movie?.original_title || movie?.original_name)
-          ? ""
-          : movie?.original_title || movie?.original_name}{" "}
-        |{" "}
-        {(movie?.genres as { id: number; name: string }[])
-          .map((d) => d.name)
-          .filter((c) => c !== "Unknown")
-          ?.join(" | ")}
-      </Text>
+      <Text style={{ color: "rgba(255,255,255,0.8)", marginBottom: 10 }}>{data.join(" | ")}</Text>
 
       {movie?.tagline && (
         <Text
@@ -61,15 +74,23 @@ export default function MovieDetails({ movie, providers, width, type }: { movie:
         </Text>
       )}
 
-      <Text
-        style={{
-          fontSize: 19,
-          marginTop: 5,
-          color: "rgba(255,255,255,0.95)",
-        }}
-      >
-        {movie?.overview}
-      </Text>
+      <View style={{ padding: 10, paddingVertical: 20 }}>
+        <QuickActions movie={movie}>
+          <CustomFavourite movie={movie} />
+        </QuickActions>
+      </View>
+
+      {movie?.overview && (
+        <Text
+          style={{
+            fontSize: 19,
+            marginTop: 5,
+            color: "rgba(255,255,255,0.95)",
+          }}
+        >
+          {movie?.overview}
+        </Text>
+      )}
 
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         {movie?.runtime && (
@@ -87,9 +108,11 @@ export default function MovieDetails({ movie, providers, width, type }: { movie:
 
       <LastEpisodeToAir lastEpisode={movie?.last_episode_to_air || {}} />
 
-      <Seasons seasons={movie?.seasons || []} />
+      <Seasons seasons={(movie?.seasons as any) || []} />
 
       {/* <MovieReviews movieId={movie?.id} type={type as "movie" | "tv"} /> */}
+
+      <Cast id={movie?.id} type={type as "movie" | "tv"} />
 
       <Similar id={movie?.id} type={type as "movie" | "tv"} />
 

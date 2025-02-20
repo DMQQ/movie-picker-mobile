@@ -11,20 +11,9 @@ import DialogModals from "../../components/Home/DialogModals";
 import HomeAppbar from "../../components/Home/Appbar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useTranslation from "../../service/useTranslation";
-
-export function throttle<T extends (...args: any[]) => any>(func: T, limit: number): (...args: Parameters<T>) => void {
-  let inThrottle = false;
-
-  return function (...args: Parameters<T>): void {
-    if (!inThrottle) {
-      func.apply(null, args);
-      inThrottle = true;
-      setTimeout(() => {
-        inThrottle = false;
-      }, limit);
-    }
-  };
-}
+import { FancySpinner } from "../../components/FancySpinner";
+import { useAppSelector } from "../../redux/store";
+import { throttle } from "../../utils/throttle";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -40,11 +29,22 @@ const styles = StyleSheet.create({
 });
 
 export default function Home({ route, navigation }: any) {
-  const { cards, dislikeCard, likeCard, match, showLeaveModal, toggleLeaveModal, hideMatchModal } = useRoom(route.params?.roomId);
+  const { cards, dislikeCard, likeCard, match, showLeaveModal, toggleLeaveModal, hideMatchModal, isPlaying, joinGame } = useRoom(
+    route.params?.roomId
+  );
   const isFocused = useIsFocused();
   const [showQRModal, setShowQRModal] = useState(false);
-
+  const { isGameFinished } = useAppSelector((state) => state.room.room);
   const originalLength = useRef(cards.length);
+
+  useEffect(() => {
+    if (route?.params?.roomId) {
+      navigation.setParams({
+        roomId: route?.params?.roomId,
+      });
+      joinGame(route?.params?.roomId);
+    }
+  }, [route?.params?.roomId]);
 
   const handleNavigateDetails = (card: Movie) => {
     navigation.navigate("MovieDetails", {
@@ -76,23 +76,32 @@ export default function Home({ route, navigation }: any) {
         setShowQRModal={setShowQRModal}
       />
 
-      {cards.length === 0 && (
+      {isPlaying ? (
+        <>
+          {cards.map((card, index) => (
+            <SwipeTile
+              onPress={() => handleNavigateDetails(card)}
+              length={originalLength.current}
+              key={card.id}
+              card={card}
+              index={index}
+              likeCard={throttle(() => likeCard(card, index), 500)}
+              removeCard={throttle(() => dislikeCard(index), 500)}
+            />
+          ))}
+
+          {cards.length === 0 && (
+            <View style={styles.emptyListContainer}>
+              <Text style={{ fontSize: 20 }}>{isGameFinished ? t("room.finished") : t("room.waiting")}</Text>
+            </View>
+          )}
+        </>
+      ) : (
         <View style={styles.emptyListContainer}>
-          <Text style={{ fontSize: 20 }}>{t("room.waiting")}</Text>
+          <FancySpinner />
+          <Text style={{ fontSize: 20, marginTop: 15 }}>Wait for start</Text>
         </View>
       )}
-
-      {cards.map((card, index) => (
-        <SwipeTile
-          onPress={() => handleNavigateDetails(card)}
-          length={originalLength.current}
-          key={card.id}
-          card={card}
-          index={index}
-          likeCard={throttle(() => likeCard(card, index), 500)}
-          removeCard={throttle(() => dislikeCard(index), 500)}
-        />
-      ))}
 
       {isFocused && <MatchModal hideMatchModal={hideMatchModal} match={match} />}
     </View>

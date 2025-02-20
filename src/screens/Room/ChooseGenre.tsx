@@ -1,5 +1,5 @@
 import { FlatList, StyleSheet, View, useWindowDimensions } from "react-native";
-import { Appbar, Button, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { Appbar, Button, IconButton, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
 import useFetch from "../../service/useFetch";
 import Skeleton from "../../components/Skeleton/Skeleton";
@@ -32,7 +32,12 @@ export default function ChooseGenre({ navigation }: any) {
   return (
     <SafeIOSContainer>
       <Appbar style={{ backgroundColor: "#000" }}>
-        <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
+        <IconButton
+          icon="chevron-left"
+          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
+          size={28}
+        />
+
         <Appbar.Content title={t("room.genre")} />
       </Appbar>
       <View style={{ flex: 1, padding: 15 }}>
@@ -42,9 +47,7 @@ export default function ChooseGenre({ navigation }: any) {
           ) : (
             <FlatList
               ListHeaderComponent={
-                <Text style={{ fontSize: 45, lineHeight: 45, fontWeight: "bold", fontFamily: "Bebas", marginBottom: 15 }}>
-                  {t("room.genre")}
-                </Text>
+                <Text style={{ fontSize: 45, lineHeight: 45, fontFamily: "Bebas", marginBottom: 15 }}>{t("room.genre")}</Text>
               }
               initialNumToRender={12}
               style={{ flex: 1, paddingBottom: 25 }}
@@ -64,7 +67,7 @@ export default function ChooseGenre({ navigation }: any) {
             marginTop: 10,
           }}
           contentStyle={{ padding: 7.5 }}
-          onPress={() => navigation.navigate("ChoosePage")}
+          onPress={() => navigation.navigate("ExtraSettings")}
         >
           {t("room.next")}
         </Button>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useAppSelector } from "../../redux/store";
 import { Movie } from "../../../types";
 import TilesList from "../../components/Overview/TilesList";
@@ -20,11 +20,15 @@ export default function LikesScreen() {
 
   const t = useTranslation();
 
+  const data = useMemo(() => {
+    return [...likes].reverse();
+  }, [likes.length]);
+
   return (
     <View style={{ flex: 1, padding: 15 }}>
-      <TilesList label={t("likes.title")} data={likes} />
+      <TilesList label={t("likes.title")} data={data} />
 
-      {match && <Modal match={match} />}
+      {match && <Modal onClose={() => setMatch(undefined)} match={match} />}
 
       <Button
         onPress={randomMovie}

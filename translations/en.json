@@ -38,6 +38,7 @@
     "view-matches": "View Matches"
   },
   "room": {
+    "providers": "Pick your providers",
     "join-game": "Join game",
     "waiting": "Waiting for other players",
     "choose-category": "Choose category",
@@ -46,6 +47,7 @@
     "randomize": "Randomize",
     "genre": "Genres",
     "next": "Next",
+    "finished": "Game ended no more movies to show",
     "randomize-search": "Randomize search",
     "page-range-desc": "Select the number of pages to search",
     "qr-title": "Scan to join!",
@@ -69,7 +71,8 @@
       "genre": "Choose Genre",
       "page-range": "Choose Page Range",
       "qr-code": "Scan QR code",
-      "randomize": "Randomize Search"
+      "randomize": "Randomize Search",
+      "extra-settings": "Extra Settings"
     }
   },
   "fortune-wheel": {
@@ -114,5 +117,110 @@
     "language-info": "Changing this value will change the language target for created room, meaning the movies will be in choosen language but not the controls and other texts. More languages will be added in the future.",
     "about": " This is a simple app that allows you to create a room and pick movies with your friends. You can create a room and invite your friends to join you. You can also join a room by entering the room code. You can then add movies to the room and watch them together. App uses The Movie Database API to get the movies and JustWatch API to get the availabilities.",
     "security": " None of the data is stored on the server. The room is created in memory and is destroyed when the last user leaves the room. No additional data is stored on the server. The room code is generated randomly and the fav movies are stored locally in storage. Currently the backend is hosted in Europe so there might be some slower response times for users outside of Europe. The app is still in development and more features will be added in the future. I dont profit anything from this app and it is made for educational purposes."
+  },
+  "voter": {
+    "title": "Vote for the movies",
+    "swipe": "Swipe to vote",
+    "games": "Games",
+    "rate": "Your rating",
+    "types": {
+      "movie": "Movies",
+      "series": "Series",
+      "mixed": "Both"
+    },
+    "home": {
+      "title": "Movie voting",
+      "description": "Start a new session or join an existing one to vote for the movies you want to watch.",
+      "howtotitle": "What is it about?",
+      "howto": "One of the players creates a session and invites others to join. The players then vote for the movies they want to watch. The movies with the most votes are then shown to the players. The players can then rate the movies and decide which one to watch.",
+      "create": "Create a new session",
+      "waiting": "Waiting for other players",
+      "waiting-initial": "Waiting for partner to join...",
+      "ready": "Ready to start",
+      "you": "You",
+      "user": "Partner",
+      "ready-status": "Ready",
+      "ready-cancel": "Cancel ready",
+      "start": "Start voting",
+      "rate": "Rate",
+      "left": "left in this round",
+      "quit": "Quit"
+    },
+
+    "ratings": {
+      "interest": {
+        "label": "Interest",
+        "options": {
+          "1": "Don't want to watch",
+          "2": "Not sure",
+          "3": "Maybe",
+          "4": "Would like to watch",
+          "5": "Will definitely watch"
+        }
+      },
+      "mood": {
+        "label": "Mood",
+        "options": {
+          "1": "Don't want to watch",
+          "2": "Maybe",
+          "3": "Would like to watch"
+        }
+      },
+      "uniqueness": {
+        "label": "New?",
+        "options": {
+          "1": "Don't want to watch",
+          "2": "Not sure",
+          "3": "Maybe",
+          "4": "Would like to watch",
+          "5": "Will definitely watch"
+        }
+      },
+      "submit": "Submit rating"
+    },
+    "overview": {
+      "title": "Top picks",
+      "h2": "Other picks"
+    }
+  },
+  "quick-actions": {
+    "watch-later": "Watch later",
+    "watched": "Watched",
+    "favourite": "Favourites",
+    "my-lists": "My lists",
+    "modal": "Choose a group to add"
+  },
+  "games": {
+    "categories": {
+      "all": "All Games",
+      "popular": "Popular",
+      "new": "New Games"
+    },
+    "voter": {
+      "games": "Party Games",
+      "title": "Group Voter",
+      "swipe": "Swipe to Match!",
+      "swipeDescription": "Quick and fun party game where players swipe left or right to vote on movies or series to match with other players.",
+      "description": "Picking movies easy and fun! Vote on movies or series in three categories to get your top picks."
+    },
+    "fortunewheel": {
+      "title": "Fortune Wheel",
+      "description": "Spin the wheel of fortune to make random selections or decisions. Perfect for undecided or making quick picks!"
+    }
+  },
+  "search": {
+    "error": "Something went wrong. Please try again.",
+    "no-results": "No results for: ",
+    "begin": "Start typing to search for movies or series",
+    "search-placeholder": "Search movies and tv series",
+    "genres": "Genres",
+    "query-for": "Results for",
+    "close": "Close",
+    "apply": "Apply filters",
+    "more": "Show more",
+    "less": "Show less"
+  },
+  "cast": {
+    "heading": "Cast"
   }
 }

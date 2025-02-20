@@ -3,12 +3,13 @@
     "newArchEnabled": true,
     "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "1.0.5",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
+    "scheme": ["flickmate", "pl.dmq.moviepicker"],
     "splash": {
-      "image": "./assets/icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#000"
     },
@@ -23,32 +24,42 @@
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "icon": "./assets/output-icon.png",
-      "alternateIcons": {
-        "light": {
-          "image": "./assets/icon.png"
-        },
-        "monochrome": {
-          "image": "./assets/icon-monochrome.png",
-          "prerendered": false
-        }
-      },
-      "buildNumber": "20250702",
+      "icon": "./assets/icon.png",
+      "buildNumber": "20252102",
       "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
         "UIViewControllerBasedStatusBarAppearance": true
       },
-      "bundleIdentifier": "pl.dmq.movie-picker"
+      "bundleIdentifier": "pl.dmq.movie-picker",
+      "associatedDomains": ["applinks:movie.dmqq.dev"]
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000"
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
-      "package": "com.dmq.qrmobile"
+      "package": "pl.dmq.moviepicker",
+      "versionCode": 20251702,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "flickmate",
+              "host": "*"
+            },
+            {
+              "scheme": "https",
+              "host": "movie.dmqq.dev",
+              "pathPrefix": "/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -1,8 +1,8 @@
 import { Dimensions, Platform, Share, ToastAndroid, View } from "react-native";
-import { Appbar, Avatar, Button, Text, useTheme } from "react-native-paper";
+import { Appbar, Avatar, Button, IconButton, Text, useTheme } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import QRCode from "react-native-qrcode-svg";
-import { CommonActions } from "@react-navigation/native";
+import { CommonActions, useIsFocused } from "@react-navigation/native";
 import { useCreateRoom } from "./ContextProvider";
 import * as Clipboard from "expo-clipboard";
 import { memo, useContext, useEffect } from "react";
@@ -25,24 +25,24 @@ interface ISocketResponse {
 }
 
 export default function QRCodePage({ navigation }: any) {
-  const { category, pageRange, genre } = useCreateRoom();
+  const { category, pageRange, genre, providers } = useCreateRoom();
   const { qrCode, nickname } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
 
   const {
-    room: { users },
+    room: { users, roomId },
   } = useAppSelector((state) => state.room);
 
   useEffect(() => {
     (async () => {
       try {
-        console.log("QRCodePage", { category, pageRange, genre, nickname });
         const response = (await socket?.emitWithAck("create-room", {
           type: category,
           pageRange,
           genre: genre.map((g) => g.id),
           nickname,
+          providers,
         })) as ISocketResponse;
 
         if (response) {
@@ -53,17 +53,15 @@ export default function QRCodePage({ navigation }: any) {
 
           socket?.on("active", (users: string[]) => {
             dispatch(roomActions.setActiveUsers(users));
-
-            users.length > 1 && onJoinOwnRoom(response.roomId);
           });
         }
-      } catch (error) {
-        ToastAndroid.show("Error creating room", ToastAndroid.SHORT);
-      }
+      } catch (error) {}
     })();
   }, [category, pageRange, genre]);
 
   const onJoinOwnRoom = (code: string) => {
+    socket?.emit("room:start", roomId);
+    dispatch(roomActions.setPlaying(true));
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -85,7 +83,11 @@ export default function QRCodePage({ navigation }: any) {
   return (
     <SafeIOSContainer>
       <Appbar style={{ backgroundColor: "#000" }}>
-        <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
+        <IconButton
+          icon="chevron-left"
+          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
+          size={28}
+        />
         <Appbar.Content title="Join game" />
       </Appbar>
       <View style={{ position: "relative", flex: 1, padding: 15 }}>
@@ -142,7 +144,7 @@ export default function QRCodePage({ navigation }: any) {
               onJoinOwnRoom(qrCode);
             }}
           >
-            {t("room.next")}
+            start
           </Button>
         </View>
       </View>
@@ -155,20 +157,11 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
   const theme = useTheme();
 
   const shareCode = async (code: string) => {
-    try {
-      if (Platform.OS === "ios") {
-        await Share.share({
-          message: code,
-          url: `qr-mobile://home/${code}`,
-        });
-      } else {
-        await Share.share({
-          message: `${code}\nqr-mobile://home/${code}`,
-        });
-      }
-    } catch (error) {
-      console.error("Error sharing:", error);
-    }
+    Share.share({
+      message: "Hey! Join my room on Movie Picker: " + code,
+      title: "Join my room on Movie Picker",
+      url: "https://movie.dmqq.dev/swipe/" + code.toUpperCase(),
+    });
   };
 
   return (
@@ -187,12 +180,9 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         }}
       >
         <QRCode
-          backgroundColor={theme.colors.primary}
-          value={JSON.stringify({
-            roomId: code,
-            host: nickname,
-            type: "movie-picker",
-          })}
+          backgroundColor={theme.colors.surface}
+          color={theme.colors.primary}
+          value={`flickmate://swipe/${code}`}
           size={Dimensions.get("screen").width * 0.6}
         />
       </View>

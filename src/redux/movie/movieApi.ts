@@ -3,6 +3,22 @@ import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
 import { Movie, MovieDetails } from "../../../types";
 import { RootState } from "../store";
 
+interface SearchParams {
+  query?: string;
+  page?: number;
+  type?: "movie" | "tv" | "both";
+  year?: number;
+  with_genres?: number[];
+  without_genres?: number[];
+  with_watch_providers?: number[];
+  vote_average_gte?: number;
+  vote_count_gte?: number;
+  similarToId?: number;
+  discover?: boolean;
+  language?: string;
+  region?: string;
+}
+
 interface LandingPageParams {
   skip?: number;
   take?: number;
@@ -13,8 +29,16 @@ interface SectionParams {
   page?: number;
 }
 
+interface SearchResults {
+  page: number;
+  total_pages: number;
+  total_results: number;
+  results: any[]; // Replace with your actual movie/show type
+}
+
 export const movieApi = createApi({
   reducerPath: "movieApi",
+  tagTypes: ["Search", "SearchResults"],
   baseQuery: fetchBaseQuery({
     baseUrl: API_BASE_ENDPOINT,
     prepareHeaders: (headers, { getState }) => {
@@ -87,6 +111,46 @@ export const movieApi = createApi({
     getCategories: builder.query<any[], any>({
       query: () => "/categories",
     }),
+
+    getAllProviders: builder.query<any[], any>({
+      query: () => "/providers",
+    }),
+
+    search: builder.query<SearchResults, SearchParams & { operation?: "replace" | "append" }>({
+      query: (params) => {
+        // Remove operation parameter from API request
+        const { operation, ...apiParams } = params;
+        const queryParams = new URLSearchParams();
+
+        Object.entries(apiParams).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            if (Array.isArray(value)) {
+              queryParams.append(key, value.join(","));
+            } else {
+              queryParams.append(key, value.toString());
+            }
+          }
+        });
+
+        return {
+          url: `unified-search?${queryParams.toString()}`,
+          method: "GET",
+        };
+      },
+
+      // Add cache tag which we can use for invalidation
+      providesTags: ["SearchResults"],
+
+      transformResponse: (response: any) => {
+        return {
+          ...response,
+          results: (response.results || []).map((item: any) => ({
+            ...item,
+            key: item.id.toString(),
+          })),
+        };
+      },
+    }),
   }),
 });
 
@@ -111,4 +175,12 @@ export const {
   useGetReviewsQuery,
 
   useGetCategoriesQuery,
+
+  useGetAllProvidersQuery,
+
+  useLazyGetGenresQuery,
+
+  useSearchQuery,
+
+  useLazySearchQuery,
 } = movieApi;

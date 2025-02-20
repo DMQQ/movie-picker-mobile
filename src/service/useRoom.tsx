@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { SocketContext } from "./SocketContext";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
@@ -13,7 +13,8 @@ export default function useRoom(room: string) {
   const {
     nickname,
     isHost,
-    room: { movies: cards, match, roomId, isFinished },
+    room: { movies: cards, match, roomId, isFinished, users },
+    isPlaying,
   } = useAppSelector((state) => state.room);
 
   const setCards = (_movies: Movie[]) => {
@@ -28,47 +29,50 @@ export default function useRoom(room: string) {
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
-    (async () => {
-      // this causes issue with the room connection
+    if (!socket) return;
 
-      if (!isHost) {
-        socket?.emit("join-room", room, nickname);
-      } else {
-        socket?.emit("get-movies", room);
+    const handleMovies = async (_cards: { movies: Movie[] }) => {
+      console.log("Received movies", _cards.movies.length);
+      setCards(_cards.movies);
+      await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)));
+    };
+
+    // Setup listeners once
+    socket.on("movies", handleMovies);
+    socket.on("room:state", (data) => {
+      if (data) {
+        dispatch(roomActions.setRoom(data));
+        dispatch(roomActions.setPlaying(data.isStarted));
       }
+    });
+    socket?.on("matched", (data: Movie) => {
+      setMatch(data);
+      dispatch(roomActions.addMatch(data));
+    });
+    socket.on("active", (users) => dispatch(roomActions.setActiveUsers(users)));
 
-      socket?.on("movies", async (_cards) => {
-        setCards(_cards.movies);
-        await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)));
-      });
-
-      if (!isHost) {
-        socket?.on("room-details", (data) => {
-          if (data !== undefined) {
-            dispatch(roomActions.setRoom(data));
-
-            socket.off("room-details");
-          }
-        });
-      }
-
-      socket?.on("matched", (data: Movie) => {
-        setMatch(data);
-        dispatch(roomActions.addMatch(data));
-      });
-
-      socket?.on("active", (users: number[]) => {
-        dispatch(roomActions.setActiveUsers(users));
-      });
-    })();
+    // Initial room setup
+    if (!isHost) {
+      socket.emit("join-room", room, nickname);
+    } else {
+      socket.emit("get-movies", room);
+    }
 
     return () => {
-      socket?.off("movies");
-      socket?.off("matched");
-      socket?.off("room-details");
-      socket?.off("active");
+      socket.off("movies", handleMovies);
+      socket.off("room:state");
+      socket.off("matched");
+      socket.off("active");
     };
-  }, []);
+  }, [socket, room, nickname, isHost]);
+
+  const runOnce = useRef(false);
+  useEffect(() => {
+    if (isPlaying && runOnce.current === false && cards.length === 0) {
+      runOnce.current = true;
+      socket?.emit("get-movies", room);
+    }
+  }, [isPlaying, cards.length, room]);
 
   const removeCardLocally = (index: number) => {
     removeCard(index);
@@ -79,7 +83,7 @@ export default function useRoom(room: string) {
       socket?.emit("finish", room);
       socket?.emit("get-buddy-status", room);
     }
-  }, [isFinished]);
+  }, [isFinished, room]);
 
   const likeCard = (card: Movie, index: number) => {
     socket?.emit("pick-movie", {
@@ -108,6 +112,16 @@ export default function useRoom(room: string) {
     setShowLeaveModal((p) => !p);
   };
 
+  const joinGame = async (code: string) => {
+    const response = await socket?.emitWithAck("join-room", code, nickname);
+
+    if (response.joined) {
+      console.log("Joined room", response);
+      dispatch(roomActions.setRoom(response.room));
+      dispatch(roomActions.setPlaying(response.room.isStarted));
+    }
+  };
+
   return {
     cards,
     likeCard,
@@ -116,5 +130,7 @@ export default function useRoom(room: string) {
     match,
     hideMatchModal,
     toggleLeaveModal,
+    isPlaying,
+    joinGame,
   };
 }

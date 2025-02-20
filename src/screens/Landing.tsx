@@ -1,16 +1,16 @@
-import { Dimensions, Image, ImageBackground, Platform, Pressable, StyleSheet, View, VirtualizedList } from "react-native";
-import { Avatar, Button, IconButton, MD2DarkTheme, Text } from "react-native-paper";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../redux/store";
+import { Dimensions, Image, ImageBackground, Pressable, StyleSheet, TouchableHighlight, View, VirtualizedList } from "react-native";
+import { Avatar, MD2DarkTheme, Text } from "react-native-paper";
+import { memo, useCallback, useEffect, useState } from "react";
+import { useAppSelector } from "../redux/store";
 import { ScreenProps } from "./types";
 import { useGetFeaturedQuery, useLazyGetLandingPageMoviesQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
-import SafeIOSContainer from "../components/SafeIOSContainer";
 import ScoreRing from "../components/ScoreRing";
 import { Movie } from "../../types";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
 import useTranslation from "../service/useTranslation";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -30,12 +30,12 @@ const styles = StyleSheet.create({
     marginBottom: 35,
   },
 
-  gradientContainer: { flex: 1, padding: 10, position: "absolute", bottom: 0, width },
+  gradientContainer: { flex: 1, padding: 10, position: "absolute", bottom: 0, width, paddingTop: 30 },
 
-  overview: { fontSize: 14, color: "rgba(255,255,255,0.95)", fontWeight: "500" },
+  overview: { fontSize: 16, color: "rgba(255,255,255,0.95)", fontWeight: "500" },
 });
 
-const gradient = ["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"] as any;
+const gradient = ["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"] as any;
 
 const keyExtractor = (item: { name: string }) => item.name;
 
@@ -49,8 +49,6 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const [data, setData] = useState<{ name: string; results: Movie[] }[]>([]);
 
   const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
-
-  console.log(error);
 
   useEffect(() => {
     getLandingMovies({ skip: page * 3, take: 5 }).then((response) => {
@@ -72,7 +70,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const renderItem = useCallback(({ item: group }: { item: { name: string; results: Movie[] } }) => <Section group={group} />, []);
 
   return (
-    <SafeIOSContainer>
+    <View style={{ flex: 1 }}>
       <AppLoadingOverlay />
 
       <VirtualizedList
@@ -92,7 +90,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
       />
 
       <BottomTab navigate={navigation.navigate} />
-    </SafeIOSContainer>
+    </View>
   );
 }
 
@@ -101,8 +99,26 @@ const FeaturedSection = memo(
     const { data: featured, error } = useGetFeaturedQuery();
 
     const { nickname } = useAppSelector((state) => state.room);
-
+    const navigation = useNavigation<any>();
     const t = useTranslation();
+
+    const onPress = () => {
+      navigation.navigate("MovieDetails", {
+        id: featured?.id,
+        type: featured?.type,
+        img: featured?.poster_path,
+      });
+    };
+
+    const details = [
+      featured?.vote_average && featured?.vote_average?.toFixed(1) + "/10",
+      featured?.release_date || featured?.first_air_date,
+      ((featured?.title || featured?.name) === (featured?.original_title || featured?.original_name) && featured?.original_title) ||
+        featured?.original_name,
+      ...(featured?.genres || []),
+    ]
+      .filter(Boolean)
+      .join(" | ");
 
     return (
       <ImageBackground
@@ -113,34 +129,16 @@ const FeaturedSection = memo(
         resizeMode="cover"
         resizeMethod="scale"
       >
-        <View style={[styles.header]}>
-          <Pressable onPress={() => props.navigate("Settings")} style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
-            <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} color="#fff" />
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-              {t("settings.hello")} {nickname}.
+        <LinearGradient style={styles.gradientContainer} colors={gradient}>
+          <Pressable onPress={onPress}>
+            <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
+              {featured?.title || featured?.name}
+            </Text>
+            <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>{details}</Text>
+            <Text numberOfLines={7} style={styles.overview}>
+              {featured?.overview}
             </Text>
           </Pressable>
-
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <IconButton icon="heart" iconColor="red" size={32} onPress={() => props.navigate("Favourites")} />
-            <ScoreRing score={featured?.vote_average || 0} />
-          </View>
-        </View>
-
-        <LinearGradient style={styles.gradientContainer} colors={gradient}>
-          <Text style={{ fontSize: 50, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
-            {featured?.title || featured?.name}
-          </Text>
-          <Text style={{ color: "rgba(255,255,255,0.8)", marginBottom: 10 }}>
-            {featured?.release_date || featured?.first_air_date} |{" "}
-            {(featured?.title || featured?.name) === (featured?.original_title || featured?.original_name)
-              ? ""
-              : featured?.original_title || featured?.original_name}{" "}
-            | {featured?.genres?.join(" | ")}
-          </Text>
-          <Text numberOfLines={8} style={styles.overview}>
-            {featured?.overview}
-          </Text>
         </LinearGradient>
       </ImageBackground>
     );
@@ -148,33 +146,78 @@ const FeaturedSection = memo(
   () => true
 );
 
+const tabStyles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 15,
+    padding: 10,
+    paddingTop: 10,
+  },
+  button: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 7.5,
+    borderRadius: 100,
+  },
+});
+
 const BottomTab = memo(
   ({ navigate }: { navigate: any }) => {
     const t = useTranslation();
+
     return (
-      <View style={{ paddingHorizontal: 15, flexDirection: "row", alignItems: "center" }}>
-        <Button
-          mode="contained-tonal"
+      <View style={tabStyles.container}>
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          onPress={() => navigate("Settings")}
+          style={tabStyles.button}
+        >
+          <FontAwesome name="gear" size={25} color="#fff" />
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          style={tabStyles.button}
+          onPress={() => navigate("Favourites")}
+        >
+          <FontAwesome name="bookmark" size={25} color="#fff" />
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          style={[tabStyles.button, { backgroundColor: MD2DarkTheme.colors.primary, borderRadius: 10, padding: 5, paddingVertical: 10 }]}
           onPress={() =>
             navigate("QRCode", {
               screen: "QRScanner",
             })
           }
-          style={{ marginTop: 15, borderRadius: 100, marginBottom: 15, flex: 1 }}
-          contentStyle={{ padding: 7.5 }}
         >
-          {t("room.join-game")}
-        </Button>
+          <FontAwesome name="qrcode" size={30} color={"#fff"} />
+        </TouchableHighlight>
 
-        <View style={{ flexDirection: "row", gap: 5 }}>
-          <IconButton
-            size={30}
-            onPress={() => navigate("FortuneWheel")}
-            icon={"gamepad-variant-outline"}
-            style={{ backgroundColor: MD2DarkTheme.colors.primary }}
-          />
-          <IconButton size={30} onPress={() => navigate("QRCode")} icon={"plus"} style={{ backgroundColor: MD2DarkTheme.colors.primary }} />
-        </View>
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          style={tabStyles.button}
+          onPress={() => navigate("Games")}
+        >
+          <FontAwesome name="gamepad" size={25} color="#fff" />
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          onPress={() => navigate("Search")}
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          style={tabStyles.button}
+        >
+          <FontAwesome name="search" size={25} color="#fff" />
+        </TouchableHighlight>
       </View>
     );
   },

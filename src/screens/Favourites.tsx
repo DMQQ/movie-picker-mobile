@@ -1,8 +1,7 @@
-import { ActionSheetIOS, View, Alert, FlatList, Dimensions, Image, ImageBackground } from "react-native";
+import { View, Alert, FlatList, Dimensions, Image, ImageBackground } from "react-native";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import SafeIOSContainer from "../components/SafeIOSContainer";
-import TilesList from "../components/Overview/TilesList";
-import { Appbar, Button, FAB, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import { FAB, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { ScreenProps } from "./types";
 import useTranslation from "../service/useTranslation";
 import { createGroup } from "../redux/favourites/favourites";
@@ -13,17 +12,16 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const dispatch = useAppDispatch();
   const t = useTranslation();
 
-  console.log(groups);
-
   return (
-    <SafeIOSContainer style={{ marginTop: 0 }}>
+    <SafeIOSContainer style={{ marginTop: 0, paddingBottom: 50 }}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={35} />
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
 
         <Text style={{ fontFamily: "Bebas", fontSize: 40, textAlign: "center", width: "70%" }}>{t("favourites.title")}</Text>
       </View>
       <View style={{ padding: 15 }}>
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={groups}
           keyExtractor={(k) => k.id}
           renderItem={({ item }) => (
@@ -31,6 +29,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
               rippleColor={"#000"}
               disabled={item?.movies?.length === 0}
               onPress={() => navigation.navigate("Group", { group: item })}
+              style={{ marginBottom: 15 }}
             >
               <>
                 <ImageBackground

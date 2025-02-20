@@ -1,5 +1,5 @@
 import { FlatList, View } from "react-native";
-import { Appbar, Button, Icon, Text, useTheme } from "react-native-paper";
+import { Appbar, Button, Icon, IconButton, Text, useTheme } from "react-native-paper";
 import { useCreateRoom } from "./ContextProvider";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
@@ -10,26 +10,54 @@ type Category = {
   path: string;
 };
 
+const getFormattedDate = (offset = 0) => {
+  const date = new Date();
+  date.setDate(date.getDate() + offset);
+  return date.toISOString().split("T")[0];
+};
+
 export default function ChooseCategory({ navigation }: any) {
   const { setCategory, category } = useCreateRoom();
 
   const t = useTranslation();
 
-  const movies = [
-    { label: t("room.genres.all_movies"), path: "/discover/movie" },
-    { label: t("room.genres.now_playing"), path: "/movie/now_playing" },
-    { label: t("room.genres.popular"), path: "/movie/popular" },
-    { label: t("room.genres.top_rated"), path: "/movie/top_rated" },
-    { label: t("room.genres.upcoming"), path: "/movie/upcoming" },
-  ];
+  const movies = useMemo(
+    () => [
+      { label: t("room.genres.all_movies"), path: "/discover/movie?sort_by=popularity.desc&vote_count.gte=100" },
+      {
+        label: t("room.genres.now_playing"),
+        path: `/discover/movie?primary_release_date.gte=${getFormattedDate(
+          -30
+        )}&primary_release_date.lte=${getFormattedDate()}&sort_by=release_date.desc`,
+      },
+      { label: t("room.genres.popular"), path: `/discover/movie?sort_by=popularity.desc&vote_count.gte=200` },
+      { label: t("room.genres.top_rated"), path: `/discover/movie?sort_by=vote_average.desc&vote_count.gte=300` },
+      {
+        label: t("room.genres.upcoming"),
+        path: `/movie/upcoming`,
+      },
+    ],
+    []
+  );
 
-  const series = [
-    { label: t("room.genres.all_tv"), path: "/discover/tv" },
-    { label: t("room.genres.top_rated_tv"), path: "/tv/top_rated" },
-    { label: t("room.genres.popular_tv"), path: "/tv/popular" },
-    { label: t("room.genres.airing_today"), path: "/tv/airing_today" },
-    { label: t("room.genres.on_the_air"), path: "/tv/on_the_air" },
-  ];
+  const series = useMemo(
+    () => [
+      { label: t("room.genres.all_tv"), path: "/discover/tv?sort_by=popularity.desc&vote_count.gte=100" },
+      { label: t("room.genres.top_rated_tv"), path: `/discover/tv?sort_by=vote_average.desc&vote_count.gte=300` },
+      { label: t("room.genres.popular_tv"), path: `/discover/tv?sort_by=popularity.desc&vote_count.gte=200` },
+      {
+        label: t("room.genres.airing_today"),
+        path: `/discover/tv?air_date.gte=${getFormattedDate()}&air_date.lte=${getFormattedDate()}&sort_by=popularity.desc`,
+      },
+      {
+        label: t("room.genres.on_the_air"),
+        path: `/tv/airing_today?first_air_date.gte=${getFormattedDate(-7)}&first_air_date.lte=${getFormattedDate(
+          7
+        )}&sort_by=popularity.desc`,
+      },
+    ],
+    []
+  );
 
   const categories = useMemo(() => {
     return [...movies, ...series];
@@ -38,18 +66,18 @@ export default function ChooseCategory({ navigation }: any) {
   const onPress = (category: Category) => {
     setCategory(category.path);
 
-    if (category.path === "/discover/movie" || category.path === "/discover/tv") {
-      navigation.navigate("ChooseGenre");
-      return;
-    }
-
-    navigation.navigate("ChoosePage");
+    navigation.navigate("ChooseGenre");
   };
 
   return (
     <SafeIOSContainer>
       <Appbar style={{ backgroundColor: "#000" }}>
-        <Appbar.BackAction onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))} />
+        <IconButton
+          icon="chevron-left"
+          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
+          size={28}
+        />
+
         <Appbar.Content title="Categories" />
       </Appbar>
       <View style={{ padding: 15, flex: 1 }}>
@@ -90,7 +118,7 @@ const List = ({
   const theme = useTheme();
   return (
     <View style={{ flex: 1 }}>
-      <Text style={{ fontSize: 45, lineHeight: 45, fontWeight: "bold", fontFamily: "Bebas" }}>{title}</Text>
+      <Text style={{ fontSize: 45, lineHeight: 45, fontFamily: "Bebas" }}>{title}</Text>
 
       <FlatList
         data={data}
@@ -111,7 +139,7 @@ const List = ({
               onPress(c);
             }}
           >
-            {["/discover/movie", "/discover/tv"].includes(c.path) && <Icon source={"crown"} color="gold" size={16} />} {c.label}
+            {c.label}
           </Button>
         )}
       />

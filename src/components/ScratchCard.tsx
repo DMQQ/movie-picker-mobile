@@ -4,6 +4,8 @@ import { Canvas, Group, Skia, Path, Mask, Rect, Image, useImage, SkPath } from "
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { svgPathProperties } from "svg-path-properties";
 
+import { Image as RNImage } from "react-native";
+
 interface ILayersProps {
   width: number;
   height: number;
@@ -41,6 +43,10 @@ export const ScratchCard = ({ imageUrl, style }: ScratchCardProps) => {
   const totalAreaScratched = useRef<number>(0);
   const [isScratched, setIsScratched] = useState(false);
   const [paths, setPaths] = useState<SkPath[]>([]);
+
+  useEffect(() => {
+    RNImage.prefetch(imageUrl);
+  }, [imageUrl]);
 
   const pan = Gesture.Pan()
     .runOnJS(true)

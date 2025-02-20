@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import FortuneWheelComponent from "../components/FortuneWheelComponent";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import { Dimensions, FlatList, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
@@ -16,9 +16,10 @@ import { Appbar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from 
 import WatchProviders from "../components/Movie/WatchProviders";
 import { ScreenProps } from "./types";
 import { FancySpinner } from "../components/FancySpinner";
-import { throttle } from "./Room/Home";
 import Favourite from "../components/Favourite";
 import useTranslation from "../service/useTranslation";
+import { throttle } from "../utils/throttle";
+import { useIsFocused } from "@react-navigation/native";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
 
@@ -32,6 +33,8 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
   const [getLazyMovies] = useLazyGetLandingPageMoviesQuery();
 
   const type = selectedItem?.type === "tv" ? "tv" : "movie";
+
+  const wheelRef = useRef<{ spin: Function }>(null);
 
   const { data, refetch, isLoading: isMovieLoading } = useGetMovieQuery({ id: selectedItem?.id!, type });
 
@@ -60,32 +63,48 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
 
   const [selectedCards, setSelectedCards] = useState<Movie[]>([]);
 
-  const handleThrowDice = (value: number | string) => {
-    getLazyMovies({ skip: 0, take: 17 }).then(async (response) => {
-      if (response.data && Array.isArray(response.data)) {
-        const index = typeof value === "number" ? value : response?.data?.findIndex((d) => d.name === value);
-        const randomSection = response.data[index];
+  const handleThrowDice = useCallback(
+    (value: number | string) => {
+      getLazyMovies({ skip: 0, take: 26 }).then(async (response) => {
+        if (response.data && Array.isArray(response.data)) {
+          const index = typeof value === "number" ? value : response?.data?.findIndex((d) => d.name === value);
+          const randomSection = response.data[index];
 
-        const movies = randomSection.results;
+          if (!randomSection?.results) return;
 
-        Promise.any(
-          movies.map((movie) => {
-            return Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path);
-          })
-        );
+          const movies = randomSection.results;
+          await Promise.any(
+            movies.map((movie) => {
+              return Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path);
+            })
+          );
 
-        setSelectedCards(movies.slice(0, 12));
+          const pos = Math.random() > 5 ? movies.slice(0, 12) : movies.slice(8, 20);
 
-        setSignatures(movies.map(({ id }) => id).join("-"));
-      }
-    });
-  };
+          setSelectedCards(pos);
+          setSignatures(movies.map(({ id }) => id).join("-"));
+        }
+      });
+    },
+    [getLazyMovies]
+  );
 
   const [isSpin, setIsSpin] = useState(false);
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    handleThrowDice(route?.params?.category || Math.floor(Math.random() * 17));
-  }, [route?.params?.category]);
+    if (route?.params?.category) {
+      handleThrowDice(route.params.category);
+    }
+  }, [route?.params?.category, handleThrowDice]);
+
+  // Separate useEffect for initial load and focus changes
+  useEffect(() => {
+    if (!route?.params?.category && isFocused) {
+      handleThrowDice(Math.floor(Math.random() * 17));
+    }
+  }, [isFocused, handleThrowDice, route?.params?.category]);
 
   const { width, height } = useWindowDimensions();
 
@@ -95,7 +114,7 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
     <SafeIOSContainer>
       {!selectedItem && (
         <Appbar.Header style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
-          <Appbar.BackAction onPress={() => navigation.goBack()} color="#fff" />
+          <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
         </Appbar.Header>
       )}
       {selectedItem && selectedItem?.id === data?.id ? (
@@ -158,14 +177,20 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
                   mode="contained"
                   onPress={() => {
                     setSelectedItem(undefined);
+
+                    setTimeout(() => {
+                      wheelRef.current?.spin();
+                    }, 400);
                   }}
-                  contentStyle={{ padding: 5 }}
+                  contentStyle={{ padding: 7.5 }}
                   style={{ borderRadius: 100, flex: 1 }}
                 >
                   {t("fortune-wheel.roll")}
                 </Button>
 
-                <Favourite movie={data as Movie} />
+                <View style={{ padding: 10, paddingHorizontal: 15 }}>
+                  <Favourite showLabel={false} movie={data as Movie} />
+                </View>
               </View>
             </View>
           </LinearGradient>
@@ -182,7 +207,7 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
             <>
               <Text style={{ fontSize: 70, fontFamily: "Bebas" }}>{t("fortune-wheel.pick-a-movie")}</Text>
               <View style={{ flexDirection: "row" }}>
-                <Button rippleColor={"#fff"} onPress={throttle(() => handleThrowDice(Math.floor(Math.random() * 17)), 200)}>
+                <Button rippleColor={"#fff"} onPress={throttle(() => handleThrowDice(Math.floor(Math.random() * 26)), 200)}>
                   {t("fortune-wheel.random-category")}
                 </Button>
 
@@ -202,6 +227,7 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
 
       {selectedCards.length > 0 && (
         <FortuneWheelComponent
+          ref={wheelRef}
           style={{}}
           key={signatures}
           onSpinStart={() => {
@@ -226,7 +252,7 @@ export const SectionSelector = ({ navigation }: any) => {
   return (
     <View style={{ flex: 1 }}>
       <Appbar.Header style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
-        <Appbar.BackAction onPress={() => navigation.goBack()} color="#fff" />
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
       </Appbar.Header>
       <FlatList
         numColumns={2}
@@ -244,7 +270,7 @@ export const SectionSelector = ({ navigation }: any) => {
             }}
           >
             <ImageBackground
-              blurRadius={5}
+              blurRadius={10}
               source={{
                 uri: "https://image.tmdb.org/t/p/w200" + item.results[0].poster_path,
               }}
@@ -263,7 +289,7 @@ export const SectionSelector = ({ navigation }: any) => {
                   color: "#fff",
                   textShadowColor: "rgba(0, 0, 0, 0.75)",
                   textShadowOffset: { width: 0, height: 1 },
-                  textShadowRadius: 3,
+                  textShadowRadius: 5,
                   textAlign: "center",
                   padding: 5,
                 }}
