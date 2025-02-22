@@ -10,7 +10,7 @@ import { Provider } from "react-redux";
 import { store, useAppDispatch } from "./src/redux/store";
 import Overview from "./src/screens/Overview";
 import { Alert, Linking, Platform, StatusBar, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import MovieDetails from "./src/screens/MovieDetails";
 import { RootStackParamList } from "./src/screens/types";
 import SettingsScreen from "./src/screens/Settings";
@@ -87,13 +87,15 @@ export default function App() {
   if (!isLoaded) return <Fallback />;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
-      <Provider store={store}>
-        <PaperProvider theme={theme}>
-          <Navigator />
-        </PaperProvider>
-      </Provider>
-    </SafeAreaView>
+    <SafeAreaProvider style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
+        <Provider store={store}>
+          <PaperProvider theme={theme}>
+            <Navigator />
+          </PaperProvider>
+        </Provider>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
@@ -281,7 +283,7 @@ const Navigator = () => {
               headerShown: false,
             }}
           />
-          <Stack.Screen name="SearchFilters" component={SearchFilters} options={{ headerShown: false }} />
+          <Stack.Screen name="SearchFilters" component={SearchFilters} options={{ headerShown: false, presentation: "modal" }} />
         </Stack.Navigator>
       </GestureHandlerRootView>
     </NavigationContainer>

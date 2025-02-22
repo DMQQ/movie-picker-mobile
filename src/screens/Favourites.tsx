@@ -1,4 +1,4 @@
-import { View, Alert, FlatList, Dimensions, Image, ImageBackground } from "react-native";
+import { View, Alert, FlatList, Dimensions } from "react-native";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import { FAB, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
@@ -7,6 +7,8 @@ import useTranslation from "../service/useTranslation";
 import { createGroup } from "../redux/favourites/favourites";
 import { AntDesign } from "@expo/vector-icons";
 import PageHeading from "../components/PageHeading";
+
+import { Image, ImageBackground } from "expo-image";
 
 export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const { groups } = useAppSelector((state) => state.favourite);
@@ -20,7 +22,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
         <FlatList
           showsVerticalScrollIndicator={false}
           data={groups}
-          keyExtractor={(k) => k.id}
+          keyExtractor={(k, index) => k.id + "-" + index}
           renderItem={({ item }) => (
             <TouchableRipple
               rippleColor={"#000"}
@@ -29,43 +31,43 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
               style={{ marginBottom: 15 }}
             >
               <>
-                <ImageBackground
-                  borderRadius={10}
-                  blurRadius={10}
-                  style={{
-                    width: Dimensions.get("window").width - 30,
-                    height: Dimensions.get("window").width / 2 - 30,
-                    borderRadius: 15,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: 5,
-                    backgroundColor: MD2DarkTheme.colors.surface,
-                  }}
-                  source={{
-                    uri: "https://image.tmdb.org/t/p/w500" + item?.movies[0]?.imageUrl,
-                  }}
-                >
-                  {item?.movies?.length === 0 && (
-                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 10 }}>
-                      <AntDesign name="plus" size={50} color="white" style={{ opacity: 0.5 }} />
-                      <Text style={{ fontSize: 11, textAlign: "center" }}>{t("favourites.empty")}</Text>
+                <View style={{ borderRadius: 10, overflow: "hidden" }}>
+                  <ImageBackground
+                    blurRadius={10}
+                    style={{
+                      width: Dimensions.get("window").width - 30,
+                      height: Dimensions.get("window").width / 2 - 30,
+                      borderRadius: 15,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: MD2DarkTheme.colors.surface,
+                    }}
+                    source={{
+                      uri: "https://image.tmdb.org/t/p/w500" + item?.movies[0]?.imageUrl,
+                    }}
+                  >
+                    {item?.movies?.length === 0 && (
+                      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 10 }}>
+                        <AntDesign name="plus" size={50} color="white" style={{ opacity: 0.5 }} />
+                        <Text style={{ fontSize: 11, textAlign: "center" }}>{t("favourites.empty")}</Text>
+                      </View>
+                    )}
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 5 }}>
+                      {item.movies.slice(0, 4).map((m) => (
+                        <Image
+                          key={m.id}
+                          contentFit="cover"
+                          source={{ uri: "https://image.tmdb.org/t/p/w200" + m.imageUrl }}
+                          style={{
+                            width: (Dimensions.get("window").width / 2 - 20) * 0.45,
+                            height: (Dimensions.get("window").width / 2 - 20) * 0.65,
+                            borderRadius: 10,
+                          }}
+                        />
+                      ))}
                     </View>
-                  )}
-                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 5 }}>
-                    {item.movies.slice(0, 4).map((m) => (
-                      <Image
-                        key={m.id}
-                        resizeMode="contain"
-                        source={{ uri: "https://image.tmdb.org/t/p/w500" + m.imageUrl }}
-                        style={{
-                          width: (Dimensions.get("window").width / 2 - 20) * 0.45,
-                          height: (Dimensions.get("window").width / 2 - 20) * 0.65,
-                          borderRadius: 10,
-                        }}
-                      />
-                    ))}
-                  </View>
-                </ImageBackground>
+                  </ImageBackground>
+                </View>
                 <Text style={{ color: "#fff", fontSize: 25, fontFamily: "Bebas", padding: 10 }}>
                   {item.name} <Text style={{ fontSize: 15 }}>({item.movies.length})</Text>
                 </Text>

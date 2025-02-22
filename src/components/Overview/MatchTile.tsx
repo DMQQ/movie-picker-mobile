@@ -1,6 +1,6 @@
 import { TouchableRipple } from "react-native-paper";
 import { Movie } from "../../../types";
-import Animated from "react-native-reanimated";
+import Thumbnail from "../Thumbnail";
 
 const MatchTile = ({ match, type: _type, navigation }: { match: Movie; type: string; navigation: any; index: number }) => {
   const type = (match?.type || _type).includes("movie") ? "movie" : "tv";
@@ -19,12 +19,8 @@ const MatchTile = ({ match, type: _type, navigation }: { match: Movie; type: str
         })
       }
     >
-      <Animated.Image
-        resizeMode="cover"
-        resizeMethod="resize"
-        source={{
-          uri: "https://image.tmdb.org/t/p/w500" + match.poster_path,
-        }}
+      <Thumbnail
+        path={match.poster_path}
         style={{
           width: "100%",
           aspectRatio: 2 / 3,

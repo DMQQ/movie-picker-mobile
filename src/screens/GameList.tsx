@@ -179,8 +179,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   header: {
-    paddingTop: 8,
-    paddingBottom: 16,
+    paddingBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
   },
@@ -275,7 +274,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFD700",
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4,
+    borderRadius: 10,
     position: "absolute",
     top: 10,
     left: 10,

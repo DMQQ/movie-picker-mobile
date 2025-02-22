@@ -113,9 +113,9 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
   return (
     <SafeIOSContainer>
       {!selectedItem && (
-        <Appbar.Header style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
+        <View style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
           <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
-        </Appbar.Header>
+        </View>
       )}
       {selectedItem && selectedItem?.id === data?.id ? (
         <AnimatedBackgroundImage

@@ -3,7 +3,7 @@ import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import WatchProviders from "./WatchProviders";
 import LastEpisodeToAir from "./LastEpisodeDetails";
 import Seasons from "./SeasonsList";
-import { ImageBackground, Platform, ScrollView, View } from "react-native";
+import { Platform, View } from "react-native";
 import { BlurView } from "expo-blur";
 import Similar from "../Similar";
 import useTranslation from "../../service/useTranslation";
@@ -41,10 +41,9 @@ export default function MovieDetails({
       intensity={Platform.OS === "ios" ? 30 : 100}
       tint="dark"
       style={{
-        padding: 20,
+        padding: 15,
         backgroundColor: `rgba(0,0,0,${Platform.OS === "ios" ? 0.5 : 0.8})`, // Adjust opacity for glass effect
         width,
-
         overflow: "hidden",
       }}
     >
@@ -54,27 +53,27 @@ export default function MovieDetails({
           fontSize: 55,
           fontFamily: "Bebas",
           lineHeight: 55,
-          marginTop: 15,
+          marginTop: 10,
         }}
       >
         {movie?.title || movie?.name}
       </Text>
 
-      <Text style={{ color: "rgba(255,255,255,0.8)", marginBottom: 10 }}>{data.join(" | ")}</Text>
-
       {movie?.tagline && (
         <Text
           style={{
-            fontSize: 16,
-            color: "rgba(255,255,255,0.9)",
-            marginVertical: 5,
+            fontSize: 15,
+            color: "rgba(255,255,255,0.95)",
+            marginBottom: 10,
           }}
         >
           {movie?.tagline}
         </Text>
       )}
 
-      <View style={{ padding: 10, paddingVertical: 20 }}>
+      <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 15 }}>{data.join(" | ")}</Text>
+
+      <View style={{ paddingVertical: 30 }}>
         <QuickActions movie={movie}>
           <CustomFavourite movie={movie} />
         </QuickActions>
@@ -84,7 +83,6 @@ export default function MovieDetails({
         <Text
           style={{
             fontSize: 19,
-            marginTop: 5,
             color: "rgba(255,255,255,0.95)",
           }}
         >
@@ -92,14 +90,14 @@ export default function MovieDetails({
         </Text>
       )}
 
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
         {movie?.runtime && (
-          <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>
+          <Text style={{ fontSize: 15, color: "rgba(255,255,255,0.6)" }}>
             {t("movie.details.runtime")}: {movie?.runtime} {t("movie.details.minutes")}
           </Text>
         )}
 
-        <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>
+        <Text style={{ fontSize: 15, color: "rgba(255,255,255,0.6)" }}>
           {t("movie.details.status")}: {movie?.status}
         </Text>
       </View>

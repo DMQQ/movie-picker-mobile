@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     left: width * 0.05,
     backgroundColor: "#000",
     borderRadius: 25,
+    overflow: "hidden",
   },
   gradientContainer: {
     flex: 1,

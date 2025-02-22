@@ -10,15 +10,15 @@ export default function Thumbnail({
   size = 200,
   container,
   ...rest
-}: { path: string; size: number; container?: StyleProp<ViewStyle> } & ImageProps) {
+}: { path: string; size?: number; container?: StyleProp<ViewStyle> } & ImageProps) {
   return (
     <View style={[styles.container, container]}>
       <Image
         contentFit="cover"
-        {...rest}
         placeholder={blurhash}
         transition={400}
         cachePolicy={"memory-disk"}
+        {...rest}
         source={{ uri: `https://image.tmdb.org/t/p/w${size}` + path }}
         style={[styles.image, rest.style]}
       />

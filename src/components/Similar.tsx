@@ -1,11 +1,12 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { Dimensions, Image, Pressable, StyleSheet, Text, View, VirtualizedList } from "react-native";
+import { Dimensions, Pressable, StyleSheet, Text, View, VirtualizedList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { Movie } from "../../types";
 import { useLazyGetSimilarQuery } from "../redux/movie/movieApi";
 import ScoreRing from "./ScoreRing";
 import useTranslation from "../service/useTranslation";
+import Thumbnail from "./Thumbnail";
 
 const { width, height } = Dimensions.get("window");
 
@@ -43,13 +44,7 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
           position: "relative",
         }}
       >
-        <Image
-          resizeMode="cover"
-          style={sectionStyles.image}
-          source={{
-            uri: "https://image.tmdb.org/t/p/w200" + item.poster_path,
-          }}
-        />
+        <Thumbnail contentFit="cover" container={sectionStyles.image} size={200} path={item.poster_path} />
         <View style={{ position: "absolute", right: 25, bottom: 5 }}>
           <ScoreRing score={item.vote_average} />
         </View>

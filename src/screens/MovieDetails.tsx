@@ -6,7 +6,10 @@ import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
 import MovieDetails from "../components/Movie/MovieDetails";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
 import { Appbar, IconButton } from "react-native-paper";
-import Favourite from "../components/Favourite";
+
+import { Image } from "expo-image";
+
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"MovieDetails">) {
   const { width, height } = useWindowDimensions();
@@ -60,22 +63,21 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
         <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
       </View>
 
-      <Animated.Image
-        resizeMethod={"resize"}
-        //sharedTransitionStyle={sharedElementTransition}
-        // sharedTransitionTag={`movie-poster-image-${route.params.img}`}
-        style={[
-          {
-            height: IMG_HEIGHT,
-            width: width,
-          },
-          imageStyle,
-        ]}
-        resizeMode="cover"
-        source={{
-          uri: "https://image.tmdb.org/t/p/w500" + route.params.img || movie?.poster_path,
-        }}
-      />
+      <Animated.View style={imageStyle}>
+        <Image
+          priority={"high"}
+          contentFit={"cover"}
+          style={[
+            {
+              height: IMG_HEIGHT,
+              width: width,
+            },
+          ]}
+          source={{
+            uri: "https://image.tmdb.org/t/p/w500" + route.params.img || movie?.poster_path,
+          }}
+        />
+      </Animated.View>
       {loading ? <MovieDetailsSkeleton /> : <MovieDetails type={typeOfContent} movie={movie} providers={providers} width={width} />}
     </Animated.ScrollView>
   );

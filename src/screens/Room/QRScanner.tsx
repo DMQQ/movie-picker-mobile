@@ -7,6 +7,7 @@ import { SocketContext } from "../../service/SocketContext";
 import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
+import PageHeading from "../../components/PageHeading";
 
 export default function QRScanner({ navigation }: any) {
   const [hasPermission, request] = useCameraPermissions();
@@ -136,11 +137,8 @@ export default function QRScanner({ navigation }: any) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <Appbar.Header style={{ backgroundColor: "#000" }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
+      <PageHeading title={t("scanner.heading")} />
 
-        <Appbar.Content title={t("scanner.heading")} />
-      </Appbar.Header>
       <CameraView
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         facing="back"

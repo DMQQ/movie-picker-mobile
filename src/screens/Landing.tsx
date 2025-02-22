@@ -1,4 +1,4 @@
-import { Dimensions, Image, Pressable, StyleSheet, TouchableHighlight, View, VirtualizedList } from "react-native";
+import { Dimensions, Pressable, StyleSheet, TouchableHighlight, View, VirtualizedList } from "react-native";
 import { Avatar, MD2DarkTheme, Text } from "react-native-paper";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../redux/store";
@@ -14,7 +14,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import NoConnectionError from "../components/NoConnectionError";
 import Thumbnail from "../components/Thumbnail";
 
-import { ImageBackground } from "expo-image";
+import { ImageBackground, Image } from "expo-image";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -157,9 +157,9 @@ const tabStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     gap: 15,
-    padding: 10,
+    paddingHorizontal: 10,
     paddingTop: 10,
-    height: 80,
+    height: 70,
   },
   button: {
     flex: 1,
@@ -282,8 +282,8 @@ const Section = memo(({ group }: SectionProps) => {
   const renderItem = useCallback(
     ({ item }: { item: Movie & { type: string } }) => (
       <Pressable
-        onPress={() => {
-          Image.prefetch("https://image.tmdb.org/t/p/w500" + item.poster_path);
+        onPress={async () => {
+          Image.prefetch("https://image.tmdb.org/t/p/w500" + item.poster_path, { cachePolicy: "memory-disk" });
           navigation.navigate("MovieDetails", {
             id: item.id,
             type: item.type,

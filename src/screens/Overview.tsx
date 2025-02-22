@@ -35,7 +35,13 @@ function Overview() {
           },
         }}
       >
-        <OverviewTopTabs.Screen name={t("overview.matches")} component={MatchesScreen} />
+        <OverviewTopTabs.Screen
+          name="Matches"
+          component={MatchesScreen}
+          options={{
+            tabBarLabel: t("overview.matches"),
+          }}
+        />
         <OverviewTopTabs.Screen
           options={{
             tabBarLabel: t("overview.likes"),

@@ -2,6 +2,8 @@ import { FlatList, Image, View, StyleSheet } from "react-native";
 import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
+import Thumbnail from "../Thumbnail";
+import layout from "../../utils/layout";
 
 export default function Cast({ id, type }: { id: number; type: "movie" | "tv" }) {
   const { data, error } = useGetMovieKeyPeopleQuery({ id, type, actorLimit: 15, includeDirector: true });
@@ -19,7 +21,7 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Image source={{ uri: "https://image.tmdb.org/t/p/w200" + item.profile_path }} style={styles.image} />
+            <Thumbnail size={200} path={item.profile_path || ""} container={styles.image} />
             <Text style={styles.character} numberOfLines={1}>
               {item.character === "Self" ? item.name : item.character}
             </Text>
@@ -36,16 +38,11 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <View style={styles.directorContainer}>
-            <Image
-              source={{
-                uri: "https://image.tmdb.org/t/p/w200" + item?.profile_path,
-              }}
-              style={styles.directorImage}
-            />
+            <Thumbnail path={item?.profile_path || ""} container={styles.directorImage} />
 
             <View
               style={{
-                gap: 5,
+                gap: 10,
               }}
             >
               <Text style={{ color: "#fff", fontSize: 22.5, fontFamily: "Bebas" }}>{item?.name}</Text>
@@ -64,14 +61,12 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   card: {
-    borderRadius: 12,
-    marginRight: 12,
-    width: 120,
-    alignItems: "center",
+    borderRadius: 15,
+    marginRight: 20,
   },
   image: {
-    width: 120,
-    height: 160,
+    width: layout.screen.width * 0.3,
+    height: layout.screen.height * 0.2,
     borderRadius: 10,
     marginBottom: 8,
   },
@@ -79,12 +74,10 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     fontSize: 19,
     color: "#fff",
-    textAlign: "center",
   },
   actor: {
     fontSize: 14,
     color: "#ccc",
-    textAlign: "center",
   },
 
   directorContainer: {

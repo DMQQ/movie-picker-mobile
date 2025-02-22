@@ -64,7 +64,7 @@ export default function SearchFilters({ navigation, route }: any) {
   return (
     <SafeAreaView style={styles.safeArea} edges={["right", "left"]}>
       <View style={styles.container}>
-        <Appbar.Header style={styles.header}>
+        <View style={styles.header}>
           <View style={styles.headerContent}>
             <IconButton icon="close" iconColor="#fff" onPress={() => navigation.goBack()} size={24} style={styles.closeButton} />
 
@@ -72,7 +72,7 @@ export default function SearchFilters({ navigation, route }: any) {
               Reset
             </Button>
           </View>
-        </Appbar.Header>
+        </View>
 
         <ScrollView
           style={styles.scrollContent}
@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
     elevation: 0,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
+    paddingVertical: 10,
   },
   headerContent: {
     flexDirection: "row",

@@ -17,7 +17,7 @@ export default function Group({ navigation, route }: any) {
 
   const t = useTranslation();
 
-  const [match, setMatch] = useState<Movie | undefined>(undefined);
+  const [match, setMatch] = useState<(typeof groups)[number]["movies"][number] | undefined>(undefined);
 
   return (
     <View style={{ flex: 1, paddingBottom: 15, paddingVertical: 15 }}>
@@ -44,7 +44,7 @@ export default function Group({ navigation, route }: any) {
         />
       )}
 
-      <View style={{ paddingHorizontal: 15, paddingBottom: 15 }}>
+      <View style={{ padding: 15 }}>
         <Button
           mode="contained"
           style={{ borderRadius: 100 }}

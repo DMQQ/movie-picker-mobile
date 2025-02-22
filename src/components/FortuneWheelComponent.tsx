@@ -1,5 +1,5 @@
 import React, { forwardRef, memo, useEffect, useImperativeHandle } from "react";
-import { View, StyleSheet, Image, Dimensions, ImageBackground, Vibration, StyleProp, ViewStyle } from "react-native";
+import { View, StyleSheet, Dimensions, ImageBackground, Vibration, StyleProp, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
@@ -16,6 +16,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { MD2DarkTheme } from "react-native-paper";
 import useTranslation from "../service/useTranslation";
 import * as Haptics from "expo-haptics";
+import Thumbnail from "./Thumbnail";
 
 const { width, height } = Dimensions.get("window");
 
@@ -242,13 +243,11 @@ const Segment = memo(({ item, index, segmentAngle, wheelSize }: { item: any; ind
           },
         ]}
       >
-        <Image
-          source={{
-            uri: "https://image.tmdb.org/t/p/w200" + item.poster_path,
-          }}
-          resizeMode="contain"
-          borderRadius={20}
-          style={{
+        <Thumbnail
+          path={item.poster_path}
+          size={200}
+          contentFit="contain"
+          container={{
             width: wheelSize * 0.2,
             height: wheelSize * 0.2,
           }}
