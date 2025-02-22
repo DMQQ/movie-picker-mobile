@@ -223,7 +223,7 @@ const Navigator = () => {
             }}
           />
           <Stack.Screen
-            name="FortuneWheel"
+            name="Fortune"
             component={FortuneWheel}
             options={{
               headerShown: false,
@@ -255,16 +255,6 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-            }}
-          />
-
-          <Stack.Screen
-            name="SectionSelector"
-            component={SectionSelector}
-            options={{
-              headerShown: false,
-              title: "",
-              ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
 

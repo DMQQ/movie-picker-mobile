@@ -13,7 +13,7 @@ export type RootStackParamList = {
 
   Settings: undefined;
 
-  FortuneWheel: { category?: string };
+  Fortune: { category?: string };
 
   Favourites: undefined;
 

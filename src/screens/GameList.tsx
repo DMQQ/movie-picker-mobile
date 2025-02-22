@@ -127,7 +127,7 @@ export default function GameList() {
       title: "FortuneWheel",
       description: t("games.fortunewheel.description"),
 
-      route: "FortuneWheel",
+      route: "Fortune",
       players: "1",
       duration: "5 min",
       category: "popular",

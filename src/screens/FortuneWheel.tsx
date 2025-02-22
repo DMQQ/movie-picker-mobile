@@ -14,18 +14,38 @@ import ScoreRing from "../components/ScoreRing";
 import { LinearGradient } from "expo-linear-gradient";
 import { Appbar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import WatchProviders from "../components/Movie/WatchProviders";
-import { ScreenProps } from "./types";
 import { FancySpinner } from "../components/FancySpinner";
 import Favourite from "../components/Favourite";
 import useTranslation from "../service/useTranslation";
 import { throttle } from "../utils/throttle";
 import { useIsFocused } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
 
 const AnimatedBackgroundImage = Animated.createAnimatedComponent(ImageBackground);
 
-export default function FortuneWheel({ navigation, route }: ScreenProps<"FortuneWheel">) {
+const Stack = createNativeStackNavigator<any>();
+
+export default (props) => (
+  <Stack.Navigator
+    initialRouteName="FortuneWheel"
+    screenOptions={{
+      headerShown: false,
+    }}
+  >
+    <Stack.Screen name="FortuneWheel" component={FortuneWheel} />
+    <Stack.Screen
+      name="SectionSelector"
+      component={SectionSelector}
+      options={{
+        presentation: "modal",
+      }}
+    />
+  </Stack.Navigator>
+);
+
+function FortuneWheel({ navigation, route }: any) {
   const [signatures, setSignatures] = useState("");
 
   const [selectedItem, setSelectedItem] = useState<(Movie & { type: string }) | undefined>();
@@ -111,7 +131,7 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
   const t = useTranslation();
 
   return (
-    <SafeIOSContainer>
+    <SafeIOSContainer style={{ overflow: "hidden" }}>
       {!selectedItem && (
         <View style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
           <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
@@ -168,7 +188,9 @@ export default function FortuneWheel({ navigation, route }: ScreenProps<"Fortune
                 | {(data?.genres as { id: number; name: string }[]).map((d) => d.name)?.join(" | ")}
               </Text>
 
-              <Text style={{ fontSize: 16 }}>{data?.overview}</Text>
+              <Text style={{ fontSize: 16 }} numberOfLines={10}>
+                {data?.overview}
+              </Text>
 
               <WatchProviders hideLabel providers={providers} style={{ marginTop: 0 }} />
 
@@ -251,9 +273,9 @@ export const SectionSelector = ({ navigation }: any) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Appbar.Header style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
+      <View style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
         <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
-      </Appbar.Header>
+      </View>
       <FlatList
         numColumns={2}
         data={data}
@@ -261,7 +283,7 @@ export const SectionSelector = ({ navigation }: any) => {
         style={{ flex: 1 }}
         renderItem={({ item }) => (
           <TouchableRipple
-            onPress={() => navigation.navigate("FortuneWheel", { category: item.name })}
+            onPress={() => navigation.popTo("FortuneWheel", { category: item.name })}
             style={{
               marginRight: 10,
               width: Dimensions.get("window").width / 2 - 15,
