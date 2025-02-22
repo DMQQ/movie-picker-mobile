@@ -23,7 +23,6 @@ export default function TilesList<T>(props: TileListProps) {
   return (
     <Animated.FlatList
       numColumns={3}
-      style={{ marginBottom: Platform.OS === "ios" ? 50 : 10 }}
       ListHeaderComponent={
         props.label ? (
           <View style={{ flexDirection: "row", justifyContent: "space-between" }}>

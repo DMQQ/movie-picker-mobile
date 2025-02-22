@@ -6,6 +6,7 @@ import useTranslation from "../service/useTranslation";
 import { Movie } from "../../types";
 import { useState } from "react";
 import Modal from "./Overview/Modal";
+import PageHeading from "../components/PageHeading";
 
 export default function Group({ navigation, route }: any) {
   const { group } = route.params;
@@ -19,13 +20,9 @@ export default function Group({ navigation, route }: any) {
   const [match, setMatch] = useState<Movie | undefined>(undefined);
 
   return (
-    <View style={{ flex: 1, paddingBottom: 15 }}>
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
-
-        <Text style={{ fontFamily: "Bebas", fontSize: 40, textAlign: "center", width: "70%", color: "#fff" }}>{data?.name}</Text>
-      </View>
-      <View style={{ flex: 1, padding: 15 }}>
+    <View style={{ flex: 1, paddingBottom: 15, paddingVertical: 15 }}>
+      <PageHeading title={data?.name! || ""} />
+      <View style={{ flex: 1, paddingHorizontal: 15 }}>
         <TilesList
           data={
             data?.movies.map((m) => ({

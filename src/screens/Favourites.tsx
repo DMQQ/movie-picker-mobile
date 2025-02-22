@@ -6,6 +6,7 @@ import { ScreenProps } from "./types";
 import useTranslation from "../service/useTranslation";
 import { createGroup } from "../redux/favourites/favourites";
 import { AntDesign } from "@expo/vector-icons";
+import PageHeading from "../components/PageHeading";
 
 export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const { groups } = useAppSelector((state) => state.favourite);
@@ -13,13 +14,9 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const t = useTranslation();
 
   return (
-    <SafeIOSContainer style={{ marginTop: 0, paddingBottom: 50 }}>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
-
-        <Text style={{ fontFamily: "Bebas", fontSize: 40, textAlign: "center", width: "70%" }}>{t("favourites.title")}</Text>
-      </View>
-      <View style={{ padding: 15 }}>
+    <SafeIOSContainer style={{ marginTop: 0 }}>
+      <PageHeading title={t("favourites.title")} />
+      <View style={{ paddingHorizontal: 15, flex: 1 }}>
         <FlatList
           showsVerticalScrollIndicator={false}
           data={groups}
@@ -79,7 +76,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
       </View>
 
       <FAB
-        style={{ position: "absolute", margin: 16, right: 0, bottom: 25, backgroundColor: MD2DarkTheme.colors.primary }}
+        style={{ position: "absolute", margin: 16, right: 5, bottom: 5, backgroundColor: MD2DarkTheme.colors.primary }}
         icon="plus"
         onPress={() =>
           Alert.prompt("Create group", "", [

@@ -26,26 +26,25 @@ export default function LikesScreen() {
 
   return (
     <View style={{ flex: 1, padding: 15 }}>
-      <TilesList label={t("likes.title")} data={data} />
-
+      <View style={{ marginBottom: 60 }}>
+        <TilesList label={t("likes.title")} data={data} />
+      </View>
       {match && <Modal onClose={() => setMatch(undefined)} match={match} />}
 
-      <Button
-        onPress={randomMovie}
-        mode="contained"
-        style={{
-          position: "absolute",
-          bottom: 10,
-          left: 10,
-          right: 10,
-          width: "100%",
-          borderRadius: 100,
-          ...(match ? { backgroundColor: "#f44336" } : {}),
-        }}
-        contentStyle={{ padding: 7.5 }}
-      >
-        {match ? t("likes.close") : t("likes.random")}
-      </Button>
+      <View style={{ position: "absolute", bottom: 10, left: 10, right: 10, paddingTop: 15, backgroundColor: "#000" }}>
+        <Button
+          onPress={randomMovie}
+          mode="contained"
+          style={{
+            width: "100%",
+            borderRadius: 100,
+            ...(match ? { backgroundColor: "#f44336" } : {}),
+          }}
+          contentStyle={{ padding: 7.5 }}
+        >
+          {match ? t("likes.close") : t("likes.random")}
+        </Button>
+      </View>
     </View>
   );
 }

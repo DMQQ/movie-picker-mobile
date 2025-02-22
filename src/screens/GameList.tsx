@@ -11,6 +11,7 @@ import CardSwiperAnimation from "../components/GameListAnimations/SwipeAnimation
 import SwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
 import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
+import PageHeading from "../components/PageHeading";
 // import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
 
 const { width } = Dimensions.get("screen");
@@ -139,10 +140,7 @@ export default function GameList() {
   return (
     <SafeIOSContainer>
       <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} style={styles.backButton} />
-          <Text style={styles.headerTitle}>{t("voter.games")}</Text>
-        </View>
+        <PageHeading title={t("voter.games")} />
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
           {categories.map((category) => (

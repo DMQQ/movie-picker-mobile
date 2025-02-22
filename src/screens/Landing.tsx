@@ -1,4 +1,4 @@
-import { Dimensions, Image, ImageBackground, Pressable, StyleSheet, TouchableHighlight, View, VirtualizedList } from "react-native";
+import { Dimensions, Image, Pressable, StyleSheet, TouchableHighlight, View, VirtualizedList } from "react-native";
 import { Avatar, MD2DarkTheme, Text } from "react-native-paper";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../redux/store";
@@ -11,6 +11,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
 import useTranslation from "../service/useTranslation";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import NoConnectionError from "../components/NoConnectionError";
+import Thumbnail from "../components/Thumbnail";
+
+import { ImageBackground } from "expo-image";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -73,6 +77,8 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     <View style={{ flex: 1 }}>
       <AppLoadingOverlay />
 
+      <NoConnectionError />
+
       <VirtualizedList
         maxToRenderPerBatch={5}
         windowSize={3}
@@ -126,8 +132,7 @@ const FeaturedSection = memo(
         source={{
           uri: "https://image.tmdb.org/t/p/w500" + featured?.poster_path,
         }}
-        resizeMode="cover"
-        resizeMethod="scale"
+        contentFit="cover"
       >
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
           <Pressable onPress={onPress}>
@@ -154,20 +159,19 @@ const tabStyles = StyleSheet.create({
     gap: 15,
     padding: 10,
     paddingTop: 10,
+    height: 80,
   },
   button: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 7.5,
-    borderRadius: 100,
+    borderRadius: 10,
+    height: "100%",
   },
 });
 
 const BottomTab = memo(
   ({ navigate }: { navigate: any }) => {
-    const t = useTranslation();
-
     return (
       <View style={tabStyles.container}>
         <TouchableHighlight
@@ -190,7 +194,7 @@ const BottomTab = memo(
 
         <TouchableHighlight
           activeOpacity={0.8}
-          underlayColor={MD2DarkTheme.colors.surface}
+          underlayColor={"#52287d"}
           style={[tabStyles.button, { backgroundColor: MD2DarkTheme.colors.primary, borderRadius: 10, padding: 5, paddingVertical: 10 }]}
           onPress={() =>
             navigate("QRCode", {
@@ -278,24 +282,19 @@ const Section = memo(({ group }: SectionProps) => {
   const renderItem = useCallback(
     ({ item }: { item: Movie & { type: string } }) => (
       <Pressable
-        onPress={() =>
+        onPress={() => {
+          Image.prefetch("https://image.tmdb.org/t/p/w500" + item.poster_path);
           navigation.navigate("MovieDetails", {
             id: item.id,
             type: item.type,
             img: item.poster_path,
-          })
-        }
+          });
+        }}
         style={{
           position: "relative",
         }}
       >
-        <Image
-          resizeMode="cover"
-          style={sectionStyles.image}
-          source={{
-            uri: "https://image.tmdb.org/t/p/w200" + item.poster_path,
-          }}
-        />
+        <Thumbnail path={item.poster_path} size={200} container={sectionStyles.image} />
         <View style={{ position: "absolute", right: 30, bottom: 10 }}>
           <ScoreRing score={item.vote_average} />
         </View>
