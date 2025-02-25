@@ -1,4 +1,4 @@
-import { Platform, useWindowDimensions, View } from "react-native";
+import { Dimensions, Platform, useWindowDimensions, View } from "react-native";
 import { MovieDetails as MovieDetailsType } from "../../types";
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { ScreenProps } from "./types";
@@ -9,11 +9,9 @@ import { Appbar, IconButton } from "react-native-paper";
 
 import { Image } from "expo-image";
 
-const AnimatedImage = Animated.createAnimatedComponent(Image);
+const { width, height } = Dimensions.get("window");
 
 export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"MovieDetails">) {
-  const { width, height } = useWindowDimensions();
-
   const scrollOffset = useSharedValue(0);
   const scrollhandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -54,13 +52,13 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
 
   return (
     <Animated.ScrollView
-      scrollEventThrottle={16}
+      scrollEventThrottle={32}
       onScroll={scrollhandler}
       contentContainerStyle={{ alignItems: "center", position: "relative" }}
-      style={{ flex: 1, height }}
+      style={{ flex: 1, height, width }}
     >
       <View style={{ position: "absolute", top: 10, left: 10, zIndex: 100 }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
+        <IconButton icon="chevron-left" onPress={() => navigation.pop()} size={28} />
       </View>
 
       <Animated.View style={imageStyle}>

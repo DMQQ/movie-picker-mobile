@@ -100,7 +100,7 @@ export default function CustomFavourite({ movie, showLabel = true }: { movie: Mo
     <View>
       <TouchableOpacity style={styles.iconButton} onPress={() => setVisible(true)}>
         <>
-          <FontAwesome name={isFavorite ? "bookmark" : "bookmark-o"} size={30} color="#fff" />
+          <FontAwesome name={isFavorite ? "bookmark" : "bookmark-o"} size={35} color="#fff" />
           {showLabel && <Text style={styles.iconText}>{t("quick-actions.my-lists")}</Text>}
         </>
       </TouchableOpacity>

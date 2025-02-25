@@ -8,6 +8,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { useGetMaxPageRangeQuery } from "../../redux/movie/movieApi";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
+import PageHeading from "../../components/PageHeading";
 
 function generateArrayWithMaxIncrement(max: number, length = 7) {
   if (max === 0) return Array.from({ length }, (_, i) => i + 1);
@@ -44,38 +45,12 @@ export default function ChoosePageRange({ navigation }: any) {
 
   return (
     <SafeIOSContainer>
-      <Appbar style={{ backgroundColor: "#000" }}>
-        <IconButton
-          icon="chevron-left"
-          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
-          size={28}
-        />
-        <Appbar.Content title={t("room.randomize-search")} />
-      </Appbar>
+      <PageHeading title={t("room.randomize-search")} />
       <View style={{ padding: 15, flex: 1 }}>
-        <Text style={{ fontSize: 45, lineHeight: 45, fontFamily: "Bebas" }}>{t("room.titles.randomize")}</Text>
-        <Text style={{ fontSize: 14, color: "rgba(255,255,255,0.95)", fontWeight: "500" }}>{t("room.page-range")}</Text>
+        <Text style={{ fontSize: 18, color: "rgba(255,255,255,0.95)", fontWeight: "500" }}>{t("room.page-range")}</Text>
 
         <View style={{ flex: 1, marginTop: 15 }}>
-          {/* <TextInput
-            keyboardType="numeric"
-            mode="outlined"
-            label={"Page Range"}
-            value={pageRange.toString()}
-            onChangeText={(text) => {
-              setPageRange(text.replace(/[^0-9]/g, "").replace(/^0+/, ""));
-            }}
-            style={{ marginTop: 10 }}
-          />
-          <Button
-            onPress={() => {
-              navigation.navigate("CreateQRCode");
-            }}
-          >
-            Next
-          </Button> */}
-
-          <Text style={{ fontFamily: "Bebas", color: "#fff", fontSize: 20, marginVertical: 15 }}>{t("room.page-range-desc")}</Text>
+          <Text style={{ fontFamily: "Bebas", color: "#fff", fontSize: 25, marginVertical: 15 }}>{t("room.page-range-desc")}</Text>
 
           {!loading ? (
             nums.map((n, index) => (

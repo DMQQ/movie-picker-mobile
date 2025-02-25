@@ -4,6 +4,7 @@ import { useCreateRoom } from "./ContextProvider";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import { useMemo } from "react";
+import PageHeading from "../../components/PageHeading";
 
 type Category = {
   label: string;
@@ -71,15 +72,7 @@ export default function ChooseCategory({ navigation }: any) {
 
   return (
     <SafeIOSContainer>
-      <Appbar style={{ backgroundColor: "#000" }}>
-        <IconButton
-          icon="chevron-left"
-          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
-          size={28}
-        />
-
-        <Appbar.Content title="Categories" />
-      </Appbar>
+      <PageHeading title={t("room.movie") + " & " + t("room.series")} />
       <View style={{ padding: 15, flex: 1 }}>
         <List category={category} data={movies} title={t("room.movie")} onPress={onPress} />
 

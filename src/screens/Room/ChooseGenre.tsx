@@ -7,6 +7,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { useGetGenresQuery } from "../../redux/movie/movieApi";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
+import PageHeading from "../../components/PageHeading";
 
 const ListEmptyComponent = () => {
   const { width } = useWindowDimensions();
@@ -31,24 +32,13 @@ export default function ChooseGenre({ navigation }: any) {
 
   return (
     <SafeIOSContainer>
-      <Appbar style={{ backgroundColor: "#000" }}>
-        <IconButton
-          icon="chevron-left"
-          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
-          size={28}
-        />
-
-        <Appbar.Content title={t("room.genre")} />
-      </Appbar>
-      <View style={{ flex: 1, padding: 15 }}>
+      <PageHeading title={t("room.genre")} />
+      <View style={{ flex: 1, paddingHorizontal: 15 }}>
         <View style={{ flex: 1 }}>
           {loading ? (
             <ListEmptyComponent />
           ) : (
             <FlatList
-              ListHeaderComponent={
-                <Text style={{ fontSize: 45, lineHeight: 45, fontFamily: "Bebas", marginBottom: 15 }}>{t("room.genre")}</Text>
-              }
               initialNumToRender={12}
               style={{ flex: 1, paddingBottom: 25 }}
               data={genres as { id: number; name: string }[]}

@@ -37,7 +37,6 @@ export default function MovieDetails({
   return (
     <AnimatedBlurView
       blurReductionFactor={0.25}
-      entering={FadeInDown}
       intensity={Platform.OS === "ios" ? 30 : 100}
       tint="dark"
       style={{

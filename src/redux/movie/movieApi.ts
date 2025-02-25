@@ -48,19 +48,28 @@ export const movieApi = createApi({
 
       const state = getState() as RootState;
 
-      if (state?.room?.language === "pl") {
-        headers.set("x-user-language", "pl-PL");
-        headers.set("x-user-region", "PL");
-        headers.set("x-user-timezone", "Europe/Warsaw");
-        headers.set("x-user-watch-provider", "PL");
-        headers.set("x-user-watch-region", "PL");
-      } else {
-        headers.set("x-user-language", "en-US");
-        headers.set("x-user-region", "US");
-        headers.set("x-user-timezone", "America/New_York");
-        headers.set("x-user-watch-provider", "US");
-        headers.set("x-user-watch-region", "US");
-      }
+      const defaultHeaders =
+        state?.room?.language === "pl"
+          ? {
+              "x-user-language": "pl-PL",
+              "x-user-region": "PL",
+              "x-user-timezone": "Europe/Warsaw",
+              "x-user-watch-provider": "PL",
+              "x-user-watch-region": "PL",
+            }
+          : {
+              "x-user-language": "en-US",
+              "x-user-region": "US",
+              "x-user-timezone": "America/New_York",
+              "x-user-watch-provider": "US",
+              "x-user-watch-region": "US",
+            };
+
+      const regionalization = state?.room?.regionalization || defaultHeaders;
+
+      Object.entries(regionalization).forEach(([key, value]) => {
+        headers.set(key, value);
+      });
 
       return headers;
     },

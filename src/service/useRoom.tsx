@@ -32,7 +32,6 @@ export default function useRoom(room: string) {
     if (!socket) return;
 
     const handleMovies = async (_cards: { movies: Movie[] }) => {
-      console.log("Received movies", _cards.movies.length);
       setCards(_cards.movies);
       await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)));
     };
@@ -116,7 +115,6 @@ export default function useRoom(room: string) {
     const response = await socket?.emitWithAck("join-room", code, nickname);
 
     if (response.joined) {
-      console.log("Joined room", response);
       dispatch(roomActions.setRoom(response.room));
       dispatch(roomActions.setPlaying(response.room.isStarted));
     }

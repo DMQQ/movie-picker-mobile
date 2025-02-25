@@ -8,6 +8,7 @@ const initialState = {
   qrCode: "",
   nickname: "",
   language: "en",
+  regionalization: {} as Record<string, string>,
   isPlaying: false,
   beenFired: false,
 
@@ -83,11 +84,13 @@ const roomSlice = createSlice({
         payload: {
           nickname: string;
           language: string;
+          regionalization: Record<string, string>;
         };
       }
     ) {
       state.nickname = payload.nickname;
       state.language = payload.language;
+      state.regionalization = payload.regionalization;
     },
     setQRCode(state, action) {
       state.qrCode = action.payload;

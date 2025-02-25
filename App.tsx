@@ -123,25 +123,18 @@ const Navigator = () => {
     };
   }, []);
 
-  const handleDeepLink = ({ url }: { url: string }) => {
-    console.log("Received URL:", url);
-    // You can add custom handling here if needed
-  };
+  const handleDeepLink = ({ url }: { url: string }) => {};
 
   useEffect(() => {
     (async () => {
       try {
-        let language = await AsyncStorage.getItem("language");
+        const [language, regionalization] = await Promise.all([AsyncStorage.getItem("language"), AsyncStorage.getItem("regionalization")]);
 
-        if (!language) {
-          setShowLanguageSelector(true);
-
-          return;
-        }
+        if (!language) return setShowLanguageSelector(true);
 
         const nickname = (await AsyncStorage.getItem("nickname")) || language === "en" ? "Guest" : "Gość";
 
-        dispatch(roomActions.setSettings({ nickname, language }));
+        dispatch(roomActions.setSettings({ nickname, language, regionalization: JSON.parse(regionalization || "{}") || ({} as any) }));
       } catch (error) {
       } finally {
         setLoaded(true);

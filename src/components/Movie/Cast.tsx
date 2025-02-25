@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 15,
     marginRight: 20,
+    maxWidth: layout.screen.width * 0.3,
   },
   image: {
     width: layout.screen.width * 0.3,
@@ -74,6 +75,7 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     fontSize: 19,
     color: "#fff",
+    flexWrap: "wrap",
   },
   actor: {
     fontSize: 14,

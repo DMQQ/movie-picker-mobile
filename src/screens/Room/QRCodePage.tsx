@@ -1,8 +1,8 @@
-import { Dimensions, Platform, Share, ToastAndroid, View } from "react-native";
-import { Appbar, Avatar, Button, IconButton, Text, useTheme } from "react-native-paper";
+import { Dimensions, Share, ToastAndroid, View } from "react-native";
+import { Avatar, Button, Text, useTheme } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import QRCode from "react-native-qrcode-svg";
-import { CommonActions, useIsFocused } from "@react-navigation/native";
+import { CommonActions } from "@react-navigation/native";
 import { useCreateRoom } from "./ContextProvider";
 import * as Clipboard from "expo-clipboard";
 import { memo, useContext, useEffect } from "react";
@@ -11,6 +11,7 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
+import PageHeading from "../../components/PageHeading";
 
 interface ISocketResponse {
   roomId: string;
@@ -82,17 +83,8 @@ export default function QRCodePage({ navigation }: any) {
 
   return (
     <SafeIOSContainer>
-      <Appbar style={{ backgroundColor: "#000" }}>
-        <IconButton
-          icon="chevron-left"
-          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
-          size={28}
-        />
-        <Appbar.Content title="Join game" />
-      </Appbar>
+      <PageHeading title={t("room.qr-title")} />
       <View style={{ position: "relative", flex: 1, padding: 15 }}>
-        <Text style={{ fontSize: 45, fontFamily: "Bebas", lineHeight: 45 }}>{t("room.qr-title")}</Text>
-
         <Text
           style={{
             fontSize: 16,

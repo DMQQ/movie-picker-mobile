@@ -9,6 +9,8 @@ import { roomActions } from "../redux/room/roomSlice";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import * as Updates from "expo-updates";
 import useTranslation from "../service/useTranslation";
+import ChooseRegion from "../components/ChooseRegion";
+import PageHeading from "../components/PageHeading";
 
 export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) {
   const { language: lg, nickname: nk } = useAppSelector((state) => state.room);
@@ -56,14 +58,10 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
 
   return (
     <SafeIOSContainer>
-      <Appbar style={{ backgroundColor: "#000" }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
-
-        <Appbar.Content title={t("settings.heading")} />
-      </Appbar>
+      <PageHeading title={t("settings.heading")} />
       <View style={{ paddingHorizontal: 15, flex: 1 }}>
         <View style={{ marginTop: 20 }}>
-          <Text style={{ fontSize: 18, fontWeight: "bold", padding: 2.5 }}>Nickname</Text>
+          <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Nickname</Text>
 
           <TextInput value={nickname} onChangeText={setNickname} mode="outlined" label={"Nickname"} />
 
@@ -71,7 +69,7 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
         </View>
 
         <View style={{ marginTop: 35 }}>
-          <Text style={{ fontSize: 18, fontWeight: "bold", padding: 2.5 }}>Language</Text>
+          <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Application language</Text>
 
           <SegmentedButtons
             buttons={[
@@ -88,27 +86,9 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
             value={language}
             style={{ marginTop: 10 }}
           />
-
-          {/* <Text style={{ fontSize: 16, marginTop: 5, padding: 5, color: "gray" }}>{t("settings.language-info")}</Text> */}
         </View>
 
-        {/* <View style={{ marginTop: 35 }}>
-          <Text style={{ fontSize: 18, fontWeight: "bold", padding: 2.5 }}>About</Text>
-
-          <Text style={{ fontSize: 16, marginTop: 5, padding: 5, color: "gray" }}>{t("settings.about")}</Text>
-
-          <Text
-            style={{
-              fontSize: 16,
-              marginTop: 5,
-              padding: 5,
-              color: "gray",
-              textDecorationLine: "underline",
-            }}
-          >
-            {t("settings.security")}
-          </Text>
-        </View> */}
+        <ChooseRegion />
       </View>
     </SafeIOSContainer>
   );

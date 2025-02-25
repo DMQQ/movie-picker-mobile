@@ -7,11 +7,15 @@ import CustomSearchBar from "../components/SearchBar";
 
 import useTranslation from "../service/useTranslation";
 import { Movie } from "../../types";
+import Animated, { FadeIn } from "react-native-reanimated";
+import Thumbnail from "../components/Thumbnail";
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const ITEM_HEIGHT = 180;
 
-const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
+const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; index: number }) => {
   const t = useTranslation();
   const data = [
     !!!item?.title ? t("voter.types.series") : t("voter.types.movie"),
@@ -25,7 +29,8 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
   const navigation = useNavigation<any>();
 
   return (
-    <Pressable
+    <AnimatedPressable
+      entering={FadeIn.delay(index * 50)}
       onPress={() => {
         navigation.navigate("MovieDetails", {
           id: item.id,
@@ -39,13 +44,10 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
         height: ITEM_HEIGHT,
         borderRadius: 10,
         backgroundColor: MD2DarkTheme.colors.surface,
-        marginBottom: 15,
+        marginTop: 15,
       }}
     >
-      <Image
-        source={{ uri: item?.poster_path ? "https://image.tmdb.org/t/p/w200" + item.poster_path : "https://via.placeholder.com/120x180" }}
-        style={styles.cardImage}
-      />
+      <Thumbnail path={item.poster_path} style={styles.cardImage} />
 
       <View style={{ flex: 1, padding: 10, overflow: "hidden", gap: 2.5 }}>
         <Text
@@ -66,7 +68,7 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
           </Text>
         </View>
       </View>
-    </Pressable>
+    </AnimatedPressable>
   );
 };
 
@@ -123,7 +125,6 @@ const SearchScreen = ({ navigation, route }: any) => {
       JSON.stringify(currentParams.people) !== JSON.stringify(prevParams.people);
 
     if (hasParamsChanged) {
-      console.log("Search params changed:", currentParams);
       routeParamsRef.current = route.params;
 
       // Reset search state
@@ -178,32 +179,34 @@ const SearchScreen = ({ navigation, route }: any) => {
       const sortSearchResults = (searchTerm: string, results: Movie[]) => {
         const term = searchTerm.toLowerCase();
 
-        return [...results].sort((a, b) => {
-          const titleA = (a?.title || a?.name || "").toLowerCase();
-          const titleB = (b?.title || b?.name || "").toLowerCase();
+        return [...results]
+          .filter((m) => m.overview.length > 0 && m.vote_average > 0)
+          .sort((a, b) => {
+            const titleA = (a?.title || a?.name || "").toLowerCase();
+            const titleB = (b?.title || b?.name || "").toLowerCase();
 
-          // 1. Exact title matches come first
-          const exactMatchA = titleA === term;
-          const exactMatchB = titleB === term;
-          if (exactMatchA && !exactMatchB) return -1;
-          if (!exactMatchA && exactMatchB) return 1;
+            // 1. Exact title matches come first
+            const exactMatchA = titleA === term;
+            const exactMatchB = titleB === term;
+            if (exactMatchA && !exactMatchB) return -1;
+            if (!exactMatchA && exactMatchB) return 1;
 
-          // 2. Title starts with search term
-          const startsWithA = titleA.startsWith(term);
-          const startsWithB = titleB.startsWith(term);
-          if (startsWithA && !startsWithB) return -1;
-          if (!startsWithA && startsWithB) return 1;
+            // 2. Title starts with search term
+            const startsWithA = titleA.startsWith(term);
+            const startsWithB = titleB.startsWith(term);
+            if (startsWithA && !startsWithB) return -1;
+            if (!startsWithA && startsWithB) return 1;
 
-          // 3. Consider franchise films (title contains search term as whole word)
-          const wordBoundaryRegex = new RegExp(`\\b${term}\\b`, "i");
-          const containsWordA = wordBoundaryRegex.test(titleA);
-          const containsWordB = wordBoundaryRegex.test(titleB);
-          if (containsWordA && !containsWordB) return -1;
-          if (!containsWordA && containsWordB) return 1;
+            // 3. Consider franchise films (title contains search term as whole word)
+            const wordBoundaryRegex = new RegExp(`\\b${term}\\b`, "i");
+            const containsWordA = wordBoundaryRegex.test(titleA);
+            const containsWordB = wordBoundaryRegex.test(titleB);
+            if (containsWordA && !containsWordB) return -1;
+            if (!containsWordA && containsWordB) return 1;
 
-          // 4. For similar relevance, use popularity as tiebreaker
-          return (b?.popularity || 0) - (a?.popularity || 0);
-        });
+            // 4. For similar relevance, use popularity as tiebreaker
+            return (b?.popularity || 0) - (a?.popularity || 0);
+          });
       };
 
       if (response.page === page) {
@@ -313,11 +316,10 @@ const SearchScreen = ({ navigation, route }: any) => {
         <Text style={styles.errorText}>{t("search.error")}</Text>
       ) : (
         <VirtualizedList
-          style={{ marginTop: 30 }}
           data={allResults}
           getItem={getItem}
           getItemCount={getItemCount}
-          renderItem={({ item }) => <MovieCard item={item} />}
+          renderItem={({ item, index }) => <MovieCard index={index} item={item} />}
           keyExtractor={(item, index) => {
             const mediaType = item.media_type || filters.type;
             const uniqueId = `${item.id}-${mediaType}-${index}`;

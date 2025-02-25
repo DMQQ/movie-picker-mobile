@@ -152,8 +152,6 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
 
     const response = await socket.emitWithAck("voter:session:start", { sessionId });
 
-    console.log("startSession", response);
-
     if (response?.error) {
       setError(response.error);
     } else {
@@ -192,9 +190,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const handleMoviesReceive = async ({ movies, setId }: any) => {
-      console.log(currentUserId, movies.length, setId);
       if (movies.length === 0) {
-        console.log("refetching movies");
         await socket.emitWithAck("voter:movies:refetch", { sessionId });
       }
       setCurrentMovies(movies);

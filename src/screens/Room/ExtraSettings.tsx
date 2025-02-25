@@ -5,6 +5,7 @@ import useTranslation from "../../service/useTranslation";
 import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useCreateRoom } from "./ContextProvider";
+import PageHeading from "../../components/PageHeading";
 
 export default function ExtraSettings({ navigation }: any) {
   const t = useTranslation();
@@ -27,19 +28,10 @@ export default function ExtraSettings({ navigation }: any) {
 
   return (
     <SafeIOSContainer style={styles.container}>
-      <Appbar style={styles.appbar}>
-        <IconButton
-          icon="chevron-left"
-          onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing"))}
-          size={28}
-        />
-        <Appbar.Content title={t("room.titles.extra-settings")} />
-      </Appbar>
+      <PageHeading title={t("room.providers")} />
 
       <View style={styles.content}>
         <View style={styles.providersContainer}>
-          <Text style={styles.title}>{t("room.providers")}</Text>
-
           <FlatList
             data={data}
             keyExtractor={(item) => item.provider_id.toString()}
@@ -51,16 +43,7 @@ export default function ExtraSettings({ navigation }: any) {
                 onPress={() => toggleProvider(item.provider_id)}
                 style={[styles.providerWrapper, selectedProviders.includes(item.provider_id) && styles.selectedProvider]}
               >
-                <Image
-                  source={{ uri: `https://image.tmdb.org/t/p/w300${item?.logo_path}` }}
-                  style={[
-                    styles.providerLogo,
-                    {
-                      width: 55,
-                      height: 55,
-                    },
-                  ]}
-                />
+                <Image source={{ uri: `https://image.tmdb.org/t/p/w300${item?.logo_path}` }} style={[styles.providerLogo]} />
               </TouchableRipple>
             )}
           />
@@ -90,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
   content: {
-    padding: 15,
+    paddingHorizontal: 15,
     flex: 1,
   },
   providersContainer: {
@@ -111,7 +94,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   providerWrapper: {
-    padding: 8,
     borderRadius: 12,
     borderWidth: 2,
     borderColor: "transparent",
@@ -122,8 +104,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#1a1a1a80",
   },
   providerLogo: {
-    width: 60,
-    height: 60,
+    width: 70,
+    height: 70,
     borderRadius: 8,
   },
   button: {
