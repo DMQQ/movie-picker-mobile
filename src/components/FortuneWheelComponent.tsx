@@ -16,7 +16,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { MD2DarkTheme } from "react-native-paper";
 import useTranslation from "../service/useTranslation";
 import * as Haptics from "expo-haptics";
-import Svg, { Path, Defs, Pattern, Line, G } from "react-native-svg";
+import Svg, { Path, Defs, Pattern, Line, G, Circle } from "react-native-svg";
 import Thumbnail from "./Thumbnail";
 import { Entypo } from "@expo/vector-icons";
 
@@ -24,14 +24,14 @@ const { width, height } = Dimensions.get("window");
 
 // Define wheel segment colors
 const COLORS = [
-  "#000",
-  MD2DarkTheme.colors.surface,
-  "#000",
-  MD2DarkTheme.colors.surface,
-  "#000",
-  MD2DarkTheme.colors.surface,
-  "#000",
-  MD2DarkTheme.colors.surface,
+  "#592796",
+  MD2DarkTheme.colors.primary,
+  "#592796",
+  MD2DarkTheme.colors.primary,
+  "#592796",
+  MD2DarkTheme.colors.primary,
+  "#592796",
+  MD2DarkTheme.colors.primary,
 ];
 
 interface SegmentProps {
@@ -49,16 +49,19 @@ const Segment = memo(({ item, index, segmentAngle, wheelSize, startAngle }: Segm
   const radius = wheelSize / 2;
   const middleAngle = startAngle + segmentAngle / 2;
 
-  const angleInRadians = Math.round((middleAngle - 90) * (Math.PI / 180) * 10000) / 10000;
-  const imageSize = Math.round(wheelSize * 0.2);
+  // Use exact calculation without rounding during the computation
+  const angleInRadians = (middleAngle - 90) * (Math.PI / 180);
+  const imageSize = wheelSize * 0.2;
 
-  const distanceFromCenter = Math.round(radius - imageSize / 2 - 15);
+  const distanceFromCenter = radius - imageSize / 2 - 15;
 
-  const translateX = Math.round(Math.cos(angleInRadians) * distanceFromCenter);
-  const translateY = Math.round(Math.sin(angleInRadians) * distanceFromCenter);
+  // Calculate exact positions without premature rounding
+  const translateX = Math.cos(angleInRadians) * distanceFromCenter;
+  const translateY = Math.sin(angleInRadians) * distanceFromCenter;
 
-  const left = Math.floor(radius - imageSize / 2 + translateX);
-  const top = Math.floor(radius - imageSize / 2 + translateY);
+  // Only round for the final position
+  const left = radius - imageSize / 2 + translateX;
+  const top = radius - imageSize / 2 + translateY;
 
   return (
     <View
@@ -68,7 +71,7 @@ const Segment = memo(({ item, index, segmentAngle, wheelSize, startAngle }: Segm
         height: imageSize,
         left,
         top,
-        transform: [{ rotate: `${Math.round(middleAngle)}deg` }],
+        transform: [{ rotate: `${middleAngle}deg` }],
         justifyContent: "center",
         alignItems: "center",
       }}
@@ -225,13 +228,14 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(({ size = 300, items,
   }));
 
   const renderWheelSegments = () => {
-    return items.map((_, index) => {
+    return items.map((item, index) => {
       const startAngle = index * segmentAngle;
       const endAngle = startAngle + segmentAngle;
       const centerX = size / 2;
       const centerY = size / 2;
       const radius = size / 2;
 
+      // Use precise calculations without premature rounding
       const startRad = ((startAngle - 90) * Math.PI) / 180;
       const endRad = ((endAngle - 90) * Math.PI) / 180;
 
@@ -246,11 +250,28 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(({ size = 300, items,
       return (
         <G key={index}>
           <Path d={pathData} fill={COLORS[index % COLORS.length]} />
-          {/* Fix: Adjusted pattern size and rotation for better stripe alignment */}
-          <Path d={pathData} fill={`url(#stripePattern${index})`} opacity="0.3" />
+          {/* No pattern used here to simplify and ensure perfect circle */}
         </G>
       );
     });
+  };
+
+  // Add a border circle to ensure the wheel is perfectly round
+  const renderWheelBorder = () => {
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const radius = size / 2;
+
+    return (
+      <Circle
+        cx={centerX}
+        cy={centerY}
+        r={radius - 2} // Slightly smaller than wheel size to appear as a border
+        fill="none"
+        stroke="rgba(255, 255, 255, 0.2)"
+        strokeWidth="4"
+      />
+    );
   };
 
   return (
@@ -270,7 +291,6 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(({ size = 300, items,
         style={[
           useAnimatedStyle(() => ({
             opacity: isSpinning.value ? withTiming(0) : withTiming(1),
-            transform: [{ translateY: -30 }],
           })),
           {
             color: "#fff",
@@ -296,8 +316,6 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(({ size = 300, items,
                     height: size,
                     borderRadius: size / 2,
                     overflow: "hidden",
-                    borderWidth: 4,
-                    borderColor: "rgba(255, 255, 255, 0.1)",
                   },
                   useAnimatedStyle(() => ({
                     transform: [{ rotate: `${rotate.value}deg` }],
@@ -306,6 +324,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(({ size = 300, items,
               >
                 <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
                   {renderWheelSegments()}
+                  {renderWheelBorder()}
                 </Svg>
 
                 {items.map((item, index) => (
@@ -331,7 +350,7 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     bottom: -130,
-    left: -width / 1.5 - 35, // Adjusted from -35 to -32 to fix 3px offset
+    left: 0,
     right: 0,
     alignItems: "center",
   },
@@ -348,8 +367,9 @@ const styles = StyleSheet.create({
   },
   wheel: {
     position: "absolute",
-    left: 0,
     top: 0,
+    transform: [{ translateX: -150 }], // Half of default size (300)
+    marginBottom: 50, // Add some margin at the bottom
   },
   segment: {
     position: "absolute",
@@ -359,7 +379,8 @@ const styles = StyleSheet.create({
   center: {
     position: "absolute",
     width: 100,
-    left: width + 60, // Adjusted to match wheel centering
+    left: "50%",
+    marginLeft: -50,
     alignItems: "center",
     zIndex: 1,
     transform: [{ translateY: -50 }],
