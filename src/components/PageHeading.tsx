@@ -2,11 +2,11 @@ import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
 
-export default function PageHeading({ title }: { title: string }) {
+export default function PageHeading({ title, onPress }: { title: string; onPress?: () => void }) {
   const navigation = useNavigation();
   return (
     <View style={styles.headerTop}>
-      <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} style={styles.backButton} />
+      <IconButton icon="chevron-left" onPress={onPress || (() => navigation.goBack())} size={28} style={styles.backButton} />
       <Text style={styles.headerTitle}>{title}</Text>
     </View>
   );

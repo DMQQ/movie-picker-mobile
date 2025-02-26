@@ -196,7 +196,7 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-              ...(Platform.OS === "ios" && { presentation: "modal" }),
+              presentation: "modal",
             }}
           />
           <Stack.Screen
@@ -206,7 +206,7 @@ const Navigator = () => {
               headerTransparent: true,
               headerTitleAlign: "center",
               headerTitle: "",
-              ...(Platform.OS === "ios" && { presentation: "modal" }),
+
               title: "",
             }}
             initialParams={{
@@ -238,7 +238,6 @@ const Navigator = () => {
             options={{
               headerShown: false,
               title: "",
-              ...(Platform.OS === "ios" && { presentation: "modal" }),
             }}
           />
 
@@ -266,7 +265,7 @@ const Navigator = () => {
               headerShown: false,
             }}
           />
-          <Stack.Screen name="SearchFilters" component={SearchFilters} options={{ headerShown: false, presentation: "modal" }} />
+          <Stack.Screen name="SearchFilters" component={SearchFilters} options={{ headerShown: false }} />
         </Stack.Navigator>
       </GestureHandlerRootView>
     </NavigationContainer>

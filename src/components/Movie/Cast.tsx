@@ -38,7 +38,7 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <View style={styles.directorContainer}>
-            <Thumbnail path={item?.profile_path || ""} container={styles.directorImage} />
+            {item?.profile_path && <Thumbnail path={item?.profile_path || ""} container={styles.directorImage} />}
 
             <View
               style={{

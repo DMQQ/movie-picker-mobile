@@ -1,5 +1,5 @@
 import { Dimensions, Share, ToastAndroid, View } from "react-native";
-import { Avatar, Button, Text, useTheme } from "react-native-paper";
+import { Avatar, Button, Icon, MD2DarkTheme, Text, useTheme } from "react-native-paper";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import QRCode from "react-native-qrcode-svg";
 import { CommonActions } from "@react-navigation/native";
@@ -12,6 +12,7 @@ import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import PageHeading from "../../components/PageHeading";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
 interface ISocketResponse {
   roomId: string;
@@ -95,50 +96,48 @@ export default function QRCodePage({ navigation }: any) {
         </Text>
 
         <QrCodeBox code={qrCode} />
-
-        <View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginBottom: 10,
-              height: 25,
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ fontSize: 16 }}>{t("room.active")}:</Text>
-            <View style={{ flexDirection: "row", gap: 5 }}>
-              {users.map((nick, index) => (
-                <View
-                  key={nick + index}
-                  style={{
-                    flexDirection: "row",
-                    backgroundColor: "#000",
-                    gap: 5,
-                    borderRadius: 100,
-                    alignItems: "center",
-                  }}
-                >
-                  <Avatar.Text size={25} label={nick[0].toUpperCase()} style={{ backgroundColor: AVATAR_COLORS[index % 5] }} />
-                </View>
-              ))}
-            </View>
+      </View>
+      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginBottom: 10,
+            height: 25,
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ fontSize: 16 }}>{t("room.active")}:</Text>
+          <View style={{ flexDirection: "row", gap: 5 }}>
+            {users.map((nick, index) => (
+              <View
+                key={nick + index}
+                style={{
+                  flexDirection: "row",
+                  backgroundColor: "#000",
+                  gap: 5,
+                  borderRadius: 100,
+                  alignItems: "center",
+                }}
+              >
+                <Avatar.Text size={25} label={nick[0].toUpperCase()} style={{ backgroundColor: AVATAR_COLORS[index % 5] }} />
+              </View>
+            ))}
           </View>
-
-          <Button
-            mode="contained"
-            style={{
-              borderRadius: 100,
-              marginTop: 10,
-            }}
-            contentStyle={{ padding: 7.5 }}
-            onPress={() => {
-              onJoinOwnRoom(qrCode);
-            }}
-          >
-            start
-          </Button>
         </View>
+        <Button
+          mode="contained"
+          style={{
+            borderRadius: 100,
+            marginTop: 10,
+          }}
+          contentStyle={{ padding: 7.5 }}
+          onPress={() => {
+            onJoinOwnRoom(qrCode);
+          }}
+        >
+          start
+        </Button>
       </View>
     </SafeIOSContainer>
   );
@@ -180,6 +179,7 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
       </View>
 
       <Button
+        icon={() => <FontAwesome name="share" size={24} color={MD2DarkTheme.colors.primary} />}
         onLongPress={async () => {
           shareCode(code);
         }}
@@ -187,6 +187,8 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
           await Clipboard.setStringAsync(code);
           ToastAndroid.show("Copied to clipboard", ToastAndroid.SHORT);
         }}
+        contentStyle={{ flexDirection: "row-reverse" }}
+        style={{ marginTop: 15 }}
       >
         <Text style={{ fontSize: 25, letterSpacing: 1, color: theme.colors.primary }}>{code}</Text>
       </Button>

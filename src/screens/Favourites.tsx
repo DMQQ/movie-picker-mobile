@@ -9,6 +9,7 @@ import { AntDesign } from "@expo/vector-icons";
 import PageHeading from "../components/PageHeading";
 
 import { Image, ImageBackground } from "expo-image";
+import Thumbnail from "../components/Thumbnail";
 
 export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const { groups } = useAppSelector((state) => state.favourite);
@@ -52,25 +53,27 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
                         <Text style={{ fontSize: 11, textAlign: "center" }}>{t("favourites.empty")}</Text>
                       </View>
                     )}
-                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 5 }}>
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
                       {item.movies.slice(0, 4).map((m) => (
-                        <Image
+                        <Thumbnail
                           key={m.id}
                           contentFit="cover"
-                          source={{ uri: "https://image.tmdb.org/t/p/w200" + m.imageUrl }}
-                          style={{
-                            width: (Dimensions.get("window").width / 2 - 20) * 0.45,
-                            height: (Dimensions.get("window").width / 2 - 20) * 0.65,
-                            borderRadius: 10,
+                          path={m.imageUrl}
+                          size={200}
+                          container={{
+                            width: (Dimensions.get("window").width / 2 - 25) * 0.45,
+                            height: (Dimensions.get("window").width / 2 - 25) * 0.65,
+                            borderRadius: 5,
                           }}
                         />
                       ))}
                     </View>
                   </ImageBackground>
                 </View>
-                <Text style={{ color: "#fff", fontSize: 25, fontFamily: "Bebas", padding: 10 }}>
-                  {item.name} <Text style={{ fontSize: 15 }}>({item.movies.length})</Text>
-                </Text>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={{ color: "#fff", fontSize: 25, fontFamily: "Bebas", padding: 10 }}>{item.name}</Text>
+                  <Text style={{ fontSize: 15 }}>({item.movies.length})</Text>
+                </View>
               </>
             </TouchableRipple>
           )}

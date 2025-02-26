@@ -15,16 +15,16 @@ import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useMovieVoter } from "../../service/useVoter";
 import RangeSlider from "../../components/RangeSlidePicker";
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from "react-native-reanimated";
-import CustomFavourite from "../../components/Favourite";
 import QRCodeComponent from "../../components/Voter/QRCode";
 import { FancySpinner } from "../../components/FancySpinner";
 import useTranslation from "../../service/useTranslation";
 import QuickActions from "../../components/QuickActions";
 
 import * as Haptics from "expo-haptics";
-import { useGetAllProvidersQuery, useGetGenresQuery, useLazyGetGenresQuery } from "../../redux/movie/movieApi";
+import { useGetAllProvidersQuery, useGetGenresQuery } from "../../redux/movie/movieApi";
 import { throttle } from "../../utils/throttle";
 import { CommonActions } from "@react-navigation/native";
+import PageHeading from "../../components/PageHeading";
 
 const scaleTitle = (title: string, size = 30) => {
   if (title.length > 30) return size * 0.75;
@@ -101,25 +101,20 @@ export default function Home({ navigation, route }: any) {
 
   const t = useTranslation();
 
+  function onGoBack() {
+    navigation.canGoBack()
+      ? navigation.goBack()
+      : navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: "Landing" }, { name: "Games" }],
+          })
+        );
+  }
+
   const renderInitialState = () => (
     <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
-        <IconButton
-          icon="chevron-left"
-          onPress={() =>
-            navigation.canGoBack()
-              ? navigation.goBack()
-              : navigation.dispatch(
-                  CommonActions.reset({
-                    index: 1,
-                    routes: [{ name: "Landing" }, { name: "Games" }],
-                  })
-                )
-          }
-          size={28}
-        />
-        <Text style={{ fontSize: 35, fontFamily: "Bebas", textAlign: "center", width: "70%" }}>{t("voter.home.title")}</Text>
-      </View>
+      <PageHeading title={t("voter.home.title")} onPress={onGoBack} />
       <View style={{ flex: 1, paddingHorizontal: 15, paddingBottom: 15 }}>
         <View style={{ flex: 1 }}>
           <View style={{ marginTop: 15 }}>
@@ -148,8 +143,9 @@ export default function Home({ navigation, route }: any) {
             providers={sessionSettings.providers}
           />
         </View>
-
-        <Button mode="contained" onPress={actions.createSession} style={styles.button} contentStyle={{ padding: 7.5 }}>
+      </View>
+      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
+        <Button mode="contained" onPress={actions.createSession} style={[styles.button, { marginTop: 0 }]} contentStyle={{ padding: 7.5 }}>
           {t("voter.home.create")}
         </Button>
       </View>
@@ -162,12 +158,7 @@ export default function Home({ navigation, route }: any) {
 
     return (
       <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
-        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
-          <IconButton icon="chevron-left" onPress={() => navigation.navigate("Landing")} size={28} />
-          <Text style={{ fontSize: 30, fontFamily: "Bebas", width: "70%" }}>
-            {users.length > 1 ? t("voter.home.ready") : t("voter.home.waiting-initial")}
-          </Text>
-        </View>
+        <PageHeading title={users.length > 1 ? t("voter.home.ready") : t("voter.home.waiting-initial")} onPress={onGoBack} />
 
         <View style={{ padding: 15, flex: 1 }}>
           <Text>
@@ -191,37 +182,36 @@ export default function Home({ navigation, route }: any) {
               <QRCodeComponent sessionId={sessionId} type="voter" safetyCode="1234" size={Dimensions.get("screen").width / 2} />
             </View>
           )}
+        </View>
+        <View style={{ height: 100, justifyContent: "flex-end", paddingHorizontal: 15, paddingTop: 15 }}>
+          {!currentUserReady && (
+            <Button mode="contained" onPress={handleReady} style={styles.button} contentStyle={{ padding: 7.5 }}>
+              {t("voter.home.ready-status")}
+            </Button>
+          )}
 
-          <View style={{ height: 100, justifyContent: "flex-end" }}>
-            {!currentUserReady && (
-              <Button mode="contained" onPress={handleReady} style={styles.button} contentStyle={{ padding: 7.5 }}>
-                {t("voter.home.ready-status")}
-              </Button>
-            )}
-
-            {allReady && isHost && (
-              <Button
-                disabled={loadingInitialContent}
-                mode="contained"
-                onPress={actions.startSession}
-                style={[
-                  styles.button,
-                  {
-                    backgroundColor: MD2DarkTheme.colors.accent,
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  },
-                ]}
-                contentStyle={{
-                  padding: 7.5,
-                }}
-              >
-                {loadingInitialContent && <ActivityIndicator style={{ marginHorizontal: 10 }} size={15} color="#fff" />}
-                {t("voter.home.start")}
-              </Button>
-            )}
-          </View>
+          {allReady && isHost && (
+            <Button
+              disabled={loadingInitialContent}
+              mode="contained"
+              onPress={actions.startSession}
+              style={[
+                styles.button,
+                {
+                  backgroundColor: MD2DarkTheme.colors.accent,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              ]}
+              contentStyle={{
+                padding: 7.5,
+              }}
+            >
+              {loadingInitialContent && <ActivityIndicator style={{ marginHorizontal: 10 }} size={15} color="#fff" />}
+              {t("voter.home.start")}
+            </Button>
+          )}
         </View>
       </Animated.View>
     );
@@ -764,6 +754,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     marginVertical: 16,
+    height: 60,
   },
   userChip: {
     margin: 4,

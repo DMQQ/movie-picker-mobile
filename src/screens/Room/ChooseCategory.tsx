@@ -73,25 +73,29 @@ export default function ChooseCategory({ navigation }: any) {
   return (
     <SafeIOSContainer>
       <PageHeading title={t("room.movie") + " & " + t("room.series")} />
-      <View style={{ padding: 15, flex: 1 }}>
-        <List category={category} data={movies} title={t("room.movie")} onPress={onPress} />
+      <View style={{ flex: 1 }}>
+        <View style={{ padding: 15, flex: 1 }}>
+          <List category={category} data={movies} title={t("room.movie")} onPress={onPress} />
 
-        <List category={category} data={series} title={t("room.series")} onPress={onPress} />
+          <List category={category} data={series} title={t("room.series")} onPress={onPress} />
+        </View>
 
-        <Button
-          icon="dice-4"
-          mode="contained"
-          style={{
-            borderRadius: 100,
-            marginTop: 10,
-          }}
-          contentStyle={{ padding: 7.5 }}
-          onPress={() => {
-            onPress(categories[Math.floor(Math.random() * categories.length)]);
-          }}
-        >
-          {t("room.randomize")}
-        </Button>
+        <View style={{ paddingTop: 15, paddingHorizontal: 15 }}>
+          <Button
+            icon="dice-4"
+            mode="contained"
+            style={{
+              borderRadius: 100,
+              marginTop: 10,
+            }}
+            contentStyle={{ padding: 7.5 }}
+            onPress={() => {
+              onPress(categories[Math.floor(Math.random() * categories.length)]);
+            }}
+          >
+            {t("room.randomize")}
+          </Button>
+        </View>
       </View>
     </SafeIOSContainer>
   );

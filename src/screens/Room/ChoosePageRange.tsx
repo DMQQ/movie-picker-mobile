@@ -83,7 +83,8 @@ export default function ChoosePageRange({ navigation }: any) {
             </Skeleton>
           )}
         </View>
-
+      </View>
+      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
         <Button
           mode="contained"
           style={{

@@ -35,13 +35,7 @@ export default (props) => (
     }}
   >
     <Stack.Screen name="FortuneWheel" component={FortuneWheel} />
-    <Stack.Screen
-      name="SectionSelector"
-      component={SectionSelector}
-      options={{
-        presentation: "modal",
-      }}
-    />
+    <Stack.Screen name="SectionSelector" component={SectionSelector} />
   </Stack.Navigator>
 );
 

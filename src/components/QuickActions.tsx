@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { IconButton, Text, TouchableRipple } from "react-native-paper";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
-import { addToGroup } from "../redux/favourites/favourites";
+import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { Movie } from "../../types";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 
@@ -14,27 +14,36 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
   const { groups } = useAppSelector((state) => state.favourite);
   const t = useTranslation();
 
-  const onPress = (groupId: "1" | "2" | "999") => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (!props.movie) return;
-    dispatch(
-      addToGroup({
-        groupId: groupId,
-        item: {
-          id: props?.movie?.id,
-          imageUrl: props?.movie?.poster_path,
-          type: props?.movie?.type || (props.movie?.title ? "movie" : "tv"),
-        },
-      })
-    );
-  };
-
   const isInGroup = (groupId: "1" | "2" | "999") => {
     const group = groups.find((g) => g?.id === groupId);
 
     if (!group) return false;
 
     return group.movies.some((m) => m?.id === props?.movie?.id);
+  };
+
+  const onPress = (groupId: "1" | "2" | "999") => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (!props.movie) return;
+
+    if (!isInGroup(groupId))
+      dispatch(
+        addToGroup({
+          groupId: groupId,
+          item: {
+            id: props?.movie?.id,
+            imageUrl: props?.movie?.poster_path,
+            type: props?.movie?.type || (props.movie?.title ? "movie" : "tv"),
+          },
+        })
+      );
+    else
+      dispatch(
+        removeFromGroup({
+          groupId: groupId,
+          movieId: props?.movie?.id,
+        })
+      );
   };
 
   return (

@@ -12,8 +12,6 @@ import QuickActions from "../QuickActions";
 import CustomFavourite from "../Favourite";
 import Cast from "./Cast";
 
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
-
 export default function MovieDetails({
   movie,
   providers,
@@ -35,87 +33,89 @@ export default function MovieDetails({
   ].filter((v) => v !== undefined && v !== "") as any;
 
   return (
-    <AnimatedBlurView
-      blurReductionFactor={0.25}
-      intensity={Platform.OS === "ios" ? 30 : 100}
-      tint="dark"
-      style={{
-        padding: 15,
-        backgroundColor: `rgba(0,0,0,${Platform.OS === "ios" ? 0.5 : 0.8})`, // Adjust opacity for glass effect
-        width,
-        overflow: "hidden",
-      }}
-    >
-      <Text
-        numberOfLines={2}
+    <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{ flex: 1 }}>
+      <BlurView
+        blurReductionFactor={0.25}
+        intensity={Platform.OS === "ios" ? 30 : 100}
+        tint="dark"
         style={{
-          fontSize: 55,
-          fontFamily: "Bebas",
-          lineHeight: 55,
-          marginTop: 10,
+          padding: 15,
+          backgroundColor: `rgba(0,0,0,${Platform.OS === "ios" ? 0.5 : 0.8})`, // Adjust opacity for glass effect
+          width,
+          overflow: "hidden",
         }}
       >
-        {movie?.title || movie?.name}
-      </Text>
-
-      {movie?.tagline && (
         <Text
+          numberOfLines={2}
           style={{
-            fontSize: 15,
-            color: "rgba(255,255,255,0.95)",
-            marginBottom: 10,
+            fontSize: 55,
+            fontFamily: "Bebas",
+            lineHeight: 55,
+            marginTop: 10,
           }}
         >
-          {movie?.tagline}
+          {movie?.title || movie?.name}
         </Text>
-      )}
 
-      <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 15 }}>{data.join(" | ")}</Text>
-
-      <View style={{ paddingVertical: 30 }}>
-        <QuickActions movie={movie}>
-          <CustomFavourite movie={movie} />
-        </QuickActions>
-      </View>
-
-      {movie?.overview && (
-        <Text
-          style={{
-            fontSize: 19,
-            color: "rgba(255,255,255,0.95)",
-          }}
-        >
-          {movie?.overview}
-        </Text>
-      )}
-
-      <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
-        {movie?.runtime && (
-          <Text style={{ fontSize: 15, color: "rgba(255,255,255,0.6)" }}>
-            {t("movie.details.runtime")}: {movie?.runtime} {t("movie.details.minutes")}
+        {movie?.tagline && (
+          <Text
+            style={{
+              fontSize: 15,
+              color: "rgba(255,255,255,0.95)",
+              marginBottom: 10,
+            }}
+          >
+            {movie?.tagline}
           </Text>
         )}
 
-        <Text style={{ fontSize: 15, color: "rgba(255,255,255,0.6)" }}>
-          {t("movie.details.status")}: {movie?.status}
-        </Text>
-      </View>
+        <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 15 }}>{data.join(" | ")}</Text>
 
-      <WatchProviders providers={providers || []} />
+        <View style={{ paddingVertical: 30 }}>
+          <QuickActions movie={movie}>
+            <CustomFavourite movie={movie} />
+          </QuickActions>
+        </View>
 
-      <LastEpisodeToAir lastEpisode={movie?.last_episode_to_air || {}} />
+        {movie?.overview && (
+          <Text
+            style={{
+              fontSize: 19,
+              color: "rgba(255,255,255,0.95)",
+            }}
+          >
+            {movie?.overview}
+          </Text>
+        )}
 
-      <Seasons seasons={(movie?.seasons as any) || []} />
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+          {movie?.runtime && (
+            <Text style={{ fontSize: 15, color: "rgba(255,255,255,0.6)" }}>
+              {t("movie.details.runtime")}: {movie?.runtime} {t("movie.details.minutes")}
+            </Text>
+          )}
 
-      {/* <MovieReviews movieId={movie?.id} type={type as "movie" | "tv"} /> */}
+          <Text style={{ fontSize: 15, color: "rgba(255,255,255,0.6)" }}>
+            {t("movie.details.status")}: {movie?.status}
+          </Text>
+        </View>
 
-      <Cast id={movie?.id} type={type as "movie" | "tv"} />
+        <WatchProviders providers={providers || []} />
 
-      <Similar id={movie?.id} type={type as "movie" | "tv"} />
+        <LastEpisodeToAir lastEpisode={movie?.last_episode_to_air || {}} />
 
-      <View style={{ padding: 20, justifyContent: "center", height: 100 }}>
-        <Text style={{ color: "gray", textAlign: "center" }}>{t("global.attributions")}</Text>
-      </View>
-    </AnimatedBlurView>
+        <Seasons seasons={(movie?.seasons as any) || []} />
+
+        {/* <MovieReviews movieId={movie?.id} type={type as "movie" | "tv"} /> */}
+
+        <Cast id={movie?.id} type={type as "movie" | "tv"} />
+
+        <Similar id={movie?.id} type={type as "movie" | "tv"} />
+
+        <View style={{ padding: 20, justifyContent: "center", height: 100 }}>
+          <Text style={{ color: "gray", textAlign: "center" }}>{t("global.attributions")}</Text>
+        </View>
+      </BlurView>
+    </Animated.View>
   );
 }

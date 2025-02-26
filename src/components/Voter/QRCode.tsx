@@ -2,6 +2,7 @@ import { Share, TouchableOpacity, View } from "react-native";
 import { Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import * as Clipboard from "expo-clipboard";
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function QRCodeComponent(props: { sessionId: string; type: string; safetyCode: string; size: number }) {
   const theme = useTheme();
@@ -24,6 +25,9 @@ export default function QRCodeComponent(props: { sessionId: string; type: string
         />
       </View>
       <Button
+        style={{ marginTop: 15 }}
+        contentStyle={{ flexDirection: "row-reverse" }}
+        icon={() => <FontAwesome name="share" size={24} color={MD2DarkTheme.colors.primary} />}
         onLongPress={async () => {
           Share.share({
             message: "Hey! Join my room on Movie Picker: " + props.sessionId,

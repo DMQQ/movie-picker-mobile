@@ -20,7 +20,7 @@ export default function Group({ navigation, route }: any) {
   const [match, setMatch] = useState<(typeof groups)[number]["movies"][number] | undefined>(undefined);
 
   return (
-    <View style={{ flex: 1, paddingBottom: 15, paddingVertical: 15 }}>
+    <View style={{ flex: 1 }}>
       <PageHeading title={data?.name! || ""} />
       <View style={{ flex: 1, paddingHorizontal: 15 }}>
         <TilesList
@@ -44,7 +44,7 @@ export default function Group({ navigation, route }: any) {
         />
       )}
 
-      <View style={{ padding: 15 }}>
+      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
         <Button
           mode="contained"
           style={{ borderRadius: 100 }}
