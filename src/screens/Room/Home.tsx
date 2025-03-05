@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import { Text } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import SwipeTile from "../../components/Movie/SwipeTiles";
@@ -13,7 +13,6 @@ import useTranslation from "../../service/useTranslation";
 import { FancySpinner } from "../../components/FancySpinner";
 import { useAppSelector } from "../../redux/store";
 import { throttle } from "../../utils/throttle";
-import { Image } from "expo-image";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -47,7 +46,7 @@ export default function Home({ route, navigation }: any) {
   }, [route?.params?.roomId]);
 
   const handleNavigateDetails = (card: Movie) => {
-    Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path, { cachePolicy: "memory-disk" });
+    Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path);
     navigation.navigate("MovieDetails", {
       id: card.id,
       type: route.params?.type || "movie",

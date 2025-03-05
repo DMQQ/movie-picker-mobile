@@ -1,6 +1,6 @@
-import { FlatList, Image, View, StyleSheet } from "react-native";
+import { FlatList, View, StyleSheet } from "react-native";
 import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
 import Thumbnail from "../Thumbnail";
 import layout from "../../utils/layout";

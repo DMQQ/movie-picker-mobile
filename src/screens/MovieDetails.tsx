@@ -86,8 +86,6 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
         <Animated.View style={imageStyle}>
           <Thumbnail
             size={500}
-            priority={"high"}
-            contentFit={"cover"}
             container={[
               {
                 height: IMG_HEIGHT,
@@ -109,8 +107,6 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
       <View
         style={{
           position: "absolute",
-          top: 10,
-          left: 10,
           zIndex: 100,
         }}
       >

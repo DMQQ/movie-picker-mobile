@@ -1,5 +1,5 @@
 import React, { forwardRef, memo, useEffect, useImperativeHandle } from "react";
-import { View, StyleSheet, Dimensions, StyleProp, ViewStyle } from "react-native";
+import { View, StyleSheet, Dimensions, StyleProp, ViewStyle, Image } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
@@ -76,11 +76,12 @@ const Segment = memo(({ item, index, segmentAngle, wheelSize, startAngle }: Segm
         alignItems: "center",
       }}
     >
-      <Thumbnail
-        path={item.poster_path}
-        size={200}
-        contentFit="contain"
-        container={{
+      <Image
+        source={{
+          uri: "https://image.tmdb.org/t/p/w200" + item.poster_path,
+        }}
+        resizeMode="contain"
+        style={{
           width: imageSize,
           height: imageSize,
           backgroundColor: "transparent",
@@ -378,9 +379,7 @@ const styles = StyleSheet.create({
   },
   center: {
     position: "absolute",
-    width: 100,
-    left: "50%",
-    marginLeft: -50,
+    width: "100%",
     alignItems: "center",
     zIndex: 1,
     transform: [{ translateY: -50 }],

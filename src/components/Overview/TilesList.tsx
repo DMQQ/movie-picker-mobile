@@ -35,6 +35,7 @@ export default function TilesList<T>(props: TileListProps) {
       initialNumToRender={6}
       renderItem={({ item: match, index }) => (
         <MatchTile
+          posterSize={props.data?.length % 3 !== 0 && index === props.data.length - 1 ? 500 : props?.data?.length % 2 !== 0 ? 300 : 200}
           match={match}
           type={props.useMovieType ? match.type || (match?.name ? "tv" : "movie") : type}
           navigation={navigation}

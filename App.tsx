@@ -181,7 +181,7 @@ const Navigator = () => {
             headerShown: false,
 
             ...(Platform.OS === "android" && {
-              animation: "fade_from_bottom",
+              animation: "simple_push",
             }),
           }}
         >
@@ -206,7 +206,6 @@ const Navigator = () => {
               headerTransparent: true,
               headerTitleAlign: "center",
               headerTitle: "",
-
               title: "",
             }}
             initialParams={{

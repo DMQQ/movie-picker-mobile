@@ -1,4 +1,4 @@
-import { Pressable, View, useWindowDimensions } from "react-native";
+import { Platform, Pressable, View, useWindowDimensions } from "react-native";
 import { Icon, TouchableRipple } from "react-native-paper";
 
 export default function TabBar(props: { likeCard: () => void; removeCard: () => void; openInfo: () => void; zIndex: number }) {
@@ -8,7 +8,7 @@ export default function TabBar(props: { likeCard: () => void; removeCard: () => 
       style={[
         {
           position: "absolute",
-          bottom: -30,
+          bottom: Platform.OS === "ios" ? -30 : 20,
           left: 10,
           width: width,
           flexDirection: "row",

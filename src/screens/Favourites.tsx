@@ -1,4 +1,4 @@
-import { View, Alert, FlatList, Dimensions } from "react-native";
+import { View, Alert, FlatList, Dimensions, ImageBackground } from "react-native";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import { FAB, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
@@ -8,7 +8,6 @@ import { createGroup } from "../redux/favourites/favourites";
 import { AntDesign } from "@expo/vector-icons";
 import PageHeading from "../components/PageHeading";
 
-import { Image, ImageBackground } from "expo-image";
 import Thumbnail from "../components/Thumbnail";
 
 export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
@@ -57,7 +56,6 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
                       {item.movies.slice(0, 4).map((m) => (
                         <Thumbnail
                           key={m.id}
-                          contentFit="cover"
                           path={m.imageUrl}
                           size={200}
                           container={{

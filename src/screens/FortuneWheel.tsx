@@ -27,7 +27,7 @@ const AnimatedBackgroundImage = Animated.createAnimatedComponent(ImageBackground
 
 const Stack = createNativeStackNavigator<any>();
 
-export default (props) => (
+export default (props: any) => (
   <Stack.Navigator
     initialRouteName="FortuneWheel"
     screenOptions={{
@@ -124,6 +124,13 @@ function FortuneWheel({ navigation, route }: any) {
 
   const t = useTranslation();
 
+  const subHeading = [
+    `${data?.vote_average?.toFixed(2)}/10`,
+    data?.release_date || data?.first_air_date,
+    (data?.title || data?.name) === (data?.original_title || data?.original_name) ? "" : data?.original_title || data?.original_name,
+    ...(data?.genres || [])?.map((g: any) => g.name),
+  ].filter((v) => v !== undefined && v !== "") as any;
+
   return (
     <SafeIOSContainer style={{ overflow: "hidden" }}>
       {!selectedItem && (
@@ -133,8 +140,8 @@ function FortuneWheel({ navigation, route }: any) {
       )}
       {selectedItem && selectedItem?.id === data?.id ? (
         <AnimatedBackgroundImage
-          entering={FadeInDown.duration(350)}
-          exiting={FadeOutDown.duration(350)}
+          entering={FadeInDown.duration(200)}
+          exiting={FadeOutDown.duration(200)}
           style={{
             width,
             height: height,
@@ -168,25 +175,21 @@ function FortuneWheel({ navigation, route }: any) {
           </View>
 
           <LinearGradient
-            style={{ flex: 1, padding: 10, position: "absolute", top: 0, width, height, justifyContent: "flex-end" }}
+            style={{ flex: 1, position: "absolute", top: 0, width, height, justifyContent: "flex-end" }}
             colors={["transparent", "rgba(0,0,0,0.5)", "#000000"]}
           >
-            <View style={{ marginBottom: Platform.OS === "ios" ? 80 : 10, padding: 10, gap: 0 }}>
-              <Text style={{ fontSize: 50, fontFamily: "Bebas", lineHeight: 50 }}>{data?.title || data?.name}</Text>
-
-              <Text style={{ color: "rgba(255,255,255,0.8)", marginBottom: 10 }}>
-                {data?.release_date || data?.first_air_date} |{" "}
-                {(data?.title || data?.name) === (data?.original_title || data?.original_name)
-                  ? ""
-                  : data?.original_title || data?.original_name}{" "}
-                | {(data?.genres as { id: number; name: string }[]).map((d) => d.name)?.join(" | ")}
+            <View style={{ marginBottom: Platform.OS === "ios" ? 80 : 10, padding: 15, gap: 0 }}>
+              <Text numberOfLines={2} style={{ fontSize: 55, fontFamily: "Bebas", lineHeight: 55, marginTop: 10 }}>
+                {data?.title || data?.name}
               </Text>
 
-              <Text style={{ fontSize: 16 }} numberOfLines={10}>
+              <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 15, marginBottom: 10 }}>{subHeading.join(" | ")}</Text>
+
+              <Text style={{ fontSize: 19, color: "rgba(255,255,255,0.95)" }} numberOfLines={8}>
                 {data?.overview}
               </Text>
 
-              <WatchProviders hideLabel providers={providers} style={{ marginTop: 0 }} />
+              <WatchProviders hideLabel providers={providers} style={{ marginVertical: 5, marginTop: 5 }} />
 
               <View style={{ flexDirection: "row", gap: 10, alignItems: "center", marginTop: 10 }}>
                 <Button
@@ -241,9 +244,9 @@ function FortuneWheel({ navigation, route }: any) {
         </Animated.View>
       )}
 
-      {selectedCards.length > 0 && (
+      {selectedCards && (
         <FortuneWheelComponent
-          ref={wheelRef}
+          ref={wheelRef as any}
           style={{}}
           key={signatures}
           onSpinStart={() => {

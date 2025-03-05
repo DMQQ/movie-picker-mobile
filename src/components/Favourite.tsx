@@ -48,7 +48,7 @@ const ModalExitingTransition = () => {
 };
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  if (Platform.OS === "android") return <Portal>{children}</Portal>;
+  if (Platform.OS === "android") return <Portal.Host>{children}</Portal.Host>;
   return <Fragment>{children}</Fragment>;
 };
 
@@ -58,8 +58,6 @@ export default function CustomFavourite({ movie, showLabel = true }: { movie: Mo
   const [visible, setVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const t = useTranslation();
-
-  if (!movie) return null;
 
   const isFavorite = favourites?.groups?.some((group) => group.movies.some((m) => m?.id === movie?.id));
 
@@ -95,6 +93,8 @@ export default function CustomFavourite({ movie, showLabel = true }: { movie: Mo
 
     handleClose();
   };
+
+  if (!movie) return null;
 
   return (
     <View>

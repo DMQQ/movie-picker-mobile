@@ -2,7 +2,18 @@ import { TouchableRipple } from "react-native-paper";
 import { Movie } from "../../../types";
 import Thumbnail from "../Thumbnail";
 
-const MatchTile = ({ match, type: _type, navigation }: { match: Movie; type: string; navigation: any; index: number }) => {
+const MatchTile = ({
+  match,
+  type: _type,
+  navigation,
+  posterSize = 200,
+}: {
+  match: Movie;
+  type: string;
+  navigation: any;
+  index: number;
+  posterSize?: number;
+}) => {
   const type = (match?.type || _type).includes("movie") ? "movie" : "tv";
 
   return (
@@ -20,6 +31,7 @@ const MatchTile = ({ match, type: _type, navigation }: { match: Movie; type: str
       }
     >
       <Thumbnail
+        size={posterSize}
         path={match.poster_path}
         style={{
           width: "100%",

@@ -118,7 +118,7 @@ export default function Poster(props: {
         ]}
       />
       <Thumbnail
-        size={300}
+        size={500}
         style={[
           imageDimensions,
           {

@@ -25,6 +25,7 @@ import { useGetAllProvidersQuery, useGetGenresQuery } from "../../redux/movie/mo
 import { throttle } from "../../utils/throttle";
 import { CommonActions } from "@react-navigation/native";
 import PageHeading from "../../components/PageHeading";
+import { Pressable } from "react-native-gesture-handler";
 
 const scaleTitle = (title: string, size = 30) => {
   if (title.length > 30) return size * 0.75;
@@ -466,6 +467,7 @@ function Results({ navigation }: any) {
       <View
         style={{
           padding: 10,
+          height: 80,
           flexDirection: "row",
           alignItems: "center",
           paddingVertical: 10,
@@ -473,6 +475,7 @@ function Results({ navigation }: any) {
         }}
       >
         <IconButton
+          style={{ position: "absolute", left: 10, top: 10 }}
           icon="chevron-left"
           onPress={() =>
             navigation.dispatch(
@@ -484,7 +487,7 @@ function Results({ navigation }: any) {
           }
           size={28}
         />
-        <Text style={{ fontSize: 30, fontFamily: "Bebas", width: "100%" }}>{t("voter.overview.title")} 🎬</Text>
+        <Text style={{ fontSize: 30, fontFamily: "Bebas", width: "100%", textAlign: "center" }}>{t("voter.overview.title")} 🎬</Text>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -492,14 +495,24 @@ function Results({ navigation }: any) {
       >
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: "row", gap: 15 }}>
-            <Image
-              source={{ uri: "https://image.tmdb.org/t/p/w500" + card?.poster_path }}
-              style={{
-                width: (Dimensions.get("window").width - 30) / 2 - 60,
-                height: 215,
-                borderRadius: 10,
+            <Pressable
+              onPress={() => {
+                navigation.navigate("MovieDetails", {
+                  id: card?.id,
+                  type: card?.title ? "movie" : "tv",
+                  img: card?.poster_path,
+                });
               }}
-            />
+            >
+              <Image
+                source={{ uri: "https://image.tmdb.org/t/p/w500" + card?.poster_path }}
+                style={{
+                  width: (Dimensions.get("window").width - 30) / 2 - 60,
+                  height: 215,
+                  borderRadius: 10,
+                }}
+              />
+            </Pressable>
             <View style={{ flex: 1, gap: 10, justifyContent: "space-between", paddingVertical: 15 }}>
               <Text
                 style={{
@@ -536,7 +549,7 @@ function Results({ navigation }: any) {
               >
                 <View style={{ flexDirection: "row", gap: 15 }}>
                   <Image
-                    source={{ uri: "https://image.tmdb.org/t/p/w500" + item.movie.poster_path }}
+                    source={{ uri: "https://image.tmdb.org/t/p/w200" + item.movie.poster_path }}
                     style={{
                       width: 80,
                       height: 120,

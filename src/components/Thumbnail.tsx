@@ -1,25 +1,28 @@
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-import { Image, ImageProps } from "expo-image";
+import { StyleProp, StyleSheet, View, ViewStyle, Image, ImageProps } from "react-native";
 import { MD2DarkTheme } from "react-native-paper";
-
-const blurhash =
-  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function Thumbnail({
   path,
   size = 200,
   container,
+  priority,
   ...rest
-}: { path: string; size?: number; container?: StyleProp<ViewStyle> } & ImageProps) {
+}: { path: string; size?: number; container?: StyleProp<ViewStyle>; priority?: "low" | "high" | "normal" } & ImageProps) {
+  if (!path) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }, container]}>
+        <AntDesign name="picture" size={size} color={MD2DarkTheme.colors.placeholder} />
+      </View>
+    );
+  }
+
   return (
     <View style={[styles.container, container]}>
       <Image
-        contentFit="cover"
-        placeholder={blurhash}
-        transition={400}
-        cachePolicy={"memory-disk"}
+        resizeMode={"cover"}
         {...rest}
-        source={{ uri: `https://image.tmdb.org/t/p/w${size}` + path }}
+        source={{ uri: `https://image.tmdb.org/t/p/w${size}` + path, cache: "force-cache" }}
         style={[styles.image, rest.style]}
       />
     </View>

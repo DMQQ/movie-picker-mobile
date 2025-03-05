@@ -1,4 +1,4 @@
-import { Dimensions, Pressable, StyleSheet, TouchableHighlight, View, VirtualizedList } from "react-native";
+import { Dimensions, Pressable, StyleSheet, TouchableHighlight, View, VirtualizedList, ImageBackground, Image } from "react-native";
 import { Avatar, MD2DarkTheme, Text } from "react-native-paper";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../redux/store";
@@ -13,8 +13,6 @@ import useTranslation from "../service/useTranslation";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import NoConnectionError from "../components/NoConnectionError";
 import Thumbnail from "../components/Thumbnail";
-
-import { ImageBackground, Image } from "expo-image";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -132,7 +130,6 @@ const FeaturedSection = memo(
         source={{
           uri: "https://image.tmdb.org/t/p/w500" + featured?.poster_path,
         }}
-        contentFit="cover"
       >
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
           <Pressable onPress={onPress}>
@@ -283,7 +280,7 @@ const Section = memo(({ group }: SectionProps) => {
     ({ item }: { item: Movie & { type: string } }) => (
       <Pressable
         onPress={async () => {
-          Image.prefetch("https://image.tmdb.org/t/p/w500" + item.poster_path, { cachePolicy: "memory-disk" });
+          Image.prefetch("https://image.tmdb.org/t/p/w500" + item.poster_path);
           navigation.navigate("MovieDetails", {
             id: item.id,
             type: item.type,

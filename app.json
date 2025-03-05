@@ -3,7 +3,7 @@
     "newArchEnabled": true,
     "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "1.1.1",
+    "version": "1.1.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -25,15 +25,16 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "icon": "./assets/icon.png",
-      "buildNumber": "20252102",
+      "buildNumber": "20250503",
       "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
-        "UIViewControllerBasedStatusBarAppearance": true
+        "UIViewControllerBasedStatusBarAppearance": true,
+        "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "pl.dmq.movie-picker",
-      "associatedDomains": ["applinks:movie.dmqq.dev"]
+      "associatedDomains": ["applinks:movie.dmqq.dev", "applinks:movie.dmqq.dev"]
     },
     "android": {
       "adaptiveIcon": {
@@ -42,7 +43,7 @@
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 20251702,
+      "versionCode": 20250503,
       "intentFilters": [
         {
           "action": "VIEW",
