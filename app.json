@@ -25,7 +25,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "icon": "./assets/icon.png",
-      "buildNumber": "20250703",
+      "buildNumber": "20250803",
       "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",

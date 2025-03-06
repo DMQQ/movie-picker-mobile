@@ -1,24 +1,21 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { IconButton, Text, TouchableRipple } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { Movie } from "../../types";
 import { useAppDispatch, useAppSelector } from "../redux/store";
-
 import * as Haptics from "expo-haptics";
 import useTranslation from "../service/useTranslation";
 import { ReactNode } from "react";
 
-export default function QuickActions(props: { movie: Movie; children?: ReactNode }) {
+export default function QuickActions(props: { movie: Movie; children?: ReactNode; hideLabels?: boolean }) {
   const dispatch = useAppDispatch();
   const { groups } = useAppSelector((state) => state.favourite);
   const t = useTranslation();
 
   const isInGroup = (groupId: "1" | "2" | "999") => {
     const group = groups.find((g) => g?.id === groupId);
-
     if (!group) return false;
-
     return group.movies.some((m) => m?.id === props?.movie?.id);
   };
 
@@ -50,27 +47,32 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
     <View style={styles.container}>
       <View style={styles.iconContainer}>
         <TouchableOpacity style={[styles.iconButton]} onPress={() => onPress("2")}>
-          <>
-            <AntDesign name={isInGroup("2") ? "clockcircle" : "clockcircleo"} size={35} color="#fff" />
-
-            <Text style={styles.iconText}>{t("quick-actions.watch-later")}</Text>
-          </>
+          <AntDesign name={isInGroup("2") ? "clockcircle" : "clockcircleo"} size={35} color="#fff" />
+          {!props?.hideLabels && (
+            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.iconText}>
+              {t("quick-actions.watch-later")}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
       <View style={styles.iconContainer}>
         <TouchableOpacity style={styles.iconButton} onPress={() => onPress("1")}>
-          <>
-            <FontAwesome name={isInGroup("1") ? "star" : "star-o"} size={35} color="#fff" />
-            <Text style={styles.iconText}>{t("quick-actions.favourite")}</Text>
-          </>
+          <FontAwesome name={isInGroup("1") ? "star" : "star-o"} size={35} color="#fff" />
+          {!props?.hideLabels && (
+            <Text numberOfLines={1} ellipsizeMode="clip" style={styles.iconText}>
+              {t("quick-actions.favourite")}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
       <View style={styles.iconContainer}>
         <TouchableOpacity style={styles.iconButton} onPress={() => onPress("999")}>
-          <>
-            <AntDesign name={isInGroup("999") ? "eye" : "eyeo"} size={35} color="#fff" />
-            <Text style={styles.iconText}>{t("quick-actions.watched")}</Text>
-          </>
+          <AntDesign name={isInGroup("999") ? "eye" : "eyeo"} size={35} color="#fff" />
+          {!props?.hideLabels && (
+            <Text numberOfLines={1} ellipsizeMode="clip" style={styles.iconText}>
+              {t("quick-actions.watched")}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
       {props.children}
@@ -85,7 +87,6 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 10,
   },
-
   iconButton: {
     justifyContent: "center",
     alignItems: "center",
@@ -96,6 +97,9 @@ const styles = StyleSheet.create({
   iconText: {
     fontFamily: "Bebas",
     fontSize: 20,
+    textAlign: "center",
+    width: "100%",
+    overflow: "hidden",
   },
   iconContainer: {
     flex: 1,

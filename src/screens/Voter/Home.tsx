@@ -239,7 +239,7 @@ export default function Home({ navigation, route }: any) {
               </Text>
             </View>
             <View style={{ flex: 1, marginTop: 10 }}>
-              <View style={{ flexDirection: "row", gap: 15 }}>
+              <View style={{ flexDirection: "row", gap: 10 }}>
                 <TouchableOpacity
                   disabled={typeof card?.id === "undefined"}
                   activeOpacity={0.9}
@@ -263,7 +263,7 @@ export default function Home({ navigation, route }: any) {
                     resizeMode="contain"
                   />
                 </TouchableOpacity>
-                <View style={{ flex: 1, gap: 10, paddingVertical: 10, justifyContent: "space-between" }}>
+                <View style={{ flex: 1, gap: 10, justifyContent: "space-between" }}>
                   <View>
                     <Text
                       style={{
@@ -280,7 +280,11 @@ export default function Home({ navigation, route }: any) {
                     </Text>
                   </View>
 
-                  <QuickActions movie={card} />
+                  <View style={{ width: "100%" }}>
+                    <QuickActions movie={card}>
+                      <View style={{ height: 100 }} />
+                    </QuickActions>
+                  </View>
                 </View>
               </View>
               <Animated.Text
@@ -475,7 +479,7 @@ function Results({ navigation }: any) {
         }}
       >
         <IconButton
-          style={{ position: "absolute", left: 10, top: 10 }}
+          style={{ position: "absolute", left: 10, top: 10, zIndex: 100 }}
           icon="chevron-left"
           onPress={() =>
             navigation.dispatch(
