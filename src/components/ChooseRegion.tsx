@@ -73,11 +73,13 @@ const ChooseRegion = () => {
       const regionalization = await AsyncStorage.getItem("regionalization");
 
       if (regionalization) {
-        const headers = new Map(JSON.parse(regionalization));
-        const region = regions.find((region) => region.code === headers.get("x-user-region"));
+        const headers = JSON.parse(regionalization) as Record<string, string>;
+        const region = regions.find((region) => region.code === headers["x-user-region"]);
 
         if (region) {
           setSelectedRegion(region);
+
+          console.log("Region set to", region);
         }
       }
     })();
@@ -86,6 +88,7 @@ const ChooseRegion = () => {
   const onSettingsChange = async (settings: any) => {
     try {
       await AsyncStorage.setItem("regionalization", JSON.stringify(settings));
+      console.log("settings", settings);
 
       await reloadAsync();
     } catch (error) {
