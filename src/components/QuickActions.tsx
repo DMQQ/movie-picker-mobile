@@ -91,10 +91,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     overflow: "hidden",
+    flex: 1,
   },
   iconText: {
     fontFamily: "Bebas",
     fontSize: 20,
   },
-  iconContainer: {},
+  iconContainer: {
+    flex: 1,
+  },
 });

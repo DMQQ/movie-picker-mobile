@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.6)",
 
     ...StyleSheet.absoluteFillObject,
+    height: Dimensions.get("screen").height,
     zIndex: 1000,
   },
   matchText: {

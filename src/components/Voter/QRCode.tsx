@@ -28,15 +28,12 @@ export default function QRCodeComponent(props: { sessionId: string; type: string
         style={{ marginTop: 15 }}
         contentStyle={{ flexDirection: "row-reverse" }}
         icon={() => <FontAwesome name="share" size={24} color={MD2DarkTheme.colors.primary} />}
-        onLongPress={async () => {
+        onPress={async () => {
           Share.share({
             message: "Hey! Join my room on Movie Picker: " + props.sessionId,
             title: "Join my room on Movie Picker",
             url: "https://movie.dmqq.dev/voter/" + props.sessionId.toUpperCase,
           });
-        }}
-        onPress={async () => {
-          await Clipboard.setStringAsync("https://movie.dmqq.dev/voter/" + props.sessionId.toUpperCase);
         }}
       >
         <Text style={{ fontSize: 25, letterSpacing: 1, color: theme.colors.primary }}>{props.sessionId}</Text>

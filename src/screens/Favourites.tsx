@@ -1,7 +1,7 @@
-import { View, Alert, FlatList, Dimensions, ImageBackground } from "react-native";
+import { View, Alert, FlatList, Dimensions, ImageBackground, Keyboard } from "react-native";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import SafeIOSContainer from "../components/SafeIOSContainer";
-import { FAB, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import { Button, Dialog, FAB, IconButton, MD2DarkTheme, Text, TextInput, TouchableRipple } from "react-native-paper";
 import { ScreenProps } from "./types";
 import useTranslation from "../service/useTranslation";
 import { createGroup } from "../redux/favourites/favourites";
@@ -9,11 +9,15 @@ import { AntDesign } from "@expo/vector-icons";
 import PageHeading from "../components/PageHeading";
 
 import Thumbnail from "../components/Thumbnail";
+import { useState } from "react";
 
 export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const { groups } = useAppSelector((state) => state.favourite);
   const dispatch = useAppDispatch();
   const t = useTranslation();
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [text, setText] = useState("");
 
   return (
     <SafeIOSContainer style={{ marginTop: 0 }}>
@@ -81,16 +85,42 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
       <FAB
         style={{ position: "absolute", margin: 16, right: 5, bottom: 5, backgroundColor: MD2DarkTheme.colors.primary }}
         icon="plus"
-        onPress={() =>
-          Alert.prompt("Create group", "", [
-            {
-              onPress: (text) => {
-                if (text) dispatch(createGroup(text));
-              },
-            },
-          ])
-        }
+        onPress={() => {
+          setModalVisible(true);
+        }}
       />
+
+      <Dialog
+        dismissableBackButton
+        visible={isModalVisible}
+        onDismiss={() => setModalVisible(false)}
+        style={{ backgroundColor: MD2DarkTheme.colors.surface }}
+      >
+        <Dialog.Title>{t("favourites.create.title")}</Dialog.Title>
+        <Dialog.Content>
+          <TextInput
+            onSubmitEditing={() => Keyboard.dismiss()}
+            value={text}
+            onChangeText={setText}
+            label={t("favourites.create.name")}
+            mode="outlined"
+          />
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={() => setModalVisible(false)}> {t("favourites.create.cancel")}</Button>
+          <Button
+            onPress={() => {
+              if (text) {
+                dispatch(createGroup(text.trim()));
+                setModalVisible(false);
+                setText("");
+              }
+            }}
+          >
+            {t("favourites.create.create")}
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
     </SafeIOSContainer>
   );
 }

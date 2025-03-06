@@ -94,7 +94,13 @@
   },
   "favourites": {
     "title": "Ulubione",
-    "empty": "Jeszcze nie dodałeś żadnych filmów do ulubionych"
+    "empty": "Jeszcze nie dodałeś żadnych filmów do ulubionych",
+    "create": {
+      "title": "Stwórz nową listę",
+      "name": "Nazwa listy",
+      "create": "Dodaj",
+      "cancel": "Anuluj"
+    }
   },
   "global": {
     "justwatch": "Dostępność filmów wspierana przez JustWatch",

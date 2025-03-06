@@ -94,7 +94,13 @@
   },
   "favourites": {
     "title": "Favorites",
-    "empty": "You haven't added any movies to your favorites yet"
+    "empty": "You haven't added any movies to your favorites yet",
+    "create": {
+      "title": "Create a new list",
+      "name": "List name",
+      "create": "Create",
+      "cancel": "Cancel"
+    }
   },
 
   "global": {

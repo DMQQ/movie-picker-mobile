@@ -89,7 +89,7 @@ export default function QRCodePage({ navigation }: any) {
         <Text
           style={{
             fontSize: 16,
-            color: "rgba(255,255,255,0.9)",
+            color: "#fff",
           }}
         >
           {t("room.qr-subtitle")}
@@ -180,12 +180,8 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
 
       <Button
         icon={() => <FontAwesome name="share" size={24} color={MD2DarkTheme.colors.primary} />}
-        onLongPress={async () => {
-          shareCode(code);
-        }}
         onPress={async () => {
-          await Clipboard.setStringAsync(code);
-          ToastAndroid.show("Copied to clipboard", ToastAndroid.SHORT);
+          shareCode(code);
         }}
         contentStyle={{ flexDirection: "row-reverse" }}
         style={{ marginTop: 15 }}

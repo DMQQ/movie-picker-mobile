@@ -85,7 +85,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
       >
         <Animated.View style={imageStyle}>
           <Thumbnail
-            size={500}
+            size={780}
             container={[
               {
                 height: IMG_HEIGHT,

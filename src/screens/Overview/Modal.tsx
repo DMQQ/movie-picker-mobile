@@ -142,7 +142,7 @@ export default function Modal({ match, onClose, styles }: any) {
             </Animated.View>
           )}
           <ScratchCard
-            imageUrl={`https://image.tmdb.org/t/p/w500${match.poster_path}`}
+            imageUrl={`https://image.tmdb.org/t/p/w780${match.poster_path}`}
             style={{
               width: Dimensions.get("screen").width - 30 - 15,
               height: Dimensions.get("window").height / 1.5 - 50,

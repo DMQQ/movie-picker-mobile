@@ -73,7 +73,9 @@ export default function MovieDetails({
 
         <View style={{ paddingVertical: 30 }}>
           <QuickActions movie={movie}>
-            <CustomFavourite movie={movie} />
+            <View style={{ flex: 1 }}>
+              <CustomFavourite movie={movie} />
+            </View>
           </QuickActions>
         </View>
 

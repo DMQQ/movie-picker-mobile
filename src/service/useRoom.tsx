@@ -33,7 +33,7 @@ export default function useRoom(room: string) {
 
     const handleMovies = async (_cards: { movies: Movie[] }) => {
       setCards(_cards.movies);
-      await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w500" + card.poster_path)));
+      await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w780" + card.poster_path)));
     };
 
     // Setup listeners once

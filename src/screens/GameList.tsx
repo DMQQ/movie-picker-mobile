@@ -12,6 +12,7 @@ import SwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
 import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
 import PageHeading from "../components/PageHeading";
+import { useGetCategoriesQuery } from "../redux/movie/movieApi";
 // import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
 
 const { width } = Dimensions.get("screen");
@@ -32,7 +33,7 @@ const Animations = [<SwiperAnimation />, <VoterAnimation />, <FortuneWheelAnimat
 
 const GameCard = ({ title, description, onPress, beta, players, duration, index }: GameCardProps) => {
   const scale = useRef(new Animated.Value(1)).current;
-  const theme = useTheme();
+  useGetCategoriesQuery({});
 
   const onPressIn = () => {
     Animated.spring(scale, {

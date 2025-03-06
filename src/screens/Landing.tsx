@@ -128,7 +128,7 @@ const FeaturedSection = memo(
       <ImageBackground
         style={styles.featuredImage}
         source={{
-          uri: "https://image.tmdb.org/t/p/w500" + featured?.poster_path,
+          uri: "https://image.tmdb.org/t/p/w780" + featured?.poster_path,
         }}
       >
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
@@ -280,7 +280,7 @@ const Section = memo(({ group }: SectionProps) => {
     ({ item }: { item: Movie & { type: string } }) => (
       <Pressable
         onPress={async () => {
-          Image.prefetch("https://image.tmdb.org/t/p/w500" + item.poster_path);
+          Image.prefetch("https://image.tmdb.org/t/p/w780" + item.poster_path);
           navigation.navigate("MovieDetails", {
             id: item.id,
             type: item.type,

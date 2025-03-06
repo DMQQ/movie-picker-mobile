@@ -150,18 +150,18 @@ function FortuneWheel({ navigation, route }: any) {
             zIndex: 100,
           }}
           source={{
-            uri: "https://image.tmdb.org/t/p/w500" + data?.poster_path,
+            uri: "https://image.tmdb.org/t/p/w780" + data?.poster_path,
           }}
         >
           <View
             style={{
               position: "absolute",
-              top: Platform.OS === "ios" ? 0 : 10,
+              top: 0,
               right: 0,
               width,
               justifyContent: "space-between",
               flexDirection: "row",
-              padding: 10,
+              padding: 5,
               zIndex: 100,
             }}
           >
@@ -178,7 +178,14 @@ function FortuneWheel({ navigation, route }: any) {
             style={{ flex: 1, position: "absolute", top: 0, width, height, justifyContent: "flex-end" }}
             colors={["transparent", "rgba(0,0,0,0.5)", "#000000"]}
           >
-            <View style={{ marginBottom: Platform.OS === "ios" ? 80 : 10, padding: 15, gap: 0 }}>
+            <View
+              style={{
+                marginBottom: Platform.OS === "ios" ? 80 : 10,
+                padding: 15,
+                paddingBottom: Platform.OS === "android" ? 0 : undefined,
+                gap: 0,
+              }}
+            >
               <Text numberOfLines={2} style={{ fontSize: 55, fontFamily: "Bebas", lineHeight: 55, marginTop: 10 }}>
                 {data?.title || data?.name}
               </Text>
@@ -244,7 +251,7 @@ function FortuneWheel({ navigation, route }: any) {
         </Animated.View>
       )}
 
-      {selectedCards && (
+      {selectedCards && selectedCards?.length > 0 && (
         <FortuneWheelComponent
           ref={wheelRef as any}
           style={{}}

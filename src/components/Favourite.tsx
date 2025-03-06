@@ -49,7 +49,7 @@ const ModalExitingTransition = () => {
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   if (Platform.OS === "android") return <Portal.Host>{children}</Portal.Host>;
-  return <Fragment>{children}</Fragment>;
+  return <Portal>{children}</Portal>;
 };
 
 export default function CustomFavourite({ movie, showLabel = true }: { movie: Movie; showLabel?: boolean }) {

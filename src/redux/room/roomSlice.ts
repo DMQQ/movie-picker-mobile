@@ -81,16 +81,16 @@ const roomSlice = createSlice({
       {
         payload,
       }: {
-        payload: {
+        payload: Partial<{
           nickname: string;
           language: string;
           regionalization: Record<string, string>;
-        };
+        }>;
       }
     ) {
-      state.nickname = payload.nickname;
-      state.language = payload.language;
-      state.regionalization = payload.regionalization;
+      state.nickname = payload.nickname || state.nickname;
+      state.language = payload.language || state.language;
+      state.regionalization = payload.regionalization || state.regionalization;
     },
     setQRCode(state, action) {
       state.qrCode = action.payload;

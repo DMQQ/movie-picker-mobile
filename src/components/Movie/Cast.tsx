@@ -6,9 +6,13 @@ import Thumbnail from "../Thumbnail";
 import layout from "../../utils/layout";
 
 export default function Cast({ id, type }: { id: number; type: "movie" | "tv" }) {
-  const { data, error } = useGetMovieKeyPeopleQuery({ id, type, actorLimit: 15, includeDirector: true });
+  const { data, error, isLoading } = useGetMovieKeyPeopleQuery({ id, type, actorLimit: 15, includeDirector: true });
 
   const t = useTranslation();
+
+  if (data?.actors.length === 0 && data?.directors.length === 0 && !isLoading) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>

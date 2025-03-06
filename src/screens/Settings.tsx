@@ -33,9 +33,9 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
     if (language === lg) return;
     await AsyncStorage.setItem("language", language);
 
-    await Updates.reloadAsync();
-
     dispatch(roomActions.setSettings({ nickname, language }));
+
+    await Updates.reloadAsync();
   };
 
   useEffect(() => {
