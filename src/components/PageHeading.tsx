@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { StyleSheet, View } from "react-native";
+import { Platform, PlatformColor, StyleSheet, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
 
 export default function PageHeading({ title, onPress }: { title: string; onPress?: () => void }) {
@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 8,
     position: "relative",
+    paddingTop: Platform.OS === "android" ? 10 : 0,
   },
   headerTitle: {
     fontFamily: "Bebas",
@@ -26,13 +27,14 @@ const styles = StyleSheet.create({
     color: "#fff",
     flex: 1,
     textAlign: "center",
-    marginLeft: 40,
-    marginRight: 40,
+    marginLeft: 20,
+    marginRight: 20,
   },
   backButton: {
     marginRight: 8,
     position: "absolute",
     left: 8,
     zIndex: 1,
+    top: Platform.OS === "android" ? 3 : 0,
   },
 });

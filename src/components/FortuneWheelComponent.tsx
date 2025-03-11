@@ -1,5 +1,5 @@
 import React, { forwardRef, memo, useEffect, useImperativeHandle } from "react";
-import { View, StyleSheet, Dimensions, StyleProp, ViewStyle, Image } from "react-native";
+import { View, StyleSheet, Dimensions, StyleProp, ViewStyle, Image, Platform } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
@@ -110,7 +110,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(({ size = 300, items,
   const t = useTranslation();
 
   const triggerItemHaptic = () => {
-    Haptics.selectionAsync();
+    if (Platform.OS === "ios") Haptics.selectionAsync();
   };
 
   useAnimatedReaction(

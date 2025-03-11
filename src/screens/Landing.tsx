@@ -1,4 +1,14 @@
-import { Dimensions, Pressable, StyleSheet, TouchableHighlight, View, VirtualizedList, ImageBackground, Image } from "react-native";
+import {
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  TouchableHighlight,
+  View,
+  VirtualizedList,
+  ImageBackground,
+  Image,
+  Platform,
+} from "react-native";
 import { Avatar, MD2DarkTheme, Text } from "react-native-paper";
 import { memo, useCallback, useEffect, useState } from "react";
 import { useAppSelector } from "../redux/store";
@@ -157,6 +167,7 @@ const tabStyles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 10,
     height: 70,
+    paddingBottom: Platform.OS === "android" ? 10 : 0,
   },
   button: {
     flex: 1,

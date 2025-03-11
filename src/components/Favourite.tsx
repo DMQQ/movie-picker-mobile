@@ -131,7 +131,7 @@ export default function CustomFavourite({ movie, showLabel = true }: { movie: Mo
                     ]}
                     onPress={() => {
                       onPress(group);
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      if (Platform.OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     }}
                   >
                     <Text style={styles.itemText}>{group.name}</Text>
