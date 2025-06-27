@@ -8,10 +8,10 @@ import {
   ImageBackground,
   Image,
   Platform,
+  RefreshControl,
 } from "react-native";
-import { Avatar, MD2DarkTheme, Text } from "react-native-paper";
+import { MD2DarkTheme, Text } from "react-native-paper";
 import { memo, useCallback, useEffect, useState } from "react";
-import { useAppSelector } from "../redux/store";
 import { ScreenProps } from "./types";
 import { useGetFeaturedQuery, useLazyGetLandingPageMoviesQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
 import ScoreRing from "../components/ScoreRing";
@@ -62,6 +62,8 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
   const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
 
+  const t = useTranslation();
+
   useEffect(() => {
     getLandingMovies({ skip: page * 3, take: 5 }).then((response) => {
       if (response.data && Array.isArray(response.data)) {
@@ -81,6 +83,20 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
   const renderItem = useCallback(({ item: group }: { item: { name: string; results: Movie[] } }) => <Section group={group} />, []);
 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setPage(0);
+    setData([]);
+    getLandingMovies({ skip: 0, take: 5 }).then((response) => {
+      if (response.data && Array.isArray(response.data)) {
+        setData(response.data);
+      }
+      setRefreshing(false);
+    });
+  }, []);
+
   return (
     <View style={{ flex: 1 }}>
       <AppLoadingOverlay />
@@ -88,11 +104,17 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
       <NoConnectionError />
 
       <VirtualizedList
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         maxToRenderPerBatch={5}
         windowSize={3}
         removeClippedSubviews={true}
         style={{ flex: 1 }}
         ListHeaderComponent={<FeaturedSection navigate={navigation.navigate} />}
+        ListEmptyComponent={
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", height: height - 80 }}>
+            <Text style={{ fontFamily: "Bebas", fontSize: 40 }}>{t("landing.error")}</Text>
+          </View>
+        }
         data={(data || []) as { name: string; results: Movie[] }[]}
         initialNumToRender={3}
         keyExtractor={keyExtractor}
@@ -112,7 +134,6 @@ const FeaturedSection = memo(
   (props: { navigate: any }) => {
     const { data: featured, error } = useGetFeaturedQuery();
 
-    const { nickname } = useAppSelector((state) => state.room);
     const navigation = useNavigation<any>();
     const t = useTranslation();
 
@@ -133,6 +154,8 @@ const FeaturedSection = memo(
     ]
       .filter(Boolean)
       .join(" | ");
+
+    if (!featured || error) return null;
 
     return (
       <ImageBackground

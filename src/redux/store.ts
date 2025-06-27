@@ -8,8 +8,8 @@ import { personApi } from "./person/personApi";
 const store = configureStore({
   reducer: {
     room: roomSlice.reducer,
-    [movieApi.reducerPath]: movieApi.reducer,
-    [personApi.reducerPath]: personApi.reducer,
+    [movieApi?.reducerPath]: movieApi.reducer,
+    [personApi?.reducerPath]: personApi.reducer,
     favourite: favoritesSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([movieApi.middleware, personApi.middleware]),

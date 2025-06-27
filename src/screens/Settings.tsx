@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { ToastAndroid, View } from "react-native";
-import { Appbar, IconButton, SegmentedButtons, Text, TextInput } from "react-native-paper";
-
+import { SegmentedButtons, Text, TextInput } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { ScreenProps } from "./types";

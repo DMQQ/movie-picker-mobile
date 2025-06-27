@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
-import { useAppSelector } from "../redux/store";
+import { RootState } from "../redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState, AppStateStatus, Platform } from "react-native";
+import { useSelector } from "react-redux";
 
 const isDev = false;
 const BACKGROUND_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
-export const url = isDev ? "http://192.168.0.22:3000" : "https://movie.dmqq.dev";
+const baseUrl = isDev ? "http://192.168.1.20:3000" : "https://movie.dmqq.dev";
+export const url = baseUrl + "/api";
 
 export const SocketContext = React.createContext<{
   socket: Socket | null;
@@ -57,7 +59,7 @@ const makeHeaders = (language: string) => {
 };
 
 export const SocketProvider = ({ children, namespace }: { children: React.ReactNode; namespace: "/swipe" | "/voter" }) => {
-  const language = useAppSelector((st) => st.room.language);
+  const language = useSelector((st: RootState) => st.room.language);
   const socketRef = useRef<Socket | null>(null); // ✅ Fix: Use ref instead of state
   const [isSocketInitialized, setIsSocketInitialized] = useState(false); // To track initialization
   const appState = useRef(AppState.currentState);
@@ -72,7 +74,7 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
       const userId = (await AsyncStorage.getItem("userId")) || Math.random().toString(36).substring(7);
       await AsyncStorage.setItem("userId", userId);
 
-      const newSocket = socketIOClient(url + namespace, {
+      const newSocket = socketIOClient(baseUrl + namespace, {
         ...connectionConfig,
         extraHeaders: {
           "user-id": userId,
@@ -93,7 +95,7 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
       });
 
       newSocket.on("connect_error", (error) => {
-        console.log("❌ Connection error:", error);
+        console.log("❌ Connection error:", JSON.stringify(error, null, 2));
         scheduleReconnect();
       });
 

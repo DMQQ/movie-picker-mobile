@@ -228,5 +228,9 @@
   },
   "cast": {
     "heading": "Cast"
+  },
+  "landing": {
+    "error": "Something went wrong. Please try again.",
+    "title": "Welcome to Movie Picker"
   }
 }

@@ -25,7 +25,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "icon": "./assets/icon.png",
-      "buildNumber": "20250903",
+      "buildNumber": "20252706",
       "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
@@ -43,7 +43,7 @@
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 20251103,
+      "versionCode": 20252706,
       "intentFilters": [
         {
           "action": "VIEW",
