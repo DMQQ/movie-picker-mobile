@@ -27,6 +27,7 @@
     "expo-haptics": "~14.0.1",
     "expo-linear-gradient": "~14.0.2",
     "expo-sharing": "~13.0.1",
+    "expo-splash-screen": "^0.30.9",
     "expo-status-bar": "~2.0.1",
     "expo-updates": "~0.27.1",
     "lottie-react-native": "7.1.0",

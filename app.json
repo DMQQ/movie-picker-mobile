@@ -6,7 +6,7 @@
     "version": "1.1.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "scheme": ["flickmate", "pl.dmq.moviepicker"],
     "splash": {
       "image": "./assets/splash.png",
@@ -20,12 +20,20 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0d0f14",
+          "image": "./assets/images/icon.png",
+          "imageWidth": 200
+        }
+      ]
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "icon": "./assets/icon.png",
-      "buildNumber": "20252706",
+      "buildNumber": "20252906",
       "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
