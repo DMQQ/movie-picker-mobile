@@ -23,7 +23,7 @@ interface ScratchCardProps {
 }
 
 const ScratchPattern = ({ width, height }: { width: number; height: number }) => {
-  const scratchPatternImage = useImage(require("../../assets/low-poly-grid-haikei.png"));
+  const scratchPatternImage = useImage(require("../../assets/images/low-poly-grid-haikei.png"));
   return scratchPatternImage ? <Image image={scratchPatternImage} fit="cover" width={width} height={height} /> : null;
 };
 
