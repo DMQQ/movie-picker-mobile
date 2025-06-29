@@ -23,14 +23,15 @@
   "movie": {
     "details": {
       "lastEpisode": "Last Episode",
-      "episode": "Episode",
+      "episode": "Episodes",
       "season": "Season",
       "runtime": "Runtime",
       "releaseDate": "Release Date",
       "status": "Status",
       "minutes": "minutes",
       "similar-movies": "Similar Movies",
-      "similar-series": "Similar Series"
+      "similar-series": "Similar Series",
+      "air_date": "Air Date"
     }
   },
   "match": {

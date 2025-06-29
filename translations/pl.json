@@ -23,14 +23,15 @@
   "movie": {
     "details": {
       "lastEpisode": "Ostatni Odcinek",
-      "episode": "Odcinek",
+      "episode": "Odcinki",
       "season": "Sezon",
       "runtime": "Czas trwania",
       "releaseDate": "Data premiery",
       "status": "Status",
       "minutes": "minut",
       "similar-movies": "Podobne Filmy",
-      "similar-series": "Podobne Seriale"
+      "similar-series": "Podobne Seriale",
+      "air_date": "Data emisji"
     }
   },
   "match": {
@@ -227,8 +228,8 @@
   "cast": {
     "heading": "Obsada"
   },
-  "landing":{
-    "error":"Oops, coś poszło nie tak, spróbuj ponownie.",
+  "landing": {
+    "error": "Oops, coś poszło nie tak, spróbuj ponownie.",
     "title": "Movie Picker"
   }
 }

@@ -78,7 +78,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
         onScroll={scrollhandler}
         contentContainerStyle={{
           alignItems: "center",
-          paddingBottom: 20, // Add padding to prevent content from being cut off
+          // paddingBottom: 20, // Add padding to prevent content from being cut off
         }}
         removeClippedSubviews={true} // Optimize rendering for off-screen components
         style={{ flex: 1 }}

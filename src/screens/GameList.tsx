@@ -80,11 +80,6 @@ const GameCard = ({ title, description, onPress, beta, players, duration, index 
             </View>
           </BlurView>
         </LinearGradient>
-        {beta && (
-          <View style={styles.betaBadge}>
-            <Text style={styles.betaText}>BETA</Text>
-          </View>
-        )}
       </Animated.View>
     </TouchableRipple>
   );

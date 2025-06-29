@@ -23,6 +23,8 @@ import useTranslation from "../service/useTranslation";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import NoConnectionError from "../components/NoConnectionError";
 import Thumbnail from "../components/Thumbnail";
+import RatingIcons from "../components/RatingIcons";
+import FrostedGlass from "../components/FrostedGlass";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -42,7 +44,7 @@ const styles = StyleSheet.create({
     marginBottom: 35,
   },
 
-  gradientContainer: { flex: 1, padding: 10, position: "absolute", bottom: 0, width, paddingTop: 30 },
+  gradientContainer: { flex: 1, padding: 5, position: "absolute", bottom: 0, width, paddingTop: 30 },
 
   overview: { fontSize: 16, color: "rgba(255,255,255,0.95)", fontWeight: "500" },
 });
@@ -122,7 +124,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         getItem={getItem}
         onEndReached={onEndReached}
         renderItem={renderItem}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={2}
       />
 
       <BottomTab navigate={navigation.navigate} />
@@ -146,7 +148,7 @@ const FeaturedSection = memo(
     };
 
     const details = [
-      featured?.vote_average && featured?.vote_average?.toFixed(1) + "/10",
+      // featured?.vote_average && featured?.vote_average?.toFixed(1) + "/10",
       featured?.release_date || featured?.first_air_date,
       ((featured?.title || featured?.name) === (featured?.original_title || featured?.original_name) && featured?.original_title) ||
         featured?.original_name,
@@ -166,13 +168,18 @@ const FeaturedSection = memo(
       >
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
           <Pressable onPress={onPress}>
-            <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
-              {featured?.title || featured?.name}
-            </Text>
-            <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>{details}</Text>
-            <Text numberOfLines={7} style={styles.overview}>
-              {featured?.overview}
-            </Text>
+            <FrostedGlass style={{ padding: 15 }}>
+              <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
+                {featured?.title || featured?.name}
+              </Text>
+              <View style={{ flexDirection: "row", marginBottom: 10 }}>
+                <RatingIcons vote={featured?.vote_average} size={20} />
+              </View>
+              <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>{details}</Text>
+              <Text numberOfLines={7} style={styles.overview}>
+                {featured?.overview}
+              </Text>
+            </FrostedGlass>
           </Pressable>
         </LinearGradient>
       </ImageBackground>
@@ -325,7 +332,7 @@ const Section = memo(({ group }: SectionProps) => {
           position: "relative",
         }}
       >
-        <Thumbnail path={item.poster_path} size={200} container={sectionStyles.image} />
+        <Thumbnail path={item.poster_path} size={300} container={sectionStyles.image} />
         <View style={{ position: "absolute", right: 30, bottom: 10 }}>
           <ScoreRing score={item.vote_average} />
         </View>

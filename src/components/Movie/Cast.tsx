@@ -4,6 +4,7 @@ import { Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
 import Thumbnail from "../Thumbnail";
 import layout from "../../utils/layout";
+import FrostedGlass from "../FrostedGlass";
 
 export default function Cast({ id, type }: { id: number; type: "movie" | "tv" }) {
   const { data, error, isLoading } = useGetMovieKeyPeopleQuery({ id, type, actorLimit: 15, includeDirector: true });
@@ -24,36 +25,40 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
         keyExtractor={(item) => item.id.toString()}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
-          <View style={styles.card}>
+          <FrostedGlass style={styles.card} container={{ marginRight: 15 }}>
             <Thumbnail size={200} path={item.profile_path || ""} container={styles.image} />
-            <Text style={styles.character} numberOfLines={1}>
-              {item.character === "Self" ? item.name : item.character}
-            </Text>
-            <Text style={styles.actor} numberOfLines={1}>
-              {item.name}
-            </Text>
-          </View>
+            <View style={{ padding: 10, paddingTop: 0, paddingBottom: 15 }}>
+              <Text style={styles.character} numberOfLines={1}>
+                {item.character === "Self" ? item.name : item.character}
+              </Text>
+              <Text style={styles.actor} numberOfLines={1}>
+                {item.name}
+              </Text>
+            </View>
+          </FrostedGlass>
         )}
       />
       <FlatList
+        style={{ marginTop: 30 }}
         horizontal
         data={data?.directors}
         keyExtractor={(item) => item.id.toString()}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
-          <View style={styles.directorContainer}>
+          <FrostedGlass style={styles.directorContainer} container={{ marginRight: 15 }}>
             {item?.profile_path && <Thumbnail path={item?.profile_path || ""} container={styles.directorImage} />}
 
             <View
               style={{
-                gap: 10,
+                gap: 5,
+                flex: 1,
               }}
             >
               <Text style={{ color: "#fff", fontSize: 22.5, fontFamily: "Bebas" }}>{item?.name}</Text>
 
               <Text style={{ color: "rgba(255,255,255,0.95)", fontSize: 16, fontFamily: "Bebas" }}>{item?.job}</Text>
             </View>
-          </View>
+          </FrostedGlass>
         )}
       />
     </View>
@@ -66,11 +71,10 @@ const styles = StyleSheet.create({
   },
   card: {
     borderRadius: 15,
-    marginRight: 20,
-    maxWidth: layout.screen.width * 0.3,
+    maxWidth: layout.screen.width * 0.4,
   },
   image: {
-    width: layout.screen.width * 0.3,
+    width: layout.screen.width * 0.35,
     height: layout.screen.height * 0.2,
     borderRadius: 10,
     marginBottom: 8,
@@ -92,7 +96,6 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     paddingRight: 15,
     alignItems: "center",
-    marginTop: 30,
   },
 
   directorImage: {
