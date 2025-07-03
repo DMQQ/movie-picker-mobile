@@ -136,6 +136,10 @@ export const movieApi = createApi({
       query: ({ id, season }) => `/tv/${id}/seasons/${season}`,
     }),
 
+    getTrailers: builder.query<any[], { type: string; id: number }>({
+      query: ({ type, id }) => `/${type}/${id}/trailers`,
+    }),
+
     search: builder.query<SearchResults, SearchParams & { operation?: "replace" | "append" }>({
       query: (params) => {
         // Remove operation parameter from API request
@@ -205,4 +209,6 @@ export const {
   useLazySearchQuery,
 
   useGetSeasonEpisodesQuery,
+
+  useGetTrailersQuery,
 } = movieApi;

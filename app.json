@@ -2,7 +2,7 @@
   "expo": {
     "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "orientation": "portrait",
     "icon": "./assets/images/icon-dark.png",
     "userInterfaceStyle": "automatic",
@@ -32,7 +32,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
-      "buildNumber": "20250705",
+      "buildNumber": "20250706",
       "supportsTablet": false,
       "icon": {
         "light": "./assets/images/icon-light.png",

@@ -4,12 +4,13 @@ import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useS
 import { ScreenProps } from "./types";
 import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
 import MovieDetails from "../components/Movie/MovieDetails";
-import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
+import { useGetMovieProvidersQuery, useGetMovieQuery, useGetTrailersQuery } from "../redux/movie/movieApi";
 import { TouchableRipple } from "react-native-paper";
 import Thumbnail from "../components/Thumbnail";
 import { useCallback, useMemo } from "react";
 import FrostedGlass from "../components/FrostedGlass";
 import Entypo from "react-native-vector-icons/Entypo";
+import Trailers from "../components/Movie/Trailers";
 
 const { width, height } = Dimensions.get("window");
 
@@ -88,7 +89,10 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
         {loading ? (
           <MovieDetailsSkeleton />
         ) : (
-          <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={width} />
+          <View>
+            <Trailers id={movieId} type={typeOfContent} />
+            <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={width} />
+          </View>
         )}
       </Animated.ScrollView>
 

@@ -12,6 +12,7 @@ import CustomFavourite from "../Favourite";
 import Cast from "./Cast";
 import FrostedGlass from "../FrostedGlass";
 import RatingIcons from "../RatingIcons";
+import Trailers from "./Trailers";
 
 export default function MovieDetails({
   movie,
