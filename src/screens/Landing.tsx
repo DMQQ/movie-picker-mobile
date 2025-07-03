@@ -9,6 +9,7 @@ import {
   Image,
   Platform,
   RefreshControl,
+  AppState,
 } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import { memo, useCallback, useEffect, useState } from "react";
@@ -44,14 +45,14 @@ const styles = StyleSheet.create({
     marginBottom: 35,
   },
 
-  gradientContainer: { flex: 1, padding: 5, position: "absolute", bottom: 0, width, paddingTop: 30 },
+  gradientContainer: { flex: 1, position: "absolute", bottom: 0, width, paddingTop: 30 },
 
   overview: { fontSize: 16, color: "rgba(255,255,255,0.95)", fontWeight: "500" },
 });
 
 const gradient = ["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"] as any;
 
-const keyExtractor = (item: { name: string }) => item.name;
+const keyExtractor = (item: { name: string }, index: number) => item.name + "-" + index;
 
 const getItemCount = (data: { name: string; results: Movie[] }[]) => data.length;
 
@@ -99,6 +100,18 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     });
   }, []);
 
+  useEffect(() => {
+    const listener = AppState.addEventListener("change", (state) => {
+      if (state === "active") {
+        onRefresh();
+      }
+    });
+
+    return () => {
+      listener.remove();
+    };
+  }, []);
+
   return (
     <View style={{ flex: 1 }}>
       <AppLoadingOverlay />
@@ -124,7 +137,12 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         getItem={getItem}
         onEndReached={onEndReached}
         renderItem={renderItem}
-        onEndReachedThreshold={2}
+        onEndReachedThreshold={0.5}
+        getItemLayout={(data, index) => ({
+          length: height * 0.35 + 50,
+          offset: (height * 0.35 + 50) * index,
+          index,
+        })}
       />
 
       <BottomTab navigate={navigation.navigate} />
@@ -206,10 +224,17 @@ const tabStyles = StyleSheet.create({
     borderRadius: 10,
     height: "100%",
   },
+  buttonLabel: {
+    fontSize: 10,
+    color: "rgba(255,255,255,0.9)",
+    letterSpacing: 0.5,
+    marginTop: 5,
+  },
 });
 
 const BottomTab = memo(
   ({ navigate }: { navigate: any }) => {
+    const t = useTranslation();
     return (
       <View style={tabStyles.container}>
         <TouchableHighlight
@@ -218,7 +243,10 @@ const BottomTab = memo(
           onPress={() => navigate("Settings")}
           style={tabStyles.button}
         >
-          <FontAwesome name="gear" size={25} color="#fff" />
+          <>
+            <FontAwesome name="gear" size={25} color="#fff" />
+            <Text style={tabStyles.buttonLabel}>{t("tabBar.settings")}</Text>
+          </>
         </TouchableHighlight>
 
         <TouchableHighlight
@@ -227,7 +255,10 @@ const BottomTab = memo(
           style={tabStyles.button}
           onPress={() => navigate("Favourites")}
         >
-          <FontAwesome name="bookmark" size={25} color="#fff" />
+          <>
+            <FontAwesome name="bookmark" size={25} color="#fff" />
+            <Text style={tabStyles.buttonLabel}>{t("tabBar.favourites")}</Text>
+          </>
         </TouchableHighlight>
 
         <TouchableHighlight
@@ -240,7 +271,10 @@ const BottomTab = memo(
             })
           }
         >
-          <FontAwesome name="qrcode" size={30} color={"#fff"} />
+          <>
+            <FontAwesome name="qrcode" size={30} color={"#fff"} />
+            {/* <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text> */}
+          </>
         </TouchableHighlight>
 
         <TouchableHighlight
@@ -249,7 +283,10 @@ const BottomTab = memo(
           style={tabStyles.button}
           onPress={() => navigate("Games")}
         >
-          <FontAwesome name="gamepad" size={25} color="#fff" />
+          <>
+            <FontAwesome name="gamepad" size={25} color="#fff" />
+            <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
+          </>
         </TouchableHighlight>
 
         <TouchableHighlight
@@ -258,7 +295,10 @@ const BottomTab = memo(
           underlayColor={MD2DarkTheme.colors.surface}
           style={tabStyles.button}
         >
-          <FontAwesome name="search" size={25} color="#fff" />
+          <>
+            <FontAwesome name="search" size={25} color="#fff" />
+            <Text style={tabStyles.buttonLabel}>{t("tabBar.search")}</Text>
+          </>
         </TouchableHighlight>
       </View>
     );
@@ -271,7 +311,7 @@ interface SectionProps {
 }
 
 const sectionStyles = StyleSheet.create({
-  container: { marginBottom: 20, padding: 15, minHeight: height * 0.275 + 100 },
+  container: { marginBottom: 20, padding: 15, minHeight: height * 0.35 + 50 },
   title: { color: "#fff", fontSize: 45, marginBottom: 20, fontFamily: "Bebas" },
   list: {
     flex: 1,
@@ -345,7 +385,7 @@ const Section = memo(({ group }: SectionProps) => {
     <View style={sectionStyles.container}>
       <Text style={sectionStyles.title}>{group.name}</Text>
       <VirtualizedList
-        initialNumToRender={5} // Increased from 3
+        initialNumToRender={3} // Increased from 3
         maxToRenderPerBatch={3} // Reduced from 5
         updateCellsBatchingPeriod={50} // Add this
         windowSize={2}

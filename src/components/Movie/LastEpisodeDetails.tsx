@@ -15,27 +15,23 @@ const LastEpisodeToAir = ({ lastEpisode }: { lastEpisode: any }) => {
       </Text>
 
       <FrostedGlass>
-        <View style={{ borderRadius: 10 }}>
-          <View style={{ borderRadius: 15, overflow: "hidden" }}>
-            <Thumbnail
-              container={{
-                width: "100%",
-                height: 220,
-                borderRadius: 15,
-                overflow: "hidden",
-                borderBottomEndRadius: 0,
-                borderBottomLeftRadius: 0,
-              }}
-              size={500}
-              path={lastEpisode.still_path}
-            />
-          </View>
-          <View style={{ paddingHorizontal: 10, paddingBottom: 15 }}>
+        <View style={{ borderRadius: 20, padding: 15 }}>
+          <Thumbnail
+            container={{
+              width: "100%",
+              height: 220,
+              borderRadius: 10,
+              overflow: "hidden",
+            }}
+            size={500}
+            path={lastEpisode.still_path}
+          />
+
+          <View style={{ paddingHorizontal: 10, paddingBottom: 5, marginTop: 15 }}>
             <Text
               style={{
                 fontSize: 25,
                 fontFamily: "Bebas",
-                marginTop: 10,
               }}
             >
               {lastEpisode.name}

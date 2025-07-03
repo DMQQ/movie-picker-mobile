@@ -26,6 +26,7 @@ import { throttle } from "../../utils/throttle";
 import { CommonActions } from "@react-navigation/native";
 import PageHeading from "../../components/PageHeading";
 import { Pressable } from "react-native-gesture-handler";
+import ReviewManager from "../../utils/rate";
 
 const scaleTitle = (title: string, size = 30) => {
   if (title.length > 30) return size * 0.75;
@@ -589,7 +590,10 @@ function Results({ navigation }: any) {
 
         <Button
           mode="contained"
-          onPress={() => navigation.navigate("Landing")}
+          onPress={() => {
+            ReviewManager.onGameComplete(true);
+            navigation.navigate("Landing");
+          }}
           style={[styles.button, { marginBottom: 15 }]}
           contentStyle={{ padding: 7.5 }}
         >

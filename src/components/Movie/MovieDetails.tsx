@@ -35,7 +35,7 @@ export default function MovieDetails({
 
   return (
     <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{ flex: 1 }}>
-      <FrostedGlass blurAmount={Platform.OS === "ios" ? 30 : 100} container={{ borderBottomWidth: 0 }}>
+      <FrostedGlass blurAmount={Platform.OS === "ios" ? 50 : 100} container={{ borderBottomWidth: 0 }}>
         <View style={{ flex: 1, padding: 15 }}>
           <Text
             style={{
@@ -99,13 +99,13 @@ export default function MovieDetails({
 
           <WatchProviders providers={providers || []} />
 
+          <Cast id={movie?.id} type={type as "movie" | "tv"} />
+
           <LastEpisodeToAir lastEpisode={movie?.last_episode_to_air || {}} />
 
-          <Seasons seasons={(movie?.seasons as any) || []} />
+          {type === "tv" && <Seasons id={movie?.id} seasons={(movie?.seasons as any) || []} />}
 
           {/* <MovieReviews movieId={movie?.id} type={type as "movie" | "tv"} /> */}
-
-          <Cast id={movie?.id} type={type as "movie" | "tv"} />
 
           <Similar id={movie?.id} type={type as "movie" | "tv"} />
 

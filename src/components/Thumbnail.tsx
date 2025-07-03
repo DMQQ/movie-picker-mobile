@@ -12,7 +12,7 @@ export default function Thumbnail({
   if (!path) {
     return (
       <View style={[styles.container, { justifyContent: "center", alignItems: "center" }, container]}>
-        <AntDesign name="picture" size={size} color={MD2DarkTheme.colors.placeholder} />
+        <AntDesign name="picture" size={size / 3} color={MD2DarkTheme.colors.placeholder} />
       </View>
     );
   }

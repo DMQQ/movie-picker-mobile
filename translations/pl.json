@@ -31,7 +31,9 @@
       "minutes": "minut",
       "similar-movies": "Podobne Filmy",
       "similar-series": "Podobne Seriale",
-      "air_date": "Data emisji"
+      "air_date": "Data emisji",
+      "show_more": "Zobacz więcej",
+      "show_less": "Zobacz mniej"
     }
   },
   "match": {
@@ -55,6 +57,8 @@
     "active": "Aktywni użytkownicy",
     "qr-subtitle": "Udostępnij ten kod znajomym, aby dołączyli do gry",
     "page-range": "Znudziły ci się te same stare filmy? Zwiększ swoje szanse na znalezienie czegoś nowego, losując wyszukiwanie.",
+    "provider_desc": "Wybierz platformy, które chcesz uwzględnić w swoim wyszukiwaniu. Możesz wybrać wiele platform lub żadną, aby zobaczyć wszystko.",
+    "genre_desc": "Wybierz gatunki filmów i seriali, które chcesz oglądać. Możesz wybrać wiele gatunków lub żaden, aby zobaczyć wszystko.",
     "genres": {
       "all_movies": "Wszystkie filmy",
       "now_playing": "Aktualnie w kinach",
@@ -231,5 +235,12 @@
   "landing": {
     "error": "Oops, coś poszło nie tak, spróbuj ponownie.",
     "title": "Movie Picker"
+  },
+  "tabBar": {
+    "settings": "Ustawienia",
+    "favourites": "Ulubione",
+    "join-game": "Dołącz do gry",
+    "games": "Gry",
+    "search": "Szukaj"
   }
 }

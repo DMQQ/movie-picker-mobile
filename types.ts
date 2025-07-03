@@ -59,3 +59,33 @@ export type MovieDetails = Movie & {
     backdrop_path: string;
   } | null;
 };
+
+export interface Episode {
+  air_date: string;
+  crew: any[];
+
+  episode_number: number;
+
+  episode_type: string;
+
+  guest_stars: any[];
+
+  id: number;
+
+  name: string;
+  overview: string;
+
+  production_code: string;
+
+  runtime: number;
+
+  season_number: 1;
+
+  show_id: number;
+
+  still_path: string;
+
+  vote_average: number;
+
+  vote_count: number;
+}

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
-import { Movie, MovieDetails } from "../../../types";
+import { Episode, Movie, MovieDetails } from "../../../types";
 import { RootState } from "../store";
 
 interface SearchParams {
@@ -125,6 +125,17 @@ export const movieApi = createApi({
       query: () => "/providers",
     }),
 
+    getSeasonEpisodes: builder.query<
+      {
+        episodes: Episode[];
+        _id: string;
+        air_date: string;
+      },
+      { id: number; season: number }
+    >({
+      query: ({ id, season }) => `/tv/${id}/seasons/${season}`,
+    }),
+
     search: builder.query<SearchResults, SearchParams & { operation?: "replace" | "append" }>({
       query: (params) => {
         // Remove operation parameter from API request
@@ -192,4 +203,6 @@ export const {
   useSearchQuery,
 
   useLazySearchQuery,
+
+  useGetSeasonEpisodesQuery,
 } = movieApi;

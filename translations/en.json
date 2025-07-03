@@ -31,7 +31,9 @@
       "minutes": "minutes",
       "similar-movies": "Similar Movies",
       "similar-series": "Similar Series",
-      "air_date": "Air Date"
+      "air_date": "Air Date",
+      "show_more": "Show More",
+      "show_less": "Show Less"
     }
   },
   "match": {
@@ -55,6 +57,8 @@
     "active": "Active users",
     "qr-subtitle": "Share this code with your friends to join the game",
     "page-range": "Tired of the same old movies? Increase your chances of finding something new by randomizing your search.",
+    "provider_desc": "Select the streaming providers you want to include in your search. You can choose multiple providers or none to see everything.",
+    "genre_desc": "Select the genres of movies and series you want to watch. You can choose multiple genres or none to see everything.",
     "genres": {
       "all_movies": "All movies",
       "now_playing": "Now playing",
@@ -233,5 +237,12 @@
   "landing": {
     "error": "Something went wrong. Please try again.",
     "title": "Welcome to Movie Picker"
+  },
+  "tabBar": {
+    "settings": "Settings",
+    "favourites": "Favourites",
+    "join-game": "Join game",
+    "games": "Games",
+    "search": "Search"
   }
 }

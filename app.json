@@ -24,13 +24,14 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#0d0f14",
-          "image": "./assets/images/icon-dark.png",
+          "image": "./assets/images/icon-light.png",
           "imageWidth": 200
         }
       ]
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
       "buildNumber": "20250705",
       "supportsTablet": false,
       "icon": {

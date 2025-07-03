@@ -140,6 +140,7 @@ export default function QRScanner({ navigation }: any) {
       <PageHeading title={t("scanner.heading")} />
 
       <CameraView
+        key={`${hasPermission?.granted}-camera`}
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         facing="back"
         onBarcodeScanned={isScanned ? undefined : throttle(onBarcodeScanned, 1000)}

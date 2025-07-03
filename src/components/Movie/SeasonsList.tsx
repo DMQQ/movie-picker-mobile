@@ -1,9 +1,12 @@
-import { FlatList, Image, View } from "react-native";
-import { Text } from "react-native-paper";
+import { FlatList, Image, Pressable, View } from "react-native";
+import { MD2DarkTheme, Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
 import Thumbnail from "../Thumbnail";
 import FrostedGlass from "../FrostedGlass";
 import RatingIcons from "../RatingIcons";
+import SeasonEpisodes from "./SeasonEpisodes";
+import { useMemo, useState } from "react";
+import { hexToRgba } from "../../utils/hexToRgb";
 
 interface Season {
   air_date: string;
@@ -22,8 +25,22 @@ interface Season {
   vote_average: number;
 }
 
-const Seasons = ({ seasons }: { seasons: Season[] }) => {
+const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
   const t = useTranslation();
+  const [selectedSeason, setSelectedSeason] = useState<number>(1);
+
+  const seasonsList = useMemo(() => {
+    if (seasons?.length === 0 || seasons === undefined) return [];
+
+    if (seasons[0]?.season_number === 0) {
+      const firstItem = seasons[0];
+
+      return [...seasons.slice(1), firstItem];
+    }
+
+    return seasons;
+  }, [seasons]);
+
   if (seasons?.length === 0 || seasons === undefined) return null;
 
   return (
@@ -34,56 +51,65 @@ const Seasons = ({ seasons }: { seasons: Season[] }) => {
       <FlatList
         showsHorizontalScrollIndicator={false}
         horizontal
-        data={seasons}
+        data={seasonsList}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <FrostedGlass
-            style={{
-              borderRadius: 20,
-              flexDirection: "row",
-              width: 250,
-            }}
-            container={{
-              marginRight: 15,
+          <Pressable
+            onPress={() => {
+              setSelectedSeason(item.season_number);
             }}
           >
-            {item.poster_path?.length > 0 && (
-              <Thumbnail
-                container={{
-                  width: 70,
-                  height: 100,
-                  borderRadius: 5,
-                }}
-                path={item.poster_path}
-              />
-            )}
-
-            <View style={{ flex: 1, alignItems: "flex-start", padding: 10, paddingRight: 20, justifyContent: "space-between" }}>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 20, fontFamily: "Bebas" }}>{item.name}</Text>
-                <Text style={{ color: "#9E9E9E", marginTop: 2.5, fontSize: 12 }}>
-                  {t("movie.details.episode")} ({item.episode_count})
-                </Text>
-                <Text
-                  style={{
-                    color: "#9E9E9E",
-                    fontSize: 12,
-                    marginTop: 2.5,
+            <FrostedGlass
+              style={{
+                borderRadius: 15,
+                flexDirection: "row",
+                width: 250,
+                padding: 15,
+                ...(item.season_number === selectedSeason ? { backgroundColor: hexToRgba(MD2DarkTheme.colors.primary, 0.15) } : {}),
+              }}
+              container={{
+                marginRight: 15,
+              }}
+            >
+              {item.poster_path?.length > 0 && (
+                <Thumbnail
+                  container={{
+                    width: 70,
+                    height: 100,
+                    borderRadius: 10,
                   }}
-                >
-                  {item.air_date}
-                </Text>
-              </View>
-
-              {item.vote_average > 0 && (
-                <View style={{ flex: 1, justifyContent: "space-between", flexDirection: "row" }}>
-                  <RatingIcons vote={item.vote_average} size={15} />
-                </View>
+                  path={item.poster_path}
+                />
               )}
-            </View>
-          </FrostedGlass>
+
+              <View style={{ flex: 1, alignItems: "flex-start", padding: 10, paddingRight: 20, justifyContent: "space-between" }}>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 20, fontFamily: "Bebas" }}>{item.name}</Text>
+                  <Text style={{ color: "#9E9E9E", marginTop: 2.5, fontSize: 12 }}>
+                    {t("movie.details.episode")} ({item.episode_count})
+                  </Text>
+                  <Text
+                    style={{
+                      color: "#9E9E9E",
+                      fontSize: 12,
+                      marginTop: 2.5,
+                    }}
+                  >
+                    {item.air_date}
+                  </Text>
+                </View>
+
+                {item.vote_average > 0 && (
+                  <View style={{ flex: 1, justifyContent: "space-between", flexDirection: "row" }}>
+                    <RatingIcons vote={item.vote_average} size={15} />
+                  </View>
+                )}
+              </View>
+            </FrostedGlass>
+          </Pressable>
         )}
       />
+      <SeasonEpisodes id={id} season={selectedSeason} />
     </View>
   );
 };

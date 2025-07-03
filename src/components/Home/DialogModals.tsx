@@ -7,6 +7,7 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { useContext } from "react";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
+import ReviewManager from "../../utils/rate";
 
 export default function DialogModals({
   showLeaveModal,
@@ -35,6 +36,7 @@ export default function DialogModals({
       })
     );
     dispatch(roomActions.reset());
+    ReviewManager.onGameComplete(true);
     socket?.emit("leave-room", route.params?.roomId);
   };
 

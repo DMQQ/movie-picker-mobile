@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 import { Movie } from "../../types";
 import { Image } from "react-native";
+import ReviewManager from "../utils/rate";
 
 export default function useRoom(room: string) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);

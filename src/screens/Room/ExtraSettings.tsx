@@ -1,5 +1,5 @@
 import { FlatList, Image, View, StyleSheet, Dimensions } from "react-native";
-import { Appbar, Button, IconButton, Text, TouchableRipple } from "react-native-paper";
+import { Appbar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { useMemo, useState } from "react";
 import useTranslation from "../../service/useTranslation";
 import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
@@ -49,17 +49,21 @@ export default function ExtraSettings({ navigation }: any) {
           />
         </View>
 
-        <Button
-          mode="contained"
-          style={styles.button}
-          contentStyle={styles.buttonContent}
-          onPress={() => {
-            setProviders(selectedProviders);
-            navigation.navigate("ChoosePage");
-          }}
-        >
-          {t("room.next")}
-        </Button>
+        <View>
+          <Text style={{ paddingVertical: 10, color: "gray" }}>{t("room.provider_desc")}</Text>
+
+          <Button
+            mode="contained"
+            style={styles.button}
+            contentStyle={styles.buttonContent}
+            onPress={() => {
+              setProviders(selectedProviders);
+              navigation.navigate("ChoosePage");
+            }}
+          >
+            {t("room.next")}
+          </Button>
+        </View>
       </View>
     </SafeIOSContainer>
   );
@@ -100,13 +104,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#1a1a1a",
   },
   selectedProvider: {
-    borderColor: "#007AFF",
-    backgroundColor: "#1a1a1a80",
+    borderColor: MD2DarkTheme.colors.primary,
   },
   providerLogo: {
     width: 70,
     height: 70,
-    borderRadius: 8,
+    borderRadius: 10,
   },
   button: {
     borderRadius: 100,
