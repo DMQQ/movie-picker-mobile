@@ -40,6 +40,8 @@ export default function ChooseGenre({ navigation }: any) {
   return (
     <SafeIOSContainer>
       <PageHeading title={t("room.genre")} />
+      <Text style={{ padding: 10, color: "gray", marginBottom: 15, fontSize: 16 }}>{t("room.genre_desc")}</Text>
+
       <View style={{ flex: 1, paddingHorizontal: 15 }}>
         <View style={{ flex: 1 }}>
           {loading ? (
@@ -60,7 +62,6 @@ export default function ChooseGenre({ navigation }: any) {
         </View>
 
         <View>
-          <Text style={{ paddingVertical: 10, color: "gray" }}>{t("room.genre_desc")}</Text>
           <Button
             mode="contained"
             style={{

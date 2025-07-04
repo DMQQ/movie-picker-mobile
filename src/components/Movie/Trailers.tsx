@@ -1,68 +1,143 @@
-import { Linking, Pressable, View, ScrollView, Dimensions } from "react-native";
+import { Linking, Pressable, View, ScrollView, Dimensions, TouchableOpacity } from "react-native";
 import { useGetTrailersQuery } from "../../redux/movie/movieApi";
 import { Text, Chip, Surface, Icon } from "react-native-paper";
 import FrostedGlass from "../FrostedGlass";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { hexToRgba } from "../../utils/hexToRgb";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  FadeInLeft,
+  FadeInRight,
+  FadeOutLeft,
+  FadeOutRight,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+import { useMemo, useState } from "react";
+
+const width = Dimensions.get("window").width;
+
+const config = {
+  damping: 20,
+  stiffness: 200,
+  mass: 0.9,
+};
 
 export default function Trailers({ id, type }: { id: number; type: string }) {
   const { data: trailers } = useGetTrailersQuery({ id: id, type: type });
 
-  console.log("Trailers", trailers?.length);
+  const [showItems, setShowItems] = useState(false);
 
-  if (!trailers?.length) return null;
+  const isExpanded = useSharedValue(false);
+
+  const filteredItems = useMemo(() => {
+    return trailers?.filter((v) => v.site === "YouTube" && v.official) || [];
+  }, [trailers]);
+
+  const animatedValue = useAnimatedStyle(() => ({
+    width: withSpring(isExpanded.value ? width / 2 : 115, config),
+    height: withSpring(isExpanded.value ? filteredItems.length * 45 + 45 : 45, config),
+  }));
+
+  if (!filteredItems.length) return null;
 
   return (
-    <Animated.View
-      entering={FadeInDown}
-      style={{
-        position: "absolute",
-        top: -50,
-        width: Dimensions.get("window").width - 30,
-      }}
-    >
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingRight: 16 }}>
-        {trailers
-          .filter((v) => !(v.site === "Youtube" && v.official))
-          .map((trailer, index) => (
-            <Animated.View entering={FadeInDown.delay(100 * (index + 1))} key={trailer.key}>
-              <FrostedGlass
-                style={{
-                  borderRadius: 12,
-                  backgroundColor: hexToRgba("#FF000", 0.2),
-                }}
-                container={{ marginRight: 15 }}
-              >
-                <Pressable
-                  onPress={() => {
-                    Linking.openURL(`https://www.youtube.com/watch?v=${trailer.key}`);
-                  }}
-                  style={{
-                    padding: 7.5,
-                    paddingHorizontal: 15,
-                    justifyContent: "center",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 10,
-                  }}
-                >
-                  <AntDesign name="youtube" size={24} color="#FF0000" />
-                  <Text
-                    variant="bodyMedium"
+    <Animated.View style={{ position: "absolute", right: 5, bottom: 25 }} entering={FadeInDown}>
+      <FrostedGlass
+        blurAmount={70}
+        style={{
+          borderRadius: 12,
+          // backgroundColor: hexToRgba("#FF000", 0.5),
+        }}
+        container={{ marginRight: 15 }}
+      >
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            isExpanded.value = !isExpanded.value;
+            setShowItems(!showItems);
+          }}
+        >
+          <Animated.View style={[animatedValue, { position: "relative" }]}>
+            {showItems && (
+              <Animated.View entering={FadeInDown.delay(filteredItems.length > 3 ? 200 : 50)}>
+                {filteredItems.map((trailer, index) => (
+                  <Animated.View
+                    key={trailer.key}
+                    entering={FadeInDown.delay(index * 50)}
                     style={{
-                      color: "white",
-                      fontWeight: "bold",
+                      width: "100%",
                     }}
-                    numberOfLines={2}
                   >
-                    {trailer.name || "Trailer"}
-                  </Text>
-                </Pressable>
-              </FrostedGlass>
+                    <TouchableOpacity
+                      onPress={() => {
+                        Linking.openURL(`https://www.youtube.com/watch?v=${trailer.key}`);
+                      }}
+                      style={{
+                        padding: 10,
+                        paddingHorizontal: 15,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 10,
+                        borderBottomWidth: 1,
+                        borderBottomColor: hexToRgba("#FFFFFF", 0.2),
+                      }}
+                      activeOpacity={0.8}
+                    >
+                      <AntDesign name="youtube" size={24} color="#FF0000" />
+                      <Text
+                        variant="bodyMedium"
+                        style={{
+                          color: "white",
+                          fontWeight: "bold",
+                          width: width / 2 - 50,
+                        }}
+                        numberOfLines={1}
+                      >
+                        {trailer.name || "Trailer"}
+                      </Text>
+                    </TouchableOpacity>
+                  </Animated.View>
+                ))}
+              </Animated.View>
+            )}
+            <Animated.View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 10,
+                position: "absolute",
+                bottom: 10,
+                left: 15,
+                width: showItems ? width / 2 - 30 : 90,
+                justifyContent: "space-between",
+              }}
+            >
+              {!showItems && (
+                <Animated.View entering={FadeInLeft} exiting={FadeOutLeft}>
+                  <AntDesign name="youtube" size={24} color="#FF0000" />
+                </Animated.View>
+              )}
+              <Text
+                variant="bodyMedium"
+                style={{
+                  color: "white",
+                  fontWeight: "bold",
+                }}
+                numberOfLines={2}
+              >
+                {showItems ? "Close" : "Trailers"}
+              </Text>
+              {showItems && (
+                <Animated.View entering={FadeInRight} exiting={FadeOutRight}>
+                  <AntDesign name="close" size={24} color="#FFF" />
+                </Animated.View>
+              )}
             </Animated.View>
-          ))}
-      </ScrollView>
+          </Animated.View>
+        </TouchableOpacity>
+      </FrostedGlass>
     </Animated.View>
   );
 }

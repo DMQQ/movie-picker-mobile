@@ -24,7 +24,7 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
     );
   }
 
-  if (!data || !data?.episodes || data?.episodes.length === 0) return null;
+  if (!data || !data?.episodes || data?.episodes?.length === 0) return null;
 
   return (
     <Animated.View style={{ marginTop: 30 }} layout={LinearTransition}>

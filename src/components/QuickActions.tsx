@@ -45,7 +45,7 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
   };
 
   return (
-    <FrostedGlass style={{ paddingVertical: 20, paddingLeft: 15 }}>
+    <FrostedGlass style={{ paddingVertical: 20, paddingLeft: 5 }}>
       <View style={styles.container}>
         <View style={styles.iconContainer}>
           <TouchableOpacity style={[styles.iconButton]} onPress={() => onPress("2")}>

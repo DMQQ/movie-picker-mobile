@@ -47,7 +47,7 @@ export default function HomeAppbar({
         />
       )}
 
-      <Appbar.Action color={theme.colors.primary} size={17} icon="qrcode-scan" onPress={() => setShowQRModal((p) => !p)} />
+      <Appbar.Action color={theme.colors.primary} size={20} icon="qrcode-scan" onPress={() => setShowQRModal((p) => !p)} />
 
       <Appbar.Action size={20} color={theme.colors.primary} icon="heart" onPress={() => navigation.navigate("Overview")} />
     </View>

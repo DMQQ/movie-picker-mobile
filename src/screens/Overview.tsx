@@ -1,4 +1,4 @@
-import { Dimensions, Platform } from "react-native";
+import { Dimensions, Platform, SafeAreaView } from "react-native";
 import { ThemeProvider, useTheme } from "react-native-paper";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { memo, useEffect } from "react";
@@ -14,7 +14,7 @@ function Overview() {
   const t = useTranslation();
 
   return (
-    <>
+    <SafeAreaView style={{ flex: 1 }}>
       <OverviewTopTabs.Navigator
         initialLayout={{ width: Dimensions.get("window").width }}
         initialRouteName="Matches"
@@ -50,7 +50,7 @@ function Overview() {
           component={LikesScreen}
         />
       </OverviewTopTabs.Navigator>
-    </>
+    </SafeAreaView>
   );
 }
 

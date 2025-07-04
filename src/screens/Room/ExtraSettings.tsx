@@ -29,6 +29,7 @@ export default function ExtraSettings({ navigation }: any) {
   return (
     <SafeIOSContainer style={styles.container}>
       <PageHeading title={t("room.providers")} />
+      <Text style={{ padding: 10, color: "gray", marginBottom: 15, fontSize: 16 }}>{t("room.provider_desc")}</Text>
 
       <View style={styles.content}>
         <View style={styles.providersContainer}>
@@ -50,8 +51,6 @@ export default function ExtraSettings({ navigation }: any) {
         </View>
 
         <View>
-          <Text style={{ paddingVertical: 10, color: "gray" }}>{t("room.provider_desc")}</Text>
-
           <Button
             mode="contained"
             style={styles.button}

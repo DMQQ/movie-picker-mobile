@@ -207,6 +207,7 @@ const Navigator = () => {
               headerTitleAlign: "center",
               headerTitle: "",
               title: "",
+              presentation: "modal",
             }}
             initialParams={{
               id: 0,

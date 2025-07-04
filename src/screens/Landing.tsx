@@ -9,7 +9,6 @@ import {
   Image,
   Platform,
   RefreshControl,
-  AppState,
 } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import { memo, useCallback, useEffect, useState } from "react";
@@ -98,18 +97,6 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
       }
       setRefreshing(false);
     });
-  }, []);
-
-  useEffect(() => {
-    const listener = AppState.addEventListener("change", (state) => {
-      if (state === "active") {
-        onRefresh();
-      }
-    });
-
-    return () => {
-      listener.remove();
-    };
   }, []);
 
   return (

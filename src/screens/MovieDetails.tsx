@@ -11,6 +11,7 @@ import { useCallback, useMemo } from "react";
 import FrostedGlass from "../components/FrostedGlass";
 import Entypo from "react-native-vector-icons/Entypo";
 import Trailers from "../components/Movie/Trailers";
+import * as Haptics from "expo-haptics";
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,6 +30,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
   });
 
   const handleBack = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.pop();
   }, [navigation]);
 
@@ -89,12 +91,11 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
         {loading ? (
           <MovieDetailsSkeleton />
         ) : (
-          <View>
-            <Trailers id={movieId} type={typeOfContent} />
-            <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={width} />
-          </View>
+          <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={width} />
         )}
       </Animated.ScrollView>
+
+      <Trailers id={movieId} type={typeOfContent} />
 
       <View
         style={{

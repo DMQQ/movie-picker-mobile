@@ -25,9 +25,9 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
         keyExtractor={(item) => item.id.toString()}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
-          <FrostedGlass style={styles.card} container={{ marginRight: 15 }}>
+          <FrostedGlass style={styles.card} container={{ marginRight: 10 }}>
             <Thumbnail size={200} path={item.profile_path || ""} container={styles.image} />
-            <View style={{ padding: 10, paddingTop: 0, paddingBottom: 15 }}>
+            <View style={{ paddingTop: 0 }}>
               <Text style={styles.character} numberOfLines={1}>
                 {item.character === "Self" ? item.name : item.character}
               </Text>
@@ -70,12 +70,13 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   card: {
-    borderRadius: 15,
-    maxWidth: layout.screen.width * 0.4,
+    padding: 15,
+    borderRadius: 25,
+    maxWidth: layout.screen.width * 0.45,
   },
   image: {
-    width: layout.screen.width * 0.35,
-    height: layout.screen.height * 0.2,
+    width: layout.screen.width * 0.45 - 30,
+    height: layout.screen.width * 0.5,
     borderRadius: 10,
     marginBottom: 8,
   },
@@ -91,6 +92,7 @@ const styles = StyleSheet.create({
   },
 
   directorContainer: {
+    padding: 15,
     flexDirection: "row",
     gap: 15,
     borderRadius: 100,
