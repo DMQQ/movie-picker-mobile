@@ -26,7 +26,7 @@ const WatchProviders = ({ providers, hideLabel = false, style }: { providers: an
     <View style={[{ marginTop: 30 }, style]}>
       {!hideLabel && <Text style={{ fontSize: 35, fontFamily: "Bebas", lineHeight: 35 }}>Streaming</Text>}
 
-      <FrostedGlass style={{ padding: 15, borderRadius: 15 }}>
+      <FrostedGlass style={{ padding: 15, borderRadius: 15 }} container={{ height: 80 }}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {providersList.map((provider) => (
             <Thumbnail

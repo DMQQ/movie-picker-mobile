@@ -65,10 +65,10 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
                 flexDirection: "row",
                 width: 250,
                 padding: 15,
-                ...(item.season_number === selectedSeason ? { backgroundColor: hexToRgba(MD2DarkTheme.colors.primary, 0.15) } : {}),
               }}
               container={{
                 marginRight: 15,
+                ...(item.season_number === selectedSeason ? { borderColor: MD2DarkTheme.colors.primary } : {}),
               }}
             >
               {item.poster_path?.length > 0 && (

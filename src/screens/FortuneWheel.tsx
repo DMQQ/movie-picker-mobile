@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import FortuneWheelComponent from "../components/FortuneWheelComponent";
 import SafeIOSContainer from "../components/SafeIOSContainer";
-import { Dimensions, FlatList, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
+import { Dimensions, FlatList, Image, ImageBackground, Platform, Pressable, useWindowDimensions, View } from "react-native";
 import {
   useGetCategoriesQuery,
   useGetMovieProvidersQuery,
@@ -20,6 +20,7 @@ import useTranslation from "../service/useTranslation";
 import { throttle } from "../utils/throttle";
 import { useIsFocused } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import FrostedGlass from "../components/FrostedGlass";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
 
@@ -178,7 +179,11 @@ function FortuneWheel({ navigation, route }: any) {
             style={{ flex: 1, position: "absolute", top: 0, width, height, justifyContent: "flex-end" }}
             colors={["transparent", "rgba(0,0,0,0.5)", "#000000"]}
           >
-            <View
+            <FrostedGlass
+              container={{
+                width: "100%",
+                height: 500,
+              }}
               style={{
                 marginBottom: Platform.OS === "ios" ? 80 : 10,
                 padding: 15,
@@ -186,15 +191,27 @@ function FortuneWheel({ navigation, route }: any) {
                 gap: 0,
               }}
             >
-              <Text numberOfLines={2} style={{ fontSize: 55, fontFamily: "Bebas", lineHeight: 55, marginTop: 10 }}>
-                {data?.title || data?.name}
-              </Text>
+              <Pressable
+                onPress={() => {
+                  navigation.push("MovieDetails", {
+                    id: data?.id,
+                    type: type,
+                    img: data?.poster_path,
+                  });
+                }}
+              >
+                <>
+                  <Text numberOfLines={2} style={{ fontSize: 55, fontFamily: "Bebas", lineHeight: 55, marginTop: 10 }}>
+                    {data?.title || data?.name}
+                  </Text>
 
-              <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 15, marginBottom: 10 }}>{subHeading.join(" | ")}</Text>
+                  <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 15, marginBottom: 10 }}>{subHeading.join(" | ")}</Text>
 
-              <Text style={{ fontSize: 19, color: "rgba(255,255,255,0.95)" }} numberOfLines={8}>
-                {data?.overview}
-              </Text>
+                  <Text style={{ fontSize: 16, color: "rgba(255,255,255,0.95)" }} numberOfLines={5}>
+                    {data?.overview}
+                  </Text>
+                </>
+              </Pressable>
 
               <WatchProviders hideLabel providers={providers} style={{ marginVertical: 5, marginTop: 5 }} />
 
@@ -218,7 +235,7 @@ function FortuneWheel({ navigation, route }: any) {
                   <Favourite showLabel={false} movie={data as Movie} />
                 </View>
               </View>
-            </View>
+            </FrostedGlass>
           </LinearGradient>
         </AnimatedBackgroundImage>
       ) : (
