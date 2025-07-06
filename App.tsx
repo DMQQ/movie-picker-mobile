@@ -33,7 +33,7 @@ import { LinkingOptions } from "@react-navigation/native";
 import SearchFilters from "./src/screens/SearchFilters";
 
 const linking: LinkingOptions<RootStackParamList> = {
-  prefixes: ["flickmate://", "https://movie.dmqq.dev"],
+  prefixes: ["flickmate://", "pl.dmq.moviepicker://"],
   config: {
     screens: {
       Voter: {
@@ -58,6 +58,25 @@ const linking: LinkingOptions<RootStackParamList> = {
     },
   },
 };
+
+if (Platform.OS === "web") {
+  const originalPushState = window.history.pushState;
+  const originalReplaceState = window.history.replaceState;
+
+  window.history.pushState = function (state, title, url) {
+    if (typeof url === "string" && url.startsWith("/") && !url.startsWith("/app")) {
+      url = "/app" + url;
+    }
+    return originalPushState.call(this, state, title, url);
+  };
+
+  window.history.replaceState = function (state, title, url) {
+    if (typeof url === "string" && url.startsWith("/") && !url.startsWith("/app")) {
+      url = "/app" + url;
+    }
+    return originalReplaceState.call(this, state, title, url);
+  };
+}
 
 const Fallback = () => (
   <View

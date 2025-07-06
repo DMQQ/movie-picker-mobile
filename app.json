@@ -78,6 +78,8 @@
     "web": {
       "bundler": "metro",
       "favicon": "./assets/images/icon-light.png",
+      "publicPath": "/app/",
+      "output": "single",
       "build": {
         "babel": {
           "include": ["@expo/vector-icons"]
@@ -95,6 +97,9 @@
     "runtimeVersion": "1.0.0",
     "updates": {
       "url": "https://u.expo.dev/ab2d7ea0-e25f-4063-a2e2-1a449547340b"
+    },
+    "experiments": {
+      "baseUrl": "/app"
     }
   }
 }
