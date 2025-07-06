@@ -46,7 +46,6 @@ export default function Home({ route, navigation }: any) {
   }, [route?.params?.roomId]);
 
   const handleNavigateDetails = (card: Movie) => {
-    Image.prefetch("https://image.tmdb.org/t/p/w780" + card.poster_path);
     navigation.navigate("MovieDetails", {
       id: card.id,
       type: route.params?.type || "movie",

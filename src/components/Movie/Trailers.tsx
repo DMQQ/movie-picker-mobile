@@ -1,6 +1,6 @@
-import { Linking, Pressable, View, ScrollView, Dimensions, TouchableOpacity } from "react-native";
+import { Linking, Dimensions, TouchableOpacity, StyleSheet } from "react-native";
 import { useGetTrailersQuery } from "../../redux/movie/movieApi";
-import { Text, Chip, Surface, Icon } from "react-native-paper";
+import { Text } from "react-native-paper";
 import FrostedGlass from "../FrostedGlass";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { hexToRgba } from "../../utils/hexToRgb";
@@ -40,15 +40,12 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
     height: withSpring(isExpanded.value ? filteredItems.length * 45 + 45 : 45, config),
   }));
 
-  if (!filteredItems.length) return null;
-
   return (
-    <Animated.View style={{ position: "absolute", right: 5, bottom: 25 }} entering={FadeInDown}>
+    <Animated.View style={styles.container}>
       <FrostedGlass
         blurAmount={70}
         style={{
           borderRadius: 12,
-          // backgroundColor: hexToRgba("#FF000", 0.5),
         }}
         container={{ marginRight: 15 }}
       >
@@ -61,11 +58,11 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
         >
           <Animated.View style={[animatedValue, { position: "relative" }]}>
             {showItems && (
-              <Animated.View entering={FadeInDown.delay(filteredItems.length > 3 ? 200 : 50)}>
+              <Animated.View entering={FadeInDown.delay(filteredItems.length > 3 ? 150 : 50)}>
                 {filteredItems.map((trailer, index) => (
                   <Animated.View
                     key={trailer.key}
-                    entering={FadeInDown.delay(index * 50)}
+                    entering={FadeInDown.delay(index * 35)}
                     style={{
                       width: "100%",
                     }}
@@ -74,27 +71,11 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
                       onPress={() => {
                         Linking.openURL(`https://www.youtube.com/watch?v=${trailer.key}`);
                       }}
-                      style={{
-                        padding: 10,
-                        paddingHorizontal: 15,
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 10,
-                        borderBottomWidth: 1,
-                        borderBottomColor: hexToRgba("#FFFFFF", 0.2),
-                      }}
+                      style={styles.button}
                       activeOpacity={0.8}
                     >
                       <AntDesign name="youtube" size={24} color="#FF0000" />
-                      <Text
-                        variant="bodyMedium"
-                        style={{
-                          color: "white",
-                          fontWeight: "bold",
-                          width: width / 2 - 50,
-                        }}
-                        numberOfLines={1}
-                      >
+                      <Text variant="bodyMedium" style={styles.mainButtonText} numberOfLines={1}>
                         {trailer.name || "Trailer"}
                       </Text>
                     </TouchableOpacity>
@@ -102,18 +83,7 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
                 ))}
               </Animated.View>
             )}
-            <Animated.View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 10,
-                position: "absolute",
-                bottom: 10,
-                left: 15,
-                width: showItems ? width / 2 - 30 : 90,
-                justifyContent: "space-between",
-              }}
-            >
+            <Animated.View style={[styles.buttonsContainer, { width: showItems ? width / 2 - 30 : 90 }]}>
               {!showItems && (
                 <Animated.View entering={FadeInLeft} exiting={FadeOutLeft}>
                   <AntDesign name="youtube" size={24} color="#FF0000" />
@@ -141,3 +111,30 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
     </Animated.View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { position: "absolute", right: 0, bottom: 30 },
+  button: {
+    padding: 10,
+    paddingHorizontal: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: hexToRgba("#FFFFFF", 0.2),
+  },
+  mainButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    width: width / 2 - 50,
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    position: "absolute",
+    bottom: 10,
+    left: 15,
+    justifyContent: "space-between",
+  },
+});

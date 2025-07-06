@@ -5,6 +5,7 @@ import { roomActions } from "../redux/room/roomSlice";
 import { Movie } from "../../types";
 import { Image } from "react-native";
 import ReviewManager from "../utils/rate";
+import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 
 export default function useRoom(room: string) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
@@ -33,8 +34,11 @@ export default function useRoom(room: string) {
     if (!socket) return;
 
     const handleMovies = async (_cards: { movies: Movie[] }) => {
+      await Promise.all(
+        _cards.movies.map((card: Movie) => prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge))
+      );
+
       setCards(_cards.movies);
-      await Promise.all(_cards.movies.map((card: Movie) => Image.prefetch("https://image.tmdb.org/t/p/w780" + card.poster_path)));
     };
 
     // Setup listeners once

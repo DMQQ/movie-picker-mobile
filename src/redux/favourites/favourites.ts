@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Movie } from "../../../types";
 
 type MediaType = "movie" | "tv";
 
@@ -156,6 +157,36 @@ export const deleteGroup = createAsyncThunk("favorites/deleteGroup", async (grou
   return groupId;
 });
 
+export const createGroupFromArray = createAsyncThunk(
+  "favourites/createGroupFromArray",
+  async ({ name, movies }: { name: string; movies: Movie[] }) => {
+    try {
+      const data = await AsyncStorage.getItem(STORAGE_KEY);
+      const storage = data ? JSON.parse(data) : { groups: [] };
+
+      const group: FavoriteGroup = {
+        id: Date.now().toString(),
+        name,
+        movies: movies.map((m) => ({
+          id: m.id,
+          imageUrl: m.poster_path,
+          type: m.type as "movie" | "tv",
+        })),
+      };
+
+      const updated = {
+        ...storage,
+        groups: [...storage.groups, group],
+      };
+
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return group;
+    } catch (error) {
+      throw new Error("createGroupFromArray failed: " + error);
+    }
+  }
+);
+
 export const favoritesSlice = createSlice({
   name: "favorites",
   initialState,
@@ -181,6 +212,9 @@ export const favoritesSlice = createSlice({
       })
       .addCase(deleteGroup.fulfilled, (state, action) => {
         state.groups = state.groups.filter((group) => group.id !== action.payload);
+      })
+      .addCase(createGroupFromArray.fulfilled, (state, action) => {
+        state.groups.push(action.payload);
       })
       .addMatcher(
         (action) => action.type.endsWith("/rejected"),

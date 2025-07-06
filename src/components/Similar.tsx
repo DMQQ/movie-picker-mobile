@@ -6,7 +6,7 @@ import { Movie } from "../../types";
 import { useLazyGetSimilarQuery } from "../redux/movie/movieApi";
 import ScoreRing from "./ScoreRing";
 import useTranslation from "../service/useTranslation";
-import Thumbnail from "./Thumbnail";
+import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "./Thumbnail";
 
 const { width, height } = Dimensions.get("window");
 
@@ -26,6 +26,7 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
     getSectionMovies({ id: id, type: type, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
         setSectionMovies((prev) => prev.concat(response?.data?.results || []));
+        if (response?.data) Promise.any(response.data.results.map((i) => prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.xxlarge)));
       }
     });
   }, [page]);

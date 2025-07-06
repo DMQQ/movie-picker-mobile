@@ -1,7 +1,5 @@
 import { View, useWindowDimensions } from "react-native";
 import Animated, { useAnimatedStyle, SharedValue, interpolate, interpolateColor, withTiming } from "react-native-reanimated";
-import { sharedElementTransition } from "../../service/utils/SharedElementTransition";
-import { useEffect } from "react";
 
 const SwipeText = (props: {
   text: string;

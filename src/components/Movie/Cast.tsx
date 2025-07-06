@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   card: {
     padding: 15,
     borderRadius: 25,
-    maxWidth: layout.screen.width * 0.45,
+    maxWidth: layout.screen.width * 0.45 - 2,
   },
   image: {
     width: layout.screen.width * 0.45 - 30,

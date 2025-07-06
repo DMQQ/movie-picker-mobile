@@ -6,12 +6,11 @@ import {
   View,
   VirtualizedList,
   ImageBackground,
-  Image,
   Platform,
   RefreshControl,
 } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { ScreenProps } from "./types";
 import { useGetFeaturedQuery, useLazyGetLandingPageMoviesQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
 import ScoreRing from "../components/ScoreRing";
@@ -22,9 +21,10 @@ import AppLoadingOverlay from "../components/AppLoadingOverlay";
 import useTranslation from "../service/useTranslation";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import NoConnectionError from "../components/NoConnectionError";
-import Thumbnail from "../components/Thumbnail";
+import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import RatingIcons from "../components/RatingIcons";
 import FrostedGlass from "../components/FrostedGlass";
+import { uuid } from "expo-modules-core";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -153,7 +153,6 @@ const FeaturedSection = memo(
     };
 
     const details = [
-      // featured?.vote_average && featured?.vote_average?.toFixed(1) + "/10",
       featured?.release_date || featured?.first_air_date,
       ((featured?.title || featured?.name) === (featured?.original_title || featured?.original_name) && featured?.original_title) ||
         featured?.original_name,
@@ -161,6 +160,12 @@ const FeaturedSection = memo(
     ]
       .filter(Boolean)
       .join(" | ");
+
+    useEffect(() => {
+      if (!featured?.poster_path) return;
+
+      prefetchThumbnail(featured?.poster_path, ThumbnailSizes.poster.xxlarge);
+    }, [featured?.poster_path]);
 
     if (!featured || error) return null;
 
@@ -339,34 +344,21 @@ const Section = memo(({ group }: SectionProps) => {
 
     getSectionMovies({ name: group.name, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
+        Promise.any(
+          response.data.results.map((i) =>
+            [
+              prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.xxlarge),
+              prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.large),
+            ].flat()
+          )
+        );
+
         setSectionMovies((prev) => prev.concat(response?.data?.results || []));
       }
     });
   }, [page]);
 
-  const renderItem = useCallback(
-    ({ item }: { item: Movie & { type: string } }) => (
-      <Pressable
-        onPress={async () => {
-          Image.prefetch("https://image.tmdb.org/t/p/w780" + item.poster_path);
-          navigation.navigate("MovieDetails", {
-            id: item.id,
-            type: item.type,
-            img: item.poster_path,
-          });
-        }}
-        style={{
-          position: "relative",
-        }}
-      >
-        <Thumbnail path={item.poster_path} size={300} container={sectionStyles.image} />
-        <View style={{ position: "absolute", right: 30, bottom: 10 }}>
-          <ScoreRing score={item.vote_average} />
-        </View>
-      </Pressable>
-    ),
-    []
-  );
+  const renderItem = useCallback(({ item }: { item: Movie & { type: string } }) => <SectionListItem {...item} />, []);
 
   return (
     <View style={sectionStyles.container}>
@@ -397,3 +389,33 @@ const Section = memo(({ group }: SectionProps) => {
     </View>
   );
 });
+
+const SectionListItem = (item: Movie) => {
+  const navigation = useNavigation<any>();
+
+  const uniqueId = useMemo(() => {
+    return uuid.v4();
+  }, []);
+
+  return (
+    <Pressable
+      onPress={async () => {
+        navigation.navigate("MovieDetails", {
+          id: item.id,
+          type: item.type,
+          img: item.poster_path,
+
+          sharedId: uniqueId,
+        });
+      }}
+      style={{
+        position: "relative",
+      }}
+    >
+      <Thumbnail path={item.poster_path} size={300} container={sectionStyles.image} />
+      <View style={{ position: "absolute", right: 30, bottom: 10 }}>
+        <ScoreRing score={item.vote_average} />
+      </View>
+    </Pressable>
+  );
+};
