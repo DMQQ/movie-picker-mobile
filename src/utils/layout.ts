@@ -1,7 +1,8 @@
 import { Dimensions, PixelRatio } from "react-native";
+import { getConstrainedDimensions } from "./getConstrainedDimensions";
 
-const d = Dimensions.get("window");
-const s = Dimensions.get("screen");
+const d = getConstrainedDimensions("window");
+const s = getConstrainedDimensions("screen");
 
 const pxToDp = (px: number) => {
   const screenScale = PixelRatio.get();
@@ -10,7 +11,7 @@ const pxToDp = (px: number) => {
 };
 
 const responsivePxToDp = (px: number) => {
-  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+  const { width: screenWidth, height: screenHeight } = getConstrainedDimensions("window");
 
   const baseWidth = 390;
   const scaleFactor = Math.min(screenWidth, screenHeight) / baseWidth;

@@ -8,6 +8,7 @@ import { useContext } from "react";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import ReviewManager from "../../utils/rate";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
 export default function DialogModals({
   showLeaveModal,
@@ -73,7 +74,7 @@ export default function DialogModals({
             backgroundColor={theme.colors.surface}
             color={theme.colors.primary}
             value={`flickmate://swipe/${qrCode}`}
-            size={Dimensions.get("screen").width / 1.35}
+            size={getConstrainedDimensions("screen").width / 1.35}
           />
           <Text
             style={{

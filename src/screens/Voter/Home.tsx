@@ -27,6 +27,7 @@ import { CommonActions } from "@react-navigation/native";
 import PageHeading from "../../components/PageHeading";
 import { Pressable } from "react-native-gesture-handler";
 import ReviewManager from "../../utils/rate";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
 const scaleTitle = (title: string, size = 30) => {
   if (title.length > 30) return size * 0.75;
@@ -181,7 +182,7 @@ export default function Home({ navigation, route }: any) {
 
           {sessionId && (
             <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
-              <QRCodeComponent sessionId={sessionId} type="voter" safetyCode="1234" size={Dimensions.get("screen").width / 2} />
+              <QRCodeComponent sessionId={sessionId} type="voter" safetyCode="1234" size={getConstrainedDimensions("screen").width / 2} />
             </View>
           )}
         </View>
@@ -257,7 +258,7 @@ export default function Home({ navigation, route }: any) {
                     exiting={FadeOutDown.duration(300)}
                     source={{ uri: "https://image.tmdb.org/t/p/w200" + card?.poster_path }}
                     style={{
-                      width: (Dimensions.get("window").width - 30) / 2 - 50,
+                      width: (getConstrainedDimensions("window").width - 30) / 2 - 50,
                       height: 210,
                       borderRadius: 10,
                     }}
@@ -322,7 +323,7 @@ export default function Home({ navigation, route }: any) {
                 </Text>
                 <RangeSlider
                   value={localRatings.interest}
-                  width={Dimensions.get("window").width - 30}
+                  width={getConstrainedDimensions("window").width - 30}
                   steps={5}
                   barHeight={30}
                   barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
@@ -353,7 +354,7 @@ export default function Home({ navigation, route }: any) {
                 </Text>
                 <RangeSlider
                   value={localRatings.mood}
-                  width={Dimensions.get("window").width - 30}
+                  width={getConstrainedDimensions("window").width - 30}
                   steps={3}
                   barHeight={30}
                   barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
@@ -387,7 +388,7 @@ export default function Home({ navigation, route }: any) {
                 </Text>
                 <RangeSlider
                   value={localRatings.uniqueness}
-                  width={Dimensions.get("window").width - 30}
+                  width={getConstrainedDimensions("window").width - 30}
                   steps={5}
                   barHeight={30}
                   barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
@@ -512,7 +513,7 @@ function Results({ navigation }: any) {
               <Image
                 source={{ uri: "https://image.tmdb.org/t/p/w500" + card?.poster_path }}
                 style={{
-                  width: (Dimensions.get("window").width - 30) / 2 - 60,
+                  width: (getConstrainedDimensions("window").width - 30) / 2 - 60,
                   height: 215,
                   borderRadius: 10,
                 }}
@@ -543,7 +544,7 @@ function Results({ navigation }: any) {
                 activeOpacity={0.9}
                 disabled={!item.movie.id}
                 key={item.movie.id}
-                style={{ marginBottom: 15, width: Dimensions.get("screen").width - 30, overflow: "hidden" }}
+                style={{ marginBottom: 15, width: getConstrainedDimensions("screen").width - 30, overflow: "hidden" }}
                 onPress={() => {
                   navigation.navigate("MovieDetails", {
                     id: item.movie.id,
@@ -705,7 +706,7 @@ const PickProviders = ({ providers, setProviders }: { setProviders: any; provide
   // Calculate size accounting for all spacing
   const totalHorizontalPadding = CONTAINER_PADDING * 2;
   const totalMargins = MARGIN * (NUM_COLUMNS - 1);
-  const size = Math.floor((Dimensions.get("screen").width - totalHorizontalPadding - totalMargins) / NUM_COLUMNS);
+  const size = Math.floor((getConstrainedDimensions("screen").width - totalHorizontalPadding - totalMargins) / NUM_COLUMNS);
 
   return (
     <FlatList

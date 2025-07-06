@@ -21,8 +21,9 @@ import { throttle } from "../utils/throttle";
 import { useIsFocused } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FrostedGlass from "../components/FrostedGlass";
+import { getConstrainedDimensions } from "../utils/getConstrainedDimensions";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
+const { width: screenWidth, height: screenHeight } = getConstrainedDimensions("screen");
 
 const AnimatedBackgroundImage = Animated.createAnimatedComponent(ImageBackground);
 
@@ -307,7 +308,7 @@ export const SectionSelector = ({ navigation }: any) => {
             onPress={() => navigation.popTo("FortuneWheel", { category: item.name })}
             style={{
               marginRight: 10,
-              width: Dimensions.get("window").width / 2 - 15,
+              width: getConstrainedDimensions("window").width / 2 - 15,
               backgroundColor: MD2DarkTheme.colors.surface,
               height: 100,
             }}

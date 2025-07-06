@@ -8,6 +8,7 @@ import useTranslation from "../../service/useTranslation";
 import LottieView from "lottie-react-native";
 import { useEffect, useRef, useState } from "react";
 import * as Haptics from "expo-haptics";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
 const styles = StyleSheet.create({
   matchModal: {
@@ -16,7 +17,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.6)",
 
     ...StyleSheet.absoluteFillObject,
-    height: Dimensions.get("screen").height,
+    height: getConstrainedDimensions("screen").height,
     zIndex: 1000,
   },
   matchText: {
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
     position: "relative",
     height: "auto",
     marginTop: 15,
-    minHeight: Dimensions.get("screen").height / 1.5,
+    minHeight: getConstrainedDimensions("screen").height / 1.5,
   },
   matchClose: {
     marginVertical: 10,
@@ -39,8 +40,8 @@ const styles = StyleSheet.create({
   },
   gradient: {
     overflow: "hidden",
-    width: Dimensions.get("screen").width * 0.95 - 20,
-    height: Dimensions.get("screen").height * 0.7,
+    width: getConstrainedDimensions("screen").width * 0.95 - 20,
+    height: getConstrainedDimensions("screen").height * 0.7,
     justifyContent: "flex-end",
     position: "absolute",
     zIndex: 10,
@@ -126,8 +127,8 @@ export default function MatchModal({ match, hideMatchModal }: { match: any; hide
           ref={animation}
           style={{
             position: "absolute",
-            width: Dimensions.get("window").width,
-            height: Dimensions.get("window").height,
+            width: getConstrainedDimensions("window").width,
+            height: getConstrainedDimensions("window").height,
             top: -50,
             left: 0,
             zIndex: 100,
@@ -168,8 +169,8 @@ export default function MatchModal({ match, hideMatchModal }: { match: any; hide
 
             <Poster
               imageDimensions={{
-                width: Dimensions.get("screen").width * 0.95 - 20,
-                height: Dimensions.get("screen").height * 0.7,
+                width: getConstrainedDimensions("screen").width * 0.95 - 20,
+                height: getConstrainedDimensions("screen").height * 0.7,
               }}
               card={match}
             />

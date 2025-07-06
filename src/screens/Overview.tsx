@@ -5,6 +5,7 @@ import { memo, useEffect } from "react";
 import MatchesScreen from "./Overview/Matches";
 import LikesScreen from "./Overview/Likes";
 import useTranslation from "../service/useTranslation";
+import { getConstrainedDimensions } from "../utils/getConstrainedDimensions";
 
 const OverviewTopTabs = createMaterialTopTabNavigator();
 
@@ -16,7 +17,7 @@ function Overview() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <OverviewTopTabs.Navigator
-        initialLayout={{ width: Dimensions.get("window").width }}
+        initialLayout={{ width: getConstrainedDimensions("window").width }}
         initialRouteName="Matches"
         screenOptions={{
           tabBarLabelStyle: {

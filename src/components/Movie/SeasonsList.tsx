@@ -6,7 +6,6 @@ import FrostedGlass from "../FrostedGlass";
 import RatingIcons from "../RatingIcons";
 import SeasonEpisodes from "./SeasonEpisodes";
 import { useMemo, useState } from "react";
-import { hexToRgba } from "../../utils/hexToRgb";
 
 interface Season {
   air_date: string;

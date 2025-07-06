@@ -5,6 +5,7 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { svgPathProperties } from "svg-path-properties";
 
 import { Image as RNImage } from "react-native";
+import { getConstrainedDimensions } from "../utils/getConstrainedDimensions";
 
 interface ILayersProps {
   width: number;
@@ -137,7 +138,7 @@ export const ScratchCard = ({ imageUrl, style }: ScratchCardProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: Dimensions.get("screen").width - 30,
+    width: getConstrainedDimensions("screen").width - 30,
     height: 350,
     backgroundColor: "#fff",
     borderRadius: 15,

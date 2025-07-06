@@ -10,6 +10,7 @@ import PageHeading from "../components/PageHeading";
 
 import Thumbnail from "../components/Thumbnail";
 import { useState } from "react";
+import { getConstrainedDimensions } from "../utils/getConstrainedDimensions";
 
 export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const { groups } = useAppSelector((state) => state.favourite);
@@ -39,8 +40,8 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
                   <ImageBackground
                     blurRadius={10}
                     style={{
-                      width: Dimensions.get("window").width - 30,
-                      height: Dimensions.get("window").width / 2 - 30,
+                      width: getConstrainedDimensions("window").width - 30,
+                      height: getConstrainedDimensions("window").width / 2 - 30,
                       borderRadius: 15,
                       justifyContent: "center",
                       alignItems: "center",
@@ -63,8 +64,8 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
                           path={m.imageUrl}
                           size={200}
                           container={{
-                            width: (Dimensions.get("window").width / 2 - 25) * 0.45,
-                            height: (Dimensions.get("window").width / 2 - 25) * 0.65,
+                            width: (getConstrainedDimensions("window").width / 2 - 25) * 0.45,
+                            height: (getConstrainedDimensions("window").width / 2 - 25) * 0.65,
                             borderRadius: 5,
                           }}
                         />

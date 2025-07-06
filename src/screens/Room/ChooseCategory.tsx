@@ -9,6 +9,7 @@ import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import { useMemo } from "react";
 import PageHeading from "../../components/PageHeading";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
 type Category = {
   label: string;
@@ -22,7 +23,7 @@ const getFormattedDate = (offset = 0) => {
   return date.toISOString().split("T")[0];
 };
 
-const { width } = Dimensions.get("window");
+const { width } = getConstrainedDimensions("window");
 const buttonWidth = (width - 60) / 3;
 
 const getCategoryIcon = (path: string, isSelected: boolean, theme: any) => {

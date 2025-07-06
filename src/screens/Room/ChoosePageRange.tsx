@@ -9,6 +9,7 @@ import { useGetMaxPageRangeQuery } from "../../redux/movie/movieApi";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import PageHeading from "../../components/PageHeading";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
 function generateArrayWithMaxIncrement(max: number, length = 7) {
   if (max === 0) return Array.from({ length }, (_, i) => i + 1);
@@ -27,7 +28,7 @@ function generateArrayWithMaxIncrement(max: number, length = 7) {
   return arr.sort((a, b) => a - b);
 }
 
-const { width } = Dimensions.get("screen");
+const { width } = getConstrainedDimensions("screen");
 
 export default function ChoosePageRange({ navigation }: any) {
   const { pageRange, setPageRange, category, genre } = useCreateRoom();

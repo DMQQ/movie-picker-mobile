@@ -6,8 +6,9 @@ import { Text } from "react-native-paper";
 import Thumbnail from "../Thumbnail";
 import RatingIcons from "../RatingIcons";
 import { useState } from "react";
-import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
 export default function SeasonEpisodes({ id, season }: { id: number; season: number }) {
   const { data, isLoading } = useGetSeasonEpisodesQuery({ id, season }, { refetchOnMountOrArgChange: true });
@@ -27,7 +28,7 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
   if (!data || !data?.episodes || data?.episodes?.length === 0) return null;
 
   return (
-    <Animated.View style={{ marginTop: 30 }} layout={LinearTransition}>
+    <Animated.View style={{ marginTop: 30 }}>
       <Text style={{ fontSize: 35, fontFamily: "Bebas", color: "#fff", marginBottom: 10 }}>
         {t("movie.details.season")} {season}{" "}
         <Text style={{ fontSize: 20, fontFamily: "Bebas" }}>{data?.episodes.length ? `(${data?.episodes.length})` : ""}</Text>
@@ -36,7 +37,7 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
         <Animated.View key={item.id} entering={FadeIn.delay(index * 50)}>
           <FrostedGlass
             container={{
-              width: Dimensions.get("screen").width - 30,
+              width: getConstrainedDimensions("screen").width - 30,
               marginBottom: 15,
               borderRadius: 20,
             }}

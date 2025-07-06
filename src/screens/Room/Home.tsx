@@ -1,4 +1,4 @@
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image, Platform } from "react-native";
 import { Text } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import SwipeTile from "../../components/Movie/SwipeTiles";
@@ -58,7 +58,7 @@ export default function Home({ route, navigation }: any) {
   const t = useTranslation();
 
   return (
-    <View style={{ flex: 1, marginBottom: insets.bottom }}>
+    <View style={{ flex: 1, marginBottom: insets.bottom, ...(Platform.OS === "web" && { overflow: "hidden" }) }}>
       <HomeAppbar
         cards={cards}
         route={route}

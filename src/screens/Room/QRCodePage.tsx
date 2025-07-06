@@ -13,6 +13,7 @@ import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import PageHeading from "../../components/PageHeading";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
 interface ISocketResponse {
   roomId: string;
@@ -174,7 +175,7 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
           backgroundColor={theme.colors.surface}
           color={theme.colors.primary}
           value={`flickmate://swipe/${code}`}
-          size={Dimensions.get("screen").width * 0.6}
+          size={getConstrainedDimensions("screen").width * 0.6}
         />
       </View>
 

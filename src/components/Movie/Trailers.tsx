@@ -15,8 +15,9 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useMemo, useState } from "react";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
-const width = Dimensions.get("window").width;
+const width = getConstrainedDimensions("window").width;
 
 const config = {
   damping: 20,
@@ -136,5 +137,6 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: 15,
     justifyContent: "space-between",
+    flexWrap: "nowrap",
   },
 });

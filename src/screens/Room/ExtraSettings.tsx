@@ -6,6 +6,7 @@ import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useCreateRoom } from "./ContextProvider";
 import PageHeading from "../../components/PageHeading";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
 export default function ExtraSettings({ navigation }: any) {
   const t = useTranslation();
@@ -19,7 +20,7 @@ export default function ExtraSettings({ navigation }: any) {
   };
 
   const numberOfColumns = useMemo(() => {
-    const container = Dimensions.get("window").width - 30;
+    const container = getConstrainedDimensions("window").width - 30;
     const gap = 5;
     const size = 70;
 

@@ -7,8 +7,9 @@ import { useLazyGetSimilarQuery } from "../redux/movie/movieApi";
 import ScoreRing from "./ScoreRing";
 import useTranslation from "../service/useTranslation";
 import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "./Thumbnail";
+import { getConstrainedDimensions } from "../utils/getConstrainedDimensions";
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = getConstrainedDimensions("window");
 
 const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
   const navigation = useNavigation<any>();

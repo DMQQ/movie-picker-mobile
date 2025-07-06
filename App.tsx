@@ -99,10 +99,22 @@ export default function App() {
   if (!isLoaded) return <Fallback />;
 
   return (
-    <SafeAreaProvider style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
+    <SafeAreaProvider style={{ flex: 1, backgroundColor: "#000" }}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: "#000",
+          ...(Platform.OS === "web"
+            ? {
+                maxWidth: 550,
+                alignSelf: "center",
+                width: "100%",
+              }
+            : {}),
+        }}
+      >
         <Provider store={store}>
-          <PaperProvider theme={theme}>
+          <PaperProvider theme={MD2DarkTheme}>
             <Navigator />
           </PaperProvider>
         </Provider>

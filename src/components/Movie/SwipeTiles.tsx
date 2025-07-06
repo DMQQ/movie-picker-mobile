@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, View, useWindowDimensions } from "react-native";
+import { Dimensions, StyleSheet, View, useWindowDimensions, Platform } from "react-native";
 import { Movie } from "../../../types";
 import Animated, { Extrapolation, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -8,8 +8,9 @@ import { memo } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import TabBar from "../Home/TabBar";
 import * as Haptics from "expo-haptics";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
-const { width } = Dimensions.get("screen");
+const { width } = getConstrainedDimensions("screen");
 
 const styles = StyleSheet.create({
   container: {
@@ -53,7 +54,6 @@ const SwipeTile = ({
   index,
   length,
   onPress,
-
   ...actions
 }: {
   card: Movie;
@@ -112,7 +112,63 @@ const SwipeTile = ({
         isRightVisible.value = false;
       }
     })
-    .enabled(index === 0);
+    .enabled(index === 0 && Platform.OS !== "web");
+
+  const webTouchHandlers =
+    Platform.OS === "web" && index === 0
+      ? {
+          onTouchStart: (e: any) => {
+            const startX = e.touches[0].clientX;
+            const startY = e.touches[0].clientY;
+
+            const handleTouchMove = (moveEvent: TouchEvent) => {
+              if (moveEvent.cancelable) {
+                moveEvent.preventDefault();
+              }
+
+              if (moveEvent.touches.length > 0) {
+                const deltaX = moveEvent.touches[0].clientX - startX;
+                const deltaY = moveEvent.touches[0].clientY - startY;
+
+                position.value = { x: deltaX, y: deltaY };
+
+                if (deltaX > 50) {
+                  isLeftVisible.value = true;
+                  isRightVisible.value = false;
+                } else if (deltaX < -50) {
+                  isLeftVisible.value = false;
+                  isRightVisible.value = true;
+                } else {
+                  isLeftVisible.value = false;
+                  isRightVisible.value = false;
+                }
+              }
+            };
+
+            const handleTouchEnd = () => {
+              const currentX = position.value.x;
+
+              if (currentX > width * 0.25) {
+                likeCard();
+                position.value = withSpring({ x: width + 100, y: 100 });
+              } else if (currentX < -width * 0.25) {
+                removeCard();
+                position.value = withSpring({ x: -width - 100, y: 100 });
+              } else {
+                position.value = withSpring({ x: 0, y: 0 });
+                isLeftVisible.value = false;
+                isRightVisible.value = false;
+              }
+
+              document.removeEventListener("touchmove", handleTouchMove);
+              document.removeEventListener("touchend", handleTouchEnd);
+            };
+
+            document.addEventListener("touchmove", handleTouchMove);
+            document.addEventListener("touchend", handleTouchEnd);
+          },
+        }
+      : {};
 
   const animatedStyle = useAnimatedStyle(() => {
     const rotate = interpolate(position.value.x, [-width * 0.35, width * 0.35], [-10, 10], Extrapolation.CLAMP);
@@ -132,7 +188,9 @@ const SwipeTile = ({
       }
       fn();
 
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      if (Platform.OS !== "web") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
     };
   };
 
@@ -143,34 +201,36 @@ const SwipeTile = ({
     height: height * 0.7,
   };
 
+  const AnimatedCard = (
+    <Animated.View style={[animatedStyle, { zIndex: 1000 - index }]} {...webTouchHandlers}>
+      <View style={styles.container}>
+        <LinearGradient colors={["transparent", "transparent", "rgba(0,0,0,0.9)"]} style={[styles.gradientContainer, dims]}>
+          <Text style={styles.title}>{card.title || card.name}</Text>
+          {card.overview && (
+            <Text style={styles.overview} numberOfLines={3}>
+              {card.overview}
+            </Text>
+          )}
+          <Text style={styles.release_date}>
+            {card.release_date || card.first_air_date}, {card.vote_average.toFixed(1)}/10
+          </Text>
+        </LinearGradient>
+
+        <Poster
+          isSwipeable
+          isLeftVisible={isLeftVisible}
+          isRightVisible={isRightVisible}
+          imageDimensions={dims}
+          translate={position}
+          card={card}
+        />
+      </View>
+    </Animated.View>
+  );
+
   return (
     <>
-      <GestureDetector gesture={moveGesture}>
-        <Animated.View style={[animatedStyle, { zIndex: 1000 - index }]}>
-          <View style={styles.container}>
-            <LinearGradient colors={["transparent", "transparent", "rgba(0,0,0,0.9)"]} style={[styles.gradientContainer, dims]}>
-              <Text style={styles.title}>{card.title || card.name}</Text>
-              {card.overview && (
-                <Text style={styles.overview} numberOfLines={3}>
-                  {card.overview}
-                </Text>
-              )}
-              <Text style={styles.release_date}>
-                {card.release_date || card.first_air_date}, {card.vote_average.toFixed(1)}/10
-              </Text>
-            </LinearGradient>
-
-            <Poster
-              isSwipeable
-              isLeftVisible={isLeftVisible}
-              isRightVisible={isRightVisible}
-              imageDimensions={dims}
-              translate={position}
-              card={card}
-            />
-          </View>
-        </Animated.View>
-      </GestureDetector>
+      {Platform.OS === "web" ? AnimatedCard : <GestureDetector gesture={moveGesture}>{AnimatedCard}</GestureDetector>}
 
       {index === 0 && (
         <TabBar

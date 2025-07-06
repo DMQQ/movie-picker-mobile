@@ -6,6 +6,7 @@ import Animated, { FadeIn, FadeOut, withSpring, withTiming } from "react-native-
 import ScratchCard from "../../components/ScratchCard";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FancySpinner } from "../../components/FancySpinner";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
 const ModalEnteringTransition = () => {
   "worklet";
@@ -80,7 +81,7 @@ export default function Modal({ match, onClose, styles }: any) {
         exiting={FadeOut.delay(200)}
         style={[
           {
-            ...Dimensions.get("window"),
+            ...getConstrainedDimensions("window"),
             backgroundColor: "rgba(0, 0, 0, 0.9)",
             alignItems: "center",
             position: "absolute",
@@ -94,8 +95,8 @@ export default function Modal({ match, onClose, styles }: any) {
           ref={animation}
           style={{
             position: "absolute",
-            width: Dimensions.get("window").width,
-            height: Dimensions.get("window").height,
+            width: getConstrainedDimensions("window").width,
+            height: getConstrainedDimensions("window").height,
             top: -50,
             left: 0,
             zIndex: 100,
@@ -129,8 +130,8 @@ export default function Modal({ match, onClose, styles }: any) {
               exiting={FadeOut}
               style={{
                 position: "absolute",
-                width: Dimensions.get("screen").width - 30 - 15,
-                height: Dimensions.get("window").height / 1.5 - 50,
+                width: getConstrainedDimensions("screen").width - 30 - 15,
+                height: getConstrainedDimensions("window").height / 1.5 - 50,
                 justifyContent: "center",
                 alignItems: "center",
                 backgroundColor: "rgba(0,0,0,0.7)",
@@ -144,8 +145,8 @@ export default function Modal({ match, onClose, styles }: any) {
           <ScratchCard
             imageUrl={`https://image.tmdb.org/t/p/w780${match.poster_path}`}
             style={{
-              width: Dimensions.get("screen").width - 30 - 15,
-              height: Dimensions.get("window").height / 1.5 - 50,
+              width: getConstrainedDimensions("screen").width - 30 - 15,
+              height: getConstrainedDimensions("window").height / 1.5 - 50,
             }}
           />
         </AnimatedPressable>

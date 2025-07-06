@@ -12,8 +12,9 @@ import { useGetGenresQuery } from "../../redux/movie/movieApi";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import PageHeading from "../../components/PageHeading";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
-const { width } = Dimensions.get("window");
+const { width } = getConstrainedDimensions("window");
 const cardWidth = (width - 60) / 3;
 
 const ListEmptyComponent = () => {

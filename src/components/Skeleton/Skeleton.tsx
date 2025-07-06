@@ -12,12 +12,13 @@ import Reanimated, {
   FadeOut,
 } from "react-native-reanimated";
 import { MD3DarkTheme, useTheme } from "react-native-paper";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
 interface SkeletonProps {
   children: React.ReactElement;
 }
 
-const dims = Dimensions.get("screen");
+const dims = getConstrainedDimensions("screen");
 
 const Skeleton = ({ children }: SkeletonProps) => {
   const shared = useSharedValue(0);
@@ -48,9 +49,7 @@ const Skeleton = ({ children }: SkeletonProps) => {
           height,
         }}
       >
-        <View
-          style={[styles.background, { backgroundColor: theme.colors.surface }]}
-        />
+        <View style={[styles.background, { backgroundColor: theme.colors.surface }]} />
         <Reanimated.View style={[StyleSheet.absoluteFill, animatedStyle]}>
           <MaskedView
             style={StyleSheet.absoluteFill}

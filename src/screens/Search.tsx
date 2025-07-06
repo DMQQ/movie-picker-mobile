@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { View, VirtualizedList, StyleSheet, ScrollView, Dimensions, Image, Pressable } from "react-native";
+import { View, VirtualizedList, StyleSheet, ScrollView, Dimensions, Image, Pressable, Platform } from "react-native";
 import { Chip, Text, ActivityIndicator, Portal, Modal, Button, Divider, MD2DarkTheme, TouchableRipple } from "react-native-paper";
 import { useLazySearchQuery } from "../redux/movie/movieApi";
 import { useNavigation } from "@react-navigation/native";
@@ -9,10 +9,11 @@ import useTranslation from "../service/useTranslation";
 import { Movie } from "../../types";
 import Animated, { FadeIn } from "react-native-reanimated";
 import Thumbnail from "../components/Thumbnail";
+import { getConstrainedDimensions } from "../utils/getConstrainedDimensions";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_WIDTH = getConstrainedDimensions("window").width;
 const ITEM_HEIGHT = 180;
 
 const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; index: number }) => {
@@ -352,6 +353,7 @@ const SearchScreen = ({ navigation, route }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: Platform.OS === "web" ? 20 : 0,
   },
   chipContainer: {
     borderBottomWidth: 1,

@@ -3,9 +3,8 @@ import { SocketContext } from "./SocketContext";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
 import { Movie } from "../../types";
-import { Image } from "react-native";
-import ReviewManager from "../utils/rate";
 import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
+import { Platform } from "react-native";
 
 export default function useRoom(room: string) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
@@ -31,6 +30,54 @@ export default function useRoom(room: string) {
   const { socket } = useContext(SocketContext);
 
   useEffect(() => {
+    if (Platform.OS === "web" && (isPlaying || cards.length > 0)) {
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        e.preventDefault();
+        e.returnValue = "";
+        return "";
+      };
+
+      const saveState = () => {
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem(
+            "roomState",
+            JSON.stringify({
+              room,
+              nickname,
+              isHost,
+              cards,
+              isPlaying,
+              roomId,
+            })
+          );
+        }
+      };
+
+      window.addEventListener("beforeunload", handleBeforeUnload);
+      window.addEventListener("visibilitychange", saveState);
+
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+        window.removeEventListener("visibilitychange", saveState);
+      };
+    }
+  }, [isPlaying, cards.length, room, nickname, isHost, roomId]);
+
+  useEffect(() => {
+    if (Platform.OS === "web" && typeof window !== "undefined") {
+      const savedState = sessionStorage.getItem("roomState");
+      if (savedState) {
+        const state = JSON.parse(savedState);
+        if (state.room === room) {
+          dispatch(roomActions.addMovies(state.cards));
+          dispatch(roomActions.setPlaying(state.isPlaying));
+          sessionStorage.removeItem("roomState");
+        }
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (!socket) return;
 
     const handleMovies = async (_cards: { movies: Movie[] }) => {
@@ -41,10 +88,10 @@ export default function useRoom(room: string) {
       setCards(_cards.movies);
     };
 
-    // Setup listeners once
     socket.on("movies", handleMovies);
     socket.on("room:state", (data) => {
       if (data) {
+        console.log("Room state updated:", data);
         dispatch(roomActions.setRoom(data));
         dispatch(roomActions.setPlaying(data.isStarted));
       }
@@ -55,7 +102,6 @@ export default function useRoom(room: string) {
     });
     socket.on("active", (users) => dispatch(roomActions.setActiveUsers(users)));
 
-    // Initial room setup
     if (!isHost) {
       socket.emit("join-room", room, nickname);
     } else {
@@ -119,7 +165,7 @@ export default function useRoom(room: string) {
   const joinGame = async (code: string) => {
     const response = await socket?.emitWithAck("join-room", code, nickname);
 
-    if (response.joined) {
+    if (response.joined && response?.room) {
       dispatch(roomActions.setRoom(response.room));
       dispatch(roomActions.setPlaying(response.room.isStarted));
     }

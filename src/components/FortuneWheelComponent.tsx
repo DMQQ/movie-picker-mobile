@@ -19,8 +19,9 @@ import * as Haptics from "expo-haptics";
 import Svg, { Path, Defs, Pattern, Line, G, Circle } from "react-native-svg";
 import Thumbnail from "./Thumbnail";
 import { Entypo } from "@expo/vector-icons";
+import { getConstrainedDimensions } from "../utils/getConstrainedDimensions";
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = getConstrainedDimensions("window");
 
 // Define wheel segment colors
 const COLORS = [

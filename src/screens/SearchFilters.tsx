@@ -5,8 +5,9 @@ import { Appbar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple, Divide
 import useTranslation from "../service/useTranslation";
 import DropdownPersonSearch from "../components/DropdownSearchPeron";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { getConstrainedDimensions } from "../utils/getConstrainedDimensions";
 
-const { width } = Dimensions.get("window");
+const { width } = getConstrainedDimensions("window");
 
 export default function SearchFilters({ navigation, route }: any) {
   const [selectedProviders, setSelectedProviders] = useState<number[]>(route?.params?.providers || []);

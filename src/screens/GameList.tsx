@@ -15,7 +15,7 @@ import PageHeading from "../components/PageHeading";
 import { useGetCategoriesQuery } from "../redux/movie/movieApi";
 // import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
 
-const { width } = Dimensions.get("screen");
+const { width } = "screen";
 const CARD_HEIGHT = 280;
 
 interface GameCardProps {

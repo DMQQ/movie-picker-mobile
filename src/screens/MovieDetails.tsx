@@ -12,8 +12,9 @@ import FrostedGlass from "../components/FrostedGlass";
 import Entypo from "react-native-vector-icons/Entypo";
 import Trailers from "../components/Movie/Trailers";
 import * as Haptics from "expo-haptics";
+import { getConstrainedDimensions } from "../utils/getConstrainedDimensions";
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = getConstrainedDimensions("window");
 
 export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"MovieDetails">) {
   const scrollOffset = useSharedValue(0);
@@ -30,14 +31,23 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
   });
 
   const handleBack = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.pop();
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    // navigation.pop();
+    navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Landing");
   }, [navigation]);
 
   const imageStyle = useAnimatedStyle(() => {
+    if (Platform.OS === "web") {
+      return {
+        width: "100%",
+        height: IMG_HEIGHT,
+      };
+    }
+
     if (Platform.OS === "ios") {
       const translateY = interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]);
-
       const scale = interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]);
 
       return {
@@ -65,14 +75,17 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
   });
 
   return (
-    <View style={{ flex: 1, height, width }}>
+    <View
+      style={{
+        flex: 1,
+        ...(Platform.OS === "web" ? { width: "100%", height: "100vh" } : { height, width }),
+      }}
+    >
       <Animated.ScrollView
         scrollEventThrottle={16}
-        onScroll={scrollhandler}
-        contentContainerStyle={{
-          alignItems: "center",
-        }}
-        removeClippedSubviews={true}
+        onScroll={Platform.OS !== "web" ? scrollhandler : undefined}
+        contentContainerStyle={Platform.OS === "web" ? {} : { alignItems: "center" }}
+        removeClippedSubviews={Platform.OS !== "web"}
         style={{ flex: 1 }}
       >
         <Animated.View style={imageStyle}>
@@ -81,7 +94,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
             container={[
               {
                 height: IMG_HEIGHT,
-                width: width,
+                width: Platform.OS === "web" ? "100%" : width,
               },
             ]}
             path={posterPath || movie?.poster_path}
@@ -91,7 +104,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
         {loading ? (
           <MovieDetailsSkeleton />
         ) : (
-          <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={width} />
+          <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={Platform.OS === "web" ? "100%" : width} />
         )}
       </Animated.ScrollView>
 

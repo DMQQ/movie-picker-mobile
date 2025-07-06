@@ -25,8 +25,9 @@ import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../components/Thum
 import RatingIcons from "../components/RatingIcons";
 import FrostedGlass from "../components/FrostedGlass";
 import { uuid } from "expo-modules-core";
+import { getConstrainedDimensions } from "../utils/getConstrainedDimensions";
 
-const { width, height } = Dimensions.get("screen");
+const { width, height } = getConstrainedDimensions("screen");
 
 const styles = StyleSheet.create({
   header: {
@@ -206,8 +207,8 @@ const tabStyles = StyleSheet.create({
     gap: 15,
     paddingHorizontal: 10,
     paddingTop: 10,
-    height: 70,
-    paddingBottom: Platform.OS === "android" ? 10 : 0,
+    height: Platform.OS === "web" ? 90 : 70,
+    paddingBottom: Platform.OS === "android" ? 10 : Platform.OS === "web" ? 20 : 0,
   },
   button: {
     flex: 1,

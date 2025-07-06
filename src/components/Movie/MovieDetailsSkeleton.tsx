@@ -1,8 +1,9 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import Skeleton from "../Skeleton/Skeleton";
 import { useTheme } from "react-native-paper";
+import { getConstrainedDimensions } from "../../utils/getConstrainedDimensions";
 
-const { width, height } = Dimensions.get("screen");
+const { width, height } = getConstrainedDimensions("screen");
 
 const styles = StyleSheet.create({
   container: {

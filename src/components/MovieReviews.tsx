@@ -1,6 +1,7 @@
 import { Dimensions, FlatList, View } from "react-native";
 import { useGetReviewsQuery } from "../redux/movie/movieApi";
 import { Text } from "react-native-paper";
+import { getConstrainedDimensions } from "../utils/getConstrainedDimensions";
 
 interface Review {
   id: string;
@@ -23,13 +24,13 @@ export default function MovieReviews(props: { movieId: number; type: "movie" | "
     <View>
       <FlatList
         style={{
-          width: Dimensions.get("screen").width - 30,
+          width: getConstrainedDimensions("screen").width - 30,
         }}
         horizontal
         data={data}
         keyExtractor={(item: Review) => item.id}
         renderItem={({ item }) => (
-          <View style={{ padding: 10, width: Dimensions.get("screen").width - 30, backgroundColor: "#000", borderRadius: 15 }}>
+          <View style={{ padding: 10, width: getConstrainedDimensions("screen").width - 30, backgroundColor: "#000", borderRadius: 15 }}>
             <View
               style={{
                 flexDirection: "row",
