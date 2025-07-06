@@ -1,5 +1,6 @@
 import { View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
+import useTranslation from "../../service/useTranslation";
 
 const categories = [
   "/discover/movie",
@@ -27,12 +28,11 @@ export default function Category({
   handleGenerateCode: Function;
   onNextOption: Function;
 }) {
+  const t = useTranslation();
   return (
     <View style={{ flex: 1, justifyContent: "space-between" }}>
       <View style={{ flexDirection: "column" }}>
-        <Text style={{ fontSize: 25, fontWeight: "bold", marginTop: 5 }}>
-          Choose category
-        </Text>
+        <Text style={{ fontSize: 25, fontWeight: "bold", marginTop: 5 }}>{t("room.choose-category")}</Text>
         <TextInput
           keyboardType="numeric"
           mode="outlined"

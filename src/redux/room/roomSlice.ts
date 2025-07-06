@@ -8,7 +8,8 @@ const initialState = {
   qrCode: "",
   nickname: "",
   language: "en",
-
+  regionalization: {} as Record<string, string>,
+  isPlaying: false,
   beenFired: false,
 
   room: {
@@ -21,6 +22,8 @@ const initialState = {
     page: 1,
     name: "",
 
+    isGameFinished: false,
+
     isFinished: false,
 
     match: undefined as Movie | undefined,
@@ -29,6 +32,8 @@ const initialState = {
     movies: [] as Movie[],
     matches: [] as Movie[],
     likes: [] as Movie[],
+
+    isRunning: false,
   },
 };
 
@@ -53,8 +58,22 @@ const roomSlice = createSlice({
       state.room.type = action.payload.type;
       state.room.page = action.payload.page;
       state.room.users = action.payload.users;
-      state.room.matches = [];
-      state.room.movies = [];
+    },
+
+    start(state) {
+      state.room.isRunning = true;
+    },
+
+    setGameFinished(state) {
+      state.room.isGameFinished = true;
+    },
+
+    setPlaying(state, action) {
+      state.isPlaying = action.payload;
+    },
+
+    setLanguage(state, action) {
+      state.language = action.payload;
     },
 
     setSettings(
@@ -62,14 +81,16 @@ const roomSlice = createSlice({
       {
         payload,
       }: {
-        payload: {
+        payload: Partial<{
           nickname: string;
           language: string;
-        };
+          regionalization: Record<string, string>;
+        }>;
       }
     ) {
-      state.nickname = payload.nickname;
-      state.language = payload.language;
+      state.nickname = payload.nickname || state.nickname;
+      state.language = payload.language || state.language;
+      state.regionalization = payload.regionalization || state.regionalization;
     },
     setQRCode(state, action) {
       state.qrCode = action.payload;
@@ -101,8 +122,7 @@ const roomSlice = createSlice({
         payload: MovieMatch;
       }
     ) {
-      if (!state.room.matches.find((m) => m.id === payload.id))
-        state.room.matches.push(payload);
+      if (!state.room.matches.find((m) => m.id === payload.id)) state.room.matches.push(payload);
     },
 
     setMatch(state, { payload }) {
@@ -158,6 +178,14 @@ const roomSlice = createSlice({
     setActiveUsers(state, { payload }) {
       state.room.usersCount = payload.length;
       state.room.users = payload;
+    },
+
+    setRoomState(state, { payload }) {
+      state.room.isFinished = false;
+      state.room = payload.room;
+      state.room.movies = payload.movies;
+      state.room.users = payload.room.users;
+      state.room.isRunning = payload.isRunning;
     },
 
     reset(state) {

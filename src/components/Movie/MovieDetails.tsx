@@ -1,109 +1,120 @@
 import { MD2DarkTheme, Text } from "react-native-paper";
-import Animated from "react-native-reanimated";
+import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import WatchProviders from "./WatchProviders";
 import LastEpisodeToAir from "./LastEpisodeDetails";
 import Seasons from "./SeasonsList";
-import { ScrollView, View } from "react-native";
-
-import { BlurView } from "expo-blur";
+import { Platform, View } from "react-native";
 import Similar from "../Similar";
+import useTranslation from "../../service/useTranslation";
+import { Movie } from "../../../types";
+import QuickActions from "../QuickActions";
+import CustomFavourite from "../Favourite";
+import Cast from "./Cast";
+import FrostedGlass from "../FrostedGlass";
+import RatingIcons from "../RatingIcons";
+import Trailers from "./Trailers";
 
-export default function MovieDetails({ movie, providers, width, type }: { movie: any; providers: any; width: number; type: string }) {
+export default function MovieDetails({
+  movie,
+  providers,
+  width,
+  type,
+}: {
+  movie: Movie & Record<string, string>;
+  providers: any;
+  width: number;
+  type: string;
+}) {
+  const t = useTranslation();
+
+  const data = [
+    // `${movie?.vote_average?.toFixed(2)}/10`,
+    movie?.release_date || movie?.first_air_date,
+    (movie?.title || movie?.name) === (movie?.original_title || movie?.original_name) ? "" : movie?.original_title || movie?.original_name,
+    ...(movie?.genres || [])?.map((g: any) => g.name),
+  ].filter((v) => v !== undefined && v !== "") as any;
+
   return (
-    <Animated.View
-      style={[
-        {
-          width,
-          borderTopEndRadius: 25,
-          borderTopStartRadius: 25,
-
-          overflow: "hidden",
-        },
-      ]}
-    >
-      <BlurView
-        intensity={20}
-        tint="dark"
-        style={{
-          padding: 20,
-          backgroundColor: "rgba(0,0,0,0.5)", // Adjust opacity for glass effect
-        }}
-      >
-        <Text
-          numberOfLines={2}
-          style={{
-            fontSize: 55,
-            fontFamily: "Bebas",
-          }}
-        >
-          {movie?.title || movie?.name}
-        </Text>
-
-        {movie?.tagline && (
+    <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{ flex: 1 }}>
+      <FrostedGlass blurAmount={Platform.OS === "ios" ? 50 : 100} container={{ borderBottomWidth: 0 }}>
+        <View style={{ flex: 1, padding: 15 }}>
           <Text
             style={{
-              fontSize: 16,
-              color: "rgba(255,255,255,0.9)",
-              marginTop: 5,
+              fontSize: 50,
+              fontFamily: "Bebas",
+              lineHeight: 55,
+              marginTop: 10,
             }}
           >
-            {movie?.tagline}
+            {movie?.title || movie?.name}
           </Text>
-        )}
 
-        <Text
-          style={{
-            fontSize: 19,
-            marginTop: 5,
-            color: "rgba(255,255,255,0.95)",
-          }}
-        >
-          {movie?.overview}
-        </Text>
-
-        <ScrollView showsHorizontalScrollIndicator={false} horizontal style={{ flexDirection: "row", marginVertical: 15 }}>
-          {movie?.genres?.map((genre: any) => (
-            <View
-              key={genre.name}
+          {movie?.tagline && (
+            <Text
               style={{
-                backgroundColor: MD2DarkTheme.colors.primary,
-                borderRadius: 100,
-                padding: 5,
-                paddingHorizontal: 15,
-                marginRight: 15,
+                fontSize: 15,
+                color: "rgba(255,255,255,0.95)",
+                marginBottom: 10,
               }}
             >
-              <Text style={{ fontSize: 16, color: "#000" }}>{genre.name}</Text>
-            </View>
-          ))}
-        </ScrollView>
+              {movie?.tagline}
+            </Text>
+          )}
 
-        <WatchProviders providers={providers || []} />
+          <View style={{ flexDirection: "row", marginBottom: 10 }}>
+            <RatingIcons size={20} vote={movie?.vote_average} />
+          </View>
 
-        <LastEpisodeToAir lastEpisode={movie?.last_episode_to_air || {}} />
+          <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 15 }}>{data.join(" | ")}</Text>
 
-        <Seasons seasons={movie?.seasons || []} />
+          <View style={{ paddingVertical: 15 }}>
+            <QuickActions movie={movie}>
+              <View style={{ flex: 1 }}>
+                <CustomFavourite movie={movie} />
+              </View>
+            </QuickActions>
+          </View>
 
-        <Text style={{ fontSize: 16, marginTop: 5, color: "rgba(255,255,255,0.6)" }}>
-          {movie?.release_date || movie?.last_episode_to_air?.air_date}
-        </Text>
+          {movie?.overview && (
+            <Text
+              style={{
+                fontSize: 19,
+                color: "rgba(255,255,255,0.95)",
+              }}
+            >
+              {movie?.overview}
+            </Text>
+          )}
 
-        <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>
-          Rating: {movie?.vote_average} out of {movie?.vote_count} votes
-        </Text>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+            {movie?.runtime && (
+              <Text style={{ fontSize: 15, color: "rgba(255,255,255,0.6)" }}>
+                {t("movie.details.runtime")}: {movie?.runtime} {t("movie.details.minutes")}
+              </Text>
+            )}
 
-        <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>Runtime: {movie?.runtime} minutes</Text>
+            <Text style={{ fontSize: 15, color: "rgba(255,255,255,0.6)" }}>
+              {t("movie.details.status")}: {movie?.status}
+            </Text>
+          </View>
 
-        <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>Status: {movie?.status}</Text>
+          <WatchProviders providers={providers || []} />
 
-        <Text style={{ fontSize: 16, marginTop: 10, color: "rgba(255,255,255,0.6)" }}>Original Language: {movie?.original_language}</Text>
+          <Cast id={movie?.id} type={type as "movie" | "tv"} />
 
-        <Similar id={movie?.id} type={type as "movie" | "tv"} />
+          <LastEpisodeToAir lastEpisode={movie?.last_episode_to_air || {}} />
 
-        <View style={{ padding: 20, justifyContent: "center", height: 100 }}>
-          <Text style={{ color: "gray", textAlign: "center" }}>Movies povered by The Movie Database API</Text>
+          {type === "tv" && <Seasons id={movie?.id} seasons={(movie?.seasons as any) || []} />}
+
+          {/* <MovieReviews movieId={movie?.id} type={type as "movie" | "tv"} /> */}
+
+          <Similar id={movie?.id} type={type as "movie" | "tv"} />
+
+          <View style={{ padding: 20, justifyContent: "center", height: 100 }}>
+            <Text style={{ color: "gray", textAlign: "center" }}>{t("global.attributions")}</Text>
+          </View>
         </View>
-      </BlurView>
+      </FrostedGlass>
     </Animated.View>
   );
 }

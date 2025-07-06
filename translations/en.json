@@ -1,0 +1,248 @@
+{
+  "dialogs": {
+    "scan-code": {
+      "title": "Scan QR code",
+      "message": "Scan the QR code to get the movie details",
+      "close": "Close",
+      "cancel": "Cancel",
+      "leave": "Leave"
+    },
+    "leave-room": {
+      "message": "Are you sure you want to leave the room?",
+      "title": "Leave Room",
+      "cancel": "Cancel",
+      "leave": "Leave"
+    },
+    "qr": {
+      "error": "Something went wrong!",
+      "error-desc": "Invalid QR code",
+      "close": "Close",
+      "manual": "Join room manually"
+    }
+  },
+  "movie": {
+    "details": {
+      "lastEpisode": "Last Episode",
+      "episode": "Episodes",
+      "season": "Season",
+      "runtime": "Runtime",
+      "releaseDate": "Release Date",
+      "status": "Status",
+      "minutes": "minutes",
+      "similar-movies": "Similar Movies",
+      "similar-series": "Similar Series",
+      "air_date": "Air Date",
+      "show_more": "Show More",
+      "show_less": "Show Less"
+    }
+  },
+  "match": {
+    "title": "It's a match!",
+    "view-matches": "View Matches"
+  },
+  "room": {
+    "providers": "Pick your providers",
+    "join-game": "Join game",
+    "waiting": "Waiting for other players",
+    "choose-category": "Choose category",
+    "movie": "Movie",
+    "series": "Series",
+    "randomize": "Randomize",
+    "genre": "Genres",
+    "next": "Next",
+    "finished": "Game ended no more movies to show",
+    "randomize-search": "Randomize search",
+    "page-range-desc": "Select the number of pages to search",
+    "qr-title": "Scan to join!",
+    "active": "Active users",
+    "qr-subtitle": "Share this code with your friends to join the game",
+    "page-range": "Tired of the same old movies? Increase your chances of finding something new by randomizing your search.",
+    "provider_desc": "Select the streaming providers you want to include in your search. You can choose multiple providers or none to see everything.",
+    "genre_desc": "Select the genres of movies and series you want to watch. You can choose multiple genres or none to see everything.",
+    "genres": {
+      "all_movies": "All movies",
+      "now_playing": "Now playing",
+      "popular": "Popular",
+      "top_rated": "Top rated",
+      "upcoming": "Upcoming",
+      "all_tv": "All TV",
+      "top_rated_tv": "Top rated TV",
+      "popular_tv": "Popular TV",
+      "airing_today": "Airing today",
+      "on_the_air": "On the air"
+    },
+    "titles": {
+      "category": "Choose Category",
+      "genre": "Choose Genre",
+      "page-range": "Choose Page Range",
+      "qr-code": "Scan QR code",
+      "randomize": "Randomize Search",
+      "extra-settings": "Extra Settings"
+    }
+  },
+  "fortune-wheel": {
+    "drag": "Drag up to spin",
+    "roll": "Roll again",
+    "random-category": "Random Category",
+    "pick-category": "Pick Category",
+    "pick-a-movie": "Spin the wheel!"
+  },
+  "likes": {
+    "title": "Your likes",
+    "empty": "You haven't liked any movies yet",
+    "close": "Close match",
+    "no-matches": "No matches found",
+    "random": "Randomize"
+  },
+  "matched": {
+    "title": "Matched with your friends"
+  },
+  "favourites": {
+    "title": "Favorites",
+    "empty": "You haven't added any movies to your favorites yet",
+    "create": {
+      "title": "Create a new list",
+      "name": "List name",
+      "create": "Create",
+      "cancel": "Cancel"
+    }
+  },
+
+  "global": {
+    "justwatch": "The movie availabilities are powered by JustWatch",
+    "attributions": "Movies povered by The Movie Database API And JustWatch"
+  },
+  "overview": {
+    "matches": "Matched",
+    "likes": "Likes"
+  },
+  "scanner": {
+    "request-permission": "Request permission",
+    "heading": "Scan QR code",
+    "join": "Join the game"
+  },
+  "settings": {
+    "hello": "Hello",
+    "heading": "Settings",
+    "nickname-info": "Here you can change your nickname. This will be displayed to other users in the room.",
+    "language-info": "Changing this value will change the language target for created room, meaning the movies will be in choosen language but not the controls and other texts. More languages will be added in the future.",
+    "about": " This is a simple app that allows you to create a room and pick movies with your friends. You can create a room and invite your friends to join you. You can also join a room by entering the room code. You can then add movies to the room and watch them together. App uses The Movie Database API to get the movies and JustWatch API to get the availabilities.",
+    "security": " None of the data is stored on the server. The room is created in memory and is destroyed when the last user leaves the room. No additional data is stored on the server. The room code is generated randomly and the fav movies are stored locally in storage. Currently the backend is hosted in Europe so there might be some slower response times for users outside of Europe. The app is still in development and more features will be added in the future. I dont profit anything from this app and it is made for educational purposes."
+  },
+  "voter": {
+    "title": "Vote for the movies",
+    "swipe": "Swipe to vote",
+    "games": "Games",
+    "rate": "Your rating",
+    "types": {
+      "movie": "Movies",
+      "series": "Series",
+      "mixed": "Both"
+    },
+    "home": {
+      "title": "Movie voting",
+      "description": "Start a new session or join an existing one to vote for the movies you want to watch.",
+      "howtotitle": "What is it about?",
+      "howto": "One of the players creates a session and invites others to join. The players then vote for the movies they want to watch. The movies with the most votes are then shown to the players. The players can then rate the movies and decide which one to watch.",
+      "create": "Create a new session",
+      "waiting": "Waiting for other players",
+      "waiting-initial": "Waiting for partner to join...",
+      "ready": "Ready to start",
+      "you": "You",
+      "user": "Partner",
+      "ready-status": "Ready",
+      "ready-cancel": "Cancel ready",
+      "start": "Start voting",
+      "rate": "Rate",
+      "left": "left in this round",
+      "quit": "Quit"
+    },
+
+    "ratings": {
+      "interest": {
+        "label": "Interest",
+        "options": {
+          "1": "Don't want to watch",
+          "2": "Not sure",
+          "3": "Maybe",
+          "4": "Would like to watch",
+          "5": "Will definitely watch"
+        }
+      },
+      "mood": {
+        "label": "Mood",
+        "options": {
+          "1": "Don't want to watch",
+          "2": "Maybe",
+          "3": "Would like to watch"
+        }
+      },
+      "uniqueness": {
+        "label": "New?",
+        "options": {
+          "1": "Don't want to watch",
+          "2": "Not sure",
+          "3": "Maybe",
+          "4": "Would like to watch",
+          "5": "Will definitely watch"
+        }
+      },
+      "submit": "Submit rating"
+    },
+    "overview": {
+      "title": "Top picks",
+      "h2": "Other picks"
+    }
+  },
+  "quick-actions": {
+    "watch-later": "Watch later",
+    "watched": "Watched",
+    "favourite": "Favourites",
+    "my-lists": "My lists",
+    "modal": "Choose a group to add"
+  },
+  "games": {
+    "categories": {
+      "all": "All Games",
+      "popular": "Popular",
+      "new": "New Games"
+    },
+    "voter": {
+      "games": "Party Games",
+      "title": "Group Voter",
+      "swipe": "Swipe to Match!",
+      "swipeDescription": "Quick and fun party game where players swipe left or right to vote on movies or series to match with other players.",
+      "description": "Picking movies easy and fun! Vote on movies or series in three categories to get your top picks."
+    },
+    "fortunewheel": {
+      "title": "Fortune Wheel",
+      "description": "Spin the wheel of fortune to make random selections or decisions. Perfect for undecided or making quick picks!"
+    }
+  },
+  "search": {
+    "error": "Something went wrong. Please try again.",
+    "no-results": "No results for: ",
+    "begin": "Start typing to search for movies or series",
+    "search-placeholder": "Search movies and tv series",
+    "genres": "Genres",
+    "query-for": "Results for",
+    "close": "Close",
+    "apply": "Apply filters",
+    "more": "Show more",
+    "less": "Show less"
+  },
+  "cast": {
+    "heading": "Cast"
+  },
+  "landing": {
+    "error": "Something went wrong. Please try again.",
+    "title": "Welcome to Movie Picker"
+  },
+  "tabBar": {
+    "settings": "Settings",
+    "favourites": "Favourites",
+    "join-game": "Join game",
+    "games": "Games",
+    "search": "Search"
+  }
+}

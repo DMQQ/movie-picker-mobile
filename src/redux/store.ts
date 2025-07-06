@@ -3,15 +3,16 @@ import { roomSlice } from "./room/roomSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { movieApi } from "./movie/movieApi";
 import { favoritesSlice } from "./favourites/favourites";
+import { personApi } from "./person/personApi";
 
 const store = configureStore({
   reducer: {
     room: roomSlice.reducer,
-    [movieApi.reducerPath]: movieApi.reducer,
-
+    [movieApi?.reducerPath]: movieApi.reducer,
+    [personApi?.reducerPath]: personApi.reducer,
     favourite: favoritesSlice.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(movieApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([movieApi.middleware, personApi.middleware]),
 });
 
 export { store };

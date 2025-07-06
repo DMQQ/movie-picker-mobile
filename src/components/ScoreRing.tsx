@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
+import FrostedGlass from "./FrostedGlass";
 
 const getColor = (score: number) => {
   if (score >= 7) return "#21d07a"; // Green
@@ -21,13 +22,13 @@ const absoluteContainer = {
   alignItems: "center",
 } as any;
 
-const container = { width: size, height: size, backgroundColor: "#081c22", borderRadius: size / 2 } as any;
+const container = { width: size, height: size } as any;
 
 const ScoreRing = memo(({ score }: { score: number }) => {
   const progress = (score / 10) * circumference;
 
   return (
-    <View style={container}>
+    <FrostedGlass style={container} container={{ borderRadius: 100 }}>
       <Svg width={size} height={size}>
         <Circle
           cx={size / 2}
@@ -44,7 +45,7 @@ const ScoreRing = memo(({ score }: { score: number }) => {
       <View style={absoluteContainer}>
         <Text style={{ color: "white", fontWeight: "700", fontSize: 13 }}>{(score * 10).toFixed(0)}%</Text>
       </View>
-    </View>
+    </FrostedGlass>
   );
 });
 

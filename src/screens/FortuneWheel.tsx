@@ -1,24 +1,46 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import FortuneWheelComponent from "../components/FortuneWheelComponent";
 import SafeIOSContainer from "../components/SafeIOSContainer";
-import { Dimensions, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
-import { useGetMovieProvidersQuery, useGetMovieQuery, useLazyGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
+import { Dimensions, FlatList, Image, ImageBackground, Platform, Pressable, useWindowDimensions, View } from "react-native";
+import {
+  useGetCategoriesQuery,
+  useGetMovieProvidersQuery,
+  useGetMovieQuery,
+  useLazyGetLandingPageMoviesQuery,
+} from "../redux/movie/movieApi";
 import { Movie } from "../../types";
-import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, SlideInUp, SlideOutDown, SlideOutUp } from "react-native-reanimated";
+import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown } from "react-native-reanimated";
 import ScoreRing from "../components/ScoreRing";
 import { LinearGradient } from "expo-linear-gradient";
-import { Appbar, Button, IconButton, Text } from "react-native-paper";
+import { Appbar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import WatchProviders from "../components/Movie/WatchProviders";
-import { ScreenProps } from "./types";
 import { FancySpinner } from "../components/FancySpinner";
-import { throttle } from "./Home";
 import Favourite from "../components/Favourite";
+import useTranslation from "../service/useTranslation";
+import { throttle } from "../utils/throttle";
+import { useIsFocused } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import FrostedGlass from "../components/FrostedGlass";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
 
 const AnimatedBackgroundImage = Animated.createAnimatedComponent(ImageBackground);
 
-export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">) {
+const Stack = createNativeStackNavigator<any>();
+
+export default (props: any) => (
+  <Stack.Navigator
+    initialRouteName="FortuneWheel"
+    screenOptions={{
+      headerShown: false,
+    }}
+  >
+    <Stack.Screen name="FortuneWheel" component={FortuneWheel} />
+    <Stack.Screen name="SectionSelector" component={SectionSelector} />
+  </Stack.Navigator>
+);
+
+function FortuneWheel({ navigation, route }: any) {
   const [signatures, setSignatures] = useState("");
 
   const [selectedItem, setSelectedItem] = useState<(Movie & { type: string }) | undefined>();
@@ -26,6 +48,8 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
   const [getLazyMovies] = useLazyGetLandingPageMoviesQuery();
 
   const type = selectedItem?.type === "tv" ? "tv" : "movie";
+
+  const wheelRef = useRef<{ spin: Function }>(null);
 
   const { data, refetch, isLoading: isMovieLoading } = useGetMovieQuery({ id: selectedItem?.id!, type });
 
@@ -54,45 +78,71 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
 
   const [selectedCards, setSelectedCards] = useState<Movie[]>([]);
 
-  const handleThrowDice = () => {
-    getLazyMovies({ skip: 0, take: 5 }).then(async (response) => {
-      if (response.data && Array.isArray(response.data)) {
-        const randomSection = response.data[Math.floor(Math.random() * response.data.length)];
+  const handleThrowDice = useCallback(
+    (value: number | string) => {
+      getLazyMovies({ skip: 0, take: 26 }).then(async (response) => {
+        if (response.data && Array.isArray(response.data)) {
+          const index = typeof value === "number" ? value : response?.data?.findIndex((d) => d.name === value);
+          const randomSection = response.data[index];
 
-        const movies = randomSection.results;
+          if (!randomSection?.results) return;
 
-        Promise.any(
-          movies.map((movie) => {
-            return Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path);
-          })
-        );
+          const movies = randomSection.results;
+          await Promise.any(
+            movies.map((movie) => {
+              return Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path);
+            })
+          );
 
-        setSelectedCards(movies.slice(0, 12));
+          const pos = Math.random() > 5 ? movies.slice(0, 12) : movies.slice(8, 20);
 
-        setSignatures(movies.map(({ id }) => id).join("-"));
-      }
-    });
-  };
+          setSelectedCards(pos);
+          setSignatures(movies.map(({ id }) => id).join("-"));
+        }
+      });
+    },
+    [getLazyMovies]
+  );
 
   const [isSpin, setIsSpin] = useState(false);
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    handleThrowDice();
-  }, []);
+    if (route?.params?.category) {
+      handleThrowDice(route.params.category);
+    }
+  }, [route?.params?.category, handleThrowDice]);
+
+  // Separate useEffect for initial load and focus changes
+  useEffect(() => {
+    if (!route?.params?.category && isFocused) {
+      handleThrowDice(Math.floor(Math.random() * 17));
+    }
+  }, [isFocused, handleThrowDice, route?.params?.category]);
 
   const { width, height } = useWindowDimensions();
 
+  const t = useTranslation();
+
+  const subHeading = [
+    `${data?.vote_average?.toFixed(2)}/10`,
+    data?.release_date || data?.first_air_date,
+    (data?.title || data?.name) === (data?.original_title || data?.original_name) ? "" : data?.original_title || data?.original_name,
+    ...(data?.genres || [])?.map((g: any) => g.name),
+  ].filter((v) => v !== undefined && v !== "") as any;
+
   return (
-    <SafeIOSContainer>
+    <SafeIOSContainer style={{ overflow: "hidden" }}>
       {!selectedItem && (
-        <View style={{ padding: 10, top: 0, position: "absolute", left: 0, zIndex: 100 }}>
-          <Appbar.BackAction onPress={() => navigation.goBack()} color="#fff" />
+        <View style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
+          <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
         </View>
       )}
       {selectedItem && selectedItem?.id === data?.id ? (
         <AnimatedBackgroundImage
-          entering={FadeIn.duration(350)}
-          exiting={FadeOut.duration(350)}
+          entering={FadeInDown.duration(200)}
+          exiting={FadeOutDown.duration(200)}
           style={{
             width,
             height: height,
@@ -101,18 +151,18 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
             zIndex: 100,
           }}
           source={{
-            uri: "https://image.tmdb.org/t/p/w500" + data?.poster_path,
+            uri: "https://image.tmdb.org/t/p/w780" + data?.poster_path,
           }}
         >
           <View
             style={{
               position: "absolute",
-              top: Platform.OS === "ios" ? 0 : 10,
+              top: 0,
               right: 0,
               width,
               justifyContent: "space-between",
               flexDirection: "row",
-              padding: 10,
+              padding: 5,
               zIndex: 100,
             }}
           >
@@ -126,31 +176,66 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
           </View>
 
           <LinearGradient
-            style={{ flex: 1, padding: 10, position: "absolute", top: 0, width, height, justifyContent: "flex-end" }}
+            style={{ flex: 1, position: "absolute", top: 0, width, height, justifyContent: "flex-end" }}
             colors={["transparent", "rgba(0,0,0,0.5)", "#000000"]}
           >
-            <View style={{ marginBottom: Platform.OS === "ios" ? 80 : 10, padding: 10, gap: 0 }}>
-              <Text style={{ fontSize: 50, fontFamily: "Bebas", width: width - 80 }}>{data?.title || data?.name}</Text>
+            <FrostedGlass
+              container={{
+                width: "100%",
+                height: 500,
+              }}
+              style={{
+                marginBottom: Platform.OS === "ios" ? 80 : 10,
+                padding: 15,
+                paddingBottom: Platform.OS === "android" ? 0 : undefined,
+                gap: 0,
+              }}
+            >
+              <Pressable
+                onPress={() => {
+                  navigation.push("MovieDetails", {
+                    id: data?.id,
+                    type: type,
+                    img: data?.poster_path,
+                  });
+                }}
+              >
+                <>
+                  <Text numberOfLines={2} style={{ fontSize: 55, fontFamily: "Bebas", lineHeight: 55, marginTop: 10 }}>
+                    {data?.title || data?.name}
+                  </Text>
 
-              <Text style={{ fontSize: 16 }}>{data?.overview}</Text>
+                  <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 15, marginBottom: 10 }}>{subHeading.join(" | ")}</Text>
 
-              <WatchProviders hideLabel providers={providers} style={{ marginTop: 0 }} />
+                  <Text style={{ fontSize: 16, color: "rgba(255,255,255,0.95)" }} numberOfLines={5}>
+                    {data?.overview}
+                  </Text>
+                </>
+              </Pressable>
 
-              <View style={{ flexDirection: "row", gap: 10, alignItems: "center", marginTop: 30 }}>
+              <WatchProviders hideLabel providers={providers} style={{ marginVertical: 5, marginTop: 5 }} />
+
+              <View style={{ flexDirection: "row", gap: 10, alignItems: "center", marginTop: 10 }}>
                 <Button
                   mode="contained"
                   onPress={() => {
                     setSelectedItem(undefined);
+
+                    setTimeout(() => {
+                      wheelRef.current?.spin();
+                    }, 400);
                   }}
-                  contentStyle={{ padding: 5 }}
+                  contentStyle={{ padding: 7.5 }}
                   style={{ borderRadius: 100, flex: 1 }}
                 >
-                  Roll Again
+                  {t("fortune-wheel.roll")}
                 </Button>
 
-                <Favourite movie={data as Movie} />
+                <View style={{ padding: 10, paddingHorizontal: 15 }}>
+                  <Favourite showLabel={false} movie={data as Movie} />
+                </View>
               </View>
-            </View>
+            </FrostedGlass>
           </LinearGradient>
         </AnimatedBackgroundImage>
       ) : (
@@ -163,17 +248,29 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
 
           {!isSpin && (
             <>
-              <Text style={{ fontSize: 50, fontFamily: "Bebas" }}>Spin the wheel!</Text>
-              <Button rippleColor={"#fff"} onPress={throttle(handleThrowDice, 500)}>
-                Change movies!
-              </Button>
+              <Text style={{ fontSize: 70, fontFamily: "Bebas" }}>{t("fortune-wheel.pick-a-movie")}</Text>
+              <View style={{ flexDirection: "row" }}>
+                <Button rippleColor={"#fff"} onPress={throttle(() => handleThrowDice(Math.floor(Math.random() * 26)), 200)}>
+                  {t("fortune-wheel.random-category")}
+                </Button>
+
+                <Button
+                  rippleColor={"#fff"}
+                  onPress={throttle(() => {
+                    navigation.navigate("SectionSelector");
+                  }, 500)}
+                >
+                  {t("fortune-wheel.pick-category")}
+                </Button>
+              </View>
             </>
           )}
         </Animated.View>
       )}
 
-      {selectedCards.length > 0 && (
+      {selectedCards && selectedCards?.length > 0 && (
         <FortuneWheelComponent
+          ref={wheelRef as any}
           style={{}}
           key={signatures}
           onSpinStart={() => {
@@ -191,3 +288,62 @@ export default function FortuneWheel({ navigation }: ScreenProps<"FortuneWheel">
     </SafeIOSContainer>
   );
 }
+
+export const SectionSelector = ({ navigation }: any) => {
+  const { data, error } = useGetCategoriesQuery({});
+
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
+        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
+      </View>
+      <FlatList
+        numColumns={2}
+        data={data}
+        contentContainerStyle={{ gap: 10, padding: 10, paddingBottom: 50 }}
+        style={{ flex: 1 }}
+        renderItem={({ item }) => (
+          <TouchableRipple
+            onPress={() => navigation.popTo("FortuneWheel", { category: item.name })}
+            style={{
+              marginRight: 10,
+              width: Dimensions.get("window").width / 2 - 15,
+              backgroundColor: MD2DarkTheme.colors.surface,
+              height: 100,
+            }}
+          >
+            <ImageBackground
+              blurRadius={10}
+              source={{
+                uri: "https://image.tmdb.org/t/p/w200" + item.results[0].poster_path,
+              }}
+              style={{
+                width: "100%",
+                height: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              borderRadius={10}
+            >
+              <Text
+                style={{
+                  fontSize: 25,
+                  fontFamily: "Bebas",
+                  color: "#fff",
+                  textShadowColor: "rgba(0, 0, 0, 0.75)",
+                  textShadowOffset: { width: 0, height: 1 },
+                  textShadowRadius: 5,
+                  textAlign: "center",
+                  padding: 5,
+                }}
+              >
+                {item.name}
+              </Text>
+            </ImageBackground>
+          </TouchableRipple>
+        )}
+        keyExtractor={(item) => item.name}
+      />
+    </View>
+  );
+};

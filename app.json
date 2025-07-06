@@ -1,14 +1,14 @@
 {
   "expo": {
-    "newArchEnabled": true,
-    "name": "Movie Picker",
+    "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "1.0.1",
+    "version": "1.1.6",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "icon": "./assets/images/icon-dark.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": ["flickmate", "pl.dmq.moviepicker"],
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#000"
     },
@@ -19,24 +19,60 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0d0f14",
+          "image": "./assets/images/icon-light.png",
+          "imageWidth": 200
+        }
+      ]
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
+      "buildNumber": "20250708",
       "supportsTablet": false,
+      "icon": {
+        "light": "./assets/images/icon-light.png",
+        "dark": "./assets/images/icon-dark.png",
+        "tinted": "./assets/images/icon-dark.png"
+      },
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
-        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
+        "UIViewControllerBasedStatusBarAppearance": true,
+        "ITSAppUsesNonExemptEncryption": false
       },
-      "bundleIdentifier": "pl.dmq.movie-picker"
+      "bundleIdentifier": "pl.dmq.movie-picker",
+      "associatedDomains": ["applinks:movie.dmqq.dev", "applinks:movie.dmqq.dev"]
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#000"
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
-      "package": "com.dmq.qrmobile"
+      "package": "pl.dmq.moviepicker",
+      "versionCode": 20252706,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "flickmate",
+              "host": "*"
+            },
+            {
+              "scheme": "https",
+              "host": "movie.dmqq.dev",
+              "pathPrefix": "/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",

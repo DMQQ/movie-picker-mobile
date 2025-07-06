@@ -1,17 +1,26 @@
 import { TouchableRipple } from "react-native-paper";
 import { Movie } from "../../../types";
-import { Image } from "react-native";
-import Animated from "react-native-reanimated";
-import { sharedElementTransition } from "../../service/utils/SharedElementTransition";
+import Thumbnail from "../Thumbnail";
 
-const MatchTile = ({ match, type, navigation }: { match: Movie; type: string; navigation: any; index: number }) => {
+const MatchTile = ({
+  match,
+  type: _type,
+  navigation,
+  posterSize = 200,
+}: {
+  match: Movie;
+  type: string;
+  navigation: any;
+  index: number;
+  posterSize?: number;
+}) => {
+  const type = (match?.type || _type).includes("movie") ? "movie" : "tv";
+
   return (
     <TouchableRipple
       style={{
         margin: 5,
-        flexDirection: "row",
         flex: 1,
-        maxWidth: "50%",
       }}
       onPress={() =>
         navigation.navigate("MovieDetails", {
@@ -21,15 +30,14 @@ const MatchTile = ({ match, type, navigation }: { match: Movie; type: string; na
         })
       }
     >
-      <Animated.Image
-        // sharedTransitionStyle={sharedElementTransition}
-        // sharedTransitionTag={`movie-poster-image-${match.poster_path}`}
-        resizeMode="cover"
-        resizeMethod={"resize"}
-        source={{
-          uri: "https://image.tmdb.org/t/p/w500" + match.poster_path,
+      <Thumbnail
+        size={posterSize}
+        path={match.poster_path}
+        style={{
+          width: "100%",
+          aspectRatio: 2 / 3,
+          borderRadius: 10,
         }}
-        style={{ width: "100%", height: 250, borderRadius: 10 }}
       />
     </TouchableRipple>
   );

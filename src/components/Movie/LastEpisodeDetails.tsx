@@ -1,52 +1,51 @@
 import { Image, View } from "react-native";
 import { Surface, Text } from "react-native-paper";
+import useTranslation from "../../service/useTranslation";
+import Thumbnail from "../Thumbnail";
+import FrostedGlass from "../FrostedGlass";
 
 const LastEpisodeToAir = ({ lastEpisode }: { lastEpisode: any }) => {
-  if (
-    lastEpisode === undefined ||
-    lastEpisode === null ||
-    lastEpisode?.name === undefined
-  )
-    return null;
+  const t = useTranslation();
+  if (lastEpisode === undefined || lastEpisode === null || lastEpisode?.name === undefined || !lastEpisode?.still_path) return null;
 
   return (
-    <View style={{ marginTop: 10 }}>
-      <Text style={{ fontSize: 20 }}>Last Episode To Air</Text>
-      <Surface style={{ padding: 7.5, borderRadius: 12.5, marginTop: 10 }}>
-        <Image
-          style={{
-            width: "100%",
-            height: 150,
-            borderRadius: 10,
-          }}
-          resizeMode="cover"
-          source={{
-            uri: "https://image.tmdb.org/t/p/w500" + lastEpisode.still_path,
-          }}
-        />
-        <View style={{ paddingVertical: 5 }}>
-          <Text
-            style={{
-              fontSize: 15,
-              textTransform: "uppercase",
+    <>
+      <Text style={{ fontSize: 35, fontFamily: "Bebas", lineHeight: 35, marginTop: 30, marginBottom: 10 }}>
+        {t("movie.details.lastEpisode")}
+      </Text>
+
+      <FrostedGlass>
+        <View style={{ borderRadius: 20, padding: 15 }}>
+          <Thumbnail
+            container={{
+              width: "100%",
+              height: 220,
+              borderRadius: 10,
+              overflow: "hidden",
             }}
-          >
-            {lastEpisode.name}
-            {"  "}
-            <Text style={{ color: "gray" }}>{lastEpisode.air_date}</Text>
-          </Text>
+            size={500}
+            path={lastEpisode.still_path}
+          />
 
-          <Text style={{ color: "#9E9E9E", marginTop: 5 }}>
-            Episode {lastEpisode.episode_number} Season{" "}
-            {lastEpisode.season_number}
-          </Text>
+          <View style={{ paddingHorizontal: 10, paddingBottom: 5, marginTop: 15 }}>
+            <Text
+              style={{
+                fontSize: 25,
+                fontFamily: "Bebas",
+              }}
+            >
+              {lastEpisode.name}
+            </Text>
 
-          <Text style={{ color: "#9E9E9E", marginTop: 5 }}>
-            {lastEpisode.overview}
-          </Text>
+            <Text style={{ color: "rgba(255,255,255,0.9)", marginTop: 5, fontSize: 15 }}>{lastEpisode.overview}</Text>
+
+            <Text style={{ color: "#9E9E9E", marginTop: 7.5 }}>
+              {t("movie.details.episode")} {lastEpisode.episode_number} {t("movie.details.season")} {lastEpisode.season_number}
+            </Text>
+          </View>
         </View>
-      </Surface>
-    </View>
+      </FrostedGlass>
+    </>
   );
 };
 

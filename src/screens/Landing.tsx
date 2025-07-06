@@ -1,18 +1,30 @@
-import { Dimensions, Image, ImageBackground, Platform, Pressable, StyleSheet, View, VirtualizedList } from "react-native";
-import { Avatar, Button, IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import {
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  TouchableHighlight,
+  View,
+  VirtualizedList,
+  ImageBackground,
+  Platform,
+  RefreshControl,
+} from "react-native";
+import { MD2DarkTheme, Text } from "react-native-paper";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAppDispatch, useAppSelector } from "../redux/store";
-import { roomActions } from "../redux/room/roomSlice";
 import { ScreenProps } from "./types";
 import { useGetFeaturedQuery, useLazyGetLandingPageMoviesQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
-import SafeIOSContainer from "../components/SafeIOSContainer";
 import ScoreRing from "../components/ScoreRing";
 import { Movie } from "../../types";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
-import { loadFavorites } from "../redux/favourites/favourites";
+import useTranslation from "../service/useTranslation";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import NoConnectionError from "../components/NoConnectionError";
+import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
+import RatingIcons from "../components/RatingIcons";
+import FrostedGlass from "../components/FrostedGlass";
+import { uuid } from "expo-modules-core";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -21,25 +33,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
-    marginTop: Platform.OS === "ios" ? 40 : 0,
+    paddingHorizontal: 10,
+    padding: 5,
   },
 
   featuredImage: {
     width,
-    height: height / 1.25,
+    height: height / 1.3,
     position: "relative",
     marginBottom: 35,
   },
 
-  gradientContainer: { flex: 1, padding: 10, position: "absolute", bottom: 0, width },
+  gradientContainer: { flex: 1, position: "absolute", bottom: 0, width, paddingTop: 30 },
 
-  overview: { fontSize: 14, color: "rgba(255,255,255,0.95)", fontWeight: "500" },
+  overview: { fontSize: 16, color: "rgba(255,255,255,0.95)", fontWeight: "500" },
 });
 
-const gradient = ["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"] as any;
+const gradient = ["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"] as any;
 
-const keyExtractor = (item: { name: string }) => item.name;
+const keyExtractor = (item: { name: string }, index: number) => item.name + "-" + index;
 
 const getItemCount = (data: { name: string; results: Movie[] }[]) => data.length;
 
@@ -50,7 +62,9 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
   const [data, setData] = useState<{ name: string; results: Movie[] }[]>([]);
 
-  const [getLandingMovies] = useLazyGetLandingPageMoviesQuery();
+  const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
+
+  const t = useTranslation();
 
   useEffect(() => {
     getLandingMovies({ skip: page * 3, take: 5 }).then((response) => {
@@ -65,35 +79,44 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     });
   }, [page]);
 
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    (async () => {
-      const nickname = (await AsyncStorage.getItem("nickname")) || "Guest";
-      const language = (await AsyncStorage.getItem("language")) || "en";
-
-      dispatch(roomActions.setSettings({ nickname, language }));
-
-      dispatch(loadFavorites());
-    })();
-  }, []);
-
   const onEndReached = useCallback(() => {
     setPage((prev) => prev + 1);
   }, []);
 
   const renderItem = useCallback(({ item: group }: { item: { name: string; results: Movie[] } }) => <Section group={group} />, []);
 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setPage(0);
+    setData([]);
+    getLandingMovies({ skip: 0, take: 5 }).then((response) => {
+      if (response.data && Array.isArray(response.data)) {
+        setData(response.data);
+      }
+      setRefreshing(false);
+    });
+  }, []);
+
   return (
-    <SafeIOSContainer style={{ marginTop: 0 }}>
+    <View style={{ flex: 1 }}>
       <AppLoadingOverlay />
 
+      <NoConnectionError />
+
       <VirtualizedList
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         maxToRenderPerBatch={5}
         windowSize={3}
         removeClippedSubviews={true}
         style={{ flex: 1 }}
         ListHeaderComponent={<FeaturedSection navigate={navigation.navigate} />}
+        ListEmptyComponent={
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", height: height - 80 }}>
+            <Text style={{ fontFamily: "Bebas", fontSize: 40 }}>{t("landing.error")}</Text>
+          </View>
+        }
         data={(data || []) as { name: string; results: Movie[] }[]}
         initialNumToRender={3}
         keyExtractor={keyExtractor}
@@ -102,45 +125,72 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         onEndReached={onEndReached}
         renderItem={renderItem}
         onEndReachedThreshold={0.5}
+        getItemLayout={(data, index) => ({
+          length: height * 0.35 + 50,
+          offset: (height * 0.35 + 50) * index,
+          index,
+        })}
       />
 
       <BottomTab navigate={navigation.navigate} />
-    </SafeIOSContainer>
+    </View>
   );
 }
 
 const FeaturedSection = memo(
   (props: { navigate: any }) => {
-    const { data: featured } = useGetFeaturedQuery();
+    const { data: featured, error } = useGetFeaturedQuery();
 
-    const { nickname } = useAppSelector((state) => state.room);
+    const navigation = useNavigation<any>();
+    const t = useTranslation();
+
+    const onPress = () => {
+      navigation.navigate("MovieDetails", {
+        id: featured?.id,
+        type: featured?.type,
+        img: featured?.poster_path,
+      });
+    };
+
+    const details = [
+      featured?.release_date || featured?.first_air_date,
+      ((featured?.title || featured?.name) === (featured?.original_title || featured?.original_name) && featured?.original_title) ||
+        featured?.original_name,
+      ...(featured?.genres || []),
+    ]
+      .filter(Boolean)
+      .join(" | ");
+
+    useEffect(() => {
+      if (!featured?.poster_path) return;
+
+      prefetchThumbnail(featured?.poster_path, ThumbnailSizes.poster.xxlarge);
+    }, [featured?.poster_path]);
+
+    if (!featured || error) return null;
 
     return (
       <ImageBackground
         style={styles.featuredImage}
         source={{
-          uri: "https://image.tmdb.org/t/p/w500" + featured?.poster_path,
+          uri: "https://image.tmdb.org/t/p/w780" + featured?.poster_path,
         }}
       >
-        <View style={[styles.header]}>
-          <Pressable onPress={() => props.navigate("Settings")} style={{ flexDirection: "row", gap: 15, alignItems: "center" }}>
-            <Avatar.Text size={30} label={nickname?.[0]?.toUpperCase()} color="#fff" />
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Hello {nickname}.</Text>
-          </Pressable>
-
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-            <IconButton icon="heart" iconColor="#fff" size={28} onPress={() => props.navigate("Favourites")} />
-            <ScoreRing score={featured?.vote_average || 0} />
-          </View>
-        </View>
-
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
-          <Text style={{ fontSize: 50, fontFamily: "Bebas" }} numberOfLines={2}>
-            {featured?.title || featured?.name}
-          </Text>
-          <Text numberOfLines={8} style={styles.overview}>
-            {featured?.overview}
-          </Text>
+          <Pressable onPress={onPress}>
+            <FrostedGlass style={{ padding: 15 }}>
+              <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
+                {featured?.title || featured?.name}
+              </Text>
+              <View style={{ flexDirection: "row", marginBottom: 10 }}>
+                <RatingIcons vote={featured?.vote_average} size={20} />
+              </View>
+              <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>{details}</Text>
+              <Text numberOfLines={7} style={styles.overview}>
+                {featured?.overview}
+              </Text>
+            </FrostedGlass>
+          </Pressable>
         </LinearGradient>
       </ImageBackground>
     );
@@ -148,28 +198,100 @@ const FeaturedSection = memo(
   () => true
 );
 
+const tabStyles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 15,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    height: 70,
+    paddingBottom: Platform.OS === "android" ? 10 : 0,
+  },
+  button: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    height: "100%",
+  },
+  buttonLabel: {
+    fontSize: 10,
+    color: "rgba(255,255,255,0.9)",
+    letterSpacing: 0.5,
+    marginTop: 5,
+  },
+});
+
 const BottomTab = memo(
   ({ navigate }: { navigate: any }) => {
+    const t = useTranslation();
     return (
-      <View style={{ paddingHorizontal: 15, flexDirection: "row", alignItems: "center" }}>
-        <Button
-          mode="contained-tonal"
-          onPress={() => navigate("QRScanner")}
-          style={{ marginTop: 15, borderRadius: 100, marginBottom: 15, flex: 1 }}
-          contentStyle={{ padding: 7.5 }}
+      <View style={tabStyles.container}>
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          onPress={() => navigate("Settings")}
+          style={tabStyles.button}
         >
-          Join a game
-        </Button>
+          <>
+            <FontAwesome name="gear" size={25} color="#fff" />
+            <Text style={tabStyles.buttonLabel}>{t("tabBar.settings")}</Text>
+          </>
+        </TouchableHighlight>
 
-        <View style={{ flexDirection: "row", gap: 5 }}>
-          <IconButton
-            size={30}
-            onPress={() => navigate("FortuneWheel")}
-            icon={"dice-6"}
-            style={{ backgroundColor: MD2DarkTheme.colors.primary }}
-          />
-          <IconButton size={30} onPress={() => navigate("QRCode")} icon={"plus"} style={{ backgroundColor: MD2DarkTheme.colors.primary }} />
-        </View>
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          style={tabStyles.button}
+          onPress={() => navigate("Favourites")}
+        >
+          <>
+            <FontAwesome name="bookmark" size={25} color="#fff" />
+            <Text style={tabStyles.buttonLabel}>{t("tabBar.favourites")}</Text>
+          </>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={"#52287d"}
+          style={[tabStyles.button, { backgroundColor: MD2DarkTheme.colors.primary, borderRadius: 10, padding: 5, paddingVertical: 10 }]}
+          onPress={() =>
+            navigate("QRCode", {
+              screen: "QRScanner",
+            })
+          }
+        >
+          <>
+            <FontAwesome name="qrcode" size={30} color={"#fff"} />
+            {/* <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text> */}
+          </>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          style={tabStyles.button}
+          onPress={() => navigate("Games")}
+        >
+          <>
+            <FontAwesome name="gamepad" size={25} color="#fff" />
+            <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
+          </>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          onPress={() => navigate("Search")}
+          activeOpacity={0.8}
+          underlayColor={MD2DarkTheme.colors.surface}
+          style={tabStyles.button}
+        >
+          <>
+            <FontAwesome name="search" size={25} color="#fff" />
+            <Text style={tabStyles.buttonLabel}>{t("tabBar.search")}</Text>
+          </>
+        </TouchableHighlight>
       </View>
     );
   },
@@ -181,11 +303,11 @@ interface SectionProps {
 }
 
 const sectionStyles = StyleSheet.create({
-  container: { marginBottom: 20, padding: 15, height: height * 0.275 + 100 },
+  container: { marginBottom: 20, padding: 15, minHeight: height * 0.35 + 50 },
   title: { color: "#fff", fontSize: 45, marginBottom: 20, fontFamily: "Bebas" },
   list: {
     flex: 1,
-    height: height * 0.275,
+    minHeight: height * 0.275,
   },
   listContainer: {
     justifyContent: "flex-start",
@@ -222,47 +344,27 @@ const Section = memo(({ group }: SectionProps) => {
 
     getSectionMovies({ name: group.name, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
+        Promise.any(
+          response.data.results.map((i) =>
+            [
+              prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.xxlarge),
+              prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.large),
+            ].flat()
+          )
+        );
+
         setSectionMovies((prev) => prev.concat(response?.data?.results || []));
       }
     });
   }, [page]);
 
-  const snapToOffsets = useMemo(() => movies.map((_, index) => index * width * 0.375 + index * 20 - 5), [movies.length]);
-
-  const renderItem = useCallback(
-    ({ item }: { item: Movie & { type: string } }) => (
-      <Pressable
-        onPress={() =>
-          navigation.navigate("MovieDetails", {
-            id: item.id,
-            type: item.type,
-            img: item.poster_path,
-          })
-        }
-        style={{
-          position: "relative",
-        }}
-      >
-        <Image
-          resizeMode="cover"
-          style={sectionStyles.image}
-          source={{
-            uri: "https://image.tmdb.org/t/p/w200" + item.poster_path,
-          }}
-        />
-        <View style={{ position: "absolute", right: 25, bottom: 5 }}>
-          <ScoreRing score={item.vote_average} />
-        </View>
-      </Pressable>
-    ),
-    []
-  );
+  const renderItem = useCallback(({ item }: { item: Movie & { type: string } }) => <SectionListItem {...item} />, []);
 
   return (
     <View style={sectionStyles.container}>
       <Text style={sectionStyles.title}>{group.name}</Text>
       <VirtualizedList
-        initialNumToRender={5} // Increased from 3
+        initialNumToRender={3} // Increased from 3
         maxToRenderPerBatch={3} // Reduced from 5
         updateCellsBatchingPeriod={50} // Add this
         windowSize={2}
@@ -276,9 +378,6 @@ const Section = memo(({ group }: SectionProps) => {
         keyExtractor={keySectionExtractor}
         style={sectionStyles.list}
         contentContainerStyle={sectionStyles.listContainer}
-        snapToOffsets={snapToOffsets}
-        snapToAlignment="start"
-        decelerationRate="fast"
         renderItem={renderItem}
         onEndReachedThreshold={0.5}
         maintainVisibleContentPosition={{
@@ -290,3 +389,33 @@ const Section = memo(({ group }: SectionProps) => {
     </View>
   );
 });
+
+const SectionListItem = (item: Movie) => {
+  const navigation = useNavigation<any>();
+
+  const uniqueId = useMemo(() => {
+    return uuid.v4();
+  }, []);
+
+  return (
+    <Pressable
+      onPress={async () => {
+        navigation.navigate("MovieDetails", {
+          id: item.id,
+          type: item.type,
+          img: item.poster_path,
+
+          sharedId: uniqueId,
+        });
+      }}
+      style={{
+        position: "relative",
+      }}
+    >
+      <Thumbnail path={item.poster_path} size={300} container={sectionStyles.image} />
+      <View style={{ position: "absolute", right: 30, bottom: 10 }}>
+        <ScoreRing score={item.vote_average} />
+      </View>
+    </Pressable>
+  );
+};

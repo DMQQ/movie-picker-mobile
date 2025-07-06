@@ -1,0 +1,246 @@
+{
+  "dialogs": {
+    "scan-code": {
+      "title": "Zeskanuj kod QR",
+      "message": "Zeskanuj kod QR, aby uzyskać szczegóły filmu",
+      "close": "Zamknij",
+      "cancel": "Anuluj",
+      "leave": "Opuść"
+    },
+    "leave-room": {
+      "message": "Czy na pewno chcesz opuścić pokój?",
+      "title": "Opuść Pokój",
+      "cancel": "Anuluj",
+      "leave": "Opuść"
+    },
+    "qr": {
+      "error": "Coś poszło nie tak!",
+      "error-desc": "Nieprawidłowy kod QR",
+      "close": "Zamknij",
+      "manual": "Dołącz do pokoju ręcznie"
+    }
+  },
+  "movie": {
+    "details": {
+      "lastEpisode": "Ostatni Odcinek",
+      "episode": "Odcinki",
+      "season": "Sezon",
+      "runtime": "Czas trwania",
+      "releaseDate": "Data premiery",
+      "status": "Status",
+      "minutes": "minut",
+      "similar-movies": "Podobne Filmy",
+      "similar-series": "Podobne Seriale",
+      "air_date": "Data emisji",
+      "show_more": "Zobacz więcej",
+      "show_less": "Zobacz mniej"
+    }
+  },
+  "match": {
+    "title": "Mamy pare!",
+    "view-matches": "Wyświetl Dopasowania"
+  },
+  "room": {
+    "providers": "Wybierz platformy",
+    "join-game": "Dołącz do gry",
+    "waiting": "Oczekiwanie na innych graczy",
+    "choose-category": "Wybierz kategorię",
+    "movie": "Film",
+    "series": "Serial",
+    "randomize": "Losuj",
+    "genre": "Gatunki",
+    "next": "Dalej",
+    "finished": "Gra zakończona, nie ma więcej w tej kategorii",
+    "randomize-search": "Losowe wyszukiwanie",
+    "page-range-desc": "Wybierz liczbę stron do przeszukania",
+    "qr-title": "Zeskanuj, aby dołączyć!",
+    "active": "Aktywni użytkownicy",
+    "qr-subtitle": "Udostępnij ten kod znajomym, aby dołączyli do gry",
+    "page-range": "Znudziły ci się te same stare filmy? Zwiększ swoje szanse na znalezienie czegoś nowego, losując wyszukiwanie.",
+    "provider_desc": "Wybierz platformy, które chcesz uwzględnić w swoim wyszukiwaniu. Możesz wybrać wiele platform lub żadną, aby zobaczyć wszystko.",
+    "genre_desc": "Wybierz gatunki filmów i seriali, które chcesz oglądać. Możesz wybrać wiele gatunków lub żaden, aby zobaczyć wszystko.",
+    "genres": {
+      "all_movies": "Wszystkie filmy",
+      "now_playing": "Aktualnie w kinach",
+      "popular": "Popularne",
+      "top_rated": "Najlepiej oceniane",
+      "upcoming": "Nadchodzące",
+      "all_tv": "Wszystkie seriale",
+      "top_rated_tv": "Najlepiej oceniane seriale",
+      "popular_tv": "Popularne seriale",
+      "airing_today": "Emitowane dzisiaj",
+      "on_the_air": "Aktualnie nadawane"
+    },
+    "titles": {
+      "category": "Wybierz Kategorię",
+      "genre": "Wybierz Gatunek",
+      "page-range": "Wybierz Zakres Stron",
+      "qr-code": "Zeskanuj kod QR",
+      "randomize": "Losuj wyniki",
+      "extra-settings": "Dodatkowe ustawienia"
+    }
+  },
+  "fortune-wheel": {
+    "drag": "Pociągnij w górę, aby zakręcić",
+    "roll": "Zakręć ponownie",
+    "random-category": "Losowa Kategoria",
+    "pick-category": "Wybierz Kategorię",
+    "pick-a-movie": "Zakręć kołem!"
+  },
+  "likes": {
+    "title": "Twoje polubienia",
+    "empty": "Jeszcze nie polubiłeś żadnych filmów",
+    "close": "Zamknij dopasowanie",
+    "no-matches": "Nie znaleziono dopasowań",
+    "random": "Losuj"
+  },
+  "matched": {
+    "title": "Dopasowani z twoimi znajomymi"
+  },
+  "favourites": {
+    "title": "Ulubione",
+    "empty": "Jeszcze nie dodałeś żadnych filmów do ulubionych",
+    "create": {
+      "title": "Stwórz nową listę",
+      "name": "Nazwa listy",
+      "create": "Dodaj",
+      "cancel": "Anuluj"
+    }
+  },
+  "global": {
+    "justwatch": "Dostępność filmów wspierana przez JustWatch",
+    "attributions": "Filmy dostarczone przez The Movie Database API i JustWatch"
+  },
+  "overview": {
+    "matches": "Dopasowane",
+    "likes": "Polubienia"
+  },
+  "scanner": {
+    "request-permission": "Poproś o pozwolenie",
+    "heading": "Zeskanuj kod QR",
+    "join": "Dołącz do gry"
+  },
+  "settings": {
+    "hello": "Cześć",
+    "heading": "Ustawienia",
+    "nickname-info": "Tutaj możesz zmienić swój pseudonim. Będzie on wyświetlany innym użytkownikom w pokoju.",
+    "language-info": "Zmiana tej wartości zmieni język docelowy dla utworzonego pokoju, co oznacza, że filmy będą w wybranym języku, ale nie kontrolki i inne teksty. Więcej języków zostanie dodanych w przyszłości.",
+    "about": "Jest to prosta aplikacja, która pozwala utworzyć pokój i wybierać filmy ze znajomymi. Możesz utworzyć pokój i zaprosić znajomych do dołączenia. Możesz również dołączyć do pokoju, wprowadzając kod pokoju. Następnie możesz dodawać filmy do pokoju i oglądać je razem. Aplikacja korzysta z The Movie Database API, aby pobierać filmy, oraz JustWatch API, aby uzyskać informacje o dostępności.",
+    "security": "Żadne dane nie są przechowywane na serwerze. Pokój jest tworzony w pamięci i jest niszczony, gdy ostatni użytkownik go opuszcza. Żadne dodatkowe dane nie są przechowywane na serwerze. Kod pokoju jest generowany losowo, a ulubione filmy są przechowywane lokalnie w pamięci. Aplikacja nie przechowuje żadnych danych użytkownika, a jedynie pseudonim, który jest wyświetlany w pokoju. Nie zarabiam na niej"
+  },
+  "voter": {
+    "games": "Gry",
+    "title": "Głosowanie w parach",
+    "swipe": "Matchowanie ze znajomymi",
+    "rate": "Twoja ocena",
+    "types": {
+      "movie": "Filmy",
+      "series": "Seriale",
+      "mixed": "Wszystko"
+    },
+    "home": {
+      "title": "Głosowanie w parach",
+      "description": "Głosowanie w parach to zabawa, w której możesz głosować na filmy i seriale, aby znaleźć wspólne zainteresowania ze znajomym.",
+      "howtotitle": "Jak to działa?",
+      "howto": "Jeden uzytkownik tworzy sesję, a drugi dołącza do niej. Następnie obaj użytkownicy oceniają filmy i seriale, aby znaleźć wspólne zainteresowania. Gdy obaj użytkownicy ocenią, sesja zostanie zakończona, a wyniki zostaną wyświetlone.",
+      "create": "Utwórz nową sesję",
+      "waiting": "Oczekiwanie na innych graczy",
+      "waiting-initial": "Oczekwianie na partnera...",
+      "ready": "Gotowy do głosowania",
+      "you": "Ty",
+      "user": "Partner",
+      "ready-status": "Gotowy?",
+      "ready-cancel": "Anuluj gotowość",
+      "start": "Rozpocznij głosowanie",
+      "rate": "Oceń",
+      "left": "pozostało w tej kolejce",
+      "quit": "Opuść grę"
+    },
+    "ratings": {
+      "interest": {
+        "label": "Zainteresowanie",
+        "options": {
+          "1": "Nie chcę oglądać",
+          "2": "Nie jestem pewien",
+          "3": "Może być",
+          "4": "Chętnie obejrzę",
+          "5": "Na pewno obejrzę"
+        }
+      },
+      "mood": {
+        "label": "Nastrój",
+        "options": {
+          "1": "Nie chcę oglądać",
+          "2": "Może być",
+          "3": "Chętnie obejrzę"
+        }
+      },
+      "uniqueness": {
+        "label": "Wyjątkowość",
+        "options": {
+          "1": "Ani troche",
+          "2": "Raczej nie",
+          "3": "Może",
+          "4": "Raczej tak",
+          "5": "Napewno"
+        }
+      },
+      "submit": "Wyślij ocenę"
+    },
+    "overview": {
+      "title": "Najlepszy wybór",
+      "h2": "Inne pasujące"
+    }
+  },
+  "quick-actions": {
+    "watch-later": "Na później",
+    "watched": "Obejrzane",
+    "favourite": "Ulubione",
+    "my-lists": "Moje listy",
+    "modal": "Wybierz grupę do dodania"
+  },
+  "games": {
+    "categories": {
+      "all": "Wszystkie Gry",
+      "popular": "Popularne",
+      "new": "Nowe Gry"
+    },
+    "voter": {
+      "games": "Gry Imprezowe",
+      "title": "Ranking w parach",
+      "swipe": "Przesuwaj i matchuj!",
+      "swipeDescription": "Szybka i prosta gra grupowa, dla par i znajomych, przesuń w prawo lub w lewo aby głosować na filmy i seriale.",
+      "description": "Ułatw podejmowanie decyzji! Głosuj na filmy lub seriale w 3 kategoriach aby znaleźć wspólne TOP propozycje."
+    },
+    "fortunewheel": {
+      "title": "Koło Fortuny",
+      "description": "Zakręć kołem fortuny i losuj! Idealne dla niezdecydowanych lub szybkich decyzji!"
+    }
+  },
+  "search": {
+    "error": "Oops, coś poszło nie tak, spróbuj ponownie.",
+    "no-results": "Brak wyników dla frazy: ",
+    "begin": "Zacznij pisać, aby wyszukać",
+    "search-placeholder": "Wyszukaj filmy i seriale",
+    "genres": "Gatunki",
+    "query-for": "Wyniki dla",
+    "close": "Zamknij",
+    "apply": "Zastosuj filtry",
+    "more": "Pokaz więcej",
+    "less": "Pokaz mniej"
+  },
+  "cast": {
+    "heading": "Obsada"
+  },
+  "landing": {
+    "error": "Oops, coś poszło nie tak, spróbuj ponownie.",
+    "title": "Movie Picker"
+  },
+  "tabBar": {
+    "settings": "Ustawienia",
+    "favourites": "Ulubione",
+    "join-game": "Dołącz do gry",
+    "games": "Gry",
+    "search": "Szukaj"
+  }
+}

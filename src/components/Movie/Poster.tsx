@@ -1,7 +1,5 @@
 import { View, useWindowDimensions } from "react-native";
 import Animated, { useAnimatedStyle, SharedValue, interpolate, interpolateColor, withTiming } from "react-native-reanimated";
-import { sharedElementTransition } from "../../service/utils/SharedElementTransition";
-import { useEffect } from "react";
 
 const SwipeText = (props: {
   text: string;
@@ -119,19 +117,16 @@ export default function Poster(props: {
         ]}
       />
       <Animated.Image
-        // sharedTransitionStyle={sharedElementTransition}
-        // sharedTransitionTag={`movie-poster-image-${props.card.poster_path}`}
         style={[
           imageDimensions,
           {
             borderRadius: 19,
           },
         ]}
-        //resizeMode="cover"
         resizeMode="cover"
         resizeMethod="resize"
         source={{
-          uri: "https://image.tmdb.org/t/p/w500" + props.card.poster_path,
+          uri: "https://image.tmdb.org/t/p/w780" + props.card.poster_path,
         }}
       />
     </View>

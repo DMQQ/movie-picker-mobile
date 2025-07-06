@@ -1,6 +1,9 @@
 import { useMemo } from "react";
 import { Image, ScrollView, StyleProp, View, ViewStyle } from "react-native";
 import { Surface, Text } from "react-native-paper";
+import useTranslation from "../../service/useTranslation";
+import Thumbnail from "../Thumbnail";
+import FrostedGlass from "../FrostedGlass";
 
 const WatchProviders = ({ providers, hideLabel = false, style }: { providers: any; hideLabel?: boolean; style?: StyleProp<ViewStyle> }) => {
   const providersList = useMemo(() => {
@@ -15,32 +18,32 @@ const WatchProviders = ({ providers, hideLabel = false, style }: { providers: an
     return [...list];
   }, [providers]);
 
+  const t = useTranslation();
+
   if (providersList.length === 0) return null;
 
   return (
-    <View style={[{ marginVertical: 10, marginTop: 20 }, style]}>
-      {!hideLabel && <Text style={{ fontSize: 20, fontWeight: "bold" }}>Streaming services (PL)</Text>}
+    <View style={[{ marginTop: 30 }, style]}>
+      {!hideLabel && <Text style={{ fontSize: 35, fontFamily: "Bebas", lineHeight: 35 }}>Streaming</Text>}
 
-      <ScrollView horizontal>
-        {providersList.map((provider) => (
-          <Image
-            key={provider as string}
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: 5,
-              marginRight: 10,
-              marginVertical: 15,
-            }}
-            resizeMode="cover"
-            source={{
-              uri: "https://image.tmdb.org/t/p/w500" + provider,
-            }}
-          />
-        ))}
-      </ScrollView>
+      <FrostedGlass style={{ padding: 15, borderRadius: 15 }} container={{ height: 80 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {providersList.map((provider) => (
+            <Thumbnail
+              key={provider as string}
+              container={{
+                width: 50,
+                height: 50,
+                borderRadius: 7.5,
+                marginRight: 10,
+              }}
+              path={provider as string}
+            />
+          ))}
+        </ScrollView>
+      </FrostedGlass>
 
-      <Text style={{ color: "rgba(255,255,255,0.4)" }}>The movie availabilities are powered by JustWatch</Text>
+      <Text style={{ color: "rgba(255,255,255,0.8)", textAlign: "center", fontSize: 11, marginTop: 2.5 }}>{t("global.justwatch")}</Text>
     </View>
   );
 };

@@ -11,7 +11,7 @@ const AppLoadingOverlay = () => {
     const timer = setTimeout(() => {
       setIsHiding(true);
       setTimeout(() => setIsLoading(false), 500);
-    }, 1500);
+    }, 500);
     return () => clearTimeout(timer);
   }, []);
 
