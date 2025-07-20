@@ -1,10 +1,11 @@
-import { Dimensions, Platform, SafeAreaView } from "react-native";
-import { ThemeProvider, useTheme } from "react-native-paper";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { useNavigation } from "@react-navigation/native";
 import { memo, useEffect } from "react";
-import MatchesScreen from "./Overview/Matches";
-import LikesScreen from "./Overview/Likes";
+import { Dimensions, SafeAreaView } from "react-native";
+import { IconButton, useTheme } from "react-native-paper";
 import useTranslation from "../service/useTranslation";
+import LikesScreen from "./Overview/Likes";
+import MatchesScreen from "./Overview/Matches";
 
 const OverviewTopTabs = createMaterialTopTabNavigator();
 
@@ -12,6 +13,14 @@ function Overview() {
   const theme = useTheme();
 
   const t = useTranslation();
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />,
+    });
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

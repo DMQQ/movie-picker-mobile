@@ -1,15 +1,15 @@
-import { View, Alert, FlatList, Dimensions, ImageBackground, Keyboard } from "react-native";
-import { useAppDispatch, useAppSelector } from "../redux/store";
-import SafeIOSContainer from "../components/SafeIOSContainer";
-import { Button, Dialog, FAB, IconButton, MD2DarkTheme, Text, TextInput, TouchableRipple } from "react-native-paper";
-import { ScreenProps } from "./types";
-import useTranslation from "../service/useTranslation";
-import { createGroup } from "../redux/favourites/favourites";
 import { AntDesign } from "@expo/vector-icons";
+import { Dimensions, FlatList, ImageBackground, Keyboard, View } from "react-native";
+import { Button, Dialog, FAB, MD2DarkTheme, Text, TextInput, TouchableRipple } from "react-native-paper";
 import PageHeading from "../components/PageHeading";
+import SafeIOSContainer from "../components/SafeIOSContainer";
+import { createGroup } from "../redux/favourites/favourites";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import useTranslation from "../service/useTranslation";
+import { ScreenProps } from "./types";
 
-import Thumbnail from "../components/Thumbnail";
 import { useState } from "react";
+import Thumbnail from "../components/Thumbnail";
 
 export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const { groups } = useAppSelector((state) => state.favourite);

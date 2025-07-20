@@ -1,13 +1,13 @@
-import { ActivityIndicator, Dimensions, FlatList, Pressable, View } from "react-native";
-import { useGetSeasonEpisodesQuery } from "../../redux/movie/movieApi";
-import { Episode } from "../../../types";
-import FrostedGlass from "../FrostedGlass";
-import { Text } from "react-native-paper";
-import Thumbnail from "../Thumbnail";
-import RatingIcons from "../RatingIcons";
 import { useState } from "react";
+import { ActivityIndicator, Dimensions, Pressable, View } from "react-native";
+import { Text } from "react-native-paper";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
+import { Episode } from "../../../types";
+import { useGetSeasonEpisodesQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
+import FrostedGlass from "../FrostedGlass";
+import RatingIcons from "../RatingIcons";
+import Thumbnail from "../Thumbnail";
 
 export default function SeasonEpisodes({ id, season }: { id: number; season: number }) {
   const { data, isLoading } = useGetSeasonEpisodesQuery({ id, season }, { refetchOnMountOrArgChange: true });
@@ -72,7 +72,7 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
       {(data?.episodes.length || 0) > 5 && (
         <View style={{ alignItems: "center", marginTop: 10 }}>
           <Pressable onPress={() => setShowAll((p) => !p)}>
-            <Text>{showAll ? t("movie.details.show_less") : `${t("movie.details.show_more")} (${data?.episodes.length})`}</Text>
+            <Text>{showAll ? t("movie.details.show_less") : `${t("movie.details.show_more")}`}</Text>
           </Pressable>
         </View>
       )}

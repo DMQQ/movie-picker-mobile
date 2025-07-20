@@ -1,18 +1,16 @@
-import { MD2DarkTheme, Text } from "react-native-paper";
-import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
-import WatchProviders from "./WatchProviders";
-import LastEpisodeToAir from "./LastEpisodeDetails";
-import Seasons from "./SeasonsList";
 import { Platform, View } from "react-native";
-import Similar from "../Similar";
-import useTranslation from "../../service/useTranslation";
+import { Text } from "react-native-paper";
+import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { Movie } from "../../../types";
-import QuickActions from "../QuickActions";
+import useTranslation from "../../service/useTranslation";
 import CustomFavourite from "../Favourite";
-import Cast from "./Cast";
 import FrostedGlass from "../FrostedGlass";
+import QuickActions from "../QuickActions";
 import RatingIcons from "../RatingIcons";
-import Trailers from "./Trailers";
+import Similar from "../Similar";
+import Cast from "./Cast";
+import Seasons from "./SeasonsList";
+import WatchProviders from "./WatchProviders";
 
 export default function MovieDetails({
   movie,
@@ -102,7 +100,7 @@ export default function MovieDetails({
 
           <Cast id={movie?.id} type={type as "movie" | "tv"} />
 
-          <LastEpisodeToAir lastEpisode={movie?.last_episode_to_air || {}} />
+          {/* <LastEpisodeToAir lastEpisode={movie?.last_episode_to_air || {}} /> */}
 
           {type === "tv" && <Seasons id={movie?.id} seasons={(movie?.seasons as any) || []} />}
 

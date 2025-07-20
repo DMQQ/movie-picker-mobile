@@ -1,26 +1,26 @@
+import { useIsFocused } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useRef, useState } from "react";
-import FortuneWheelComponent from "../components/FortuneWheelComponent";
-import SafeIOSContainer from "../components/SafeIOSContainer";
 import { Dimensions, FlatList, Image, ImageBackground, Platform, Pressable, useWindowDimensions, View } from "react-native";
+import { Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from "react-native-reanimated";
+import { Movie } from "../../types";
+import { FancySpinner } from "../components/FancySpinner";
+import Favourite from "../components/Favourite";
+import FortuneWheelComponent from "../components/FortuneWheelComponent";
+import FrostedGlass from "../components/FrostedGlass";
+import WatchProviders from "../components/Movie/WatchProviders";
+import SafeIOSContainer from "../components/SafeIOSContainer";
+import ScoreRing from "../components/ScoreRing";
 import {
   useGetCategoriesQuery,
   useGetMovieProvidersQuery,
   useGetMovieQuery,
   useLazyGetLandingPageMoviesQuery,
 } from "../redux/movie/movieApi";
-import { Movie } from "../../types";
-import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, FadeOutDown } from "react-native-reanimated";
-import ScoreRing from "../components/ScoreRing";
-import { LinearGradient } from "expo-linear-gradient";
-import { Appbar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
-import WatchProviders from "../components/Movie/WatchProviders";
-import { FancySpinner } from "../components/FancySpinner";
-import Favourite from "../components/Favourite";
 import useTranslation from "../service/useTranslation";
 import { throttle } from "../utils/throttle";
-import { useIsFocused } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import FrostedGlass from "../components/FrostedGlass";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
 
@@ -182,7 +182,7 @@ function FortuneWheel({ navigation, route }: any) {
             <FrostedGlass
               container={{
                 width: "100%",
-                height: 500,
+                minHeight: 400,
               }}
               style={{
                 marginBottom: Platform.OS === "ios" ? 80 : 10,

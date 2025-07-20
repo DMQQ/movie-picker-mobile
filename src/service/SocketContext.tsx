@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
-import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
-import { RootState } from "../redux/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
 import { useSelector } from "react-redux";
+import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
+import { RootState } from "../redux/store";
 
 const isDev = false;
 const BACKGROUND_TIMEOUT = 5 * 60 * 1000; // 5 minutes

@@ -1,6 +1,6 @@
-import React from "react";
-import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
 import { BlurView } from "expo-blur";
+import React from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 interface FrostedGlassProps {
   children?: React.ReactNode;

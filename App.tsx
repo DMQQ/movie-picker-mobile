@@ -1,31 +1,31 @@
 import "react-native-reanimated";
 
-import { Button, MD2DarkTheme, PaperProvider } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Landing from "./src/screens/Landing";
-import QRCode from "./src/screens/Room/Main";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Provider } from "react-redux";
-import { store, useAppDispatch } from "./src/redux/store";
-import Overview from "./src/screens/Overview";
-import { Alert, Linking, Platform, StatusBar, View } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import MovieDetails from "./src/screens/MovieDetails";
-import { RootStackParamList } from "./src/screens/types";
-import SettingsScreen from "./src/screens/Settings";
-import { useEffect, useState } from "react";
 import { loadAsync } from "expo-font";
-import FortuneWheel, { SectionSelector } from "./src/screens/FortuneWheel";
+import { useEffect, useState } from "react";
+import { Linking, Platform, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Button, MD2DarkTheme, PaperProvider } from "react-native-paper";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
 import { FancySpinner } from "./src/components/FancySpinner";
-import Favourites from "./src/screens/Favourites";
 import { loadFavorites } from "./src/redux/favourites/favourites";
 import { roomActions } from "./src/redux/room/roomSlice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Group from "./src/screens/Group";
-import Main from "./src/screens/Voter/Main";
+import { store, useAppDispatch } from "./src/redux/store";
+import Favourites from "./src/screens/Favourites";
+import FortuneWheel from "./src/screens/FortuneWheel";
 import GameList from "./src/screens/GameList";
+import Group from "./src/screens/Group";
+import Landing from "./src/screens/Landing";
+import MovieDetails from "./src/screens/MovieDetails";
+import Overview from "./src/screens/Overview";
+import QRCode from "./src/screens/Room/Main";
 import Search from "./src/screens/Search";
+import SettingsScreen from "./src/screens/Settings";
+import { RootStackParamList } from "./src/screens/types";
+import Main from "./src/screens/Voter/Main";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -194,8 +194,9 @@ const Navigator = () => {
             name="Overview"
             component={Overview}
             options={{
-              headerShown: false,
-              title: "",
+              headerShown: Platform.OS !== "ios",
+              title: Platform.OS === "ios" ? "" : "Overview",
+              headerTitleAlign: "center",
               presentation: "modal",
             }}
           />

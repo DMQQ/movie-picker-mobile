@@ -1,9 +1,6 @@
-import { Linking, Dimensions, TouchableOpacity, StyleSheet } from "react-native";
-import { useGetTrailersQuery } from "../../redux/movie/movieApi";
+import { useMemo, useState } from "react";
+import { Dimensions, Linking, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
-import FrostedGlass from "../FrostedGlass";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import { hexToRgba } from "../../utils/hexToRgb";
 import Animated, {
   FadeInDown,
   FadeInLeft,
@@ -14,7 +11,10 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { useMemo, useState } from "react";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { useGetTrailersQuery } from "../../redux/movie/movieApi";
+import { hexToRgba } from "../../utils/hexToRgb";
+import FrostedGlass from "../FrostedGlass";
 
 const width = Dimensions.get("window").width;
 
@@ -39,6 +39,8 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
     width: withSpring(isExpanded.value ? width / 2 : 115, config),
     height: withSpring(isExpanded.value ? filteredItems.length * 45 + 45 : 45, config),
   }));
+
+  if (!filteredItems.length) return null;
 
   return (
     <Animated.View style={styles.container}>
