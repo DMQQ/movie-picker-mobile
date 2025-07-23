@@ -28,9 +28,11 @@ export default function MovieDetails({
   const data = [
     // `${movie?.vote_average?.toFixed(2)}/10`,
     movie?.release_date || movie?.first_air_date,
-    (movie?.title || movie?.name) === (movie?.original_title || movie?.original_name) ? "" : movie?.original_title || movie?.original_name,
+    (movie?.title || movie?.name) === (movie?.original_title || movie?.original_name)
+      ? null
+      : movie?.original_title || movie?.original_name,
     ...(movie?.genres || [])?.map((g: any) => g.name),
-  ].filter((v) => v !== undefined && v !== "") as any;
+  ].filter((v) => v !== undefined && v !== "" && v !== null) as string[];
 
   return (
     <Animated.View entering={FadeInDown} exiting={FadeOutDown} style={{ flex: 1 }}>
@@ -85,7 +87,7 @@ export default function MovieDetails({
           )}
 
           <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
-            {movie?.runtime && (
+            {!!movie?.runtime && (
               <Text style={{ fontSize: 15, color: "rgba(255,255,255,0.6)" }}>
                 {t("movie.details.runtime")}: {movie?.runtime} {t("movie.details.minutes")}
               </Text>
@@ -100,11 +102,7 @@ export default function MovieDetails({
 
           <Cast id={movie?.id} type={type as "movie" | "tv"} />
 
-          {/* <LastEpisodeToAir lastEpisode={movie?.last_episode_to_air || {}} /> */}
-
           {type === "tv" && <Seasons id={movie?.id} seasons={(movie?.seasons as any) || []} />}
-
-          {/* <MovieReviews movieId={movie?.id} type={type as "movie" | "tv"} /> */}
 
           <Similar id={movie?.id} type={type as "movie" | "tv"} />
 

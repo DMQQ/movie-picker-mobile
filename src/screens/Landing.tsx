@@ -1,30 +1,31 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import { uuid } from "expo-modules-core";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Dimensions,
+  ImageBackground,
+  Platform,
   Pressable,
+  RefreshControl,
   StyleSheet,
   TouchableHighlight,
   View,
   VirtualizedList,
-  ImageBackground,
-  Platform,
-  RefreshControl,
 } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { ScreenProps } from "./types";
-import { useGetFeaturedQuery, useLazyGetLandingPageMoviesQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
-import ScoreRing from "../components/ScoreRing";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { Movie } from "../../types";
-import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
-import useTranslation from "../service/useTranslation";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import NoConnectionError from "../components/NoConnectionError";
-import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
-import RatingIcons from "../components/RatingIcons";
 import FrostedGlass from "../components/FrostedGlass";
-import { uuid } from "expo-modules-core";
+import NoConnectionError from "../components/NoConnectionError";
+import RatingIcons from "../components/RatingIcons";
+import ScoreRing from "../components/ScoreRing";
+import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
+import { useGetFeaturedQuery, useLazyGetLandingPageMoviesQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
+import useTranslation from "../service/useTranslation";
+import { ScreenProps } from "./types";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -56,6 +57,12 @@ const keyExtractor = (item: { name: string }, index: number) => item.name + "-" 
 const getItemCount = (data: { name: string; results: Movie[] }[]) => data.length;
 
 const getItem = (data: { name: string; results: Movie[] }[], index: number) => data[index];
+
+const getItemLayout = (data: any, index: number) => ({
+  length: height * 0.35 + 50,
+  offset: (height * 0.35 + 50) * index,
+  index,
+});
 
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const [page, setPage] = useState(0);
@@ -125,11 +132,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         onEndReached={onEndReached}
         renderItem={renderItem}
         onEndReachedThreshold={0.5}
-        getItemLayout={(data, index) => ({
-          length: height * 0.35 + 50,
-          offset: (height * 0.35 + 50) * index,
-          index,
-        })}
+        getItemLayout={getItemLayout}
       />
 
       <BottomTab navigate={navigation.navigate} />
@@ -328,7 +331,6 @@ const getSectionItemCount = (data: any) => data.length;
 const keySectionExtractor = (item: any, index: number) => item.id.toString() + "-" + index;
 
 const Section = memo(({ group }: SectionProps) => {
-  const navigation = useNavigation<any>();
   const [page, setPage] = useState(1);
   const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
 
@@ -361,7 +363,7 @@ const Section = memo(({ group }: SectionProps) => {
   const renderItem = useCallback(({ item }: { item: Movie & { type: string } }) => <SectionListItem {...item} />, []);
 
   return (
-    <View style={sectionStyles.container}>
+    <Animated.View style={sectionStyles.container} entering={FadeIn}>
       <Text style={sectionStyles.title}>{group.name}</Text>
       <VirtualizedList
         initialNumToRender={3} // Increased from 3
@@ -386,7 +388,7 @@ const Section = memo(({ group }: SectionProps) => {
           autoscrollToTopThreshold: 10,
         }}
       />
-    </View>
+    </Animated.View>
   );
 });
 

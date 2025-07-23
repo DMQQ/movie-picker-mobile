@@ -1,17 +1,16 @@
-import { Dimensions, Platform, View } from "react-native";
-import { MovieDetails as MovieDetailsType } from "../../types";
-import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
-import { ScreenProps } from "./types";
-import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
-import MovieDetails from "../components/Movie/MovieDetails";
-import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
-import { TouchableRipple } from "react-native-paper";
-import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
-import { useCallback, useMemo } from "react";
-import FrostedGlass from "../components/FrostedGlass";
-import Entypo from "react-native-vector-icons/Entypo";
-import Trailers from "../components/Movie/Trailers";
 import * as Haptics from "expo-haptics";
+import { useCallback, useMemo } from "react";
+import { Dimensions, Platform, View } from "react-native";
+import { TouchableRipple } from "react-native-paper";
+import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import Entypo from "react-native-vector-icons/Entypo";
+import FrostedGlass from "../components/FrostedGlass";
+import MovieDetails from "../components/Movie/MovieDetails";
+import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
+import Trailers from "../components/Movie/Trailers";
+import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
+import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
+import { ScreenProps } from "./types";
 
 const { width, height } = Dimensions.get("window");
 
@@ -54,7 +53,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
     }
   });
 
-  const { data: movie = {} as MovieDetailsType, isLoading: loading } = useGetMovieQuery({
+  const { data: movie = {}, isLoading: loading } = useGetMovieQuery({
     id: movieId,
     type: typeOfContent,
   });
@@ -84,7 +83,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
                 width: width,
               },
             ]}
-            path={posterPath || movie?.poster_path}
+            path={posterPath || (movie?.poster_path as any)}
           />
         </Animated.View>
 
