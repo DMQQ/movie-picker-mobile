@@ -1,19 +1,10 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
+import { FlashList } from "@shopify/flash-list";
 import { LinearGradient } from "expo-linear-gradient";
 import { uuid } from "expo-modules-core";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import {
-  Dimensions,
-  ImageBackground,
-  Platform,
-  Pressable,
-  RefreshControl,
-  StyleSheet,
-  TouchableHighlight,
-  View,
-  VirtualizedList,
-} from "react-native";
+import { Dimensions, ImageBackground, Platform, Pressable, RefreshControl, StyleSheet, TouchableHighlight, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { Movie } from "../../types";
@@ -54,16 +45,6 @@ const gradient = ["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0
 
 const keyExtractor = (item: { name: string }, index: number) => item.name + "-" + index;
 
-const getItemCount = (data: { name: string; results: Movie[] }[]) => data.length;
-
-const getItem = (data: { name: string; results: Movie[] }[], index: number) => data[index];
-
-const getItemLayout = (data: any, index: number) => ({
-  length: height * 0.35 + 50,
-  offset: (height * 0.35 + 50) * index,
-  index,
-});
-
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const [page, setPage] = useState(0);
 
@@ -75,6 +56,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
   useEffect(() => {
     getLandingMovies({ skip: page * 3, take: 5 }).then((response) => {
+      console.log("Landing movies response", response);
       if (response.data && Array.isArray(response.data)) {
         setData((prev) => {
           const uniqueSections = (response.data || []).filter(
@@ -112,12 +94,8 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
       <NoConnectionError />
 
-      <VirtualizedList
+      <FlashList
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        maxToRenderPerBatch={5}
-        windowSize={3}
-        removeClippedSubviews={true}
-        style={{ flex: 1 }}
         ListHeaderComponent={<FeaturedSection navigate={navigation.navigate} />}
         ListEmptyComponent={
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center", height: height - 80 }}>
@@ -125,14 +103,12 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
           </View>
         }
         data={(data || []) as { name: string; results: Movie[] }[]}
-        initialNumToRender={3}
         keyExtractor={keyExtractor}
-        getItemCount={getItemCount}
-        getItem={getItem}
         onEndReached={onEndReached}
         renderItem={renderItem}
         onEndReachedThreshold={0.5}
-        getItemLayout={getItemLayout}
+        drawDistance={1000}
+        estimatedItemSize={height * 0.275 + 30}
       />
 
       <BottomTab navigate={navigation.navigate} />
@@ -306,11 +282,10 @@ interface SectionProps {
 }
 
 const sectionStyles = StyleSheet.create({
-  container: { marginBottom: 20, padding: 15, minHeight: height * 0.35 + 50 },
-  title: { color: "#fff", fontSize: 45, marginBottom: 20, fontFamily: "Bebas" },
+  container: { paddingHorizontal: 15, height: height * 0.275 + 30, paddingBottom: 30 },
+  title: { color: "#fff", fontSize: 35, fontFamily: "Bebas", marginBottom: 10 },
   list: {
     flex: 1,
-    minHeight: height * 0.275,
   },
   listContainer: {
     justifyContent: "flex-start",
@@ -318,19 +293,16 @@ const sectionStyles = StyleSheet.create({
   },
 
   image: {
-    width: width * 0.375,
-    height: height * 0.275,
-    borderRadius: 15,
-    marginRight: 20,
+    width: width * 0.3,
+    height: height * 0.2,
+    borderRadius: 7.5,
+    marginRight: 15,
   },
 });
 
-const getSectionItem = (data: any, index: number) => data[index];
-const getSectionItemCount = (data: any) => data.length;
-
 const keySectionExtractor = (item: any, index: number) => item.id.toString() + "-" + index;
 
-const Section = memo(({ group }: SectionProps) => {
+export const Section = memo(({ group }: SectionProps) => {
   const [page, setPage] = useState(1);
   const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
 
@@ -365,34 +337,21 @@ const Section = memo(({ group }: SectionProps) => {
   return (
     <Animated.View style={sectionStyles.container} entering={FadeIn}>
       <Text style={sectionStyles.title}>{group.name}</Text>
-      <VirtualizedList
-        initialNumToRender={3} // Increased from 3
-        maxToRenderPerBatch={3} // Reduced from 5
-        updateCellsBatchingPeriod={50} // Add this
-        windowSize={2}
-        removeClippedSubviews={true}
-        getItem={getSectionItem}
-        getItemCount={getSectionItemCount}
+      <FlashList
         onEndReached={onEndReached}
         data={(movies || []) as any}
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={keySectionExtractor}
-        style={sectionStyles.list}
-        contentContainerStyle={sectionStyles.listContainer}
         renderItem={renderItem}
         onEndReachedThreshold={0.5}
-        maintainVisibleContentPosition={{
-          // Add this
-          minIndexForVisible: 0,
-          autoscrollToTopThreshold: 10,
-        }}
+        estimatedItemSize={width * 0.3 + 15}
       />
     </Animated.View>
   );
 });
 
-const SectionListItem = (item: Movie) => {
+export const SectionListItem = (item: Movie) => {
   const navigation = useNavigation<any>();
 
   const uniqueId = useMemo(() => {
@@ -414,8 +373,8 @@ const SectionListItem = (item: Movie) => {
         position: "relative",
       }}
     >
-      <Thumbnail path={item.poster_path} size={300} container={sectionStyles.image} />
-      <View style={{ position: "absolute", right: 30, bottom: 10 }}>
+      <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} />
+      <View style={{ position: "absolute", right: 20, bottom: 5 }}>
         <ScoreRing score={item.vote_average} />
       </View>
     </Pressable>

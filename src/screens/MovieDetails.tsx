@@ -12,7 +12,7 @@ import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
 import { ScreenProps } from "./types";
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get("screen");
 
 export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"MovieDetails">) {
   const scrollOffset = useSharedValue(0);
@@ -30,7 +30,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
 
   const handleBack = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.pop();
+    navigation.goBack();
   }, [navigation]);
 
   const imageStyle = useAnimatedStyle(() => {
@@ -64,14 +64,14 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
   });
 
   return (
-    <View style={{ flex: 1, height, width }}>
+    <View style={{ flex: 1 }}>
       <Animated.ScrollView
         scrollEventThrottle={16}
         onScroll={scrollhandler}
         contentContainerStyle={{
           alignItems: "center",
         }}
-        removeClippedSubviews={true}
+        removeClippedSubviews={false}
         style={{ flex: 1 }}
       >
         <Animated.View style={imageStyle}>
@@ -84,6 +84,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
               },
             ]}
             path={posterPath || (movie?.poster_path as any)}
+            priority="high"
           />
         </Animated.View>
 

@@ -1,8 +1,8 @@
-import { StyleProp, StyleSheet, View, ViewStyle, Image, ImageProps } from "react-native";
-import { MD2DarkTheme } from "react-native-paper";
 import { AntDesign } from "@expo/vector-icons";
-import Animated from "react-native-reanimated";
-import { sharedElementTransition } from "../service/utils/SharedElementTransition";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { MD2DarkTheme } from "react-native-paper";
+
+import { Image, ImageProps } from "expo-image";
 
 export const ThumbnailSizes = {
   poster: {
@@ -60,10 +60,14 @@ export default function Thumbnail({
 
   return (
     <View style={[styles.container, container]}>
-      <Animated.Image
-        resizeMode={"cover"}
+      <Image
+        contentFit={"cover"}
         {...rest}
-        source={{ uri: `https://image.tmdb.org/t/p/w${size}` + path, cache: "force-cache" }}
+        source={{ uri: `https://image.tmdb.org/t/p/w${size}` + path, cacheKey: `https://image.tmdb.org/t/p/w${size}` + path }}
+        placeholder="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGBobHB0eH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABRAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIRAxEAPwCdABmyuK"
+        placeholderContentFit="cover"
+        transition={200}
+        cachePolicy="memory-disk"
         style={[styles.image, rest.style]}
       />
     </View>

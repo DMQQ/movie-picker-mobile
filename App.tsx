@@ -1,4 +1,4 @@
-import "react-native-reanimated";
+console.log("=== App.tsx file is loading ===");
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
@@ -79,10 +79,17 @@ export default function App() {
   useEffect(() => {
     loadAsync({
       Bebas: require("./assets/fonts/BebasNeue-Regular.ttf"),
-    }).then(() => {
-      setIsLoaded(true);
-    });
+    })
+      .then(() => {
+        setIsLoaded(true);
+      })
+      .catch((error) => {
+        console.error("Font loading failed:", error);
+        setIsLoaded(true); // Still show app even if fonts fail
+      });
   }, []);
+
+  console.log("App started");
 
   if (!isLoaded) return <Fallback />;
 
