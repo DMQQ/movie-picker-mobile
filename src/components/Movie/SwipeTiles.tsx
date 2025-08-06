@@ -77,8 +77,8 @@ const SwipeTile = ({
   const scale = useSharedValue(Math.max(1 - index * 0.075, 0.85));
 
   useEffect(() => {
-    position.value = withTiming({ x: 0, y: Math.max(index * -15, -45) });
-    scale.value = withTiming(Math.max(1 - index * 0.075, 0.85));
+    position.value = withTiming({ x: 0, y: Math.max(index * -15, -45) }, { duration: 200 });
+    scale.value = withTiming(Math.max(1 - index * 0.075, 0.85), { duration: 200 });
   }, [index]);
 
   const likeCard = () => {

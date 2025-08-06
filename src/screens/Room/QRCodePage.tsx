@@ -11,7 +11,13 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
-import { useCreateRoom } from "./ContextProvider";
+
+interface RoomSetupParams {
+  category: string;
+  maxRounds: number;
+  genre: { id: number; name: string }[];
+  providers: number[];
+}
 
 interface ISocketResponse {
   roomId: string;
@@ -25,8 +31,9 @@ interface ISocketResponse {
   };
 }
 
-export default function QRCodePage({ navigation }: any) {
-  const { category, pageRange, genre, providers, maxRounds } = useCreateRoom();
+export default function QRCodePage({ navigation, route }: any) {
+  const { roomSetup }: { roomSetup: RoomSetupParams } = route.params || {};
+  const { category, maxRounds, genre, providers } = roomSetup || {};
   const { qrCode, nickname } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
@@ -40,10 +47,10 @@ export default function QRCodePage({ navigation }: any) {
         const response = (await socket?.emitWithAck("create-room", {
           type: category,
           pageRange: Math.trunc(Math.random() * 5),
-          genre: genre.map((g) => g.id),
+          genre: genre?.map((g) => g.id) || [],
           nickname,
-          providers,
-          maxRounds,
+          providers: providers || [],
+          maxRounds: maxRounds || 6,
         })) as ISocketResponse;
 
         if (response) {
@@ -58,7 +65,7 @@ export default function QRCodePage({ navigation }: any) {
         }
       } catch (error) {}
     })();
-  }, [category, pageRange, genre]);
+  }, [category, genre, providers, maxRounds, nickname, socket, dispatch]);
 
   const onJoinOwnRoom = (code: string) => {
     socket?.emit("room:start", roomId);

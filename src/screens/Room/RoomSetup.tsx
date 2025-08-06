@@ -1,6 +1,6 @@
 // src/screens/Room/RoomSetup/RoomSetup.tsx
 
-import { useMemo } from "react";
+import { useCallback, useMemo, useReducer } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -14,14 +14,60 @@ import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useGetAllProvidersQuery, useGetGenresQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
 import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
-import { useCreateRoom } from "./ContextProvider";
+
+interface RoomSetupState {
+  category: string;
+  maxRounds: number;
+  genre: Genre[];
+  providers: number[];
+}
+
+type RoomSetupAction =
+  | { type: "SET_CATEGORY"; payload: string }
+  | { type: "SET_MAX_ROUNDS"; payload: number }
+  | { type: "SET_GENRE"; payload: Genre[] }
+  | { type: "TOGGLE_GENRE"; payload: Genre }
+  | { type: "SET_PROVIDERS"; payload: number[] };
+
+const roomSetupReducer = (state: RoomSetupState, action: RoomSetupAction): RoomSetupState => {
+  switch (action.type) {
+    case "SET_CATEGORY":
+      return { ...state, category: action.payload };
+    case "SET_MAX_ROUNDS":
+      return { ...state, maxRounds: action.payload };
+    case "SET_GENRE":
+      return { ...state, genre: action.payload };
+    case "TOGGLE_GENRE":
+      const genreExists = state.genre.some((g) => g.id === action.payload.id);
+      return {
+        ...state,
+        genre: genreExists ? state.genre.filter((g) => g.id !== action.payload.id) : [...state.genre, action.payload],
+      };
+    case "SET_PROVIDERS":
+      return { ...state, providers: action.payload };
+    default:
+      return state;
+  }
+};
 
 export default function RoomSetup({ navigation }: any) {
-  const { category, setCategory, genre, setGenre, providers, setProviders, maxRounds, setMaxRounds } = useCreateRoom();
   const t = useTranslation();
 
+  const initialState: RoomSetupState = useMemo(
+    () => ({
+      category: getMovieCategories(t)[0]?.path || "",
+      maxRounds: 6,
+      genre: [],
+      providers: [],
+    }),
+    [t]
+  );
+
+  const [state, dispatch] = useReducer(roomSetupReducer, initialState);
+  const { category, maxRounds, genre, providers } = state;
+
   const isCategorySelected = !!category;
-  const mediaType = category.includes("tv") ? "tv" : "movie";
+  const mediaType = useMemo(() => (category.includes("tv") ? "tv" : "movie"), [category]);
 
   const { data: genresData = [], isLoading: genresLoading } = useGetGenresQuery({ type: mediaType }, { skip: !isCategorySelected });
   const { data: providersData } = useGetAllProvidersQuery({});
@@ -53,16 +99,38 @@ export default function RoomSetup({ navigation }: any) {
     [t]
   );
 
-  const handleGenrePress = (genreItem: Genre) => {
-    setGenre((prev: Genre[]) =>
-      prev.some((g) => g.id === genreItem.id) ? prev.filter((g) => g.id !== genreItem.id) : [...prev, genreItem]
-    );
-  };
+  // Memoized callbacks for optimal performance
+  const handleCategoryPress = useCallback((categoryPath: string) => {
+    dispatch({ type: "SET_CATEGORY", payload: categoryPath });
+  }, []);
 
-  const handleNextPress = () => {
-    // Note: The `providers` state in context is already up-to-date
-    navigation.navigate("CreateQRCode");
-  };
+  const handleMaxRoundsPress = useCallback((rounds: number) => {
+    dispatch({ type: "SET_MAX_ROUNDS", payload: rounds });
+  }, []);
+
+  const handleGenrePress = useCallback((genreItem: Genre) => {
+    dispatch({ type: "TOGGLE_GENRE", payload: genreItem });
+  }, []);
+
+  const handleProviderToggle = useCallback((newProviders: number[]) => {
+    dispatch({
+      type: "SET_PROVIDERS",
+      payload: newProviders,
+    });
+  }, []);
+
+  const handleNextPress = useCallback(() => {
+    navigation.navigate("CreateQRCode", {
+      roomSetup: {
+        category,
+        maxRounds,
+        genre,
+        providers,
+      },
+    });
+  }, [navigation, category, maxRounds, genre, providers]);
+
+  console.log("RoomSetup State:", state);
 
   return (
     <SafeIOSContainer>
@@ -77,14 +145,14 @@ export default function RoomSetup({ navigation }: any) {
                   label={option.label}
                   iconData={option.iconData}
                   isSelected={maxRounds === option.value}
-                  onPress={() => setMaxRounds(option.value)}
+                  onPress={() => handleMaxRoundsPress(option.value)}
                 />
               ))}
             </ScrollView>
           </Section>
 
           <Section title={`${t("room.movie")} & ${t("room.series")}`}>
-            <CategoryList categories={categories} selectedCategory={category} onCategoryPress={(cat) => setCategory(cat.path)} />
+            <CategoryList categories={categories} selectedCategory={category} onCategoryPress={(cat) => handleCategoryPress(cat.path)} />
           </Section>
 
           <Section title={t("room.genre")} description={t("room.genre_desc")} disabled={!isCategorySelected}>
@@ -99,9 +167,9 @@ export default function RoomSetup({ navigation }: any) {
 
           <Section title={t("room.providers")} description={t("room.provider_desc")} disabled={!isCategorySelected}>
             <ProviderList
-              providers={providersData}
-              selectedProviders={providers} // This is correct
-              onToggleProvider={setProviders} // This is also correct
+              providers={providersData || []}
+              selectedProviders={providers}
+              onToggleProvider={handleProviderToggle}
               isCategorySelected={isCategorySelected}
             />
           </Section>
