@@ -23,6 +23,8 @@ export interface Movie {
   type?: "movie" | "tv";
 
   original_name?: string;
+
+  placeholder_poster_path?: string;
 }
 
 export interface TVShow {}

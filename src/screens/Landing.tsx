@@ -1,9 +1,9 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
+import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { uuid } from "expo-modules-core";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { Dimensions, ImageBackground, Platform, Pressable, RefreshControl, StyleSheet, TouchableHighlight, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
@@ -51,25 +51,35 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const [data, setData] = useState<{ name: string; results: Movie[] }[]>([]);
 
   const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
+  const [hasMore, setHasMore] = useState(true);
 
   const t = useTranslation();
 
   useEffect(() => {
-    getLandingMovies({ skip: page * 3, take: 5 }).then((response) => {
-      console.log("Landing movies response", response);
-      if (response.data && Array.isArray(response.data)) {
+    getLandingMovies({ skip: page * 5, take: 5 }).then((response) => {
+      if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+        setHasMore(response.data.length >= 5);
         setData((prev) => {
           const uniqueSections = (response.data || []).filter(
             (newSection) => !prev.some((existingSection) => existingSection.name === newSection.name)
           );
           return [...prev, ...uniqueSections];
         });
+      } else if (hasMore) {
+        setPage((prev) => {
+          return prev + 1;
+        });
+        setHasMore(false);
       }
     });
-  }, [page]);
+    console.log("Landing page movies fetched, current page:", page, "hasMore:", hasMore);
+  }, [page, hasMore]);
 
   const onEndReached = useCallback(() => {
-    setPage((prev) => prev + 1);
+    setPage((prev) => {
+      console.log("onEndReached called, current page:", prev + 1);
+      return prev + 1;
+    });
   }, []);
 
   const renderItem = useCallback(({ item: group }: { item: { name: string; results: Movie[] } }) => <Section group={group} />, []);
@@ -206,12 +216,21 @@ const tabStyles = StyleSheet.create({
 const BottomTab = memo(
   ({ navigate }: { navigate: any }) => {
     const t = useTranslation();
+
+    const withTouch = (fn: () => void) => {
+      return () => {
+        if (Platform.OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+        fn();
+      };
+    };
+
     return (
       <View style={tabStyles.container}>
         <TouchableHighlight
           activeOpacity={0.8}
           underlayColor={MD2DarkTheme.colors.surface}
-          onPress={() => navigate("Settings")}
+          onPress={withTouch(() => navigate("Settings"))}
           style={tabStyles.button}
         >
           <>
@@ -224,7 +243,7 @@ const BottomTab = memo(
           activeOpacity={0.8}
           underlayColor={MD2DarkTheme.colors.surface}
           style={tabStyles.button}
-          onPress={() => navigate("Favourites")}
+          onPress={withTouch(() => navigate("Favourites"))}
         >
           <>
             <FontAwesome name="bookmark" size={25} color="#fff" />
@@ -236,11 +255,11 @@ const BottomTab = memo(
           activeOpacity={0.8}
           underlayColor={"#52287d"}
           style={[tabStyles.button, { backgroundColor: MD2DarkTheme.colors.primary, borderRadius: 10, padding: 5, paddingVertical: 10 }]}
-          onPress={() =>
+          onPress={withTouch(() =>
             navigate("QRCode", {
               screen: "QRScanner",
             })
-          }
+          )}
         >
           <>
             <FontAwesome name="qrcode" size={30} color={"#fff"} />
@@ -252,7 +271,7 @@ const BottomTab = memo(
           activeOpacity={0.8}
           underlayColor={MD2DarkTheme.colors.surface}
           style={tabStyles.button}
-          onPress={() => navigate("Games")}
+          onPress={withTouch(() => navigate("Games"))}
         >
           <>
             <FontAwesome name="gamepad" size={25} color="#fff" />
@@ -261,7 +280,7 @@ const BottomTab = memo(
         </TouchableHighlight>
 
         <TouchableHighlight
-          onPress={() => navigate("Search")}
+          onPress={withTouch(() => navigate("Search"))}
           activeOpacity={0.8}
           underlayColor={MD2DarkTheme.colors.surface}
           style={tabStyles.button}
@@ -300,7 +319,7 @@ const sectionStyles = StyleSheet.create({
   },
 });
 
-const keySectionExtractor = (item: any, index: number) => item.id.toString() + "-" + index;
+const keySectionExtractor = (item: any, index: number) => `${item.id}-${item.type || "movie"}-${index}`;
 
 export const Section = memo(({ group }: SectionProps) => {
   const [page, setPage] = useState(1);
@@ -344,29 +363,27 @@ export const Section = memo(({ group }: SectionProps) => {
         showsHorizontalScrollIndicator={false}
         keyExtractor={keySectionExtractor}
         renderItem={renderItem}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0.75}
         estimatedItemSize={width * 0.3 + 15}
       />
     </Animated.View>
   );
 });
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 export const SectionListItem = (item: Movie) => {
   const navigation = useNavigation<any>();
 
-  const uniqueId = useMemo(() => {
-    return uuid.v4();
-  }, []);
-
   return (
-    <Pressable
+    <AnimatedPressable
+      entering={FadeIn}
+      key={item.poster_path}
       onPress={async () => {
         navigation.navigate("MovieDetails", {
           id: item.id,
           type: item.type,
           img: item.poster_path,
-
-          sharedId: uniqueId,
         });
       }}
       style={{
@@ -377,6 +394,6 @@ export const SectionListItem = (item: Movie) => {
       <View style={{ position: "absolute", right: 20, bottom: 5 }}>
         <ScoreRing score={item.vote_average} />
       </View>
-    </Pressable>
+    </AnimatedPressable>
   );
 };

@@ -1,11 +1,11 @@
-import { FlatList, Image, View, StyleSheet, Dimensions } from "react-native";
-import { Appbar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { useMemo, useState } from "react";
-import useTranslation from "../../service/useTranslation";
-import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
-import SafeIOSContainer from "../../components/SafeIOSContainer";
-import { useCreateRoom } from "./ContextProvider";
+import { Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
+import { Button, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import PageHeading from "../../components/PageHeading";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
+import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
+import useTranslation from "../../service/useTranslation";
+import { useCreateRoom } from "./ContextProvider";
 
 export default function ExtraSettings({ navigation }: any) {
   const t = useTranslation();

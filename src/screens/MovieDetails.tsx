@@ -11,6 +11,7 @@ import Trailers from "../components/Movie/Trailers";
 import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
 import { ScreenProps } from "./types";
+import { Movie } from "../../types";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -53,7 +54,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
     }
   });
 
-  const { data: movie = {}, isLoading: loading } = useGetMovieQuery({
+  const { data: movie = {} as Movie, isLoading: loading } = useGetMovieQuery({
     id: movieId,
     type: typeOfContent,
   });
@@ -84,6 +85,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
               },
             ]}
             path={posterPath || (movie?.poster_path as any)}
+            placeholder={movie?.placeholder_poster_path}
             priority="high"
           />
         </Animated.View>

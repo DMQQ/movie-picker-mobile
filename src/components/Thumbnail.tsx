@@ -48,6 +48,7 @@ export default function Thumbnail({
   size = 200,
   container,
   priority,
+  placeholder,
   ...rest
 }: { path: string; size?: number; container?: StyleProp<ViewStyle>; priority?: "low" | "high" | "normal" } & ImageProps) {
   if (!path) {
@@ -64,7 +65,7 @@ export default function Thumbnail({
         contentFit={"cover"}
         {...rest}
         source={{ uri: `https://image.tmdb.org/t/p/w${size}` + path, cacheKey: `https://image.tmdb.org/t/p/w${size}` + path }}
-        placeholder="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGBobHB0eH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABRAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIRAxEAPwCdABmyuK"
+        placeholder={{ uri: placeholder }}
         placeholderContentFit="cover"
         transition={200}
         cachePolicy="memory-disk"
