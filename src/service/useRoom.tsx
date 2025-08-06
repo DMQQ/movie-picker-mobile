@@ -1,14 +1,13 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { SocketContext } from "./SocketContext";
-import { useAppDispatch, useAppSelector } from "../redux/store";
-import { roomActions } from "../redux/room/roomSlice";
 import { Movie } from "../../types";
-import { Image } from "react-native";
-import ReviewManager from "../utils/rate";
 import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
+import { roomActions } from "../redux/room/roomSlice";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { SocketContext } from "./SocketContext";
 
 export default function useRoom(room: string) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const initialCardsLength = useRef(0);
   const setMatch = (movie: Movie) => {
     dispatch(roomActions.setMatch(movie));
   };
@@ -20,6 +19,7 @@ export default function useRoom(room: string) {
   } = useAppSelector((state) => state.room);
 
   const setCards = (_movies: Movie[]) => {
+    initialCardsLength.current = _movies.length;
     dispatch(roomActions.addMovies(_movies));
   };
 
@@ -124,6 +124,17 @@ export default function useRoom(room: string) {
       dispatch(roomActions.setPlaying(response.room.isStarted));
     }
   };
+
+  useEffect(() => {
+    if (cards.length === initialCardsLength.current / 4 && initialCardsLength.current > 0) {
+      socket?.emitWithAck("get-next-page", roomId).then((response) => {
+        if (response?.movies && response.movies.length > 0) {
+          console.log("Appending movies:", response.movies.length);
+          dispatch(roomActions.appendMovies(response.movies));
+        }
+      });
+    }
+  }, [cards.length]);
 
   return {
     cards,

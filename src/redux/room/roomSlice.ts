@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Movie } from "../../../types";
+import { removeDuplicateResults } from "../../utils/deduplicates";
 
 const initialState = {
   isHost: false,
@@ -153,6 +154,12 @@ const roomSlice = createSlice({
         state.room.movies = payload;
         state.room.isFinished = false;
         state.beenFired = true;
+      }
+    },
+
+    appendMovies(state, { payload }: { payload: Movie[] }) {
+      if (payload.length !== 0) {
+        state.room.movies = removeDuplicateResults([...state.room.movies, ...payload], "id");
       }
     },
 

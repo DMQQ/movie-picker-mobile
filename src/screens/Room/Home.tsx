@@ -1,17 +1,17 @@
-import { StyleSheet, View, Image } from "react-native";
-import { Text } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
-import SwipeTile from "../../components/Movie/SwipeTiles";
-import useRoom from "../../service/useRoom";
-import { Movie } from "../../../types";
 import { useEffect, useRef, useState } from "react";
-import MatchModal from "../../components/Movie/MatchModal";
-import DialogModals from "../../components/Home/DialogModals";
-import HomeAppbar from "../../components/Home/Appbar";
+import { StyleSheet, View } from "react-native";
+import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import useTranslation from "../../service/useTranslation";
+import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
+import HomeAppbar from "../../components/Home/Appbar";
+import DialogModals from "../../components/Home/DialogModals";
+import MatchModal from "../../components/Movie/MatchModal";
+import SwipeTile from "../../components/Movie/SwipeTiles";
 import { useAppSelector } from "../../redux/store";
+import useRoom from "../../service/useRoom";
+import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
 
 const styles = StyleSheet.create({

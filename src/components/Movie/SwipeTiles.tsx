@@ -1,20 +1,29 @@
-import { Dimensions, StyleSheet, View, useWindowDimensions } from "react-native";
-import { Movie } from "../../../types";
-import Animated, { Extrapolation, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Poster from "./Poster";
-import { Text } from "react-native-paper";
-import { memo } from "react";
-import { LinearGradient } from "expo-linear-gradient";
-import TabBar from "../Home/TabBar";
 import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
+import { memo, useEffect } from "react";
+import { Dimensions, StyleSheet, View, useWindowDimensions } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { Text } from "react-native-paper";
+import Animated, {
+  Extrapolation,
+  FadeIn,
+  interpolate,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
+import { Movie } from "../../../types";
+import TabBar from "../Home/TabBar";
+import Poster from "./Poster";
 
 const { width } = Dimensions.get("screen");
 
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    left: width * 0.05,
+    left: width * 0.1 - 10,
     backgroundColor: "#000",
     borderRadius: 25,
     overflow: "hidden",
@@ -64,18 +73,24 @@ const SwipeTile = ({
   onPress?: () => void;
 }) => {
   const { width, height } = useWindowDimensions();
-  const position = useSharedValue({ x: 0, y: 0 });
+  const position = useSharedValue({ x: 0, y: Math.max(index * -15, -60) });
+  const scale = useSharedValue(Math.max(1 - index * 0.075, 0.85));
+
+  useEffect(() => {
+    position.value = withTiming({ x: 0, y: Math.max(index * -15, -45) });
+    scale.value = withTiming(Math.max(1 - index * 0.075, 0.85));
+  }, [index]);
 
   const likeCard = () => {
     setTimeout(() => {
       actions.likeCard();
-    }, 500);
+    }, 200);
   };
 
   const removeCard = () => {
     setTimeout(() => {
       actions.removeCard();
-    }, 500);
+    }, 200);
   };
 
   const isLeftVisible = useSharedValue(false);
@@ -118,10 +133,17 @@ const SwipeTile = ({
     const rotate = interpolate(position.value.x, [-width * 0.35, width * 0.35], [-10, 10], Extrapolation.CLAMP);
 
     return {
-      transform: [{ translateX: position.value.x }, { translateY: position.value.y }, { rotate: `${rotate}deg` }],
-      top: withSpring(height * 0.05),
+      transform: [
+        { translateX: position.value.x },
+        { translateY: position.value.y },
+        { rotate: `${rotate}deg` },
+        {
+          scale: scale.value,
+        },
+      ],
+      top: withSpring(height * 0.075),
     };
-  }, []);
+  });
 
   const moveOnPress = (fn: () => any, dir: "left" | "right") => {
     return () => {
@@ -139,14 +161,14 @@ const SwipeTile = ({
   if (index >= 3) return null;
 
   const dims = {
-    width: width * 0.95 - 20,
-    height: height * 0.7,
+    width: width * 0.9 - 20,
+    height: height * 0.65,
   };
 
   return (
     <>
       <GestureDetector gesture={moveGesture}>
-        <Animated.View style={[animatedStyle, { zIndex: 1000 - index }]}>
+        <Animated.View style={[animatedStyle, { zIndex: 1000 - index }]} entering={index > 1 ? FadeIn : undefined}>
           <View style={styles.container}>
             <LinearGradient colors={["transparent", "transparent", "rgba(0,0,0,0.9)"]} style={[styles.gradientContainer, dims]}>
               <Text style={styles.title}>{card.title || card.name}</Text>
