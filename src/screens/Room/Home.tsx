@@ -33,18 +33,31 @@ export default function Home({ route, navigation }: any) {
   );
   const isFocused = useIsFocused();
   const [showQRModal, setShowQRModal] = useState(false);
-  const { gameEnded } = useAppSelector((state) => state.room.room);
+  const { gameEnded, isGameFinished, likes } = useAppSelector((state) => state.room.room);
 
-  // Auto-navigate to GameSummary when game ends
+  const [hasUserPlayed, setHasUserPlayed] = useState(false);
+  
   useEffect(() => {
-    if (gameEnded) {
-      navigation.navigate("GameSummary", { roomId: route.params?.roomId });
+    if (likes.length > 0 || (cards.length > 0 && cards.length < 20)) {
+      console.log("🎬 [Home] User has played - likes:", likes.length, "cards:", cards.length);
+      setHasUserPlayed(true);
     }
-  }, [gameEnded, navigation, route.params?.roomId]);
+  }, [likes.length, cards.length]);
+  
+  useEffect(() => {
+    if (gameEnded && hasUserPlayed && isPlaying === false) {
+      const timer = setTimeout(() => {
+        navigation.navigate("GameSummary", { roomId: route.params?.roomId });
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [gameEnded, hasUserPlayed, isPlaying, navigation, route.params?.roomId]);
   const originalLength = useRef(cards.length);
 
   useEffect(() => {
     if (route?.params?.roomId) {
+      console.log("🎬 [Home] Joining game with roomId:", route?.params?.roomId);
       navigation.setParams({
         roomId: route?.params?.roomId,
       });
