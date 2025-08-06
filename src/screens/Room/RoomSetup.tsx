@@ -3,11 +3,13 @@
 import { useMemo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import PageHeading from "../../components/PageHeading";
 import CategoryList from "../../components/Room/CategoryList";
 import GenreList, { Genre } from "../../components/Room/GenreList";
 import ProviderList from "../../components/Room/ProviderList";
 import Section from "../../components/Room/Section";
+import SelectionCard from "../../components/Room/SelectionCard";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useGetAllProvidersQuery, useGetGenresQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
@@ -15,7 +17,7 @@ import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig
 import { useCreateRoom } from "./ContextProvider";
 
 export default function RoomSetup({ navigation }: any) {
-  const { category, setCategory, genre, setGenre, providers, setProviders } = useCreateRoom();
+  const { category, setCategory, genre, setGenre, providers, setProviders, maxRounds, setMaxRounds } = useCreateRoom();
   const t = useTranslation();
 
   const isCategorySelected = !!category;
@@ -29,6 +31,27 @@ export default function RoomSetup({ navigation }: any) {
     const series = getSeriesCategories(t);
     return [...movies, ...series];
   }, [t]);
+
+  const gameTimeOptions = useMemo(
+    () => [
+      {
+        value: 3,
+        label: t("room.game_time_short"),
+        iconData: { component: FontAwesome5, name: "bolt", color: "#FF6B35" },
+      },
+      {
+        value: 6,
+        label: t("room.game_time_medium"),
+        iconData: { component: FontAwesome5, name: "clock", color: "#4ECDC4" },
+      },
+      {
+        value: 10,
+        label: t("room.game_time_long"),
+        iconData: { component: FontAwesome5, name: "hourglass", color: "#FFD23F" },
+      },
+    ],
+    [t]
+  );
 
   const handleGenrePress = (genreItem: Genre) => {
     setGenre((prev: Genre[]) =>
@@ -46,6 +69,20 @@ export default function RoomSetup({ navigation }: any) {
       <PageHeading title={t("room.movie") + " Setup"} />
       <ScrollView style={styles.flex} showsVerticalScrollIndicator={false}>
         <View style={styles.contentContainer}>
+          <Section title={t("room.game_time")} description={t("room.game_time_desc")}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {gameTimeOptions.map((option) => (
+                <SelectionCard
+                  key={option.value}
+                  label={option.label}
+                  iconData={option.iconData}
+                  isSelected={maxRounds === option.value}
+                  onPress={() => setMaxRounds(option.value)}
+                />
+              ))}
+            </ScrollView>
+          </Section>
+
           <Section title={`${t("room.movie")} & ${t("room.series")}`}>
             <CategoryList categories={categories} selectedCategory={category} onCategoryPress={(cat) => setCategory(cat.path)} />
           </Section>

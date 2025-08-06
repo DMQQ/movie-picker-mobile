@@ -30,6 +30,9 @@ const CreateRoomContext = createContext<{
   providers: number[];
 
   setProviders: React.Dispatch<React.SetStateAction<number[]>>;
+
+  maxRounds: number;
+  setMaxRounds: (maxRounds: number) => void;
 }>({
   category: "",
   setCategory: () => {},
@@ -42,6 +45,9 @@ const CreateRoomContext = createContext<{
   providers: [],
 
   setProviders: () => {},
+
+  maxRounds: 10,
+  setMaxRounds: () => {},
 });
 
 export default function ContextProvider({ children, navigation }: { children: React.ReactNode; navigation: any }) {
@@ -56,8 +62,9 @@ export default function ContextProvider({ children, navigation }: { children: Re
   >([]);
 
   const [providers, setProviders] = useState<number[]>([]);
+  const [maxRounds, setMaxRounds] = useState(10);
 
-  console.log({ pageRange, genre, providers, category });
+  console.log({ pageRange, genre, providers, category, maxRounds });
 
   return (
     <CreateRoomContext.Provider
@@ -73,6 +80,9 @@ export default function ContextProvider({ children, navigation }: { children: Re
         providers,
 
         setProviders,
+
+        maxRounds,
+        setMaxRounds,
       }}
     >
       {children}

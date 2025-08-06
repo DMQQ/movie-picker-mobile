@@ -59,6 +59,11 @@
     "page-range": "Znudziły ci się te same stare filmy? Zwiększ swoje szanse na znalezienie czegoś nowego, losując wyszukiwanie.",
     "provider_desc": "Wybierz platformy, które chcesz uwzględnić w swoim wyszukiwaniu. Możesz wybrać wiele platform lub żadną, aby zobaczyć wszystko.",
     "genre_desc": "Wybierz gatunki filmów i seriali, które chcesz oglądać. Możesz wybrać wiele gatunków lub żaden, aby zobaczyć wszystko.",
+    "game_time": "Czas Gry",
+    "game_time_desc": "Wybierz ile filmów każdy gracz będzie oceniać",
+    "game_time_short": "Krótki",
+    "game_time_medium": "Średni",
+    "game_time_long": "Długi",
     "genres": {
       "all_movies": "Wszystkie filmy",
       "now_playing": "Aktualnie w kinach",

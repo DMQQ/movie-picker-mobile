@@ -26,7 +26,7 @@ interface ISocketResponse {
 }
 
 export default function QRCodePage({ navigation }: any) {
-  const { category, pageRange, genre, providers, setPageRange } = useCreateRoom();
+  const { category, pageRange, genre, providers, maxRounds } = useCreateRoom();
   const { qrCode, nickname } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
@@ -43,6 +43,7 @@ export default function QRCodePage({ navigation }: any) {
           genre: genre.map((g) => g.id),
           nickname,
           providers,
+          maxRounds,
         })) as ISocketResponse;
 
         if (response) {

@@ -59,6 +59,11 @@
     "page-range": "Tired of the same old movies? Increase your chances of finding something new by randomizing your search.",
     "provider_desc": "Select the streaming providers you want to include in your search. You can choose multiple providers or none to see everything.",
     "genre_desc": "Select the genres of movies and series you want to watch. You can choose multiple genres or none to see everything.",
+    "game_time": "Game Time",
+    "game_time_desc": "Choose how many movies each player will vote on",
+    "game_time_short": "Short",
+    "game_time_medium": "Medium", 
+    "game_time_long": "Long",
     "genres": {
       "all_movies": "All movies",
       "now_playing": "Now playing",
