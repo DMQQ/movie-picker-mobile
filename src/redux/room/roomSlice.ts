@@ -24,6 +24,7 @@ const initialState = {
     name: "",
 
     isGameFinished: false,
+    gameEnded: false,
 
     isFinished: false,
 
@@ -42,10 +43,16 @@ type MovieMatch = Movie;
 
 type SetRoomAction = {
   payload: {
-    id: string;
+    id?: string;
+    roomId?: string;
     type: string;
     page: number;
-    users: string[];
+    users: string[] | any[];
+    gameEnded?: boolean;
+    isStarted?: boolean;
+    isGameFinished?: boolean;
+    isRunning?: boolean;
+    [key: string]: any; // Allow additional fields from backend
   };
 };
 
@@ -54,11 +61,24 @@ const roomSlice = createSlice({
   initialState,
   reducers: {
     setRoom(state, action: SetRoomAction) {
-      state.room.roomId = action.payload.id;
-      state.qrCode = action.payload.id;
-      state.room.type = action.payload.type;
-      state.room.page = action.payload.page;
-      state.room.users = action.payload.users;
+      const payload = action.payload;
+      
+      // Handle room ID from either field
+      const roomId = payload.roomId || payload.id;
+      if (roomId) {
+        state.room.roomId = roomId;
+        state.qrCode = roomId;
+      }
+      
+      // Update existing fields
+      if (payload.type) state.room.type = payload.type;
+      if (payload.page !== undefined) state.room.page = payload.page;
+      if (payload.users) state.room.users = payload.users;
+      
+      // Update new game state fields
+      if (payload.gameEnded !== undefined) state.room.gameEnded = payload.gameEnded;
+      if (payload.isStarted !== undefined) state.room.isRunning = payload.isStarted;
+      if (payload.isGameFinished !== undefined) state.room.isGameFinished = payload.isGameFinished;
     },
 
     start(state) {

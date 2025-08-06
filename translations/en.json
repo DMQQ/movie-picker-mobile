@@ -5,7 +5,8 @@
       "message": "Scan the QR code to get the movie details",
       "close": "Close",
       "cancel": "Cancel",
-      "leave": "Leave"
+      "leave": "Leave",
+      "endGame": "End Game"
     },
     "leave-room": {
       "message": "Are you sure you want to leave the room?",

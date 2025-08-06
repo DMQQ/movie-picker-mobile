@@ -14,9 +14,10 @@ export default function useRoom(room: string) {
   const {
     nickname,
     isHost,
-    room: { movies: cards, match, roomId, isFinished, users },
+    room: { movies: cards, match, roomId, isFinished, likes },
     isPlaying,
   } = useAppSelector((state) => state.room);
+
 
   const setCards = (_movies: Movie[]) => {
     initialCardsLength.current = _movies.length;
@@ -126,10 +127,9 @@ export default function useRoom(room: string) {
   };
 
   useEffect(() => {
-    if (cards.length === initialCardsLength.current / 4 && initialCardsLength.current > 0) {
+    if (cards.length === Math.trunc(initialCardsLength.current / 4) && initialCardsLength.current > 0) {
       socket?.emitWithAck("get-next-page", roomId).then((response) => {
         if (response?.movies && response.movies.length > 0) {
-          console.log("Appending movies:", response.movies.length);
           dispatch(roomActions.appendMovies(response.movies));
         }
       });

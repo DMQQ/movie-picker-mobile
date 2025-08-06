@@ -26,13 +26,30 @@ export default function HomeAppbar({
   const {
     room: { isFinished, users },
     isPlaying,
+    isHost,
   } = useAppSelector((state) => state.room);
 
   const t = useTranslation();
 
+  const handleEndGame = () => {
+    const roomId = route.params?.roomId;
+    socket?.emit("end-game", roomId);
+    navigation.navigate("GameSummary", { roomId });
+  };
+
   return (
     <View style={{ backgroundColor: "#000", marginTop: 0, flexDirection: "row", padding: 10 }}>
-      <Button onPress={toggleLeaveModal}>{t("dialogs.scan-code.leave")}</Button>
+      {isHost ? (
+        <Button 
+          onPress={handleEndGame}
+          buttonColor="transparent"
+          textColor="#ff4444"
+        >
+          {t("dialogs.scan-code.endGame")}
+        </Button>
+      ) : (
+        <Button onPress={toggleLeaveModal}>{t("dialogs.scan-code.leave")}</Button>
+      )}
 
       <ActiveUsers data={users} />
 

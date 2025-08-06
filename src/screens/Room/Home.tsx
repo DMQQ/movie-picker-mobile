@@ -33,7 +33,14 @@ export default function Home({ route, navigation }: any) {
   );
   const isFocused = useIsFocused();
   const [showQRModal, setShowQRModal] = useState(false);
-  const { isGameFinished } = useAppSelector((state) => state.room.room);
+  const { gameEnded } = useAppSelector((state) => state.room.room);
+
+  // Auto-navigate to GameSummary when game ends
+  useEffect(() => {
+    if (gameEnded) {
+      navigation.navigate("GameSummary", { roomId: route.params?.roomId });
+    }
+  }, [gameEnded, navigation, route.params?.roomId]);
   const originalLength = useRef(cards.length);
 
   useEffect(() => {

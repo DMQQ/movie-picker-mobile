@@ -5,7 +5,8 @@
       "message": "Zeskanuj kod QR, aby uzyskać szczegóły filmu",
       "close": "Zamknij",
       "cancel": "Anuluj",
-      "leave": "Opuść"
+      "leave": "Opuść",
+      "endGame": "Zakończ Grę"
     },
     "leave-room": {
       "message": "Czy na pewno chcesz opuścić pokój?",

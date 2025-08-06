@@ -6,6 +6,7 @@ import { SocketProvider } from "../../service/SocketContext";
 import Home from "./Home";
 import QRScanner from "./QRScanner";
 import RoomSetup from "./RoomSetup";
+import GameSummary from "./GameSummary";
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +37,15 @@ export default function QRCode({ navigation }: any) {
           <Stack.Screen name="Home" component={Home} />
 
           <Stack.Screen name="QRScanner" component={QRScanner} options={{ headerShown: false, title: "", headerTransparent: true }} />
+
+          <Stack.Screen 
+            name="GameSummary" 
+            component={GameSummary} 
+            options={{ 
+              headerShown: false,
+              title: "Game Summary" 
+            }} 
+          />
         </Stack.Navigator>
       </ContextProvider>
     </SocketProvider>
