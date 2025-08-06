@@ -35,6 +35,7 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
   const renderItem = useCallback(
     ({ item }: { item: Movie & { type: string } }) => (
       <Pressable
+        key={item.poster_path}
         onPress={() =>
           navigation.push("MovieDetails", {
             id: item.id,
@@ -96,6 +97,6 @@ const sectionStyles = StyleSheet.create({
   },
 });
 
-const keySectionExtractor = (item: any, index: number) => item.id.toString() + "-" + index;
+const keySectionExtractor = (item: any, index: number) => item.id.toString() + "-" + item.type + "-" + index;
 
 export default Similar;

@@ -37,7 +37,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
               <>
                 <View style={{ borderRadius: 10, overflow: "hidden" }}>
                   <ImageBackground
-                    blurRadius={10}
+                    blurRadius={20}
                     style={{
                       width: Dimensions.get("window").width - 30,
                       height: Dimensions.get("window").width / 2 - 30,
@@ -72,7 +72,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
                     </View>
                   </ImageBackground>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={{ flexDirection: "row", alignItems: "center", position: "absolute", bottom: 0, left: 0 }}>
                   <Text style={{ color: "#fff", fontSize: 25, fontFamily: "Bebas", padding: 10 }}>{item.name}</Text>
                   <Text style={{ fontSize: 15 }}>({item.movies.length})</Text>
                 </View>

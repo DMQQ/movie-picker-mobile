@@ -182,7 +182,7 @@ function FortuneWheel({ navigation, route }: any) {
             <FrostedGlass
               container={{
                 width: "100%",
-                minHeight: 400,
+                minHeight: 450,
               }}
               style={{
                 marginBottom: Platform.OS === "ios" ? 80 : 10,
