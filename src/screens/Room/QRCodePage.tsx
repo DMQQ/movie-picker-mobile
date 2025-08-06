@@ -1,18 +1,17 @@
-import { Dimensions, Share, ToastAndroid, View } from "react-native";
-import { Avatar, Button, Icon, MD2DarkTheme, Text, useTheme } from "react-native-paper";
-import { useAppDispatch, useAppSelector } from "../../redux/store";
-import QRCode from "react-native-qrcode-svg";
+import { FontAwesome } from "@expo/vector-icons";
 import { CommonActions } from "@react-navigation/native";
-import { useCreateRoom } from "./ContextProvider";
-import * as Clipboard from "expo-clipboard";
 import { memo, useContext, useEffect } from "react";
-import { SocketContext } from "../../service/SocketContext";
-import { roomActions } from "../../redux/room/roomSlice";
+import { Dimensions, Share, View } from "react-native";
+import { Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
+import QRCode from "react-native-qrcode-svg";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
-import SafeIOSContainer from "../../components/SafeIOSContainer";
-import useTranslation from "../../service/useTranslation";
 import PageHeading from "../../components/PageHeading";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
+import { roomActions } from "../../redux/room/roomSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { SocketContext } from "../../service/SocketContext";
+import useTranslation from "../../service/useTranslation";
+import { useCreateRoom } from "./ContextProvider";
 
 interface ISocketResponse {
   roomId: string;
@@ -27,7 +26,7 @@ interface ISocketResponse {
 }
 
 export default function QRCodePage({ navigation }: any) {
-  const { category, pageRange, genre, providers } = useCreateRoom();
+  const { category, pageRange, genre, providers, setPageRange } = useCreateRoom();
   const { qrCode, nickname } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
@@ -35,13 +34,12 @@ export default function QRCodePage({ navigation }: any) {
   const {
     room: { users, roomId },
   } = useAppSelector((state) => state.room);
-
   useEffect(() => {
     (async () => {
       try {
         const response = (await socket?.emitWithAck("create-room", {
           type: category,
-          pageRange,
+          pageRange: Math.trunc(Math.random() * 5),
           genre: genre.map((g) => g.id),
           nickname,
           providers,

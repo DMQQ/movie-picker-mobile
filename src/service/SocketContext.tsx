@@ -189,7 +189,8 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
 
   return (
     <SocketContext.Provider value={{ socket: socketRef.current, reconnect }}>
-      {isSocketInitialized ? children : null}
+      {/* {isSocketInitialized ? children : null} */}
+      {children}
     </SocketContext.Provider>
   );
 };

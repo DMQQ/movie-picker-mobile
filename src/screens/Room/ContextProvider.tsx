@@ -1,4 +1,6 @@
 import { createContext, useContext, useState } from "react";
+import useTranslation from "../../service/useTranslation";
+import { getMovieCategories } from "../../utils/roomsConfig";
 
 export const useCreateRoom = () => useContext(CreateRoomContext);
 
@@ -43,7 +45,8 @@ const CreateRoomContext = createContext<{
 });
 
 export default function ContextProvider({ children, navigation }: { children: React.ReactNode; navigation: any }) {
-  const [category, setCategory] = useState("");
+  const t = useTranslation();
+  const [category, setCategory] = useState(getMovieCategories(t)[0].path);
   const [pageRange, setPageRange] = useState("1");
   const [genre, setGenre] = useState<
     {
@@ -53,6 +56,8 @@ export default function ContextProvider({ children, navigation }: { children: Re
   >([]);
 
   const [providers, setProviders] = useState<number[]>([]);
+
+  console.log({ pageRange, genre, providers, category });
 
   return (
     <CreateRoomContext.Provider
