@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
 import { Episode, Movie, MovieDetails } from "../../../types";
+import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
 import { RootState } from "../store";
 
 interface SearchParams {
@@ -22,6 +22,8 @@ interface SearchParams {
 interface LandingPageParams {
   skip?: number;
   take?: number;
+
+  category?: string;
 }
 
 interface SectionParams {
@@ -76,7 +78,10 @@ export const movieApi = createApi({
   }),
   endpoints: (builder) => ({
     getLandingPageMovies: builder.query<{ name: string; results: Movie[] }[], LandingPageParams>({
-      query: (params = { skip: 0, take: 5 }) => `/landing?skip=${params.skip}&take=${params.take}`,
+      query: (params = { skip: 0, take: 5, category: "" }) =>
+        `/landing?skip=${params.skip}&take=${params.take}${
+          params.category !== "" && params.category !== "all" ? `&category=${params.category}` : ""
+        }`,
     }),
 
     getMovie: builder.query<

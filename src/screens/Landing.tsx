@@ -4,7 +4,7 @@ import { FlashList } from "@shopify/flash-list";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, ImageBackground, Platform, Pressable, RefreshControl, StyleSheet, TouchableOpacity, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
@@ -53,16 +53,25 @@ const AnimatedFlashList = Animated.createAnimatedComponent(FlashList);
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const [page, setPage] = useState(0);
   const [selectedChip, setSelectedChip] = useState("all");
+  const previousChip = useRef(selectedChip);
 
   const [data, setData] = useState<{ name: string; results: Movie[] }[]>([]);
 
   const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
   const [hasMore, setHasMore] = useState(true);
 
+  useEffect(() => {
+    if (previousChip.current !== selectedChip) {
+      setPage(0);
+      setData([]);
+      previousChip.current = selectedChip;
+    }
+  }, [selectedChip]);
+
   const t = useTranslation();
 
   useEffect(() => {
-    getLandingMovies({ skip: page * 5, take: 5 }).then((response) => {
+    getLandingMovies({ skip: page * 5, take: 5, category: selectedChip }).then((response) => {
       if (response.data && Array.isArray(response.data) && response.data.length > 0) {
         setHasMore(response.data.length >= 5);
         setData((prev) => {
@@ -78,7 +87,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         setHasMore(false);
       }
     });
-  }, [page, hasMore]);
+  }, [page, hasMore, selectedChip]);
 
   const onEndReached = useCallback(() => {
     setPage((prev) => {
@@ -135,7 +144,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         onEndReachedThreshold={0.5}
         drawDistance={1000}
         estimatedItemSize={height * 0.275 + 30}
-        contentContainerStyle={{ paddingTop: 100 }}
+        contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
       />
 
       <BottomTab navigate={navigation.navigate} />

@@ -1,13 +1,13 @@
-import { Text, useTheme } from "react-native-paper";
-import Card from "./Card";
-import Poster from "./Poster";
-import { Dimensions, Platform, Pressable, StyleSheet, Vibration } from "react-native";
+import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
+import LottieView from "lottie-react-native";
+import { useEffect, useRef } from "react";
+import { Dimensions, Platform, Pressable, StyleSheet } from "react-native";
+import { Text, useTheme } from "react-native-paper";
 import Animated, { FadeIn, FadeOut, SlideInUp, SlideOutUp, withSpring, withTiming } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
-import LottieView from "lottie-react-native";
-import { useEffect, useRef, useState } from "react";
-import * as Haptics from "expo-haptics";
+import Card from "./Card";
+import Poster from "./Poster";
 
 const styles = StyleSheet.create({
   matchModal: {
@@ -103,12 +103,11 @@ export default function MatchModal({ match, hideMatchModal }: { match: any; hide
     if (match) {
       let timeout = setTimeout(() => {
         animation.current?.play();
-        Vibration.vibrate([100]);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }, 100);
 
       return () => {
         clearTimeout(timeout);
-        Vibration.cancel();
       };
     }
   }, [match]);

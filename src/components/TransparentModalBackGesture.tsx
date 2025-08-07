@@ -21,8 +21,8 @@ const TransparentModalScreen = ({ children }: PropsWithChildren<{}>) => {
     .onEnd((event) => {
       if (!isValidGesture.value) return;
 
-      if (event.translationX > layout.screen.width / 2) {
-        translateX.value = withTiming(1000, {}, () => {
+      if (event.translationX > layout.screen.width / 2.5) {
+        translateX.value = withTiming(500, {}, () => {
           "worklet";
           runOnJS(navigation.goBack)();
         });

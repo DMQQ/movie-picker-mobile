@@ -45,6 +45,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
                       justifyContent: "center",
                       alignItems: "center",
                       backgroundColor: MD2DarkTheme.colors.surface,
+                      paddingBottom: 25,
                     }}
                     source={{
                       uri: "https://image.tmdb.org/t/p/w500" + item?.movies[0]?.imageUrl,
@@ -72,8 +73,8 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
                     </View>
                   </ImageBackground>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", position: "absolute", bottom: 0, left: 0 }}>
-                  <Text style={{ color: "#fff", fontSize: 25, fontFamily: "Bebas", padding: 10 }}>{item.name}</Text>
+                <View style={{ flexDirection: "row", alignItems: "center", position: "absolute", bottom: 10, left: 15, gap: 5 }}>
+                  <Text style={{ color: "#fff", fontSize: 25, fontFamily: "Bebas" }}>{item.name}</Text>
                   <Text style={{ fontSize: 15 }}>({item.movies.length})</Text>
                 </View>
               </>

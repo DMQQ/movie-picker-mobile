@@ -1,12 +1,12 @@
-import { Platform, Text, View } from "react-native";
-import TilesList from "../components/Overview/TilesList";
-import { useAppSelector } from "../redux/store";
-import { Appbar, Button, IconButton } from "react-native-paper";
-import useTranslation from "../service/useTranslation";
-import { Movie } from "../../types";
 import { useState } from "react";
-import Modal from "./Overview/Modal";
+import { Platform, View } from "react-native";
+import { Button } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import TilesList from "../components/Overview/TilesList";
 import PageHeading from "../components/PageHeading";
+import { useAppSelector } from "../redux/store";
+import useTranslation from "../service/useTranslation";
+import Modal from "./Overview/Modal";
 
 export default function Group({ navigation, route }: any) {
   const { group } = route.params;
@@ -17,10 +17,12 @@ export default function Group({ navigation, route }: any) {
 
   const t = useTranslation();
 
+  const insets = useSafeAreaInsets();
+
   const [match, setMatch] = useState<(typeof groups)[number]["movies"][number] | undefined>(undefined);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom }}>
       <PageHeading title={data?.name! || ""} />
       <View style={{ flex: 1, paddingHorizontal: 15 }}>
         <TilesList

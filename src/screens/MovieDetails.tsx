@@ -4,6 +4,7 @@ import { Dimensions, Platform, View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import Entypo from "react-native-vector-icons/Entypo";
+import { Movie } from "../../types";
 import FrostedGlass from "../components/FrostedGlass";
 import MovieDetails from "../components/Movie/MovieDetails";
 import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
@@ -11,7 +12,6 @@ import Trailers from "../components/Movie/Trailers";
 import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
 import { ScreenProps } from "./types";
-import { Movie } from "../../types";
 
 const { width, height } = Dimensions.get("screen");
 

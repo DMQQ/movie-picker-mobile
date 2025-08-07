@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
-import { useAppSelector } from "../../redux/store";
+import { View } from "react-native";
+import { Button } from "react-native-paper";
 import { Movie } from "../../../types";
 import TilesList from "../../components/Overview/TilesList";
-import { View } from "react-native";
-import { Button, Portal } from "react-native-paper";
-import Modal from "./Modal";
+import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
+import Modal from "./Modal";
 
 export default function MatchesScreen() {
   const {
@@ -27,7 +27,7 @@ export default function MatchesScreen() {
 
   return (
     <View style={{ flex: 1, padding: 15, position: "relative" }}>
-      <View style={{ marginBottom: 60 }}>
+      <View style={{ marginBottom: 60, flex: 1 }}>
         <TilesList label={t("matched.title")} data={data} />
       </View>
 

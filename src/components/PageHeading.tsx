@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import * as Haptic from "expo-haptics";
 import { Platform, StyleSheet, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
 
@@ -15,7 +16,18 @@ export default function PageHeading({
   return (
     <View style={styles.headerTop}>
       {showBackButton && (
-        <IconButton icon="chevron-left" onPress={onPress || (() => navigation.goBack())} size={28} style={styles.backButton} />
+        <IconButton
+          icon="chevron-left"
+          onPress={() => {
+            typeof onPress !== "undefined" ? onPress() : navigation.goBack();
+
+            if (Platform.OS === "ios") {
+              Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+            }
+          }}
+          size={28}
+          style={styles.backButton}
+        />
       )}
       <Text style={styles.headerTitle}>{title}</Text>
     </View>

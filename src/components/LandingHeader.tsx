@@ -34,22 +34,6 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
     };
   });
 
-  const titleAnimatedStyle = useAnimatedStyle(() => {
-    const scale = scrollY ? interpolate(scrollY.value, [0, 100], [1, 0.9], Extrapolation.CLAMP) : 1;
-
-    return {
-      transform: [{ scale }],
-    };
-  });
-
-  const contentAnimatedStyle = useAnimatedStyle(() => {
-    const translateY = scrollY ? interpolate(scrollY.value, [0, 100], [0, -15], Extrapolation.CLAMP) : 0;
-
-    return {
-      transform: [{ translateY }],
-    };
-  });
-
   const mainHeaderAnimatedStyle = useAnimatedStyle(() => {
     const marginLeft = scrollY ? interpolate(scrollY.value, [0, 60], [0, 20], Extrapolation.CLAMP) : 0;
     const marginRight = scrollY ? interpolate(scrollY.value, [0, 60], [0, 20], Extrapolation.CLAMP) : 0;
@@ -82,19 +66,16 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
   return (
     <Animated.View style={[styles.container, headerAnimatedStyle]} entering={FadeInUp}>
       <BlurView style={{ flex: 1, padding: 15, paddingTop: insets.top }} intensity={60} tint="dark">
-        <Animated.View style={contentAnimatedStyle}>
-          {/* Main header with Hello, settings, and search */}
+        <Animated.View>
           <Animated.View style={[styles.mainHeader, mainHeaderAnimatedStyle]}>
-            <Animated.View style={titleAnimatedStyle}>
-              <Text style={styles.helloText}>Hi {nickname}!</Text>
-            </Animated.View>
+            <Text style={styles.helloText}>Hi {nickname}!</Text>
 
             <Animated.View style={[styles.buttonsContainer]}>
               <IconButton icon="cog" size={24} iconColor="#fff" onPress={() => navigation.navigate("Settings")} style={styles.iconButton} />
 
               <IconButton
                 icon="magnify"
-                size={24}
+                size={30}
                 iconColor="#fff"
                 onPress={() => navigation.navigate("Search")}
                 style={styles.iconButton}

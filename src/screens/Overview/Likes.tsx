@@ -1,12 +1,11 @@
 import { useMemo, useState } from "react";
-import { useAppSelector } from "../../redux/store";
+import { View } from "react-native";
+import { Button } from "react-native-paper";
 import { Movie } from "../../../types";
 import TilesList from "../../components/Overview/TilesList";
-import { View } from "react-native";
-import MatchModal from "../../components/Movie/MatchModal";
-import { Button, Portal } from "react-native-paper";
-import Modal from "./Modal";
+import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
+import Modal from "./Modal";
 
 export default function LikesScreen() {
   const { likes } = useAppSelector((state) => state.room.room);
@@ -26,7 +25,7 @@ export default function LikesScreen() {
 
   return (
     <View style={{ flex: 1, padding: 15 }}>
-      <View style={{ marginBottom: 60 }}>
+      <View style={{ marginBottom: 60, flex: 1 }}>
         <TilesList label={t("likes.title")} data={data} />
       </View>
       {match && <Modal onClose={() => setMatch(undefined)} match={match} />}
