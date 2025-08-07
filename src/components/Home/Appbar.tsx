@@ -1,11 +1,11 @@
-import { Appbar, Button, useTheme } from "react-native-paper";
-import ActiveUsers from "./ActiveUsers";
-import { useContext } from "react";
-import { SocketContext } from "../../service/SocketContext";
 import { useNavigation } from "@react-navigation/native";
-import { useAppSelector } from "../../redux/store";
-import useTranslation from "../../service/useTranslation";
+import { useContext } from "react";
 import { View } from "react-native";
+import { Appbar, Button, useTheme } from "react-native-paper";
+import { useAppSelector } from "../../redux/store";
+import { SocketContext } from "../../service/SocketContext";
+import useTranslation from "../../service/useTranslation";
+import ActiveUsers from "./ActiveUsers";
 
 export default function HomeAppbar({
   toggleLeaveModal,
@@ -34,17 +34,13 @@ export default function HomeAppbar({
   const handleEndGame = () => {
     const roomId = route.params?.roomId;
     socket?.emit("end-game", roomId);
-    navigation.navigate("GameSummary", { roomId });
+    navigation.replace("GameSummary", { roomId });
   };
 
   return (
     <View style={{ backgroundColor: "#000", marginTop: 0, flexDirection: "row", padding: 10 }}>
       {isHost ? (
-        <Button 
-          onPress={handleEndGame}
-          buttonColor="transparent"
-          textColor="#ff4444"
-        >
+        <Button onPress={handleEndGame} buttonColor="transparent" textColor="#ff4444">
           {t("dialogs.scan-code.endGame")}
         </Button>
       ) : (

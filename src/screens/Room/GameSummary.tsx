@@ -3,12 +3,12 @@ import LottieView from "lottie-react-native";
 import { useContext, useEffect, useState } from "react";
 import { Dimensions, FlatList, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FancySpinner } from "../../components/FancySpinner";
-import PageHeading from "../../components/PageHeading";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import Thumbnail from "../../components/Thumbnail";
 import { roomActions } from "../../redux/room/roomSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { useAppDispatch } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 
 interface GameSummary {
@@ -45,11 +45,7 @@ export default function GameSummary({ route }: any) {
   const [summary, setSummary] = useState<GameSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const {
-    room: { users },
-    nickname,
-  } = useAppSelector((state) => state.room);
+  const insets = useSafeAreaInsets();
 
   // Fetch game summary when component mounts
   useEffect(() => {
@@ -117,7 +113,6 @@ export default function GameSummary({ route }: any) {
   if (loading) {
     return (
       <SafeIOSContainer>
-        <PageHeading title="Game Summary" />
         <View style={[styles.container, styles.centered]}>
           <FancySpinner size={80} />
           <Text style={styles.loadingText}>Loading game summary...</Text>
@@ -129,7 +124,6 @@ export default function GameSummary({ route }: any) {
   if (error) {
     return (
       <SafeIOSContainer>
-        <PageHeading title="Game Summary" />
         <View style={[styles.container, styles.centered]}>
           <Text style={styles.errorText}>Error: {error}</Text>
           <Button mode="contained" onPress={handleBackToHome} style={styles.backButton}>
@@ -142,8 +136,6 @@ export default function GameSummary({ route }: any) {
 
   return (
     <SafeIOSContainer>
-      <PageHeading title="Game Summary" showBackButton={false} />
-
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <View style={styles.statusContainer}>
@@ -151,7 +143,7 @@ export default function GameSummary({ route }: any) {
               <LottieView source={require("../../assets/confetti.json")} autoPlay loop={false} style={styles.confetti} />
             )}
             <Text style={[styles.statusText, { color: theme.colors.primary }]}>
-              {summary?.gameEndReason === "all_users_finished" ? "Game Completed!" : "Game Ended by Admin"}
+              {summary?.gameEndReason === "all_users_finished" ? "Game Completed!" : "Game finished!"}
             </Text>
 
             {summary && (
@@ -209,13 +201,14 @@ export default function GameSummary({ route }: any) {
               />
             </View>
           )}
-          <View style={styles.buttonContainer}>
-            <Button mode="contained" onPress={handleBackToHome} style={styles.backButton} contentStyle={styles.backButtonContent}>
-              Back to Home
-            </Button>
-          </View>
         </View>
       </ScrollView>
+
+      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
+        <Button mode="contained" onPress={handleBackToHome} style={styles.backButton} contentStyle={styles.backButtonContent}>
+          Back to Home
+        </Button>
+      </View>
     </SafeIOSContainer>
   );
 }
@@ -225,6 +218,16 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 15,
   },
+  statusContainer: {
+    alignItems: "center",
+    marginBottom: 30,
+    position: "relative",
+  },
+  statusText: {
+    fontSize: 64,
+    fontFamily: "Bebas",
+    marginBottom: 15,
+  },
   content: {
     paddingTop: 15,
     paddingBottom: 20,
@@ -233,23 +236,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  statusContainer: {
-    alignItems: "center",
-    marginBottom: 30,
-    position: "relative",
-  },
   confetti: {
     position: "absolute",
     width: 300,
     height: 300,
     zIndex: 10,
     top: -150,
-  },
-  statusText: {
-    fontSize: 64,
-    fontFamily: "Bebas",
-    marginBottom: 15,
-    textAlign: "center",
   },
   configText: {
     fontSize: 14,
@@ -344,16 +336,17 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 2 / 3,
     borderRadius: 10,
-    marginBottom: 8,
   },
   movieTitleSmall: {
     fontSize: 12,
-    textAlign: "center",
     fontWeight: "bold",
-    opacity: 0.8,
+    marginTop: 5,
   },
-  buttonContainer: {
-    paddingBottom: 20,
+  absoluteButtonContainer: {
+    position: "absolute",
+    left: 15,
+    right: 15,
+    zIndex: 10,
   },
   backButton: {
     borderRadius: 100,

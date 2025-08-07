@@ -36,20 +36,20 @@ export default function Home({ route, navigation }: any) {
   const { gameEnded, isGameFinished, likes } = useAppSelector((state) => state.room.room);
 
   const [hasUserPlayed, setHasUserPlayed] = useState(false);
-  
+
   useEffect(() => {
     if (likes.length > 0 || (cards.length > 0 && cards.length < 20)) {
       console.log("🎬 [Home] User has played - likes:", likes.length, "cards:", cards.length);
       setHasUserPlayed(true);
     }
   }, [likes.length, cards.length]);
-  
+
   useEffect(() => {
     if (gameEnded && hasUserPlayed && isPlaying === false) {
       const timer = setTimeout(() => {
-        navigation.navigate("GameSummary", { roomId: route.params?.roomId });
+        navigation.replace("GameSummary", { roomId: route.params?.roomId });
       }, 1000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [gameEnded, hasUserPlayed, isPlaying, navigation, route.params?.roomId]);
