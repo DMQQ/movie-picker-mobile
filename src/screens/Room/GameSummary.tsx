@@ -5,7 +5,6 @@ import { Dimensions, FlatList, ScrollView, StyleSheet, View } from "react-native
 import { Button, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FancySpinner } from "../../components/FancySpinner";
-import SafeIOSContainer from "../../components/SafeIOSContainer";
 import Thumbnail from "../../components/Thumbnail";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch } from "../../redux/store";
@@ -112,30 +111,30 @@ export default function GameSummary({ route }: any) {
 
   if (loading) {
     return (
-      <SafeIOSContainer>
+      <View style={{ flex: 1 }}>
         <View style={[styles.container, styles.centered]}>
           <FancySpinner size={80} />
           <Text style={styles.loadingText}>Loading game summary...</Text>
         </View>
-      </SafeIOSContainer>
+      </View>
     );
   }
 
   if (error) {
     return (
-      <SafeIOSContainer>
+      <View style={{ flex: 1 }}>
         <View style={[styles.container, styles.centered]}>
           <Text style={styles.errorText}>Error: {error}</Text>
           <Button mode="contained" onPress={handleBackToHome} style={styles.backButton}>
             Back to Home
           </Button>
         </View>
-      </SafeIOSContainer>
+      </View>
     );
   }
 
   return (
-    <SafeIOSContainer>
+    <View style={{ flex: 1 }}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <View style={styles.statusContainer}>
@@ -209,7 +208,7 @@ export default function GameSummary({ route }: any) {
           Back to Home
         </Button>
       </View>
-    </SafeIOSContainer>
+    </View>
   );
 }
 

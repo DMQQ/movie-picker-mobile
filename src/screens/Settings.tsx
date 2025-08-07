@@ -1,15 +1,16 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BlurView } from "expo-blur";
+import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
 import { ToastAndroid, View } from "react-native";
 import { SegmentedButtons, Text, TextInput } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAppDispatch, useAppSelector } from "../redux/store";
-import { ScreenProps } from "./types";
-import { roomActions } from "../redux/room/roomSlice";
-import SafeIOSContainer from "../components/SafeIOSContainer";
-import * as Updates from "expo-updates";
-import useTranslation from "../service/useTranslation";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChooseRegion from "../components/ChooseRegion";
 import PageHeading from "../components/PageHeading";
+import { roomActions } from "../redux/room/roomSlice";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import useTranslation from "../service/useTranslation";
+import { ScreenProps } from "./types";
 
 export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) {
   const { language: lg, nickname: nk } = useAppSelector((state) => state.room);
@@ -54,41 +55,50 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
   }, [language]);
 
   const t = useTranslation();
+  const insets = useSafeAreaInsets();
 
   return (
-    <SafeIOSContainer>
-      <PageHeading title={t("settings.heading")} />
-      <View style={{ paddingHorizontal: 15, flex: 1 }}>
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Nickname</Text>
+    <BlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
+      <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)" }}>
+        <PageHeading title={t("settings.heading")} />
+        <View style={{ paddingHorizontal: 15, flex: 1 }}>
+          <View style={{ marginTop: 20 }}>
+            <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Nickname</Text>
 
-          <TextInput value={nickname} onChangeText={setNickname} mode="outlined" label={"Nickname"} />
+            <TextInput
+              value={nickname}
+              onChangeText={setNickname}
+              mode="outlined"
+              label={"Nickname"}
+              style={{ backgroundColor: "transparent", marginTop: 5 }}
+            />
 
-          <Text style={{ fontSize: 16, marginTop: 5, padding: 5, color: "gray" }}>{t("settings.nickname-info")}</Text>
+            <Text style={{ fontSize: 16, marginTop: 5, padding: 5, color: "#fff" }}>{t("settings.nickname-info")}</Text>
+          </View>
+
+          <View style={{ marginTop: 35 }}>
+            <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Application language</Text>
+
+            <SegmentedButtons
+              buttons={[
+                {
+                  label: "English",
+                  value: "en",
+                },
+                {
+                  label: "Polish",
+                  value: "pl",
+                },
+              ]}
+              onValueChange={(value) => setLanguage(value)}
+              value={language}
+              style={{ marginTop: 10 }}
+            />
+          </View>
+
+          <ChooseRegion onBack={() => navigation.navigate("RegionSelector")} />
         </View>
-
-        <View style={{ marginTop: 35 }}>
-          <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Application language</Text>
-
-          <SegmentedButtons
-            buttons={[
-              {
-                label: "English",
-                value: "en",
-              },
-              {
-                label: "Polish",
-                value: "pl",
-              },
-            ]}
-            onValueChange={(value) => setLanguage(value)}
-            value={language}
-            style={{ marginTop: 10 }}
-          />
-        </View>
-
-        <ChooseRegion />
       </View>
-    </SafeIOSContainer>
+    </BlurView>
   );
 }

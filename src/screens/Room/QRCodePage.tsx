@@ -6,7 +6,6 @@ import { Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper
 import QRCode from "react-native-qrcode-svg";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
 import PageHeading from "../../components/PageHeading";
-import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
@@ -89,7 +88,7 @@ export default function QRCodePage({ navigation, route }: any) {
   const t = useTranslation();
 
   return (
-    <SafeIOSContainer>
+    <View style={{ flex: 1 }}>
       <PageHeading title={t("room.qr-title")} />
       <View style={{ position: "relative", flex: 1, padding: 15 }}>
         <Text
@@ -145,7 +144,7 @@ export default function QRCodePage({ navigation, route }: any) {
           start
         </Button>
       </View>
-    </SafeIOSContainer>
+    </View>
   );
 }
 

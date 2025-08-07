@@ -1,15 +1,16 @@
 import { useIsFocused } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, FlatList, Image, ImageBackground, Platform, Pressable, useWindowDimensions, View } from "react-native";
+import { Dimensions, FlatList, Image, ImageBackground, Pressable, useWindowDimensions, View } from "react-native";
 import { Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
-import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from "react-native-reanimated";
+import Animated, { FadeIn, FadeInDown, FadeOut } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../types";
 import { FancySpinner } from "../components/FancySpinner";
 import Favourite from "../components/Favourite";
 import FortuneWheelComponent from "../components/FortuneWheelComponent";
-import FrostedGlass from "../components/FrostedGlass";
 import WatchProviders from "../components/Movie/WatchProviders";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import ScoreRing from "../components/ScoreRing";
@@ -123,6 +124,8 @@ function FortuneWheel({ navigation, route }: any) {
 
   const { width, height } = useWindowDimensions();
 
+  const insets = useSafeAreaInsets();
+
   const t = useTranslation();
 
   const subHeading = [
@@ -142,7 +145,6 @@ function FortuneWheel({ navigation, route }: any) {
       {selectedItem && selectedItem?.id === data?.id ? (
         <AnimatedBackgroundImage
           entering={FadeInDown.duration(200)}
-          exiting={FadeOutDown.duration(200)}
           style={{
             width,
             height: height,
@@ -157,7 +159,7 @@ function FortuneWheel({ navigation, route }: any) {
           <View
             style={{
               position: "absolute",
-              top: 0,
+              top: insets.top,
               right: 0,
               width,
               justifyContent: "space-between",
@@ -179,16 +181,13 @@ function FortuneWheel({ navigation, route }: any) {
             style={{ flex: 1, position: "absolute", top: 0, width, height, justifyContent: "flex-end" }}
             colors={["transparent", "rgba(0,0,0,0.5)", "#000000"]}
           >
-            <FrostedGlass
-              container={{
-                width: "100%",
-                minHeight: 450,
-              }}
+            <BlurView
+              intensity={50}
+              tint="dark"
               style={{
-                marginBottom: Platform.OS === "ios" ? 80 : 10,
                 padding: 15,
-                paddingBottom: Platform.OS === "android" ? 0 : undefined,
                 gap: 0,
+                paddingBottom: insets.bottom,
               }}
             >
               <Pressable
@@ -235,7 +234,7 @@ function FortuneWheel({ navigation, route }: any) {
                   <Favourite showLabel={false} movie={data as Movie} />
                 </View>
               </View>
-            </FrostedGlass>
+            </BlurView>
           </LinearGradient>
         </AnimatedBackgroundImage>
       ) : (

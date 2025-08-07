@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { Linking, Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Button, MD2DarkTheme, PaperProvider } from "react-native-paper";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { FancySpinner } from "./src/components/FancySpinner";
 import { loadFavorites } from "./src/redux/favourites/favourites";
@@ -21,6 +21,7 @@ import Group from "./src/screens/Group";
 import Landing from "./src/screens/Landing";
 import MovieDetails from "./src/screens/MovieDetails";
 import Overview from "./src/screens/Overview";
+import RegionSelectorScreen from "./src/screens/RegionSelector";
 import QRCode from "./src/screens/Room/Main";
 import Search from "./src/screens/Search";
 import SettingsScreen from "./src/screens/Settings";
@@ -89,19 +90,15 @@ export default function App() {
       });
   }, []);
 
-  console.log("App started");
-
   if (!isLoaded) return <Fallback />;
 
   return (
     <SafeAreaProvider style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
-        <Provider store={store}>
-          <PaperProvider theme={theme}>
-            <Navigator />
-          </PaperProvider>
-        </Provider>
-      </SafeAreaView>
+      <Provider store={store}>
+        <PaperProvider theme={theme}>
+          <Navigator />
+        </PaperProvider>
+      </Provider>
     </SafeAreaProvider>
   );
 }
@@ -192,7 +189,13 @@ const Navigator = () => {
             }),
           }}
         >
-          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} options={{ presentation: "transparentModal", animation: "fade" }} />
+
+          <Stack.Screen
+            name="RegionSelector"
+            component={RegionSelectorScreen}
+            options={{ headerShown: false, presentation: "transparentModal", animation: "fade" }}
+          />
 
           <Stack.Screen name="Landing" component={Landing} />
           <Stack.Screen name="QRCode" component={QRCode} />
@@ -271,9 +274,15 @@ const Navigator = () => {
             component={Search}
             options={{
               headerShown: false,
+              presentation: "transparentModal",
+              animation: "fade",
             }}
           />
-          <Stack.Screen name="SearchFilters" component={SearchFilters} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="SearchFilters"
+            component={SearchFilters}
+            options={{ headerShown: false, presentation: "transparentModal", animation: "fade" }}
+          />
         </Stack.Navigator>
       </GestureHandlerRootView>
     </NavigationContainer>

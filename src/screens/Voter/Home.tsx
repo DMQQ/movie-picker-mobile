@@ -15,7 +15,6 @@ import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from "react-native
 import { FancySpinner } from "../../components/FancySpinner";
 import QuickActions from "../../components/QuickActions";
 import RangeSlider from "../../components/RangeSlidePicker";
-import SafeIOSContainer from "../../components/SafeIOSContainer";
 import QRCodeComponent from "../../components/Voter/QRCode";
 import useTranslation from "../../service/useTranslation";
 import { useMovieVoter } from "../../service/useVoter";
@@ -423,12 +422,12 @@ export default function Home({ navigation, route }: any) {
   );
 
   return (
-    <SafeIOSContainer>
+    <View style={{ flex: 1 }}>
       {status === "idle" && renderInitialState()}
       {status === "waiting" && renderWaitingState()}
       {status === "rating" && currentMovies !== undefined && renderRatingState()}
       {status === "completed" && renderCompletedState()}
-    </SafeIOSContainer>
+    </View>
   );
 }
 
@@ -438,24 +437,24 @@ function Results({ navigation }: any) {
 
   if (!sessionResults) {
     return (
-      <SafeIOSContainer>
+      <View style={{ flex: 1 }}>
         <View style={styles.center}>
           <Text>Loading results...</Text>
         </View>
-      </SafeIOSContainer>
+      </View>
     );
   }
 
   if (!sessionResults.topPicks.length) {
     return (
-      <SafeIOSContainer>
+      <View style={{ flex: 1 }}>
         <View style={styles.center}>
           <Text>No movies matched your preferences</Text>
           <Button mode="contained" onPress={() => navigation.replace("Home")} style={styles.button}>
             {t("voter.home.quit")}
           </Button>
         </View>
-      </SafeIOSContainer>
+      </View>
     );
   }
 

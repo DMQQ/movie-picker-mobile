@@ -1,7 +1,8 @@
-import React from "react";
-import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
-import { MD2DarkTheme, IconButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { BlurView } from "expo-blur";
+import { StyleSheet, TextInput, View } from "react-native";
+import { IconButton, MD2DarkTheme } from "react-native-paper";
+import Animated, { FadeInUp } from "react-native-reanimated";
 
 interface SearchBarProps {
   value: string;
@@ -13,39 +14,43 @@ const CustomSearchBar = ({ value, onChangeText, placeholder = "Search movies and
   const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} style={styles.backButton} />
+    <Animated.View style={{ paddingHorizontal: 15 }} entering={FadeInUp}>
+      <View style={styles.container}>
+        <BlurView style={styles.searchContainer} intensity={5}>
+          <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} style={styles.backButton} />
 
-        <TextInput
-          placeholder={placeholder}
-          placeholderTextColor="#666"
-          value={value}
-          onChangeText={onChangeText}
-          style={styles.input}
-          selectionColor={MD2DarkTheme.colors.primary}
-        />
+          <TextInput
+            placeholder={placeholder}
+            placeholderTextColor="#666"
+            value={value}
+            onChangeText={onChangeText}
+            style={styles.input}
+            selectionColor={MD2DarkTheme.colors.primary}
+          />
 
-        {value.length > 0 && (
-          <IconButton icon="close" size={20} iconColor="#666" onPress={() => onChangeText("")} style={styles.clearButton} />
-        )}
+          {value.length > 0 && (
+            <IconButton icon="close" size={20} iconColor="#666" onPress={() => onChangeText("")} style={styles.clearButton} />
+          )}
+        </BlurView>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 5,
-    marginBottom: 10,
+    marginBottom: 15,
+    borderRadius: 100,
+    overflow: "hidden",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.1)",
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: MD2DarkTheme.colors.surface,
     borderRadius: 100,
-    height: 56,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
   },
   backButton: {
     margin: 0,

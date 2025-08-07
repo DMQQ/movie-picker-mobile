@@ -1,15 +1,18 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
+import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback, useEffect, useState } from "react";
-import { Dimensions, ImageBackground, Platform, Pressable, RefreshControl, StyleSheet, TouchableHighlight, View } from "react-native";
+import { Dimensions, ImageBackground, Platform, Pressable, RefreshControl, StyleSheet, TouchableOpacity, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { FadeIn, useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../types";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
 import FrostedGlass from "../components/FrostedGlass";
+import LandingHeader from "../components/LandingHeader";
 import NoConnectionError from "../components/NoConnectionError";
 import RatingIcons from "../components/RatingIcons";
 import ScoreRing from "../components/ScoreRing";
@@ -45,8 +48,11 @@ const gradient = ["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0
 
 const keyExtractor = (item: { name: string }, index: number) => item.name + "-" + index;
 
+const AnimatedFlashList = Animated.createAnimatedComponent(FlashList);
+
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const [page, setPage] = useState(0);
+  const [selectedChip, setSelectedChip] = useState("all");
 
   const [data, setData] = useState<{ name: string; results: Movie[] }[]>([]);
 
@@ -98,13 +104,25 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     });
   }, []);
 
+  const handleChipPress = (chip: string) => {
+    setSelectedChip(chip);
+    // Add filtering logic here based on chip selection
+  };
+
+  const scrollY = useSharedValue(0);
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
   return (
     <View style={{ flex: 1 }}>
       <AppLoadingOverlay />
-
       <NoConnectionError />
 
-      <FlashList
+      <AnimatedFlashList
+        onScroll={onScroll}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         ListHeaderComponent={<FeaturedSection navigate={navigation.navigate} />}
         ListEmptyComponent={
@@ -113,15 +131,17 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
           </View>
         }
         data={(data || []) as { name: string; results: Movie[] }[]}
-        keyExtractor={keyExtractor}
+        keyExtractor={keyExtractor as any}
         onEndReached={onEndReached}
-        renderItem={renderItem}
+        renderItem={renderItem as any}
         onEndReachedThreshold={0.5}
         drawDistance={1000}
         estimatedItemSize={height * 0.275 + 30}
+        contentContainerStyle={{ paddingTop: 100 }}
       />
 
       <BottomTab navigate={navigation.navigate} />
+      <LandingHeader selectedChip={selectedChip} onChipPress={handleChipPress} scrollY={scrollY} />
     </View>
   );
 }
@@ -192,11 +212,10 @@ const tabStyles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 15,
-    paddingHorizontal: 10,
-    paddingTop: 10,
-    height: 70,
-    paddingBottom: Platform.OS === "android" ? 10 : 0,
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   button: {
     flex: 1,
@@ -216,6 +235,7 @@ const tabStyles = StyleSheet.create({
 const BottomTab = memo(
   ({ navigate }: { navigate: any }) => {
     const t = useTranslation();
+    const insets = useSafeAreaInsets();
 
     const withTouch = (fn: () => void) => {
       return () => {
@@ -226,35 +246,24 @@ const BottomTab = memo(
     };
 
     return (
-      <View style={tabStyles.container}>
-        <TouchableHighlight
-          activeOpacity={0.8}
-          underlayColor={MD2DarkTheme.colors.surface}
-          onPress={withTouch(() => navigate("Settings"))}
-          style={tabStyles.button}
-        >
-          <>
-            <FontAwesome name="gear" size={25} color="#fff" />
-            <Text style={tabStyles.buttonLabel}>{t("tabBar.settings")}</Text>
-          </>
-        </TouchableHighlight>
-
-        <TouchableHighlight
-          activeOpacity={0.8}
-          underlayColor={MD2DarkTheme.colors.surface}
-          style={tabStyles.button}
-          onPress={withTouch(() => navigate("Favourites"))}
-        >
+      <BlurView
+        intensity={50}
+        tint="dark"
+        style={[{ flexDirection: "row", paddingBottom: insets.bottom, paddingTop: 10 }, tabStyles.container]}
+      >
+        <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigate("Favourites"))}>
           <>
             <FontAwesome name="bookmark" size={25} color="#fff" />
             <Text style={tabStyles.buttonLabel}>{t("tabBar.favourites")}</Text>
           </>
-        </TouchableHighlight>
+        </TouchableOpacity>
 
-        <TouchableHighlight
+        <TouchableOpacity
           activeOpacity={0.8}
-          underlayColor={"#52287d"}
-          style={[tabStyles.button, { backgroundColor: MD2DarkTheme.colors.primary, borderRadius: 10, padding: 5, paddingVertical: 10 }]}
+          style={[
+            tabStyles.button,
+            { backgroundColor: MD2DarkTheme.colors.primary, borderRadius: 10, padding: 5, paddingVertical: 10, maxWidth: 70 },
+          ]}
           onPress={withTouch(() =>
             navigate("QRCode", {
               screen: "QRScanner",
@@ -265,32 +274,15 @@ const BottomTab = memo(
             <FontAwesome name="qrcode" size={30} color={"#fff"} />
             {/* <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text> */}
           </>
-        </TouchableHighlight>
+        </TouchableOpacity>
 
-        <TouchableHighlight
-          activeOpacity={0.8}
-          underlayColor={MD2DarkTheme.colors.surface}
-          style={tabStyles.button}
-          onPress={withTouch(() => navigate("Games"))}
-        >
+        <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigate("Games"))}>
           <>
             <FontAwesome name="gamepad" size={25} color="#fff" />
             <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
           </>
-        </TouchableHighlight>
-
-        <TouchableHighlight
-          onPress={withTouch(() => navigate("Search"))}
-          activeOpacity={0.8}
-          underlayColor={MD2DarkTheme.colors.surface}
-          style={tabStyles.button}
-        >
-          <>
-            <FontAwesome name="search" size={25} color="#fff" />
-            <Text style={tabStyles.buttonLabel}>{t("tabBar.search")}</Text>
-          </>
-        </TouchableHighlight>
-      </View>
+        </TouchableOpacity>
+      </BlurView>
     );
   },
   () => true

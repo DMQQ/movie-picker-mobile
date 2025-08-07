@@ -1,14 +1,17 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import { View, VirtualizedList, StyleSheet, ScrollView, Dimensions, Image, Pressable } from "react-native";
-import { Chip, Text, ActivityIndicator, Portal, Modal, Button, Divider, MD2DarkTheme, TouchableRipple } from "react-native-paper";
-import { useLazySearchQuery } from "../redux/movie/movieApi";
 import { useNavigation } from "@react-navigation/native";
-import CustomSearchBar from "../components/SearchBar";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Dimensions, ImageBackground, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, MD2DarkTheme, Text, TouchableRipple, Searchbar, IconButton } from "react-native-paper";
+import { useLazySearchQuery } from "../redux/movie/movieApi";
 
-import useTranslation from "../service/useTranslation";
+import { FlashList } from "@shopify/flash-list";
+import { BlurView } from "expo-blur";
+import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../types";
-import Animated, { FadeIn } from "react-native-reanimated";
-import Thumbnail from "../components/Thumbnail";
+import FrostedGlass from "../components/FrostedGlass";
+import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
+import useTranslation from "../service/useTranslation";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -39,35 +42,43 @@ const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; i
         });
       }}
       style={{
-        flexDirection: "row",
-        width: SCREEN_WIDTH - 20,
-        height: ITEM_HEIGHT,
-        borderRadius: 10,
-        backgroundColor: MD2DarkTheme.colors.surface,
+        width: SCREEN_WIDTH - 30,
+        borderRadius: 15,
         marginTop: 15,
+        borderWidth: 2,
+        borderColor: "rgba(255,255,255,0.1)",
       }}
     >
-      <Thumbnail path={item.poster_path} style={styles.cardImage} />
-
-      <View style={{ flex: 1, padding: 10, overflow: "hidden", gap: 2.5 }}>
-        <Text
-          numberOfLines={2}
-          style={{
-            fontFamily: "Bebas",
-            fontSize: 28,
-          }}
-        >
-          {item?.title || item?.name}
-        </Text>
-
-        <Text style={{ color: "rgba(255, 255, 255, 0.8)" }}>{data.join(" | ")}</Text>
-
-        <View style={{ flex: 1, overflow: "hidden" }}>
-          <Text numberOfLines={4} ellipsizeMode="tail" style={{ marginTop: 5 }}>
-            {item.overview}
-          </Text>
+      <ImageBackground
+        source={{ uri: `https://image.tmdb.org/t/p/w780${item.backdrop_path}` }}
+        blurRadius={10}
+        style={{ flex: 1 }}
+        imageStyle={{ flex: 1, borderRadius: 15 }}
+      >
+        <View style={{ position: "relative", justifyContent: "center", alignItems: "center", padding: 15 }}>
+          <Thumbnail path={item.poster_path} container={[styles.cardImage]} size={ThumbnailSizes.poster.xlarge} />
         </View>
-      </View>
+
+        <FrostedGlass style={{ flex: 1, padding: 15, overflow: "hidden", gap: 2.5 }}>
+          <Text
+            numberOfLines={2}
+            style={{
+              fontFamily: "Bebas",
+              fontSize: 40,
+            }}
+          >
+            {item?.title || item?.name}
+          </Text>
+
+          <Text style={{ color: "rgba(255, 255, 255, 0.8)" }}>{data.join(" | ")}</Text>
+
+          <View style={{ flex: 1, overflow: "hidden" }}>
+            <Text numberOfLines={4} ellipsizeMode="tail" style={{ marginTop: 5 }}>
+              {item.overview}
+            </Text>
+          </View>
+        </FrostedGlass>
+      </ImageBackground>
     </AnimatedPressable>
   );
 };
@@ -281,99 +292,115 @@ const SearchScreen = ({ navigation, route }: any) => {
     { id: "tv", label: t("voter.types.series") },
   ] as { id: "movie" | "tv" | "both"; label: string }[];
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.container}>
-      <CustomSearchBar value={searchQuery} onChangeText={setSearchQuery} placeholder={t("search.search-placeholder")} />
+    <BlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
+      <View style={styles.container}>
+        <View style={styles.searchContainer}>
+          <Searchbar 
+            placeholder={t("search.search-placeholder")} 
+            onChangeText={setSearchQuery} 
+            value={searchQuery} 
+            style={styles.searchbar}
+            inputStyle={styles.searchInput}
+            icon={() => <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={24} iconColor="#fff" style={{ margin: 0 }} />}
+          />
+        </View>
 
-      <View style={styles.chipContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
-          {categories.map((category) => (
-            <TouchableRipple
-              key={category.id}
-              onPress={() => handleFilterChange(category.id)}
-              style={[styles.categoryChip, filters.type === category.id && styles.categoryChipActive]}
-            >
-              <Text style={[styles.categoryText, filters.type === category.id && styles.categoryTextActive]}>{category.label}</Text>
-            </TouchableRipple>
-          ))}
-        </ScrollView>
-        <TouchableRipple
-          onPress={() => {
-            navigation.navigate("SearchFilters", { ...route?.params, type: filters.type });
-          }}
-          style={[
-            styles.categoryChip,
-            route?.params && {
-              backgroundColor: MD2DarkTheme.colors.primary,
-            },
-          ]}
-        >
-          <Text style={[styles.categoryText]}>Filters</Text>
-        </TouchableRipple>
-      </View>
+        <View style={styles.chipContainer}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
+            {categories.map((category, index) => (
+              <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>
+                <TouchableRipple
+                  onPress={() => handleFilterChange(category.id)}
+                  style={[styles.categoryChip, filters.type === category.id && styles.categoryChipActive]}
+                >
+                  <Text style={[styles.categoryText, filters.type === category.id && styles.categoryTextActive]}>{category.label}</Text>
+                </TouchableRipple>
+              </Animated.View>
+            ))}
+          </ScrollView>
+          <TouchableRipple
+            onPress={() => {
+              navigation.navigate("SearchFilters", { ...route?.params, type: filters.type });
+            }}
+            style={[styles.categoryChip]}
+          >
+            <Text style={[styles.categoryText]}>Filters</Text>
+          </TouchableRipple>
+        </View>
 
-      {isError ? (
-        <Text style={styles.errorText}>{t("search.error")}</Text>
-      ) : (
-        <VirtualizedList
+        <FlashList
+          estimatedItemSize={430}
+          contentContainerStyle={{ padding: 15 }}
           data={allResults}
-          getItem={getItem}
-          getItemCount={getItemCount}
           renderItem={({ item, index }) => <MovieCard index={index} item={item} />}
           keyExtractor={(item, index) => {
             const mediaType = item.media_type || filters.type;
-            const uniqueId = `${item.id}-${mediaType}-${index}`;
+            const uniqueId = `${item.id}-${mediaType}`;
             return uniqueId;
           }}
-          getItemLayout={(data, index) => ({
-            length: ITEM_HEIGHT + 10,
-            offset: (ITEM_HEIGHT + 10) * index,
-            index,
-          })}
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.5}
-          contentContainerStyle={[styles.listContent, allResults.length === 0 && { flex: 1, justifyContent: "center" }]}
           ListFooterComponent={() =>
             isFetching && currentPage > 1 ? (
               <ActivityIndicator style={styles.loader} animating={true} color={MD2DarkTheme.colors.primary} />
             ) : null
           }
           ListEmptyComponent={renderEmptyComponent}
-          initialNumToRender={6}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          removeClippedSubviews={true}
         />
-      )}
-    </View>
+      </View>
+    </BlurView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.1)",
+  },
+  searchContainer: {
+    paddingHorizontal: 15,
+    marginBottom: 15,
+  },
+  searchbar: {
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+  },
+  searchInput: {
+    color: "#fff",
   },
   chipContainer: {
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
     paddingBottom: 15,
     flexDirection: "row",
+    paddingRight: 15,
   },
   chip: {
     marginHorizontal: 4,
     backgroundColor: "rgba(255,255,255,0.1)",
   },
   listContent: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingBottom: 20,
     minHeight: 100,
   },
   cardImage: {
-    width: 120,
-    height: ITEM_HEIGHT,
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    backgroundColor: "#2a2a2a",
+    borderRadius: 10,
+    height: 230,
+    width: 170,
+    borderColor: "rgba(255,255,255,0.1)",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   loader: {
     marginVertical: 20,

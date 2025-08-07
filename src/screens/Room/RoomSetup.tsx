@@ -10,7 +10,6 @@ import GenreList, { Genre } from "../../components/Room/GenreList";
 import ProviderList from "../../components/Room/ProviderList";
 import Section from "../../components/Room/Section";
 import SelectionCard from "../../components/Room/SelectionCard";
-import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useGetAllProvidersQuery, useGetGenresQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
 import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
@@ -133,7 +132,7 @@ export default function RoomSetup({ navigation }: any) {
   console.log("RoomSetup State:", state);
 
   return (
-    <SafeIOSContainer>
+    <View style={{ flex: 1 }}>
       <PageHeading title={t("room.movie") + " Setup"} />
       <ScrollView style={styles.flex} showsVerticalScrollIndicator={false}>
         <View style={styles.contentContainer}>
@@ -187,7 +186,7 @@ export default function RoomSetup({ navigation }: any) {
           {t("room.next")}
         </Button>
       </View>
-    </SafeIOSContainer>
+    </View>
   );
 }
 

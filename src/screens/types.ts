@@ -13,6 +13,8 @@ export type RootStackParamList = {
 
   Settings: undefined;
 
+  RegionSelector: undefined;
+
   Fortune: { category?: string };
 
   Favourites: undefined;

@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Dimensions, FlatList, Image, StyleSheet, View, ScrollView } from "react-native";
-import { useGetAllProvidersQuery, useGetGenresQuery } from "../redux/movie/movieApi";
-import { Appbar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple, Divider, Surface, Chip } from "react-native-paper";
-import useTranslation from "../service/useTranslation";
+import { BlurView } from "expo-blur";
+import React, { useMemo, useState } from "react";
+import { Dimensions, FlatList, Image, ScrollView, StyleSheet, View } from "react-native";
+import { Button, Chip, Divider, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DropdownPersonSearch from "../components/DropdownSearchPeron";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useGetAllProvidersQuery, useGetGenresQuery } from "../redux/movie/movieApi";
+import useTranslation from "../service/useTranslation";
 
 const { width } = Dimensions.get("window");
 
@@ -61,8 +62,10 @@ export default function SearchFilters({ navigation, route }: any) {
 
   const [limitProviders, setLimitProviders] = useState(18);
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.safeArea} edges={["right", "left"]}>
+    <BlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.headerContent}>
@@ -147,13 +150,13 @@ export default function SearchFilters({ navigation, route }: any) {
           </Section>
         </ScrollView>
 
-        <Surface style={styles.bottomBar}>
+        <BlurView style={[styles.bottomBar, { paddingBottom: insets.bottom }]} tint="dark" intensity={50}>
           <Button mode="contained" onPress={applyFilters} style={styles.applyButton} contentStyle={styles.buttonContent}>
             {getFilterCount() > 0 ? `${t("search.apply")} (` + getFilterCount() + ")" : t("search.apply")}
           </Button>
-        </Surface>
+        </BlurView>
       </View>
-    </SafeAreaView>
+    </BlurView>
   );
 }
 
@@ -167,14 +170,11 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#000",
   },
   container: {
     flex: 1,
-    backgroundColor: "#000",
   },
   header: {
-    backgroundColor: "#000",
     elevation: 0,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 2,
     borderColor: "transparent",
-    backgroundColor: "#1a1a1a",
+
     overflow: "hidden",
     marginRight: 5,
   },
@@ -297,8 +297,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 15,
     paddingVertical: 15,
-
-    backgroundColor: "#0A0A0A",
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.08)",
     elevation: 8,

@@ -55,7 +55,7 @@ const GameCard = ({ title, description, onPress, beta, players, duration, index 
         {Animations[index]}
 
         <LinearGradient colors={["transparent", "rgba(0,0,0,0.8)"]} style={styles.cardGradient}>
-          <BlurView intensity={20} style={styles.cardContent}>
+          <BlurView intensity={20} tint="dark" style={styles.cardContent}>
             <View style={styles.cardHeader}>
               <View style={{ width: "100%" }}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>

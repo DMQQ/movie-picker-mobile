@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
-import { StyleProp, View, ViewStyle } from "react-native";
+import { StyleProp, ViewStyle } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SafeIOSContainer({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
-  return <View style={[{ flex: 1 }, style]}>{children}</View>;
+  return <SafeAreaView style={[{ flex: 1 }, style]}>{children}</SafeAreaView>;
 }

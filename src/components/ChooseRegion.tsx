@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { reloadAsync } from "expo-updates";
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { Surface, Text, SegmentedButtons, List, MD2DarkTheme, Button, Portal, Modal, Searchbar } from "react-native-paper";
+import { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { List, Searchbar, Text } from "react-native-paper";
 
 const regions = [
   // North America
@@ -63,10 +63,15 @@ const regions = [
   { code: "UA", name: "Ukraine", language: "uk-UA", timezone: "Europe/Kiev" },
 ];
 
-const ChooseRegion = () => {
+interface ChooseRegionProps {
+  onBack?: () => void;
+  onRegionSelect?: (region: (typeof regions)[number]) => void;
+  showAsSelector?: boolean;
+}
+
+const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: ChooseRegionProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRegion, setSelectedRegion] = useState(regions[0]);
-  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -98,9 +103,13 @@ const ChooseRegion = () => {
 
   const handleRegionSelect = (region: (typeof regions)[number]) => {
     setSelectedRegion(region);
-    setModalVisible(false);
-    const headers = {} as Record<string, string>;
 
+    if (onRegionSelect) {
+      onRegionSelect(region);
+      return;
+    }
+
+    const headers = {} as Record<string, string>;
     headers["x-user-region"] = region.code;
     headers["x-user-watch-provider"] = region.code;
     headers["x-user-watch-region"] = region.code;
@@ -114,32 +123,10 @@ const ChooseRegion = () => {
       region.name.toLowerCase().includes(searchQuery.toLowerCase()) || region.code.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  return (
-    <Surface style={styles.container}>
-      <Text style={styles.title}>Region & Language Settings</Text>
-
-      <List.Item
-        title="Selected Region"
-        description={`${selectedRegion.name} (${selectedRegion.code})`}
-        left={(props) => <List.Icon {...props} icon="map-marker" />}
-        onPress={() => setModalVisible(true)}
-        style={styles.listItem}
-        right={(props) => <List.Icon {...props} icon="pencil" />}
-      />
-
-      <List.Item
-        title="Timezone"
-        description={selectedRegion.timezone}
-        left={(props) => <List.Icon {...props} icon="clock-outline" />}
-        style={styles.listItem}
-      />
-
-      <Portal>
-        <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)} contentContainerStyle={styles.modal} theme={MD2DarkTheme}>
-          <Text variant="titleLarge" style={styles.modalTitle}>
-            Select Region
-          </Text>
-
+  if (showAsSelector) {
+    return (
+      <View style={styles.selectorContainer}>
+        <View style={styles.selectorContent}>
           <Searchbar placeholder="Search regions..." onChangeText={setSearchQuery} value={searchQuery} style={styles.searchbar} />
 
           <ScrollView style={styles.regionList}>
@@ -151,23 +138,41 @@ const ChooseRegion = () => {
                 onPress={() => handleRegionSelect(region)}
                 left={(props) => <List.Icon {...props} icon="map-marker" />}
                 right={(props) => selectedRegion.code === region.code && <List.Icon {...props} icon="check" />}
+                style={styles.regionItem}
               />
             ))}
           </ScrollView>
+        </View>
+      </View>
+    );
+  }
 
-          <Button mode="contained" onPress={() => setModalVisible(false)} style={styles.closeButton} contentStyle={{ padding: 7.5 }}>
-            Close
-          </Button>
-        </Modal>
-      </Portal>
-    </Surface>
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Region & Language Settings</Text>
+
+      <List.Item
+        title="Selected Region"
+        description={`${selectedRegion.name} (${selectedRegion.code})`}
+        left={(props) => <List.Icon {...props} icon="map-marker" />}
+        onPress={() => onBack && onBack()}
+        style={styles.listItem}
+        right={(props) => <List.Icon {...props} icon="pencil" />}
+      />
+
+      <List.Item
+        title="Timezone"
+        description={selectedRegion.timezone}
+        left={(props) => <List.Icon {...props} icon="clock-outline" />}
+        style={styles.listItem}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     marginTop: 30,
-    backgroundColor: "#000",
     borderRadius: 8,
   },
   title: {
@@ -179,28 +184,35 @@ const styles = StyleSheet.create({
   listItem: {
     paddingVertical: 8,
   },
-  modal: {
-    backgroundColor: MD2DarkTheme.colors.surface,
-    margin: 20,
-    padding: 20,
-    borderRadius: 8,
-    maxHeight: "80%",
+  selectorContainer: {
+    flex: 1,
+    backgroundColor: "transparent",
   },
-  modalTitle: {
-    textAlign: "center",
-    marginBottom: 16,
+  header: {
+    backgroundColor: "transparent",
+    elevation: 0,
+  },
+  headerTitle: {
     color: "white",
+    fontFamily: "Bebas",
+    fontSize: 20,
+  },
+  selectorContent: {
+    flex: 1,
+    padding: 15,
   },
   searchbar: {
     marginBottom: 16,
     backgroundColor: "rgba(255, 255, 255, 0.08)",
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.1)",
   },
   regionList: {
-    marginBottom: 16,
+    flex: 1,
   },
-  closeButton: {
-    marginTop: 8,
-    borderRadius: 100,
+  regionItem: {
+    paddingVertical: 8,
   },
 });
 
