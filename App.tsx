@@ -189,12 +189,12 @@ const Navigator = () => {
             }),
           }}
         >
-          <Stack.Screen name="Settings" component={SettingsScreen} options={{ presentation: "transparentModal", animation: "fade" }} />
+          <Stack.Screen name="Settings" component={SettingsScreen} options={{ presentation: "transparentModal", animation: "fade", gestureEnabled: true }} />
 
           <Stack.Screen
             name="RegionSelector"
             component={RegionSelectorScreen}
-            options={{ headerShown: false, presentation: "transparentModal", animation: "fade" }}
+            options={{ headerShown: false, presentation: "transparentModal", animation: "fade", gestureEnabled: true }}
           />
 
           <Stack.Screen name="Landing" component={Landing} />
@@ -276,12 +276,13 @@ const Navigator = () => {
               headerShown: false,
               presentation: "transparentModal",
               animation: "fade",
+              gestureEnabled: true,
             }}
           />
           <Stack.Screen
             name="SearchFilters"
             component={SearchFilters}
-            options={{ headerShown: false, presentation: "transparentModal", animation: "fade" }}
+            options={{ headerShown: false, presentation: "transparentModal", animation: "fade", gestureEnabled: true }}
           />
         </Stack.Navigator>
       </GestureHandlerRootView>
