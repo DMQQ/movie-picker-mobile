@@ -1,13 +1,12 @@
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
+import { ReactNode } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
-import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { Movie } from "../../types";
+import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
-import * as Haptics from "expo-haptics";
 import useTranslation from "../service/useTranslation";
-import { ReactNode } from "react";
-import FrostedGlass from "./FrostedGlass";
 
 export default function QuickActions(props: { movie: Movie; children?: ReactNode; hideLabels?: boolean }) {
   const dispatch = useAppDispatch();
@@ -45,41 +44,39 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
   };
 
   return (
-    <FrostedGlass style={{ paddingVertical: 20, paddingLeft: 5 }}>
-      <View style={styles.container}>
-        <View style={styles.iconContainer}>
-          <TouchableOpacity style={[styles.iconButton]} onPress={() => onPress("2")}>
-            <AntDesign name={isInGroup("2") ? "clockcircle" : "clockcircleo"} size={35} color="#fff" />
-            {!props?.hideLabels && (
-              <Text numberOfLines={1} ellipsizeMode="tail" style={styles.iconText}>
-                {t("quick-actions.watch-later")}
-              </Text>
-            )}
-          </TouchableOpacity>
-        </View>
-        <View style={styles.iconContainer}>
-          <TouchableOpacity style={styles.iconButton} onPress={() => onPress("1")}>
-            <FontAwesome name={isInGroup("1") ? "star" : "star-o"} size={35} color="#fff" />
-            {!props?.hideLabels && (
-              <Text numberOfLines={1} ellipsizeMode="clip" style={styles.iconText}>
-                {t("quick-actions.favourite")}
-              </Text>
-            )}
-          </TouchableOpacity>
-        </View>
-        <View style={styles.iconContainer}>
-          <TouchableOpacity style={styles.iconButton} onPress={() => onPress("999")}>
-            <AntDesign name={isInGroup("999") ? "eye" : "eyeo"} size={35} color="#fff" />
-            {!props?.hideLabels && (
-              <Text numberOfLines={1} ellipsizeMode="clip" style={styles.iconText}>
-                {t("quick-actions.watched")}
-              </Text>
-            )}
-          </TouchableOpacity>
-        </View>
-        {props.children}
+    <View style={styles.container}>
+      <View style={styles.iconContainer}>
+        <TouchableOpacity style={[styles.iconButton]} onPress={() => onPress("2")}>
+          <AntDesign name={isInGroup("2") ? "clockcircle" : "clockcircleo"} size={35} color="#fff" />
+          {!props?.hideLabels && (
+            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.iconText}>
+              {t("quick-actions.watch-later")}
+            </Text>
+          )}
+        </TouchableOpacity>
       </View>
-    </FrostedGlass>
+      <View style={styles.iconContainer}>
+        <TouchableOpacity style={styles.iconButton} onPress={() => onPress("1")}>
+          <FontAwesome name={isInGroup("1") ? "star" : "star-o"} size={35} color="#fff" />
+          {!props?.hideLabels && (
+            <Text numberOfLines={1} ellipsizeMode="clip" style={styles.iconText}>
+              {t("quick-actions.favourite")}
+            </Text>
+          )}
+        </TouchableOpacity>
+      </View>
+      <View style={styles.iconContainer}>
+        <TouchableOpacity style={styles.iconButton} onPress={() => onPress("999")}>
+          <AntDesign name={isInGroup("999") ? "eye" : "eyeo"} size={35} color="#fff" />
+          {!props?.hideLabels && (
+            <Text numberOfLines={1} ellipsizeMode="clip" style={styles.iconText}>
+              {t("quick-actions.watched")}
+            </Text>
+          )}
+        </TouchableOpacity>
+      </View>
+      {props.children}
+    </View>
   );
 }
 

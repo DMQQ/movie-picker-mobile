@@ -102,24 +102,37 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   }, [socket, sessionSettings]);
 
   const joinSession = useCallback(
+    async (joinSessionId: string): Promise<void> => {
+      setSessionId(joinSessionId);
+      setStatus("waiting");
+      
+      if (!socket?.connected) {
+        return;
+      }
+
+      return joinSessionInternal(joinSessionId);
+    },
+    [socket]
+  );
+  
+  const joinSessionInternal = useCallback(
     async (joinSessionId: string) => {
-      if (!socket) return;
-
       try {
-        const { error } = await socket.emitWithAck("voter:session:join", { sessionId: joinSessionId });
-
-        if (error) {
-          setError(error);
-          return;
+        const response = await socket!.emitWithAck("voter:session:join", { sessionId: joinSessionId });
+        
+        if (response?.error) {
+          setError(response.error);
+          throw new Error(response.error);
         }
+        
         const userId = await AsyncStorage.getItem("userId");
         setCurrentUserId(userId);
         setSessionId(joinSessionId);
         setStatus("waiting");
-        setIsHost(false);
+        
+        const userIsHost = response?.isHost || false;
+        setIsHost(userIsHost);
       } catch (error) {
-        console.error("joinSession error", error);
-
         throw error;
       }
     },
@@ -135,7 +148,9 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     (ready: boolean) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-      if (!socket || !sessionId) return;
+      if (!socket || !sessionId) {
+        return;
+      }
       socket.emit("voter:session:ready", { sessionId, ready });
     },
     [socket, sessionId]
@@ -179,6 +194,12 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     },
     [socket, sessionId]
   );
+
+  useEffect(() => {
+    if (socket?.connected && sessionId && users.length === 0 && !isHost) {
+      joinSessionInternal(sessionId).catch(console.error);
+    }
+  }, [socket, sessionId, users.length, isHost]);
 
   useEffect(() => {
     if (!socket) return;

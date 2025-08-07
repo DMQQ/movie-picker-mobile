@@ -1,6 +1,6 @@
 import { Platform, View } from "react-native";
 import { Text } from "react-native-paper";
-import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import useTranslation from "../../service/useTranslation";
 import CustomFavourite from "../Favourite";
@@ -68,11 +68,13 @@ export default function MovieDetails({
           <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 15 }}>{data.join(" | ")}</Text>
 
           <View style={{ paddingVertical: 15 }}>
-            <QuickActions movie={movie}>
-              <View style={{ flex: 1 }}>
-                <CustomFavourite movie={movie} />
-              </View>
-            </QuickActions>
+            <FrostedGlass style={{ paddingVertical: 20, paddingLeft: 5 }}>
+              <QuickActions movie={movie}>
+                <View style={{ flex: 1 }}>
+                  <CustomFavourite movie={movie} />
+                </View>
+              </QuickActions>
+            </FrostedGlass>
           </View>
 
           {movie?.overview && (

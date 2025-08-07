@@ -1,32 +1,32 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  View,
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Image,
+  ImageBackground,
   ScrollView,
   StyleSheet,
-  Dimensions,
-  ImageBackground,
-  Image,
-  FlatList,
-  ActivityIndicator,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { Button, Text, Chip, MD2DarkTheme, TouchableRipple, IconButton } from "react-native-paper";
-import SafeIOSContainer from "../../components/SafeIOSContainer";
-import { useMovieVoter } from "../../service/useVoter";
-import RangeSlider from "../../components/RangeSlidePicker";
+import { Button, Chip, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from "react-native-reanimated";
-import QRCodeComponent from "../../components/Voter/QRCode";
 import { FancySpinner } from "../../components/FancySpinner";
-import useTranslation from "../../service/useTranslation";
 import QuickActions from "../../components/QuickActions";
+import RangeSlider from "../../components/RangeSlidePicker";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
+import QRCodeComponent from "../../components/Voter/QRCode";
+import useTranslation from "../../service/useTranslation";
+import { useMovieVoter } from "../../service/useVoter";
 
-import * as Haptics from "expo-haptics";
-import { useGetAllProvidersQuery, useGetGenresQuery } from "../../redux/movie/movieApi";
-import { throttle } from "../../utils/throttle";
 import { CommonActions } from "@react-navigation/native";
-import PageHeading from "../../components/PageHeading";
+import * as Haptics from "expo-haptics";
 import { Pressable } from "react-native-gesture-handler";
+import PageHeading from "../../components/PageHeading";
+import { useGetAllProvidersQuery, useGetGenresQuery } from "../../redux/movie/movieApi";
 import ReviewManager from "../../utils/rate";
+import { throttle } from "../../utils/throttle";
 
 const scaleTitle = (title: string, size = 30) => {
   if (title.length > 30) return size * 0.75;
@@ -251,6 +251,7 @@ export default function Home({ navigation, route }: any) {
                       img: card?.poster_path,
                     });
                   }}
+                  style={{ borderRadius: 10, overflow: "hidden" }}
                 >
                   <Animated.Image
                     entering={FadeInDown.duration(300)}
@@ -261,7 +262,6 @@ export default function Home({ navigation, route }: any) {
                       height: 210,
                       borderRadius: 10,
                     }}
-                    resizeMode="contain"
                   />
                 </TouchableOpacity>
                 <View style={{ flex: 1, gap: 10, justifyContent: "space-between" }}>
