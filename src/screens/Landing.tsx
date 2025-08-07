@@ -78,12 +78,10 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         setHasMore(false);
       }
     });
-    console.log("Landing page movies fetched, current page:", page, "hasMore:", hasMore);
   }, [page, hasMore]);
 
   const onEndReached = useCallback(() => {
     setPage((prev) => {
-      console.log("onEndReached called, current page:", prev + 1);
       return prev + 1;
     });
   }, []);
@@ -247,7 +245,7 @@ const BottomTab = memo(
 
     return (
       <BlurView
-        intensity={50}
+        intensity={60}
         tint="dark"
         style={[{ flexDirection: "row", paddingBottom: insets.bottom, paddingTop: 10 }, tabStyles.container]}
       >

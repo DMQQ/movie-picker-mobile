@@ -20,7 +20,6 @@ export default function QRCode({ navigation }: any) {
             name="RoomSetup"
             component={RoomSetup}
             options={{
-              title: t("room.titles.setup"),
               headerTitleAlign: "center",
             }}
           />

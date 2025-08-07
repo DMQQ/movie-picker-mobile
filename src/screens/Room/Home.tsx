@@ -39,7 +39,6 @@ export default function Home({ route, navigation }: any) {
 
   useEffect(() => {
     if (likes.length > 0 || (cards.length > 0 && cards.length < 20)) {
-      console.log("🎬 [Home] User has played - likes:", likes.length, "cards:", cards.length);
       setHasUserPlayed(true);
     }
   }, [likes.length, cards.length]);
@@ -57,7 +56,6 @@ export default function Home({ route, navigation }: any) {
 
   useEffect(() => {
     if (route?.params?.roomId) {
-      console.log("🎬 [Home] Joining game with roomId:", route?.params?.roomId);
       navigation.setParams({
         roomId: route?.params?.roomId,
       });

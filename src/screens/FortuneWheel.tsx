@@ -291,8 +291,10 @@ function FortuneWheel({ navigation, route }: any) {
 export const SectionSelector = ({ navigation }: any) => {
   const { data, error } = useGetCategoriesQuery({});
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: insets.top }}>
       <View style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
         <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
       </View>

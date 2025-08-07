@@ -7,6 +7,7 @@ import { SegmentedButtons, Text, TextInput } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChooseRegion from "../components/ChooseRegion";
 import PageHeading from "../components/PageHeading";
+import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import { roomActions } from "../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
@@ -58,47 +59,49 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
   const insets = useSafeAreaInsets();
 
   return (
-    <BlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
-      <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)" }}>
-        <PageHeading title={t("settings.heading")} />
-        <View style={{ paddingHorizontal: 15, flex: 1 }}>
-          <View style={{ marginTop: 20 }}>
-            <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Nickname</Text>
+    <TransparentModalScreen>
+      <BlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)" }}>
+          <PageHeading title={t("settings.heading")} />
+          <View style={{ paddingHorizontal: 15, flex: 1 }}>
+            <View style={{ marginTop: 20 }}>
+              <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Nickname</Text>
 
-            <TextInput
-              value={nickname}
-              onChangeText={setNickname}
-              mode="outlined"
-              label={"Nickname"}
-              style={{ backgroundColor: "transparent", marginTop: 5 }}
-            />
+              <TextInput
+                value={nickname}
+                onChangeText={setNickname}
+                mode="outlined"
+                label={"Nickname"}
+                style={{ backgroundColor: "transparent", marginTop: 5 }}
+              />
 
-            <Text style={{ fontSize: 16, marginTop: 5, padding: 5, color: "#fff" }}>{t("settings.nickname-info")}</Text>
+              <Text style={{ fontSize: 16, marginTop: 5, padding: 5, color: "#fff" }}>{t("settings.nickname-info")}</Text>
+            </View>
+
+            <View style={{ marginTop: 35 }}>
+              <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Application language</Text>
+
+              <SegmentedButtons
+                buttons={[
+                  {
+                    label: "English",
+                    value: "en",
+                  },
+                  {
+                    label: "Polish",
+                    value: "pl",
+                  },
+                ]}
+                onValueChange={(value) => setLanguage(value)}
+                value={language}
+                style={{ marginTop: 10 }}
+              />
+            </View>
+
+            <ChooseRegion onBack={() => navigation.navigate("RegionSelector")} />
           </View>
-
-          <View style={{ marginTop: 35 }}>
-            <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Application language</Text>
-
-            <SegmentedButtons
-              buttons={[
-                {
-                  label: "English",
-                  value: "en",
-                },
-                {
-                  label: "Polish",
-                  value: "pl",
-                },
-              ]}
-              onValueChange={(value) => setLanguage(value)}
-              value={language}
-              style={{ marginTop: 10 }}
-            />
-          </View>
-
-          <ChooseRegion onBack={() => navigation.navigate("RegionSelector")} />
         </View>
-      </View>
-    </BlurView>
+      </BlurView>
+    </TransparentModalScreen>
   );
 }

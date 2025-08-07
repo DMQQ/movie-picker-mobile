@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, ImageBackground, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { ActivityIndicator, MD2DarkTheme, Text, TouchableRipple, Searchbar, IconButton } from "react-native-paper";
+import { ActivityIndicator, IconButton, MD2DarkTheme, Searchbar, Text, TouchableRipple } from "react-native-paper";
 import { useLazySearchQuery } from "../redux/movie/movieApi";
 
 import { FlashList } from "@shopify/flash-list";
@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../types";
 import FrostedGlass from "../components/FrostedGlass";
 import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
+import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import useTranslation from "../service/useTranslation";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -295,63 +296,67 @@ const SearchScreen = ({ navigation, route }: any) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <BlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
-      <View style={styles.container}>
-        <View style={styles.searchContainer}>
-          <Searchbar 
-            placeholder={t("search.search-placeholder")} 
-            onChangeText={setSearchQuery} 
-            value={searchQuery} 
-            style={styles.searchbar}
-            inputStyle={styles.searchInput}
-            icon={() => <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={24} iconColor="#fff" style={{ margin: 0 }} />}
+    <TransparentModalScreen>
+      <BlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
+        <View style={styles.container}>
+          <View style={styles.searchContainer}>
+            <Searchbar
+              placeholder={t("search.search-placeholder")}
+              onChangeText={setSearchQuery}
+              value={searchQuery}
+              style={styles.searchbar}
+              inputStyle={styles.searchInput}
+              icon={() => (
+                <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={24} iconColor="#fff" style={{ margin: 0 }} />
+              )}
+            />
+          </View>
+
+          <View style={styles.chipContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
+              {categories.map((category, index) => (
+                <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>
+                  <TouchableRipple
+                    onPress={() => handleFilterChange(category.id)}
+                    style={[styles.categoryChip, filters.type === category.id && styles.categoryChipActive]}
+                  >
+                    <Text style={[styles.categoryText, filters.type === category.id && styles.categoryTextActive]}>{category.label}</Text>
+                  </TouchableRipple>
+                </Animated.View>
+              ))}
+            </ScrollView>
+            <TouchableRipple
+              onPress={() => {
+                navigation.navigate("SearchFilters", { ...route?.params, type: filters.type });
+              }}
+              style={[styles.categoryChip]}
+            >
+              <Text style={[styles.categoryText]}>Filters</Text>
+            </TouchableRipple>
+          </View>
+
+          <FlashList
+            estimatedItemSize={430}
+            contentContainerStyle={{ padding: 15 }}
+            data={allResults}
+            renderItem={({ item, index }) => <MovieCard index={index} item={item} />}
+            keyExtractor={(item, index) => {
+              const mediaType = item.media_type || filters.type;
+              const uniqueId = `${item.id}-${mediaType}`;
+              return uniqueId;
+            }}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={() =>
+              isFetching && currentPage > 1 ? (
+                <ActivityIndicator style={styles.loader} animating={true} color={MD2DarkTheme.colors.primary} />
+              ) : null
+            }
+            ListEmptyComponent={renderEmptyComponent}
           />
         </View>
-
-        <View style={styles.chipContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
-            {categories.map((category, index) => (
-              <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>
-                <TouchableRipple
-                  onPress={() => handleFilterChange(category.id)}
-                  style={[styles.categoryChip, filters.type === category.id && styles.categoryChipActive]}
-                >
-                  <Text style={[styles.categoryText, filters.type === category.id && styles.categoryTextActive]}>{category.label}</Text>
-                </TouchableRipple>
-              </Animated.View>
-            ))}
-          </ScrollView>
-          <TouchableRipple
-            onPress={() => {
-              navigation.navigate("SearchFilters", { ...route?.params, type: filters.type });
-            }}
-            style={[styles.categoryChip]}
-          >
-            <Text style={[styles.categoryText]}>Filters</Text>
-          </TouchableRipple>
-        </View>
-
-        <FlashList
-          estimatedItemSize={430}
-          contentContainerStyle={{ padding: 15 }}
-          data={allResults}
-          renderItem={({ item, index }) => <MovieCard index={index} item={item} />}
-          keyExtractor={(item, index) => {
-            const mediaType = item.media_type || filters.type;
-            const uniqueId = `${item.id}-${mediaType}`;
-            return uniqueId;
-          }}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={() =>
-            isFetching && currentPage > 1 ? (
-              <ActivityIndicator style={styles.loader} animating={true} color={MD2DarkTheme.colors.primary} />
-            ) : null
-          }
-          ListEmptyComponent={renderEmptyComponent}
-        />
-      </View>
-    </BlurView>
+      </BlurView>
+    </TransparentModalScreen>
   );
 };
 

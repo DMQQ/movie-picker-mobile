@@ -4,6 +4,7 @@ import { Dimensions, FlatList, Image, ScrollView, StyleSheet, View } from "react
 import { Button, Chip, Divider, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DropdownPersonSearch from "../components/DropdownSearchPeron";
+import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import { useGetAllProvidersQuery, useGetGenresQuery } from "../redux/movie/movieApi";
 import useTranslation from "../service/useTranslation";
 
@@ -65,98 +66,100 @@ export default function SearchFilters({ navigation, route }: any) {
   const insets = useSafeAreaInsets();
 
   return (
-    <BlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.headerContent}>
-            <IconButton icon="chevron-left" iconColor="#fff" onPress={() => navigation.pop()} size={24} style={styles.closeButton} />
+    <TransparentModalScreen>
+      <BlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <View style={styles.headerContent}>
+              <IconButton icon="chevron-left" iconColor="#fff" onPress={() => navigation.pop()} size={24} style={styles.closeButton} />
 
-            <Button mode="text" onPress={resetFilters} textColor={MD2DarkTheme.colors.primary} style={styles.resetButton}>
-              Reset
-            </Button>
+              <Button mode="text" onPress={resetFilters} textColor={MD2DarkTheme.colors.primary} style={styles.resetButton}>
+                Reset
+              </Button>
+            </View>
           </View>
-        </View>
 
-        <ScrollView
-          style={styles.scrollContent}
-          contentContainerStyle={styles.scrollContentContainer}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          {route.params?.type !== "both" && (
-            <>
-              <DropdownPersonSearch onSelectPerson={handlePeopleSelection} maxSelections={5} />
-              <Divider style={styles.divider} />
-            </>
-          )}
-          {/* Streaming Services */}
-          <Section title={t("room.providers")}>
-            <FlatList
-              data={(providers || []).slice(0, limitProviders)}
-              keyExtractor={(item) => item.provider_id.toString()}
-              horizontal={false}
-              numColumns={6}
-              scrollEnabled={false}
-              contentContainerStyle={styles.providersGrid}
-              renderItem={({ item }) => (
+          <ScrollView
+            style={styles.scrollContent}
+            contentContainerStyle={styles.scrollContentContainer}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {route.params?.type !== "both" && (
+              <>
+                <DropdownPersonSearch onSelectPerson={handlePeopleSelection} maxSelections={5} />
+                <Divider style={styles.divider} />
+              </>
+            )}
+            {/* Streaming Services */}
+            <Section title={t("room.providers")}>
+              <FlatList
+                data={(providers || []).slice(0, limitProviders)}
+                keyExtractor={(item) => item.provider_id.toString()}
+                horizontal={false}
+                numColumns={6}
+                scrollEnabled={false}
+                contentContainerStyle={styles.providersGrid}
+                renderItem={({ item }) => (
+                  <TouchableRipple
+                    onPress={() => toggleProvider(item.provider_id)}
+                    style={[styles.providerWrapper, selectedProviders.includes(item.provider_id) && styles.selectedProvider]}
+                  >
+                    <Image source={{ uri: `https://image.tmdb.org/t/p/w200${item?.logo_path}` }} style={styles.providerLogo} />
+                  </TouchableRipple>
+                )}
+                ListFooterComponent={
+                  <Button
+                    onPress={() => (limitProviders < (providers || [])?.length ? setLimitProviders((p) => p + 12) : setLimitProviders(18))}
+                  >
+                    {limitProviders < (providers || [])?.length ? t("search.more") : t("search.less")}
+                  </Button>
+                }
+              />
+            </Section>
+
+            <Divider style={styles.divider} />
+
+            {/* Genres */}
+            <Section title={t("search.genres")}>
+              <View style={styles.genreTabsContainer}>
                 <TouchableRipple
-                  onPress={() => toggleProvider(item.provider_id)}
-                  style={[styles.providerWrapper, selectedProviders.includes(item.provider_id) && styles.selectedProvider]}
+                  onPress={() => setActiveTab("movie")}
+                  style={[styles.genreTab, activeTab === "movie" && styles.activeGenreTab]}
                 >
-                  <Image source={{ uri: `https://image.tmdb.org/t/p/w200${item?.logo_path}` }} style={styles.providerLogo} />
+                  <Text style={[styles.genreTabText, activeTab === "movie" && styles.activeGenreTabText]}>{t("voter.types.movie")}</Text>
                 </TouchableRipple>
-              )}
-              ListFooterComponent={
-                <Button
-                  onPress={() => (limitProviders < (providers || [])?.length ? setLimitProviders((p) => p + 12) : setLimitProviders(18))}
-                >
-                  {limitProviders < (providers || [])?.length ? t("search.more") : t("search.less")}
-                </Button>
-              }
-            />
-          </Section>
+                <TouchableRipple onPress={() => setActiveTab("tv")} style={[styles.genreTab, activeTab === "tv" && styles.activeGenreTab]}>
+                  <Text style={[styles.genreTabText, activeTab === "tv" && styles.activeGenreTabText]}>{t("voter.types.series")}</Text>
+                </TouchableRipple>
+              </View>
 
-          <Divider style={styles.divider} />
+              <View style={styles.genreChipsContainer}>
+                {genreData.map((item) => (
+                  <Chip
+                    key={item.id}
+                    selected={genres.includes(item.id)}
+                    onPress={() => toggleGenre(item.id)}
+                    style={[styles.genreChip, genres.includes(item.id) && styles.selectedGenreChip]}
+                    textStyle={[styles.genreChipText, genres.includes(item.id) && styles.selectedGenreChipText]}
+                    showSelectedCheck={false}
+                    elevated
+                  >
+                    {item.name}
+                  </Chip>
+                ))}
+              </View>
+            </Section>
+          </ScrollView>
 
-          {/* Genres */}
-          <Section title={t("search.genres")}>
-            <View style={styles.genreTabsContainer}>
-              <TouchableRipple
-                onPress={() => setActiveTab("movie")}
-                style={[styles.genreTab, activeTab === "movie" && styles.activeGenreTab]}
-              >
-                <Text style={[styles.genreTabText, activeTab === "movie" && styles.activeGenreTabText]}>{t("voter.types.movie")}</Text>
-              </TouchableRipple>
-              <TouchableRipple onPress={() => setActiveTab("tv")} style={[styles.genreTab, activeTab === "tv" && styles.activeGenreTab]}>
-                <Text style={[styles.genreTabText, activeTab === "tv" && styles.activeGenreTabText]}>{t("voter.types.series")}</Text>
-              </TouchableRipple>
-            </View>
-
-            <View style={styles.genreChipsContainer}>
-              {genreData.map((item) => (
-                <Chip
-                  key={item.id}
-                  selected={genres.includes(item.id)}
-                  onPress={() => toggleGenre(item.id)}
-                  style={[styles.genreChip, genres.includes(item.id) && styles.selectedGenreChip]}
-                  textStyle={[styles.genreChipText, genres.includes(item.id) && styles.selectedGenreChipText]}
-                  showSelectedCheck={false}
-                  elevated
-                >
-                  {item.name}
-                </Chip>
-              ))}
-            </View>
-          </Section>
-        </ScrollView>
-
-        <BlurView style={[styles.bottomBar, { paddingBottom: insets.bottom }]} tint="dark" intensity={50}>
-          <Button mode="contained" onPress={applyFilters} style={styles.applyButton} contentStyle={styles.buttonContent}>
-            {getFilterCount() > 0 ? `${t("search.apply")} (` + getFilterCount() + ")" : t("search.apply")}
-          </Button>
-        </BlurView>
-      </View>
-    </BlurView>
+          <BlurView style={[styles.bottomBar, { paddingBottom: insets.bottom }]} tint="dark" intensity={50}>
+            <Button mode="contained" onPress={applyFilters} style={styles.applyButton} contentStyle={styles.buttonContent}>
+              {getFilterCount() > 0 ? `${t("search.apply")} (` + getFilterCount() + ")" : t("search.apply")}
+            </Button>
+          </BlurView>
+        </View>
+      </BlurView>
+    </TransparentModalScreen>
   );
 }
 

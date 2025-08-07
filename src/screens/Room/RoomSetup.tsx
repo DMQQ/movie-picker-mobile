@@ -129,8 +129,6 @@ export default function RoomSetup({ navigation }: any) {
     });
   }, [navigation, category, maxRounds, genre, providers]);
 
-  console.log("RoomSetup State:", state);
-
   return (
     <View style={{ flex: 1 }}>
       <PageHeading title={t("room.movie") + " Setup"} />

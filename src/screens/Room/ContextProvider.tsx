@@ -64,8 +64,6 @@ export default function ContextProvider({ children, navigation }: { children: Re
   const [providers, setProviders] = useState<number[]>([]);
   const [maxRounds, setMaxRounds] = useState(10);
 
-  console.log({ pageRange, genre, providers, category, maxRounds });
-
   return (
     <CreateRoomContext.Provider
       value={{

@@ -1,16 +1,13 @@
-console.log("=== App.tsx file is loading ===");
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { loadAsync } from "expo-font";
+import { isLoaded, loadAsync } from "expo-font";
 import { useEffect, useState } from "react";
-import { Linking, Platform, View } from "react-native";
+import { Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Button, MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
-import { FancySpinner } from "./src/components/FancySpinner";
 import { loadFavorites } from "./src/redux/favourites/favourites";
 import { roomActions } from "./src/redux/room/roomSlice";
 import { store, useAppDispatch } from "./src/redux/store";
@@ -31,6 +28,7 @@ import Main from "./src/screens/Voter/Main";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 import { LinkingOptions } from "@react-navigation/native";
+import { Image } from "expo-image";
 import SearchFilters from "./src/screens/SearchFilters";
 
 const linking: LinkingOptions<RootStackParamList> = {
@@ -69,7 +67,8 @@ const Fallback = () => (
       backgroundColor: "#000",
     }}
   >
-    <FancySpinner size={100} />
+    {/* <FancySpinner size={100} /> */}
+    <Image source={require("./assets/images/icon-light.png")} style={{ width: 100, height: 100, marginBottom: 20 }} />
   </View>
 );
 
@@ -90,44 +89,23 @@ export default function App() {
       });
   }, []);
 
-  if (!isLoaded) return <Fallback />;
-
   return (
     <SafeAreaProvider style={{ flex: 1 }}>
       <Provider store={store}>
         <PaperProvider theme={theme}>
-          <Navigator />
+          <Navigator isLoaded={isLoaded} />
         </PaperProvider>
       </Provider>
     </SafeAreaProvider>
   );
 }
 
-const Navigator = () => {
+const Navigator = ({ isLoaded }: { isLoaded: boolean }) => {
   const dispatch = useAppDispatch();
 
   const [loaded, setLoaded] = useState(false);
 
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
-
-  useEffect(() => {
-    // Handle deep links when app is already open
-    const subscription = Linking.addEventListener("url", handleDeepLink);
-
-    // Handle deep link that launched the app
-    (async () => {
-      const initialUrl = await Linking.getInitialURL();
-      if (initialUrl) {
-        handleDeepLink({ url: initialUrl });
-      }
-    })();
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
-
-  const handleDeepLink = ({ url }: { url: string }) => {};
 
   useEffect(() => {
     (async () => {
@@ -147,7 +125,7 @@ const Navigator = () => {
     dispatch(loadFavorites());
   }, [showLanguageSelector]);
 
-  if (!loaded) return <Fallback />;
+  if (!loaded || !isLoaded) return <Fallback />;
 
   if (showLanguageSelector) {
     return (
@@ -189,7 +167,15 @@ const Navigator = () => {
             }),
           }}
         >
-          <Stack.Screen name="Settings" component={SettingsScreen} options={{ presentation: "transparentModal", animation: "fade", gestureEnabled: true }} />
+          <Stack.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{
+              presentation: "transparentModal",
+              animation: "fade",
+              gestureEnabled: true,
+            }}
+          />
 
           <Stack.Screen
             name="RegionSelector"

@@ -77,19 +77,11 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
     };
   });
 
-  const buttonsAnimatedStyle = useAnimatedStyle(() => {
-    const scale = scrollY ? interpolate(scrollY.value, [0, 100], [1, 0.9], Extrapolation.CLAMP) : 1;
-
-    return {
-      transform: [{ scale }],
-    };
-  });
-
   const nickname = useAppSelector((state) => state.room.nickname);
 
   return (
     <Animated.View style={[styles.container, headerAnimatedStyle]} entering={FadeInUp}>
-      <BlurView style={{ flex: 1, padding: 15, paddingTop: insets.top }} intensity={50} tint="dark">
+      <BlurView style={{ flex: 1, padding: 15, paddingTop: insets.top }} intensity={60} tint="dark">
         <Animated.View style={contentAnimatedStyle}>
           {/* Main header with Hello, settings, and search */}
           <Animated.View style={[styles.mainHeader, mainHeaderAnimatedStyle]}>
@@ -97,7 +89,7 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
               <Text style={styles.helloText}>Hi {nickname}!</Text>
             </Animated.View>
 
-            <Animated.View style={[styles.buttonsContainer, buttonsAnimatedStyle]}>
+            <Animated.View style={[styles.buttonsContainer]}>
               <IconButton icon="cog" size={24} iconColor="#fff" onPress={() => navigation.navigate("Settings")} style={styles.iconButton} />
 
               <IconButton

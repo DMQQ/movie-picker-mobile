@@ -83,8 +83,6 @@ const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: Choose
 
         if (region) {
           setSelectedRegion(region);
-
-          console.log("Region set to", region);
         }
       }
     })();
@@ -93,7 +91,6 @@ const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: Choose
   const onSettingsChange = async (settings: any) => {
     try {
       await AsyncStorage.setItem("regionalization", JSON.stringify(settings));
-      console.log("settings", settings);
 
       await reloadAsync();
     } catch (error) {

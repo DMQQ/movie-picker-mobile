@@ -1,24 +1,22 @@
-import React, { forwardRef, memo, useEffect, useImperativeHandle } from "react";
-import { View, StyleSheet, Dimensions, StyleProp, ViewStyle, Image, Platform } from "react-native";
+import { Entypo } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
+import { forwardRef, memo, useImperativeHandle } from "react";
+import { Dimensions, Image, Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { MD2DarkTheme } from "react-native-paper";
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
+  clamp,
   Easing,
   runOnJS,
-  clamp,
   SlideInDown,
   SlideOutDown,
   useAnimatedReaction,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { MD2DarkTheme } from "react-native-paper";
+import Svg, { Circle, G, Path } from "react-native-svg";
 import useTranslation from "../service/useTranslation";
-import * as Haptics from "expo-haptics";
-import Svg, { Path, Defs, Pattern, Line, G, Circle } from "react-native-svg";
-import Thumbnail from "./Thumbnail";
-import { Entypo } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("window");
 

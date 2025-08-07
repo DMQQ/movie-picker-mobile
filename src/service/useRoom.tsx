@@ -19,7 +19,6 @@ export default function useRoom(room: string) {
   } = useAppSelector((state) => state.room);
 
   const setCards = (_movies: Movie[]) => {
-    console.log("🎬 [useRoom] Adding movies to setCards:", _movies.length, "movies");
     initialCardsLength.current = _movies.length;
     dispatch(roomActions.addMovies(_movies));
   };
@@ -35,7 +34,6 @@ export default function useRoom(room: string) {
     if (!socket) return;
 
     const handleMovies = async (_cards: { movies: Movie[] }) => {
-      console.log("🎬 [useRoom] Received movies from socket:", _cards.movies.length);
       await Promise.all(
         _cards.movies.map((card: Movie) => prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge))
       );
@@ -75,7 +73,6 @@ export default function useRoom(room: string) {
   const runOnce = useRef(false);
   useEffect(() => {
     if (isPlaying && runOnce.current === false && cards.length === 0) {
-      console.log("🎬 [useRoom] Requesting initial movies for room:", room);
       runOnce.current = true;
       socket?.emit("get-movies", room);
     }
@@ -123,7 +120,6 @@ export default function useRoom(room: string) {
     const response = await socket?.emitWithAck("join-room", code, nickname);
 
     if (response.joined) {
-      console.log("🎬 [useRoom] Joined room, setting room data");
       dispatch(roomActions.setRoom(response.room));
       dispatch(roomActions.setPlaying(response.room.isStarted));
     }
@@ -133,7 +129,6 @@ export default function useRoom(room: string) {
     if (cards.length === Math.trunc(initialCardsLength.current / 4) && initialCardsLength.current > 0) {
       socket?.emitWithAck("get-next-page", roomId).then((response) => {
         if (response?.movies && response.movies.length > 0) {
-          console.log("🎬 [useRoom] Appending next page movies:", response.movies.length, "movies");
           dispatch(roomActions.appendMovies(response.movies));
         }
       });
