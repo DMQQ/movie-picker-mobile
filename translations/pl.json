@@ -271,5 +271,13 @@
     "picks": "wyborów",
     "matched-movies": "Dopasowane filmy",
     "failed-to-load": "Nie udało się załadować podsumowania gry"
+  },
+  "game-invite": {
+    "social-title": "🎯 Znajdź Idealny Wybór",
+    "social-subtitle": "Przesuwaj z przyjaciółmi i odkrywaj filmy, które pokochacie",
+    "social-button": "Zagraj w Dopasowanie",
+    "quick-title": "🎮 Rzuć Wyzwanie Znajomym",
+    "quick-subtitle": "Myślisz, że znasz świetne filmy? Udowodnij to!",
+    "quick-button": "Rozpocznij Grę Filmową"
   }
 }

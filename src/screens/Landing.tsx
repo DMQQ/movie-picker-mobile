@@ -55,7 +55,8 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const [selectedChip, setSelectedChip] = useState("all");
   const previousChip = useRef(selectedChip);
 
-  const [data, setData] = useState<{ name: string; results: Movie[] }[]>([]);
+  type SectionData = { name: string; results: Movie[] } | { name: string; results: Movie[]; type: "game"; gameType: "quick" | "social" };
+  const [data, setData] = useState<SectionData[]>([]);
 
   const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
   const [hasMore, setHasMore] = useState(true);
@@ -78,7 +79,62 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
           const uniqueSections = (response.data || []).filter(
             (newSection) => !prev.some((existingSection) => existingSection.name === newSection.name)
           );
-          return [...prev, ...uniqueSections];
+
+          let newData = [...prev, ...uniqueSections];
+
+          const movieSectionsCount = newData.filter(item => !('type' in item && (item as any).type === 'game')).length;
+
+          if (
+            movieSectionsCount >= 3 &&
+            !newData.some((item) => "type" in item && (item as any).type === "game" && "gameType" in item && (item as any).gameType === "social")
+          ) {
+            let movieCount = 0;
+            let insertIndex = 0;
+            for (let i = 0; i < newData.length; i++) {
+              const currentItem = newData[i] as any;
+              if (!('type' in currentItem && currentItem.type === 'game')) {
+                movieCount++;
+                if (movieCount === 3) {
+                  insertIndex = i + 1;
+                  break;
+                }
+              }
+            }
+            
+            newData.splice(insertIndex, 0, {
+              name: "Game Invite 1",
+              results: [],
+              type: "game" as const,
+              gameType: "social" as const,
+            } as SectionData);
+          }
+
+          if (
+            movieSectionsCount >= 9 &&
+            !newData.some((item) => "type" in item && (item as any).type === "game" && "gameType" in item && (item as any).gameType === "quick")
+          ) {
+            let movieCount = 0;
+            let insertIndex = 0;
+            for (let i = 0; i < newData.length; i++) {
+              const currentItem = newData[i] as any;
+              if (!('type' in currentItem && currentItem.type === 'game')) {
+                movieCount++;
+                if (movieCount === 9) {
+                  insertIndex = i + 1;
+                  break;
+                }
+              }
+            }
+            
+            newData.splice(insertIndex, 0, {
+              name: "Game Invite 2",
+              results: [],
+              type: "game" as const,
+              gameType: "quick" as const,
+            } as SectionData);
+          }
+
+          return newData;
         });
       } else if (hasMore) {
         setPage((prev) => {
@@ -95,7 +151,25 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     });
   }, []);
 
-  const renderItem = useCallback(({ item: group }: { item: { name: string; results: Movie[] } }) => <Section group={group} />, []);
+  const renderItem = useCallback(
+    ({ item, index }: { item: SectionData; index: number }) => {
+      if ("type" in item && item.type === "game") {
+        const previousSections = data.slice(0, index).filter((section) => !("type" in section));
+        const backgroundMovies = previousSections.flatMap((section) => section.results).slice(0, 6);
+
+        return (
+          <GameInviteSection
+            type={item.gameType}
+            navigation={navigation}
+            backgroundMovies={backgroundMovies}
+          />
+        );
+      }
+
+      return <Section group={item} />;
+    },
+    [navigation, data]
+  );
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -103,13 +177,34 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     setRefreshing(true);
     setPage(0);
     setData([]);
-    getLandingMovies({ skip: 0, take: 5 }).then((response) => {
+    getLandingMovies({ skip: 0, take: 5, category: selectedChip }).then((response) => {
       if (response.data && Array.isArray(response.data)) {
-        setData(response.data);
+        let newData = [...response.data];
+
+        if (newData.length >= 3) {
+          newData.splice(3, 0, {
+            name: "Game Invite 1",
+            results: [],
+            type: "game" as const,
+            gameType: "social" as const,
+          } as SectionData);
+        }
+
+        if (newData.length >= 9) {
+          const adjustedIndex = newData.length >= 3 ? 10 : 9;
+          newData.splice(adjustedIndex, 0, {
+            name: "Game Invite 2",
+            results: [],
+            type: "game" as const,
+            gameType: "quick" as const,
+          } as SectionData);
+        }
+
+        setData(newData);
       }
       setRefreshing(false);
     });
-  }, []);
+  }, [selectedChip]);
 
   const handleChipPress = (chip: string) => {
     setSelectedChip(chip);
@@ -137,12 +232,13 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
             <Text style={{ fontFamily: "Bebas", fontSize: 40 }}>{t("landing.error")}</Text>
           </View>
         }
-        data={(data || []) as { name: string; results: Movie[] }[]}
+        data={data || []}
         keyExtractor={keyExtractor as any}
         onEndReached={onEndReached}
         renderItem={renderItem as any}
         onEndReachedThreshold={0.5}
         drawDistance={1000}
+        getItemType={(item: any) => ("type" in item && item.type === "game" ? "game" : "section")}
         estimatedItemSize={height * 0.275 + 30}
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
       />
@@ -396,3 +492,142 @@ export const SectionListItem = (item: Movie) => {
     </AnimatedPressable>
   );
 };
+
+const gameInviteStyles = StyleSheet.create({
+  container: {
+    marginHorizontal: 15,
+    borderRadius: 16,
+    overflow: "hidden",
+    minHeight: 180,
+    marginBottom: 30,
+  },
+  backgroundMovies: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    opacity: 0.3,
+  },
+  movieThumbnail: {
+    width: "33.33%",
+    height: "50%",
+    opacity: 0.6,
+  },
+  blurContainer: {
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 180,
+  },
+  title: {
+    fontSize: 28,
+    fontFamily: "Bebas",
+    color: "#fff",
+    textAlign: "center",
+    marginBottom: 8,
+    textShadowColor: "rgba(0,0,0,0.8)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "rgba(255,255,255,0.95)",
+    textAlign: "center",
+    marginBottom: 20,
+    lineHeight: 22,
+    textShadowColor: "rgba(0,0,0,0.8)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  button: {
+    borderRadius: 25,
+    overflow: "hidden",
+    minWidth: 180,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  buttonGradient: {
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: 8,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+});
+
+const GameInviteSection = memo(
+  ({
+    type,
+    navigation,
+    backgroundMovies = [],
+  }: {
+    type: "quick" | "social";
+    navigation: any;
+    backgroundMovies?: Movie[];
+  }) => {
+    const t = useTranslation();
+    
+    const title = type === "quick" ? t("game-invite.quick-title") : t("game-invite.social-title");
+    const subtitle = type === "quick" ? t("game-invite.quick-subtitle") : t("game-invite.social-subtitle");
+    const buttonText = type === "quick" ? t("game-invite.quick-button") : t("game-invite.social-button");
+    const handleGamePress = useCallback(() => {
+      if (Platform.OS === "ios") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      }
+
+      if (type === "quick") {
+        navigation.navigate("Games");
+      } else {
+        navigation.navigate("QRCode", {
+          screen: "CreateQRCode",
+          params: { quickStart: true },
+        });
+      }
+    }, [type, navigation]);
+
+    const gradientColors: readonly [string, string, ...string[]] =
+      type === "quick" ? (["#6366f1", "#8b5cf6"] as const) : (["#f59e0b", "#ef4444"] as const);
+
+    return (
+      <Animated.View style={gameInviteStyles.container} entering={FadeIn.delay(200)}>
+        {/* Background Movies */}
+        <View style={gameInviteStyles.backgroundMovies}>
+          {backgroundMovies.slice(0, 6).map((movie, index) => (
+            <Thumbnail
+              key={`${movie.id}-${index}`}
+              path={movie.poster_path}
+              size={185}
+              container={gameInviteStyles.movieThumbnail}
+              priority="low"
+            />
+          ))}
+        </View>
+
+        {/* Blur Overlay with Content */}
+        <BlurView intensity={10} tint="dark" style={gameInviteStyles.blurContainer}>
+          <Text style={gameInviteStyles.title}>{title}</Text>
+          <Text style={gameInviteStyles.subtitle}>{subtitle}</Text>
+
+          <TouchableOpacity style={gameInviteStyles.button} onPress={handleGamePress} activeOpacity={0.8}>
+            <LinearGradient colors={gradientColors} style={gameInviteStyles.buttonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+              <FontAwesome name={type === "quick" ? "gamepad" : "users"} size={18} color="#fff" />
+              <Text style={gameInviteStyles.buttonText}>{buttonText}</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </BlurView>
+      </Animated.View>
+    );
+  }
+);

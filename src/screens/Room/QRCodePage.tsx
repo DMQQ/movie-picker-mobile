@@ -10,6 +10,7 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
+import { getMovieCategories } from "../../utils/roomsConfig";
 
 interface RoomSetupParams {
   category: string;
@@ -36,6 +37,7 @@ export default function QRCodePage({ navigation, route }: any) {
   const { qrCode, nickname } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
+  const t = useTranslation();
 
   const {
     room: { users, roomId },
@@ -43,14 +45,30 @@ export default function QRCodePage({ navigation, route }: any) {
   useEffect(() => {
     (async () => {
       try {
-        const response = (await socket?.emitWithAck("create-room", {
-          type: category,
-          pageRange: Math.trunc(Math.random() * 5),
-          genre: genre?.map((g) => g.id) || [],
-          nickname,
-          providers: providers || [],
-          maxRounds: maxRounds || 6,
-        })) as ISocketResponse;
+        const response = (await socket?.emitWithAck(
+          "create-room",
+          route?.params?.quickStart
+            ? (() => {
+                const movieCategories = getMovieCategories(t);
+                const randomCategory = movieCategories[Math.floor(Math.random() * movieCategories.length)];
+                return {
+                  type: randomCategory.path,
+                  pageRange: Math.trunc(Math.random() * 5),
+                  genre: [],
+                  nickname,
+                  providers: [],
+                  maxRounds: 3,
+                };
+              })()
+            : {
+                type: category,
+                pageRange: Math.trunc(Math.random() * 5),
+                genre: genre?.map((g) => g.id) || [],
+                nickname,
+                providers: providers || [],
+                maxRounds: maxRounds || 6,
+              }
+        )) as ISocketResponse;
 
         if (response) {
           dispatch(roomActions.setRoom(response.details));
@@ -69,6 +87,15 @@ export default function QRCodePage({ navigation, route }: any) {
   const onJoinOwnRoom = (code: string) => {
     socket?.emit("room:start", roomId);
     dispatch(roomActions.setPlaying(true));
+
+    // Determine type based on category path or quickStart default
+    let gameType = "movie"; // default
+    if (route?.params?.quickStart) {
+      gameType = "movie"; // quickStart uses movie categories
+    } else if (category) {
+      gameType = category.includes("/movie") || category.includes("movie") ? "movie" : "tv";
+    }
+
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -77,15 +104,13 @@ export default function QRCodePage({ navigation, route }: any) {
             name: "Home",
             params: {
               roomId: code,
-              type: category.includes("movie") ? "movie" : "tv",
+              type: gameType,
             },
           },
         ],
       })
     );
   };
-
-  const t = useTranslation();
 
   return (
     <View style={{ flex: 1 }}>

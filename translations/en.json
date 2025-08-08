@@ -273,5 +273,13 @@
     "picks": "picks",
     "matched-movies": "Matched Movies",
     "failed-to-load": "Failed to load game summary"
+  },
+  "game-invite": {
+    "social-title": "🎯 Find Your Perfect Match",
+    "social-subtitle": "Swipe with friends and discover movies you'll both love",
+    "social-button": "Play Matching Game",
+    "quick-title": "🎮 Challenge Your Friends",
+    "quick-subtitle": "Think you know great movies? Prove it!",
+    "quick-button": "Start Movie Game"
   }
 }
