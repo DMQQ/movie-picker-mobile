@@ -16,15 +16,15 @@ const getFormattedDate = (offset = 0) => {
 
 export const getMovieCategories = (t: (key: string) => string) => [
   { label: t("room.genres.all_movies"), path: "/discover/movie?sort_by=popularity.desc&vote_count.gte=100" },
-  {
-    label: t("room.genres.now_playing"),
-    path: `/discover/movie?primary_release_date.gte=${getFormattedDate(
-      -30
-    )}&primary_release_date.lte=${getFormattedDate()}&sort_by=release_date.desc`,
-  },
   { label: t("room.genres.popular"), path: "/discover/movie?sort_by=popularity.desc&vote_count.gte=200" },
   { label: t("room.genres.top_rated"), path: "/discover/movie?sort_by=vote_average.desc&vote_count.gte=300" },
   { label: t("room.genres.upcoming"), path: "/movie/upcoming" },
+  {
+    label: t("room.genres.now_playing"),
+    path: `/discover/movie?primary_release_date.gte=${getFormattedDate(
+      -60
+    )}&primary_release_date.lte=${getFormattedDate()}&sort_by=release_date.desc`,
+  },
 ];
 
 export const getSeriesCategories = (t: (key: string) => string) => [

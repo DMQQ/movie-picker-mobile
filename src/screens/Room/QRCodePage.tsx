@@ -1,6 +1,6 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { CommonActions } from "@react-navigation/native";
-import { memo, useContext, useEffect } from "react";
+import { memo, useContext, useEffect, useMemo } from "react";
 import { Dimensions, Share, View } from "react-native";
 import { Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
@@ -10,7 +10,7 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
-import { getMovieCategories } from "../../utils/roomsConfig";
+import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
 
 interface RoomSetupParams {
   category: string;
@@ -42,35 +42,57 @@ export default function QRCodePage({ navigation, route }: any) {
   const {
     room: { users, roomId },
   } = useAppSelector((state) => state.room);
+
+  const roomConfig = useMemo(() => {
+    if (!route?.params?.quickStart) {
+      return {
+        type: category,
+        pageRange: Math.trunc(Math.random() * 5),
+        genre: genre?.map((g) => g.id) || [],
+        nickname,
+        providers: providers || [],
+        maxRounds: maxRounds || 6,
+      };
+    }
+
+    // QuickStart logic - only run when we have valid nickname and socket
+    if (!nickname || !socket) {
+      return null;
+    }
+
+    const movieCategories = getMovieCategories(t).slice(0, 3);
+    const seriesCategories = getSeriesCategories(t).slice(0, 3);
+
+    // Pick one random category from movies and one from series
+    const randomMovie = movieCategories[Math.floor(Math.random() * movieCategories.length)];
+    const randomSeries = seriesCategories[Math.floor(Math.random() * seriesCategories.length)];
+
+    // Randomly choose between movie or series
+    const randomCategory = Math.random() < 0.5 ? randomMovie : randomSeries;
+
+    const config = {
+      type: randomCategory.path,
+      pageRange: Math.trunc(Math.random() * 5),
+      genre: [],
+      nickname,
+      providers: [],
+      maxRounds: 3,
+    };
+    console.log("🎮 QuickStart selected:", randomCategory.label);
+    return config;
+  }, [route?.params?.quickStart, category, maxRounds, genre, providers, nickname, socket]);
   useEffect(() => {
     (async () => {
       try {
-        const response = (await socket?.emitWithAck(
-          "create-room",
-          route?.params?.quickStart
-            ? (() => {
-                const movieCategories = getMovieCategories(t);
-                const randomCategory = movieCategories[Math.floor(Math.random() * movieCategories.length)];
-                return {
-                  type: randomCategory.path,
-                  pageRange: Math.trunc(Math.random() * 5),
-                  genre: [],
-                  nickname,
-                  providers: [],
-                  maxRounds: 3,
-                };
-              })()
-            : {
-                type: category,
-                pageRange: Math.trunc(Math.random() * 5),
-                genre: genre?.map((g) => g.id) || [],
-                nickname,
-                providers: providers || [],
-                maxRounds: maxRounds || 6,
-              }
-        )) as ISocketResponse;
+        if (!roomConfig) {
+          return;
+        }
+
+        const response = (await socket?.emitWithAck("create-room", roomConfig)) as ISocketResponse;
 
         if (response) {
+          console.log("✅ Room created:", response.roomId);
+
           dispatch(roomActions.setRoom(response.details));
           dispatch(roomActions.setQRCode(response.roomId));
 
@@ -80,18 +102,20 @@ export default function QRCodePage({ navigation, route }: any) {
             dispatch(roomActions.setActiveUsers(users));
           });
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log("💥 Error creating room:", error);
+      }
     })();
-  }, [category, genre, providers, maxRounds, nickname, socket, dispatch]);
+  }, [roomConfig, nickname, socket, dispatch, route?.params]);
 
   const onJoinOwnRoom = (code: string) => {
     socket?.emit("room:start", roomId);
     dispatch(roomActions.setPlaying(true));
 
-    // Determine type based on category path or quickStart default
-    let gameType = "movie"; // default
-    if (route?.params?.quickStart) {
-      gameType = "movie"; // quickStart uses movie categories
+    let gameType = "movie";
+    if (route?.params?.quickStart && roomConfig) {
+      gameType = roomConfig.type?.includes("/tv") ? "tv" : "movie";
+      console.log("🎮 Starting:", gameType);
     } else if (category) {
       gameType = category.includes("/movie") || category.includes("movie") ? "movie" : "tv";
     }
