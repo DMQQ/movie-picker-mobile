@@ -171,16 +171,17 @@ const Navigator = ({ isLoaded }: { isLoaded: boolean }) => {
             name="Settings"
             component={SettingsScreen}
             options={{
-              presentation: "transparentModal",
-              animation: "fade",
-              gestureEnabled: true,
+              ...(Platform.OS === "ios" && { presentation: "transparentModal", animation: "fade", gestureEnabled: true }),
             }}
           />
 
           <Stack.Screen
             name="RegionSelector"
             component={RegionSelectorScreen}
-            options={{ headerShown: false, presentation: "transparentModal", animation: "fade", gestureEnabled: true }}
+            options={{
+              headerShown: false,
+              ...(Platform.OS === "ios" && { presentation: "transparentModal", animation: "fade", gestureEnabled: true }),
+            }}
           />
 
           <Stack.Screen name="Landing" component={Landing} />
@@ -205,6 +206,7 @@ const Navigator = ({ isLoaded }: { isLoaded: boolean }) => {
               headerTitle: "",
               title: "",
               presentation: "modal",
+              ...(Platform.OS === "android" && { animation: "fade_from_bottom" }),
             }}
             initialParams={{
               id: 0,
@@ -260,15 +262,16 @@ const Navigator = ({ isLoaded }: { isLoaded: boolean }) => {
             component={Search}
             options={{
               headerShown: false,
-              presentation: "transparentModal",
-              animation: "fade",
-              gestureEnabled: true,
+              ...(Platform.OS === "ios" && { presentation: "transparentModal", animation: "fade", gestureEnabled: true }),
             }}
           />
           <Stack.Screen
             name="SearchFilters"
             component={SearchFilters}
-            options={{ headerShown: false, presentation: "transparentModal", animation: "fade", gestureEnabled: true }}
+            options={{
+              headerShown: false,
+              ...(Platform.OS === "ios" && { presentation: "transparentModal", animation: "fade", gestureEnabled: true }),
+            }}
           />
         </Stack.Navigator>
       </GestureHandlerRootView>

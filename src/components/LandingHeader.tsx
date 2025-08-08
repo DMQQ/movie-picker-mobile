@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
-import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { Platform, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { IconButton, Text } from "react-native-paper";
 import Animated, { Extrapolation, FadeInUp, interpolate, SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -68,7 +68,7 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
 
   return (
     <Animated.View style={[styles.container, headerAnimatedStyle]} entering={FadeInUp}>
-      <BlurView style={{ flex: 1, padding: 15, paddingTop: insets.top }} intensity={60} tint="dark">
+      <BlurView style={{ flex: 1, padding: 15, paddingTop: insets.top }} intensity={Platform.OS === "ios" ? 60 : 100} tint="dark">
         <Animated.View>
           <Animated.View style={[styles.mainHeader, mainHeaderAnimatedStyle]}>
             <Text style={styles.helloText}>Hi {nickname}!</Text>
@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 1000,
+    backgroundColor: Platform.OS === "android" ? "#000" : "transparent",
   },
   mainHeader: {
     flexDirection: "row",

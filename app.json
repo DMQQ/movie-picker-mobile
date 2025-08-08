@@ -55,7 +55,7 @@
       },
       "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202507020,
+      "versionCode": 202500808,
       "intentFilters": [
         {
           "action": "VIEW",

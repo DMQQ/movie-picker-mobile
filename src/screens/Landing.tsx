@@ -82,17 +82,19 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
           let newData = [...prev, ...uniqueSections];
 
-          const movieSectionsCount = newData.filter(item => !('type' in item && (item as any).type === 'game')).length;
+          const movieSectionsCount = newData.filter((item) => !("type" in item && (item as any).type === "game")).length;
 
           if (
             movieSectionsCount >= 3 &&
-            !newData.some((item) => "type" in item && (item as any).type === "game" && "gameType" in item && (item as any).gameType === "social")
+            !newData.some(
+              (item) => "type" in item && (item as any).type === "game" && "gameType" in item && (item as any).gameType === "social"
+            )
           ) {
             let movieCount = 0;
             let insertIndex = 0;
             for (let i = 0; i < newData.length; i++) {
               const currentItem = newData[i] as any;
-              if (!('type' in currentItem && currentItem.type === 'game')) {
+              if (!("type" in currentItem && currentItem.type === "game")) {
                 movieCount++;
                 if (movieCount === 3) {
                   insertIndex = i + 1;
@@ -100,7 +102,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
                 }
               }
             }
-            
+
             newData.splice(insertIndex, 0, {
               name: "Game Invite 1",
               results: [],
@@ -111,13 +113,15 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
           if (
             movieSectionsCount >= 9 &&
-            !newData.some((item) => "type" in item && (item as any).type === "game" && "gameType" in item && (item as any).gameType === "quick")
+            !newData.some(
+              (item) => "type" in item && (item as any).type === "game" && "gameType" in item && (item as any).gameType === "quick"
+            )
           ) {
             let movieCount = 0;
             let insertIndex = 0;
             for (let i = 0; i < newData.length; i++) {
               const currentItem = newData[i] as any;
-              if (!('type' in currentItem && currentItem.type === 'game')) {
+              if (!("type" in currentItem && currentItem.type === "game")) {
                 movieCount++;
                 if (movieCount === 9) {
                   insertIndex = i + 1;
@@ -125,7 +129,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
                 }
               }
             }
-            
+
             newData.splice(insertIndex, 0, {
               name: "Game Invite 2",
               results: [],
@@ -157,13 +161,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         const previousSections = data.slice(0, index).filter((section) => !("type" in section));
         const backgroundMovies = previousSections.flatMap((section) => section.results).slice(0, 6);
 
-        return (
-          <GameInviteSection
-            type={item.gameType}
-            navigation={navigation}
-            backgroundMovies={backgroundMovies}
-          />
-        );
+        return <GameInviteSection type={item.gameType} navigation={navigation} backgroundMovies={backgroundMovies} />;
       }
 
       return <Section group={item} />;
@@ -319,6 +317,7 @@ const tabStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    backgroundColor: Platform.OS === "android" ? "#000" : "transparent",
   },
   button: {
     flex: 1,
@@ -350,7 +349,7 @@ const BottomTab = memo(
 
     return (
       <BlurView
-        intensity={60}
+        intensity={Platform.OS === "ios" ? 60 : 100}
         tint="dark"
         style={[{ flexDirection: "row", paddingBottom: insets.bottom, paddingTop: 10 }, tabStyles.container]}
       >
@@ -568,17 +567,9 @@ const gameInviteStyles = StyleSheet.create({
 });
 
 const GameInviteSection = memo(
-  ({
-    type,
-    navigation,
-    backgroundMovies = [],
-  }: {
-    type: "quick" | "social";
-    navigation: any;
-    backgroundMovies?: Movie[];
-  }) => {
+  ({ type, navigation, backgroundMovies = [] }: { type: "quick" | "social"; navigation: any; backgroundMovies?: Movie[] }) => {
     const t = useTranslation();
-    
+
     const title = type === "quick" ? t("game-invite.quick-title") : t("game-invite.social-title");
     const subtitle = type === "quick" ? t("game-invite.quick-subtitle") : t("game-invite.social-subtitle");
     const buttonText = type === "quick" ? t("game-invite.quick-button") : t("game-invite.social-button");
