@@ -240,7 +240,12 @@
   },
   "landing": {
     "error": "Oops, coś poszło nie tak, spróbuj ponownie.",
-    "title": "Movie Picker"
+    "title": "Movie Picker",
+    "chips": {
+      "all": "Wszystko",
+      "trending": "Popularne",
+      "new": "Nowości"
+    }
   },
   "tabBar": {
     "settings": "Ustawienia",
@@ -248,5 +253,23 @@
     "join-game": "Dołącz do gry",
     "games": "Gry",
     "search": "Szukaj"
+  },
+  "game-summary": {
+    "loading": "Ładowanie podsumowania gry...",
+    "error": "Błąd: ",
+    "back-to-home": "Powrót do głównego menu",
+    "game-completed": "Gra zakończona!",
+    "game-finished": "Gra zakończona!",
+    "rounds": "rund",
+    "movies": "Filmy",
+    "tv-shows": "Seriale",
+    "room": "Pokój: ",
+    "players": "Gracze",
+    "matches": "Dopasowania",
+    "total-picks": "Łączne wybory",
+    "player-performance": "Wyniki graczy:",
+    "picks": "wyborów",
+    "matched-movies": "Dopasowane filmy",
+    "failed-to-load": "Nie udało się załadować podsumowania gry"
   }
 }

@@ -32,7 +32,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
-      "buildNumber": "20250807",
+      "buildNumber": "20250808",
       "supportsTablet": false,
       "icon": {
         "light": "./assets/images/icon-light.png",

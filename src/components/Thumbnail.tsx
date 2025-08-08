@@ -67,7 +67,7 @@ export default function Thumbnail({
         source={{ uri: `https://image.tmdb.org/t/p/w${size}` + path, cacheKey: `https://image.tmdb.org/t/p/w${size}` + path }}
         placeholder={{ uri: placeholder }}
         placeholderContentFit="cover"
-        transition={200}
+        transition={500}
         cachePolicy="memory-disk"
         style={[styles.image, rest.style]}
       />
@@ -83,7 +83,7 @@ export async function prefetchThumbnail(path: string, size: number = 200) {
 }
 
 const styles = StyleSheet.create({
-  container: { overflow: "hidden", backgroundColor: MD2DarkTheme.colors.surface },
+  container: { overflow: "hidden" },
 
   image: {
     flex: 1,

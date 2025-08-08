@@ -242,7 +242,12 @@
   },
   "landing": {
     "error": "Something went wrong. Please try again.",
-    "title": "Welcome to Movie Picker"
+    "title": "Welcome to Movie Picker",
+    "chips": {
+      "all": "All",
+      "trending": "Trending",
+      "new": "New"
+    }
   },
   "tabBar": {
     "settings": "Settings",
@@ -250,5 +255,23 @@
     "join-game": "Join game",
     "games": "Games",
     "search": "Search"
+  },
+  "game-summary": {
+    "loading": "Loading game summary...",
+    "error": "Error: ",
+    "back-to-home": "Back to Home",
+    "game-completed": "Game Completed!",
+    "game-finished": "Game finished!",
+    "rounds": "rounds",
+    "movies": "Movies",
+    "tv-shows": "TV Shows",
+    "room": "Room: ",
+    "players": "Players",
+    "matches": "Matches",
+    "total-picks": "Total Picks",
+    "player-performance": "Player Performance:",
+    "picks": "picks",
+    "matched-movies": "Matched Movies",
+    "failed-to-load": "Failed to load game summary"
   }
 }

@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import { useContext, useEffect, useState } from "react";
 import { Dimensions, FlatList, ScrollView, StyleSheet, View } from "react-native";
@@ -9,6 +9,7 @@ import Thumbnail from "../../components/Thumbnail";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
+import useTranslation from "../../service/useTranslation";
 
 interface GameSummary {
   roomId: string;
@@ -40,6 +41,7 @@ export default function GameSummary({ route }: any) {
   const dispatch = useAppDispatch();
   const theme = useTheme();
   const { socket } = useContext(SocketContext);
+  const t = useTranslation();
 
   const [summary, setSummary] = useState<GameSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -63,7 +65,7 @@ export default function GameSummary({ route }: any) {
           setError(response.error);
         }
       } catch (err) {
-        setError("Failed to load game summary");
+        setError(t("game-summary.failed-to-load"));
       } finally {
         setLoading(false);
       }
@@ -81,7 +83,12 @@ export default function GameSummary({ route }: any) {
 
   const handleBackToHome = () => {
     dispatch(roomActions.reset());
-    navigation.navigate("Landing");
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "Landing" }],
+      })
+    );
   };
 
   const renderMovieItem = ({ item }: { item: any }) => {
@@ -114,7 +121,7 @@ export default function GameSummary({ route }: any) {
       <View style={{ flex: 1 }}>
         <View style={[styles.container, styles.centered]}>
           <FancySpinner size={80} />
-          <Text style={styles.loadingText}>Loading game summary...</Text>
+          <Text style={styles.loadingText}>{t("game-summary.loading")}</Text>
         </View>
       </View>
     );
@@ -124,9 +131,9 @@ export default function GameSummary({ route }: any) {
     return (
       <View style={{ flex: 1 }}>
         <View style={[styles.container, styles.centered]}>
-          <Text style={styles.errorText}>Error: {error}</Text>
+          <Text style={styles.errorText}>{t("game-summary.error")}{error}</Text>
           <Button mode="contained" onPress={handleBackToHome} style={styles.backButton}>
-            Back to Home
+            {t("game-summary.back-to-home")}
           </Button>
         </View>
       </View>
@@ -142,12 +149,12 @@ export default function GameSummary({ route }: any) {
               <LottieView source={require("../../assets/confetti.json")} autoPlay loop={false} style={styles.confetti} />
             )}
             <Text style={[styles.statusText, { color: theme.colors.primary }]}>
-              {summary?.gameEndReason === "all_users_finished" ? "Game Completed!" : "Game finished!"}
+              {summary?.gameEndReason === "all_users_finished" ? t("game-summary.game-completed") : t("game-summary.game-finished")}
             </Text>
 
             {summary && (
               <Text style={styles.configText}>
-                {summary.maxRounds} rounds • {summary.type === "movie" ? "Movies" : "TV Shows"} • Room: {summary.roomId || roomId}
+                {summary.maxRounds} {t("game-summary.rounds")} • {summary.type === "movie" ? t("game-summary.movies") : t("game-summary.tv-shows")} • {t("game-summary.room")}{summary.roomId || roomId}
               </Text>
             )}
           </View>
@@ -155,31 +162,31 @@ export default function GameSummary({ route }: any) {
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={[styles.statNumber, { color: theme.colors.primary }]}>{summary?.totalUsers || 0}</Text>
-              <Text style={styles.statLabel}>Players</Text>
+              <Text style={styles.statLabel}>{t("game-summary.players")}</Text>
             </View>
 
             <View style={styles.statItem}>
               <Text style={[styles.statNumber, { color: theme.colors.primary }]}>{summary?.totalMatches || 0}</Text>
-              <Text style={styles.statLabel}>Matches</Text>
+              <Text style={styles.statLabel}>{t("game-summary.matches")}</Text>
             </View>
 
             <View style={styles.statItem}>
               <Text style={[styles.statNumber, { color: theme.colors.primary }]}>
                 {summary?.users?.reduce((total, user) => total + user.totalPicks, 0) || 0}
               </Text>
-              <Text style={styles.statLabel}>Total Picks</Text>
+              <Text style={styles.statLabel}>{t("game-summary.total-picks")}</Text>
             </View>
           </View>
 
           {summary?.users && (
             <View style={styles.playersContainer}>
-              <Text style={styles.playersTitle}>Player Performance:</Text>
+              <Text style={styles.playersTitle}>{t("game-summary.player-performance")}</Text>
               {summary.users.map((user, index) => (
                 <View key={index} style={styles.playerItem}>
                   <Text style={styles.playerName}>{user.username}</Text>
                   <View style={styles.playerStats}>
                     <Text style={[styles.playerStatus, { color: user.finished ? "#4CAF50" : "#ff4444" }]}>{user.finished ? "✓" : "✗"}</Text>
-                    <Text style={styles.pickCount}>{user.totalPicks} picks</Text>
+                    <Text style={styles.pickCount}>{user.totalPicks} {t("game-summary.picks")}</Text>
                   </View>
                 </View>
               ))}
@@ -188,7 +195,7 @@ export default function GameSummary({ route }: any) {
 
           {summary?.matchedMovies && summary.matchedMovies.length > 0 && (
             <View style={styles.matchesContainer}>
-              <Text style={styles.matchesTitle}>Matched Movies</Text>
+              <Text style={styles.matchesTitle}>{t("game-summary.matched-movies")}</Text>
               <FlatList
                 data={summary.matchedMovies}
                 renderItem={renderMovieItem}
@@ -205,7 +212,7 @@ export default function GameSummary({ route }: any) {
 
       <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
         <Button mode="contained" onPress={handleBackToHome} style={styles.backButton} contentStyle={styles.backButtonContent}>
-          Back to Home
+          {t("game-summary.back-to-home")}
         </Button>
       </View>
     </View>
