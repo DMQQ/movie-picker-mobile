@@ -78,9 +78,9 @@ export default function QRCodePage({ navigation, route }: any) {
       providers: [],
       maxRounds: 3,
     };
-    console.log("🎮 QuickStart selected:", randomCategory.label);
     return config;
   }, [route?.params?.quickStart, category, maxRounds, genre, providers, nickname, socket]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -106,7 +106,7 @@ export default function QRCodePage({ navigation, route }: any) {
         console.log("💥 Error creating room:", error);
       }
     })();
-  }, [roomConfig, nickname, socket, dispatch, route?.params]);
+  }, [roomConfig, route?.params, socket]);
 
   const onJoinOwnRoom = (code: string) => {
     socket?.emit("room:start", roomId);
@@ -198,7 +198,6 @@ export default function QRCodePage({ navigation, route }: any) {
 }
 
 const QrCodeBox = memo(({ code }: { code: string }) => {
-  const { nickname } = useAppSelector((state) => state.room);
   const theme = useTheme();
 
   const shareCode = async (code: string) => {
@@ -240,7 +239,7 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         contentStyle={{ flexDirection: "row-reverse" }}
         style={{ marginTop: 15 }}
       >
-        <Text style={{ fontSize: 25, letterSpacing: 1, color: theme.colors.primary }}>{code}</Text>
+        <Text style={{ fontSize: 25, letterSpacing: 1, color: theme.colors.primary }}>{code || "Loading..."}</Text>
       </Button>
     </View>
   );

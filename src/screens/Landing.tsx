@@ -5,7 +5,17 @@ import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, ImageBackground, Platform, Pressable, RefreshControl, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  ImageBackground,
+  Platform,
+  Pressable,
+  RefreshControl,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  VirtualizedList,
+} from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -46,9 +56,18 @@ const styles = StyleSheet.create({
 
 const gradient = ["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"] as any;
 
-const keyExtractor = (item: { name: string }, index: number) => item.name + "-" + index;
+const keyExtractor = (item: any, index: number) => {
+  if ("type" in item && item.type === "game") {
+    return `game-${item.gameType}`;
+  }
+  return `section-${item.name}`;
+};
 
-const AnimatedFlashList = Animated.createAnimatedComponent(FlashList);
+const getItemCount = (data: any) => data?.length || 0;
+
+const getItem = (data: any, index: number) => data[index];
+
+const AnimatedVirtualizedList = Animated.createAnimatedComponent(VirtualizedList);
 
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const [page, setPage] = useState(0);
@@ -216,29 +235,41 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     },
   });
 
+  const getItemLayout = useCallback((data: SectionData[], index: number) => {
+    const item = data?.[index];
+    const isGame = item && "type" in item && item.type === "game";
+    const itemHeight = isGame ? 210 : height * 0.275 + 30;
+
+    let offset = 0;
+    for (let i = 0; i < index; i++) {
+      const prevItem = data?.[i];
+      const prevIsGame = prevItem && "type" in prevItem && prevItem.type === "game";
+      offset += prevIsGame ? 210 : height * 0.275 + 30;
+    }
+
+    return { length: itemHeight, offset, index };
+  }, []);
+
   return (
     <View style={{ flex: 1 }}>
       <AppLoadingOverlay />
       <NoConnectionError />
 
-      <AnimatedFlashList
+      <AnimatedVirtualizedList
         onScroll={onScroll}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        ListHeaderComponent={<FeaturedSection navigate={navigation.navigate} />}
-        ListEmptyComponent={
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", height: height - 80 }}>
-            <Text style={{ fontFamily: "Bebas", fontSize: 40 }}>{t("landing.error")}</Text>
-          </View>
-        }
-        data={data || []}
-        keyExtractor={keyExtractor as any}
-        onEndReached={onEndReached}
+        data={data}
+        initialNumToRender={3}
         renderItem={renderItem as any}
+        keyExtractor={keyExtractor}
+        getItemCount={getItemCount}
+        getItem={getItem}
+        onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
-        drawDistance={1000}
-        getItemType={(item: any) => ("type" in item && item.type === "game" ? "game" : "section")}
-        estimatedItemSize={height * 0.275 + 30}
+        ListHeaderComponent={<FeaturedSection navigate={navigation.navigate} />}
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        removeClippedSubviews
+        getItemLayout={getItemLayout}
       />
 
       <BottomTab navigate={navigation.navigate} />
