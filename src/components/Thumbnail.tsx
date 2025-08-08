@@ -1,8 +1,7 @@
 import { AntDesign } from "@expo/vector-icons";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import FastImage, { FastImageProps } from "react-native-fast-image";
 import { MD2DarkTheme } from "react-native-paper";
-
-import { Image, ImageProps } from "expo-image";
 
 export const ThumbnailSizes = {
   poster: {
@@ -47,10 +46,16 @@ export default function Thumbnail({
   path,
   size = 200,
   container,
-  priority,
+  priority = "normal",
   placeholder,
   ...rest
-}: { path: string; size?: number; container?: StyleProp<ViewStyle>; priority?: "low" | "high" | "normal" } & ImageProps) {
+}: {
+  path: string;
+  size?: number;
+  container?: StyleProp<ViewStyle>;
+  priority?: "low" | "high" | "normal";
+  placeholder?: string;
+} & FastImageProps) {
   if (!path) {
     return (
       <View style={[styles.container, { justifyContent: "center", alignItems: "center" }, container]}>
@@ -59,16 +64,21 @@ export default function Thumbnail({
     );
   }
 
+  const priorityMap = {
+    low: FastImage.priority.low,
+    normal: FastImage.priority.normal,
+    high: FastImage.priority.high,
+  };
+
   return (
     <View style={[styles.container, container]}>
-      <Image
-        contentFit={"cover"}
+      <FastImage
         {...rest}
-        source={{ uri: `https://image.tmdb.org/t/p/w${size}` + path, cacheKey: `https://image.tmdb.org/t/p/w${size}` + path }}
-        placeholder={{ uri: placeholder }}
-        placeholderContentFit="cover"
-        transition={500}
-        cachePolicy="memory-disk"
+        source={{
+          uri: `https://image.tmdb.org/t/p/w${size}` + path,
+          priority: priorityMap[priority],
+        }}
+        resizeMode={FastImage.resizeMode.cover}
         style={[styles.image, rest.style]}
       />
     </View>
@@ -77,14 +87,12 @@ export default function Thumbnail({
 
 export async function prefetchThumbnail(path: string, size: number = 200) {
   if (!path) return;
-
   const imageUrl = `https://image.tmdb.org/t/p/w${size}` + path;
-  await Image.prefetch(imageUrl);
+  FastImage.preload([{ uri: imageUrl }]);
 }
 
 const styles = StyleSheet.create({
   container: { overflow: "hidden" },
-
   image: {
     flex: 1,
     width: "100%",

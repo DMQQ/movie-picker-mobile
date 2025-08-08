@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
+import * as Haptics from "expo-haptics";
 import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { IconButton, Text } from "react-native-paper";
 import Animated, { Extrapolation, FadeInUp, interpolate, SharedValue, useAnimatedStyle } from "react-native-reanimated";
@@ -73,13 +74,27 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
             <Text style={styles.helloText}>Hi {nickname}!</Text>
 
             <Animated.View style={[styles.buttonsContainer]}>
-              <IconButton icon="cog" size={24} iconColor="#fff" onPress={() => navigation.navigate("Settings")} style={styles.iconButton} />
+              <IconButton
+                icon="cog"
+                size={24}
+                iconColor="#fff"
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+                  navigation.navigate("Settings");
+                }}
+                style={styles.iconButton}
+              />
 
               <IconButton
                 icon="magnify"
                 size={30}
                 iconColor="#fff"
-                onPress={() => navigation.navigate("Search")}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+                  navigation.navigate("Search");
+                }}
                 style={styles.iconButton}
               />
             </Animated.View>
@@ -91,7 +106,11 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
               {chipCategories.map((category, index) => (
                 <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>
                   <TouchableOpacity
-                    onPress={() => onChipPress?.(category.id)}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+                      onChipPress?.(category.id);
+                    }}
                     style={[
                       styles.chipWrapper,
                       selectedChip === category.id && {

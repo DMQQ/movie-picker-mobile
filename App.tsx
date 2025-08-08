@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { isLoaded, loadAsync } from "expo-font";
+import { loadAsync } from "expo-font";
 import { useEffect, useState } from "react";
 import { Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -28,7 +28,7 @@ import Main from "./src/screens/Voter/Main";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 import { LinkingOptions } from "@react-navigation/native";
-import { Image } from "expo-image";
+import Image from "react-native-fast-image";
 import SearchFilters from "./src/screens/SearchFilters";
 
 const linking: LinkingOptions<RootStackParamList> = {
