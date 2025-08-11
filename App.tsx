@@ -28,7 +28,7 @@ import Main from "./src/screens/Voter/Main";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 import { LinkingOptions } from "@react-navigation/native";
-import Image from "react-native-fast-image";
+import { Image } from "react-native";
 import SearchFilters from "./src/screens/SearchFilters";
 
 const linking: LinkingOptions<RootStackParamList> = {

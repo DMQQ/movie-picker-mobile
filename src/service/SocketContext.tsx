@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import { RootState } from "../redux/store";
 
-const isDev = false;
+const isDev = process.env.EXPO_PUBLIC_ENV !== "production";
 const BACKGROUND_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
 const baseUrl = isDev ? "http://192.168.1.20:3000" : "https://movie.dmqq.dev";

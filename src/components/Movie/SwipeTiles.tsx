@@ -1,6 +1,6 @@
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useRef } from "react";
 import { Dimensions, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
@@ -145,8 +145,13 @@ const SwipeTile = ({
     };
   });
 
+  const isPressed = useRef(false);
+
   const moveOnPress = (fn: () => any, dir: "left" | "right") => {
     return () => {
+      if (isPressed.current) return;
+      isPressed.current = true;
+
       if (dir === "left") {
         position.value = withSpring({ x: -width - 100, y: 100 });
       } else {

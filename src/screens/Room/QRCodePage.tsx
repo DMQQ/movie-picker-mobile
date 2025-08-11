@@ -180,6 +180,7 @@ export default function QRCodePage({ navigation, route }: any) {
           </View>
         </View>
         <Button
+          disabled={!qrCode}
           mode="contained"
           style={{
             borderRadius: 100,

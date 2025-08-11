@@ -70,7 +70,7 @@ const getItem = (data: any, index: number) => data[index];
 const AnimatedVirtualizedList = Animated.createAnimatedComponent(VirtualizedList);
 
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [selectedChip, setSelectedChip] = useState("all");
   const previousChip = useRef(selectedChip);
 
@@ -88,12 +88,10 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     }
   }, [selectedChip]);
 
-  const t = useTranslation();
-
   useEffect(() => {
-    getLandingMovies({ skip: page * 5, take: 5, category: selectedChip }).then((response) => {
+    getLandingMovies({ skip: page * 8, take: 8, category: selectedChip }, true).then((response) => {
       if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-        setHasMore(response.data.length >= 5);
+        setHasMore(response.data.length >= 8);
         setData((prev) => {
           const uniqueSections = (response.data || []).filter(
             (newSection) => !prev.some((existingSection) => existingSection.name === newSection.name)
@@ -169,10 +167,12 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   }, [page, hasMore, selectedChip]);
 
   const onEndReached = useCallback(() => {
+    if (error || !hasMore) return;
+
     setPage((prev) => {
       return prev + 1;
     });
-  }, []);
+  }, [error, hasMore]);
 
   const renderItem = useCallback(
     ({ item, index }: { item: SectionData; index: number }) => {
@@ -264,7 +264,6 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         getItemCount={getItemCount}
         getItem={getItem}
         onEndReached={onEndReached}
-        onEndReachedThreshold={0.5}
         ListHeaderComponent={<FeaturedSection navigate={navigation.navigate} />}
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -316,6 +315,7 @@ const FeaturedSection = memo(
         source={{
           uri: "https://image.tmdb.org/t/p/w780" + featured?.poster_path,
         }}
+        defaultSource={{ uri: featured?.placeholder_poster_path }}
       >
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
           <Pressable onPress={onPress}>

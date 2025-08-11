@@ -1,5 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { PropsWithChildren } from "react";
+import { ImageBackground, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import FastImage, { FastImageProps } from "react-native-fast-image";
 import { MD2DarkTheme } from "react-native-paper";
 
@@ -42,6 +43,21 @@ export const ThumbnailSizes = {
   },
 } as const;
 
+const priorityMap = {
+  low: FastImage.priority.low,
+  normal: FastImage.priority.normal,
+  high: FastImage.priority.high,
+};
+
+const BlurPlaceholder = ({ children, placeholder, style }: PropsWithChildren<{ placeholder?: string; style: StyleProp<ViewStyle> }>) =>
+  placeholder ? (
+    <ImageBackground source={{ uri: placeholder }} style={[style]}>
+      {children}
+    </ImageBackground>
+  ) : (
+    <View style={[style]}>{children}</View>
+  );
+
 export default function Thumbnail({
   path,
   size = 200,
@@ -64,14 +80,8 @@ export default function Thumbnail({
     );
   }
 
-  const priorityMap = {
-    low: FastImage.priority.low,
-    normal: FastImage.priority.normal,
-    high: FastImage.priority.high,
-  };
-
   return (
-    <View style={[styles.container, container]}>
+    <BlurPlaceholder placeholder={placeholder} style={[styles.container, container]}>
       <FastImage
         {...rest}
         source={{
@@ -81,7 +91,7 @@ export default function Thumbnail({
         resizeMode={FastImage.resizeMode.cover}
         style={[styles.image, rest.style]}
       />
-    </View>
+    </BlurPlaceholder>
   );
 }
 

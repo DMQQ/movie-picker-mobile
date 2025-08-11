@@ -1,5 +1,6 @@
 import { View, useWindowDimensions } from "react-native";
-import Animated, { useAnimatedStyle, SharedValue, interpolate, interpolateColor, withTiming } from "react-native-reanimated";
+import Animated, { SharedValue, interpolate, interpolateColor, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
 
 const SwipeText = (props: {
   text: string;
@@ -52,6 +53,7 @@ const SwipeText = (props: {
 export default function Poster(props: {
   card: {
     poster_path: string;
+    placeholder_poster_path?: string;
   };
   translate?: SharedValue<{
     x: number;
@@ -116,18 +118,13 @@ export default function Poster(props: {
           overlayAnimatedStyle,
         ]}
       />
-      <Animated.Image
-        style={[
-          imageDimensions,
-          {
-            borderRadius: 19,
-          },
-        ]}
-        resizeMode="cover"
-        resizeMethod="resize"
-        source={{
-          uri: "https://image.tmdb.org/t/p/w780" + props.card.poster_path,
-        }}
+
+      <Thumbnail
+        path={props.card.poster_path}
+        placeholder={props.card.placeholder_poster_path}
+        size={ThumbnailSizes.poster.xxlarge}
+        container={{ borderRadius: 19, ...imageDimensions }}
+        style={{ borderRadius: 19, ...imageDimensions }}
       />
     </View>
   );
