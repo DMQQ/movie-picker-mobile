@@ -198,6 +198,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingHorizontal: 15,
+    paddingTop: 15,
   },
   nextButton: {
     borderRadius: 100,

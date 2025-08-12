@@ -26,6 +26,8 @@ const GenreList = ({
 }: GenreListProps) => {
   const isSelected = (genreId: number) => selectedGenres.some((g) => g.id === genreId);
 
+  console.log("Rendering GenreList with genres:", genres);
+
   const renderContent = () => {
     // Group actual genres into columns of 2
     const genreColumns = [];

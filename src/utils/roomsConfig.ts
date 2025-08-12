@@ -73,17 +73,35 @@ const CATEGORY_ICON_MAP: IconMap = {
 };
 
 const GENRE_ICON_MAP: IconMap = {
-  28: { component: FontAwesome5, name: "fist-raised", color: "#FF6B35" },
-  10759: { component: FontAwesome5, name: "running", color: "#FF6B35" },
-  12: { component: FontAwesome5, name: "hiking", color: "#4ECDC4" },
-  16: { component: FontAwesome5, name: "film", color: "#FFD23F" },
-  35: { component: FontAwesome5, name: "smile-beam", color: "#FF8C69" },
-  80: { component: FontAwesome5, name: "fingerprint", color: "#8B4513" },
-  99: { component: FontAwesome5, name: "newspaper", color: "#708090" },
-  18: { component: FontAwesome5, name: "sad-cry", color: "#9370DB" },
-  10751: { component: FontAwesome5, name: "baby", color: "#32CD32" },
-  // ... add all other genre icons here
-  37: { component: FontAwesome5, name: "horse", color: "#D2691E" },
+  28: { component: FontAwesome5, name: "fist-raised", color: "#FF6B35" }, // Action
+  10759: { component: FontAwesome5, name: "running", color: "#FF6B35" }, // Action & Adventure
+  12: { component: FontAwesome5, name: "hiking", color: "#4ECDC4" }, // Adventure
+  16: { component: FontAwesome5, name: "film", color: "#FFD23F" }, // Animation
+  35: { component: FontAwesome5, name: "smile-beam", color: "#FF8C69" }, // Comedy
+  80: { component: FontAwesome5, name: "fingerprint", color: "#8B4513" }, // Crime
+  99: { component: FontAwesome5, name: "newspaper", color: "#708090" }, // Documentary
+  18: { component: FontAwesome5, name: "sad-cry", color: "#9370DB" }, // Drama
+  10751: { component: FontAwesome5, name: "baby", color: "#32CD32" }, // Family
+  14: { component: FontAwesome5, name: "magic", color: "#DA70D6" }, // Fantasy
+  36: { component: FontAwesome5, name: "landmark", color: "#CD853F" }, // History
+  27: { component: FontAwesome5, name: "ghost", color: "#8B0000" }, // Horror
+  10402: { component: FontAwesome5, name: "music", color: "#FF1493" }, // Music
+  9648: { component: FontAwesome5, name: "search", color: "#4B0082" }, // Mystery
+  10749: { component: FontAwesome5, name: "heart", color: "#FF69B4" }, // Romance
+  878: { component: FontAwesome5, name: "rocket", color: "#00CED1" }, // Science Fiction
+  10770: { component: MaterialIcons, name: "tv", color: "#696969" }, // TV Movie
+  53: { component: FontAwesome5, name: "exclamation-triangle", color: "#DC143C" }, // Thriller
+  10752: { component: FontAwesome5, name: "shield-alt", color: "#8B4513" }, // War
+  37: { component: FontAwesome5, name: "horse", color: "#D2691E" }, // Western
+  
+  // TV-specific genres
+  10762: { component: FontAwesome5, name: "child", color: "#FFB6C1" }, // Kids
+  10763: { component: FontAwesome5, name: "broadcast-tower", color: "#2F4F4F" }, // News
+  10764: { component: FontAwesome5, name: "camera", color: "#FF7F50" }, // Reality
+  10765: { component: FontAwesome5, name: "space-shuttle", color: "#6A5ACD" }, // Sci-Fi & Fantasy
+  10766: { component: FontAwesome5, name: "theater-masks", color: "#DDA0DD" }, // Soap
+  10767: { component: FontAwesome5, name: "microphone", color: "#20B2AA" }, // Talk
+  10768: { component: FontAwesome5, name: "gavel", color: "#B22222" }, // War & Politics
 };
 
 const DEFAULT_ICON = { component: MaterialIcons, name: "local-offer", color: "#808080" };
