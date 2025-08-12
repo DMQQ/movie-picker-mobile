@@ -116,7 +116,16 @@
 
   "global": {
     "justwatch": "The movie availabilities are powered by JustWatch",
-    "attributions": "Movies povered by The Movie Database API And JustWatch"
+    "attributions": "Movies povered by The Movie Database API And JustWatch",
+    "provider_legend": {
+      "title": "Icon Legend",
+      "subscription": "Subscription",
+      "rental": "Rental",
+      "purchase": "Purchase", 
+      "rent_buy": "Rent/Buy",
+      "free": "Free",
+      "ads": "With Ads"
+    }
   },
   "overview": {
     "matches": "Matched",

@@ -83,12 +83,12 @@ export default function Thumbnail({
   return (
     <BlurPlaceholder placeholder={placeholder} style={[styles.container, container]}>
       <FastImage
+        resizeMode={FastImage.resizeMode.cover}
         {...rest}
         source={{
           uri: `https://image.tmdb.org/t/p/w${size}` + path,
           priority: priorityMap[priority],
         }}
-        resizeMode={FastImage.resizeMode.cover}
         style={[styles.image, rest.style]}
       />
     </BlurPlaceholder>

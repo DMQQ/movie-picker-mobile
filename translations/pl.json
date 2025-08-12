@@ -115,7 +115,16 @@
   },
   "global": {
     "justwatch": "Dostępność filmów wspierana przez JustWatch",
-    "attributions": "Filmy dostarczone przez The Movie Database API i JustWatch"
+    "attributions": "Filmy dostarczone przez The Movie Database API i JustWatch",
+    "provider_legend": {
+      "title": "Legenda Ikon",
+      "subscription": "Abonament",
+      "rental": "Wypożyczenie",
+      "purchase": "Zakup",
+      "rent_buy": "Wypożyczenie/Zakup",
+      "free": "Za Darmo",
+      "ads": "Z Reklamami"
+    }
   },
   "overview": {
     "matches": "Dopasowane",

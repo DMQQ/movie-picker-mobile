@@ -5,8 +5,8 @@ import { Platform, ScrollView, StyleSheet, TouchableOpacity } from "react-native
 import { IconButton, Text } from "react-native-paper";
 import Animated, { Extrapolation, FadeInUp, interpolate, SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useGetChipCategoriesQuery } from "../redux/movie/movieApi";
 import { useAppSelector } from "../redux/store";
-import useTranslation from "../service/useTranslation";
 
 interface LandingHeaderProps {
   selectedChip?: string;
@@ -17,15 +17,8 @@ interface LandingHeaderProps {
 
 const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHeaderProps) => {
   const navigation = useNavigation<any>();
-  const t = useTranslation();
 
-  const chipCategories = [
-    { id: "all", label: t("landing.chips.all") },
-    { id: "trending", label: t("landing.chips.trending") },
-    { id: "movies", label: t("voter.types.movie") },
-    { id: "series", label: t("voter.types.series") },
-    { id: "new", label: t("landing.chips.new") },
-  ];
+  const { data: chipCategories = [] } = useGetChipCategoriesQuery();
 
   const insets = useSafeAreaInsets();
 

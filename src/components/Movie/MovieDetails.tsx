@@ -57,7 +57,7 @@ export default function MovieDetails({
                 marginBottom: 10,
               }}
             >
-              {movie?.tagline}
+              {movie?.tagline ? `"${movie?.tagline}"` : ""}
             </Text>
           )}
 

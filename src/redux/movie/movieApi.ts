@@ -126,6 +126,10 @@ export const movieApi = createApi({
       query: () => "/categories",
     }),
 
+    getChipCategories: builder.query<{ id: string; label: string }[], void>({
+      query: () => "/chip-categories",
+    }),
+
     getAllProviders: builder.query<any[], any>({
       query: () => "/providers",
     }),
@@ -204,6 +208,8 @@ export const {
   useGetReviewsQuery,
 
   useGetCategoriesQuery,
+
+  useGetChipCategoriesQuery,
 
   useGetAllProvidersQuery,
 

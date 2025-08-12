@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import Animated, { FadeOut } from "react-native-reanimated";
-import { FancySpinner } from "./FancySpinner";
 
 const AppLoadingOverlay = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +19,7 @@ const AppLoadingOverlay = () => {
   return (
     <Animated.View exiting={FadeOut} style={styles.overlay}>
       <View style={styles.loaderContainer}>
-        <FancySpinner hideAnimation={isHiding} size={150} />
+        <Image source={require("../../assets/images/icon-light.png")} style={{ width: 200, height: 200, marginBottom: 20 }} />
       </View>
     </Animated.View>
   );

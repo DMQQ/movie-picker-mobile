@@ -68,7 +68,7 @@ const Fallback = () => (
     }}
   >
     {/* <FancySpinner size={100} /> */}
-    <Image source={require("./assets/images/icon-light.png")} style={{ width: 100, height: 100, marginBottom: 20 }} />
+    <Image source={require("./assets/images/icon-light.png")} style={{ width: 200, height: 200, marginBottom: 20 }} />
   </View>
 );
 

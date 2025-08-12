@@ -17,7 +17,7 @@ import {
   VirtualizedList,
 } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import Animated, { FadeIn, useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import Animated, { FadeIn, FadeInDown, useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../types";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
@@ -58,9 +58,9 @@ const gradient = ["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0
 
 const keyExtractor = (item: any, index: number) => {
   if ("type" in item && item.type === "game") {
-    return `game-${item.gameType}`;
+    return `game-${item.gameType}-${index}`;
   }
-  return `section-${item.name}`;
+  return `section-${item.name}-${index}`;
 };
 
 const getItemCount = (data: any) => data?.length || 0;
@@ -280,9 +280,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 const FeaturedSection = memo(
   (props: { navigate: any }) => {
     const { data: featured, error } = useGetFeaturedQuery();
-
     const navigation = useNavigation<any>();
-    const t = useTranslation();
 
     const onPress = () => {
       navigation.navigate("MovieDetails", {
@@ -318,20 +316,22 @@ const FeaturedSection = memo(
         defaultSource={{ uri: featured?.placeholder_poster_path }}
       >
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
-          <Pressable onPress={onPress}>
-            <FrostedGlass style={{ padding: 15 }}>
-              <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
-                {featured?.title || featured?.name}
-              </Text>
-              <View style={{ flexDirection: "row", marginBottom: 10 }}>
-                <RatingIcons vote={featured?.vote_average} size={20} />
-              </View>
-              <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>{details}</Text>
-              <Text numberOfLines={7} style={styles.overview}>
-                {featured?.overview}
-              </Text>
-            </FrostedGlass>
-          </Pressable>
+          <Animated.View entering={FadeInDown.delay(750)}>
+            <Pressable onPress={onPress}>
+              <FrostedGlass style={{ padding: 15, borderBottomWidth: 0 }} container={{ borderWidth: 0 }}>
+                <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
+                  {featured?.title || featured?.name}
+                </Text>
+                <View style={{ flexDirection: "row", marginBottom: 10 }}>
+                  <RatingIcons vote={featured?.vote_average} size={20} />
+                </View>
+                <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>{details}</Text>
+                <Text numberOfLines={7} style={styles.overview}>
+                  {featured?.overview}
+                </Text>
+              </FrostedGlass>
+            </Pressable>
+          </Animated.View>
         </LinearGradient>
       </ImageBackground>
     );
