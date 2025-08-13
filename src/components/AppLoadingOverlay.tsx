@@ -1,25 +1,27 @@
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
-import Animated, { FadeOut } from "react-native-reanimated";
+import { StyleSheet, View } from "react-native";
+import Animated, { FadeOut, ZoomOut } from "react-native-reanimated";
 
 const AppLoadingOverlay = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isHiding, setIsHiding] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsHiding(true);
-      setTimeout(() => setIsLoading(false), 500);
-    }, 500);
+      setIsLoading(false);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
   if (!isLoading) return null;
 
   return (
-    <Animated.View exiting={FadeOut} style={styles.overlay}>
+    <Animated.View exiting={FadeOut.delay(150)} style={styles.overlay}>
       <View style={styles.loaderContainer}>
-        <Image source={require("../../assets/images/icon-light.png")} style={{ width: 200, height: 200, marginBottom: 20 }} />
+        <Animated.Image
+          exiting={ZoomOut}
+          source={require("../../assets/images/icon-light.png")}
+          style={{ width: 200, height: 200, marginBottom: 20 }}
+        />
       </View>
     </Animated.View>
   );

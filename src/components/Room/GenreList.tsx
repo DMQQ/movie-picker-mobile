@@ -15,8 +15,6 @@ type GenreListProps = {
   isCategorySelected: boolean;
 };
 
-const SkeletonCard = () => <View style={styles.skeleton} />;
-
 const GenreList = ({
   genres,
   selectedGenres = [], // <<< FIX: Default to an empty array
@@ -26,10 +24,7 @@ const GenreList = ({
 }: GenreListProps) => {
   const isSelected = (genreId: number) => selectedGenres.some((g) => g.id === genreId);
 
-  console.log("Rendering GenreList with genres:", genres);
-
   const renderContent = () => {
-    // Group actual genres into columns of 2
     const genreColumns = [];
     for (let i = 0; i < genres.length; i += 2) {
       genreColumns.push(genres.slice(i, i + 2));

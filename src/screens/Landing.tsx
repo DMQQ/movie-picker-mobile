@@ -462,14 +462,7 @@ export const Section = memo(({ group }: SectionProps) => {
 
     getSectionMovies({ name: group.name, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
-        Promise.any(
-          response.data.results.map((i) =>
-            [
-              prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.xxlarge),
-              prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.large),
-            ].flat()
-          )
-        );
+        Promise.any(response.data.results.map((i) => prefetchThumbnail(i.poster_path, 185)));
 
         setSectionMovies((prev) => prev.concat(response?.data?.results || []));
       }
@@ -488,7 +481,6 @@ export const Section = memo(({ group }: SectionProps) => {
         showsHorizontalScrollIndicator={false}
         keyExtractor={keySectionExtractor}
         renderItem={renderItem}
-        onEndReachedThreshold={0.75}
         estimatedItemSize={width * 0.3 + 15}
       />
     </Animated.View>

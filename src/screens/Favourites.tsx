@@ -9,7 +9,10 @@ import useTranslation from "../service/useTranslation";
 import { ScreenProps } from "./types";
 
 import { useState } from "react";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import Thumbnail from "../components/Thumbnail";
+
+const AnimatedRipple = Animated.createAnimatedComponent(TouchableRipple);
 
 export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const { groups } = useAppSelector((state) => state.favourite);
@@ -27,12 +30,13 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
           showsVerticalScrollIndicator={false}
           data={groups}
           keyExtractor={(k, index) => k.id + "-" + index}
-          renderItem={({ item }) => (
-            <TouchableRipple
+          renderItem={({ item, index }) => (
+            <AnimatedRipple
               rippleColor={"#000"}
               disabled={item?.movies?.length === 0}
               onPress={() => navigation.navigate("Group", { group: item })}
               style={{ marginBottom: 15 }}
+              entering={FadeInDown.delay((index + 1) * 75)}
             >
               <>
                 <View style={{ borderRadius: 10, overflow: "hidden" }}>
@@ -78,7 +82,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
                   <Text style={{ fontSize: 15 }}>({item.movies.length})</Text>
                 </View>
               </>
-            </TouchableRipple>
+            </AnimatedRipple>
           )}
         />
       </View>

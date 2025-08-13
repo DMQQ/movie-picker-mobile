@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, ImageBackground, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { ActivityIndicator, IconButton, MD2DarkTheme, Searchbar, Text, TouchableRipple } from "react-native-paper";
+import { Dimensions, ImageBackground, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, IconButton, MD2DarkTheme, Searchbar, Text } from "react-native-paper";
 import { useLazySearchQuery } from "../redux/movie/movieApi";
 
 import { FlashList } from "@shopify/flash-list";
@@ -10,14 +10,13 @@ import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../types";
 import FrostedGlass from "../components/FrostedGlass";
-import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
+import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import useTranslation from "../service/useTranslation";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const ITEM_HEIGHT = 180;
 
 const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; index: number }) => {
   const t = useTranslation();
@@ -224,6 +223,8 @@ const SearchScreen = ({ navigation, route }: any) => {
       if (response.page === page) {
         lastReceivedApiPage.current = page;
 
+        Promise.any(response.results.map((item) => prefetchThumbnail(item, ThumbnailSizes.poster.xxlarge)));
+
         if (page === 1) {
           setAllResults(sortSearchResults(searchQuery, response.results));
         } else {
@@ -256,9 +257,6 @@ const SearchScreen = ({ navigation, route }: any) => {
       }, 100);
     }
   }, [isFetching, hasNextPage, currentPage]);
-
-  const getItem = (_data: any, index: number) => allResults[index];
-  const getItemCount = () => allResults.length || 0;
 
   const handleFilterChange = useCallback((type: "movie" | "tv" | "both") => {
     setFilters((f) => ({ ...f, type }));
@@ -316,23 +314,33 @@ const SearchScreen = ({ navigation, route }: any) => {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
               {categories.map((category, index) => (
                 <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>
-                  <TouchableRipple
+                  <TouchableOpacity
                     onPress={() => handleFilterChange(category.id)}
-                    style={[styles.categoryChip, filters.type === category.id && styles.categoryChipActive]}
+                    style={[
+                      styles.chipWrapper,
+                      filters.type === category.id && {
+                        borderColor: "rgba(255, 255, 255, 0.3)",
+                        backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      },
+                    ]}
                   >
-                    <Text style={[styles.categoryText, filters.type === category.id && styles.categoryTextActive]}>{category.label}</Text>
-                  </TouchableRipple>
+                    <BlurView style={[styles.chip]} intensity={filters.type === category.id ? 15 : 5}>
+                      <Text style={[styles.chipText, filters.type === category.id && styles.chipTextActive]}>{category.label}</Text>
+                    </BlurView>
+                  </TouchableOpacity>
                 </Animated.View>
               ))}
             </ScrollView>
-            <TouchableRipple
+            <TouchableOpacity
               onPress={() => {
                 navigation.navigate("SearchFilters", { ...route?.params, type: filters.type });
               }}
-              style={[styles.categoryChip]}
+              style={[styles.chipWrapper]}
             >
-              <Text style={[styles.categoryText]}>Filters</Text>
-            </TouchableRipple>
+              <BlurView style={[styles.chip]} intensity={5}>
+                <Text style={[styles.chipText]}>Filters</Text>
+              </BlurView>
+            </TouchableOpacity>
           </View>
 
           <FlashList
@@ -385,10 +393,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingRight: 15,
   },
-  chip: {
-    marginHorizontal: 4,
-    backgroundColor: "rgba(255,255,255,0.1)",
-  },
   listContent: {
     paddingHorizontal: 15,
     paddingBottom: 20,
@@ -436,23 +440,26 @@ const styles = StyleSheet.create({
   applyButton: {
     marginTop: 20,
   },
-  categoryChip: {
+  chipWrapper: {
+    marginRight: 10,
+    borderRadius: 100,
+    overflow: "hidden",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+  },
+  chip: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    marginRight: 8,
   },
-  categoryChipActive: {
-    backgroundColor: "#fff",
-  },
-  categoryText: {
-    color: "#fff",
+  chipText: {
+    color: "rgba(255, 255, 255, 0.8)",
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "500",
   },
-  categoryTextActive: {
-    color: "#000",
+  chipTextActive: {
+    color: "#fff",
+    fontWeight: "600",
   },
   categoriesContainer: {
     paddingHorizontal: 15,

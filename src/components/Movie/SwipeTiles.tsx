@@ -16,6 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import TabBar from "../Home/TabBar";
+import RatingIcons from "../RatingIcons";
 import Poster from "./Poster";
 
 const { width } = Dimensions.get("screen");
@@ -122,7 +123,13 @@ const SwipeTile = ({
         runOnJS(removeCard)();
         position.value = withSpring({ x: -width - 100, y: 100 });
       } else {
-        position.value = withSpring({ x: 0, y: 0 });
+        position.value = withSpring(
+          { x: 0, y: 0 },
+          {
+            damping: 10,
+            stiffness: 150,
+          }
+        );
         isLeftVisible.value = false;
         isRightVisible.value = false;
       }
@@ -175,15 +182,19 @@ const SwipeTile = ({
       <GestureDetector gesture={moveGesture}>
         <Animated.View style={[animatedStyle, { zIndex: 1000 - index }]} entering={index > 1 ? FadeIn : undefined}>
           <View style={styles.container}>
-            <LinearGradient colors={["transparent", "transparent", "rgba(0,0,0,0.9)"]} style={[styles.gradientContainer, dims]}>
+            <LinearGradient colors={["transparent", "rgba(0,0,0,0.2)", "rgba(0,0,0,0.9)"]} style={[styles.gradientContainer, dims]}>
               <Text style={styles.title}>{card.title || card.name}</Text>
+              <View style={{ flexDirection: "row", paddingHorizontal: 10, marginTop: 5 }}>
+                <RatingIcons size={15} vote={card?.vote_average} />
+              </View>
               {card.overview && (
                 <Text style={styles.overview} numberOfLines={3}>
                   {card.overview}
                 </Text>
               )}
+
               <Text style={styles.release_date}>
-                {card.release_date || card.first_air_date}, {card.vote_average.toFixed(1)}/10
+                {card.genres ? `${card?.genres?.map((m) => m.name).join(", ")}` : ""} {"•"} {card.release_date || card.first_air_date}
               </Text>
             </LinearGradient>
 

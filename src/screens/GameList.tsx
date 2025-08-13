@@ -1,16 +1,16 @@
-import { Dimensions, Image, ScrollView, View, StyleSheet, Animated } from "react-native";
-import { IconButton, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRef, useState } from "react";
+import { Dimensions, Animated as RNAnimated, ScrollView, StyleSheet, View } from "react-native";
+import { IconButton, Text, TouchableRipple } from "react-native-paper";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import useTranslation from "../service/useTranslation";
-import { useState, useRef } from "react";
 
-import CardSwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
+import Animated, { FadeInDown } from "react-native-reanimated";
+import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
 import SwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
-import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
 import PageHeading from "../components/PageHeading";
 import { useGetCategoriesQuery } from "../redux/movie/movieApi";
 // import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
@@ -31,26 +31,34 @@ interface GameCardProps {
 
 const Animations = [<SwiperAnimation />, <VoterAnimation />, <FortuneWheelAnimation />];
 
+const AnimatedRipple = Animated.createAnimatedComponent(TouchableRipple);
+
 const GameCard = ({ title, description, onPress, beta, players, duration, index }: GameCardProps) => {
-  const scale = useRef(new Animated.Value(1)).current;
+  const scale = useRef(new RNAnimated.Value(1)).current;
   useGetCategoriesQuery({});
 
   const onPressIn = () => {
-    Animated.spring(scale, {
+    RNAnimated.spring(scale, {
       toValue: 0.97,
       useNativeDriver: true,
     }).start();
   };
 
   const onPressOut = () => {
-    Animated.spring(scale, {
+    RNAnimated.spring(scale, {
       toValue: 1,
       useNativeDriver: true,
     }).start();
   };
 
   return (
-    <TouchableRipple onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut} style={styles.cardContainer}>
+    <AnimatedRipple
+      onPress={onPress}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}
+      style={styles.cardContainer}
+      exiting={FadeInDown.delay((index + 1) * 75)}
+    >
       <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
         {Animations[index]}
 
@@ -81,7 +89,7 @@ const GameCard = ({ title, description, onPress, beta, players, duration, index 
           </BlurView>
         </LinearGradient>
       </Animated.View>
-    </TouchableRipple>
+    </AnimatedRipple>
   );
 };
 

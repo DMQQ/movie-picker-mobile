@@ -1,6 +1,6 @@
 import { BlurView } from "expo-blur";
 import React, { useMemo, useState } from "react";
-import { Dimensions, FlatList, Image, ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Chip, Divider, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DropdownPersonSearch from "../components/DropdownSearchPeron";
@@ -123,30 +123,53 @@ export default function SearchFilters({ navigation, route }: any) {
             {/* Genres */}
             <Section title={t("search.genres")}>
               <View style={styles.genreTabsContainer}>
-                <TouchableRipple
+                <TouchableOpacity
                   onPress={() => setActiveTab("movie")}
-                  style={[styles.genreTab, activeTab === "movie" && styles.activeGenreTab]}
+                  style={[
+                    styles.chipWrapper,
+                    activeTab === "movie" && {
+                      borderColor: "rgba(255, 255, 255, 0.3)",
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    },
+                  ]}
                 >
-                  <Text style={[styles.genreTabText, activeTab === "movie" && styles.activeGenreTabText]}>{t("voter.types.movie")}</Text>
-                </TouchableRipple>
-                <TouchableRipple onPress={() => setActiveTab("tv")} style={[styles.genreTab, activeTab === "tv" && styles.activeGenreTab]}>
-                  <Text style={[styles.genreTabText, activeTab === "tv" && styles.activeGenreTabText]}>{t("voter.types.series")}</Text>
-                </TouchableRipple>
+                  <BlurView style={[styles.chip]} intensity={activeTab === "movie" ? 15 : 5}>
+                    <Text style={[styles.chipText, activeTab === "movie" && styles.chipTextActive]}>{t("voter.types.movie")}</Text>
+                  </BlurView>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setActiveTab("tv")}
+                  style={[
+                    styles.chipWrapper,
+                    activeTab === "tv" && {
+                      borderColor: "rgba(255, 255, 255, 0.3)",
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    },
+                  ]}
+                >
+                  <BlurView style={[styles.chip]} intensity={activeTab === "tv" ? 15 : 5}>
+                    <Text style={[styles.chipText, activeTab === "tv" && styles.chipTextActive]}>{t("voter.types.series")}</Text>
+                  </BlurView>
+                </TouchableOpacity>
               </View>
 
               <View style={styles.genreChipsContainer}>
                 {genreData.map((item) => (
-                  <Chip
+                  <TouchableOpacity
                     key={item.id}
-                    selected={genres.includes(item.id)}
                     onPress={() => toggleGenre(item.id)}
-                    style={[styles.genreChip, genres.includes(item.id) && styles.selectedGenreChip]}
-                    textStyle={[styles.genreChipText, genres.includes(item.id) && styles.selectedGenreChipText]}
-                    showSelectedCheck={false}
-                    elevated
+                    style={[
+                      styles.genreChipWrapper,
+                      genres.includes(item.id) && {
+                        borderColor: "rgba(255, 255, 255, 0.3)",
+                        backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      },
+                    ]}
                   >
-                    {item.name}
-                  </Chip>
+                    <BlurView style={[styles.genreChip]} intensity={genres.includes(item.id) ? 15 : 5}>
+                      <Text style={[styles.genreChipText, genres.includes(item.id) && styles.genreChipTextActive]}>{item.name}</Text>
+                    </BlurView>
+                  </TouchableOpacity>
                 ))}
               </View>
             </Section>
@@ -253,46 +276,56 @@ const styles = StyleSheet.create({
   genreTabsContainer: {
     flexDirection: "row",
     marginBottom: 16,
-    borderRadius: 8,
-    backgroundColor: "#1a1a1a",
-    padding: 4,
+    gap: 10,
   },
-  genreTab: {
+  chipWrapper: {
     flex: 1,
+    borderRadius: 100,
+    overflow: "hidden",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+  },
+  chip: {
+    paddingHorizontal: 16,
     paddingVertical: 8,
+    borderRadius: 20,
     alignItems: "center",
-    borderRadius: 6,
   },
-  activeGenreTab: {
-    backgroundColor: "rgba(128, 0, 128, 0.2)",
-  },
-  genreTabText: {
-    fontSize: 15,
+  chipText: {
+    color: "rgba(255, 255, 255, 0.8)",
+    fontSize: 14,
     fontWeight: "500",
-    color: "#888",
   },
-  activeGenreTabText: {
-    color: MD2DarkTheme.colors.primary,
+  chipTextActive: {
+    color: "#fff",
+    fontWeight: "600",
   },
   genreChipsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     marginHorizontal: -4,
   },
-  genreChip: {
+  genreChipWrapper: {
     margin: 4,
-    backgroundColor: "#1a1a1a",
-    borderColor: "transparent",
+    borderRadius: 100,
+    overflow: "hidden",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.1)",
   },
-  selectedGenreChip: {
-    backgroundColor: "rgba(128, 0, 128, 0.15)",
-    borderColor: "rgba(128, 0, 128, 0.3)",
+  genreChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    alignItems: "center",
   },
   genreChipText: {
-    color: "#ddd",
+    color: "rgba(255, 255, 255, 0.8)",
+    fontSize: 13,
+    fontWeight: "500",
   },
-  selectedGenreChipText: {
-    color: MD2DarkTheme.colors.primary,
+  genreChipTextActive: {
+    color: "#fff",
+    fontWeight: "600",
   },
   bottomBar: {
     flexDirection: "row",

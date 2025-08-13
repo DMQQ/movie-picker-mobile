@@ -77,11 +77,11 @@ export default function Poster(props: {
     if (!props.translate) return {};
 
     return {
-      opacity: interpolate(props.translate.value.x, [-width / 2, 0, width / 2], [1, 0, 1]),
+      opacity: interpolate(props.translate.value.x, [-width / 1.5, 0, width / 1.5], [1, 0, 1]),
       backgroundColor: interpolateColor(
         props.translate.value.x,
         [-width, 0, width],
-        ["rgba(255,0,0,0.4)", "rgba(0,0,0,0)", "rgba(0,255,0,0.4)"]
+        ["rgba(255,0,0,0.6)", "rgba(0,0,0,0)", "rgba(0,255,0,0.6)"]
       ),
     };
   });
