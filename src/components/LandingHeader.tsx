@@ -64,7 +64,7 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
       <BlurView style={{ flex: 1, padding: 15, paddingTop: insets.top }} intensity={Platform.OS === "ios" ? 60 : 100} tint="dark">
         <Animated.View>
           <Animated.View style={[styles.mainHeader, mainHeaderAnimatedStyle]}>
-            <Text style={styles.helloText}>H {nickname}!</Text>
+            <Text style={styles.helloText}>Hello {nickname}!</Text>
 
             <Animated.View style={[styles.buttonsContainer]}>
               <IconButton

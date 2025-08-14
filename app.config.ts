@@ -84,7 +84,7 @@ export default {
     },
     runtimeVersion: "1.0.0",
     updates: {
-      url: "https://movie.dmqq.dev/api/ota/updates",
+      url: "https://movie.dmqq.dev/api/manifest",
       requestHeaders: {
         Authorization: `Bearer ${process.env.EXPO_PUBLIC_API_KEY}`,
       },

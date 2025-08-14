@@ -75,7 +75,9 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const [selectedChip, setSelectedChip] = useState("all");
   const previousChip = useRef(selectedChip);
 
-  type SectionData = { name: string; results: Movie[] } | { name: string; results: Movie[]; type: "game"; gameType: "quick" | "social" | "voter" | "fortune" | "all-games" };
+  type SectionData =
+    | { name: string; results: Movie[] }
+    | { name: string; results: Movie[]; type: "game"; gameType: "quick" | "social" | "voter" | "fortune" | "all-games" };
   const [data, setData] = useState<SectionData[]>([]);
 
   const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
@@ -232,7 +234,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   }, []);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#1111111" }}>
       <AppLoadingOverlay />
       <NoConnectionError />
 
@@ -571,7 +573,15 @@ const gameInviteStyles = StyleSheet.create({
 });
 
 const GameInviteSection = memo(
-  ({ type, navigation, backgroundMovies = [] }: { type: "quick" | "social" | "voter" | "fortune" | "all-games"; navigation: any; backgroundMovies?: Movie[] }) => {
+  ({
+    type,
+    navigation,
+    backgroundMovies = [],
+  }: {
+    type: "quick" | "social" | "voter" | "fortune" | "all-games";
+    navigation: any;
+    backgroundMovies?: Movie[];
+  }) => {
     const t = useTranslation();
 
     const getGameConfig = (gameType: typeof type) => {
@@ -592,10 +602,11 @@ const GameInviteSection = memo(
             buttonText: t("game-invite.social-button"),
             colors: ["#f59e0b", "#ef4444"] as const,
             icon: "users",
-            navigation: () => navigation.navigate("QRCode", {
-              screen: "CreateQRCode",
-              params: { quickStart: true },
-            }),
+            navigation: () =>
+              navigation.navigate("QRCode", {
+                screen: "CreateQRCode",
+                params: { quickStart: true },
+              }),
           };
         case "voter":
           return {
@@ -637,7 +648,7 @@ const GameInviteSection = memo(
     };
 
     const config = getGameConfig(type);
-    
+
     const handleGamePress = useCallback(() => {
       if (Platform.OS === "ios") {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
