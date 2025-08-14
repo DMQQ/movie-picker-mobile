@@ -234,7 +234,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   }, []);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "purple" }}>
+    <View style={{ flex: 1, backgroundColor: "#111111" }}>
       <AppLoadingOverlay />
       <NoConnectionError />
 

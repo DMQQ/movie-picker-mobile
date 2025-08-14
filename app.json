@@ -1,0 +1,92 @@
+{
+  "expo": {
+    "name": "FlickMate",
+    "slug": "qr-mobile",
+    "version": "1.1.9",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon-dark.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": ["flickmate", "pl.dmq.moviepicker"],
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
+        }
+      ],
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0d0f14",
+          "image": "./assets/images/icon-light.png",
+          "imageWidth": 200
+        }
+      ]
+    ],
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
+      "buildNumber": "20250815",
+      "supportsTablet": false,
+      "icon": {
+        "light": "./assets/images/icon-light.png",
+        "dark": "./assets/images/icon-dark.png",
+        "tinted": "./assets/images/icon-dark.png"
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
+        "UIViewControllerBasedStatusBarAppearance": true,
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "pl.dmq.movie-picker",
+      "associatedDomains": ["applinks:movie.dmqq.dev", "applinks:movie.dmqq.dev"]
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#000"
+      },
+      "permissions": ["android.permission.CAMERA", "android.permission.RECORD_AUDIO"],
+      "package": "pl.dmq.moviepicker",
+      "versionCode": 202500809,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "flickmate",
+              "host": "*"
+            },
+            {
+              "scheme": "https",
+              "host": "movie.dmqq.dev",
+              "pathPrefix": "/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ab2d7ea0-e25f-4063-a2e2-1a449547340b"
+      }
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://movie.dmqq.dev/api/manifest",
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    }
+  }
+}
