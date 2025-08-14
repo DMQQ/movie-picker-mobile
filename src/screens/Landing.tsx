@@ -29,6 +29,7 @@ import ScoreRing from "../components/ScoreRing";
 import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import { useGetFeaturedQuery, useLazyGetLandingPageMoviesQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
 import useTranslation from "../service/useTranslation";
+import { arrayInsertsAt } from "../utils/utilities";
 import { ScreenProps } from "./types";
 
 const { width, height } = Dimensions.get("screen");
@@ -97,65 +98,24 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
             (newSection) => !prev.some((existingSection) => existingSection.name === newSection.name)
           );
 
-          let newData = [...prev, ...uniqueSections];
-
-          const movieSectionsCount = newData.filter((item) => !("type" in item && (item as any).type === "game")).length;
-
-          if (
-            movieSectionsCount >= 3 &&
-            !newData.some(
-              (item) => "type" in item && (item as any).type === "game" && "gameType" in item && (item as any).gameType === "social"
-            )
-          ) {
-            let movieCount = 0;
-            let insertIndex = 0;
-            for (let i = 0; i < newData.length; i++) {
-              const currentItem = newData[i] as any;
-              if (!("type" in currentItem && currentItem.type === "game")) {
-                movieCount++;
-                if (movieCount === 3) {
-                  insertIndex = i + 1;
-                  break;
-                }
-              }
-            }
-
-            newData.splice(insertIndex, 0, {
-              name: "Game Invite 1",
-              results: [],
-              type: "game" as const,
-              gameType: "social" as const,
-            } as SectionData);
-          }
-
-          if (
-            movieSectionsCount >= 9 &&
-            !newData.some(
-              (item) => "type" in item && (item as any).type === "game" && "gameType" in item && (item as any).gameType === "quick"
-            )
-          ) {
-            let movieCount = 0;
-            let insertIndex = 0;
-            for (let i = 0; i < newData.length; i++) {
-              const currentItem = newData[i] as any;
-              if (!("type" in currentItem && currentItem.type === "game")) {
-                movieCount++;
-                if (movieCount === 9) {
-                  insertIndex = i + 1;
-                  break;
-                }
-              }
-            }
-
-            newData.splice(insertIndex, 0, {
-              name: "Game Invite 2",
-              results: [],
-              type: "game" as const,
-              gameType: "quick" as const,
-            } as SectionData);
-          }
-
-          return newData;
+          return arrayInsertsAt(
+            [...prev.filter((item) => !("type" in item && (item as any).type === "game")), ...uniqueSections],
+            [3, 9],
+            [
+              {
+                name: "Game Invite 1",
+                results: [],
+                type: "game" as const,
+                gameType: "social" as const,
+              },
+              {
+                name: "Game Invite 2",
+                results: [],
+                type: "game" as const,
+                gameType: "quick" as const,
+              },
+            ]
+          );
         });
       } else if (hasMore) {
         setPage((prev) => {
@@ -196,28 +156,26 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     setData([]);
     getLandingMovies({ skip: 0, take: 5, category: selectedChip }).then((response) => {
       if (response.data && Array.isArray(response.data)) {
-        let newData = [...response.data];
-
-        if (newData.length >= 3) {
-          newData.splice(3, 0, {
-            name: "Game Invite 1",
-            results: [],
-            type: "game" as const,
-            gameType: "social" as const,
-          } as SectionData);
-        }
-
-        if (newData.length >= 9) {
-          const adjustedIndex = newData.length >= 3 ? 10 : 9;
-          newData.splice(adjustedIndex, 0, {
-            name: "Game Invite 2",
-            results: [],
-            type: "game" as const,
-            gameType: "quick" as const,
-          } as SectionData);
-        }
-
-        setData(newData);
+        setData(
+          arrayInsertsAt(
+            response.data,
+            [3, 9],
+            [
+              {
+                name: "Game Invite 1",
+                results: [],
+                type: "game" as const,
+                gameType: "social" as const,
+              },
+              {
+                name: "Game Invite 2",
+                results: [],
+                type: "game" as const,
+                gameType: "quick" as const,
+              },
+            ]
+          )
+        );
       }
       setRefreshing(false);
     });
@@ -225,7 +183,6 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
   const handleChipPress = (chip: string) => {
     setSelectedChip(chip);
-    // Add filtering logic here based on chip selection
   };
 
   const scrollY = useSharedValue(0);
