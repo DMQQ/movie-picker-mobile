@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import envs from "../constants/envs";
 import { RootState } from "../redux/store";
-import envs from "../constants/envs";
 
 const isDev = envs.mode !== "production";
 const BACKGROUND_TIMEOUT = 5 * 60 * 1000; // 5 minutes
