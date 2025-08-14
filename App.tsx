@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DarkTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { loadAsync } from "expo-font";
+import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
 import { Platform, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -76,17 +77,31 @@ const theme = MD2DarkTheme;
 
 export default function App() {
   const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
-    loadAsync({
-      Bebas: require("./assets/fonts/BebasNeue-Regular.ttf"),
-    })
-      .then(() => {
+    const initializeApp = async () => {
+      try {
+        // Check for updates on startup
+        if (!__DEV__) {
+          const update = await Updates.checkForUpdateAsync();
+          if (update.isAvailable) {
+            await Updates.fetchUpdateAsync();
+            await Updates.reloadAsync();
+          }
+        }
+
         setIsLoaded(true);
-      })
-      .catch((error) => {
-        console.error("Font loading failed:", error);
-        setIsLoaded(true); // Still show app even if fonts fail
-      });
+      } catch (error) {
+        console.error("App initialization failed:", error);
+        setIsLoaded(true); // Still show app even if initialization fails
+      }
+    };
+    Promise.allSettled([
+      loadAsync({
+        Bebas: require("./assets/fonts/BebasNeue-Regular.ttf"),
+      }),
+      initializeApp(),
+    ]);
   }, []);
 
   return (
