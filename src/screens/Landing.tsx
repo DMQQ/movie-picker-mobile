@@ -75,7 +75,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const [selectedChip, setSelectedChip] = useState("all");
   const previousChip = useRef(selectedChip);
 
-  type SectionData = { name: string; results: Movie[] } | { name: string; results: Movie[]; type: "game"; gameType: "quick" | "social" };
+  type SectionData = { name: string; results: Movie[] } | { name: string; results: Movie[]; type: "game"; gameType: "quick" | "social" | "voter" | "fortune" | "all-games" };
   const [data, setData] = useState<SectionData[]>([]);
 
   const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
@@ -100,7 +100,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
           return arrayInsertsAt(
             [...prev.filter((item) => !("type" in item && (item as any).type === "game")), ...uniqueSections],
-            [3, 9],
+            [3, 8, 14, 20],
             [
               {
                 name: "Game Invite 1",
@@ -112,7 +112,19 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
                 name: "Game Invite 2",
                 results: [],
                 type: "game" as const,
-                gameType: "quick" as const,
+                gameType: "voter" as const,
+              },
+              {
+                name: "Game Invite 3",
+                results: [],
+                type: "game" as const,
+                gameType: "fortune" as const,
+              },
+              {
+                name: "Game Invite 4",
+                results: [],
+                type: "game" as const,
+                gameType: "all-games" as const,
               },
             ]
           );
@@ -159,7 +171,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         setData(
           arrayInsertsAt(
             response.data,
-            [3, 9],
+            [3, 8, 14, 20],
             [
               {
                 name: "Game Invite 1",
@@ -171,7 +183,19 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
                 name: "Game Invite 2",
                 results: [],
                 type: "game" as const,
-                gameType: "quick" as const,
+                gameType: "voter" as const,
+              },
+              {
+                name: "Game Invite 3",
+                results: [],
+                type: "game" as const,
+                gameType: "fortune" as const,
+              },
+              {
+                name: "Game Invite 4",
+                results: [],
+                type: "game" as const,
+                gameType: "all-games" as const,
               },
             ]
           )
@@ -547,29 +571,81 @@ const gameInviteStyles = StyleSheet.create({
 });
 
 const GameInviteSection = memo(
-  ({ type, navigation, backgroundMovies = [] }: { type: "quick" | "social"; navigation: any; backgroundMovies?: Movie[] }) => {
+  ({ type, navigation, backgroundMovies = [] }: { type: "quick" | "social" | "voter" | "fortune" | "all-games"; navigation: any; backgroundMovies?: Movie[] }) => {
     const t = useTranslation();
 
-    const title = type === "quick" ? t("game-invite.quick-title") : t("game-invite.social-title");
-    const subtitle = type === "quick" ? t("game-invite.quick-subtitle") : t("game-invite.social-subtitle");
-    const buttonText = type === "quick" ? t("game-invite.quick-button") : t("game-invite.social-button");
+    const getGameConfig = (gameType: typeof type) => {
+      switch (gameType) {
+        case "quick":
+          return {
+            title: t("game-invite.quick-title"),
+            subtitle: t("game-invite.quick-subtitle"),
+            buttonText: t("game-invite.quick-button"),
+            colors: ["#6366f1", "#8b5cf6"] as const,
+            icon: "gamepad",
+            navigation: () => navigation.navigate("Games"),
+          };
+        case "social":
+          return {
+            title: t("game-invite.social-title"),
+            subtitle: t("game-invite.social-subtitle"),
+            buttonText: t("game-invite.social-button"),
+            colors: ["#f59e0b", "#ef4444"] as const,
+            icon: "users",
+            navigation: () => navigation.navigate("QRCode", {
+              screen: "CreateQRCode",
+              params: { quickStart: true },
+            }),
+          };
+        case "voter":
+          return {
+            title: t("game-invite.voter-title"),
+            subtitle: t("game-invite.voter-subtitle"),
+            buttonText: t("game-invite.voter-button"),
+            colors: ["#10b981", "#059669"] as const,
+            icon: "thumbs-up",
+            navigation: () => navigation.navigate("Voter", { screen: "Home" }),
+          };
+        case "fortune":
+          return {
+            title: t("game-invite.fortune-title"),
+            subtitle: t("game-invite.fortune-subtitle"),
+            buttonText: t("game-invite.fortune-button"),
+            colors: ["#8b5cf6", "#7c3aed"] as const,
+            icon: "refresh",
+            navigation: () => navigation.navigate("Fortune"),
+          };
+        case "all-games":
+          return {
+            title: t("game-invite.all-games-title"),
+            subtitle: t("game-invite.all-games-subtitle"),
+            buttonText: t("game-invite.all-games-button"),
+            colors: ["#374151", "#6b7280"] as const,
+            icon: "list",
+            navigation: () => navigation.navigate("Games"),
+          };
+        default:
+          return {
+            title: "",
+            subtitle: "",
+            buttonText: "",
+            colors: ["#6366f1", "#8b5cf6"] as const,
+            icon: "gamepad",
+            navigation: () => navigation.navigate("Games"),
+          };
+      }
+    };
+
+    const config = getGameConfig(type);
+    
     const handleGamePress = useCallback(() => {
       if (Platform.OS === "ios") {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       }
-
-      if (type === "quick") {
-        navigation.navigate("Games");
-      } else {
-        navigation.navigate("QRCode", {
-          screen: "CreateQRCode",
-          params: { quickStart: true },
-        });
-      }
+      config.navigation();
     }, [type, navigation]);
 
-    const gradientColors: readonly [string, string, ...string[]] =
-      type === "quick" ? (["#6366f1", "#8b5cf6"] as const) : (["#f59e0b", "#ef4444"] as const);
+    const gradientColors = config.colors;
 
     return (
       <Animated.View style={gameInviteStyles.container} entering={FadeIn.delay(200)}>
@@ -588,13 +664,13 @@ const GameInviteSection = memo(
 
         {/* Blur Overlay with Content */}
         <BlurView intensity={10} tint="dark" style={gameInviteStyles.blurContainer}>
-          <Text style={gameInviteStyles.title}>{title}</Text>
-          <Text style={gameInviteStyles.subtitle}>{subtitle}</Text>
+          <Text style={gameInviteStyles.title}>{config.title}</Text>
+          <Text style={gameInviteStyles.subtitle}>{config.subtitle}</Text>
 
           <TouchableOpacity style={gameInviteStyles.button} onPress={handleGamePress} activeOpacity={0.8}>
             <LinearGradient colors={gradientColors} style={gameInviteStyles.buttonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-              <FontAwesome name={type === "quick" ? "gamepad" : "users"} size={18} color="#fff" />
-              <Text style={gameInviteStyles.buttonText}>{buttonText}</Text>
+              <FontAwesome name={config.icon as any} size={18} color="#fff" />
+              <Text style={gameInviteStyles.buttonText}>{config.buttonText}</Text>
             </LinearGradient>
           </TouchableOpacity>
         </BlurView>

@@ -289,6 +289,15 @@
     "social-button": "Play Matching Game",
     "quick-title": "🎮 Challenge Your Friends",
     "quick-subtitle": "Think you know great movies? Prove it!",
-    "quick-button": "Start Movie Game"
+    "quick-button": "Start Movie Game",
+    "voter-title": "🗳️ Vote Together",
+    "voter-subtitle": "Rate movies with friends and find your shared favorites",
+    "voter-button": "Start Voting",
+    "fortune-title": "🎰 Spin to Decide",
+    "fortune-subtitle": "Can't choose? Let the wheel of fortune pick for you!",
+    "fortune-button": "Spin the Wheel",
+    "all-games-title": "🎮 Explore All Games",
+    "all-games-subtitle": "Discover all our party games and find your favorite way to pick movies",
+    "all-games-button": "View All Games"
   }
 }

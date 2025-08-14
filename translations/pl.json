@@ -287,6 +287,15 @@
     "social-button": "Zagraj w Dopasowanie",
     "quick-title": "🎮 Rzuć Wyzwanie Znajomym",
     "quick-subtitle": "Myślisz, że znasz świetne filmy? Udowodnij to!",
-    "quick-button": "Rozpocznij Grę Filmową"
+    "quick-button": "Rozpocznij Grę Filmową",
+    "voter-title": "🗳️ Głosuj Razem",
+    "voter-subtitle": "Oceniaj filmy z przyjaciółmi i znajdź wspólne ulubione",
+    "voter-button": "Rozpocznij Głosowanie",
+    "fortune-title": "🎰 Kręć Kołem",
+    "fortune-subtitle": "Nie możesz się zdecydować? Pozwól kołu fortuny wybrać za Ciebie!",
+    "fortune-button": "Kręć Kołem",
+    "all-games-title": "🎮 Odkryj Wszystkie Gry",
+    "all-games-subtitle": "Poznaj wszystkie nasze gry towarzyskie i znajdź ulubiony sposób na wybieranie filmów",
+    "all-games-button": "Zobacz Wszystkie Gry"
   }
 }
