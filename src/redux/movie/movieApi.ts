@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Episode, Movie, MovieDetails } from "../../../types";
+import envs from "../../constants/envs";
 import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
 import { RootState } from "../store";
 
@@ -44,7 +45,7 @@ export const movieApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: API_BASE_ENDPOINT,
     prepareHeaders: (headers, { getState }) => {
-      headers.set("authorization", `Bearer ${(process.env as any).EXPO_PUBLIC_API_KEY as string}`);
+      headers.set("authorization", `Bearer ${envs.server_auth_token}`);
 
       headers.set("X-User-Language", (getState() as RootState)?.room?.language || "en");
 

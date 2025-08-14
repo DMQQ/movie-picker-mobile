@@ -3,9 +3,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
+import envs from "../constants/envs";
 import { RootState } from "../redux/store";
+import envs from "../constants/envs";
 
-const isDev = process.env.EXPO_PUBLIC_ENV !== "production";
+const isDev = envs.mode !== "production";
 const BACKGROUND_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
 const baseUrl = isDev ? "http://192.168.1.20:3000" : "https://movie.dmqq.dev";
@@ -22,7 +24,7 @@ export const SocketContext = React.createContext<{
 const connectionConfig = {
   transports: ["websocket"],
   auth: {
-    token: `Bearer ${(process.env as any).EXPO_PUBLIC_API_KEY}`,
+    token: `Bearer ${envs.server_auth_token}`,
   },
   path: "/socket.io",
   reconnection: true,
@@ -38,7 +40,7 @@ const connectionConfig = {
 
 const makeHeaders = (language: string) => {
   const headers = new Map<string, string>();
-  headers.set("authorization", `Bearer ${(process.env as any).EXPO_PUBLIC_API_KEY as string}`);
+  headers.set("authorization", `Bearer ${envs.server_auth_token}`);
   headers.set("X-User-Language", language || "en");
 
   if (language === "pl") {
