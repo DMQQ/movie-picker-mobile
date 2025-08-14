@@ -1,6 +1,6 @@
 import { Platform, View } from "react-native";
 import { Text } from "react-native-paper";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import useTranslation from "../../service/useTranslation";
 import CustomFavourite from "../Favourite";
@@ -35,7 +35,7 @@ export default function MovieDetails({
   ].filter((v) => v !== undefined && v !== "" && v !== null) as string[];
 
   return (
-    <Animated.View entering={FadeInDown} style={{ flex: 1 }}>
+    <Animated.View style={{ flex: 1 }} entering={FadeIn}>
       <FrostedGlass blurAmount={Platform.OS === "ios" ? 50 : 100} container={{ borderBottomWidth: 0 }}>
         <View style={{ flex: 1, padding: 15 }}>
           <Text

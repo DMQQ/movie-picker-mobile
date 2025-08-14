@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRef, useState } from "react";
-import { Dimensions, Animated as RNAnimated, ScrollView, StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import { IconButton, Text, TouchableRipple } from "react-native-paper";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import useTranslation from "../service/useTranslation";
@@ -12,7 +12,7 @@ import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheel
 import SwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
 import PageHeading from "../components/PageHeading";
-import { useGetCategoriesQuery } from "../redux/movie/movieApi";
+import { useLazyGetAllProvidersQuery, useLazyGetCategoriesQuery, useLazyGetGenresQuery } from "../redux/movie/movieApi";
 // import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
 
 const { width } = Dimensions.get("screen");
@@ -34,32 +34,9 @@ const Animations = [<SwiperAnimation />, <VoterAnimation />, <FortuneWheelAnimat
 const AnimatedRipple = Animated.createAnimatedComponent(TouchableRipple);
 
 const GameCard = ({ title, description, onPress, beta, players, duration, index }: GameCardProps) => {
-  const scale = useRef(new RNAnimated.Value(1)).current;
-  useGetCategoriesQuery({});
-
-  const onPressIn = () => {
-    RNAnimated.spring(scale, {
-      toValue: 0.97,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const onPressOut = () => {
-    RNAnimated.spring(scale, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  };
-
   return (
-    <AnimatedRipple
-      onPress={onPress}
-      onPressIn={onPressIn}
-      onPressOut={onPressOut}
-      style={styles.cardContainer}
-      exiting={FadeInDown.delay((index + 1) * 75)}
-    >
-      <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
+    <AnimatedRipple onPress={onPress} style={styles.cardContainer} exiting={FadeInDown.delay((index + 1) * 75)}>
+      <Animated.View style={[styles.card]}>
         {Animations[index]}
 
         <LinearGradient colors={["transparent", "rgba(0,0,0,0.8)"]} style={styles.cardGradient}>
@@ -97,6 +74,14 @@ export default function GameList() {
   const navigation = useNavigation<any>();
   const t = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const [prefetchProviders] = useLazyGetAllProvidersQuery();
+  const [prefetchSections] = useLazyGetCategoriesQuery();
+  const [prefetchGengres] = useLazyGetGenresQuery();
+
+  useEffect(() => {
+    Promise.all([prefetchProviders({}), prefetchSections({}), prefetchGengres({ type: "movie" }), prefetchGengres({ type: "tv" })]);
+  }, []);
 
   const categories = [
     { id: "all", label: t("games.categories.all") },

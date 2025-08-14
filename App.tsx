@@ -205,7 +205,7 @@ const Navigator = ({ isLoaded }: { isLoaded: boolean }) => {
               headerTitleAlign: "center",
               headerTitle: "",
               title: "",
-              presentation: "modal",
+              // presentation: "modal",
               ...(Platform.OS === "android" && { animation: "fade_from_bottom" }),
             }}
             initialParams={{

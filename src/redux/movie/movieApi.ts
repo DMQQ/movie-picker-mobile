@@ -222,4 +222,8 @@ export const {
   useGetSeasonEpisodesQuery,
 
   useGetTrailersQuery,
+
+  useLazyGetAllProvidersQuery,
+
+  useLazyGetCategoriesQuery,
 } = movieApi;

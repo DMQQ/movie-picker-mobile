@@ -3,6 +3,7 @@ import { useCallback, useMemo } from "react";
 import { Dimensions, Platform, View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Entypo from "react-native-vector-icons/Entypo";
 import { Movie } from "../../types";
 import FrostedGlass from "../components/FrostedGlass";
@@ -64,6 +65,8 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
     type: typeOfContent,
   });
 
+  const insets = useSafeAreaInsets();
+
   return (
     <View style={{ flex: 1 }}>
       <Animated.ScrollView
@@ -104,7 +107,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
           position: "absolute",
           zIndex: 100,
           left: 5,
-          top: 5,
+          top: insets.top + 5,
         }}
       >
         <FrostedGlass container={{ borderRadius: 250 }}>
