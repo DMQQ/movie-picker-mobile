@@ -81,27 +81,76 @@ export default function App() {
   useEffect(() => {
     const initializeApp = async () => {
       try {
+        console.log("🚀 App initialization started");
+        console.log("📱 Environment - DEV mode:", __DEV__);
+
         // Check for updates on startup
-        if (!__DEV__) {
-          const update = await Updates.checkForUpdateAsync();
-          if (update.isAvailable) {
-            await Updates.fetchUpdateAsync();
-            await Updates.reloadAsync();
+
+        console.log("🔍 Checking for updates...");
+        console.log("📦 Updates configuration:", {
+          updateUrl: Updates?.url,
+          runtimeVersion: Updates.runtimeVersion,
+          channel: Updates.channel,
+        });
+
+        console.log("🔗 Linking configuration:", Updates.manifest, Updates);
+
+        const update = await Updates.checkForUpdateAsync();
+        console.log("📊 Update check result:", {
+          isAvailable: update.isAvailable,
+          isRollBackToEmbedded: update.isRollBackToEmbedded,
+          manifest: update.manifest ? "Present" : "Not present",
+          reason: update.reason,
+        });
+
+        if (update.isAvailable) {
+          console.log("⬇️ Update available! Starting fetch...");
+          const fetchResult = await Updates.fetchUpdateAsync();
+          console.log("📥 Fetch result:", {
+            isNew: fetchResult.isNew,
+            manifest: fetchResult.manifest ? "Present" : "Not present",
+          });
+
+          console.log("🔄 Reloading app with new update...");
+          await Updates.reloadAsync();
+        } else {
+          console.log("✅ No update available, continuing with current version");
+          if (update.reason) {
+            console.log("❓ No update reason:", update.reason);
           }
         }
 
+        console.log("✅ App initialization completed successfully");
         setIsLoaded(true);
       } catch (error) {
-        console.error("App initialization failed:", error);
+        console.error("❌ App initialization failed:", error);
+        console.error("🔍 Error details:", {
+          name: error?.name,
+          message: error?.message,
+          stack: error?.stack,
+        });
         setIsLoaded(true); // Still show app even if initialization fails
       }
     };
+
+    console.log("🎯 Starting Promise.allSettled for app initialization");
     Promise.allSettled([
       loadAsync({
         Bebas: require("./assets/fonts/BebasNeue-Regular.ttf"),
-      }),
+      })
+        .then(() => console.log("🔤 Fonts loaded successfully"))
+        .catch((error) => console.error("🔤 Font loading failed:", error)),
       initializeApp(),
-    ]);
+    ]).then((results) => {
+      console.log(
+        "🏁 Promise.allSettled completed:",
+        results.map((result, index) => ({
+          index,
+          status: result.status,
+          ...(result.status === "rejected" && { reason: result.reason }),
+        }))
+      );
+    });
   }, []);
 
   return (
