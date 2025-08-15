@@ -23,7 +23,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#0d0f14",
+          "backgroundColor": "#000",
           "image": "./assets/images/icon-light.png",
           "imageWidth": 200
         }

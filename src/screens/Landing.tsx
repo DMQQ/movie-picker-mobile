@@ -4,58 +4,24 @@ import { FlashList } from "@shopify/flash-list";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
-import {
-  Dimensions,
-  ImageBackground,
-  Platform,
-  Pressable,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  VirtualizedList,
-} from "react-native";
+import { memo, useCallback, useEffect, useState } from "react";
+import { Dimensions, Platform, Pressable, RefreshControl, StyleSheet, TouchableOpacity, View, VirtualizedList } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import Animated, { FadeIn, FadeInDown, useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../types";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
-import FrostedGlass from "../components/FrostedGlass";
+import FeaturedSection from "../components/Landing/FeaturedSection";
 import LandingHeader from "../components/LandingHeader";
 import NoConnectionError from "../components/NoConnectionError";
-import RatingIcons from "../components/RatingIcons";
 import ScoreRing from "../components/ScoreRing";
-import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
-import { useGetFeaturedQuery, useLazyGetLandingPageMoviesQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
+import Thumbnail, { prefetchThumbnail } from "../components/Thumbnail";
+import { useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
+import useLanding, { SectionData } from "../service/useLanding";
 import useTranslation from "../service/useTranslation";
-import { arrayInsertsAt } from "../utils/utilities";
 import { ScreenProps } from "./types";
 
 const { width, height } = Dimensions.get("screen");
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    padding: 5,
-  },
-
-  featuredImage: {
-    width,
-    height: height / 1.3,
-    position: "relative",
-    marginBottom: 35,
-  },
-
-  gradientContainer: { flex: 1, position: "absolute", bottom: 0, width, paddingTop: 30 },
-
-  overview: { fontSize: 16, color: "rgba(255,255,255,0.95)", fontWeight: "500" },
-});
-
-const gradient = ["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"] as any;
 
 const keyExtractor = (item: any, index: number) => {
   if ("type" in item && item.type === "game") {
@@ -71,83 +37,7 @@ const getItem = (data: any, index: number) => data[index];
 const AnimatedVirtualizedList = Animated.createAnimatedComponent(VirtualizedList);
 
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
-  const [page, setPage] = useState(1);
-  const [selectedChip, setSelectedChip] = useState("all");
-  const previousChip = useRef(selectedChip);
-
-  type SectionData =
-    | { name: string; results: Movie[] }
-    | { name: string; results: Movie[]; type: "game"; gameType: "quick" | "social" | "voter" | "fortune" | "all-games" };
-  const [data, setData] = useState<SectionData[]>([]);
-
-  const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
-  const [hasMore, setHasMore] = useState(true);
-
-  useEffect(() => {
-    if (previousChip.current !== selectedChip) {
-      setPage(0);
-      setData([]);
-      previousChip.current = selectedChip;
-    }
-  }, [selectedChip]);
-
-  useEffect(() => {
-    getLandingMovies({ skip: page * 8, take: 8, category: selectedChip }, true).then((response) => {
-      if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-        setHasMore(response.data.length >= 8);
-        setData((prev) => {
-          const uniqueSections = (response.data || []).filter(
-            (newSection) => !prev.some((existingSection) => existingSection.name === newSection.name)
-          );
-
-          return arrayInsertsAt(
-            [...prev.filter((item) => !("type" in item && (item as any).type === "game")), ...uniqueSections],
-            [3, 8, 14, 20],
-            [
-              {
-                name: "Game Invite 1",
-                results: [],
-                type: "game" as const,
-                gameType: "social" as const,
-              },
-              {
-                name: "Game Invite 2",
-                results: [],
-                type: "game" as const,
-                gameType: "voter" as const,
-              },
-              {
-                name: "Game Invite 3",
-                results: [],
-                type: "game" as const,
-                gameType: "fortune" as const,
-              },
-              {
-                name: "Game Invite 4",
-                results: [],
-                type: "game" as const,
-                gameType: "all-games" as const,
-              },
-            ]
-          );
-        });
-      } else if (hasMore) {
-        setPage((prev) => {
-          return prev + 1;
-        });
-        setHasMore(false);
-      }
-    });
-  }, [page, hasMore, selectedChip]);
-
-  const onEndReached = useCallback(() => {
-    if (error || !hasMore) return;
-
-    setPage((prev) => {
-      return prev + 1;
-    });
-  }, [error, hasMore]);
-
+  const { data, onScroll, onEndReached, refreshing, onRefresh, getItemLayout, handleChipPress, selectedChip, scrollY } = useLanding();
   const renderItem = useCallback(
     ({ item, index }: { item: SectionData; index: number }) => {
       if ("type" in item && item.type === "game") {
@@ -162,83 +52,14 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     [navigation, data]
   );
 
-  const [refreshing, setRefreshing] = useState(false);
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setPage(0);
-    setData([]);
-    getLandingMovies({ skip: 0, take: 5, category: selectedChip }).then((response) => {
-      if (response.data && Array.isArray(response.data)) {
-        setData(
-          arrayInsertsAt(
-            response.data,
-            [3, 8, 14, 20],
-            [
-              {
-                name: "Game Invite 1",
-                results: [],
-                type: "game" as const,
-                gameType: "social" as const,
-              },
-              {
-                name: "Game Invite 2",
-                results: [],
-                type: "game" as const,
-                gameType: "voter" as const,
-              },
-              {
-                name: "Game Invite 3",
-                results: [],
-                type: "game" as const,
-                gameType: "fortune" as const,
-              },
-              {
-                name: "Game Invite 4",
-                results: [],
-                type: "game" as const,
-                gameType: "all-games" as const,
-              },
-            ]
-          )
-        );
-      }
-      setRefreshing(false);
-    });
-  }, [selectedChip]);
-
-  const handleChipPress = (chip: string) => {
-    setSelectedChip(chip);
-  };
-
-  const scrollY = useSharedValue(0);
-  const onScroll = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-    },
-  });
-
-  const getItemLayout = useCallback((data: SectionData[], index: number) => {
-    const item = data?.[index];
-    const isGame = item && "type" in item && item.type === "game";
-    const itemHeight = isGame ? 210 : height * 0.275 + 30;
-
-    let offset = 0;
-    for (let i = 0; i < index; i++) {
-      const prevItem = data?.[i];
-      const prevIsGame = prevItem && "type" in prevItem && prevItem.type === "game";
-      offset += prevIsGame ? 210 : height * 0.275 + 30;
-    }
-
-    return { length: itemHeight, offset, index };
-  }, []);
-
   return (
-    <View style={{ flex: 1, backgroundColor: "#111111" }}>
+    <View style={{ flex: 1 }}>
       <AppLoadingOverlay />
       <NoConnectionError />
 
       <AnimatedVirtualizedList
+        windowSize={16}
+        removeClippedSubviews={true}
         onScroll={onScroll}
         data={data}
         initialNumToRender={3}
@@ -250,7 +71,6 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         ListHeaderComponent={<FeaturedSection navigate={navigation.navigate} />}
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        removeClippedSubviews
         getItemLayout={getItemLayout}
       />
 
@@ -259,68 +79,6 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     </View>
   );
 }
-
-const FeaturedSection = memo(
-  (props: { navigate: any }) => {
-    const { data: featured, error } = useGetFeaturedQuery();
-    const navigation = useNavigation<any>();
-
-    const onPress = () => {
-      navigation.navigate("MovieDetails", {
-        id: featured?.id,
-        type: featured?.type,
-        img: featured?.poster_path,
-      });
-    };
-
-    const details = [
-      featured?.release_date || featured?.first_air_date,
-      ((featured?.title || featured?.name) === (featured?.original_title || featured?.original_name) && featured?.original_title) ||
-        featured?.original_name,
-      ...(featured?.genres || []),
-    ]
-      .filter(Boolean)
-      .join(" | ");
-
-    useEffect(() => {
-      if (!featured?.poster_path) return;
-
-      prefetchThumbnail(featured?.poster_path, ThumbnailSizes.poster.xxlarge);
-    }, [featured?.poster_path]);
-
-    if (!featured || error) return null;
-
-    return (
-      <ImageBackground
-        style={styles.featuredImage}
-        source={{
-          uri: "https://image.tmdb.org/t/p/w780" + featured?.poster_path,
-        }}
-        defaultSource={{ uri: featured?.placeholder_poster_path }}
-      >
-        <LinearGradient style={styles.gradientContainer} colors={gradient}>
-          <Animated.View entering={FadeInDown.delay(750)}>
-            <Pressable onPress={onPress}>
-              <FrostedGlass style={{ padding: 15, borderBottomWidth: 0 }} container={{ borderWidth: 0 }}>
-                <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
-                  {featured?.title || featured?.name}
-                </Text>
-                <View style={{ flexDirection: "row", marginBottom: 10 }}>
-                  <RatingIcons vote={featured?.vote_average} size={20} />
-                </View>
-                <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>{details}</Text>
-                <Text numberOfLines={7} style={styles.overview}>
-                  {featured?.overview}
-                </Text>
-              </FrostedGlass>
-            </Pressable>
-          </Animated.View>
-        </LinearGradient>
-      </ImageBackground>
-    );
-  },
-  () => true
-);
 
 const tabStyles = StyleSheet.create({
   container: {
