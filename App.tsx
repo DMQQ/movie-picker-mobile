@@ -121,7 +121,7 @@ const Navigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: bo
     };
   };
 
-  if (!loaded || !isLoaded) return <Fallback isUpdating={isUpdating} />;
+  if (!loaded || !isLoaded || isUpdating) return <Fallback isUpdating={isUpdating} />;
 
   if (showLanguageSelector) {
     return (
