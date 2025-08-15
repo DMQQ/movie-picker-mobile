@@ -68,7 +68,7 @@ const Fallback = ({ isUpdating }: { isUpdating?: boolean }) => (
     }}
   >
     <Image source={require("./assets/images/icon-light.png")} style={{ width: 200, height: 200, marginBottom: 20 }} />
-    {isUpdating && <Text>App is updating, please wait...</Text>}
+    {isUpdating && <Text style={{ fontFamily: "Bebas", marginTop: 10, fontSize: 25 }}>App is updating, please wait...</Text>}
   </View>
 );
 
