@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import envs from "../../constants/envs";
 import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
-import { RootState } from "../store";
+import prepareHeaders from "../../service/prepareHeaders";
 // Define interfaces
 interface Person {
   id: number;
@@ -83,29 +82,7 @@ export const personApi = createApi({
   reducerPath: "personApi",
   baseQuery: fetchBaseQuery({
     baseUrl: API_BASE_ENDPOINT + "/people",
-    prepareHeaders: (headers, { getState }) => {
-      headers.set("authorization", `Bearer ${envs.server_auth_token}`);
-
-      headers.set("X-User-Language", (getState() as RootState)?.room?.language || "en");
-
-      const state = getState() as RootState;
-
-      if (state?.room?.language === "pl") {
-        headers.set("x-user-language", "pl-PL");
-        headers.set("x-user-region", "PL");
-        headers.set("x-user-timezone", "Europe/Warsaw");
-        headers.set("x-user-watch-provider", "PL");
-        headers.set("x-user-watch-region", "PL");
-      } else {
-        headers.set("x-user-language", "en-US");
-        headers.set("x-user-region", "US");
-        headers.set("x-user-timezone", "America/New_York");
-        headers.set("x-user-watch-provider", "US");
-        headers.set("x-user-watch-region", "US");
-      }
-
-      return headers;
-    },
+    prepareHeaders: prepareHeaders,
   }),
   tagTypes: ["Person", "MovieCredits", "TVCredits", "CombinedCredits", "KeyPeople", "Cache"],
 

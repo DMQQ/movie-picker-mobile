@@ -1,8 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Episode, Movie, MovieDetails } from "../../../types";
-import envs from "../../constants/envs";
 import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
-import { RootState } from "../store";
+import prepareHeaders from "../../service/prepareHeaders";
 
 interface SearchParams {
   query?: string;
@@ -44,38 +43,7 @@ export const movieApi = createApi({
   tagTypes: ["Search", "SearchResults"],
   baseQuery: fetchBaseQuery({
     baseUrl: API_BASE_ENDPOINT,
-    prepareHeaders: (headers, { getState }) => {
-      headers.set("authorization", `Bearer ${envs.server_auth_token}`);
-
-      headers.set("X-User-Language", (getState() as RootState)?.room?.language || "en");
-
-      const state = getState() as RootState;
-
-      const defaultHeaders =
-        state?.room?.language === "pl"
-          ? {
-              "x-user-language": "pl-PL",
-              "x-user-region": "PL",
-              "x-user-timezone": "Europe/Warsaw",
-              "x-user-watch-provider": "PL",
-              "x-user-watch-region": "PL",
-            }
-          : {
-              "x-user-language": "en-US",
-              "x-user-region": "US",
-              "x-user-timezone": "America/New_York",
-              "x-user-watch-provider": "US",
-              "x-user-watch-region": "US",
-            };
-
-      const regionalization = state?.room?.regionalization || defaultHeaders;
-
-      Object.entries(regionalization).forEach(([key, value]) => {
-        headers.set(key, value);
-      });
-
-      return headers;
-    },
+    prepareHeaders: prepareHeaders,
   }),
   endpoints: (builder) => ({
     getLandingPageMovies: builder.query<{ name: string; results: Movie[] }[], LandingPageParams>({
