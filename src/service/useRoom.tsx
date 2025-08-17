@@ -92,7 +92,6 @@ export default function useRoom(room: string) {
   const likeCard = (card: Movie, index: number) => {
     socket?.emit("pick-movie", {
       roomId: room,
-      movie: card.id,
       index,
       swipe: { type: "like", movie: card.id },
     });
@@ -103,7 +102,6 @@ export default function useRoom(room: string) {
   const dislikeCard = (card: Movie, index: number) => {
     socket?.emit("pick-movie", {
       roomId: room,
-      movie: 0,
       index,
       swipe: { type: "dislike", movie: card.id },
     });

@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useRef, useState } from "react";
-import { AppState, AppStateStatus, Platform } from "react-native";
+import { AppState, AppStateStatus } from "react-native";
 import { useSelector } from "react-redux";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import envs from "../constants/envs";
@@ -67,7 +67,6 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   const reconnectTimeout = useRef<NodeJS.Timeout>();
   const backgroundTimer = useRef<NodeJS.Timeout>();
   const wasConnected = useRef(false);
-  const backgroundStartTime = useRef<number | null>(null);
 
   const initializeSocket = async () => {
     try {
@@ -119,33 +118,14 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
 
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (appState.current.match(/inactive|background/) && nextAppState === "active") {
-      if (backgroundTimer.current) {
-        clearTimeout(backgroundTimer.current);
-        backgroundTimer.current = undefined;
+      console.log("App has come to the foreground!");
+      if (socketRef.current) {
+        socketRef.current.connect();
+      } else {
+        initializeSocket();
       }
-
-      if (backgroundStartTime.current) {
-        const timeInBackground = Date.now() - backgroundStartTime.current;
-        if (timeInBackground >= BACKGROUND_TIMEOUT) {
-          reconnect();
-        }
-      }
-
-      backgroundStartTime.current = null;
-    } else if (nextAppState.match(/inactive|background/)) {
-      backgroundStartTime.current = Date.now();
-
-      if (Platform.OS === "ios") {
-        socketRef.current?.emit("background");
-      }
-
-      backgroundTimer.current = setTimeout(() => {
-        if (socketRef.current?.connected) {
-          socketRef.current.disconnect();
-        }
-      }, BACKGROUND_TIMEOUT);
+      socketRef?.current?.emit("reconnect");
     }
-
     appState.current = nextAppState;
   };
 
