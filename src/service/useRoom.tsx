@@ -94,16 +94,18 @@ export default function useRoom(room: string) {
       roomId: room,
       movie: card.id,
       index,
+      swipe: { type: "like", movie: card.id },
     });
     removeCardLocally(index);
     dispatch(roomActions.likeMovie(card));
   };
 
-  const dislikeCard = (index: number) => {
+  const dislikeCard = (card: Movie, index: number) => {
     socket?.emit("pick-movie", {
       roomId: room,
       movie: 0,
       index,
+      swipe: { type: "dislike", movie: card.id },
     });
     removeCardLocally(index);
   };

@@ -33,8 +33,8 @@ const connectionConfig = {
   forceNew: false,
   multiplex: false,
   autoConnect: true,
-  pingInterval: 10000,
-  pingTimeout: 5000,
+  pingInterval: 25000,
+  pingTimeout: 30000,
 } as Partial<ManagerOptions & SocketOptions>;
 
 const makeHeaders = (language: string) => {

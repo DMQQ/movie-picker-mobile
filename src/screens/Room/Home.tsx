@@ -102,7 +102,7 @@ export default function Home({ route, navigation }: any) {
               card={card}
               index={index}
               likeCard={throttle(() => likeCard(card, index), 500)}
-              removeCard={throttle(() => dislikeCard(index), 500)}
+              removeCard={throttle(() => dislikeCard(card, index), 500)}
             />
           ))}
 

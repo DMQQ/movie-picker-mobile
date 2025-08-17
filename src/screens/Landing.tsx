@@ -21,13 +21,13 @@ import useLanding, { SectionData } from "../service/useLanding";
 import useTranslation from "../service/useTranslation";
 import { ScreenProps } from "./types";
 
-const { width, height } = Dimensions.get("screen");
+const { width } = Dimensions.get("screen");
 
 const keyExtractor = (item: any, index: number) => {
-  if ("type" in item && item.type === "game") {
-    return `game-${item.gameType}-${index}`;
+  if (item?.type === "game") {
+    return `section-${item.gameType}`;
   }
-  return `section-${item.name}-${index}`;
+  return `section-${item.name}`;
 };
 
 const getItemCount = (data: any) => data?.length || 0;
@@ -53,13 +53,8 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
       <NoConnectionError />
 
       <AnimatedVirtualizedList
-        windowSize={6}
-        removeClippedSubviews={true}
         onScroll={onScroll}
         data={data}
-        initialNumToRender={3}
-        maxToRenderPerBatch={3}
-        updateCellsBatchingPeriod={100}
         renderItem={renderItem as any}
         keyExtractor={keyExtractor}
         getItemCount={getItemCount}
@@ -202,7 +197,7 @@ export const Section = memo(({ group }: SectionProps) => {
 
     getSectionMovies({ name: group.name, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
-        Promise.any(response.data.results.map((i) => prefetchThumbnail(i.poster_path, 185)));
+        Promise.allSettled(response.data.results.map((i) => prefetchThumbnail(i.poster_path, 185)));
 
         setSectionMovies((prev) => prev.concat(response?.data?.results || []));
       }
