@@ -38,19 +38,14 @@ const AnimatedVirtualizedList = Animated.createAnimatedComponent(VirtualizedList
 
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const { data, onScroll, onEndReached, refreshing, onRefresh, getItemLayout, handleChipPress, selectedChip, scrollY } = useLanding();
-  const renderItem = useCallback(
-    ({ item, index }: { item: SectionData; index: number }) => {
-      if ("type" in item && item.type === "game") {
-        const previousSections = data.slice(0, index).filter((section) => !("type" in section));
-        const backgroundMovies = previousSections.flatMap((section) => section.results).slice(0, 6);
 
-        return <GameInviteSection type={item.gameType} navigation={navigation} backgroundMovies={backgroundMovies} />;
-      }
+  const renderItem = useCallback(({ item }: { item: SectionData }) => {
+    if ("type" in item && item.type === "game") {
+      return <GameInviteSection type={item.gameType} navigation={navigation} />;
+    }
 
-      return <Section group={item} />;
-    },
-    [navigation, data]
-  );
+    return <Section group={item} />;
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -58,11 +53,13 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
       <NoConnectionError />
 
       <AnimatedVirtualizedList
-        windowSize={8}
+        windowSize={6}
         removeClippedSubviews={true}
         onScroll={onScroll}
         data={data}
-        initialNumToRender={4}
+        initialNumToRender={3}
+        maxToRenderPerBatch={3}
+        updateCellsBatchingPeriod={100}
         renderItem={renderItem as any}
         keyExtractor={keyExtractor}
         getItemCount={getItemCount}
@@ -169,7 +166,7 @@ interface SectionProps {
 }
 
 const sectionStyles = StyleSheet.create({
-  container: { paddingHorizontal: 15, height: Math.min(width * 0.3, 200) * 1.75 + 30, paddingBottom: 30 },
+  container: { paddingHorizontal: 15, height: Math.min(width * 0.3, 200) * 1.75 + 50, paddingBottom: 50 },
   title: { color: "#fff", fontSize: 35, fontFamily: "Bebas", marginBottom: 10 },
   list: {
     flex: 1,
@@ -332,16 +329,18 @@ const gameInviteStyles = StyleSheet.create({
   },
 });
 
+const backgroundImages = [
+  "/nGrUZvMxVqJvW1VsJ3QZStxnsZN.jpg",
+  "/kWm4HxanOhRWfW9PzigkUXulwdG.jpg",
+  "/wO15XEgeLbeijtf3MQAUqWCxSxc.jpg",
+  "/odEEx7fS8GcZcZ5rEZnrrLsDIm7.jpg",
+  "/y7tjLYcq2ZGy2DNG0ODhGX9Tm60.jpg",
+  "/mIg1qCkVxnAlM2TK3RUF0tdEXlE.jpg",
+  "/cpf7vsRZ0MYRQcnLWteD5jK9ymT.jpg",
+];
+
 const GameInviteSection = memo(
-  ({
-    type,
-    navigation,
-    backgroundMovies = [],
-  }: {
-    type: "quick" | "social" | "voter" | "fortune" | "all-games";
-    navigation: any;
-    backgroundMovies?: Movie[];
-  }) => {
+  ({ type, navigation }: { type: "quick" | "social" | "voter" | "fortune" | "all-games"; navigation: any }) => {
     const t = useTranslation();
 
     const getGameConfig = (gameType: typeof type) => {
@@ -422,14 +421,8 @@ const GameInviteSection = memo(
       <Animated.View style={gameInviteStyles.container} entering={FadeIn.delay(200)}>
         {/* Background Movies */}
         <View style={gameInviteStyles.backgroundMovies}>
-          {backgroundMovies.slice(0, 6).map((movie, index) => (
-            <Thumbnail
-              key={`${movie.id}-${index}`}
-              path={movie.poster_path}
-              size={185}
-              container={gameInviteStyles.movieThumbnail}
-              priority="low"
-            />
+          {backgroundImages.slice(0, 6).map((image, index) => (
+            <Thumbnail key={`${image}`} path={image} size={185} container={gameInviteStyles.movieThumbnail} priority="low" />
           ))}
         </View>
 

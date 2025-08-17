@@ -145,13 +145,13 @@ export default function useLanding() {
   const getItemLayout = useCallback((data: SectionData[], index: number) => {
     const item = data?.[index];
     const isGame = item && "type" in item && item.type === "game";
-    const itemHeight = isGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 30;
+    const itemHeight = isGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 50;
 
     let offset = 0;
     for (let i = 0; i < index; i++) {
       const prevItem = data?.[i];
       const prevIsGame = prevItem && "type" in prevItem && prevItem.type === "game";
-      offset += prevIsGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 30;
+      offset += prevIsGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 50;
     }
 
     return { length: itemHeight, offset, index };
