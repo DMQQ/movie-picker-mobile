@@ -58,11 +58,11 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
       <NoConnectionError />
 
       <AnimatedVirtualizedList
-        windowSize={16}
+        windowSize={8}
         removeClippedSubviews={true}
         onScroll={onScroll}
         data={data}
-        initialNumToRender={3}
+        initialNumToRender={4}
         renderItem={renderItem as any}
         keyExtractor={keyExtractor}
         getItemCount={getItemCount}
@@ -72,6 +72,8 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         getItemLayout={getItemLayout}
+        style={{ flex: 1 }}
+        ListFooterComponent={<View style={{ height: 60 }} />}
       />
 
       <BottomTab navigate={navigation.navigate} />
@@ -167,7 +169,7 @@ interface SectionProps {
 }
 
 const sectionStyles = StyleSheet.create({
-  container: { paddingHorizontal: 15, height: height * 0.275 + 30, paddingBottom: 30 },
+  container: { paddingHorizontal: 15, height: Math.min(width * 0.3, 200) * 1.75 + 30, paddingBottom: 30 },
   title: { color: "#fff", fontSize: 35, fontFamily: "Bebas", marginBottom: 10 },
   list: {
     flex: 1,
@@ -178,8 +180,8 @@ const sectionStyles = StyleSheet.create({
   },
 
   image: {
-    width: width * 0.3,
-    height: height * 0.2,
+    width: Math.min(width * 0.3, 200),
+    height: Math.min(width * 0.3, 200) * 1.5,
     borderRadius: 7.5,
     marginRight: 15,
   },

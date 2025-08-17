@@ -9,7 +9,7 @@ import useTranslation from "../service/useTranslation";
 import ScoreRing from "./ScoreRing";
 import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "./Thumbnail";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("screen");
 
 const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
   const navigation = useNavigation<any>();
@@ -78,11 +78,11 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
 });
 
 const sectionStyles = StyleSheet.create({
-  container: { marginVertical: 10, height: height * 0.2 + 30, marginTop: 30 },
+  container: { marginVertical: 10, height: Math.min(width * 0.3, 200) * 1.5 + 30, marginTop: 30 },
   title: { color: "#fff", fontSize: 35, marginBottom: 10, fontFamily: "Bebas" },
   list: {
     flex: 1,
-    height: height * 0.2,
+    height: Math.min(width * 0.3, 200) * 1.42,
   },
   listContainer: {
     justifyContent: "flex-start",
@@ -90,8 +90,8 @@ const sectionStyles = StyleSheet.create({
   },
 
   image: {
-    width: width * 0.3,
-    height: height * 0.2,
+    width: Math.min(width * 0.3, 200),
+    height: Math.min(width * 0.3, 200) * 1.42,
     borderRadius: 7.5,
     marginRight: 15,
   },

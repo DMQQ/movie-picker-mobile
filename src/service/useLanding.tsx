@@ -5,7 +5,7 @@ import { Movie } from "../../types";
 import { useLazyGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
 import { arrayInsertsAt } from "../utils/utilities";
 
-const { height } = Dimensions.get("screen");
+const { width } = Dimensions.get("screen");
 
 export type SectionData =
   | { name: string; results: Movie[] }
@@ -145,17 +145,17 @@ export default function useLanding() {
   const getItemLayout = useCallback((data: SectionData[], index: number) => {
     const item = data?.[index];
     const isGame = item && "type" in item && item.type === "game";
-    const itemHeight = isGame ? 210 : height * 0.275 + 30;
+    const itemHeight = isGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 30;
 
     let offset = 0;
     for (let i = 0; i < index; i++) {
       const prevItem = data?.[i];
       const prevIsGame = prevItem && "type" in prevItem && prevItem.type === "game";
-      offset += prevIsGame ? 210 : height * 0.275 + 30;
+      offset += prevIsGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 30;
     }
 
     return { length: itemHeight, offset, index };
-  }, []);
+  }, [width]);
 
   return {
     data,
