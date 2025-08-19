@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { memo, useEffect } from "react";
 import { Dimensions, SafeAreaView } from "react-native";
 import { IconButton, useTheme } from "react-native-paper";
+import PageHeading from "../components/PageHeading";
 import useTranslation from "../service/useTranslation";
 import LikesScreen from "./Overview/Likes";
 import MatchesScreen from "./Overview/Matches";
@@ -24,6 +25,7 @@ function Overview() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <PageHeading title="Overview" />
       <OverviewTopTabs.Navigator
         initialLayout={{ width: Dimensions.get("window").width }}
         initialRouteName="Matches"
@@ -33,7 +35,7 @@ function Overview() {
             color: theme.colors.primary,
           },
           tabBarStyle: {
-            backgroundColor: theme.colors.surface,
+            backgroundColor: "#000",
             paddingVertical: 5,
           },
 

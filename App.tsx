@@ -171,10 +171,9 @@ const Navigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: bo
             name="Overview"
             component={Overview}
             options={{
-              headerShown: Platform.OS !== "ios",
               title: Platform.OS === "ios" ? "" : "Overview",
               headerTitleAlign: "center",
-              presentation: "modal",
+              headerShown: false,
             }}
           />
           <Stack.Screen

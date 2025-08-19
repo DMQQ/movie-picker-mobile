@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 import { ScreenProps } from "./types";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import Thumbnail from "../components/Thumbnail";
 
@@ -22,11 +22,14 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [text, setText] = useState("");
 
+  const listRef = useRef<FlatList>(null);
+
   return (
     <SafeIOSContainer style={{ marginTop: 0 }}>
       <PageHeading title={t("favourites.title")} />
       <View style={{ paddingHorizontal: 15, flex: 1 }}>
         <FlatList
+          ref={listRef}
           showsVerticalScrollIndicator={false}
           data={groups}
           keyExtractor={(k, index) => k.id + "-" + index}
@@ -36,7 +39,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
               disabled={item?.movies?.length === 0}
               onPress={() => navigation.navigate("Group", { group: item })}
               style={{ marginBottom: 15 }}
-              entering={FadeInDown.delay((index + 1) * 75)}
+              entering={FadeInDown.delay(Math.min((index + 1) * 75, 500))}
             >
               <>
                 <View style={{ borderRadius: 10, overflow: "hidden" }}>
@@ -119,6 +122,9 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
                 dispatch(createGroup(text.trim()));
                 setModalVisible(false);
                 setText("");
+                setTimeout(() => {
+                  listRef.current?.scrollToEnd({ animated: true });
+                }, 200);
               }
             }}
           >
