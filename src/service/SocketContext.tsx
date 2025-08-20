@@ -7,7 +7,6 @@ import envs from "../constants/envs";
 import { RootState } from "../redux/store";
 
 const isDev = envs.mode !== "production";
-const BACKGROUND_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
 const baseUrl = isDev ? "http://192.168.1.20:3000" : "https://movie.dmqq.dev";
 export const url = baseUrl + "/api";

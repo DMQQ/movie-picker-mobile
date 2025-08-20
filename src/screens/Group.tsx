@@ -46,10 +46,10 @@ export default function Group({ navigation, route }: any) {
         />
       )}
 
-      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
+      <View style={{ paddingHorizontal: 15, paddingTop: 15, flexDirection: "row", gap: 15 }}>
         <Button
           mode="contained"
-          style={{ borderRadius: 100 }}
+          style={{ borderRadius: 100, flex: 1 }}
           contentStyle={{ padding: 7.5 }}
           onPress={() => {
             if (match) return setMatch(undefined);
@@ -58,7 +58,20 @@ export default function Group({ navigation, route }: any) {
         >
           {match ? t("likes.close") : t("likes.random")}
         </Button>
+
+        {/* <IconButton icon={"dice-5"} mode="contained" /> */}
       </View>
+      {/* 
+      <FortuneWheelComponent
+        items={
+          data?.movies.map((m) => ({
+            ...m,
+            image: m.imageUrl,
+            poster_path: m.imageUrl,
+          })) || []
+        }
+        size={Dimensions.get("screen").width * 1.75}
+      /> */}
     </View>
   );
 }

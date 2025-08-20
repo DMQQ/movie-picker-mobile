@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
@@ -13,6 +12,7 @@ import SwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
 import PageHeading from "../components/PageHeading";
 import { useLazyGetAllProvidersQuery, useLazyGetCategoriesQuery, useLazyGetGenresQuery } from "../redux/movie/movieApi";
+import { ScreenProps } from "./types";
 // import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
 
 const { width } = Dimensions.get("screen");
@@ -70,8 +70,7 @@ const GameCard = ({ title, description, onPress, beta, players, duration, index 
   );
 };
 
-export default function GameList() {
-  const navigation = useNavigation<any>();
+export default function GameList({ navigation }: ScreenProps<"Games">) {
   const t = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -81,6 +80,7 @@ export default function GameList() {
 
   useEffect(() => {
     Promise.all([prefetchProviders({}), prefetchSections({}), prefetchGengres({ type: "movie" }), prefetchGengres({ type: "tv" })]);
+    navigation.preload("Voter");
   }, []);
 
   const categories = [
@@ -95,7 +95,7 @@ export default function GameList() {
       description: t("games.voter.swipeDescription"),
 
       route: "QRCode",
-      players: "2-8",
+      players: "1-8",
       duration: "5-10 min",
       category: "popular",
       index: 0,
@@ -151,7 +151,7 @@ export default function GameList() {
             key={game.index}
             title={game.title}
             description={game.description}
-            onPress={() => navigation.navigate(game.route, game.params)}
+            onPress={() => navigation.navigate<any>(game.route, game.params)}
             beta={game.beta}
             players={game.players}
             duration={game.duration}

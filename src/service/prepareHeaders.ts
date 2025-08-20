@@ -1,4 +1,5 @@
 import { BaseQueryApi } from "@reduxjs/toolkit/query";
+import * as Updates from "expo-updates";
 import envs from "../constants/envs";
 import type { RootState } from "../redux/store";
 
@@ -9,6 +10,12 @@ export default function prepareHeaders(
   headers.set("authorization", `Bearer ${envs.server_auth_token}`);
 
   headers.set("X-User-Language", (getState() as RootState)?.room?.language || "en");
+
+  const updateId = Updates.updateId;
+  if (updateId) {
+    headers.set("X-Update-Version", updateId);
+    headers.set("x-update-manifest-id", Updates?.manifest?.id || "unknown");
+  }
 
   const state = getState() as RootState;
   const userLanguage = state?.room?.language || "en";

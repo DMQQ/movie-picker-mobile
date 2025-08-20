@@ -47,7 +47,7 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
           position: "relative",
         }}
       >
-        <Thumbnail contentFit="cover" container={sectionStyles.image} size={185} path={item.poster_path} />
+        <Thumbnail container={sectionStyles.image} size={185} path={item.poster_path} />
         <View style={{ position: "absolute", right: 25, bottom: 5 }}>
           <ScoreRing score={item.vote_average} />
         </View>
