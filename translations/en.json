@@ -6,7 +6,7 @@
       "close": "Close",
       "cancel": "Cancel",
       "leave": "Leave",
-      "endGame": "End Game"
+      "endGame": "Finish"
     },
     "leave-room": {
       "message": "Are you sure you want to leave the room?",
@@ -63,7 +63,7 @@
     "game_time": "Game Time",
     "game_time_desc": "Choose how many movies each player will vote on",
     "game_time_short": "Short",
-    "game_time_medium": "Medium", 
+    "game_time_medium": "Medium",
     "game_time_long": "Long",
     "genres": {
       "all_movies": "All movies",
@@ -121,7 +121,7 @@
       "title": "Icon Legend",
       "subscription": "Subscription",
       "rental": "Rental",
-      "purchase": "Purchase", 
+      "purchase": "Purchase",
       "rent_buy": "Rent/Buy",
       "free": "Free",
       "ads": "With Ads"
@@ -256,7 +256,9 @@
       "all": "All",
       "trending": "Trending",
       "new": "New"
-    }
+    },
+    "list_footer": "Loading more",
+    "no_more_results": "No more results"
   },
   "tabBar": {
     "settings": "Settings",

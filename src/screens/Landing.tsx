@@ -6,7 +6,7 @@ import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Dimensions, Platform, Pressable, RefreshControl, StyleSheet, TouchableOpacity, View, VirtualizedList } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { ActivityIndicator, MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../types";
@@ -37,7 +37,8 @@ const getItem = (data: any, index: number) => data[index];
 const AnimatedVirtualizedList = Animated.createAnimatedComponent(VirtualizedList);
 
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
-  const { data, onScroll, onEndReached, refreshing, onRefresh, getItemLayout, handleChipPress, selectedChip, scrollY } = useLanding();
+  const { data, onScroll, onEndReached, refreshing, onRefresh, getItemLayout, handleChipPress, selectedChip, scrollY, hasMore } =
+    useLanding();
 
   const renderItem = useCallback(({ item }: { item: SectionData }) => {
     if ("type" in item && item.type === "game") {
@@ -46,6 +47,8 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
     return <Section group={item} />;
   }, []);
+
+  const t = useTranslation();
 
   return (
     <View style={{ flex: 1 }}>
@@ -65,7 +68,20 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         getItemLayout={getItemLayout}
         style={{ flex: 1 }}
-        ListFooterComponent={<View style={{ height: 60 }} />}
+        ListFooterComponent={
+          <View style={{ height: 100 }}>
+            {hasMore ? (
+              <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", flex: 1, gap: 10 }}>
+                <ActivityIndicator size="small" color="#fff" />
+                <Text style={{ textAlign: "center", color: "#fff" }}>{t("landing.list_footer")}...</Text>
+              </View>
+            ) : (
+              <View>
+                <Text style={{ textAlign: "center", color: "#fff" }}>{t("landing.no_more_results")}</Text>
+              </View>
+            )}
+          </View>
+        }
       />
 
       <BottomTab navigate={navigation.navigate} />

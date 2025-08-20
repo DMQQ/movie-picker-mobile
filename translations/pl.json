@@ -6,7 +6,7 @@
       "close": "Zamknij",
       "cancel": "Anuluj",
       "leave": "Opuść",
-      "endGame": "Zakończ Grę"
+      "endGame": "Zakończ grę"
     },
     "leave-room": {
       "message": "Czy na pewno chcesz opuścić pokój?",
@@ -254,7 +254,9 @@
       "all": "Wszystko",
       "trending": "Popularne",
       "new": "Nowości"
-    }
+    },
+    "list_footer": "Ładowanie więcej...",
+    "no_more_results": "Brak więcej wyników"
   },
   "tabBar": {
     "settings": "Ustawienia",

@@ -1,5 +1,4 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SocketProvider } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
@@ -14,22 +13,6 @@ const Stack = createNativeStackNavigator();
 
 export default function QRCode({ navigation, route }: ScreenProps<"QRCode">) {
   const t = useTranslation();
-
-  useEffect(() => {
-    const listener = navigation.addListener("state", (event) => {
-      const route = event.data.state.routes[event.data.state.index].state?.routes;
-
-      if (route && route.length > 0 && route[0].name === "Home") {
-        navigation.setOptions({
-          gestureEnabled: false,
-        });
-      }
-    });
-
-    return () => {
-      listener();
-    };
-  }, [navigation]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
