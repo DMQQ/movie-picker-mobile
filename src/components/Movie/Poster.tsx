@@ -1,5 +1,15 @@
-import { View, useWindowDimensions } from "react-native";
-import Animated, { SharedValue, interpolate, interpolateColor, useAnimatedStyle, withTiming } from "react-native-reanimated";
+import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
+import { Text } from "react-native-paper";
+import Animated, {
+  Easing,
+  SharedValue,
+  interpolate,
+  interpolateColor,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
 
 const SwipeText = (props: {
@@ -7,46 +17,67 @@ const SwipeText = (props: {
   rotate: string;
   color: string;
   right: boolean;
-
+  icon?: React.ReactNode;
   isVisible?: SharedValue<boolean>;
 }) => {
   const animatedStyle = useAnimatedStyle(() => {
     if (!props.isVisible) return {};
 
+    const isVisible = props.isVisible.value;
+
     return {
-      opacity: props.isVisible.value ? withTiming(1) : withTiming(0),
+      opacity: withTiming(isVisible ? 1 : 0, {
+        duration: 200,
+        easing: Easing.out(Easing.cubic),
+      }),
+      transform: [
+        { rotate: props.rotate },
+        {
+          scale: withSpring(isVisible ? 1 : 0.8, {
+            damping: 15,
+            stiffness: 200,
+          }),
+        },
+      ],
     };
   });
 
   return (
-    <Animated.Text
+    <Animated.View
       style={[
-        {
-          position: "absolute",
-          top: props.text === "LIKE" ? 30 : 45,
-          zIndex: 10,
-          fontWeight: "bold",
-          fontSize: 30,
-
-          right: props.right ? 20 : undefined,
-
-          left: props.right ? undefined : 20,
-
-          transform: [{ rotate: props.rotate }],
-
-          borderWidth: 2.5,
-          borderColor: props.color,
-          paddingHorizontal: 10,
-
-          color: props.color,
-
-          borderRadius: 10,
-        },
         animatedStyle,
+        {
+          top: props.text === "LIKE" ? 40 : 60,
+          right: props.right ? 25 : undefined,
+          left: props.right ? undefined : 25,
+          backgroundColor: props.color,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 4,
+          },
+          shadowOpacity: 0.3,
+          shadowRadius: 8,
+          elevation: 8, // Android shadow
+        },
+        styles.swipe,
       ]}
     >
-      {props.text}
-    </Animated.Text>
+      {/* Icon container with background circle */}
+      <View
+        style={[
+          styles.iconContainer,
+          {
+            backgroundColor: "rgba(255,255,255,0.35)",
+            borderWidth: 1,
+            borderColor: "rgba(255,255,255,0.5)",
+          },
+        ]}
+      >
+        {props.icon}
+      </View>
+      <Text style={styles.swipeText}>{props.text}</Text>
+    </Animated.View>
   );
 };
 
@@ -95,24 +126,30 @@ export default function Poster(props: {
     <View style={{ position: "relative" }}>
       {props.isSwipeable && (
         <>
-          <SwipeText isVisible={props.isRightVisible} text="DISLIKE" color="red" rotate="30deg" right />
+          <SwipeText
+            icon={<Ionicons name="close" size={32} color="#fff" />}
+            isVisible={props.isRightVisible}
+            text="NOPE"
+            color="#FF4458"
+            rotate="30deg"
+            right
+          />
 
-          {/* Placed on left   */}
-          <SwipeText isVisible={props.isLeftVisible} text="LIKE" color="#24C722" rotate="-30deg" right={false} />
+          <SwipeText
+            icon={<Ionicons name="heart" size={32} color="#fff" style={{ transform: [{ translateY: 2 }] }} />}
+            isVisible={props.isLeftVisible}
+            text="LIKE"
+            color="#42DCA3"
+            rotate="-30deg"
+            right={false}
+          />
         </>
       )}
 
       <Animated.View
         style={[
+          styles.overlay,
           {
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            borderRadius: 19,
-            zIndex: 1,
-            opacity: 0,
             ...imageDimensions,
           },
           overlayAnimatedStyle,
@@ -129,3 +166,44 @@ export default function Poster(props: {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 19,
+    zIndex: 1,
+    opacity: 0,
+  },
+
+  swipeText: {
+    fontFamily: "Bebas",
+    fontSize: 35,
+    color: "#fff",
+    letterSpacing: 1.5,
+  },
+
+  swipe: {
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
+    zIndex: 10,
+    position: "absolute",
+    minWidth: 120,
+  },
+
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
