@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, {
@@ -50,7 +51,6 @@ const SwipeText = (props: {
           top: props.text === "LIKE" ? 40 : 60,
           right: props.right ? 25 : undefined,
           left: props.right ? undefined : 25,
-          backgroundColor: props.color,
           shadowColor: "#000",
           shadowOffset: {
             width: 0,
@@ -63,20 +63,35 @@ const SwipeText = (props: {
         styles.swipe,
       ]}
     >
-      {/* Icon container with background circle */}
-      <View
+      {/* BlurView background */}
+      <BlurView
+        intensity={80}
+        tint="light"
         style={[
-          styles.iconContainer,
+          styles.blurContainer,
           {
-            backgroundColor: "rgba(255,255,255,0.35)",
-            borderWidth: 1,
-            borderColor: "rgba(255,255,255,0.5)",
+            backgroundColor: `${props.color}E6`, // Add transparency to the color
           },
         ]}
       >
-        {props.icon}
-      </View>
-      <Text style={styles.swipeText}>{props.text}</Text>
+        {/* Icon container with background circle */}
+        <BlurView
+          intensity={60}
+          tint="light"
+          style={[
+            styles.iconContainer,
+            {
+              backgroundColor: "rgba(255,255,255,0.2)",
+              borderWidth: 1,
+              borderColor: "rgba(255,255,255,0.3)",
+            },
+          ]}
+        >
+          {props.icon}
+        </BlurView>
+
+        <Text style={styles.swipeText}>{props.text}</Text>
+      </BlurView>
     </Animated.View>
   );
 };
@@ -184,9 +199,23 @@ const styles = StyleSheet.create({
     fontSize: 35,
     color: "#fff",
     letterSpacing: 1.5,
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
 
   swipe: {
+    borderRadius: 20,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
+    zIndex: 10,
+    position: "absolute",
+    overflow: "hidden", // Important for BlurView
+  },
+
+  blurContainer: {
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 12,
@@ -194,9 +223,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     gap: 8,
-    zIndex: 10,
-    position: "absolute",
     minWidth: 120,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
   },
 
   iconContainer: {
@@ -205,5 +234,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden", // Important for BlurView
   },
 });
