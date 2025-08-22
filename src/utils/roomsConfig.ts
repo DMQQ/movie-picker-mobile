@@ -15,7 +15,7 @@ const getFormattedDate = (offset = 0) => {
 // --- CATEGORY DEFINITIONS ---
 
 export const getMovieCategories = (t: (key: string) => string) => [
-  { label: t("room.genres.all_movies"), path: "/discover/movie?sort_by=popularity.desc&vote_count.gte=100" },
+  { label: t("room.genres.all_movies"), path: "/discover/movie?sort_by=popularity.desc&vote_count.gte=300" },
   { label: t("room.genres.popular"), path: "/discover/movie?sort_by=popularity.desc&vote_count.gte=200" },
   { label: t("room.genres.top_rated"), path: "/discover/movie?sort_by=vote_average.desc&vote_count.gte=300" },
   { label: t("room.genres.upcoming"), path: "/movie/upcoming" },
@@ -93,7 +93,7 @@ const GENRE_ICON_MAP: IconMap = {
   53: { component: FontAwesome5, name: "exclamation-triangle", color: "#DC143C" }, // Thriller
   10752: { component: FontAwesome5, name: "shield-alt", color: "#8B4513" }, // War
   37: { component: FontAwesome5, name: "horse", color: "#D2691E" }, // Western
-  
+
   // TV-specific genres
   10762: { component: FontAwesome5, name: "child", color: "#FFB6C1" }, // Kids
   10763: { component: FontAwesome5, name: "broadcast-tower", color: "#2F4F4F" }, // News

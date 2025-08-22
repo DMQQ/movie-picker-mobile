@@ -55,7 +55,7 @@ export default function RoomSetup({ navigation }: any) {
   const initialState: RoomSetupState = useMemo(
     () => ({
       category: getMovieCategories(t)[0]?.path || "",
-      maxRounds: 6,
+      maxRounds: 3,
       genre: [],
       providers: [],
     }),

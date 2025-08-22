@@ -68,6 +68,7 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   const wasConnected = useRef(false);
 
   const initializeSocket = async () => {
+    console.log("Initializing socket connection...");
     try {
       const userId = (await AsyncStorage.getItem("userId")) || Math.random().toString(36).substring(7);
       await AsyncStorage.setItem("userId", userId);
@@ -82,11 +83,12 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
 
       newSocket.on("connect", () => {
         wasConnected.current = true;
-        setSocket(newSocket);
+        socketRef.current = newSocket;
       });
 
       newSocket.on("disconnect", (reason) => {
         setSocket(null);
+        socketRef.current = null;
         if (wasConnected.current && reason === "transport close") {
           scheduleReconnect();
         }
@@ -95,6 +97,8 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
       newSocket.on("connect_error", (error) => {
         scheduleReconnect();
       });
+
+      setSocket(newSocket);
 
       socketRef.current = newSocket;
     } catch (error) {
@@ -118,11 +122,6 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   const handleAppStateChange = (nextAppState: AppStateStatus) => {
     if (appState.current.match(/inactive|background/) && nextAppState === "active") {
       console.log("App has come to the foreground!");
-      if (socketRef.current) {
-        socketRef.current.connect();
-      } else {
-        initializeSocket();
-      }
       socketRef?.current?.emit("reconnect");
     }
     appState.current = nextAppState;

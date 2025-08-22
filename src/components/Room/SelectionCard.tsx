@@ -14,22 +14,22 @@ type SelectionCardProps = {
 const SelectionCard = ({ label, iconData, isSelected, onPress }: SelectionCardProps) => {
   const theme = useTheme();
   const IconComponent = iconData.component;
-  const color = isSelected ? theme.colors.onPrimary : iconData.color;
+  const color = isSelected ? theme.colors.primary : iconData.color;
 
   return (
     <View style={styles.cardContainer}>
       <Card
         style={{
-          backgroundColor: isSelected ? theme.colors.primary : theme.colors.surface,
-          borderRadius: 8,
-          borderWidth: 1,
-          borderColor: theme.colors.outline,
+          borderColor: isSelected ? theme.colors.primary : theme.colors.surface,
+          borderRadius: 10,
+          borderWidth: 2,
+          backgroundColor: "transparent",
         }}
         onPress={onPress}
       >
         <View style={styles.innerContainer}>
           <IconComponent name={iconData.name} size={24} color={color} />
-          <Text numberOfLines={2} style={[styles.labelText, { color: isSelected ? theme.colors.onPrimary : theme.colors.onSurface }]}>
+          <Text numberOfLines={2} style={[styles.labelText, { color: isSelected ? theme.colors.primary : theme.colors.onSurface }]}>
             {label}
           </Text>
         </View>
