@@ -1,11 +1,11 @@
 import LottieView from "lottie-react-native";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Dimensions, Platform, Pressable } from "react-native";
-import { ActivityIndicator, MD2DarkTheme, Portal } from "react-native-paper";
-import Animated, { FadeIn, FadeOut, withSpring, withTiming } from "react-native-reanimated";
-import ScratchCard from "../../components/ScratchCard";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { MD2DarkTheme, Portal } from "react-native-paper";
+import Animated, { FadeIn, FadeOut, withSpring, withTiming } from "react-native-reanimated";
 import { FancySpinner } from "../../components/FancySpinner";
+import ScratchCard from "../../components/ScratchCard";
 
 const ModalEnteringTransition = () => {
   "worklet";

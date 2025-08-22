@@ -9,7 +9,7 @@ const getColor = (score: number) => {
   return "#db2360"; // Red
 };
 
-const size = 50;
+const size = 40;
 const strokeWidth = 3;
 const radius = (size - strokeWidth) / 2;
 const circumference = radius * 2 * Math.PI;
@@ -43,7 +43,7 @@ const ScoreRing = memo(({ score }: { score: number }) => {
         />
       </Svg>
       <View style={absoluteContainer}>
-        <Text style={{ color: "white", fontWeight: "700", fontSize: 13 }}>{(score * 10).toFixed(0)}%</Text>
+        <Text style={{ color: "white", fontWeight: "700", fontSize: 10 }}>{(score * 10).toFixed(0)}%</Text>
       </View>
     </FrostedGlass>
   );

@@ -19,15 +19,15 @@ const Section = ({ title, description, disabled = false, children }: PropsWithCh
 
 const styles = StyleSheet.create({
   sectionContainer: {
-    marginBottom: 25,
+    marginBottom: 15,
   },
   disabled: {
     opacity: 0.5,
   },
   sectionTitle: {
-    fontSize: 28,
+    fontSize: 25,
     fontFamily: "Bebas",
-    marginBottom: 5,
+    marginBottom: 10,
     color: "#fff",
   },
   sectionDescription: {

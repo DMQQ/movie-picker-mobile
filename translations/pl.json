@@ -111,7 +111,9 @@
       "name": "Nazwa listy",
       "create": "Dodaj",
       "cancel": "Anuluj"
-    }
+    },
+    "wheel": "Zakręć kołem",
+    "scratch-card": "Zdrapka"
   },
   "global": {
     "justwatch": "Dostępność filmów wspierana przez JustWatch",
@@ -169,7 +171,9 @@
       "start": "Rozpocznij głosowanie",
       "rate": "Oceń",
       "left": "pozostało w tej kolejce",
-      "quit": "Opuść grę"
+      "quit": "Opuść grę",
+      "qrcode-scan": "Zeskanuj",
+      "likes": "Swipe'y"
     },
     "ratings": {
       "interest": {
@@ -281,7 +285,9 @@
     "player-performance": "Wyniki graczy:",
     "picks": "wyborów",
     "matched-movies": "Dopasowane filmy",
-    "failed-to-load": "Nie udało się załadować podsumowania gry"
+    "failed-to-load": "Nie udało się załadować podsumowania gry",
+    "add-to-favourites": "Polub",
+    "remove-from-favourites": "Usuń z ulubionych"
   },
   "game-invite": {
     "social-title": "🎯 Znajdź Idealny Wybór",

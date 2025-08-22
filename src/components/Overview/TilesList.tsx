@@ -2,8 +2,9 @@ import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Keyboard, Pressable, View } from "react-native";
 import { Button, Dialog, MD2DarkTheme, Text, TextInput } from "react-native-paper";
-import Animated from "react-native-reanimated";
+import Animated, { LinearTransition } from "react-native-reanimated";
 import Ant from "react-native-vector-icons/AntDesign";
+import { Movie } from "../../../types";
 import { createGroupFromArray } from "../../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { hexToRgba } from "../../utils/hexToRgb";
@@ -16,6 +17,8 @@ interface TileListProps {
   label: string;
 
   useMovieType?: boolean;
+
+  onLongItemPress?: (item: Movie) => void;
 }
 
 export default function TilesList<T>(props: TileListProps) {
@@ -34,6 +37,7 @@ export default function TilesList<T>(props: TileListProps) {
     <>
       <Animated.FlatList
         numColumns={3}
+        layout={LinearTransition}
         ListHeaderComponent={
           props.label ? (
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -55,8 +59,8 @@ export default function TilesList<T>(props: TileListProps) {
           ) : null
         }
         data={props.data}
-        keyExtractor={(match) => match.id.toString()}
-        initialNumToRender={6}
+        keyExtractor={(match: Movie) => match.type + "_" + match.id.toString()}
+        initialNumToRender={12}
         renderItem={({ item: match, index }) => (
           <MatchTile
             posterSize={props.data?.length % 3 !== 0 && index === props.data.length - 1 ? 780 : props?.data?.length % 2 !== 0 ? 500 : 200}
@@ -64,6 +68,7 @@ export default function TilesList<T>(props: TileListProps) {
             type={props.useMovieType ? match.type || (match?.name ? "tv" : "movie") : type}
             navigation={navigation}
             index={index}
+            onLongPress={props.onLongItemPress}
           />
         )}
       />

@@ -2,12 +2,14 @@ import { CommonActions, useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import { useContext, useEffect, useState } from "react";
 import { Dimensions, FlatList, ScrollView, StyleSheet, View } from "react-native";
-import { Button, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { Button, MD2DarkTheme, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
 import Thumbnail from "../../components/Thumbnail";
+import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
 import { roomActions } from "../../redux/room/roomSlice";
-import { useAppDispatch } from "../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
 
@@ -48,7 +50,6 @@ export default function GameSummary({ route }: any) {
   const [error, setError] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
 
-  // Fetch game summary when component mounts
   useEffect(() => {
     const fetchGameSummary = async () => {
       if (!socket || !roomId) return;
@@ -91,29 +92,8 @@ export default function GameSummary({ route }: any) {
     );
   };
 
-  const renderMovieItem = ({ item }: { item: any }) => {
-    const screenWidth = Dimensions.get("window").width;
-    const itemWidth = (screenWidth - 60) / 3; // 15px padding on each side + 15px gaps between items
-
-    return (
-      <TouchableRipple
-        style={[styles.movieThumbnailContainer, { width: itemWidth }]}
-        onPress={() =>
-          navigation.navigate("MovieDetails", {
-            id: item.id,
-            type: summary?.type || "movie",
-            img: item.poster_path,
-          })
-        }
-      >
-        <View>
-          <Thumbnail size={200} path={item.poster_path} style={styles.movieThumbnail} />
-          <Text style={styles.movieTitleSmall} numberOfLines={2}>
-            {item.title}
-          </Text>
-        </View>
-      </TouchableRipple>
-    );
+  const renderMovieItem = ({ item }: { item: Partial<Movie> }) => {
+    return <MatchedItem {...item} summary={summary!} />;
   };
 
   if (loading) {
@@ -131,7 +111,10 @@ export default function GameSummary({ route }: any) {
     return (
       <View style={{ flex: 1 }}>
         <View style={[styles.container, styles.centered]}>
-          <Text style={styles.errorText}>{t("game-summary.error")}{error}</Text>
+          <Text style={styles.errorText}>
+            {t("game-summary.error")}
+            {error}
+          </Text>
           <Button mode="contained" onPress={handleBackToHome} style={styles.backButton}>
             {t("game-summary.back-to-home")}
           </Button>
@@ -154,7 +137,9 @@ export default function GameSummary({ route }: any) {
 
             {summary && (
               <Text style={styles.configText}>
-                {summary.maxRounds} {t("game-summary.rounds")} • {summary.type === "movie" ? t("game-summary.movies") : t("game-summary.tv-shows")} • {t("game-summary.room")}{summary.roomId || roomId}
+                {summary.maxRounds} {t("game-summary.rounds")} •{" "}
+                {summary.type === "movie" ? t("game-summary.movies") : t("game-summary.tv-shows")} • {t("game-summary.room")}
+                {summary.roomId || roomId}
               </Text>
             )}
           </View>
@@ -186,7 +171,9 @@ export default function GameSummary({ route }: any) {
                   <Text style={styles.playerName}>{user.username}</Text>
                   <View style={styles.playerStats}>
                     <Text style={[styles.playerStatus, { color: user.finished ? "#4CAF50" : "#ff4444" }]}>{user.finished ? "✓" : "✗"}</Text>
-                    <Text style={styles.pickCount}>{user.totalPicks} {t("game-summary.picks")}</Text>
+                    <Text style={styles.pickCount}>
+                      {user.totalPicks} {t("game-summary.picks")}
+                    </Text>
                   </View>
                 </View>
               ))}
@@ -218,6 +205,74 @@ export default function GameSummary({ route }: any) {
     </View>
   );
 }
+
+const MatchedItem = ({ summary, ...item }: Partial<Movie> & { summary: { type: string } }) => {
+  const navigation = useNavigation<any>();
+  const screenWidth = Dimensions.get("window").width;
+  const itemWidth = (screenWidth - 60) / 3;
+  const dispatch = useAppDispatch();
+
+  const { groups } = useAppSelector((state) => state.favourite);
+  const t = useTranslation();
+
+  const isInGroup = (groupId: "1" | "2" | "999") => {
+    const group = groups.find((g) => g?.id === groupId);
+    if (!group) return false;
+    return group.movies.some((m) => m?.id === item?.id);
+  };
+
+  const isInGroup1 = isInGroup("1");
+
+  const onPress = () => {
+    isInGroup1
+      ? dispatch(
+          removeFromGroup({
+            groupId: "1",
+            movieId: item.id!,
+          })
+        )
+      : dispatch(
+          addToGroup({
+            item: {
+              id: item.id!,
+              imageUrl: item.poster_path!,
+              type: item.type || (item?.title !== undefined ? "movie" : "tv"),
+            },
+            groupId: "1",
+          })
+        );
+  };
+
+  return (
+    <View style={[styles.movieThumbnailContainer, { width: itemWidth, gap: 5, justifyContent: "space-between" }]}>
+      <TouchableRipple
+        onPress={() =>
+          navigation.navigate("MovieDetails", {
+            id: item.id,
+            type: summary?.type || "movie",
+            img: item.poster_path,
+          })
+        }
+      >
+        <Thumbnail size={200} path={item.poster_path!} style={styles.movieThumbnail} />
+      </TouchableRipple>
+      <View style={{ flex: 1, justifyContent: "space-between" }}>
+        <Text style={styles.movieTitleSmall} numberOfLines={2}>
+          {item.title}
+        </Text>
+
+        <Button
+          style={{ marginTop: 10, borderColor: isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary }}
+          mode="outlined"
+          onPress={onPress}
+          textColor={isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary}
+        >
+          {!isInGroup1 ? t("game-summary.add-to-favourites") : "" + t("game-summary.remove-from-favourites")}
+        </Button>
+      </View>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -346,7 +401,6 @@ const styles = StyleSheet.create({
   movieTitleSmall: {
     fontSize: 12,
     fontWeight: "bold",
-    marginTop: 5,
   },
   absoluteButtonContainer: {
     position: "absolute",

@@ -3,6 +3,7 @@ import { Dimensions } from "react-native";
 import { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { Movie } from "../../types";
 import { useLazyGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
+import uniqueBy from "../utils/unique";
 import { arrayInsertsAt } from "../utils/utilities";
 
 const { width } = Dimensions.get("screen");
@@ -23,6 +24,7 @@ export default function useLanding() {
 
   useEffect(() => {
     if (previousChip.current !== selectedChip) {
+      console.log("Chip changed, resetting page and data");
       setPage(0);
       setData([]);
       previousChip.current = selectedChip;
@@ -34,12 +36,8 @@ export default function useLanding() {
       if (response.data && Array.isArray(response.data) && response.data.length > 0) {
         setHasMore(response.data.length >= 8);
         setData((prev) => {
-          const uniqueSections = (response.data || []).filter(
-            (newSection) => !prev.some((existingSection) => existingSection.name === newSection.name)
-          );
-
           return arrayInsertsAt(
-            [...prev.filter((item) => !("type" in item && (item as any).type === "game")), ...uniqueSections],
+            uniqueBy([...prev.filter((item) => !("type" in item && (item as any).type === "game")), ...(response.data || [])], "name"),
             [3, 8, 14, 20],
             [
               {
@@ -142,20 +140,23 @@ export default function useLanding() {
     },
   });
 
-  const getItemLayout = useCallback((data: SectionData[], index: number) => {
-    const item = data?.[index];
-    const isGame = item && "type" in item && item.type === "game";
-    const itemHeight = isGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 50;
+  const getItemLayout = useCallback(
+    (data: SectionData[], index: number) => {
+      const item = data?.[index];
+      const isGame = item && "type" in item && item.type === "game";
+      const itemHeight = isGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 50;
 
-    let offset = 0;
-    for (let i = 0; i < index; i++) {
-      const prevItem = data?.[i];
-      const prevIsGame = prevItem && "type" in prevItem && prevItem.type === "game";
-      offset += prevIsGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 50;
-    }
+      let offset = 0;
+      for (let i = 0; i < index; i++) {
+        const prevItem = data?.[i];
+        const prevIsGame = prevItem && "type" in prevItem && prevItem.type === "game";
+        offset += prevIsGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 50;
+      }
 
-    return { length: itemHeight, offset, index };
-  }, [width]);
+      return { length: itemHeight, offset, index };
+    },
+    [width]
+  );
 
   return {
     data,

@@ -1,13 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { memo, useCallback, useEffect, useState } from "react";
-import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 
 import { FlashList } from "@shopify/flash-list";
 import { Movie } from "../../types";
 import { useLazyGetSimilarQuery } from "../redux/movie/movieApi";
 import useTranslation from "../service/useTranslation";
-import ScoreRing from "./ScoreRing";
-import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "./Thumbnail";
+import SectionListItem from "./SectionItem";
+import { prefetchThumbnail, ThumbnailSizes } from "./Thumbnail";
 
 const { width } = Dimensions.get("screen");
 
@@ -34,8 +34,8 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
 
   const renderItem = useCallback(
     ({ item }: { item: Movie & { type: string } }) => (
-      <Pressable
-        key={item.poster_path}
+      <SectionListItem
+        {...item}
         onPress={() =>
           navigation.push("MovieDetails", {
             id: item.id,
@@ -43,15 +43,7 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
             img: item.poster_path,
           })
         }
-        style={{
-          position: "relative",
-        }}
-      >
-        <Thumbnail container={sectionStyles.image} size={185} path={item.poster_path} />
-        <View style={{ position: "absolute", right: 25, bottom: 5 }}>
-          <ScoreRing score={item.vote_average} />
-        </View>
-      </Pressable>
+      />
     ),
     []
   );

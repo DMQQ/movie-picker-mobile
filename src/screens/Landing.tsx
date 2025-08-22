@@ -5,7 +5,7 @@ import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback, useEffect, useState } from "react";
-import { Dimensions, Platform, Pressable, RefreshControl, StyleSheet, TouchableOpacity, View, VirtualizedList } from "react-native";
+import { Dimensions, Platform, RefreshControl, StyleSheet, TouchableOpacity, View, VirtualizedList } from "react-native";
 import { ActivityIndicator, MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -14,7 +14,7 @@ import AppLoadingOverlay from "../components/AppLoadingOverlay";
 import FeaturedSection from "../components/Landing/FeaturedSection";
 import LandingHeader from "../components/LandingHeader";
 import NoConnectionError from "../components/NoConnectionError";
-import ScoreRing from "../components/ScoreRing";
+import SectionListItem from "../components/SectionItem";
 import Thumbnail, { prefetchThumbnail } from "../components/Thumbnail";
 import { useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
 import useLanding, { SectionData } from "../service/useLanding";
@@ -23,7 +23,7 @@ import { ScreenProps } from "./types";
 
 const { width } = Dimensions.get("screen");
 
-const keyExtractor = (item: any, index: number) => {
+const keyExtractor = (item: any) => {
   if (item?.type === "game") {
     return `section-${item.gameType}`;
   }
@@ -56,6 +56,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
       <NoConnectionError />
 
       <AnimatedVirtualizedList
+        initialNumToRender={3}
         onScroll={onScroll}
         data={data}
         renderItem={renderItem as any}
@@ -177,7 +178,7 @@ interface SectionProps {
 }
 
 const sectionStyles = StyleSheet.create({
-  container: { paddingHorizontal: 15, height: Math.min(width * 0.3, 200) * 1.75 + 50, paddingBottom: 50 },
+  container: { paddingHorizontal: 15, height: Math.min(width * 0.25, 200) * 1.75 + 50, paddingBottom: 50 },
   title: { color: "#fff", fontSize: 35, fontFamily: "Bebas", marginBottom: 10 },
   list: {
     flex: 1,
@@ -186,18 +187,12 @@ const sectionStyles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
-
-  image: {
-    width: Math.min(width * 0.3, 200),
-    height: Math.min(width * 0.3, 200) * 1.5,
-    borderRadius: 7.5,
-    marginRight: 15,
-  },
 });
 
 const keySectionExtractor = (item: any, index: number) => `${item.id}-${item.type || "movie"}-${index}`;
 
 export const Section = memo(({ group }: SectionProps) => {
+  const navigation = useNavigation<any>();
   const [page, setPage] = useState(1);
   const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
 
@@ -220,7 +215,21 @@ export const Section = memo(({ group }: SectionProps) => {
     });
   }, [page]);
 
-  const renderItem = useCallback(({ item }: { item: Movie & { type: string } }) => <SectionListItem {...item} />, []);
+  const renderItem = useCallback(
+    ({ item }: { item: Movie & { type: string } }) => (
+      <SectionListItem
+        onPress={() => {
+          navigation.navigate("MovieDetails", {
+            id: item.id,
+            type: item.type,
+            img: item.poster_path,
+          });
+        }}
+        {...item}
+      />
+    ),
+    []
+  );
 
   return (
     <Animated.View style={sectionStyles.container} entering={FadeIn}>
@@ -232,39 +241,11 @@ export const Section = memo(({ group }: SectionProps) => {
         showsHorizontalScrollIndicator={false}
         keyExtractor={keySectionExtractor}
         renderItem={renderItem}
-        estimatedItemSize={width * 0.3 + 15}
+        estimatedItemSize={Math.min(width * 0.25, 200)}
       />
     </Animated.View>
   );
 });
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
-export const SectionListItem = (item: Movie) => {
-  const navigation = useNavigation<any>();
-
-  return (
-    <AnimatedPressable
-      entering={FadeIn}
-      key={item.poster_path}
-      onPress={async () => {
-        navigation.navigate("MovieDetails", {
-          id: item.id,
-          type: item.type,
-          img: item.poster_path,
-        });
-      }}
-      style={{
-        position: "relative",
-      }}
-    >
-      <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} />
-      <View style={{ position: "absolute", right: 20, bottom: 5 }}>
-        <ScoreRing score={item.vote_average} />
-      </View>
-    </AnimatedPressable>
-  );
-};
 
 const gameInviteStyles = StyleSheet.create({
   container: {

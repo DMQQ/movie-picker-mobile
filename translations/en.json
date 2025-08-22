@@ -111,7 +111,9 @@
       "name": "List name",
       "create": "Create",
       "cancel": "Cancel"
-    }
+    },
+    "wheel": "Spin the wheel",
+    "scratch-card": "Scratch card"
   },
 
   "global": {
@@ -170,7 +172,9 @@
       "start": "Start voting",
       "rate": "Rate",
       "left": "left in this round",
-      "quit": "Quit"
+      "quit": "Quit",
+      "qrcode-scan": "Scan to join",
+      "likes": "Swipes"
     },
 
     "ratings": {
@@ -279,11 +283,13 @@
     "room": "Room: ",
     "players": "Players",
     "matches": "Matches",
-    "total-picks": "Total Picks",
+    "total-picks": "Total swipes",
     "player-performance": "Player Performance:",
-    "picks": "picks",
+    "picks": "swipes",
     "matched-movies": "Matched Movies",
-    "failed-to-load": "Failed to load game summary"
+    "failed-to-load": "Failed to load game summary",
+    "add-to-favourites": "Favourite",
+    "remove-from-favourites": "Undo"
   },
   "game-invite": {
     "social-title": "🎯 Find Your Perfect Match",

@@ -39,6 +39,8 @@ export default function QRCodePage({ navigation, route }: any) {
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
 
+  console.log({ roomSetup });
+
   const {
     room: { users, roomId },
   } = useAppSelector((state) => state.room);

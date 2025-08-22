@@ -2,18 +2,17 @@ import { TouchableRipple } from "react-native-paper";
 import { Movie } from "../../../types";
 import Thumbnail from "../Thumbnail";
 
-const MatchTile = ({
-  match,
-  type: _type,
-  navigation,
-  posterSize = 200,
-}: {
+interface MatchTileProps {
   match: Movie;
   type: string;
   navigation: any;
   index: number;
   posterSize?: number;
-}) => {
+
+  onLongPress?: (item: Movie) => void;
+}
+
+const MatchTile = ({ match, type: _type, navigation, posterSize = 200, onLongPress }: MatchTileProps) => {
   const type = (match?.type || _type).includes("movie") ? "movie" : "tv";
 
   return (
@@ -29,6 +28,7 @@ const MatchTile = ({
           img: match.poster_path,
         })
       }
+      onLongPress={() => onLongPress && onLongPress(match)}
     >
       <Thumbnail
         size={posterSize}

@@ -1,11 +1,38 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useContext } from "react";
-import { View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Appbar, Button, useTheme } from "react-native-paper";
 import { useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import ActiveUsers from "./ActiveUsers";
+
+const SmallButton = ({ children, onPress, icon, style }: { children?: string; onPress: () => void; icon?: string; style?: any }) => {
+  const theme = useTheme();
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        styles.smallButton,
+        {
+          backgroundColor: `${theme.colors.primary}33`,
+          borderColor: `${theme.colors.primary}66`,
+        },
+        style,
+      ]}
+      activeOpacity={0.7}
+    >
+      <View style={styles.buttonContent}>
+        {icon && (
+          <MaterialCommunityIcons name={icon as any} size={14} color={theme.colors.primary} style={[children && styles.buttonIcon]} />
+        )}
+        {children && <Text style={[styles.buttonText, { color: theme.colors.primary }]}>{children}</Text>}
+      </View>
+    </TouchableOpacity>
+  );
+};
 
 export default function HomeAppbar({
   toggleLeaveModal,
@@ -38,7 +65,7 @@ export default function HomeAppbar({
   };
 
   return (
-    <View style={{ backgroundColor: "#000", marginTop: 0, flexDirection: "row", padding: 10 }}>
+    <View style={{ backgroundColor: "#000", marginTop: 0, flexDirection: "row", padding: 10, alignItems: "center" }}>
       {isHost ? (
         <Button onPress={handleEndGame} buttonColor="transparent" textColor="#ff4444">
           {t("dialogs.scan-code.endGame")}
@@ -60,9 +87,36 @@ export default function HomeAppbar({
         />
       )}
 
-      <Appbar.Action color={theme.colors.primary} size={20} icon="qrcode-scan" onPress={() => setShowQRModal((p) => !p)} />
+      <SmallButton icon="qrcode-scan" onPress={() => setShowQRModal((p) => !p)} style={{ marginRight: 10 }} />
 
-      <Appbar.Action size={20} color={theme.colors.primary} icon="heart" onPress={() => navigation.navigate("Overview")} />
+      <SmallButton icon="heart" onPress={() => navigation.navigate("Overview")}>
+        {t("voter.home.likes")}
+      </SmallButton>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  smallButton: {
+    height: 30,
+    paddingHorizontal: 12.5,
+    paddingVertical: 5,
+    borderRadius: 14,
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonIcon: {
+    marginRight: 4,
+  },
+  buttonText: {
+    fontSize: 11,
+    fontWeight: "500",
+    includeFontPadding: false,
+  },
+});
