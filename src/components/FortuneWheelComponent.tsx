@@ -21,16 +21,7 @@ import useTranslation from "../service/useTranslation";
 const { width, height } = Dimensions.get("window");
 
 // Define wheel segment colors
-const COLORS = [
-  "#592796",
-  MD2DarkTheme.colors.primary,
-  "#592796",
-  MD2DarkTheme.colors.primary,
-  "#592796",
-  MD2DarkTheme.colors.primary,
-  "#592796",
-  MD2DarkTheme.colors.primary,
-];
+const COLORS = new Array(4).fill(["#2a272a", MD2DarkTheme.colors.surface]).flat();
 
 interface SegmentProps {
   item: {

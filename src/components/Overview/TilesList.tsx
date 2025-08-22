@@ -7,6 +7,7 @@ import Ant from "react-native-vector-icons/AntDesign";
 import { Movie } from "../../../types";
 import { createGroupFromArray } from "../../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
+import useTranslation from "../../service/useTranslation";
 import { hexToRgba } from "../../utils/hexToRgb";
 import FrostedGlass from "../FrostedGlass";
 import MatchTile from "./MatchTile";
@@ -29,6 +30,7 @@ export default function TilesList<T>(props: TileListProps) {
   const navigation = useNavigation<any>();
 
   const dispatch = useAppDispatch();
+  const t = useTranslation();
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [text, setText] = useState("");
@@ -57,6 +59,19 @@ export default function TilesList<T>(props: TileListProps) {
               </Pressable>
             </View>
           ) : null
+        }
+        ListEmptyComponent={
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", minHeight: 400, paddingHorizontal: 30 }}>
+            <Text style={{ fontSize: 28, fontFamily: "Bebas", marginBottom: 15, textAlign: "center" }}>{t("overview.empty-title")}</Text>
+            <Text style={{ fontSize: 14, opacity: 0.7, marginBottom: 25, textAlign: "center", lineHeight: 20 }}>{t("overview.empty")}</Text>
+            <Button 
+              mode="text" 
+              onPress={() => navigation.goBack()}
+              compact
+            >
+              {t("overview.back-to-game")}
+            </Button>
+          </View>
         }
         data={props.data}
         keyExtractor={(match: Movie) => match.type + "_" + match.id.toString()}

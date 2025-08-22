@@ -130,7 +130,10 @@
   },
   "overview": {
     "matches": "Dopasowane",
-    "likes": "Polubienia"
+    "likes": "Polubienia",
+    "empty-title": "Jeszcze nic tutaj",
+    "empty": "Nie znaleziono jeszcze filmów ani seriali. Zacznij grać, aby zobaczyć tutaj swoje dopasowania i polubienia!",
+    "back-to-game": "Powrót do Gry"
   },
   "scanner": {
     "request-permission": "Poproś o pozwolenie",

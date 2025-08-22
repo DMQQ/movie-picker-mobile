@@ -131,7 +131,10 @@
   },
   "overview": {
     "matches": "Matched",
-    "likes": "Likes"
+    "likes": "Likes",
+    "empty-title": "Nothing here yet",
+    "empty": "No movies or shows found yet. Start playing to see your matches and likes here!",
+    "back-to-game": "Back to Game"
   },
   "scanner": {
     "request-permission": "Request permission",

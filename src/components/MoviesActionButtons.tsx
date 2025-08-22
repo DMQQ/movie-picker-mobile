@@ -27,11 +27,18 @@ export default function MoviesActionButtons({
 
   return (
     <View style={{ paddingHorizontal: 15, paddingTop: 15, flexDirection: "row", gap: 15 }}>
-      <Button mode="contained" style={{ borderRadius: 100, flex: 1 }} contentStyle={{ padding: 7.5 }} onPress={onScratchCardPress}>
+      <Button
+        disabled={fortuneWheelMovies.length === 0}
+        mode="contained"
+        style={{ borderRadius: 100, flex: 1 }}
+        contentStyle={{ padding: 7.5 }}
+        onPress={onScratchCardPress}
+      >
         {match ? t("likes.close") : t("favourites.scratch-card")}
       </Button>
 
       <Button
+        disabled={fortuneWheelMovies.length === 0}
         style={{ borderRadius: 100, flex: 1 }}
         contentStyle={{ padding: 7.5 }}
         icon={"dice-5"}
