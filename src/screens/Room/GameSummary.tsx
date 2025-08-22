@@ -236,7 +236,7 @@ const MatchedItem = ({ summary, ...item }: Partial<Movie> & { summary: { type: s
             item: {
               id: item.id!,
               imageUrl: item.poster_path!,
-              type: item.type || (item?.title !== undefined ? "movie" : "tv"),
+              type: item.type as "movie" | "tv",
             },
             groupId: "1",
           })
