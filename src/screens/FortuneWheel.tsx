@@ -97,8 +97,21 @@ function FortuneWheel({ navigation, route }: any) {
   }, [route?.params?.category, handleThrowDice]);
 
   useEffect(() => {
-    if (!route?.params?.category) handleThrowDice();
-  }, [route?.params?.category]);
+    if (!route?.params?.category && !route.params?.movies) handleThrowDice();
+    else if (route.params?.movies) {
+      const movies = route.params?.movies as Movie[];
+
+      Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path))).then(() => {
+        const shuffled = shuffleInPlace(movies);
+
+        setSelectedCards({
+          results: fillMissing(shuffled.slice(0, 12), 12),
+          name: "",
+        });
+        setSignatures(shuffled.map(({ id }) => id).join("-"));
+      });
+    }
+  }, [route?.params?.category, route.params?.movies]);
 
   const { width, height } = useWindowDimensions();
 
@@ -119,7 +132,15 @@ function FortuneWheel({ navigation, route }: any) {
 
         {!isSpin && (
           <>
-            <Text style={{ fontSize: 70, fontFamily: "Bebas" }}>{t("fortune-wheel.pick-a-movie")}</Text>
+            <Text
+              style={{
+                fontSize: route.params?.movies ? (route.params?.title.length > 10 ? 55 : 70) : 70,
+                fontFamily: "Bebas",
+                textAlign: "center",
+              }}
+            >
+              {route.params?.movies ? route.params?.title : t("fortune-wheel.pick-a-movie")}
+            </Text>
             <View style={{ flexDirection: "row" }}>
               <Button rippleColor={"#fff"} onPress={throttle(() => handleThrowDice(), 200)}>
                 {t("fortune-wheel.random-category")}

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { View } from "react-native";
-import { Button } from "react-native-paper";
 import { Movie } from "../../../types";
+import MoviesActionButtons from "../../components/MoviesActionButtons";
 import TilesList from "../../components/Overview/TilesList";
 import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
@@ -24,26 +24,18 @@ export default function LikesScreen() {
   }, [likes.length]);
 
   return (
-    <View style={{ flex: 1, padding: 15 }}>
-      <View style={{ marginBottom: 60, flex: 1 }}>
+    <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, padding: 15 }}>
         <TilesList label={t("likes.title")} data={data} />
       </View>
       {match && <Modal onClose={() => setMatch(undefined)} match={match} />}
 
-      <View style={{ position: "absolute", bottom: 10, left: 10, right: 10, paddingTop: 15, backgroundColor: "#000" }}>
-        <Button
-          onPress={randomMovie}
-          mode="contained"
-          style={{
-            width: "100%",
-            borderRadius: 100,
-            ...(match ? { backgroundColor: "#f44336" } : {}),
-          }}
-          contentStyle={{ padding: 7.5 }}
-        >
-          {match ? t("likes.close") : t("likes.random")}
-        </Button>
-      </View>
+      <MoviesActionButtons
+        onScratchCardPress={randomMovie}
+        match={!!match}
+        fortuneWheelMovies={data}
+        fortuneWheelTitle={t("matched.title")}
+      />
     </View>
   );
 }
