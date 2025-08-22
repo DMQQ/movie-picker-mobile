@@ -8,8 +8,10 @@ import { Movie } from "../../types";
 import { FancySpinner } from "../components/FancySpinner";
 import FortuneWheelComponent from "../components/FortuneWheelComponent";
 import SafeIOSContainer from "../components/SafeIOSContainer";
-import { useGetCategoriesQuery, useLazyGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
+import { useGetCategoriesQuery, useLazyGetRandomSectionQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
 import useTranslation from "../service/useTranslation";
+import fillMissing from "../utils/fillMissing";
+import { shuffleInPlace } from "../utils/shuffle";
 import { throttle } from "../utils/throttle";
 
 const { width: screenWidth } = Dimensions.get("screen");
@@ -33,8 +35,6 @@ export default function FortuneWheelStack(props: any) {
 function FortuneWheel({ navigation, route }: any) {
   const [signatures, setSignatures] = useState("");
 
-  const [getLazyMovies] = useLazyGetLandingPageMoviesQuery();
-
   const wheelRef = useRef<{ spin: Function }>(null);
 
   const navigate = useCallback((item: Movie) => {
@@ -48,30 +48,45 @@ function FortuneWheel({ navigation, route }: any) {
     });
   }, []);
 
-  const [selectedCards, setSelectedCards] = useState<Movie[]>([]);
+  const [selectedCards, setSelectedCards] = useState<{
+    results: Movie[];
+    name: string;
+  }>({
+    results: [],
+    name: "",
+  });
 
-  const handleThrowDice = useCallback((value: number | string) => {
-    getLazyMovies({ skip: 0, take: 26 }).then(async (response) => {
-      if (response.data && Array.isArray(response.data)) {
-        const index = typeof value === "number" ? value : response?.data?.findIndex((d) => d.name === value);
-        const randomSection = response.data[index];
+  const [getLazyRandomSection] = useLazyGetRandomSectionQuery();
 
-        if (!randomSection?.results) return;
+  const [getLazySection] = useLazyGetSectionMoviesQuery();
 
-        const movies = randomSection.results;
-        await Promise.any(
-          movies.map((movie) => {
-            return Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path);
-          })
-        );
+  const handleThrowDice = useCallback(
+    (value?: number | string) => {
+      const handleResponse = async (response: any) => {
+        if (response.data && Array.isArray(response.data.results)) {
+          const movies = response.data.results as Movie[];
 
-        const pos = Math.random() * 5 + 1 > 5 ? movies.slice(0, 12) : movies.slice(8, 20);
+          await Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path)));
 
-        setSelectedCards(pos);
-        setSignatures(movies.map(({ id }) => id).join("-"));
+          const shuffled = shuffleInPlace(movies);
+
+          setSelectedCards({
+            results: fillMissing(shuffled.slice(0, 12), 12),
+            name: response.data.name || "",
+          });
+          setSignatures(shuffled.map(({ id }) => id).join("-"));
+        }
+      };
+
+      if (value) {
+        getLazySection({ name: value as string }).then(handleResponse);
+        return;
       }
-    });
-  }, []);
+
+      getLazyRandomSection(selectedCards.name).then(handleResponse);
+    },
+    [selectedCards.name]
+  );
 
   const [isSpin, setIsSpin] = useState(false);
 
@@ -82,10 +97,8 @@ function FortuneWheel({ navigation, route }: any) {
   }, [route?.params?.category, handleThrowDice]);
 
   useEffect(() => {
-    if (!route?.params?.category) {
-      handleThrowDice(Math.floor(Math.random() * 17));
-    }
-  }, [handleThrowDice, route?.params?.category]);
+    if (!route?.params?.category) handleThrowDice();
+  }, [route?.params?.category]);
 
   const { width, height } = useWindowDimensions();
 
@@ -108,7 +121,7 @@ function FortuneWheel({ navigation, route }: any) {
           <>
             <Text style={{ fontSize: 70, fontFamily: "Bebas" }}>{t("fortune-wheel.pick-a-movie")}</Text>
             <View style={{ flexDirection: "row" }}>
-              <Button rippleColor={"#fff"} onPress={throttle(() => handleThrowDice(Math.floor(Math.random() * 26)), 200)}>
+              <Button rippleColor={"#fff"} onPress={throttle(() => handleThrowDice(), 200)}>
                 {t("fortune-wheel.random-category")}
               </Button>
 
@@ -125,7 +138,7 @@ function FortuneWheel({ navigation, route }: any) {
         )}
       </Animated.View>
 
-      {selectedCards && selectedCards?.length > 0 && (
+      {selectedCards?.results?.length > 0 && (
         <FortuneWheelComponent
           ref={wheelRef as any}
           style={{}}
@@ -135,7 +148,7 @@ function FortuneWheel({ navigation, route }: any) {
           }}
           onSelectedItem={navigate}
           size={screenWidth * 1.75}
-          items={selectedCards as any}
+          items={selectedCards.results as any}
         />
       )}
     </SafeIOSContainer>

@@ -53,6 +53,12 @@ export const movieApi = createApi({
         }`,
     }),
 
+    getRandomSection: builder.query({
+      query: (not?: string) => ({
+        url: `/landing/random?not=${not}`,
+      }),
+    }),
+
     getMovie: builder.query<
       MovieDetails,
       {
@@ -160,6 +166,9 @@ export const {
   useGetLandingPageMoviesQuery,
   useGetMovieQuery,
 
+  useGetRandomSectionQuery,
+
+  useLazyGetRandomSectionQuery,
   useLazyGetMovieQuery,
   useGetMovieProvidersQuery,
   useGetGenresQuery,
