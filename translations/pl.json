@@ -117,6 +117,12 @@
     "wheel": "Zakręć kołem",
     "scratch-card": "Zdrapka"
   },
+  "create-collection": {
+    "title": "Stwórz Kolekcję",
+    "input-label": "Wprowadź nazwę dla nowej kolekcji",
+    "cancel": "Anuluj",
+    "create": "Stwórz"
+  },
   "global": {
     "justwatch": "Dostępność filmów wspierana przez JustWatch",
     "attributions": "Filmy dostarczone przez The Movie Database API i JustWatch",
@@ -135,7 +141,8 @@
     "likes": "Polubienia",
     "empty-title": "Jeszcze nic tutaj",
     "empty": "Nie znaleziono jeszcze filmów ani seriali. Zacznij grać, aby zobaczyć tutaj swoje dopasowania i polubienia!",
-    "back-to-game": "Powrót do Gry"
+    "back-to-game": "Powrót do Gry",
+    "create-collection": "Zapisz do ulubionych"
   },
   "scanner": {
     "request-permission": "Poproś o pozwolenie",

@@ -89,7 +89,7 @@ export default function useRoom(room: string) {
     }
   }, [isFinished, room]);
 
-  const likeCard = (card: Movie, index: number) => {
+  const likeCard = async (card: Movie, index: number) => {
     socket?.emit("pick-movie", {
       roomId: room,
       index,

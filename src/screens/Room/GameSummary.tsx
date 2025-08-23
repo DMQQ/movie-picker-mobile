@@ -195,7 +195,9 @@ export default function GameSummary({ route }: any) {
 
           {summary?.matchedMovies && summary.matchedMovies.length > 0 && (
             <View style={styles.matchesContainer}>
-              <Text style={styles.matchesTitle}>{t("game-summary.matched-movies")}</Text>
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15 }}>
+                <Text style={styles.matchesTitle}>{t("game-summary.matched-movies")}</Text>
+              </View>
               <FlatList
                 data={summary.matchedMovies}
                 renderItem={renderMovieItem}

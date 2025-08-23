@@ -1,11 +1,14 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useContext } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useContext, useMemo, useState } from "react";
+import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Appbar, Button, useTheme } from "react-native-paper";
+import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
+import { Movie } from "../../../types";
 import { useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
+import { ThumbnailSizes } from "../Thumbnail";
 import ActiveUsers from "./ActiveUsers";
 
 const SmallButton = ({ children, onPress, icon, style }: { children?: string; onPress: () => void; icon?: string; style?: any }) => {
@@ -65,7 +68,7 @@ export default function HomeAppbar({
   };
 
   return (
-    <View style={{ backgroundColor: "#000", marginTop: 0, flexDirection: "row", padding: 10, alignItems: "center" }}>
+    <View style={{ marginTop: 0, flexDirection: "row", alignItems: "center" }}>
       {isHost ? (
         <Button onPress={handleEndGame} buttonColor="transparent" textColor="#ff4444">
           {t("dialogs.scan-code.endGame")}
@@ -89,12 +92,72 @@ export default function HomeAppbar({
 
       <SmallButton icon="qrcode-scan" onPress={() => setShowQRModal((p) => !p)} style={{ marginRight: 10 }} />
 
-      <SmallButton icon="heart" onPress={() => navigation.navigate("Overview")}>
-        {t("voter.home.likes")}
-      </SmallButton>
+      <LikedMoviesPreview />
     </View>
   );
 }
+
+const LikedMoviesPreview = () => {
+  const navigation = useNavigation<any>();
+  const { likes } = useAppSelector((state) => state.room.room);
+  const itemsToDisplay = useMemo(() => likes.toReversed().slice(0, 5), [likes]);
+
+  const [loadedURIs, setLoadedURIs] = useState<Set<string>>(new Set());
+
+  const handleImageLoaded = (uri: string) => {
+    setLoadedURIs((prev) => new Set([...prev, uri]));
+  };
+
+  const loadedMovies = itemsToDisplay.filter((movie) => {
+    const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
+    return loadedURIs.has(uri);
+  });
+
+  return (
+    <Pressable onPress={() => navigation.navigate("Overview")}>
+      <Animated.View layout={LinearTransition} style={styles.likedContainer}>
+        {itemsToDisplay.map((movie) => (
+          <PrefetchedImage key={`prefetch-${movie.id}`} movie={movie} onLoaded={handleImageLoaded} />
+        ))}
+
+        {loadedMovies.map((movie, index) => (
+          <Animated.View
+            entering={FadeIn}
+            key={`display-${movie.id}`}
+            style={{ position: "absolute", left: index * 5, zIndex: loadedMovies.length - index }}
+          >
+            <LikedMovieImage movie={movie} />
+          </Animated.View>
+        ))}
+      </Animated.View>
+    </Pressable>
+  );
+};
+
+const PrefetchedImage = ({ movie, onLoaded }: { movie: Movie; onLoaded: (uri: string) => void }) => {
+  const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
+
+  return (
+    <Image
+      style={{ width: 1, height: 1, position: "absolute", opacity: 0 }}
+      source={{ uri, width: 25, height: 40, cache: "force-cache" }}
+      onLoad={() => {
+        onLoaded(uri);
+      }}
+      onError={() => {
+        onLoaded(uri);
+      }}
+    />
+  );
+};
+
+const LikedMovieImage = ({ movie }: { movie: Movie }) => {
+  if (!movie.poster_path) return null;
+
+  const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
+
+  return <Image style={styles.likedImage} source={{ uri, width: 25, height: 40 }} />;
+};
 
 const styles = StyleSheet.create({
   smallButton: {
@@ -118,5 +181,23 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "500",
     includeFontPadding: false,
+  },
+
+  likedImage: {
+    width: 25,
+    height: 40,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 2,
+  },
+
+  likedContainer: {
+    position: "relative",
+    width: 50,
+    height: 40,
+    marginLeft: 10,
+    overflow: "hidden",
+    borderRadius: 2,
   },
 });

@@ -1,13 +1,13 @@
-import { CommonActions } from "@react-navigation/native";
-import { useCameraPermissions, CameraView } from "expo-camera";
+import { CommonActions, useIsFocused } from "@react-navigation/native";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { useContext, useEffect, useState } from "react";
-import { ToastAndroid, View, Vibration, Platform, Linking } from "react-native";
-import { Appbar, Button, Dialog, FAB, IconButton, Portal, Text, TextInput, useTheme } from "react-native-paper";
-import { SocketContext } from "../../service/SocketContext";
+import { Platform, ToastAndroid, Vibration, View } from "react-native";
+import { Button, Dialog, FAB, Portal, Text, TextInput, useTheme } from "react-native-paper";
+import PageHeading from "../../components/PageHeading";
 import { useAppSelector } from "../../redux/store";
+import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
-import PageHeading from "../../components/PageHeading";
 
 export default function QRScanner({ navigation }: any) {
   const [hasPermission, request] = useCameraPermissions();
@@ -121,6 +121,8 @@ export default function QRScanner({ navigation }: any) {
     !hasPermission?.granted && request();
   }, []);
 
+  const isFocused = useIsFocused();
+
   const t = useTranslation();
 
   if (hasPermission === null) {
@@ -139,24 +141,26 @@ export default function QRScanner({ navigation }: any) {
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       <PageHeading title={t("scanner.heading")} />
 
-      <CameraView
-        key={`${hasPermission?.granted}-camera`}
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        facing="back"
-        onBarcodeScanned={isScanned ? undefined : throttle(onBarcodeScanned, 1000)}
-        mute
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            width: 200,
-            height: 200,
-            borderWidth: 2,
-            borderColor: "#fff",
-            backgroundColor: "rgba(255,255,255,0.2)",
-          }}
-        />
-      </CameraView>
+      {hasPermission.granted && isFocused && (
+        <CameraView
+          key={`${hasPermission?.granted}-camera`}
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          facing="back"
+          onBarcodeScanned={isScanned ? undefined : throttle(onBarcodeScanned, 1000)}
+          mute
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              width: 200,
+              height: 200,
+              borderWidth: 2,
+              borderColor: "#fff",
+              backgroundColor: "rgba(255,255,255,0.2)",
+            }}
+          />
+        </CameraView>
+      )}
 
       <Portal>
         <>

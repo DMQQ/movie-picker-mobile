@@ -1,7 +1,6 @@
-import * as Haptics from "expo-haptics";
 import { Platform, Pressable, View, useWindowDimensions } from "react-native";
 import { Icon } from "react-native-paper";
-import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -30,7 +29,6 @@ const AnimatedButton = ({
 
   const handlePressIn = () => {
     scale.value = withSpring(0.9, { damping: 15, stiffness: 300 });
-    runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const handlePressOut = () => {

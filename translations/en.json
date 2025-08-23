@@ -117,6 +117,12 @@
     "wheel": "Spin the wheel",
     "scratch-card": "Scratch card"
   },
+  "create-collection": {
+    "title": "Create Collection",
+    "input-label": "Enter a name for your new collection",
+    "cancel": "Cancel",
+    "create": "Create"
+  },
 
   "global": {
     "justwatch": "The movie availabilities are powered by JustWatch",
@@ -136,7 +142,8 @@
     "likes": "Likes",
     "empty-title": "Nothing here yet",
     "empty": "No movies or shows found yet. Start playing to see your matches and likes here!",
-    "back-to-game": "Back to Game"
+    "back-to-game": "Back to Game",
+    "create-collection": "Save to favourites"
   },
   "scanner": {
     "request-permission": "Request permission",
