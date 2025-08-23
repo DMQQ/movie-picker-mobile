@@ -106,7 +106,13 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       setSessionId(joinSessionId);
       setStatus("waiting");
       
-      if (!socket?.connected) {
+      if (!socket) {
+        setError('Socket not available');
+        return;
+      }
+      
+      if (!socket.connected) {
+        setError('Not connected to server');
         return;
       }
 
@@ -148,9 +154,21 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     (ready: boolean) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-      if (!socket || !sessionId) {
+      if (!socket) {
+        setError('Socket not available');
         return;
       }
+      
+      if (!sessionId) {
+        setError('No session joined');
+        return;
+      }
+      
+      if (!socket.connected) {
+        setError('Not connected to server');
+        return;
+      }
+      
       socket.emit("voter:session:ready", { sessionId, ready });
     },
     [socket, sessionId]

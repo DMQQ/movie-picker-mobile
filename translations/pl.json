@@ -42,6 +42,8 @@
     "view-matches": "Wyświetl Dopasowania"
   },
   "room": {
+    "too-restricted": "Filtry są zbyt restrykcyjne",
+    "lower-results-count": "Znaleziono tylko {count} wyników, gra będzie krótsza",
     "providers": "Wybierz platformy",
     "join-game": "Dołącz do gry",
     "waiting": "Oczekiwanie na innych graczy",

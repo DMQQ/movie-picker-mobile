@@ -2,10 +2,11 @@ import { CommonActions, useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import { useContext, useEffect, useState } from "react";
 import { Dimensions, FlatList, ScrollView, StyleSheet, View } from "react-native";
-import { Button, MD2DarkTheme, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { Avatar, Button, MD2DarkTheme, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
+import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
 import Thumbnail from "../../components/Thumbnail";
 import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
 import { roomActions } from "../../redux/room/roomSlice";
@@ -168,7 +169,19 @@ export default function GameSummary({ route }: any) {
               <Text style={styles.playersTitle}>{t("game-summary.player-performance")}</Text>
               {summary.users.map((user, index) => (
                 <View key={index} style={styles.playerItem}>
-                  <Text style={styles.playerName}>{user.username}</Text>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                    <Avatar.Text
+                      size={24}
+                      label={user.username?.[0].toUpperCase() || "U"}
+                      color="white"
+                      style={{
+                        borderWidth: 0.5,
+                        borderColor: "#fff",
+                        backgroundColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
+                      }}
+                    />
+                    <Text style={styles.playerName}>{user.username}</Text>
+                  </View>
                   <View style={styles.playerStats}>
                     <Text style={[styles.playerStatus, { color: user.finished ? "#4CAF50" : "#ff4444" }]}>{user.finished ? "✓" : "✗"}</Text>
                     <Text style={styles.pickCount}>

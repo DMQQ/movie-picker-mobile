@@ -1,9 +1,10 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { CommonActions } from "@react-navigation/native";
-import { memo, useContext, useEffect, useMemo } from "react";
+import { memo, useContext, useEffect, useMemo, useState } from "react";
 import { Dimensions, Share, View } from "react-native";
 import { Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
+import { Movie } from "../../../types";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
 import PageHeading from "../../components/PageHeading";
 import { roomActions } from "../../redux/room/roomSlice";
@@ -40,6 +41,7 @@ export default function QRCodePage({ navigation, route }: any) {
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
+  const [moviesCount, setMoviesCount] = useState<number | null>(null);
 
   const {
     room: { users, roomId },
@@ -92,8 +94,7 @@ export default function QRCodePage({ navigation, route }: any) {
         const response = (await socket?.emitWithAck("create-room", roomConfig)) as ISocketResponse;
 
         if (response) {
-          console.log("✅ Room created:", response.roomId);
-
+          console.log("💡 Room created:", response.roomId);
           dispatch(roomActions.setRoom(response.details));
           dispatch(roomActions.setQRCode(response.roomId));
 
@@ -102,11 +103,20 @@ export default function QRCodePage({ navigation, route }: any) {
           socket?.on("active", (users: string[]) => {
             dispatch(roomActions.setActiveUsers(users));
           });
+
+          socket?.on("movies", ({ movies }: { movies: Movie[] }) => {
+            setMoviesCount(movies.length);
+          });
         }
       } catch (error) {
         console.log("💥 Error creating room:", error);
       }
     })();
+
+    return () => {
+      socket?.off("active");
+      socket?.off("movies");
+    };
   }, [roomConfig, route?.params, socket]);
 
   const onJoinOwnRoom = (code: string) => {
@@ -152,12 +162,11 @@ export default function QRCodePage({ navigation, route }: any) {
 
         <QrCodeBox code={qrCode} />
       </View>
-      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
+      <View style={{ paddingHorizontal: 15, paddingTop: 15, gap: 7.5 }}>
         <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            marginBottom: 10,
             height: 25,
             alignItems: "center",
           }}
@@ -180,8 +189,12 @@ export default function QRCodePage({ navigation, route }: any) {
             ))}
           </View>
         </View>
+        <Text style={{ color: "gray" }}>
+          {moviesCount != null && moviesCount < 15 ? t("room.lower-results-count", { count: moviesCount }) : ""}
+        </Text>
+
         <Button
-          disabled={!qrCode}
+          disabled={!qrCode || (moviesCount != null ? moviesCount < 5 : false)}
           mode="contained"
           style={{
             borderRadius: 100,
@@ -192,7 +205,7 @@ export default function QRCodePage({ navigation, route }: any) {
             onJoinOwnRoom(qrCode);
           }}
         >
-          start
+          {moviesCount === 0 ? t("room.too-restricted") : "start"}
         </Button>
       </View>
     </View>

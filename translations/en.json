@@ -42,6 +42,8 @@
     "view-matches": "View Matches"
   },
   "room": {
+    "too-restricted": "Filters too restricted, try again",
+    "lower-results-count": "Found only {count} results, the game will be less fun",
     "providers": "Pick your providers",
     "join-game": "Join game",
     "waiting": "Waiting for other players",

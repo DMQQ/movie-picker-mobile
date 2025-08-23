@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useTransition } from "react";
-import { StyleSheet, View, FlatList, TouchableOpacity, Animated, ListRenderItem, Image } from "react-native";
-import { Text, TextInput, TouchableRipple, Surface, ActivityIndicator, MD2DarkTheme, Chip, Avatar } from "react-native-paper";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, FlatList, Image, ListRenderItem, StyleSheet, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Avatar, MD2DarkTheme, Surface, Text, TextInput, TouchableRipple } from "react-native-paper";
 import { useLazySearchPeopleQuery } from "../redux/person/personApi";
 import useTranslation from "../service/useTranslation";
 

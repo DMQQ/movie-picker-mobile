@@ -82,28 +82,29 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
       });
 
       newSocket.on("connect", () => {
+        console.log("✅ Socket connected successfully");
         wasConnected.current = true;
         socketRef.current = newSocket;
+        setSocket(newSocket); // Ensure state is updated when connected
       });
 
       newSocket.on("disconnect", (reason) => {
+        console.log("❌ Socket disconnected, reason:", reason);
         setSocket(null);
         socketRef.current = null;
         if (wasConnected.current && reason === "transport close") {
+          console.log("🔄 Scheduling reconnect due to transport close");
           scheduleReconnect();
         }
       });
 
       newSocket.on("connect_error", (error) => {
+        console.log("🚨 Socket connection error:", error);
         scheduleReconnect();
       });
 
-      setSocket(newSocket);
-
       socketRef.current = newSocket;
-    } catch (error) {
-      // Handle error silently
-    }
+    } catch (error) {}
   };
 
   const scheduleReconnect = () => {
@@ -147,9 +148,12 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   }, []);
 
   const reconnect = () => {
+    console.log("🔄 Manual reconnect triggered");
     if (socketRef.current) {
+      console.log("🔌 Reconnecting existing socket");
       socketRef.current.connect();
     } else {
+      console.log("🆕 Initializing new socket");
       initializeSocket();
     }
   };

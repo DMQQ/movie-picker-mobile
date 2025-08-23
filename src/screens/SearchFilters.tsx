@@ -1,9 +1,8 @@
 import { BlurView } from "expo-blur";
 import React, { useMemo, useState } from "react";
 import { Dimensions, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Button, Chip, Divider, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import { Button, Divider, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import DropdownPersonSearch from "../components/DropdownSearchPeron";
 import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import { useGetAllProvidersQuery, useGetGenresQuery } from "../redux/movie/movieApi";
 import useTranslation from "../service/useTranslation";
@@ -15,7 +14,7 @@ export default function SearchFilters({ navigation, route }: any) {
   const { data: providers } = useGetAllProvidersQuery({});
   const [genres, setGenres] = useState<number[]>(route?.params?.genres || []);
   const [selectedPeople, setSelectedPeople] = useState(route?.params?.people || []);
-  const [activeTab, setActiveTab] = useState<"movie" | "tv">("movie");
+  const [activeTab, setActiveTab] = useState<"movie" | "tv" | "both">("movie");
 
   const t = useTranslation();
 
@@ -85,12 +84,11 @@ export default function SearchFilters({ navigation, route }: any) {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            {route.params?.type !== "both" && (
-              <>
-                <DropdownPersonSearch onSelectPerson={handlePeopleSelection} maxSelections={5} />
-                <Divider style={styles.divider} />
-              </>
-            )}
+            {/* <>
+              <DropdownPersonSearch onSelectPerson={handlePeopleSelection} maxSelections={5} />
+              <Divider style={styles.divider} />
+            </> */}
+
             {/* Streaming Services */}
             <Section title={t("room.providers")}>
               <FlatList

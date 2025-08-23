@@ -80,7 +80,6 @@ export default function GameList({ navigation }: ScreenProps<"Games">) {
 
   useEffect(() => {
     Promise.all([prefetchProviders({}), prefetchSections({}), prefetchGengres({ type: "movie" }), prefetchGengres({ type: "tv" })]);
-    navigation.preload("Fortune", {});
   }, []);
 
   const categories = [

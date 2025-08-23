@@ -1,6 +1,7 @@
-import { useAppSelector } from "../redux/store";
+import { useCallback } from "react";
 import en from "../../translations/en.json";
 import pl from "../../translations/pl.json";
+import { useAppSelector } from "../redux/store";
 
 const translations: Record<string, any> = { en, pl };
 
@@ -19,7 +20,14 @@ const getNestedValue = (obj: any, path: string): string => {
 export default function useTranslation() {
   const lang = useAppSelector((state) => state.room.language) || "en";
 
-  return (key: string) => {
-    return getNestedValue(translations[lang], key);
-  };
+  return useCallback(
+    (key: string, args?: Record<string, number | string | boolean>) => {
+      const s = getNestedValue(translations[lang], key);
+
+      if (!args) return s;
+
+      return s.replace(/\{(\w+)\}/g, (_, k) => (k in args ? String(args[k]) : `{${k}}`));
+    },
+    [lang]
+  );
 }
