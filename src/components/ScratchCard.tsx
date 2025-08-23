@@ -1,6 +1,6 @@
-import React, { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Dimensions, LayoutChangeEvent, StyleProp, StyleSheet, Vibration, View, ViewStyle } from "react-native";
-import { Canvas, Group, Skia, Path, Mask, Rect, Image, useImage, SkPath } from "@shopify/react-native-skia";
+import { Canvas, Group, Image, Mask, Path, Rect, Skia, SkPath, useImage } from "@shopify/react-native-skia";
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Dimensions, LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, Vibration, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { svgPathProperties } from "svg-path-properties";
 
@@ -17,11 +17,6 @@ const Offer = ({ width, height, imageUrl }: ILayersProps) => {
   return offerImage ? <Image image={offerImage} fit="contain" width={width} height={height} /> : null;
 };
 
-interface ScratchCardProps {
-  imageUrl: string;
-  style?: StyleProp<ViewStyle>;
-}
-
 const ScratchPattern = ({ width, height }: { width: number; height: number }) => {
   const scratchPatternImage = useImage(require("../../assets/images/low-poly-grid-haikei.png"));
   return scratchPatternImage ? <Image image={scratchPatternImage} fit="cover" width={width} height={height} /> : null;
@@ -29,11 +24,20 @@ const ScratchPattern = ({ width, height }: { width: number; height: number }) =>
 
 interface ScratchCardProps {
   imageUrl: string;
-
   style?: StyleProp<ViewStyle>;
+  onButtonPress?: () => void;
+  showButtonOnScratch?: boolean;
+  buttonStyle?: StyleProp<ViewStyle>;
 }
 
-export const ScratchCard = ({ imageUrl, style }: ScratchCardProps) => {
+export const ScratchCard = ({
+  imageUrl,
+  style,
+
+  onButtonPress,
+  showButtonOnScratch = true,
+  buttonStyle,
+}: ScratchCardProps) => {
   const [canvasLayoutMeta, setCanvasLayoutMeta] = useState({
     width: 0,
     height: 0,
@@ -97,6 +101,12 @@ export const ScratchCard = ({ imageUrl, style }: ScratchCardProps) => {
     totalAreaScratched.current = 0;
   }, [imageUrl]);
 
+  const handleButtonPress = useCallback(() => {
+    if (onButtonPress) {
+      onButtonPress();
+    }
+  }, [onButtonPress]);
+
   return (
     <GestureDetector gesture={pan}>
       <View style={[styles.container, style]}>
@@ -130,6 +140,10 @@ export const ScratchCard = ({ imageUrl, style }: ScratchCardProps) => {
             <Offer imageUrl={imageUrl} width={width} height={height} />
           )}
         </Canvas>
+
+        {isScratched && showButtonOnScratch && (
+          <TouchableOpacity style={[styles.buttonOverlay, buttonStyle]} onPress={handleButtonPress} activeOpacity={0.8}></TouchableOpacity>
+        )}
       </View>
     </GestureDetector>
   );
@@ -148,6 +162,33 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 10,
   },
+  buttonOverlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+  },
 });
 
-export default memo(ScratchCard, (prev, next) => prev.imageUrl === next.imageUrl);
+export default memo(ScratchCard, (prev, next) => prev.imageUrl === next.imageUrl && prev.showButtonOnScratch === next.showButtonOnScratch);

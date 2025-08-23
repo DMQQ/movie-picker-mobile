@@ -108,7 +108,7 @@ export default function GameList({ navigation }: ScreenProps<"Games">) {
       params: { screen: "Home" },
       beta: true,
       players: "2",
-      duration: "10-15 min",
+      duration: "5-10 min",
       category: "new",
       index: 1,
     },

@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Dimensions, Platform, Pressable } from "react-native";
@@ -61,6 +62,7 @@ export default function Modal({ match, onClose, styles }: any) {
   const [isLoading, setIsLoading] = useState(true);
   const animation = useRef<LottieView>(null);
   const hasAnimationPlayed = useRef(false);
+  const navigation = useNavigation<any>();
 
   useEffect(() => {
     let timeout = setTimeout(() => {
@@ -146,6 +148,14 @@ export default function Modal({ match, onClose, styles }: any) {
             style={{
               width: Dimensions.get("screen").width - 30 - 15,
               height: Dimensions.get("window").height / 1.5 - 50,
+            }}
+            onButtonPress={() => {
+              console.log({ match });
+              navigation.navigate("MovieDetails", {
+                id: match?.id,
+                type: match?.type,
+                img: match?.poster_path,
+              });
             }}
           />
         </AnimatedPressable>

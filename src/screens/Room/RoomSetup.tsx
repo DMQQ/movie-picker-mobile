@@ -206,7 +206,7 @@ export default function RoomSetup({ navigation }: any) {
         maxRounds: 3,
         genre: genres,
         providers: providersData?.slice(0, 10).map((p) => p.provider_id) || [],
-        specialCategories: specialCategoryOptions[Math.floor(Math.random() * specialCategoryOptions.length)].id,
+        specialCategories: [specialCategoryOptions[Math.floor(Math.random() * specialCategoryOptions.length)].id],
       },
     });
 

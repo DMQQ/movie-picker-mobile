@@ -17,6 +17,8 @@ interface RoomSetupParams {
   maxRounds: number;
   genre: { id: number; name: string }[];
   providers: number[];
+
+  specialCategories: string[];
 }
 
 interface ISocketResponse {
@@ -33,13 +35,11 @@ interface ISocketResponse {
 
 export default function QRCodePage({ navigation, route }: any) {
   const { roomSetup }: { roomSetup: RoomSetupParams } = route.params || {};
-  const { category, maxRounds, genre, providers } = roomSetup || {};
+  const { category, maxRounds, genre, providers, specialCategories } = roomSetup || {};
   const { qrCode, nickname } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
-
-  console.log({ roomSetup });
 
   const {
     room: { users, roomId },
@@ -54,10 +54,10 @@ export default function QRCodePage({ navigation, route }: any) {
         nickname,
         providers: providers || [],
         maxRounds: maxRounds || 6,
+        specialCategories: specialCategories || [],
       };
     }
 
-    // QuickStart logic - only run when we have valid nickname and socket
     if (!nickname || !socket) {
       return null;
     }
@@ -65,11 +65,9 @@ export default function QRCodePage({ navigation, route }: any) {
     const movieCategories = getMovieCategories(t).slice(0, 3);
     const seriesCategories = getSeriesCategories(t).slice(0, 3);
 
-    // Pick one random category from movies and one from series
     const randomMovie = movieCategories[Math.floor(Math.random() * movieCategories.length)];
     const randomSeries = seriesCategories[Math.floor(Math.random() * seriesCategories.length)];
 
-    // Randomly choose between movie or series
     const randomCategory = Math.random() < 0.5 ? randomMovie : randomSeries;
 
     const config = {
@@ -79,6 +77,7 @@ export default function QRCodePage({ navigation, route }: any) {
       nickname,
       providers: [],
       maxRounds: 3,
+      specialCategories: [],
     };
     return config;
   }, [route?.params?.quickStart, category, maxRounds, genre, providers, nickname, socket]);
