@@ -1,4 +1,4 @@
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { PropsWithChildren } from "react";
 import { ImageBackground, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import FastImage, { FastImageProps } from "react-native-fast-image";
@@ -74,8 +74,16 @@ export default function Thumbnail({
 } & FastImageProps) {
   if (!path) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }, container]}>
-        <AntDesign name="picture" size={size / 3} color={MD2DarkTheme.colors.placeholder} />
+      <View style={[styles.container, container]}>
+        <View
+          style={[
+            styles.image,
+            rest.style,
+            { justifyContent: "center", alignItems: "center", backgroundColor: MD2DarkTheme.colors.surface },
+          ]}
+        >
+          <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={MD2DarkTheme.colors.placeholder} />
+        </View>
       </View>
     );
   }

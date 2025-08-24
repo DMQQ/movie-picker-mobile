@@ -5,6 +5,7 @@ import { Dimensions, FlatList, ScrollView, StyleSheet, View } from "react-native
 import { Avatar, Button, MD2DarkTheme, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../types";
+import CreateCollectionFromLiked from "../../components/CreateCollectionFromLiked";
 import { FancySpinner } from "../../components/FancySpinner";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
 import Thumbnail from "../../components/Thumbnail";
@@ -89,6 +90,16 @@ export default function GameSummary({ route }: any) {
       CommonActions.reset({
         index: 0,
         routes: [{ name: "Landing" }],
+      })
+    );
+  };
+
+  const handleTryAgain = () => {
+    dispatch(roomActions.reset());
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 1,
+        routes: [{ name: "Landing" }, { name: "QRCode" }],
       })
     );
   };
@@ -193,20 +204,44 @@ export default function GameSummary({ route }: any) {
             </View>
           )}
 
-          {summary?.matchedMovies && summary.matchedMovies.length > 0 && (
+          {summary?.matchedMovies && summary.matchedMovies.length > 0 ? (
             <View style={styles.matchesContainer}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15 }}>
                 <Text style={styles.matchesTitle}>{t("game-summary.matched-movies")}</Text>
+
+                <CreateCollectionFromLiked data={summary.matchedMovies} />
               </View>
-              <FlatList
-                data={summary.matchedMovies}
-                renderItem={renderMovieItem}
-                numColumns={3}
-                keyExtractor={(item) => item.id.toString()}
-                columnWrapperStyle={styles.movieRow}
-                showsVerticalScrollIndicator={false}
-                scrollEnabled={false}
-              />
+              {summary.matchedMovies.length === 0 ? (
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ color: "#fff", fontSize: 16 }}>{t("game-summary.no-matches")}</Text>
+                </View>
+              ) : (
+                <FlatList
+                  data={summary.matchedMovies}
+                  renderItem={renderMovieItem}
+                  numColumns={3}
+                  keyExtractor={(item) => item.id.toString()}
+                  columnWrapperStyle={styles.movieRow}
+                  showsVerticalScrollIndicator={false}
+                  scrollEnabled={false}
+                />
+              )}
+            </View>
+          ) : (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", marginTop: 30 }}>
+              <Text style={{ color: "#fff", fontSize: 45, fontFamily: "Bebas" }}>{t("game-summary.no-matches")}</Text>
+              <Text
+                style={{
+                  color: "#fff",
+                  fontSize: 16,
+                  textAlign: "center",
+                  marginVertical: 15,
+                  maxWidth: 300,
+                }}
+              >
+                {t("game-summary.no-matches-desc")}
+              </Text>
+              <Button onPress={handleTryAgain}>{t("game-summary.try-again")}</Button>
             </View>
           )}
         </View>
@@ -399,7 +434,6 @@ const styles = StyleSheet.create({
   matchesTitle: {
     fontSize: 35,
     fontFamily: "Bebas",
-    marginBottom: 15,
   },
   movieRow: {
     justifyContent: "space-between",

@@ -1,14 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
-import { Button, MD2DarkTheme, Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import Animated, { LinearTransition } from "react-native-reanimated";
-import Ant from "react-native-vector-icons/AntDesign";
 import { Movie } from "../../../types";
 import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
-import { hexToRgba } from "../../utils/hexToRgb";
 import CreateCollectionFromLiked from "../CreateCollectionFromLiked";
-import FrostedGlass from "../FrostedGlass";
 import MatchTile from "./MatchTile";
 
 interface TileListProps {
@@ -39,24 +36,7 @@ export default function TilesList<T>(props: TileListProps) {
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <Text style={{ fontSize: 35, marginBottom: 15, fontFamily: "Bebas" }}>{props.label}</Text>
 
-              <CreateCollectionFromLiked data={props.data}>
-                <FrostedGlass
-                  container={{ borderRadius: 100, backgroundColor: hexToRgba(MD2DarkTheme.colors.primary, 0.75) }}
-                  style={{ paddingHorizontal: 15, padding: 7.5, borderRadius: 100, flexDirection: "row", alignItems: "center", gap: 5 }}
-                >
-                  <Ant name="star" color={"#fff"} size={20} />
-                  <Text
-                    style={{
-                      color: "#fff",
-                      fontWeight: "bold",
-
-                      fontSize: 14,
-                    }}
-                  >
-                    {t("overview.create-collection")}
-                  </Text>
-                </FrostedGlass>
-              </CreateCollectionFromLiked>
+              <CreateCollectionFromLiked data={props.data} />
             </View>
           ) : null
         }

@@ -1,18 +1,17 @@
+import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { Keyboard, Pressable } from "react-native";
-import { Button, Dialog, MD2DarkTheme, Portal, TextInput } from "react-native-paper";
+import { Keyboard, Pressable, View } from "react-native";
+import { Button, Dialog, MD2DarkTheme, Portal, Text, TextInput } from "react-native-paper";
 import { createGroupFromArray } from "../redux/favourites/favourites";
 import { useAppDispatch } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 
 interface CreateCollectionFromLikedProps {
   data: any[];
-
-  children: React.ReactNode;
 }
 
-export default function CreateCollectionFromLiked({ data, children }: CreateCollectionFromLikedProps) {
+export default function CreateCollectionFromLiked({ data }: CreateCollectionFromLikedProps) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [text, setText] = useState("");
   const navigation = useNavigation<any>();
@@ -21,7 +20,32 @@ export default function CreateCollectionFromLiked({ data, children }: CreateColl
 
   return (
     <>
-      <Pressable onPress={() => setModalVisible((p) => !p)}>{children}</Pressable>
+      <Pressable onPress={() => setModalVisible((p) => !p)}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingHorizontal: 15,
+            paddingVertical: 10,
+            borderRadius: 100,
+            borderWidth: 1,
+            gap: 5,
+            borderColor: MD2DarkTheme.colors.primary,
+          }}
+        >
+          <FontAwesome name="bookmark-o" color={MD2DarkTheme.colors.primary} size={16} />
+          <Text
+            style={{
+              color: MD2DarkTheme.colors.primary,
+              fontWeight: "bold",
+
+              fontSize: 14,
+            }}
+          >
+            {t("overview.save-list")}
+          </Text>
+        </View>
+      </Pressable>
 
       <Portal>
         <Dialog

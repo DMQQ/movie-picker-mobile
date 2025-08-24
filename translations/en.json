@@ -143,7 +143,8 @@
     "empty-title": "Nothing here yet",
     "empty": "No movies or shows found yet. Start playing to see your matches and likes here!",
     "back-to-game": "Back to Game",
-    "create-collection": "Save to favourites"
+    "create-collection": "Save to favourites",
+    "save-list": "Save"
   },
   "scanner": {
     "request-permission": "Request permission",
@@ -301,7 +302,10 @@
     "matched-movies": "Matched Movies",
     "failed-to-load": "Failed to load game summary",
     "add-to-favourites": "Favourite",
-    "remove-from-favourites": "Undo"
+    "remove-from-favourites": "Undo",
+    "no-matches": "No matches",
+    "no-matches-desc": "Unfortunately, you didn't find any common movies in this game. Try again with different categories or settings.",
+    "try-again": "Play Again"
   },
   "game-invite": {
     "social-title": "🎯 Find Your Perfect Match",

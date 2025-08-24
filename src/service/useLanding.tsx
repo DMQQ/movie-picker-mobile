@@ -24,7 +24,6 @@ export default function useLanding() {
 
   useEffect(() => {
     if (previousChip.current !== selectedChip) {
-      console.log("Chip changed, resetting page and data");
       setPage(0);
       setData([]);
       previousChip.current = selectedChip;

@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useContext, useMemo, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Appbar, Button, useTheme } from "react-native-paper";
+import { Appbar, Button, MD2DarkTheme, useTheme } from "react-native-paper";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import { useAppSelector } from "../../redux/store";
@@ -101,30 +101,32 @@ const LikedMoviesPreview = () => {
   const navigation = useNavigation<any>();
   const { likes } = useAppSelector((state) => state.room.room);
   const itemsToDisplay = useMemo(() => likes.toReversed().slice(0, 5), [likes]);
+  const [loadedMovies, setLoadedMovies] = useState<Set<Movie>>(new Set());
 
-  const [loadedURIs, setLoadedURIs] = useState<Set<string>>(new Set());
-
-  const handleImageLoaded = (uri: string) => {
-    setLoadedURIs((prev) => new Set([...prev, uri]));
+  const handleImageLoaded = (movie: Movie) => {
+    setLoadedMovies((prev) => new Set([...prev, movie]));
   };
 
-  const loadedMovies = itemsToDisplay.filter((movie) => {
-    const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
-    return loadedURIs.has(uri);
-  });
+  const loadedItems = Array.from(loadedMovies).reverse().slice(0, 5);
 
   return (
     <Pressable onPress={() => navigation.navigate("Overview")}>
       <Animated.View layout={LinearTransition} style={styles.likedContainer}>
+        {loadedItems.length === 0 && <PlaceholderImage />}
+
         {itemsToDisplay.map((movie) => (
           <PrefetchedImage key={`prefetch-${movie.id}`} movie={movie} onLoaded={handleImageLoaded} />
         ))}
 
-        {loadedMovies.map((movie, index) => (
+        {loadedItems.map((movie, index) => (
           <Animated.View
             entering={FadeIn}
             key={`display-${movie.id}`}
-            style={{ position: "absolute", left: index * 5, zIndex: loadedMovies.length - index }}
+            style={{
+              position: "absolute",
+              transform: [{ translateX: index * 5 }],
+              zIndex: loadedItems.length - index,
+            }}
           >
             <LikedMovieImage movie={movie} />
           </Animated.View>
@@ -134,29 +136,42 @@ const LikedMoviesPreview = () => {
   );
 };
 
-const PrefetchedImage = ({ movie, onLoaded }: { movie: Movie; onLoaded: (uri: string) => void }) => {
+const PrefetchedImage = ({ movie, onLoaded }: { movie: Movie; onLoaded: (movie: Movie) => void }) => {
   const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
 
   return (
     <Image
       style={{ width: 1, height: 1, position: "absolute", opacity: 0 }}
       source={{ uri, width: 25, height: 40, cache: "force-cache" }}
-      onLoad={() => {
-        onLoaded(uri);
-      }}
-      onError={() => {
-        onLoaded(uri);
-      }}
+      onLoad={() => onLoaded(movie)}
+      onError={() => onLoaded(movie)}
     />
   );
 };
 
 const LikedMovieImage = ({ movie }: { movie: Movie }) => {
-  if (!movie.poster_path) return null;
-
   const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
 
-  return <Image style={styles.likedImage} source={{ uri, width: 25, height: 40 }} />;
+  return <Image style={styles.likedImage} source={{ uri, width: 25, height: 40, cache: "force-cache" }} />;
+};
+
+const PlaceholderImage = () => {
+  return Array.from(new Array(3).keys()).map((index) => (
+    <Animated.View
+      key={`placeholder-${index}`}
+      entering={FadeIn}
+      style={{
+        position: "absolute",
+        transform: [{ translateX: index * 5 }],
+        zIndex: 4 - index,
+      }}
+    >
+      <View style={[styles.likedImage, { backgroundColor: MD2DarkTheme.colors.surface }]}>
+        <MaterialCommunityIcons name="movie" size={20} color="rgba(255,255,255,0.3)" style={{ alignSelf: "center", marginTop: 10 }} />
+      </View>
+    </Animated.View>
+  ));
+  return;
 };
 
 const styles = StyleSheet.create({

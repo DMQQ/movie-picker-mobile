@@ -150,7 +150,6 @@ export default function Modal({ match, onClose, styles }: any) {
               height: Dimensions.get("window").height / 1.5 - 50,
             }}
             onButtonPress={() => {
-              console.log({ match });
               navigation.navigate("MovieDetails", {
                 id: match?.id,
                 type: match?.type,
