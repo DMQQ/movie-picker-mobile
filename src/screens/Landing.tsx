@@ -14,6 +14,7 @@ import AppLoadingOverlay from "../components/AppLoadingOverlay";
 import FeaturedSection from "../components/Landing/FeaturedSection";
 import LandingHeader from "../components/LandingHeader";
 import NoConnectionError from "../components/NoConnectionError";
+import PlatformBlurView from "../components/PlatformBlurView";
 import SectionListItem from "../components/SectionItem";
 import Thumbnail, { prefetchThumbnail } from "../components/Thumbnail";
 import { useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
@@ -64,6 +65,8 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         getItemCount={getItemCount}
         getItem={getItem}
         onEndReached={onEndReached}
+        removeClippedSubviews
+        onEndReachedThreshold={0.1}
         ListHeaderComponent={<FeaturedSection navigate={navigation.navigate} />}
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -131,10 +134,13 @@ const BottomTab = memo(
     };
 
     return (
-      <BlurView
+      <PlatformBlurView
         intensity={Platform.OS === "ios" ? 60 : 100}
         tint="dark"
-        style={[{ flexDirection: "row", paddingBottom: insets.bottom, paddingTop: 10 }, tabStyles.container]}
+        style={[
+          { flexDirection: "row", paddingBottom: insets.bottom + (Platform.OS === "android" ? 15 : 0), paddingTop: 10 },
+          tabStyles.container,
+        ]}
       >
         <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigate("Favourites"))}>
           <>
@@ -167,7 +173,7 @@ const BottomTab = memo(
             <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
           </>
         </TouchableOpacity>
-      </BlurView>
+      </PlatformBlurView>
     );
   },
   () => true
@@ -230,6 +236,8 @@ export const Section = memo(({ group }: SectionProps) => {
     ),
     []
   );
+
+  if (movies.length === 0 && !state.isLoading) return null;
 
   return (
     <Animated.View style={sectionStyles.container} entering={FadeIn}>

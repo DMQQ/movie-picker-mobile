@@ -7,6 +7,8 @@ import Animated, { Extrapolation, FadeInUp, interpolate, SharedValue, useAnimate
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGetChipCategoriesQuery } from "../redux/movie/movieApi";
 import { useAppSelector } from "../redux/store";
+import useTranslation from "../service/useTranslation";
+import PlatformBlurView from "./PlatformBlurView";
 
 interface LandingHeaderProps {
   selectedChip?: string;
@@ -58,13 +60,16 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
   });
 
   const nickname = useAppSelector((state) => state.room.nickname);
+  const t = useTranslation();
 
   return (
     <Animated.View style={[styles.container, headerAnimatedStyle]} entering={FadeInUp}>
-      <BlurView style={{ flex: 1, padding: 15, paddingTop: insets.top }} intensity={Platform.OS === "ios" ? 60 : 100} tint="dark">
+      <PlatformBlurView style={{ flex: 1, padding: 15, paddingTop: insets.top }} intensity={Platform.OS === "ios" ? 60 : 100} tint="dark">
         <Animated.View>
           <Animated.View style={[styles.mainHeader, mainHeaderAnimatedStyle]}>
-            <Text style={styles.helloText}>Hello {nickname}!</Text>
+            <Text style={styles.helloText}>
+              {t("global.hello")} {nickname}!
+            </Text>
 
             <Animated.View style={[styles.buttonsContainer]}>
               <IconButton
@@ -121,7 +126,7 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
             </ScrollView>
           </Animated.View>
         </Animated.View>
-      </BlurView>
+      </PlatformBlurView>
     </Animated.View>
   );
 };

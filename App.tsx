@@ -141,10 +141,6 @@ const Navigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: bo
           initialRouteName="Landing"
           screenOptions={{
             headerShown: false,
-
-            ...(Platform.OS === "android" && {
-              animation: "simple_push",
-            }),
           }}
         >
           <Stack.Screen
@@ -184,8 +180,6 @@ const Navigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: bo
               headerTitleAlign: "center",
               headerTitle: "",
               title: "",
-              // presentation: "modal",
-              ...(Platform.OS === "android" && { animation: "fade_from_bottom" }),
             }}
             initialParams={{
               id: 0,

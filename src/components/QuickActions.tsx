@@ -10,7 +10,7 @@ import useTranslation from "../service/useTranslation";
 
 export default function QuickActions(props: { movie: Movie; children?: ReactNode; hideLabels?: boolean }) {
   const dispatch = useAppDispatch();
-  const { groups } = useAppSelector((state) => state.favourite);
+  const groups = useAppSelector((state) => state.favourite.groups);
   const t = useTranslation();
 
   const isInGroup = (groupId: "1" | "2" | "999") => {

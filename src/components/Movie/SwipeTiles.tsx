@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useEffect, useRef } from "react";
-import { Dimensions, StyleSheet, View, useWindowDimensions } from "react-native";
+import { Dimensions, Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
 import Animated, {
@@ -148,7 +148,7 @@ const SwipeTile = ({
           scale: scale.value,
         },
       ],
-      top: withSpring(height * 0.075),
+      top: withSpring(height * (Platform.OS === "ios" ? 0.075 : 0.09)),
     };
   });
 

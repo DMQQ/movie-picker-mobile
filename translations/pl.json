@@ -134,7 +134,8 @@
       "rent_buy": "Wypożyczenie/Zakup",
       "free": "Za Darmo",
       "ads": "Z Reklamami"
-    }
+    },
+    "hello": "Cześć"
   },
   "overview": {
     "matches": "Dopasowane",

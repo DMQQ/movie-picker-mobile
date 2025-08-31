@@ -2,7 +2,15 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { PropsWithChildren } from "react";
 import { ImageBackground, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import FastImage, { FastImageProps } from "react-native-fast-image";
-import { MD2DarkTheme } from "react-native-paper";
+import { MD2DarkTheme, Text } from "react-native-paper";
+
+interface ThumbnailProps extends FastImageProps {
+  path: string;
+  size?: number;
+  container?: StyleProp<ViewStyle>;
+  priority?: "low" | "high" | "normal";
+  placeholder?: string;
+}
 
 export const ThumbnailSizes = {
   poster: {
@@ -58,34 +66,23 @@ const BlurPlaceholder = ({ children, placeholder, style }: PropsWithChildren<{ p
     <View style={[style]}>{children}</View>
   );
 
-export default function Thumbnail({
-  path,
-  size = 200,
-  container,
-  priority = "normal",
-  placeholder,
-  ...rest
-}: {
-  path: string;
-  size?: number;
-  container?: StyleProp<ViewStyle>;
-  priority?: "low" | "high" | "normal";
-  placeholder?: string;
-} & FastImageProps) {
+const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path">) => (
+  <View style={[styles.container, container]}>
+    <View
+      style={[styles.image, rest.style, { justifyContent: "center", alignItems: "center", backgroundColor: MD2DarkTheme.colors.surface }]}
+    >
+      <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={MD2DarkTheme.colors.placeholder} />
+
+      <Text style={{ color: MD2DarkTheme.colors.placeholder, marginTop: 8 }} variant="bodyMedium">
+        Ooops :(
+      </Text>
+    </View>
+  </View>
+);
+
+export default function Thumbnail({ path, size = 200, container, priority = "normal", placeholder, ...rest }: ThumbnailProps) {
   if (!path) {
-    return (
-      <View style={[styles.container, container]}>
-        <View
-          style={[
-            styles.image,
-            rest.style,
-            { justifyContent: "center", alignItems: "center", backgroundColor: MD2DarkTheme.colors.surface },
-          ]}
-        >
-          <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={MD2DarkTheme.colors.placeholder} />
-        </View>
-      </View>
-    );
+    return <NoImage size={size} container={container} {...rest} />;
   }
 
   return (

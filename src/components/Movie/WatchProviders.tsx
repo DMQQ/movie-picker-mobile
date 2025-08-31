@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { ScrollView, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Text } from "react-native-paper";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -81,6 +81,24 @@ const WatchProviders = ({ providers, hideLabel = false, style }: WatchProvidersP
 
   const t = useTranslation();
 
+  const icons = useCallback((provider: ProviderWithTypes) => {
+    const uniqueIcons = provider.types.reduce((acc: Array<{ type: string; iconInfo: any }>, type) => {
+      const iconInfo = getTypeIcon(type);
+      const exists = acc.some((item) => item.iconInfo.name === iconInfo.name && item.iconInfo.color === iconInfo.color);
+      if (!exists) {
+        acc.push({ type, iconInfo });
+      }
+      return acc;
+    }, []);
+
+    return uniqueIcons.slice(0, 4).map((item, index) => (
+      <View key={item.type} style={[styles.iconBadge, { backgroundColor: item.iconInfo.color }, index > 0 && styles.iconMargin]}>
+        {/* @ts-ignore */}
+        <MaterialIcons name={item.iconInfo.name} size={10} color="white" />
+      </View>
+    ));
+  }, []);
+
   if (providersList.length === 0) return null;
 
   return (
@@ -95,26 +113,7 @@ const WatchProviders = ({ providers, hideLabel = false, style }: WatchProvidersP
                 <Thumbnail container={styles.thumbnail} path={provider.logo_path} />
 
                 <View style={styles.iconsContainer}>
-                  {(() => {
-                    // Deduplicate icons with same name and color
-                    const uniqueIcons = provider.types.reduce((acc: Array<{type: string, iconInfo: any}>, type) => {
-                      const iconInfo = getTypeIcon(type);
-                      const exists = acc.some(item => 
-                        item.iconInfo.name === iconInfo.name && item.iconInfo.color === iconInfo.color
-                      );
-                      if (!exists) {
-                        acc.push({ type, iconInfo });
-                      }
-                      return acc;
-                    }, []);
-
-                    return uniqueIcons.slice(0, 4).map((item, index) => (
-                      <View key={item.type} style={[styles.iconBadge, { backgroundColor: item.iconInfo.color }, index > 0 && styles.iconMargin]}>
-                        {/* @ts-ignore */}
-                        <MaterialIcons name={item.iconInfo.name} size={10} color="white" />
-                      </View>
-                    ));
-                  })()}
+                  {icons(provider)}
                   {provider.types.length > 4 && (
                     <View style={[styles.iconBadge, styles.overflowBadge, styles.iconMargin]}>
                       <Text style={styles.overflowText}>+{provider.types.length - 4}</Text>

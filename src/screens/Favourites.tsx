@@ -15,7 +15,7 @@ import Thumbnail from "../components/Thumbnail";
 const AnimatedRipple = Animated.createAnimatedComponent(TouchableRipple);
 
 export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
-  const { groups } = useAppSelector((state) => state.favourite);
+  const groups = useAppSelector((state) => state.favourite.groups);
   const dispatch = useAppDispatch();
   const t = useTranslation();
 

@@ -1,10 +1,10 @@
+import { CommonActions, useNavigation } from "@react-navigation/native";
+import { useContext } from "react";
 import { Dimensions } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
-import { store, useAppDispatch, useAppSelector } from "../../redux/store";
-import { CommonActions, useNavigation } from "@react-navigation/native";
 import { roomActions } from "../../redux/room/roomSlice";
-import { useContext } from "react";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import ReviewManager from "../../utils/rate";
@@ -22,7 +22,7 @@ export default function DialogModals({
   setShowQRModal: (a: any) => void;
   route: { params: { roomId: string } };
 }) {
-  const { qrCode } = useAppSelector((state) => state.room);
+  const qrCode = useAppSelector((state) => state.room.qrCode);
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);

@@ -1,13 +1,13 @@
-import { Fragment, useCallback, useState } from "react";
-import { View, TouchableOpacity, Modal, Text, StyleSheet, Platform, Pressable } from "react-native";
-import { MD2DarkTheme, Portal } from "react-native-paper";
-import { Movie } from "../../types";
-import { useAppDispatch, useAppSelector } from "../redux/store";
-import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
-import * as Haptics from "expo-haptics";
-import useTranslation from "../service/useTranslation";
 import { FontAwesome } from "@expo/vector-icons";
-import Animated, { FadeIn, FadeOut, withSpring, withTiming, runOnJS } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
+import { useCallback, useState } from "react";
+import { Modal, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { MD2DarkTheme, Portal } from "react-native-paper";
+import Animated, { FadeIn, FadeOut, withSpring, withTiming } from "react-native-reanimated";
+import { Movie } from "../../types";
+import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import useTranslation from "../service/useTranslation";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -54,12 +54,12 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 
 export default function CustomFavourite({ movie, showLabel = true }: { movie: Movie; showLabel?: boolean }) {
   const dispatch = useAppDispatch<any>();
-  const favourites = useAppSelector((state) => state.favourite);
+  const favourites = useAppSelector((state) => state.favourite.groups);
   const [visible, setVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const t = useTranslation();
 
-  const isFavorite = favourites?.groups?.some((group) => group.movies.some((m) => m?.id === movie?.id));
+  const isFavorite = favourites?.some((group) => group.movies.some((m) => m?.id === movie?.id));
 
   const closeModal = useCallback(() => {
     setVisible(false);
@@ -72,7 +72,7 @@ export default function CustomFavourite({ movie, showLabel = true }: { movie: Mo
     setTimeout(closeModal, 500);
   };
 
-  const onPress = (group: (typeof favourites.groups)[number]) => {
+  const onPress = (group: (typeof favourites)[number]) => {
     group.movies.find((m) => m.id === movie.id)
       ? dispatch(
           removeFromGroup({
@@ -118,7 +118,7 @@ export default function CustomFavourite({ movie, showLabel = true }: { movie: Mo
                 <Text style={styles.modalTitle}>
                   {t("quick-actions.modal")} <Text style={styles.movieTitle}>{movie.title || movie.name}</Text>
                 </Text>
-                {favourites.groups.map((group) => (
+                {favourites.map((group) => (
                   <TouchableOpacity
                     key={group.id}
                     style={[

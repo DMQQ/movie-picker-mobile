@@ -16,7 +16,7 @@ export default function QRScanner({ navigation }: any) {
   const [isScanned, setIsScanned] = useState(false);
   const [isScannError, setIsScanError] = useState(false);
 
-  const { nickname } = useAppSelector((state) => state.room);
+  const nickname = useAppSelector((state) => state.room.nickname);
 
   const { socket } = useContext(SocketContext);
 

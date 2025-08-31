@@ -19,9 +19,7 @@ interface TileListProps {
 }
 
 export default function TilesList<T>(props: TileListProps) {
-  const {
-    room: { type },
-  } = useAppSelector((state) => state.room);
+  const type = useAppSelector((state) => state.room.room.type);
 
   const navigation = useNavigation<any>();
   const t = useTranslation();

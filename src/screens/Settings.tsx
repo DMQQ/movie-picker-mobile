@@ -14,7 +14,8 @@ import useTranslation from "../service/useTranslation";
 import { ScreenProps } from "./types";
 
 export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) {
-  const { language: lg, nickname: nk } = useAppSelector((state) => state.room);
+  const lg = useAppSelector((state) => state.room.language);
+  const nk = useAppSelector((state) => state.room.nickname);
   const [nickname, setNickname] = useState<string>(nk);
   const [language, setLanguage] = useState<string>(lg);
 

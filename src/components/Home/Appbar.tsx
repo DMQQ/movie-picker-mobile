@@ -99,7 +99,7 @@ export default function HomeAppbar({
 
 const LikedMoviesPreview = () => {
   const navigation = useNavigation<any>();
-  const { likes } = useAppSelector((state) => state.room.room);
+  const likes = useAppSelector((state) => state.room.room.likes);
   const itemsToDisplay = useMemo(() => likes.toReversed().slice(0, 5), [likes]);
   const [loadedMovies, setLoadedMovies] = useState<Set<Movie>>(new Set());
 

@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, {
@@ -11,6 +10,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import PlatformBlurView from "../PlatformBlurView";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
 
 const SwipeText = (props: {
@@ -64,7 +64,7 @@ const SwipeText = (props: {
       ]}
     >
       {/* BlurView background */}
-      <BlurView
+      <PlatformBlurView
         intensity={80}
         tint="light"
         style={[
@@ -75,7 +75,7 @@ const SwipeText = (props: {
         ]}
       >
         {/* Icon container with background circle */}
-        <BlurView
+        <PlatformBlurView
           intensity={60}
           tint="light"
           style={[
@@ -88,10 +88,10 @@ const SwipeText = (props: {
           ]}
         >
           {props.icon}
-        </BlurView>
+        </PlatformBlurView>
 
         <Text style={styles.swipeText}>{props.text}</Text>
-      </BlurView>
+      </PlatformBlurView>
     </Animated.View>
   );
 };

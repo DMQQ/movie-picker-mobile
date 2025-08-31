@@ -262,7 +262,7 @@ const MatchedItem = ({ summary, ...item }: Partial<Movie> & { summary: { type: s
   const itemWidth = (screenWidth - 60) / 3;
   const dispatch = useAppDispatch();
 
-  const { groups } = useAppSelector((state) => state.favourite);
+  const groups = useAppSelector((state) => state.favourite.groups);
   const t = useTranslation();
 
   const isInGroup = (groupId: "1" | "2" | "999") => {

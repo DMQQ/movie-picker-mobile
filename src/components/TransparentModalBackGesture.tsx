@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { PropsWithChildren } from "react";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import layout from "../utils/layout";
@@ -51,6 +51,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const AndroidModalScreen = ({ children }: PropsWithChildren<{}>) => children;
+const AndroidModalScreen = ({ children }: PropsWithChildren<{}>) => <View style={styles.content}>{children}</View>;
 
 export default Platform.OS === "ios" ? TransparentModalScreen : AndroidModalScreen;
