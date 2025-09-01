@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Movie } from "../../types";
 import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import { roomActions } from "../redux/room/roomSlice";
@@ -30,49 +30,56 @@ export default function useRoom(room: string) {
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
 
+  const handleMovies = useCallback(async (_cards: { movies: Movie[] }) => {
+    await Promise.all(
+      _cards.movies.map((card: Movie) => prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge))
+    );
+
+    setCards(_cards.movies);
+  }, []);
+
+  const handleRoomState = useCallback((data: any) => {
+    if (!data) return;
+
+    dispatch(roomActions.setRoom(data));
+    dispatch(roomActions.setPlaying(data.isStarted));
+  }, []);
+
+  const handleMatched = useCallback((data: Movie) => {
+    if (!data) return;
+    setMatch(data);
+    dispatch(roomActions.addMatch(data));
+  }, []);
+
+  const handleActive = useCallback((users: any) => dispatch(roomActions.setActiveUsers(users)), []);
+
   useEffect(() => {
     if (!socket) return;
 
-    const handleMovies = async (_cards: { movies: Movie[] }) => {
-      await Promise.all(
-        _cards.movies.map((card: Movie) => prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge))
-      );
+    socket.emit("join-room", room, nickname);
 
-      setCards(_cards.movies);
-    };
+    socket.emit("get-movies", room);
+  }, [socket, room]);
 
-    // Setup listeners once
+  useEffect(() => {
+    if (!socket || !room) return;
+
     socket.on("movies", handleMovies);
-    socket.on("room:state", (data) => {
-      if (data) {
-        dispatch(roomActions.setRoom(data));
-        dispatch(roomActions.setPlaying(data.isStarted));
-      }
-    });
-    socket?.on("matched", (data: Movie) => {
-      setMatch(data);
-      dispatch(roomActions.addMatch(data));
-    });
-    socket.on("active", (users) => dispatch(roomActions.setActiveUsers(users)));
-
-    // Initial room setup
-    if (!isHost) {
-      socket.emit("join-room", room, nickname);
-    } else {
-      socket.emit("get-movies", room);
-    }
+    socket.on("room:state", handleRoomState);
+    socket?.on("matched", handleMatched);
+    socket.on("active", handleActive);
 
     return () => {
       socket.off("movies", handleMovies);
-      socket.off("room:state");
-      socket.off("matched");
-      socket.off("active");
+      socket.off("room:state", handleRoomState);
+      socket.off("matched", handleMatched);
+      socket.off("active", handleActive);
     };
-  }, [socket, room, nickname, isHost]);
+  }, [socket]);
 
   const runOnce = useRef(false);
   useEffect(() => {
-    if (isPlaying && runOnce.current === false && cards.length === 0) {
+    if (isPlaying && runOnce.current === false && cards.length === 0 && socket) {
       runOnce.current = true;
       socket?.emit("get-movies", room);
     }
@@ -135,15 +142,18 @@ export default function useRoom(room: string) {
     }
   }, [cards.length]);
 
-  return {
-    cards,
-    likeCard,
-    dislikeCard,
-    showLeaveModal,
-    match,
-    hideMatchModal,
-    toggleLeaveModal,
-    isPlaying,
-    joinGame,
-  };
+  return useMemo(
+    () => ({
+      cards,
+      likeCard,
+      dislikeCard,
+      showLeaveModal,
+      match,
+      hideMatchModal,
+      toggleLeaveModal,
+      isPlaying,
+      joinGame,
+    }),
+    [cards, likeCard, dislikeCard, showLeaveModal, match, hideMatchModal, toggleLeaveModal, isPlaying, joinGame]
+  );
 }

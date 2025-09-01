@@ -60,6 +60,7 @@ const makeHeaders = (language: string) => {
 
 export const SocketProvider = ({ children, namespace }: { children: React.ReactNode; namespace: "/swipe" | "/voter" }) => {
   const language = useSelector((st: RootState) => st.room.language);
+  const roomId = useSelector((st: RootState) => st.room.qrCode);
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const appState = useRef(AppState.currentState);
@@ -68,7 +69,6 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   const wasConnected = useRef(false);
 
   const initializeSocket = async () => {
-    console.log("Initializing socket connection...");
     try {
       const userId = (await AsyncStorage.getItem("userId")) || Math.random().toString(36).substring(7);
       await AsyncStorage.setItem("userId", userId);
@@ -85,7 +85,7 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
         console.log("✅ Socket connected successfully");
         wasConnected.current = true;
         socketRef.current = newSocket;
-        setSocket(newSocket); // Ensure state is updated when connected
+        setSocket(newSocket);
       });
 
       newSocket.on("disconnect", (reason) => {
@@ -120,10 +120,11 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
     }, 1000);
   };
 
-  const handleAppStateChange = (nextAppState: AppStateStatus) => {
+  const handleAppStateChange = async (nextAppState: AppStateStatus) => {
     if (appState.current.match(/inactive|background/) && nextAppState === "active") {
-      console.log("App has come to the foreground!");
-      socketRef?.current?.emit("reconnect");
+      await reconnect();
+      await new Promise((res) => setTimeout(res, 100));
+      socketRef?.current?.emit("reconnect", roomId);
     }
     appState.current = nextAppState;
   };
@@ -148,15 +149,14 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   }, []);
 
   const reconnect = () => {
-    console.log("🔄 Manual reconnect triggered");
     if (socketRef.current) {
-      console.log("🔌 Reconnecting existing socket");
       socketRef.current.connect();
     } else {
-      console.log("🆕 Initializing new socket");
       initializeSocket();
     }
   };
 
-  return <SocketContext.Provider value={{ socket, reconnect }}>{children}</SocketContext.Provider>;
+  const memoizedValue = React.useMemo(() => ({ socket, reconnect }), [socket]);
+
+  return <SocketContext.Provider value={memoizedValue}>{children}</SocketContext.Provider>;
 };
