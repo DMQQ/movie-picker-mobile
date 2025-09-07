@@ -1,5 +1,4 @@
-import { useIsFocused } from "@react-navigation/native";
-import { useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,6 +12,7 @@ import { useAppSelector } from "../../redux/store";
 import useRoom from "../../service/useRoom";
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
+import useRoomMatches from "../../service/useRoomMatches";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -28,12 +28,11 @@ const styles = StyleSheet.create({
 });
 
 export default function Home({ route, navigation }: any) {
-  const { cards, dislikeCard, likeCard, match, showLeaveModal, toggleLeaveModal, hideMatchModal, isPlaying, joinGame } = useRoom(
+  const { cards, dislikeCard, likeCard, showLeaveModal, toggleLeaveModal, isPlaying, joinGame, cardsLoading } = useRoom(
     route.params?.roomId
   );
-  const isFocused = useIsFocused();
   const [showQRModal, setShowQRModal] = useState(false);
-  const { gameEnded, isGameFinished, likes } = useAppSelector((state) => state.room.room);
+  const { gameEnded, likes } = useAppSelector((state) => state.room.room);
 
   const [hasUserPlayed, setHasUserPlayed] = useState(false);
 
@@ -44,32 +43,36 @@ export default function Home({ route, navigation }: any) {
   }, [likes.length, cards.length]);
 
   useEffect(() => {
-    if (gameEnded && hasUserPlayed && isPlaying === false) {
+    if (gameEnded && isPlaying === false) {
       const timer = setTimeout(() => {
         navigation.replace("GameSummary", { roomId: route.params?.roomId });
-      }, 1000);
+      }, 750);
 
       return () => clearTimeout(timer);
     }
   }, [gameEnded, hasUserPlayed, isPlaying, navigation, route.params?.roomId]);
+
   const originalLength = useRef(cards.length);
 
   useEffect(() => {
     if (route?.params?.roomId) {
-      navigation.setParams({
-        roomId: route?.params?.roomId,
-      });
+      // navigation.setParams({
+      //   roomId: route?.params?.roomId,
+      // });
       joinGame(route?.params?.roomId);
     }
   }, [route?.params?.roomId]);
 
-  const handleNavigateDetails = (card: Movie) => {
-    navigation.navigate("MovieDetails", {
-      id: card.id,
-      type: route.params?.type || "movie",
-      img: card.poster_path,
-    });
-  };
+  const handleNavigateDetails = useCallback(
+    (card: Movie) => {
+      navigation.navigate("MovieDetails", {
+        id: card.id,
+        type: route.params?.type || "movie",
+        img: card.poster_path,
+      });
+    },
+    [route.params?.type]
+  );
 
   const insets = useSafeAreaInsets();
 
@@ -96,7 +99,7 @@ export default function Home({ route, navigation }: any) {
         <>
           {cards.map((card, index) => (
             <SwipeTile
-              onPress={() => handleNavigateDetails(card)}
+              onPress={handleNavigateDetails.bind(null, card)}
               length={originalLength.current}
               key={card.id}
               card={card}
@@ -106,20 +109,41 @@ export default function Home({ route, navigation }: any) {
             />
           ))}
 
-          {cards.length === 0 && (
+          {cards.length === 0 && !cardsLoading && (
             <View style={styles.emptyListContainer}>
-              <Text style={{ fontSize: 20 }}>{isGameFinished ? t("room.finished") : t("room.waiting")}</Text>
+              {!gameEnded && hasUserPlayed && (
+                <Text
+                  style={{
+                    fontSize: 40,
+                    fontFamily: "Bebas",
+                    color: "#fff",
+                    width: "80%",
+                    textAlign: "center",
+                  }}
+                >
+                  {t("room.no-more-results")}
+                </Text>
+              )}
+              <Text style={{ fontSize: 20, width: "80%", textAlign: "center" }}>{gameEnded ? t("room.finished") : t("room.waiting")}</Text>
             </View>
           )}
         </>
       ) : (
         <View style={styles.emptyListContainer}>
           <FancySpinner />
-          <Text style={{ fontSize: 20, marginTop: 15 }}>Wait for start</Text>
+          <Text style={{ fontSize: 20, marginTop: 15, textAlign: "center", width: "80%" }}>
+            {gameEnded ? t("room.finished") : cardsLoading ? t("room.loading") : t("room.awaiting-start")}
+          </Text>
         </View>
       )}
 
-      {isFocused && <MatchModal hideMatchModal={hideMatchModal} match={match} />}
+      <Matches roomId={route.params?.roomId} />
     </View>
   );
 }
+
+const Matches = memo(({ roomId }: { roomId: string }) => {
+  const { isFocused, hideMatchModal, match } = useRoomMatches(roomId);
+
+  return isFocused && <MatchModal hideMatchModal={hideMatchModal} match={match} />;
+});

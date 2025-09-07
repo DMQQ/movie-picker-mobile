@@ -20,10 +20,10 @@ const SelectionCard = ({ label, iconData, isSelected, onPress }: SelectionCardPr
     <View style={styles.cardContainer}>
       <Card
         style={{
-          borderColor: isSelected ? theme.colors.primary : theme.colors.surface,
+          borderColor: isSelected ? `${theme.colors.primary}40` : theme.colors.surface,
           borderRadius: 10,
-          borderWidth: 2,
-          backgroundColor: "transparent",
+          borderWidth: 1,
+          backgroundColor: isSelected ? `${theme.colors.primary}20` : "transparent",
         }}
         onPress={onPress}
       >

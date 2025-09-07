@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import envs from "../constants/envs";
 import { RootState } from "../redux/store";
+import { EventEmitter, useEventEmitter } from "./useEventEmitter";
 
 const isDev = envs.mode !== "production";
 
@@ -14,9 +15,12 @@ export const url = baseUrl + "/api";
 export const SocketContext = React.createContext<{
   socket: Socket | null;
   reconnect: () => void;
+  emitter: EventEmitter<{ reconnected: () => void }>;
 }>({
   socket: null,
   reconnect: () => {},
+
+  emitter: new EventEmitter<{ reconnected: any }>(),
 });
 
 const connectionConfig = {
@@ -32,8 +36,8 @@ const connectionConfig = {
   forceNew: false,
   multiplex: false,
   autoConnect: true,
-  pingInterval: 25000,
-  pingTimeout: 30000,
+  pingInterval: 5000,
+  pingTimeout: 5000,
 } as Partial<ManagerOptions & SocketOptions>;
 
 const makeHeaders = (language: string) => {
@@ -60,13 +64,14 @@ const makeHeaders = (language: string) => {
 
 export const SocketProvider = ({ children, namespace }: { children: React.ReactNode; namespace: "/swipe" | "/voter" }) => {
   const language = useSelector((st: RootState) => st.room.language);
-  const roomId = useSelector((st: RootState) => st.room.qrCode);
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const appState = useRef(AppState.currentState);
   const reconnectTimeout = useRef<NodeJS.Timeout>();
   const backgroundTimer = useRef<NodeJS.Timeout>();
   const wasConnected = useRef(false);
+
+  const emitter = useEventEmitter<{ reconnected: any }>();
 
   const initializeSocket = async () => {
     try {
@@ -83,6 +88,11 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
 
       newSocket.on("connect", () => {
         console.log("✅ Socket connected successfully");
+
+        if (wasConnected.current && newSocket) {
+          emitter.emit("reconnected", true);
+        }
+
         wasConnected.current = true;
         socketRef.current = newSocket;
         setSocket(newSocket);
@@ -112,19 +122,13 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
       clearTimeout(reconnectTimeout.current);
     }
     reconnectTimeout.current = setTimeout(() => {
-      if (socketRef.current) {
-        socketRef.current.connect();
-      } else {
-        initializeSocket();
-      }
-    }, 1000);
+      reconnect();
+    }, 500);
   };
 
   const handleAppStateChange = async (nextAppState: AppStateStatus) => {
     if (appState.current.match(/inactive|background/) && nextAppState === "active") {
-      await reconnect();
-      await new Promise((res) => setTimeout(res, 100));
-      socketRef?.current?.emit("reconnect", roomId);
+      reconnect();
     }
     appState.current = nextAppState;
   };
@@ -148,7 +152,7 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
     };
   }, []);
 
-  const reconnect = () => {
+  const reconnect = async () => {
     if (socketRef.current) {
       socketRef.current.connect();
     } else {
@@ -156,7 +160,7 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
     }
   };
 
-  const memoizedValue = React.useMemo(() => ({ socket, reconnect }), [socket]);
+  const memoizedValue = React.useMemo(() => ({ socket, reconnect, emitter }), [socket]);
 
   return <SocketContext.Provider value={memoizedValue}>{children}</SocketContext.Provider>;
 };

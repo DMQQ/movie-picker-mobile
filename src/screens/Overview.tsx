@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 8,
     paddingHorizontal: 8,
+    paddingTop: 0,
   },
   backButtonContainer: {
     justifyContent: "center",

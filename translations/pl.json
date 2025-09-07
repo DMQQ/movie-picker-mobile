@@ -42,11 +42,14 @@
     "view-matches": "Wyświetl Dopasowania"
   },
   "room": {
+    "loading": "Ładowanie pokoju...",
+    "no-more-results": "To juz koniec wyników w tej kategorii",
+    "awaiting-start": "Oczekiwanie na rozpoczęcie gry przez gospodarza",
     "too-restricted": "Filtry są zbyt restrykcyjne",
     "lower-results-count": "Znaleziono tylko {count} wyników, gra będzie krótsza",
     "providers": "Wybierz platformy",
     "join-game": "Dołącz do gry",
-    "waiting": "Oczekiwanie na innych graczy",
+    "waiting": "Poczekaj aź reszta graczy skończy wybierać",
     "choose-category": "Wybierz kategorię",
     "movie": "Film",
     "series": "Serial",

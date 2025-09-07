@@ -84,12 +84,15 @@ export default function QRCodePage({ navigation, route }: any) {
     return config;
   }, [route?.params?.quickStart, category, maxRounds, genre, providers, nickname, socket]);
 
+  const [createRoomLoading, setCreateRoomLoading] = useState(false);
+
   useEffect(() => {
     (async () => {
       try {
         if (!roomConfig) {
           return;
         }
+        setCreateRoomLoading(true);
 
         const response = (await socket?.emitWithAck("create-room", roomConfig)) as ISocketResponse;
 
@@ -110,6 +113,8 @@ export default function QRCodePage({ navigation, route }: any) {
         }
       } catch (error) {
         console.log("💥 Error creating room:", error);
+      } finally {
+        setCreateRoomLoading(false);
       }
     })();
 
@@ -126,7 +131,6 @@ export default function QRCodePage({ navigation, route }: any) {
     let gameType = "movie";
     if (route?.params?.quickStart && roomConfig) {
       gameType = roomConfig.type?.includes("/tv") ? "tv" : "movie";
-      console.log("🎮 Starting:", gameType);
     } else if (category) {
       gameType = category.includes("/movie") || category.includes("movie") ? "movie" : "tv";
     }
@@ -160,7 +164,7 @@ export default function QRCodePage({ navigation, route }: any) {
           {t("room.qr-subtitle")}
         </Text>
 
-        <QrCodeBox code={qrCode} />
+        <QrCodeBox code={createRoomLoading ? "......" : qrCode} />
       </View>
       <View style={{ paddingHorizontal: 15, paddingTop: 15, gap: 7.5 }}>
         <View
@@ -194,7 +198,7 @@ export default function QRCodePage({ navigation, route }: any) {
         </Text>
 
         <Button
-          disabled={!qrCode || (moviesCount != null ? moviesCount < 5 : false)}
+          disabled={!qrCode || (moviesCount != null ? moviesCount < 5 : false) || createRoomLoading}
           mode="contained"
           style={{
             borderRadius: 100,

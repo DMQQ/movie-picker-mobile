@@ -2,12 +2,14 @@ import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import LottieView from "lottie-react-native";
 import { useEffect, useRef } from "react";
-import { Dimensions, Platform, Pressable, StyleSheet } from "react-native";
+import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import Animated, { FadeIn, FadeOut, SlideInUp, SlideOutUp, withSpring, withTiming } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
 import Card from "./Card";
 import Poster from "./Poster";
+import RatingIcons from "../RatingIcons";
+import { Movie } from "../../../types";
 
 const styles = StyleSheet.create({
   matchModal: {
@@ -51,10 +53,33 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 19,
   },
   details: {
-    color: "rgba(255,255,255,0.6)",
+    color: "#fff",
     paddingHorizontal: 10,
-    fontWeight: "bold",
     marginTop: 5,
+  },
+
+  release_date: {
+    color: "rgba(255,255,255,1)",
+    paddingHorizontal: 10,
+    marginTop: 5,
+  },
+
+  title: {
+    color: "white",
+    fontSize: 40,
+    paddingHorizontal: 10,
+    fontFamily: "Bebas",
+    lineHeight: 40,
+  },
+
+  lottie: {
+    position: "absolute",
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+    top: -50,
+    left: 0,
+    zIndex: 100,
+    pointerEvents: "none",
   },
 });
 
@@ -94,22 +119,22 @@ export const ModalExitingTransition = () => {
   };
 };
 
-export default function MatchModal({ match, hideMatchModal }: { match: any; hideMatchModal: any }) {
+export default function MatchModal({ match, hideMatchModal }: { match: Movie | undefined; hideMatchModal: VoidFunction }) {
   const theme = useTheme();
   const t = useTranslation();
   const animation = useRef<LottieView>(null);
 
   useEffect(() => {
-    if (match) {
-      let timeout = setTimeout(() => {
-        animation.current?.play();
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }, 100);
+    if (!match) return;
 
-      return () => {
-        clearTimeout(timeout);
-      };
-    }
+    let timeout = setTimeout(() => {
+      animation.current?.play();
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }, 100);
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [match]);
 
   if (!match) return null;
@@ -122,19 +147,12 @@ export default function MatchModal({ match, hideMatchModal }: { match: any; hide
         </Animated.Text>
 
         <LottieView
+          key={match.id}
           ref={animation}
-          style={{
-            position: "absolute",
-            width: Dimensions.get("window").width,
-            height: Dimensions.get("window").height,
-            top: -50,
-            left: 0,
-            zIndex: 100,
-            pointerEvents: "none",
-          }}
-          autoPlay={false}
+          style={styles.lottie}
+          autoPlay={!!match}
           loop={false}
-          speed={1.25}
+          speed={1}
           resizeMode="cover"
           source={require("../../assets/confetti.json")}
         />
@@ -148,20 +166,14 @@ export default function MatchModal({ match, hideMatchModal }: { match: any; hide
         >
           <Card onPress={hideMatchModal}>
             <LinearGradient colors={["transparent", "transparent", theme.colors.primary]} style={styles.gradient}>
-              <Text
-                style={{
-                  color: "white",
-                  fontSize: 40,
-                  paddingHorizontal: 10,
-                  fontFamily: "Bebas",
-                  lineHeight: 40,
-                }}
-              >
-                {match.title || match.name}
-              </Text>
+              <Text style={styles.title}>{match.title || match.name}</Text>
 
-              <Text style={styles.details}>
-                {match.release_date || match.first_air_date} | {match.vote_average.toFixed(1)}/10
+              <View style={{ flexDirection: "row", paddingHorizontal: 10, marginBottom: 5 }}>
+                <RatingIcons size={15} vote={match?.vote_average} />
+              </View>
+
+              <Text style={styles.release_date}>
+                {match.genres ? `${match?.genres?.map((m) => m.name).join(", ")}` : ""} {"•"} {match.release_date || match.first_air_date}
               </Text>
             </LinearGradient>
 

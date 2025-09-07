@@ -198,25 +198,24 @@ export default function RoomSetup({ navigation }: any) {
   const handleCreateRandomSetup = () => {
     let genres = [];
     if (genresData.length > 0) {
-      genres = [...genresData].sort(() => 0.5 - Math.random()).slice(0, 5);
+      genres = [...genresData].sort(() => 0.5 - Math.random()).slice(0, 10);
     }
+    const randCategory = categories[Math.floor(Math.random() * categories.length)].path;
     navigation.navigate("CreateQRCode", {
       roomSetup: {
-        category: categories[Math.floor(Math.random() * categories.length)].path,
+        category: randCategory,
         maxRounds: 3,
         genre: genres,
         providers: providersData?.slice(0, 10).map((p) => p.provider_id) || [],
-        specialCategories: [specialCategoryOptions[Math.floor(Math.random() * specialCategoryOptions.length)].id],
+        specialCategories: [],
       },
     });
 
     handleProviderToggle(providersData?.slice(0, 10).map((p) => p.provider_id) || []);
-    handleCategoryPress(categories[Math.floor(Math.random() * categories.length)].path);
+    handleCategoryPress(randCategory);
     if (genresData.length > 0) {
-      const randomGenres = [...genresData].sort(() => 0.5 - Math.random()).slice(0, 5);
-      dispatch({ type: "SET_GENRE", payload: randomGenres });
+      dispatch({ type: "SET_GENRE", payload: genres });
     }
-    handleSpecialCategoryToggle(specialCategoryOptions[Math.floor(Math.random() * specialCategoryOptions.length)].id);
   };
 
   return (

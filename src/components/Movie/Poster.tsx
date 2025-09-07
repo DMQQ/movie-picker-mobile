@@ -51,14 +51,6 @@ const SwipeText = (props: {
           top: props.text === "LIKE" ? 40 : 60,
           right: props.right ? 25 : undefined,
           left: props.right ? undefined : 25,
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 4,
-          },
-          shadowOpacity: 0.3,
-          shadowRadius: 8,
-          elevation: 8, // Android shadow
         },
         styles.swipe,
       ]}

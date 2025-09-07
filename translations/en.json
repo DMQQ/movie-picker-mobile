@@ -42,11 +42,14 @@
     "view-matches": "View Matches"
   },
   "room": {
+    "loading": "Loading room...",
+    "no-more-results": "No more results in this category",
+    "awaiting-start": "Waiting for host to start the game",
     "too-restricted": "Filters too restricted, try again",
     "lower-results-count": "Found only {count} results, the game will be less fun",
     "providers": "Pick your providers",
     "join-game": "Join game",
-    "waiting": "Waiting for other players",
+    "waiting": "Wait for other players to finish picking",
     "choose-category": "Choose category",
     "movie": "Movie",
     "series": "Series",

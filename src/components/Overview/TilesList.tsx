@@ -32,7 +32,7 @@ export default function TilesList<T>(props: TileListProps) {
         ListHeaderComponent={
           props.label ? (
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-              <Text style={{ fontSize: 35, marginBottom: 15, fontFamily: "Bebas" }}>{props.label}</Text>
+              <Text style={{ fontSize: 35, marginBottom: 15, fontFamily: "Bebas", maxWidth: "70%" }}>{props.label}</Text>
 
               <CreateCollectionFromLiked data={props.data} />
             </View>
