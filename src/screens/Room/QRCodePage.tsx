@@ -102,14 +102,6 @@ export default function QRCodePage({ navigation, route }: any) {
           dispatch(roomActions.setQRCode(response.roomId));
 
           socket?.emit("join-room", response.roomId, nickname);
-
-          socket?.on("active", (users: string[]) => {
-            dispatch(roomActions.setActiveUsers(users));
-          });
-
-          socket?.on("movies", ({ movies }: { movies: Movie[] }) => {
-            setMoviesCount(movies.length);
-          });
         }
       } catch (error) {
         console.log("💥 Error creating room:", error);
@@ -123,6 +115,23 @@ export default function QRCodePage({ navigation, route }: any) {
       socket?.off("movies");
     };
   }, [roomConfig, route?.params, socket]);
+
+  useEffect(() => {
+    if (!socket) return;
+    socket?.on("active", (users: string[]) => {
+      dispatch(roomActions.setActiveUsers(users));
+    });
+
+    socket?.on("movies", ({ movies }: { movies: Movie[] }) => {
+      setMoviesCount(movies.length);
+      if (!!movies) dispatch(roomActions.addMovies(movies));
+    });
+
+    return () => {
+      socket?.off("active");
+      socket?.off("movies");
+    };
+  }, [socket, qrCode]);
 
   const onJoinOwnRoom = (code: string) => {
     socket?.emit("room:start", roomId);
@@ -221,8 +230,8 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
 
   const shareCode = async (code: string) => {
     Share.share({
-      message: "Hey! Join my room on Movie Picker: " + code,
-      title: "Join my room on Movie Picker",
+      message: "Hey! Join my room on FlickMate: " + code,
+      title: "Join my room on FlickMate!",
       url: "https://movie.dmqq.dev/swipe/" + code.toUpperCase(),
     });
   };

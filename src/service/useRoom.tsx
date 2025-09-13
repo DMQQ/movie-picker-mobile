@@ -13,12 +13,14 @@ export default function useRoom(room: string) {
 
   useEffect(() => {
     if (!room) {
-      console.log("No room ID provided to useRoom");
       return;
     }
-    function onReconnected(args: unknown) {
-      if (!!args) {
-        joinGame(room);
+    async function onReconnected(args: unknown) {
+      try {
+        const response = await joinGame(room);
+        console.log("Reconnected to room:", response);
+      } catch (error) {
+        console.error("Error during reconnection:", error);
       }
     }
 
@@ -51,7 +53,7 @@ export default function useRoom(room: string) {
 
   const handleMovies = useCallback(async (_cards: { movies: Movie[] }) => {
     try {
-      await Promise.all(
+      Promise.allSettled(
         _cards.movies.map((card: Movie) => prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge))
       );
     } catch (error) {}
@@ -128,11 +130,6 @@ export default function useRoom(room: string) {
 
   const joinGame = async (code: string) => {
     const response = await socket?.emitWithAck("join-room", code, nickname);
-
-    if (response.joined) {
-      dispatch(roomActions.setRoom(response.room));
-      dispatch(roomActions.setPlaying(response.room.isStarted));
-    }
   };
 
   useEffect(() => {

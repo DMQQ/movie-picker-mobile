@@ -89,10 +89,6 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
       newSocket.on("connect", () => {
         console.log("✅ Socket connected successfully");
 
-        if (wasConnected.current && newSocket) {
-          emitter.emit("reconnected", true);
-        }
-
         wasConnected.current = true;
         socketRef.current = newSocket;
         setSocket(newSocket);
@@ -151,6 +147,13 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (wasConnected.current && socket) {
+      emitter.emit("reconnected", true);
+      console.log("Emitted reconnected event");
+    }
+  }, [socket]);
 
   const reconnect = async () => {
     if (socketRef.current) {

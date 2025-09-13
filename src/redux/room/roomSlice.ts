@@ -62,19 +62,19 @@ const roomSlice = createSlice({
   reducers: {
     setRoom(state, action: SetRoomAction) {
       const payload = action.payload;
-      
+
       // Handle room ID from either field
-      const roomId = payload.roomId || payload.id;
+      const roomId = payload?.roomId || payload?.id;
       if (roomId) {
         state.room.roomId = roomId;
         state.qrCode = roomId;
       }
-      
+
       // Update existing fields
       if (payload.type) state.room.type = payload.type;
       if (payload.page !== undefined) state.room.page = payload.page;
       if (payload.users) state.room.users = payload.users;
-      
+
       // Update new game state fields
       if (payload.gameEnded !== undefined) state.room.gameEnded = payload.gameEnded;
       if (payload.isStarted !== undefined) state.room.isRunning = payload.isStarted;

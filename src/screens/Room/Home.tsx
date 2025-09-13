@@ -56,9 +56,6 @@ export default function Home({ route, navigation }: any) {
 
   useEffect(() => {
     if (route?.params?.roomId) {
-      // navigation.setParams({
-      //   roomId: route?.params?.roomId,
-      // });
       joinGame(route?.params?.roomId);
     }
   }, [route?.params?.roomId]);

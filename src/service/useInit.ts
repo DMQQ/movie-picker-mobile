@@ -27,12 +27,9 @@ export default function useInit() {
     Promise.allSettled([
       loadAsync({
         Bebas: require("../../assets/fonts/BebasNeue-Regular.ttf"),
-      })
-        .then(() => console.log("🔤 Fonts loaded successfully"))
-        .catch((error) => console.error("🔤 Font loading failed:", error))
-        .finally(() => setIsLoaded(true)),
+      }),
       initializeApp(),
-    ]);
+    ]).finally(() => setIsLoaded(true));
   }, []);
 
   return { isLoaded, isUpdating };

@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { SocketContext } from "./SocketContext";
 
 type EventMap = Record<string, any>;
 type EventKey<T extends EventMap> = string & keyof T;
@@ -32,11 +33,21 @@ export const useEventEmitter = <T extends EventMap>() => {
   return useRef(new EventEmitter<T>()).current;
 };
 
-type AppEvents = {
-  userLogin: { userId: string; email: string };
-  userLogout: { userId: string };
-  dataUpdate: { id: string; data: any };
-  notification: { message: string; type: "success" | "error" | "info" };
-};
+export const useEventEmitterListener = <T>(event: string) => {
+  const [state, setState] = useState<T>();
 
-export const appEventEmitter = new EventEmitter<AppEvents>();
+  const { emitter } = useContext(SocketContext);
+
+  useEffect(() => {
+    const listener = (args: any) => {
+      setState(args);
+    };
+    emitter.on(event as any, listener);
+
+    return () => {
+      emitter.off(event as any, listener);
+    };
+  }, []);
+
+  return [state, setState];
+};
