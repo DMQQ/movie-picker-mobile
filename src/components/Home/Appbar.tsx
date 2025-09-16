@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { useContext, useMemo, useState } from "react";
+import { memo, useContext, useMemo, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Appbar, Button, MD2DarkTheme, useTheme } from "react-native-paper";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
@@ -10,6 +10,7 @@ import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { ThumbnailSizes } from "../Thumbnail";
 import ActiveUsers from "./ActiveUsers";
+import DialogModals from "./DialogModals";
 
 const SmallButton = ({ children, onPress, icon, style }: { children?: string; onPress: () => void; icon?: string; style?: any }) => {
   const theme = useTheme();
@@ -37,18 +38,13 @@ const SmallButton = ({ children, onPress, icon, style }: { children?: string; on
   );
 };
 
-export default function HomeAppbar({
-  toggleLeaveModal,
-  setShowQRModal,
-  route,
-  cards,
-}: {
-  toggleLeaveModal: () => void;
-  setShowQRModal: React.Dispatch<React.SetStateAction<boolean>>;
-  showQRModal: boolean;
-  route: { params: { roomId: string } };
-  cards: any;
-}) {
+function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }; hasCards: boolean }) {
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
+
+  const toggleLeaveModal = () => {
+    setShowLeaveModal((p) => !p);
+  };
   const theme = useTheme();
   const { socket } = useContext(SocketContext);
   const navigation = useNavigation<any>();
@@ -68,34 +64,46 @@ export default function HomeAppbar({
   };
 
   return (
-    <View style={{ marginTop: 0, flexDirection: "row", alignItems: "center" }}>
-      {isHost ? (
-        <Button onPress={handleEndGame} buttonColor="transparent" textColor="#ff4444">
-          {t("dialogs.scan-code.endGame")}
-        </Button>
-      ) : (
-        <Button onPress={toggleLeaveModal}>{t("dialogs.scan-code.leave")}</Button>
-      )}
+    <>
+      <View style={{ marginTop: 0, flexDirection: "row", alignItems: "center" }}>
+        {isHost ? (
+          <Button onPress={handleEndGame} buttonColor="transparent" textColor="#ff4444">
+            {t("dialogs.scan-code.endGame")}
+          </Button>
+        ) : (
+          <Button onPress={toggleLeaveModal}>{t("dialogs.scan-code.leave")}</Button>
+        )}
 
-      <ActiveUsers data={users} />
+        <ActiveUsers data={users} />
 
-      {!(cards.length > 0) && !isFinished && isPlaying && (
-        <Appbar.Action
-          color={theme.colors.primary}
-          size={22}
-          icon="refresh"
-          onPress={() => {
-            socket?.emit("get-movies", route.params?.roomId);
-          }}
-        />
-      )}
+        {!hasCards && !isFinished && isPlaying && (
+          <Appbar.Action
+            color={theme.colors.primary}
+            size={22}
+            icon="refresh"
+            onPress={() => {
+              socket?.emit("get-movies", route.params?.roomId);
+            }}
+          />
+        )}
 
-      <SmallButton icon="qrcode-scan" onPress={() => setShowQRModal((p) => !p)} style={{ marginRight: 10 }} />
+        <SmallButton icon="qrcode-scan" onPress={() => setShowQRModal((p) => !p)} style={{ marginRight: 10 }} />
 
-      <LikedMoviesPreview />
-    </View>
+        <LikedMoviesPreview />
+      </View>
+
+      <DialogModals
+        showLeaveModal={showLeaveModal}
+        route={route}
+        toggleLeaveModal={toggleLeaveModal}
+        setShowQRModal={setShowQRModal}
+        showQRModal={showQRModal}
+      />
+    </>
   );
 }
+
+export default memo(HomeAppbar);
 
 const LikedMoviesPreview = () => {
   const navigation = useNavigation<any>();

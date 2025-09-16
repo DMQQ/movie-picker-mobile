@@ -42,6 +42,7 @@
     "view-matches": "View Matches"
   },
   "room": {
+    "specialCategories": "Special Categories",
     "loading": "Loading room...",
     "no-more-results": "No more results in this category",
     "awaiting-start": "Waiting for host to start the game",

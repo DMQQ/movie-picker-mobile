@@ -2,7 +2,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { CommonActions } from "@react-navigation/native";
 import { memo, useContext, useEffect, useMemo, useState } from "react";
 import { Dimensions, Share, View } from "react-native";
-import { Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
+import { ActivityIndicator, Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { Movie } from "../../../types";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
@@ -12,6 +12,8 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
+import { FancySpinner } from "../../components/FancySpinner";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 interface RoomSetupParams {
   category: string;
@@ -173,7 +175,15 @@ export default function QRCodePage({ navigation, route }: any) {
           {t("room.qr-subtitle")}
         </Text>
 
-        <QrCodeBox code={createRoomLoading ? "......" : qrCode} />
+        {createRoomLoading ? (
+          <Animated.View entering={FadeInDown} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <FancySpinner size={100} />
+          </Animated.View>
+        ) : (
+          <Animated.View entering={FadeInDown} style={{ flex: 1 }}>
+            <QrCodeBox code={qrCode || ""} />
+          </Animated.View>
+        )}
       </View>
       <View style={{ paddingHorizontal: 15, paddingTop: 15, gap: 7.5 }}>
         <View

@@ -42,6 +42,7 @@
     "view-matches": "Wyświetl Dopasowania"
   },
   "room": {
+    "specialCategories": "Kategorie Specjalne",
     "loading": "Ładowanie pokoju...",
     "no-more-results": "To juz koniec wyników w tej kategorii",
     "awaiting-start": "Oczekiwanie na rozpoczęcie gry przez gospodarza",

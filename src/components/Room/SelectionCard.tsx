@@ -40,15 +40,16 @@ const SelectionCard = ({ label, iconData, isSelected, onPress }: SelectionCardPr
 
 const styles = StyleSheet.create({
   cardContainer: {
-    width: 150,
     marginRight: 15,
     marginBottom: 10,
   },
   innerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 12,
+    padding: 7.5,
+    paddingHorizontal: 15,
     height: 60,
+    gap: 10,
   },
   labelText: {
     marginLeft: 10,

@@ -6,21 +6,33 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import { SocketContext } from "./SocketContext";
 
 export default function useRoom(room: string) {
-  const [showLeaveModal, setShowLeaveModal] = useState(false);
   const dispatch = useAppDispatch();
   const { socket, emitter } = useContext(SocketContext);
   const [cardsLoading, setCardsLoading] = useState(false);
+  const attemptTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!room) {
       return;
     }
-    async function onReconnected(args: unknown) {
+    async function onReconnected(args: unknown, attempt = 0) {
+      if (attemptTimeout.current) {
+        clearTimeout(attemptTimeout.current);
+      }
+
+      if (attempt > 5) {
+        return;
+      }
+
       try {
         const response = await joinGame(room);
-        console.log("Reconnected to room:", response);
+        if (!response) {
+          throw new Error("Failed to rejoin room after reconnection");
+        }
       } catch (error) {
-        console.error("Error during reconnection:", error);
+        attemptTimeout.current = setTimeout(() => {
+          onReconnected(args, attempt + 1);
+        }, 100 * attempt);
       }
     }
 
@@ -124,12 +136,14 @@ export default function useRoom(room: string) {
     removeCardLocally(index);
   };
 
-  const toggleLeaveModal = () => {
-    setShowLeaveModal((p) => !p);
-  };
-
   const joinGame = async (code: string) => {
     const response = await socket?.emitWithAck("join-room", code, nickname);
+
+    if (response) {
+      console.log("💡 Joined room:", response);
+    }
+
+    return response;
   };
 
   useEffect(() => {
@@ -147,12 +161,11 @@ export default function useRoom(room: string) {
       cards,
       likeCard,
       dislikeCard,
-      showLeaveModal,
-      toggleLeaveModal,
+
       isPlaying,
       joinGame,
       cardsLoading,
     }),
-    [cards, likeCard, dislikeCard, showLeaveModal, toggleLeaveModal, isPlaying, joinGame, cardsLoading]
+    [cards, likeCard, dislikeCard, isPlaying, joinGame, cardsLoading]
   );
 }

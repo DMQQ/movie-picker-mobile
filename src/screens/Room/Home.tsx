@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -28,11 +28,9 @@ const styles = StyleSheet.create({
 });
 
 export default function Home({ route, navigation }: any) {
-  const { cards, dislikeCard, likeCard, showLeaveModal, toggleLeaveModal, isPlaying, joinGame, cardsLoading } = useRoom(
-    route.params?.roomId
-  );
-  const [showQRModal, setShowQRModal] = useState(false);
-  const { gameEnded, likes } = useAppSelector((state) => state.room.room);
+  const { cards, dislikeCard, likeCard, isPlaying, joinGame, cardsLoading } = useRoom(route.params?.roomId);
+  const likes = useAppSelector((state) => state.room.room.likes);
+  const gameEnded = useAppSelector((state) => state.room.room.gameEnded);
 
   const [hasUserPlayed, setHasUserPlayed] = useState(false);
 
@@ -75,36 +73,29 @@ export default function Home({ route, navigation }: any) {
 
   const t = useTranslation();
 
+  const renderedCards = useMemo(
+    () =>
+      cards.map((card, index) => (
+        <SwipeTile
+          onPress={handleNavigateDetails.bind(null, card)}
+          length={originalLength.current}
+          key={card.id}
+          card={card}
+          index={index}
+          likeCard={throttle(() => likeCard(card, index), 500)}
+          removeCard={throttle(() => dislikeCard(card, index), 500)}
+        />
+      )),
+    [cards, dislikeCard, handleNavigateDetails, likeCard]
+  );
+
   return (
     <View style={{ flex: 1, marginBottom: insets.bottom }}>
-      <HomeAppbar
-        cards={cards}
-        route={route}
-        setShowQRModal={setShowQRModal}
-        showQRModal={showQRModal}
-        toggleLeaveModal={toggleLeaveModal}
-      />
-      <DialogModals
-        route={route}
-        showLeaveModal={showLeaveModal}
-        toggleLeaveModal={toggleLeaveModal}
-        showQRModal={showQRModal}
-        setShowQRModal={setShowQRModal}
-      />
+      <HomeAppbar route={route} hasCards={cards.length > 0} />
 
       {isPlaying ? (
         <>
-          {cards.map((card, index) => (
-            <SwipeTile
-              onPress={handleNavigateDetails.bind(null, card)}
-              length={originalLength.current}
-              key={card.id}
-              card={card}
-              index={index}
-              likeCard={throttle(() => likeCard(card, index), 500)}
-              removeCard={throttle(() => dislikeCard(card, index), 500)}
-            />
-          ))}
+          {renderedCards}
 
           {cards.length === 0 && !cardsLoading && (
             <View style={styles.emptyListContainer}>

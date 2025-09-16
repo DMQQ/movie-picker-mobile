@@ -251,7 +251,7 @@ export default function RoomSetup({ navigation }: any) {
             />
           </Section>
 
-          <Section title="Special Categories" description="Filter by awards, age ratings, and decades" disabled={!isCategorySelected}>
+          <Section title={t("room.specialCategories")} disabled={!isCategorySelected}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {specialCategoryOptions.map((option) => (
                 <SelectionCard
