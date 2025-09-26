@@ -85,13 +85,13 @@ const SwipeTile = ({
   const likeCard = () => {
     setTimeout(() => {
       actions.likeCard();
-    }, 100);
+    }, 200);
   };
 
   const removeCard = () => {
     setTimeout(() => {
       actions.removeCard();
-    }, 100);
+    }, 200);
   };
 
   const isLeftVisible = useSharedValue(false);

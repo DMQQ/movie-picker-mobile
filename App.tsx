@@ -102,7 +102,7 @@ const Navigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: bo
 
         if (!language) return setShowLanguageSelector(true);
 
-        const nickname = (await AsyncStorage.getItem("nickname")) || language === "en" ? "Guest" : "Gość";
+        const nickname = (await AsyncStorage.getItem("nickname")) || (language === "en" ? "Guest" : "Gość");
 
         dispatch(roomActions.setSettings({ nickname, language, regionalization: JSON.parse(regionalization || "{}") || ({} as any) }));
       } catch (error) {

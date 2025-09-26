@@ -3,7 +3,7 @@ import { BlurView } from "expo-blur";
 import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
 import { ToastAndroid, View } from "react-native";
-import { SegmentedButtons, Text, TextInput } from "react-native-paper";
+import { Button, SegmentedButtons, Text, TextInput } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChooseRegion from "../components/ChooseRegion";
 import PageHeading from "../components/PageHeading";
@@ -36,8 +36,6 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
     await AsyncStorage.setItem("language", language);
 
     dispatch(roomActions.setSettings({ nickname, language }));
-
-    await Updates.reloadAsync();
   };
 
   useEffect(() => {
@@ -46,7 +44,7 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
     return () => {
       clearTimeout(nickTimeoutId);
     };
-  }, [nickname]);
+  }, [nickname, language]);
 
   useEffect(() => {
     let languageTimeoutId = setTimeout(handleSaveLanguage, 1500);
@@ -54,7 +52,7 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
     return () => {
       clearTimeout(languageTimeoutId);
     };
-  }, [language]);
+  }, [language, lg, nickname]);
 
   const t = useTranslation();
   const insets = useSafeAreaInsets();
@@ -99,7 +97,31 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
               />
             </View>
 
-            <ChooseRegion onBack={() => navigation.navigate("RegionSelector")} />
+            <ChooseRegion
+              onBack={() => navigation.navigate("RegionSelector")}
+              onRegionSelect={(region) => {
+                const headers = {} as Record<string, string>;
+                headers["x-user-region"] = region.code;
+                headers["x-user-watch-provider"] = region.code;
+                headers["x-user-watch-region"] = region.code;
+                headers["x-user-timezone"] = region.timezone;
+
+                dispatch(roomActions.setSettings({ nickname, language, regionalization: headers }));
+                AsyncStorage.setItem("regionalization", JSON.stringify(headers));
+              }}
+            />
+          </View>
+          <View style={{ padding: 15, paddingBottom: insets.bottom, backgroundColor: "rgba(0,0,0,0.1)" }}>
+            <Button
+              style={{
+                borderRadius: 100,
+              }}
+              contentStyle={{ padding: 7.5 }}
+              mode="contained"
+              onPress={async () => await Updates.reloadAsync()}
+            >
+              {t("settings.apply")}
+            </Button>
           </View>
         </View>
       </BlurView>

@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import { reloadAsync } from "expo-updates";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { List, Searchbar, Text } from "react-native-paper";
 
@@ -73,20 +74,28 @@ const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: Choose
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRegion, setSelectedRegion] = useState(regions[0]);
 
-  useEffect(() => {
-    (async () => {
-      const regionalization = await AsyncStorage.getItem("regionalization");
+  const loadSelectedRegion = useCallback(async () => {
+    const regionalization = await AsyncStorage.getItem("regionalization");
 
-      if (regionalization) {
-        const headers = JSON.parse(regionalization) as Record<string, string>;
-        const region = regions.find((region) => region.code === headers["x-user-region"]);
+    if (regionalization) {
+      const headers = JSON.parse(regionalization) as Record<string, string>;
+      const region = regions.find((region) => region.code === headers["x-user-region"]);
 
-        if (region) {
-          setSelectedRegion(region);
-        }
+      if (region) {
+        setSelectedRegion(region);
       }
-    })();
+    }
   }, []);
+
+  useEffect(() => {
+    loadSelectedRegion();
+  }, [loadSelectedRegion]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadSelectedRegion();
+    }, [loadSelectedRegion])
+  );
 
   const onSettingsChange = async (settings: any) => {
     try {

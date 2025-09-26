@@ -161,7 +161,8 @@
     "nickname-info": "Tutaj możesz zmienić swój pseudonim. Będzie on wyświetlany innym użytkownikom w pokoju.",
     "language-info": "Zmiana tej wartości zmieni język docelowy dla utworzonego pokoju, co oznacza, że filmy będą w wybranym języku, ale nie kontrolki i inne teksty. Więcej języków zostanie dodanych w przyszłości.",
     "about": "Jest to prosta aplikacja, która pozwala utworzyć pokój i wybierać filmy ze znajomymi. Możesz utworzyć pokój i zaprosić znajomych do dołączenia. Możesz również dołączyć do pokoju, wprowadzając kod pokoju. Następnie możesz dodawać filmy do pokoju i oglądać je razem. Aplikacja korzysta z The Movie Database API, aby pobierać filmy, oraz JustWatch API, aby uzyskać informacje o dostępności.",
-    "security": "Żadne dane nie są przechowywane na serwerze. Pokój jest tworzony w pamięci i jest niszczony, gdy ostatni użytkownik go opuszcza. Żadne dodatkowe dane nie są przechowywane na serwerze. Kod pokoju jest generowany losowo, a ulubione filmy są przechowywane lokalnie w pamięci. Aplikacja nie przechowuje żadnych danych użytkownika, a jedynie pseudonim, który jest wyświetlany w pokoju. Nie zarabiam na niej"
+    "security": "Żadne dane nie są przechowywane na serwerze. Pokój jest tworzony w pamięci i jest niszczony, gdy ostatni użytkownik go opuszcza. Żadne dodatkowe dane nie są przechowywane na serwerze. Kod pokoju jest generowany losowo, a ulubione filmy są przechowywane lokalnie w pamięci. Aplikacja nie przechowuje żadnych danych użytkownika, a jedynie pseudonim, który jest wyświetlany w pokoju. Nie zarabiam na niej",
+    "apply": "Zapisz"
   },
   "voter": {
     "games": "Gry",

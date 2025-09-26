@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,6 +13,7 @@ import useRoom from "../../service/useRoom";
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
 import useRoomMatches from "../../service/useRoomMatches";
+import { SocketContext } from "../../service/SocketContext";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -29,6 +30,7 @@ const styles = StyleSheet.create({
 
 export default function Home({ route, navigation }: any) {
   const { cards, dislikeCard, likeCard, isPlaying, joinGame, cardsLoading } = useRoom(route.params?.roomId);
+  const { socket } = useContext(SocketContext);
   const likes = useAppSelector((state) => state.room.room.likes);
   const gameEnded = useAppSelector((state) => state.room.room.gameEnded);
 
@@ -53,10 +55,11 @@ export default function Home({ route, navigation }: any) {
   const originalLength = useRef(cards.length);
 
   useEffect(() => {
-    if (route?.params?.roomId) {
+    if (route?.params?.roomId && socket?.connected) {
+      console.log("🔑 Joining room:", route?.params?.roomId);
       joinGame(route?.params?.roomId);
     }
-  }, [route?.params?.roomId]);
+  }, [route?.params?.roomId, socket, socket?.connected]);
 
   const handleNavigateDetails = useCallback(
     (card: Movie) => {
