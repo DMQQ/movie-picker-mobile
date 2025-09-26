@@ -3,6 +3,7 @@ import { BlurView } from "expo-blur";
 import { StyleSheet, TextInput, View } from "react-native";
 import { IconButton, MD2DarkTheme } from "react-native-paper";
 import Animated, { FadeInUp } from "react-native-reanimated";
+import PlatformBlurView from "./PlatformBlurView";
 
 interface SearchBarProps {
   value: string;
@@ -16,7 +17,7 @@ const CustomSearchBar = ({ value, onChangeText, placeholder = "Search movies and
   return (
     <Animated.View style={{ paddingHorizontal: 15 }} entering={FadeInUp}>
       <View style={styles.container}>
-        <BlurView style={styles.searchContainer} intensity={5}>
+        <PlatformBlurView style={styles.searchContainer} intensity={5}>
           <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} style={styles.backButton} />
 
           <TextInput
@@ -31,7 +32,7 @@ const CustomSearchBar = ({ value, onChangeText, placeholder = "Search movies and
           {value.length > 0 && (
             <IconButton icon="close" size={20} iconColor="#666" onPress={() => onChangeText("")} style={styles.clearButton} />
           )}
-        </BlurView>
+        </PlatformBlurView>
       </View>
     </Animated.View>
   );
@@ -43,14 +44,12 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     overflow: "hidden",
     borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.1)",
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 100,
     paddingHorizontal: 5,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
   },
   backButton: {
     margin: 0,

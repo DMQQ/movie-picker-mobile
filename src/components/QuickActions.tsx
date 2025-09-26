@@ -1,4 +1,4 @@
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { ReactNode } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -47,7 +47,7 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
     <View style={styles.container}>
       <View style={styles.iconContainer}>
         <TouchableOpacity style={[styles.iconButton]} onPress={() => onPress("2")}>
-          <AntDesign name={isInGroup("2") ? "clockcircle" : "clockcircleo"} size={35} color="#fff" />
+          <MaterialCommunityIcons name={isInGroup("2") ? "clock" : "clock-check-outline"} size={35} color="#fff" />
           {!props?.hideLabels && (
             <Text numberOfLines={1} ellipsizeMode="tail" style={styles.iconText}>
               {t("quick-actions.watch-later")}
@@ -67,7 +67,7 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
       </View>
       <View style={styles.iconContainer}>
         <TouchableOpacity style={styles.iconButton} onPress={() => onPress("999")}>
-          <AntDesign name={isInGroup("999") ? "eye" : "eyeo"} size={35} color="#fff" />
+          <AntDesign name={isInGroup("999") ? "eye" : "eye-invisible"} size={35} color="#fff" />
           {!props?.hideLabels && (
             <Text numberOfLines={1} ellipsizeMode="clip" style={styles.iconText}>
               {t("quick-actions.watched")}

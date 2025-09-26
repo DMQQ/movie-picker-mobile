@@ -1,10 +1,10 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { PropsWithChildren } from "react";
 import { ImageBackground, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-import FastImage, { FastImageProps } from "react-native-fast-image";
+import { Image, ImageProps } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
 
-interface ThumbnailProps extends FastImageProps {
+interface ThumbnailProps extends ImageProps {
   path: string;
   size?: number;
   container?: StyleProp<ViewStyle>;
@@ -51,12 +51,6 @@ export const ThumbnailSizes = {
   },
 } as const;
 
-const priorityMap = {
-  low: FastImage.priority.low,
-  normal: FastImage.priority.normal,
-  high: FastImage.priority.high,
-};
-
 const BlurPlaceholder = ({ children, placeholder, style }: PropsWithChildren<{ placeholder?: string; style: StyleProp<ViewStyle> }>) =>
   placeholder ? (
     <ImageBackground source={{ uri: placeholder }} style={[style]}>
@@ -87,12 +81,11 @@ export default function Thumbnail({ path, size = 200, container, priority = "nor
 
   return (
     <BlurPlaceholder placeholder={placeholder} style={[styles.container, container]}>
-      <FastImage
-        resizeMode={FastImage.resizeMode.cover}
+      <Image
         {...rest}
+        priority={priority}
         source={{
           uri: `https://image.tmdb.org/t/p/w${size}` + path,
-          priority: priorityMap[priority],
         }}
         style={[styles.image, rest.style]}
       />
@@ -103,7 +96,7 @@ export default function Thumbnail({ path, size = 200, container, priority = "nor
 export async function prefetchThumbnail(path: string, size: number = 200) {
   if (!path) return;
   const imageUrl = `https://image.tmdb.org/t/p/w${size}` + path;
-  FastImage.preload([{ uri: imageUrl }]);
+  Image.prefetch(imageUrl);
 }
 
 const styles = StyleSheet.create({

@@ -125,15 +125,14 @@ export default function SearchFilters({ navigation, route }: any) {
                   onPress={() => setActiveTab("movie")}
                   style={[
                     styles.chipWrapper,
+                    styles.chip,
                     activeTab === "movie" && {
                       borderColor: "rgba(255, 255, 255, 0.3)",
                       backgroundColor: "rgba(255, 255, 255, 0.1)",
                     },
                   ]}
                 >
-                  <BlurView style={[styles.chip]} intensity={activeTab === "movie" ? 15 : 5}>
-                    <Text style={[styles.chipText, activeTab === "movie" && styles.chipTextActive]}>{t("voter.types.movie")}</Text>
-                  </BlurView>
+                  <Text style={[styles.chipText, activeTab === "movie" && styles.chipTextActive]}>{t("voter.types.movie")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => setActiveTab("tv")}
@@ -158,15 +157,14 @@ export default function SearchFilters({ navigation, route }: any) {
                     onPress={() => toggleGenre(item.id)}
                     style={[
                       styles.genreChipWrapper,
+                      styles.genreChip,
                       genres.includes(item.id) && {
                         borderColor: "rgba(255, 255, 255, 0.3)",
                         backgroundColor: "rgba(255, 255, 255, 0.1)",
                       },
                     ]}
                   >
-                    <BlurView style={[styles.genreChip]} intensity={genres.includes(item.id) ? 15 : 5}>
-                      <Text style={[styles.genreChipText, genres.includes(item.id) && styles.genreChipTextActive]}>{item.name}</Text>
-                    </BlurView>
+                    <Text style={[styles.genreChipText, genres.includes(item.id) && styles.genreChipTextActive]}>{item.name}</Text>
                   </TouchableOpacity>
                 ))}
               </View>

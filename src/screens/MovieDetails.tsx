@@ -13,6 +13,7 @@ import Trailers from "../components/Movie/Trailers";
 import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
 import { ScreenProps } from "./types";
+import PlatformBlurView from "../components/PlatformBlurView";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -110,11 +111,11 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
           top: insets.top + 5,
         }}
       >
-        <FrostedGlass container={{ borderRadius: 250 }}>
+        <PlatformBlurView isInteractive style={{ borderRadius: 100, overflow: "hidden" }}>
           <TouchableRipple style={{ padding: 10 }} onPress={handleBack}>
             <Entypo name="chevron-left" size={28} color={"#fff"} />
           </TouchableRipple>
-        </FrostedGlass>
+        </PlatformBlurView>
       </View>
     </View>
   );

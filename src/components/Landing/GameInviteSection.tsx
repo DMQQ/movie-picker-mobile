@@ -8,6 +8,7 @@ import { Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
 import Thumbnail from "../Thumbnail";
+import PlatformBlurView from "../PlatformBlurView";
 
 const gameInviteStyles = StyleSheet.create({
   container: {
@@ -181,7 +182,7 @@ const GameInviteSection = memo(
         </View>
 
         {/* Blur Overlay with Content */}
-        <BlurView intensity={10} tint="dark" style={gameInviteStyles.blurContainer}>
+        <PlatformBlurView intensity={10} tint="dark" style={gameInviteStyles.blurContainer}>
           <Text style={gameInviteStyles.title}>{config.title}</Text>
           <Text style={gameInviteStyles.subtitle}>{config.subtitle}</Text>
 
@@ -191,7 +192,7 @@ const GameInviteSection = memo(
               <Text style={gameInviteStyles.buttonText}>{config.buttonText}</Text>
             </LinearGradient>
           </TouchableOpacity>
-        </BlurView>
+        </PlatformBlurView>
       </Animated.View>
     );
   }

@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000"
+      "backgroundColor": "#000000"
     },
     "plugins": [
       [
@@ -23,11 +23,12 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#000",
+          "backgroundColor": "#000000",
           "image": "./assets/images/icon-light.png",
           "imageWidth": 200
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -46,12 +47,12 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "pl.dmq.movie-picker",
-      "associatedDomains": ["applinks:movie.dmqq.dev", "applinks:movie.dmqq.dev"]
+      "associatedDomains": ["applinks:movie.dmqq.dev"]
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#000"
+        "backgroundColor": "#000000"
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",

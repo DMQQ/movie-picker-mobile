@@ -4,8 +4,6 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { Movie } from "../../types";
 import Thumbnail from "./Thumbnail";
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 const getColor = (score: number) => {
   if (score >= 7) return "#21d07a"; // Green
   if (score >= 4) return "#d2d531"; // Yellow
@@ -13,7 +11,7 @@ const getColor = (score: number) => {
 };
 
 export const SectionListItem = (item: Movie & { onPress: () => void }) => (
-  <AnimatedPressable entering={FadeIn} key={item.poster_path} onPress={item.onPress} style={sectionStyles.item}>
+  <Pressable onPress={item.onPress} style={sectionStyles.item}>
     <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} />
     {item.vote_average > 0 && (
       <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(item.vote_average || 0) }]}>
@@ -29,7 +27,7 @@ export const SectionListItem = (item: Movie & { onPress: () => void }) => (
         </Text>
       </View>
     )}
-  </AnimatedPressable>
+  </Pressable>
 );
 
 const { width } = Dimensions.get("screen");

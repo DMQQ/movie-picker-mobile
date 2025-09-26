@@ -14,7 +14,7 @@ import Animated, {
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { useGetTrailersQuery } from "../../redux/movie/movieApi";
 import { hexToRgba } from "../../utils/hexToRgb";
-import FrostedGlass from "../FrostedGlass";
+import PlatformBlurView from "../PlatformBlurView";
 
 const width = Dimensions.get("window").width;
 
@@ -44,12 +44,12 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
 
   return (
     <Animated.View style={styles.container}>
-      <FrostedGlass
-        blurAmount={70}
+      <PlatformBlurView
         style={{
-          borderRadius: 12,
+          borderRadius: 15,
+          marginright: 15,
+          overflow: "hidden",
         }}
-        container={{ marginRight: 15 }}
       >
         <TouchableOpacity
           activeOpacity={0.8}
@@ -109,13 +109,13 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
             </Animated.View>
           </Animated.View>
         </TouchableOpacity>
-      </FrostedGlass>
+      </PlatformBlurView>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { position: "absolute", right: 0, bottom: 30 },
+  container: { position: "absolute", right: 15, bottom: 30 },
   button: {
     padding: 10,
     paddingHorizontal: 15,

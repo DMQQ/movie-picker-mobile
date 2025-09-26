@@ -8,6 +8,7 @@ import { useGetFeaturedQuery } from "../../redux/movie/movieApi";
 import FrostedGlass from "../FrostedGlass";
 import RatingIcons from "../RatingIcons";
 import { prefetchThumbnail, ThumbnailSizes } from "../Thumbnail";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -17,6 +18,7 @@ const FeaturedSection = memo(
   (props: { navigate: any }) => {
     const { data: featured, error } = useGetFeaturedQuery();
     const navigation = useNavigation<any>();
+    const insets = useSafeAreaInsets();
 
     const onPress = () => {
       navigation.navigate("MovieDetails", {
@@ -45,7 +47,7 @@ const FeaturedSection = memo(
 
     return (
       <ImageBackground
-        style={styles.featuredImage}
+        style={[styles.featuredImage, { marginTop: -insets.top - 20 }]}
         source={{
           uri: "https://image.tmdb.org/t/p/w780" + featured?.poster_path,
         }}
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
 
   featuredImage: {
     width,
-    height: height / 1.3,
+    height: height / 1.3 + 50,
     position: "relative",
     marginBottom: 35,
   },

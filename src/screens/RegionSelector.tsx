@@ -8,6 +8,7 @@ import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import { roomActions } from "../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { ScreenProps } from "./types";
+import PlatformBlurView from "../components/PlatformBlurView";
 
 export default function RegionSelectorScreen({ navigation }: ScreenProps<"RegionSelector">) {
   const insets = useSafeAreaInsets();
@@ -17,7 +18,7 @@ export default function RegionSelectorScreen({ navigation }: ScreenProps<"Region
 
   return (
     <TransparentModalScreen>
-      <BlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
+      <PlatformBlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
         <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)" }}>
           <PageHeading title="Select Region" onPress={() => navigation.goBack()} />
           <View style={{ flex: 1 }}>
@@ -30,7 +31,7 @@ export default function RegionSelectorScreen({ navigation }: ScreenProps<"Region
                 headers["x-user-watch-provider"] = region.code;
                 headers["x-user-watch-region"] = region.code;
                 headers["x-user-timezone"] = region.timezone;
-                
+
                 await AsyncStorage.setItem("regionalization", JSON.stringify(headers));
                 dispatch(roomActions.setSettings({ nickname, language, regionalization: headers }));
                 navigation.goBack();
@@ -38,7 +39,7 @@ export default function RegionSelectorScreen({ navigation }: ScreenProps<"Region
             />
           </View>
         </View>
-      </BlurView>
+      </PlatformBlurView>
     </TransparentModalScreen>
   );
 }

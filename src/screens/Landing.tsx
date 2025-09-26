@@ -21,6 +21,7 @@ import { useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
 import useLanding, { SectionData } from "../service/useLanding";
 import useTranslation from "../service/useTranslation";
 import { ScreenProps } from "./types";
+import BottomTab from "../components/Landing/BottomTab";
 
 const { width } = Dimensions.get("screen");
 
@@ -88,96 +89,11 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         }
       />
 
-      <BottomTab navigate={navigation.navigate} />
+      <BottomTab />
       <LandingHeader selectedChip={selectedChip} onChipPress={handleChipPress} scrollY={scrollY} />
     </View>
   );
 }
-
-const tabStyles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: Platform.OS === "android" ? "#000" : "transparent",
-  },
-  button: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-    height: "100%",
-  },
-  buttonLabel: {
-    fontSize: 10,
-    color: "rgba(255,255,255,0.9)",
-    letterSpacing: 0.5,
-    marginTop: 5,
-  },
-});
-
-const BottomTab = memo(
-  ({ navigate }: { navigate: any }) => {
-    const t = useTranslation();
-    const insets = useSafeAreaInsets();
-
-    const withTouch = (fn: () => void) => {
-      return () => {
-        if (Platform.OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-        fn();
-      };
-    };
-
-    return (
-      <PlatformBlurView
-        intensity={Platform.OS === "ios" ? 60 : 100}
-        tint="dark"
-        style={[
-          { flexDirection: "row", paddingBottom: insets.bottom + (Platform.OS === "android" ? 15 : 0), paddingTop: 10 },
-          tabStyles.container,
-        ]}
-      >
-        <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigate("Favourites"))}>
-          <>
-            <FontAwesome name="bookmark" size={25} color="#fff" />
-            <Text style={tabStyles.buttonLabel}>{t("tabBar.favourites")}</Text>
-          </>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={[
-            tabStyles.button,
-            { backgroundColor: MD2DarkTheme.colors.primary, borderRadius: 10, padding: 5, paddingVertical: 10, maxWidth: 70 },
-          ]}
-          onPress={withTouch(() =>
-            navigate("QRCode", {
-              screen: "QRScanner",
-            })
-          )}
-        >
-          <>
-            <FontAwesome name="qrcode" size={30} color={"#fff"} />
-            {/* <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text> */}
-          </>
-        </TouchableOpacity>
-
-        <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigate("Games"))}>
-          <>
-            <FontAwesome name="gamepad" size={25} color="#fff" />
-            <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
-          </>
-        </TouchableOpacity>
-      </PlatformBlurView>
-    );
-  },
-  () => true
-);
 
 interface SectionProps {
   group: { name: string; results: Movie[] };
@@ -195,7 +111,7 @@ const sectionStyles = StyleSheet.create({
   },
 });
 
-const keySectionExtractor = (item: any, index: number) => `${item.id}-${item.type || "movie"}-${index}`;
+const keySectionExtractor = (item: any, index: number) => `${item.id}-${item.type || "movie"}`;
 
 export const Section = memo(({ group }: SectionProps) => {
   const navigation = useNavigation<any>();
@@ -221,36 +137,32 @@ export const Section = memo(({ group }: SectionProps) => {
     });
   }, [page]);
 
-  const renderItem = useCallback(
-    ({ item }: { item: Movie & { type: string } }) => (
-      <SectionListItem
-        onPress={() => {
-          navigation.navigate("MovieDetails", {
-            id: item.id,
-            type: item.type,
-            img: item.poster_path,
-          });
-        }}
-        {...item}
-      />
-    ),
-    []
-  );
-
   if (movies.length === 0 && !state.isLoading) return null;
 
   return (
     <Animated.View style={sectionStyles.container} entering={FadeIn}>
       <Text style={sectionStyles.title}>{group.name}</Text>
-      <FlashList
-        onEndReached={onEndReached}
-        data={(movies || []) as any}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={keySectionExtractor}
-        renderItem={renderItem}
-        estimatedItemSize={Math.min(width * 0.25, 200)}
-      />
+      {movies.length > 0 && (
+        <FlashList
+          onEndReached={onEndReached}
+          data={(movies || []) as any}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={keySectionExtractor}
+          renderItem={({ item }) => (
+            <SectionListItem
+              onPress={() => {
+                navigation.navigate("MovieDetails", {
+                  id: item.id,
+                  type: item.type,
+                  img: item.poster_path,
+                });
+              }}
+              {...item}
+            />
+          )}
+        />
+      )}
     </Animated.View>
   );
 });
@@ -427,7 +339,7 @@ const GameInviteSection = memo(
         </View>
 
         {/* Blur Overlay with Content */}
-        <BlurView intensity={10} tint="dark" style={gameInviteStyles.blurContainer}>
+        <View style={gameInviteStyles.blurContainer}>
           <Text style={gameInviteStyles.title}>{config.title}</Text>
           <Text style={gameInviteStyles.subtitle}>{config.subtitle}</Text>
 
@@ -437,7 +349,7 @@ const GameInviteSection = memo(
               <Text style={gameInviteStyles.buttonText}>{config.buttonText}</Text>
             </LinearGradient>
           </TouchableOpacity>
-        </BlurView>
+        </View>
       </Animated.View>
     );
   }

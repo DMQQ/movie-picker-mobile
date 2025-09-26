@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useReducer } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, IconButton } from "react-native-paper";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import PageHeading from "../../components/PageHeading";
 import CategoryList from "../../components/Room/CategoryList";
 import GenreList, { Genre } from "../../components/Room/GenreList";
@@ -93,17 +93,17 @@ export default function RoomSetup({ navigation }: any) {
       {
         value: 3,
         label: t("room.game_time_short") + " (5min)",
-        iconData: { component: FontAwesome5, name: "bolt", color: "#FF6B35" },
+        iconData: { component: MaterialIcons, name: "flash-on", color: "#FF6B35" },
       },
       {
         value: 6,
         label: t("room.game_time_medium") + " (10min)",
-        iconData: { component: FontAwesome5, name: "clock", color: "#4ECDC4" },
+        iconData: { component: MaterialIcons, name: "schedule", color: "#4ECDC4" },
       },
       {
         value: 10,
         label: t("room.game_time_long") + " (20min)",
-        iconData: { component: FontAwesome5, name: "hourglass", color: "#FFD23F" },
+        iconData: { component: MaterialIcons, name: "hourglass-empty", color: "#FFD23F" },
       },
     ],
     [t]
@@ -114,47 +114,47 @@ export default function RoomSetup({ navigation }: any) {
       {
         id: "oscar",
         label: "Oscar Winners",
-        iconData: { component: FontAwesome5, name: "trophy", color: "#FFD700" },
+        iconData: { component: MaterialIcons, name: "emoji-events", color: "#FFD700" },
       },
       {
         id: "pg13",
         label: "PG-13",
-        iconData: { component: FontAwesome5, name: "child", color: "#4CAF50" },
+        iconData: { component: MaterialIcons, name: "child-care", color: "#4CAF50" },
       },
       {
         id: "r_rated",
         label: "18+ Only",
-        iconData: { component: FontAwesome5, name: "exclamation-triangle", color: "#FF5722" },
+        iconData: { component: MaterialIcons, name: "warning", color: "#FF5722" },
       },
       {
         id: "short_runtime",
         label: "<90m",
-        iconData: { component: FontAwesome5, name: "clock", color: "#4CAF50" },
+        iconData: { component: MaterialIcons, name: "schedule", color: "#4CAF50" },
       },
       {
         id: "long_runtime",
         label: ">90m",
-        iconData: { component: FontAwesome5, name: "hourglass-end", color: "#FF9800" },
+        iconData: { component: MaterialIcons, name: "hourglass-full", color: "#FF9800" },
       },
       {
         id: "90s",
         label: "90s",
-        iconData: { component: FontAwesome5, name: "compact-disc", color: "#9C27B0" },
+        iconData: { component: MaterialIcons, name: "album", color: "#9C27B0" },
       },
       {
         id: "2000s",
         label: "2000s",
-        iconData: { component: FontAwesome5, name: "mobile-alt", color: "#2196F3" },
+        iconData: { component: MaterialIcons, name: "phone-android", color: "#2196F3" },
       },
       {
         id: "2010s",
         label: "2010s",
-        iconData: { component: FontAwesome5, name: "tablet-alt", color: "#FF9800" },
+        iconData: { component: MaterialIcons, name: "tablet", color: "#FF9800" },
       },
       {
         id: "2020s",
         label: "2020s",
-        iconData: { component: FontAwesome5, name: "wifi", color: "#00BCD4" },
+        iconData: { component: MaterialIcons, name: "wifi", color: "#00BCD4" },
       },
     ],
     []

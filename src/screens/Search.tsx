@@ -13,6 +13,7 @@ import FrostedGlass from "../components/FrostedGlass";
 import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import useTranslation from "../service/useTranslation";
+import PlatformBlurView from "../components/PlatformBlurView";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -318,15 +319,14 @@ const SearchScreen = ({ navigation, route }: any) => {
                     onPress={() => handleFilterChange(category.id)}
                     style={[
                       styles.chipWrapper,
+                      styles.chip,
                       filters.type === category.id && {
                         borderColor: "rgba(255, 255, 255, 0.3)",
                         backgroundColor: "rgba(255, 255, 255, 0.1)",
                       },
                     ]}
                   >
-                    <BlurView style={[styles.chip]} intensity={filters.type === category.id ? 15 : 5}>
-                      <Text style={[styles.chipText, filters.type === category.id && styles.chipTextActive]}>{category.label}</Text>
-                    </BlurView>
+                    <Text style={[styles.chipText, filters.type === category.id && styles.chipTextActive]}>{category.label}</Text>
                   </TouchableOpacity>
                 </Animated.View>
               ))}
@@ -335,16 +335,13 @@ const SearchScreen = ({ navigation, route }: any) => {
               onPress={() => {
                 navigation.navigate("SearchFilters", { ...route?.params, type: filters.type });
               }}
-              style={[styles.chipWrapper]}
+              style={[styles.chipWrapper, styles.chip]}
             >
-              <BlurView style={[styles.chip]} intensity={5}>
-                <Text style={[styles.chipText]}>Filters</Text>
-              </BlurView>
+              <Text style={[styles.chipText]}>Filters</Text>
             </TouchableOpacity>
           </View>
 
           <FlashList
-            estimatedItemSize={430}
             contentContainerStyle={{ padding: 15 }}
             data={allResults}
             renderItem={({ item, index }) => <MovieCard index={index} item={item} />}

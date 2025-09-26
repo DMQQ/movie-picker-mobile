@@ -8,6 +8,7 @@ import Home from "./Home";
 import QRCodePage from "./QRCodePage";
 import QRScanner from "./QRScanner";
 import RoomSetup from "./RoomSetup";
+import { StyleSheet } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,7 +16,7 @@ export default function QRCode({ navigation, route }: ScreenProps<"QRCode">) {
   const t = useTranslation();
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={[{ flex: 1, backgroundColor: "#000" }]}>
       <SocketProvider namespace="/swipe">
         <Stack.Navigator initialRouteName="RoomSetup" screenOptions={{ headerShown: false }}>
           <Stack.Screen

@@ -1,13 +1,19 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
-import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
-import { memo } from "react";
-import { Platform, StyleSheet, TouchableOpacity } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import { memo, PropsWithChildren } from "react";
+import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
+import PlatformBlurView from "../PlatformBlurView";
+
+const BottomTabContainer = ({ children }: PropsWithChildren<{}>) => {
+  return (
+    <PlatformBlurView isInteractive style={[{ flexDirection: "row", overflow: "hidden" }, tabStyles.container]}>
+      {children}
+    </PlatformBlurView>
+  );
+};
 
 const tabStyles = StyleSheet.create({
   container: {
@@ -15,10 +21,12 @@ const tabStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
+    left: 15,
+    right: 15,
+    bottom: 15,
     backgroundColor: Platform.OS === "android" ? "#000" : "transparent",
+    padding: 15,
+    borderRadius: 100,
   },
   button: {
     flex: 1,
@@ -28,7 +36,7 @@ const tabStyles = StyleSheet.create({
     height: "100%",
   },
   buttonLabel: {
-    fontSize: 10,
+    fontSize: 9,
     color: "rgba(255,255,255,0.9)",
     letterSpacing: 0.5,
     marginTop: 5,
@@ -38,7 +46,6 @@ const tabStyles = StyleSheet.create({
 const BottomTab = memo(
   () => {
     const t = useTranslation();
-    const insets = useSafeAreaInsets();
     const navigation = useNavigation<any>();
 
     const withTouch = (fn: () => void) => {
@@ -50,11 +57,7 @@ const BottomTab = memo(
     };
 
     return (
-      <BlurView
-        intensity={Platform.OS === "ios" ? 60 : 100}
-        tint="dark"
-        style={[{ flexDirection: "row", paddingBottom: insets.bottom, paddingTop: 10 }, tabStyles.container]}
-      >
+      <BottomTabContainer>
         <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Favourites"))}>
           <>
             <FontAwesome name="bookmark" size={25} color="#fff" />
@@ -64,10 +67,7 @@ const BottomTab = memo(
 
         <TouchableOpacity
           activeOpacity={0.8}
-          style={[
-            tabStyles.button,
-            { backgroundColor: MD2DarkTheme.colors.primary, borderRadius: 10, padding: 5, paddingVertical: 10, maxWidth: 70 },
-          ]}
+          style={[tabStyles.button]}
           onPress={withTouch(() =>
             navigation.navigate("QRCode", {
               screen: "QRScanner",
@@ -76,7 +76,7 @@ const BottomTab = memo(
         >
           <>
             <FontAwesome name="qrcode" size={30} color={"#fff"} />
-            {/* <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text> */}
+            <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text>
           </>
         </TouchableOpacity>
 
@@ -86,7 +86,7 @@ const BottomTab = memo(
             <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
           </>
         </TouchableOpacity>
-      </BlurView>
+      </BottomTabContainer>
     );
   },
   () => true
