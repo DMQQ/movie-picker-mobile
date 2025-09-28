@@ -1,7 +1,7 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { CommonActions } from "@react-navigation/native";
 import { memo, useContext, useEffect, useMemo, useState } from "react";
-import { Dimensions, Share, View } from "react-native";
+import { Dimensions, Platform, Share, View } from "react-native";
 import { ActivityIndicator, Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { Movie } from "../../../types";
@@ -14,6 +14,7 @@ import useTranslation from "../../service/useTranslation";
 import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
 import { FancySpinner } from "../../components/FancySpinner";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface RoomSetupParams {
   category: string;
@@ -162,6 +163,8 @@ export default function QRCodePage({ navigation, route }: any) {
     );
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
     <View style={{ flex: 1 }}>
       <PageHeading title={t("room.qr-title")} />
@@ -222,7 +225,11 @@ export default function QRCodePage({ navigation, route }: any) {
           style={{
             borderRadius: 100,
             marginTop: 10,
-            marginBottom: 20,
+            ...Platform.select({
+              android: {
+                marginBottom: insets.bottom,
+              },
+            }),
           }}
           contentStyle={{ padding: 7.5 }}
           onPress={() => {

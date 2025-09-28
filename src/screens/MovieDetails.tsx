@@ -112,7 +112,15 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
           top: insets.top + 5,
         }}
       >
-        <PlatformBlurView isInteractive style={{ borderRadius: 100, overflow: "hidden" }}>
+        <PlatformBlurView
+          isInteractive
+          style={[
+            { borderRadius: 100, overflow: "hidden" },
+            Platform.OS === "android" && {
+              backgroundColor: "rgba(0,0,0,0.5)",
+            },
+          ]}
+        >
           <IconButton icon={"chevron-left"} size={30} onPress={handleBack} iconColor="white" />
         </PlatformBlurView>
       </View>

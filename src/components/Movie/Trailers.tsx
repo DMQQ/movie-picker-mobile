@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Dimensions, Linking, StyleSheet, TouchableOpacity } from "react-native";
+import { Dimensions, Linking, Platform, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, {
   FadeInDown,
@@ -45,11 +45,14 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
   return (
     <Animated.View style={styles.container}>
       <PlatformBlurView
-        style={{
-          borderRadius: 15,
-          marginRight: 15,
-          overflow: "hidden",
-        }}
+        style={[
+          {
+            borderRadius: 15,
+            marginRight: 15,
+            overflow: "hidden",
+          },
+          Platform.OS === "android" && { backgroundColor: "#000", borderWidth: 1, borderColor: hexToRgba("#FFFFFF", 0.1) },
+        ]}
       >
         <TouchableOpacity
           activeOpacity={0.8}

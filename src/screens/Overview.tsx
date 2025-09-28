@@ -1,10 +1,10 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useNavigation } from "@react-navigation/native";
 import React, { memo, useEffect } from "react";
-import { Dimensions, SafeAreaView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import { IconButton, Text, useTheme } from "react-native-paper";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import useTranslation from "../service/useTranslation";
 import LikesScreen from "./Overview/Likes";
 import MatchesScreen from "./Overview/Matches";

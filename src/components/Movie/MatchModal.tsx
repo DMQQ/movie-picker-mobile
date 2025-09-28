@@ -96,8 +96,8 @@ export const ModalEnteringTransition = () => {
         { scale: withSpring(1) },
         {
           translateY: withSpring(0, {
-            damping: 30,
-            stiffness: 150,
+            damping: 40,
+            stiffness: 200,
           }),
         },
       ],
@@ -164,7 +164,7 @@ export default function MatchModal({ match, hideMatchModal }: { match: Movie | u
             marginTop: Platform.OS === "ios" ? 0 : 20,
           }}
         >
-          <Card onPress={hideMatchModal}>
+          <Card>
             <LinearGradient colors={["transparent", "transparent", theme.colors.primary]} style={styles.gradient}>
               <Text style={styles.title}>{match.title || match.name}</Text>
 

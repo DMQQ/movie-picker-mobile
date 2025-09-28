@@ -37,7 +37,17 @@ export default function MovieDetails({
 
   return (
     <Animated.View style={{ flex: 1 }} entering={FadeIn}>
-      <PlatformBlurView>
+      <PlatformBlurView
+        style={{
+          borderTopRightRadius: 20,
+          borderTopLeftRadius: 20,
+          ...Platform.select({
+            android: {
+              backgroundColor: "rgba(0,0,0,0.5)",
+            },
+          }),
+        }}
+      >
         <View style={{ flex: 1, padding: 15 }}>
           <Text
             style={{
