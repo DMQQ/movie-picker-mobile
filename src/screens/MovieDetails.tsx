@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { useCallback, useMemo } from "react";
 import { Dimensions, Platform, View } from "react-native";
-import { TouchableRipple } from "react-native-paper";
+import { IconButton, Text, TouchableRipple } from "react-native-paper";
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Entypo from "react-native-vector-icons/Entypo";
@@ -14,6 +14,7 @@ import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
 import { ScreenProps } from "./types";
 import PlatformBlurView from "../components/PlatformBlurView";
+import { AntDesign } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -112,9 +113,7 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
         }}
       >
         <PlatformBlurView isInteractive style={{ borderRadius: 100, overflow: "hidden" }}>
-          <TouchableRipple style={{ padding: 10 }} onPress={handleBack}>
-            <Entypo name="chevron-left" size={28} color={"#fff"} />
-          </TouchableRipple>
+          <IconButton icon={"chevron-left"} size={30} onPress={handleBack} iconColor="white" />
         </PlatformBlurView>
       </View>
     </View>

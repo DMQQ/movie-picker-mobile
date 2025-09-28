@@ -2,7 +2,7 @@
   "expo": {
     "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "1.1.9",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon-dark.png",
     "userInterfaceStyle": "automatic",
@@ -33,13 +33,9 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
-      "buildNumber": "20250815",
+      "buildNumber": "20250926",
       "supportsTablet": true,
-      "icon": {
-        "light": "./assets/images/icon-light.png",
-        "dark": "./assets/images/icon-dark.png",
-        "tinted": "./assets/images/icon-dark.png"
-      },
+      "icon": "./assets/images/icon.icon",
       "infoPlist": {
         "NSCameraUsageDescription": "FlickMate uses your camera to scan QR codes for joining movie games. You can also join manually without camera access.",
         "NSCameraUsageDescription_pl": "FlickMate używa aparatu do skanowania kodów QR, aby dołączyć do gier filmowych. Możesz również dołączyć ręcznie bez dostępu do aparatu.",
@@ -56,7 +52,7 @@
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202500809,
+      "versionCode": 20250926,
       "intentFilters": [
         {
           "action": "VIEW",
@@ -83,7 +79,7 @@
         "projectId": "ab2d7ea0-e25f-4063-a2e2-1a449547340b"
       }
     },
-    "runtimeVersion": "1.0.0",
+    "runtimeVersion": "2.0.0",
     "updates": {
       "url": "https://movie.dmqq.dev/api/manifest",
       "checkAutomatically": "ON_LOAD",

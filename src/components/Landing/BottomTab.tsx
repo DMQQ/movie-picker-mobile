@@ -6,6 +6,7 @@ import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
 import PlatformBlurView from "../PlatformBlurView";
+import { LinearGradient } from "expo-linear-gradient";
 
 const BottomTabContainer = ({ children }: PropsWithChildren<{}>) => {
   return (
@@ -21,12 +22,25 @@ const tabStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     position: "absolute",
-    left: 15,
-    right: 15,
-    bottom: 15,
-    backgroundColor: Platform.OS === "android" ? "#000" : "transparent",
-    padding: 15,
-    borderRadius: 100,
+
+    zIndex: 1000,
+
+    ...Platform.select({
+      ios: {
+        left: 15,
+        right: 15,
+        bottom: 15,
+        borderRadius: 1000,
+        padding: 15,
+      },
+      android: {
+        backgroundColor: "#000",
+        bottom: 0,
+        padding: 15,
+        paddingBottom: 40,
+        paddingTop: 20,
+      },
+    }),
   },
   button: {
     flex: 1,
@@ -57,36 +71,43 @@ const BottomTab = memo(
     };
 
     return (
-      <BottomTabContainer>
-        <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Favourites"))}>
-          <>
-            <FontAwesome name="bookmark" size={25} color="#fff" />
-            <Text style={tabStyles.buttonLabel}>{t("tabBar.favourites")}</Text>
-          </>
-        </TouchableOpacity>
+      <>
+        <LinearGradient
+          colors={["transparent", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.6)"]}
+          style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 100, zIndex: 999 }}
+          pointerEvents="none"
+        />
+        <BottomTabContainer>
+          <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Favourites"))}>
+            <>
+              <FontAwesome name="bookmark" size={20} color="#fff" />
+              <Text style={tabStyles.buttonLabel}>{t("tabBar.favourites")}</Text>
+            </>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={[tabStyles.button]}
-          onPress={withTouch(() =>
-            navigation.navigate("QRCode", {
-              screen: "QRScanner",
-            })
-          )}
-        >
-          <>
-            <FontAwesome name="qrcode" size={30} color={"#fff"} />
-            <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text>
-          </>
-        </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[tabStyles.button]}
+            onPress={withTouch(() =>
+              navigation.navigate("QRCode", {
+                screen: "QRScanner",
+              })
+            )}
+          >
+            <>
+              <FontAwesome name="qrcode" size={20} color={"#fff"} />
+              <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text>
+            </>
+          </TouchableOpacity>
 
-        <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Games"))}>
-          <>
-            <FontAwesome name="gamepad" size={25} color="#fff" />
-            <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
-          </>
-        </TouchableOpacity>
-      </BottomTabContainer>
+          <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Games"))}>
+            <>
+              <FontAwesome name="gamepad" size={20} color="#fff" />
+              <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
+            </>
+          </TouchableOpacity>
+        </BottomTabContainer>
+      </>
     );
   },
   () => true

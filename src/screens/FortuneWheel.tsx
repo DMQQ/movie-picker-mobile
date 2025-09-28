@@ -62,13 +62,9 @@ function FortuneWheel({ navigation, route }: any) {
 
   const handleThrowDice = useCallback(
     (value?: number | string) => {
-      console.log("handleThrowDice called with:", value);
-      
       const handleResponse = async (response: any) => {
-        console.log("API response:", response);
         if (response.data && Array.isArray(response.data.results)) {
           const movies = response.data.results as Movie[];
-          console.log("Movies found:", movies.length);
 
           await Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path)));
 
@@ -78,8 +74,7 @@ function FortuneWheel({ navigation, route }: any) {
             results: fillMissing(shuffled.slice(0, 12), 12),
             name: response.data.name || "",
           };
-          
-          console.log("Setting selectedCards:", newSelectedCards);
+
           setSelectedCards(newSelectedCards);
           setSignatures(shuffled.map(({ id }) => id).join("-"));
         } else {
@@ -88,12 +83,12 @@ function FortuneWheel({ navigation, route }: any) {
       };
 
       if (value) {
-        console.log("Getting section with name:", value);
-        getLazySection({ name: value as string }).then(handleResponse).catch(console.error);
+        getLazySection({ name: value as string })
+          .then(handleResponse)
+          .catch(console.error);
         return;
       }
 
-      console.log("Getting random section");
       getLazyRandomSection(selectedCards.name).then(handleResponse).catch(console.error);
     },
     [selectedCards.name, getLazySection, getLazyRandomSection]

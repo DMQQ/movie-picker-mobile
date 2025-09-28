@@ -1,0 +1,36 @@
+{
+  "fill" : {
+    "automatic-gradient" : "display-p3:0.94423,1.00000,0.95355,1.00000"
+  },
+  "groups" : [
+    {
+      "hidden" : false,
+      "layers" : [
+        {
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "icon-light.png",
+          "name" : "icon-light",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -20,
+              19.5
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : "shared"
+  }
+}

@@ -11,10 +11,10 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import AntDesign from "react-native-vector-icons/AntDesign";
 import { useGetTrailersQuery } from "../../redux/movie/movieApi";
 import { hexToRgba } from "../../utils/hexToRgb";
 import PlatformBlurView from "../PlatformBlurView";
+import { Entypo } from "@expo/vector-icons";
 
 const width = Dimensions.get("window").width;
 
@@ -47,7 +47,7 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
       <PlatformBlurView
         style={{
           borderRadius: 15,
-          marginright: 15,
+          marginRight: 15,
           overflow: "hidden",
         }}
       >
@@ -76,7 +76,7 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
                       style={styles.button}
                       activeOpacity={0.8}
                     >
-                      <AntDesign name="youtube" size={24} color="#FF0000" />
+                      <Entypo name="youtube" size={24} color="#FF0000" />
                       <Text variant="bodyMedium" style={styles.mainButtonText} numberOfLines={1}>
                         {trailer.name || "Trailer"}
                       </Text>
@@ -88,7 +88,7 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
             <Animated.View style={[styles.buttonsContainer, { width: showItems ? width / 2 - 30 : 90 }]}>
               {!showItems && (
                 <Animated.View entering={FadeInLeft} exiting={FadeOutLeft}>
-                  <AntDesign name="youtube" size={24} color="#FF0000" />
+                  <Entypo name="youtube" size={24} color="#FF0000" />
                 </Animated.View>
               )}
               <Text
@@ -103,7 +103,7 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
               </Text>
               {showItems && (
                 <Animated.View entering={FadeInRight} exiting={FadeOutRight}>
-                  <AntDesign name="close" size={24} color="#FFF" />
+                  <Entypo name="chevron-right" size={24} color="#FFF" />
                 </Animated.View>
               )}
             </Animated.View>

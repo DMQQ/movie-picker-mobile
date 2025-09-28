@@ -222,6 +222,7 @@ export default function QRCodePage({ navigation, route }: any) {
           style={{
             borderRadius: 100,
             marginTop: 10,
+            marginBottom: 20,
           }}
           contentStyle={{ padding: 7.5 }}
           onPress={() => {

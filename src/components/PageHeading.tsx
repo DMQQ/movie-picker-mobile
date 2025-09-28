@@ -56,6 +56,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 8,
     zIndex: 1,
-    top: Platform.OS === "android" ? 3 : 0,
+    top: Platform.OS === "android" ? 10 : 0,
   },
 });

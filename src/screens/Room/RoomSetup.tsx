@@ -1,7 +1,7 @@
 // src/screens/Room/RoomSetup/RoomSetup.tsx
 
 import { useCallback, useMemo, useReducer } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Button, IconButton } from "react-native-paper";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import PageHeading from "../../components/PageHeading";
@@ -13,6 +13,8 @@ import SelectionCard from "../../components/Room/SelectionCard";
 import { useGetAllProvidersQuery, useGetGenresQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
 import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
+import { LinearGradient } from "expo-linear-gradient";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface RoomSetupState {
   category: string;
@@ -160,6 +162,8 @@ export default function RoomSetup({ navigation }: any) {
     []
   );
 
+  const insets = useSafeAreaInsets();
+
   const handleCategoryPress = useCallback((categoryPath: string) => {
     dispatch({ type: "SET_CATEGORY", payload: categoryPath });
   }, []);
@@ -274,9 +278,18 @@ export default function RoomSetup({ navigation }: any) {
             />
           </Section>
         </View>
+        <View style={{ height: 80 }} />
       </ScrollView>
 
-      <View style={styles.buttonContainer}>
+      <LinearGradient
+        style={[
+          styles.buttonContainer,
+          Platform.OS === "android" && {
+            paddingBottom: insets.bottom,
+          },
+        ]}
+        colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.8)"]}
+      >
         <Button
           mode="contained"
           style={styles.nextButton}
@@ -288,7 +301,7 @@ export default function RoomSetup({ navigation }: any) {
         </Button>
 
         <IconButton icon="dice-5" size={30} onPress={handleCreateRandomSetup} />
-      </View>
+      </LinearGradient>
     </View>
   );
 }
@@ -306,7 +319,12 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-end",
+    position: "absolute",
+    bottom: 0,
+    height: 100,
+    left: 0,
+    right: 0,
   },
   nextButton: {
     borderRadius: 100,

@@ -96,8 +96,8 @@ export const ModalEnteringTransition = () => {
         { scale: withSpring(1) },
         {
           translateY: withSpring(0, {
-            damping: 12,
-            stiffness: 90,
+            damping: 30,
+            stiffness: 150,
           }),
         },
       ],
