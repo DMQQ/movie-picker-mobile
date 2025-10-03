@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { View } from "react-native";
+import { FlatListProps, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { Movie } from "../../../types";
@@ -8,7 +8,11 @@ import useTranslation from "../../service/useTranslation";
 import CreateCollectionFromLiked from "../CreateCollectionFromLiked";
 import MatchTile from "./MatchTile";
 
-interface TileListProps {
+interface TileListProps
+  extends Omit<
+    FlatListProps<Movie>,
+    "data" | "renderItem" | "keyExtractor" | "ListEmptyComponent" | "ListHeaderComponent" | "numColumns" | "initialNumToRender"
+  > {
   data: any[];
 
   label: string;
@@ -18,7 +22,7 @@ interface TileListProps {
   onLongItemPress?: (item: Movie) => void;
 }
 
-export default function TilesList<T>(props: TileListProps) {
+export default function TilesList<T>({ data, label, onLongItemPress, useMovieType, ...rest }: TileListProps) {
   const type = useAppSelector((state) => state.room.room.type);
 
   const navigation = useNavigation<any>();
@@ -27,14 +31,15 @@ export default function TilesList<T>(props: TileListProps) {
   return (
     <>
       <Animated.FlatList
+        {...rest}
         numColumns={3}
-        layout={LinearTransition}
+        contentContainerStyle={[rest.contentContainerStyle, { gap: 15 }]}
         ListHeaderComponent={
-          props.label ? (
+          label ? (
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-              <Text style={{ fontSize: 35, marginBottom: 15, fontFamily: "Bebas", maxWidth: "70%" }}>{props.label}</Text>
+              <Text style={{ fontSize: 35, marginBottom: 15, fontFamily: "Bebas", maxWidth: "70%" }}>{label}</Text>
 
-              <CreateCollectionFromLiked data={props.data} />
+              <CreateCollectionFromLiked data={data} />
             </View>
           ) : null
         }
@@ -47,17 +52,17 @@ export default function TilesList<T>(props: TileListProps) {
             </Button>
           </View>
         }
-        data={props.data}
+        data={data}
         keyExtractor={(match: Movie) => match.type + "_" + match.id.toString()}
         initialNumToRender={12}
         renderItem={({ item: match, index }) => (
           <MatchTile
-            posterSize={props.data?.length % 3 !== 0 && index === props.data.length - 1 ? 780 : props?.data?.length % 2 !== 0 ? 500 : 200}
+            posterSize={data?.length % 3 !== 0 && index === data.length - 1 ? 780 : data?.length % 2 !== 0 ? 500 : 200}
             match={match}
-            type={props.useMovieType ? match.type || (match?.name ? "tv" : "movie") : type}
+            type={useMovieType ? match.type || (match?.name ? "tv" : "movie") : type}
             navigation={navigation}
             index={index}
-            onLongPress={props.onLongItemPress}
+            onLongPress={onLongItemPress}
           />
         )}
       />

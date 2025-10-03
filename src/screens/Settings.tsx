@@ -59,8 +59,8 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
 
   return (
     <TransparentModalScreen>
-      <BlurView style={{ flex: 1, paddingTop: insets.top }} intensity={50} tint="dark">
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)" }}>
+      <BlurView style={{ flex: 1 }} intensity={50} tint="dark">
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)", paddingTop: 100 }}>
           <PageHeading title={t("settings.heading")} />
           <View style={{ paddingHorizontal: 15, flex: 1 }}>
             <View style={{ marginTop: 20 }}>

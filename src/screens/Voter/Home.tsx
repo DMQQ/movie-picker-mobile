@@ -115,11 +115,10 @@ export default function Home({ navigation, route }: any) {
 
   const renderInitialState = () => (
     <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
-      <PageHeading title={t("voter.home.title")} onPress={onGoBack} />
-      <View style={{ flex: 1, paddingHorizontal: 15, paddingBottom: 15 }}>
+      <PageHeading title={t("voter.home.howtotitle")} onPress={onGoBack} />
+      <View style={{ flex: 1, paddingHorizontal: 15, paddingBottom: 15, paddingTop: 120 }}>
         <View style={{ flex: 1 }}>
           <View style={{ marginTop: 15 }}>
-            <Text style={{ fontSize: 35, fontFamily: "Bebas", marginBottom: 5 }}>{t("voter.home.howtotitle")}</Text>
             <Text style={{ fontSize: 18 }}>{t("voter.home.howto")}</Text>
           </View>
           <PickCategory
@@ -422,7 +421,7 @@ export default function Home({ navigation, route }: any) {
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingBottom: 20 }}>
       {status === "idle" && renderInitialState()}
       {status === "waiting" && renderWaitingState()}
       {status === "rating" && currentMovies !== undefined && renderRatingState()}

@@ -15,6 +15,7 @@ import useTranslation from "../../service/useTranslation";
 import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
 
 interface RoomSetupState {
   category: string;
@@ -223,9 +224,9 @@ export default function RoomSetup({ navigation }: any) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeIOSContainer style={{ flex: 1 }}>
       <PageHeading title={t("room.movie") + " Setup"} />
-      <ScrollView style={styles.flex} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.flex} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: 80 }}>
         <View style={styles.contentContainer}>
           <Section title={t("room.game_time")}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -282,12 +283,7 @@ export default function RoomSetup({ navigation }: any) {
       </ScrollView>
 
       <LinearGradient
-        style={[
-          styles.buttonContainer,
-          Platform.OS === "android" && {
-            paddingBottom: insets.bottom,
-          },
-        ]}
+        style={[styles.buttonContainer, { paddingBottom: insets.bottom }]}
         colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.8)"]}
       >
         <Button
@@ -302,7 +298,7 @@ export default function RoomSetup({ navigation }: any) {
 
         <IconButton icon="dice-5" size={30} onPress={handleCreateRandomSetup} />
       </LinearGradient>
-    </View>
+    </SafeIOSContainer>
   );
 }
 

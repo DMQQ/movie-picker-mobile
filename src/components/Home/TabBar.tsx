@@ -96,7 +96,7 @@ export default function TabBar(props: { likeCard: () => void; removeCard: () => 
       style={[
         {
           position: "absolute",
-          bottom: Platform.OS === "ios" ? -30 : 30,
+          bottom: Platform.OS === "ios" ? 0 : 30,
           left: 10,
           width: width,
           flexDirection: "row",

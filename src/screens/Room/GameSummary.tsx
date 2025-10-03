@@ -14,6 +14,7 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
 
 interface GameSummary {
   roomId: string;
@@ -136,7 +137,7 @@ export default function GameSummary({ route }: any) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeIOSContainer style={{ flex: 1 }}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <View style={styles.statusContainer}>
@@ -252,7 +253,7 @@ export default function GameSummary({ route }: any) {
           {t("game-summary.back-to-home")}
         </Button>
       </View>
-    </View>
+    </SafeIOSContainer>
   );
 }
 

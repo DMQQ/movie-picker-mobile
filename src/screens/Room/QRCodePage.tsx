@@ -15,6 +15,7 @@ import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig
 import { FancySpinner } from "../../components/FancySpinner";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
 
 interface RoomSetupParams {
   category: string;
@@ -166,9 +167,9 @@ export default function QRCodePage({ navigation, route }: any) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeIOSContainer style={{ flex: 1 }}>
       <PageHeading title={t("room.qr-title")} />
-      <View style={{ position: "relative", flex: 1, padding: 15 }}>
+      <View style={{ position: "relative", flex: 1, padding: 15, paddingTop: 80 }}>
         <Text
           style={{
             fontSize: 16,
@@ -239,7 +240,7 @@ export default function QRCodePage({ navigation, route }: any) {
           {moviesCount === 0 ? t("room.too-restricted") : "start"}
         </Button>
       </View>
-    </View>
+    </SafeIOSContainer>
   );
 }
 

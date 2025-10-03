@@ -34,7 +34,7 @@ export default function MoviesActionButtons({
           flexDirection: "row",
           gap: 15,
           position: "absolute",
-          bottom: 0,
+          bottom: 15,
           left: 15,
           right: 15,
           borderRadius: 100,

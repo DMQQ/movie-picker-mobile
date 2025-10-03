@@ -73,8 +73,8 @@ const BottomTab = memo(
     return (
       <>
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.6)"]}
-          style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 100, zIndex: 999 }}
+          colors={["transparent", "rgba(0,0,0,0.6)", "#000"]}
+          style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 100, zIndex: 90 }}
           pointerEvents="none"
         />
         <BottomTabContainer>

@@ -14,6 +14,7 @@ import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
 import useRoomMatches from "../../service/useRoomMatches";
 import { SocketContext } from "../../service/SocketContext";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -93,7 +94,7 @@ export default function Home({ route, navigation }: any) {
   );
 
   return (
-    <View style={{ flex: 1, marginBottom: insets.bottom }}>
+    <SafeIOSContainer style={{ flex: 1, marginBottom: insets.bottom }}>
       <HomeAppbar route={route} hasCards={cards.length > 0} />
 
       {isPlaying ? (
@@ -129,7 +130,7 @@ export default function Home({ route, navigation }: any) {
       )}
 
       <Matches roomId={route.params?.roomId} />
-    </View>
+    </SafeIOSContainer>
   );
 }
 

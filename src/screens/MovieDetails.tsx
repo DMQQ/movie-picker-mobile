@@ -104,26 +104,23 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
 
       <Trailers id={movieId} type={typeOfContent} />
 
-      <View
-        style={{
-          position: "absolute",
-          zIndex: 100,
-          left: 5,
-          top: insets.top + 5,
-        }}
+      <PlatformBlurView
+        isInteractive
+        style={[
+          { borderRadius: 100, overflow: "hidden" },
+          Platform.OS === "android" && {
+            backgroundColor: "rgba(0,0,0,0.5)",
+          },
+          {
+            position: "absolute",
+            zIndex: 100,
+            left: 5,
+            top: insets.top + 5,
+          },
+        ]}
       >
-        <PlatformBlurView
-          isInteractive
-          style={[
-            { borderRadius: 100, overflow: "hidden" },
-            Platform.OS === "android" && {
-              backgroundColor: "rgba(0,0,0,0.5)",
-            },
-          ]}
-        >
-          <IconButton icon={"chevron-left"} size={30} onPress={handleBack} iconColor="white" />
-        </PlatformBlurView>
-      </View>
+        <IconButton icon={"chevron-left"} size={25} onPress={handleBack} iconColor="white" />
+      </PlatformBlurView>
     </View>
   );
 }

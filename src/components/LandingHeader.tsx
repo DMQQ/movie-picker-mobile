@@ -48,8 +48,8 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
   return (
     <>
       <LinearGradient
-        colors={["#000", "transparent"]}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 100 + insets.top, zIndex: 999 }}
+        colors={["#000", "rgba(0,0,0,0.6)", "transparent"]}
+        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 150, zIndex: 90 }}
         pointerEvents="none"
       />
       <Animated.View style={[styles.container]} entering={FadeInUp}>

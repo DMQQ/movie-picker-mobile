@@ -11,6 +11,7 @@ import useTranslation from "../../service/useTranslation";
 import { ThumbnailSizes } from "../Thumbnail";
 import ActiveUsers from "./ActiveUsers";
 import DialogModals from "./DialogModals";
+import { GlassView } from "expo-glass-effect";
 
 const SmallButton = ({ children, onPress, icon, style }: { children?: string; onPress: () => void; icon?: string; style?: any }) => {
   const theme = useTheme();
@@ -66,13 +67,20 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
   return (
     <>
       <View style={{ marginTop: 0, flexDirection: "row", alignItems: "center" }}>
-        {isHost ? (
-          <Button onPress={handleEndGame} buttonColor="transparent" textColor="#ff4444">
-            {t("dialogs.scan-code.endGame")}
-          </Button>
-        ) : (
-          <Button onPress={toggleLeaveModal}>{t("dialogs.scan-code.leave")}</Button>
-        )}
+        <GlassView
+          glassEffectStyle="clear"
+          tintColor={"#ff4444"}
+          style={{ borderRadius: 100, marginLeft: 10, overflow: "hidden" }}
+          isInteractive
+        >
+          {isHost ? (
+            <Button onPress={handleEndGame} buttonColor="transparent" textColor="#fff">
+              {t("dialogs.scan-code.endGame")}
+            </Button>
+          ) : (
+            <Button onPress={toggleLeaveModal}>{t("dialogs.scan-code.leave")}</Button>
+          )}
+        </GlassView>
 
         <ActiveUsers data={users} />
 

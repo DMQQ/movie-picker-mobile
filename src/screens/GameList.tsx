@@ -125,23 +125,9 @@ export default function GameList({ navigation }: ScreenProps<"Games">) {
 
   return (
     <SafeIOSContainer>
-      <View style={styles.header}>
-        <PageHeading title={t("voter.games")} />
+      <PageHeading title={t("voter.games")} />
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
-          {categories.map((category) => (
-            <TouchableRipple
-              key={category.id}
-              onPress={() => setSelectedCategory(category.id)}
-              style={[styles.categoryChip, selectedCategory === category.id && styles.categoryChipActive]}
-            >
-              <Text style={[styles.categoryText, selectedCategory === category.id && styles.categoryTextActive]}>{category.label}</Text>
-            </TouchableRipple>
-          ))}
-        </ScrollView>
-      </View>
-
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: 60 }}>
         {filteredGames.map((game, index) => (
           <GameCard
             index={game.index}
@@ -192,7 +178,7 @@ const styles = StyleSheet.create({
     marginRight: 40,
   },
   categoriesContainer: {
-    paddingHorizontal: 15,
+    marginTop: 8,
   },
   categoryChip: {
     paddingHorizontal: 16,
