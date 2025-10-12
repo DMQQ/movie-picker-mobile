@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { ImageBackground, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Image, ImageProps } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
@@ -10,6 +10,8 @@ interface ThumbnailProps extends ImageProps {
   container?: StyleProp<ViewStyle>;
   priority?: "low" | "high" | "normal";
   placeholder?: string;
+
+  alt?: string;
 }
 
 export const ThumbnailSizes = {
@@ -81,6 +83,11 @@ export default function Thumbnail({ path, size = 200, container, priority = "nor
 
   return (
     <BlurPlaceholder style={[styles.container, container]}>
+      {rest.alt && (
+        <View style={styles.altContainer}>
+          <Text style={styles.altText}>{rest.alt}</Text>
+        </View>
+      )}
       <Image
         {...rest}
         priority={priority}
@@ -107,5 +114,22 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
+    zIndex: 5,
+  },
+  altContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1,
+  },
+
+  altText: {
+    color: "white",
+    fontFamily: "Bebas",
+    textAlign: "center",
   },
 });

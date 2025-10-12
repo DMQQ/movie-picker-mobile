@@ -11,7 +11,7 @@ import Similar from "../Similar";
 import Cast from "./Cast";
 import Seasons from "./SeasonsList";
 import WatchProviders from "./WatchProviders";
-import PlatformBlurView from "../PlatformBlurView";
+import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
 
 export default function MovieDetails({
   movie,
@@ -37,7 +37,7 @@ export default function MovieDetails({
 
   return (
     <Animated.View style={{ flex: 1 }} entering={FadeIn}>
-      <PlatformBlurView
+      <BlurViewWrapper
         style={{
           borderTopRightRadius: 20,
           borderTopLeftRadius: 20,
@@ -123,7 +123,7 @@ export default function MovieDetails({
             <Text style={{ color: "gray", textAlign: "center" }}>{t("global.attributions")}</Text>
           </View>
         </View>
-      </PlatformBlurView>
+      </BlurViewWrapper>
     </Animated.View>
   );
 }

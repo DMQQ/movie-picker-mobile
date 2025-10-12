@@ -25,6 +25,8 @@ export interface Movie {
   original_name?: string;
 
   placeholder_poster_path?: string;
+
+  runtime: number;
 }
 
 export interface TVShow {}

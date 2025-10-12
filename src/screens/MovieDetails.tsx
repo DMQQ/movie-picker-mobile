@@ -1,24 +1,18 @@
-import * as Haptics from "expo-haptics";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { Dimensions, Platform, View } from "react-native";
-import { IconButton, Text, TouchableRipple } from "react-native-paper";
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Entypo from "react-native-vector-icons/Entypo";
 import { Movie } from "../../types";
-import FrostedGlass from "../components/FrostedGlass";
 import MovieDetails from "../components/Movie/MovieDetails";
 import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
 import Trailers from "../components/Movie/Trailers";
 import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
 import { ScreenProps } from "./types";
-import PlatformBlurView from "../components/PlatformBlurView";
-import { AntDesign } from "@expo/vector-icons";
+import FloatingMovieHeader from "../components/FloatingMovieHeader";
 
 const { width, height } = Dimensions.get("screen");
 
-export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"MovieDetails">) {
+export default function MovieDetailsScreen({ route }: ScreenProps<"MovieDetails">) {
   const scrollOffset = useSharedValue(0);
 
   const IMG_HEIGHT = useMemo(() => height * 0.75, [height]);
@@ -32,31 +26,6 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
     },
   });
 
-  const handleBack = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.goBack();
-  }, [navigation]);
-
-  const imageStyle = useAnimatedStyle(() => {
-    if (Platform.OS === "ios") {
-      const translateY = interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]);
-
-      const scale = interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]);
-
-      return {
-        transform: [{ translateY }, { scale }],
-      };
-    } else {
-      return {
-        transform: [
-          {
-            translateY: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [-IMG_HEIGHT / 3, 0, IMG_HEIGHT / 3]),
-          },
-        ],
-      };
-    }
-  });
-
   const { data: movie = {} as Movie, isLoading: loading } = useGetMovieQuery({
     id: movieId,
     type: typeOfContent,
@@ -67,20 +36,28 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
     type: typeOfContent,
   });
 
-  const insets = useSafeAreaInsets();
-
   return (
     <View style={{ flex: 1 }}>
       <Animated.ScrollView
-        scrollEventThrottle={16}
         onScroll={scrollhandler}
         contentContainerStyle={{
           alignItems: "center",
+          paddingTop: IMG_HEIGHT,
         }}
-        removeClippedSubviews={false}
-        style={{ flex: 1 }}
+        bounces
+        stickyHeaderIndices={[0]}
       >
-        <Animated.View style={imageStyle}>
+        <Animated.View
+          style={[
+            {
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 1,
+            },
+          ]}
+        >
           <Thumbnail
             size={ThumbnailSizes.poster.xxlarge}
             container={[
@@ -94,33 +71,18 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
             priority="high"
           />
         </Animated.View>
-
-        {loading ? (
-          <MovieDetailsSkeleton />
-        ) : (
-          <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={width} />
-        )}
+        <View style={{ zIndex: 10, position: "relative" }}>
+          {loading ? (
+            <MovieDetailsSkeleton />
+          ) : (
+            <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={width} />
+          )}
+        </View>
       </Animated.ScrollView>
 
       <Trailers id={movieId} type={typeOfContent} />
 
-      <PlatformBlurView
-        isInteractive
-        style={[
-          { borderRadius: 100, overflow: "hidden" },
-          Platform.OS === "android" && {
-            backgroundColor: "rgba(0,0,0,0.5)",
-          },
-          {
-            position: "absolute",
-            zIndex: 100,
-            left: 5,
-            top: insets.top + 5,
-          },
-        ]}
-      >
-        <IconButton icon={"chevron-left"} size={25} onPress={handleBack} iconColor="white" />
-      </PlatformBlurView>
+      <FloatingMovieHeader movie={movie! as any} scrollY={scrollOffset} />
     </View>
   );
 }

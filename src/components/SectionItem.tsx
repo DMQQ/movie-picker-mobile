@@ -1,6 +1,5 @@
 import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import Animated, { FadeIn } from "react-native-reanimated";
 import { Movie } from "../../types";
 import Thumbnail from "./Thumbnail";
 
@@ -12,7 +11,7 @@ const getColor = (score: number) => {
 
 export const SectionListItem = (item: Movie & { onPress: () => void }) => (
   <Pressable onPress={item.onPress} style={sectionStyles.item}>
-    <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} />
+    <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} alt={item.name || item.title} />
     {item.vote_average > 0 && (
       <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(item.vote_average || 0) }]}>
         <Text

@@ -57,7 +57,7 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
       </View>
       <View style={styles.iconContainer}>
         <TouchableOpacity style={styles.iconButton} onPress={() => onPress("1")}>
-          <FontAwesome name={isInGroup("1") ? "star" : "star-o"} size={35} color="#fff" />
+          <FontAwesome name={isInGroup("1") ? "heart" : "heart-o"} size={35} color="#fff" />
           {!props?.hideLabels && (
             <Text numberOfLines={1} ellipsizeMode="clip" style={styles.iconText}>
               {t("quick-actions.favourite")}

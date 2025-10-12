@@ -7,7 +7,7 @@ const isIOS26 = isLiquidGlassAvailable();
 
 const GlassViewWrapper = ({ children, ...rest }: PropsWithChildren<GlassViewProps>) => {
   return (
-    <GlassView {...rest} style={[rest.style, { overflow: "hidden" }]} glassEffectStyle="clear" tintColor="rgba(0,0,0,0.5)">
+    <GlassView style={[rest.style, { overflow: "hidden" }]} glassEffectStyle="clear" tintColor="rgba(0,0,0,0.5)" {...rest}>
       {children}
     </GlassView>
   );
@@ -22,7 +22,7 @@ export const BlurViewWrapper = ({ children, ...rest }: PropsWithChildren<React.C
       {...rest}
       intensity={50}
       tint="dark"
-      style={[rest.style, { overflow: "hidden", borderWidth: 2, borderColor: "rgba(255,255,255,0.1)" }]}
+      style={[{ overflow: "hidden", borderWidth: 2, borderColor: "rgba(255,255,255,0.1)" }, rest.style]}
     >
       {children}
     </BlurView>

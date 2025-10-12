@@ -40,26 +40,30 @@ export default function PageHeading({
       <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top : 0 }]}>
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center", width: "100%" }}>
           {showBackButton && (
-            <Pressable
+            <PlatformBlurView
+              isInteractive
               style={[
                 styles.backButton,
                 Platform.OS === "android" && {
                   backgroundColor: "rgba(0,0,0,0.5)",
                 },
+                { padding: 10, borderRadius: 1000 },
               ]}
-              onPress={() => {
-                typeof onPress !== "undefined" ? onPress() : navigation.goBack();
-
-                if (Platform.OS === "ios") {
-                  Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
-                }
-              }}
             >
-              <PlatformBlurView isInteractive style={{ padding: 10, borderRadius: 100 }}>
+              <Pressable
+                onPress={() => {
+                  typeof onPress !== "undefined" ? onPress() : navigation.goBack();
+
+                  if (Platform.OS === "ios") {
+                    Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+                  }
+                }}
+              >
                 <Ionicons name="chevron-back" size={25} color={"#fff"} />
-              </PlatformBlurView>
-            </Pressable>
+              </Pressable>
+            </PlatformBlurView>
           )}
+
           <Text style={styles.headerTitle}>{title}</Text>
         </View>
         {children}
