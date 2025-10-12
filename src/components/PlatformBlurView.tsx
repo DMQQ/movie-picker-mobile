@@ -13,7 +13,10 @@ const GlassViewWrapper = ({ children, ...rest }: PropsWithChildren<GlassViewProp
   );
 };
 
-const BlurViewWrapper = ({ children, ...rest }: PropsWithChildren<React.ComponentProps<typeof BlurView>>) => {
+export const BlurViewWrapper = ({ children, ...rest }: PropsWithChildren<React.ComponentProps<typeof BlurView>>) => {
+  if (Platform.OS === "android") {
+    return <View {...rest}>{children}</View>;
+  }
   return (
     <BlurView
       {...rest}

@@ -49,7 +49,6 @@ export default function Trailers({ id, type }: { id: number; type: string }) {
           {
             borderRadius: 15,
             marginRight: 15,
-            overflow: "hidden",
           },
           Platform.OS === "android" && { backgroundColor: "#000", borderWidth: 1, borderColor: hexToRgba("#FFFFFF", 0.1) },
         ]}
