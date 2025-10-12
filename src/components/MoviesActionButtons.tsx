@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { Platform, View } from "react-native";
+import { Platform, StyleProp, View, ViewStyle } from "react-native";
 import { Button, MD2DarkTheme } from "react-native-paper";
 import useTranslation from "../service/useTranslation";
 import { LinearGradient } from "expo-linear-gradient";
@@ -15,6 +15,8 @@ interface MoviesActionButtonsProps {
   }[];
 
   fortuneWheelTitle?: string;
+
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 export default function MoviesActionButtons({
@@ -22,6 +24,8 @@ export default function MoviesActionButtons({
   match,
   fortuneWheelMovies,
   fortuneWheelTitle,
+
+  containerStyle,
 }: MoviesActionButtonsProps) {
   const navigation = useNavigation<any>();
   const t = useTranslation();
@@ -40,6 +44,7 @@ export default function MoviesActionButtons({
           borderRadius: 100,
           zIndex: 10,
         },
+        containerStyle,
       ]}
       colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.8)"]}
     >

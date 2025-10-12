@@ -13,32 +13,6 @@ import ActiveUsers from "./ActiveUsers";
 import DialogModals from "./DialogModals";
 import { GlassView } from "expo-glass-effect";
 
-const SmallButton = ({ children, onPress, icon, style }: { children?: string; onPress: () => void; icon?: string; style?: any }) => {
-  const theme = useTheme();
-
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[
-        styles.smallButton,
-        {
-          backgroundColor: `${theme.colors.primary}33`,
-          borderColor: `${theme.colors.primary}66`,
-        },
-        style,
-      ]}
-      activeOpacity={0.7}
-    >
-      <View style={styles.buttonContent}>
-        {icon && (
-          <MaterialCommunityIcons name={icon as any} size={14} color={theme.colors.primary} style={[children && styles.buttonIcon]} />
-        )}
-        {children && <Text style={[styles.buttonText, { color: theme.colors.primary }]}>{children}</Text>}
-      </View>
-    </TouchableOpacity>
-  );
-};
-
 function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }; hasCards: boolean }) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
@@ -82,7 +56,7 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
           )}
         </GlassView>
 
-        <ActiveUsers data={users} />
+        <ActiveUsers data={users} onPress={() => setShowQRModal((p) => !p)} />
 
         {!hasCards && !isFinished && isPlaying && (
           <Appbar.Action
@@ -94,8 +68,6 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
             }}
           />
         )}
-
-        <SmallButton icon="qrcode-scan" onPress={() => setShowQRModal((p) => !p)} style={{ marginRight: 10 }} />
 
         <LikedMoviesPreview />
       </View>

@@ -137,7 +137,7 @@ export default function GameSummary({ route }: any) {
   }
 
   return (
-    <SafeIOSContainer style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <View style={styles.statusContainer}>
@@ -253,7 +253,7 @@ export default function GameSummary({ route }: any) {
           {t("game-summary.back-to-home")}
         </Button>
       </View>
-    </SafeIOSContainer>
+    </View>
   );
 }
 

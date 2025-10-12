@@ -10,16 +10,18 @@ const Stack = createNativeStackNavigator();
 
 export default function Main({ navigation }: any) {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SocketProvider namespace="/voter">
-        <MovieVoterProvider>
-          <ContextProvider navigation={navigation}>
-            <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="Home" component={Home} />
-            </Stack.Navigator>
-          </ContextProvider>
-        </MovieVoterProvider>
-      </SocketProvider>
-    </GestureHandlerRootView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SocketProvider namespace="/voter">
+          <MovieVoterProvider>
+            <ContextProvider navigation={navigation}>
+              <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="Home" component={Home} />
+              </Stack.Navigator>
+            </ContextProvider>
+          </MovieVoterProvider>
+        </SocketProvider>
+      </GestureHandlerRootView>
+    </SafeAreaView>
   );
 }

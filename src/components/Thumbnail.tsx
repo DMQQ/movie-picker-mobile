@@ -80,7 +80,7 @@ export default function Thumbnail({ path, size = 200, container, priority = "nor
   }
 
   return (
-    <BlurPlaceholder placeholder={placeholder} style={[styles.container, container]}>
+    <BlurPlaceholder style={[styles.container, container]}>
       <Image
         {...rest}
         priority={priority}
@@ -88,6 +88,8 @@ export default function Thumbnail({ path, size = 200, container, priority = "nor
           uri: `https://image.tmdb.org/t/p/w${size}` + path,
         }}
         style={[styles.image, rest.style]}
+        placeholder={placeholder ? { uri: placeholder } : undefined}
+        placeholderContentFit="cover"
       />
     </BlurPlaceholder>
   );

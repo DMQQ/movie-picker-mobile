@@ -94,7 +94,7 @@ export default function Home({ route, navigation }: any) {
   );
 
   return (
-    <SafeIOSContainer style={{ flex: 1, marginBottom: insets.bottom }}>
+    <View style={{ flex: 1 }}>
       <HomeAppbar route={route} hasCards={cards.length > 0} />
 
       {isPlaying ? (
@@ -130,7 +130,7 @@ export default function Home({ route, navigation }: any) {
       )}
 
       <Matches roomId={route.params?.roomId} />
-    </SafeIOSContainer>
+    </View>
   );
 }
 

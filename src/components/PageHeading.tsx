@@ -13,24 +13,31 @@ export default function PageHeading({
   title,
   onPress,
   showBackButton = true,
+  useSafeArea = true,
+  showGradientBackground = true,
 
   children,
 }: PropsWithChildren<{
   title: string;
   onPress?: () => void;
   showBackButton?: boolean;
+
+  showGradientBackground?: boolean;
+  useSafeArea?: boolean;
 }>) {
   const navigation = useNavigation();
 
   const insets = useSafeAreaInsets();
   return (
     <>
-      <LinearGradient
-        colors={["#000", "rgba(0,0,0,0.6)", "transparent"]}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 150, zIndex: 90 }}
-        pointerEvents="none"
-      />
-      <View style={[styles.headerTop, { marginTop: insets.top }]}>
+      {showGradientBackground && (
+        <LinearGradient
+          colors={["#000", "rgba(0,0,0,0.6)", "transparent"]}
+          style={{ position: "absolute", top: 0, left: 0, right: 0, height: 150, zIndex: 10 }}
+          pointerEvents="none"
+        />
+      )}
+      <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top : 0 }]}>
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center", width: "100%" }}>
           {showBackButton && (
             <Pressable
@@ -68,7 +75,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 100,
+    zIndex: 10,
   },
   headerTitle: {
     fontFamily: "Bebas",

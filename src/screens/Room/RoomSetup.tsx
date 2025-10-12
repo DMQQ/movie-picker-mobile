@@ -224,8 +224,8 @@ export default function RoomSetup({ navigation }: any) {
   };
 
   return (
-    <SafeIOSContainer style={{ flex: 1 }}>
-      <PageHeading title={t("room.movie") + " Setup"} />
+    <View style={{ flex: 1 }}>
+      <PageHeading useSafeArea={false} title={t("room.movie") + " Setup"} />
       <ScrollView style={styles.flex} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: 80 }}>
         <View style={styles.contentContainer}>
           <Section title={t("room.game_time")}>
@@ -282,10 +282,7 @@ export default function RoomSetup({ navigation }: any) {
         <View style={{ height: 80 }} />
       </ScrollView>
 
-      <LinearGradient
-        style={[styles.buttonContainer, { paddingBottom: insets.bottom }]}
-        colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.8)"]}
-      >
+      <LinearGradient style={[styles.buttonContainer]} colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.8)"]}>
         <Button
           mode="contained"
           style={styles.nextButton}
@@ -298,7 +295,7 @@ export default function RoomSetup({ navigation }: any) {
 
         <IconButton icon="dice-5" size={30} onPress={handleCreateRandomSetup} />
       </LinearGradient>
-    </SafeIOSContainer>
+    </View>
   );
 }
 

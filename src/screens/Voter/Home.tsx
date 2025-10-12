@@ -115,8 +115,8 @@ export default function Home({ navigation, route }: any) {
 
   const renderInitialState = () => (
     <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
-      <PageHeading title={t("voter.home.howtotitle")} onPress={onGoBack} />
-      <View style={{ flex: 1, paddingHorizontal: 15, paddingBottom: 15, paddingTop: 120 }}>
+      <PageHeading useSafeArea={false} title={t("voter.home.howtotitle")} onPress={onGoBack} />
+      <View style={{ flex: 1, paddingHorizontal: 15, paddingBottom: 15, paddingTop: 100 }}>
         <View style={{ flex: 1 }}>
           <View style={{ marginTop: 15 }}>
             <Text style={{ fontSize: 18 }}>{t("voter.home.howto")}</Text>
@@ -157,11 +157,16 @@ export default function Home({ navigation, route }: any) {
     const currentUserReady = users.find((u) => u.userId === currentUserId)?.ready;
 
     return (
-      <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
-        <PageHeading title={users.length > 1 ? t("voter.home.ready") : t("voter.home.waiting-initial")} onPress={onGoBack} />
+      <Animated.View style={{ flex: 1, backgroundColor: "#000" }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
+        <PageHeading
+          useSafeArea={false}
+          title={users.length > 1 ? t("voter.home.ready") : t("voter.home.waiting-initial")}
+          onPress={onGoBack}
+          showGradientBackground={false}
+        />
 
         <View style={{ padding: 15, flex: 1 }}>
-          <Text>
+          <Text style={{ marginTop: 50 }}>
             {t("voter.home.waiting")}... ({users.length}/2)
           </Text>
           <View style={styles.usersContainer}>
@@ -421,7 +426,7 @@ export default function Home({ navigation, route }: any) {
   );
 
   return (
-    <View style={{ flex: 1, paddingBottom: 20 }}>
+    <View style={{ flex: 1 }}>
       {status === "idle" && renderInitialState()}
       {status === "waiting" && renderWaitingState()}
       {status === "rating" && currentMovies !== undefined && renderRatingState()}

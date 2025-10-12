@@ -34,6 +34,7 @@ export default function TilesList<T>({ data, label, onLongItemPress, useMovieTyp
         {...rest}
         numColumns={3}
         contentContainerStyle={[rest.contentContainerStyle, { gap: 15 }]}
+        columnWrapperStyle={{ gap: 15 }}
         ListHeaderComponent={
           label ? (
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>

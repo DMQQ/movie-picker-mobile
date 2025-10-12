@@ -167,8 +167,8 @@ export default function QRCodePage({ navigation, route }: any) {
   const insets = useSafeAreaInsets();
 
   return (
-    <SafeIOSContainer style={{ flex: 1 }}>
-      <PageHeading title={t("room.qr-title")} />
+    <View style={{ flex: 1 }}>
+      <PageHeading useSafeArea={false} title={t("room.qr-title")} />
       <View style={{ position: "relative", flex: 1, padding: 15, paddingTop: 80 }}>
         <Text
           style={{
@@ -240,7 +240,7 @@ export default function QRCodePage({ navigation, route }: any) {
           {moviesCount === 0 ? t("room.too-restricted") : "start"}
         </Button>
       </View>
-    </SafeIOSContainer>
+    </View>
   );
 }
 

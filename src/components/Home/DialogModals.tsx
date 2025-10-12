@@ -1,6 +1,6 @@
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { useContext } from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { roomActions } from "../../redux/room/roomSlice";
@@ -69,12 +69,14 @@ export default function DialogModals({
         </Dialog.Content>
 
         <Dialog.Content>
-          <QRCode
-            backgroundColor={theme.colors.surface}
-            color={theme.colors.primary}
-            value={`flickmate://swipe/${qrCode}`}
-            size={Dimensions.get("screen").width / 1.35}
-          />
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <QRCode
+              backgroundColor={theme.colors.surface}
+              color={theme.colors.primary}
+              value={`flickmate://swipe/${qrCode}`}
+              size={Dimensions.get("screen").width / 2}
+            />
+          </View>
           <Text
             style={{
               color: theme.colors.primary,
