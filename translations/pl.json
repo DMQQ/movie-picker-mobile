@@ -279,7 +279,8 @@
       "new": "Nowości"
     },
     "list_footer": "Ładowanie więcej...",
-    "no_more_results": "Brak więcej wyników"
+    "no_more_results": "Brak więcej wyników",
+    "reached_end": "Dotarłeś do końca"
   },
   "tabBar": {
     "settings": "Ustawienia",

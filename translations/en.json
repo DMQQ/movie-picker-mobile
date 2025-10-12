@@ -281,7 +281,8 @@
       "new": "New"
     },
     "list_footer": "Loading more",
-    "no_more_results": "No more results"
+    "no_more_results": "No more results",
+    "reached_end": "You've reached the end"
   },
   "tabBar": {
     "settings": "Settings",

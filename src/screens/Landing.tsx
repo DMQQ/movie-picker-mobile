@@ -22,6 +22,7 @@ import useLanding, { SectionData } from "../service/useLanding";
 import useTranslation from "../service/useTranslation";
 import { ScreenProps } from "./types";
 import BottomTab from "../components/Landing/BottomTab";
+import Skeleton from "../components/Skeleton/Skeleton";
 
 const { width } = Dimensions.get("screen");
 
@@ -37,6 +38,73 @@ const getItemCount = (data: any) => data?.length || 0;
 const getItem = (data: any, index: number) => data[index];
 
 const AnimatedVirtualizedList = Animated.createAnimatedComponent(VirtualizedList);
+
+const LoadingSkeleton = memo(() => {
+  const movieWidth = Math.min(width * 0.25, 120);
+  const movieHeight = movieWidth * 1.5;
+
+  return (
+    <View style={skeletonStyles.container}>
+      {Array.from({ length: 2 }).map((_, sectionIndex) => (
+        <Animated.View key={sectionIndex} style={skeletonStyles.sectionContainer} entering={FadeIn.duration(600).delay(sectionIndex * 100)}>
+          <Skeleton>
+            <View style={{ width: 150, height: 25, backgroundColor: "#333", borderRadius: 5 }} />
+          </Skeleton>
+          <View style={skeletonStyles.moviesList}>
+            {Array.from({ length: 4 }).map((_, movieIndex) => (
+              <View key={movieIndex} style={skeletonStyles.movieCard}>
+                <Skeleton>
+                  <View style={{ width: movieWidth, height: movieHeight, backgroundColor: "#333", borderRadius: 8 }} />
+                </Skeleton>
+              </View>
+            ))}
+          </View>
+        </Animated.View>
+      ))}
+    </View>
+  );
+});
+
+const skeletonStyles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 15,
+    paddingBottom: 20,
+  },
+  sectionContainer: {
+    marginBottom: 40,
+  },
+  moviesList: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 15,
+  },
+  movieCard: {
+    alignItems: "center",
+  },
+});
+
+const noMoreResultsStyles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 40,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+  },
+  text: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  subtitle: {
+    color: "rgba(255, 255, 255, 0.6)",
+    fontSize: 14,
+    textAlign: "center",
+  },
+});
 
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const { data, onScroll, onEndReached, refreshing, onRefresh, getItemLayout, handleChipPress, selectedChip, scrollY, hasMore } =
@@ -74,16 +142,18 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         getItemLayout={getItemLayout}
         style={{ flex: 1 }}
         ListFooterComponent={
-          <View style={{ height: 100 }}>
+          <View style={{ minHeight: 200 }}>
             {hasMore ? (
-              <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", flex: 1, gap: 10 }}>
-                <ActivityIndicator size="small" color="#fff" />
-                <Text style={{ textAlign: "center", color: "#fff" }}>{t("landing.list_footer")}...</Text>
-              </View>
+              <LoadingSkeleton />
             ) : (
-              <View>
-                <Text style={{ textAlign: "center", color: "#fff" }}>{t("landing.no_more_results")}</Text>
-              </View>
+              <Animated.View 
+                style={noMoreResultsStyles.container}
+                entering={FadeIn.duration(400)}
+              >
+                <FontAwesome name="check-circle" size={32} color="rgba(255, 255, 255, 0.6)" />
+                <Text style={noMoreResultsStyles.text}>{t("landing.no_more_results")}</Text>
+                <Text style={noMoreResultsStyles.subtitle}>{t("landing.reached_end")}</Text>
+              </Animated.View>
             )}
           </View>
         }
