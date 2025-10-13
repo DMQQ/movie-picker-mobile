@@ -156,7 +156,7 @@ const Overview: React.FC = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <OverviewTopTabs.Navigator
-        initialLayout={{ width: Dimensions.get("window").width }}
+        initialLayout={{ width: Dimensions.get("window").width, height: Dimensions.get("screen").height }}
         initialRouteName="Matches"
         tabBar={(props) => <CustomTabBar {...props} />}
       >
@@ -183,9 +183,8 @@ const styles = StyleSheet.create({
   tabBarContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 8,
+    paddingVertical: 0,
     paddingHorizontal: 8,
-    paddingTop: 0,
   },
   backButtonContainer: {
     justifyContent: "center",

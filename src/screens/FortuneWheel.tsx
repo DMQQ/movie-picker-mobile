@@ -13,6 +13,7 @@ import useTranslation from "../service/useTranslation";
 import fillMissing from "../utils/fillMissing";
 import { shuffleInPlace } from "../utils/shuffle";
 import { throttle } from "../utils/throttle";
+import PageHeading from "../components/PageHeading";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -125,9 +126,7 @@ function FortuneWheel({ navigation, route }: any) {
 
   return (
     <SafeIOSContainer style={{ overflow: "hidden" }}>
-      <View style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
-      </View>
+      <PageHeading showBackButton title="" />
 
       <Animated.View
         entering={FadeIn}

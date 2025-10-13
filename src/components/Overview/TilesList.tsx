@@ -33,7 +33,7 @@ export default function TilesList<T>({ data, label, onLongItemPress, useMovieTyp
       <Animated.FlatList
         {...rest}
         numColumns={3}
-        contentContainerStyle={[rest.contentContainerStyle, { gap: 15 }]}
+        contentContainerStyle={[rest.contentContainerStyle, { gap: 15, paddingBottom: 60 }]}
         columnWrapperStyle={{ gap: 15 }}
         ListHeaderComponent={
           label ? (

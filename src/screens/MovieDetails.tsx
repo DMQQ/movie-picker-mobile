@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Dimensions, Platform, View } from "react-native";
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { Movie } from "../../types";
@@ -9,6 +9,7 @@ import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
 import { ScreenProps } from "./types";
 import FloatingMovieHeader from "../components/FloatingMovieHeader";
+import FloatingMovieBottomActions from "../components/FloatingMovieBottomActions";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -44,7 +45,8 @@ export default function MovieDetailsScreen({ route }: ScreenProps<"MovieDetails"
           alignItems: "center",
           paddingTop: IMG_HEIGHT,
         }}
-        bounces
+        overScrollMode={"never"}
+        bounces={false}
         stickyHeaderIndices={[0]}
       >
         <Animated.View
@@ -83,6 +85,14 @@ export default function MovieDetailsScreen({ route }: ScreenProps<"MovieDetails"
       <Trailers id={movieId} type={typeOfContent} />
 
       <FloatingMovieHeader movie={movie! as any} scrollY={scrollOffset} />
+
+      {/* <FloatingMovieBottomActions 
+        movie={movie! as any} 
+        scrollY={scrollOffset} 
+        movieId={movieId}
+        typeOfContent={typeOfContent}
+        providers={providers}
+      /> */}
     </View>
   );
 }

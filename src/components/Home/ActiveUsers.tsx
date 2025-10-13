@@ -17,7 +17,7 @@ export default function ActiveUsers(props: { data: string[]; showAll?: boolean; 
           width: Math.min(6, props.data?.length || 0) * 24,
         }}
       >
-        {isVisible &&
+        {isVisible ? (
           props.data.slice(0, 6).map((nick, n) => (
             <Avatar.Text
               key={n}
@@ -32,7 +32,19 @@ export default function ActiveUsers(props: { data: string[]; showAll?: boolean; 
                 backgroundColor: AVATAR_COLORS[n % AVATAR_COLORS.length],
               }}
             />
-          ))}
+          ))
+        ) : (
+          <Avatar.Icon
+            size={24}
+            icon="account"
+            color="white"
+            style={{
+              borderWidth: 0.5,
+              borderColor: "#fff",
+              backgroundColor: AVATAR_COLORS[0 % AVATAR_COLORS.length],
+            }}
+          />
+        )}
         <Avatar.Icon
           size={24}
           icon="plus"
