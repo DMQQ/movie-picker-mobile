@@ -126,6 +126,9 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
       <NoConnectionError />
 
       <AnimatedVirtualizedList
+        extraData={selectedChip}
+        overScrollMode={"never"}
+        bounces={false}
         initialNumToRender={3}
         onScroll={onScroll}
         data={data}
@@ -146,10 +149,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
             {hasMore ? (
               <LoadingSkeleton />
             ) : (
-              <Animated.View 
-                style={noMoreResultsStyles.container}
-                entering={FadeIn.duration(400)}
-              >
+              <Animated.View style={noMoreResultsStyles.container} entering={FadeIn.duration(400)}>
                 <FontAwesome name="check-circle" size={32} color="rgba(255, 255, 255, 0.6)" />
                 <Text style={noMoreResultsStyles.text}>{t("landing.no_more_results")}</Text>
                 <Text style={noMoreResultsStyles.subtitle}>{t("landing.reached_end")}</Text>
@@ -209,6 +209,9 @@ export const Section = memo(({ group }: SectionProps) => {
 
   if (movies.length === 0 && !state.isLoading) return null;
 
+  const movieWidth = Math.min(width * 0.25, 120);
+  const movieHeight = movieWidth * 1.5;
+
   return (
     <Animated.View style={sectionStyles.container} entering={FadeIn}>
       <Text style={sectionStyles.title}>{group.name}</Text>
@@ -231,6 +234,19 @@ export const Section = memo(({ group }: SectionProps) => {
               {...item}
             />
           )}
+          ListFooterComponent={
+            state.isLoading ? (
+              <View style={skeletonStyles.moviesList}>
+                {[...Array(2)].map((_, index) => (
+                  <View style={skeletonStyles.movieCard} key={index}>
+                    <Skeleton>
+                      <View style={{ width: movieWidth, height: movieHeight, backgroundColor: "#333", borderRadius: 8 }} />
+                    </Skeleton>
+                  </View>
+                ))}
+              </View>
+            ) : null
+          }
         />
       )}
     </Animated.View>

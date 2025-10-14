@@ -63,7 +63,7 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
               <PlatformBlurView style={[styles.buttonsContainer, { borderRadius: 100, overflow: "hidden" }]}>
                 <IconButton
                   icon="cog"
-                  size={20}
+                  size={25}
                   iconColor="#fff"
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -75,7 +75,7 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
 
                 <IconButton
                   icon="magnify"
-                  size={25}
+                  size={30}
                   iconColor="#fff"
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

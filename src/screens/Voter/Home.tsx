@@ -115,8 +115,8 @@ export default function Home({ navigation, route }: any) {
 
   const renderInitialState = () => (
     <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
-      <PageHeading useSafeArea={false} title={t("voter.home.howtotitle")} onPress={onGoBack} />
-      <View style={{ flex: 1, paddingHorizontal: 15, paddingBottom: 15, paddingTop: 100 }}>
+      <PageHeading gradientHeight={50} useSafeArea={false} title={t("voter.home.howtotitle")} onPress={onGoBack} />
+      <View style={{ flex: 1, paddingHorizontal: 15, paddingBottom: 15, paddingTop: 60 }}>
         <View style={{ flex: 1 }}>
           <View style={{ marginTop: 15 }}>
             <Text style={{ fontSize: 18 }}>{t("voter.home.howto")}</Text>
@@ -163,6 +163,7 @@ export default function Home({ navigation, route }: any) {
           title={users.length > 1 ? t("voter.home.ready") : t("voter.home.waiting-initial")}
           onPress={onGoBack}
           showGradientBackground={false}
+          gradientHeight={50}
         />
 
         <View style={{ padding: 15, flex: 1 }}>

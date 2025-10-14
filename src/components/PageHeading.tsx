@@ -15,6 +15,7 @@ export default function PageHeading({
   showBackButton = true,
   useSafeArea = true,
   showGradientBackground = true,
+  gradientHeight = 150,
 
   children,
 }: PropsWithChildren<{
@@ -23,6 +24,7 @@ export default function PageHeading({
   showBackButton?: boolean;
 
   showGradientBackground?: boolean;
+  gradientHeight?: number;
   useSafeArea?: boolean;
 }>) {
   const navigation = useNavigation();
@@ -33,35 +35,35 @@ export default function PageHeading({
       {showGradientBackground && (
         <LinearGradient
           colors={["#000", "rgba(0,0,0,0.6)", "transparent"]}
-          style={{ position: "absolute", top: 0, left: 0, right: 0, height: 150, zIndex: 10 }}
+          style={{ position: "absolute", top: 0, left: 0, right: 0, height: gradientHeight, zIndex: 10 }}
           pointerEvents="none"
         />
       )}
       <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top : 0 }]}>
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center", width: "100%" }}>
           {showBackButton && (
-            <PlatformBlurView
-              isInteractive
-              style={[
-                styles.backButton,
-                Platform.OS === "android" && {
-                  backgroundColor: "rgba(0,0,0,0.5)",
-                },
-                { padding: 10, borderRadius: 1000 },
-              ]}
-            >
-              <Pressable
-                onPress={() => {
-                  typeof onPress !== "undefined" ? onPress() : navigation.goBack();
+            <Pressable
+              style={styles.backButton}
+              onPress={() => {
+                typeof onPress !== "undefined" ? onPress() : navigation.goBack();
 
-                  if (Platform.OS === "ios") {
-                    Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
-                  }
-                }}
+                if (Platform.OS === "ios") {
+                  Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+                }
+              }}
+            >
+              <PlatformBlurView
+                isInteractive
+                style={[
+                  Platform.OS === "android" && {
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                  },
+                  { padding: 10, borderRadius: 1000 },
+                ]}
               >
                 <Ionicons name="chevron-back" size={25} color={"#fff"} />
-              </Pressable>
-            </PlatformBlurView>
+              </PlatformBlurView>
+            </Pressable>
           )}
 
           <Text style={styles.headerTitle}>{title}</Text>
@@ -95,5 +97,6 @@ const styles = StyleSheet.create({
     left: 15,
     zIndex: 1,
     top: Platform.OS === "android" ? 10 : 5,
+    borderRadius: 1000,
   },
 });

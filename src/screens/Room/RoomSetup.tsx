@@ -203,7 +203,7 @@ export default function RoomSetup({ navigation }: any) {
   const handleCreateRandomSetup = () => {
     let genres = [];
     if (genresData.length > 0) {
-      genres = [...genresData].sort(() => 0.5 - Math.random()).slice(0, 10);
+      genres = [...genresData].sort(() => 0.5 - Math.random()).slice(0, 12);
     }
     const randCategory = categories[Math.floor(Math.random() * categories.length)].path;
     navigation.navigate("CreateQRCode", {
@@ -225,7 +225,7 @@ export default function RoomSetup({ navigation }: any) {
 
   return (
     <View style={{ flex: 1 }}>
-      <PageHeading useSafeArea={false} title={t("room.movie") + " Setup"} />
+      <PageHeading gradientHeight={100} useSafeArea={false} title={t("room.movie") + " Setup"} />
       <ScrollView style={styles.flex} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: 80 }}>
         <View style={styles.contentContainer}>
           <Section title={t("room.game_time")}>

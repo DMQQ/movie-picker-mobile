@@ -2,6 +2,7 @@ import { Canvas, Group, Image, Mask, Path, Rect, Skia, SkPath, useImage } from "
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, Vibration, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, { useSharedValue, withSpring, useAnimatedStyle } from "react-native-reanimated";
 import { svgPathProperties } from "svg-path-properties";
 
 import { Image as RNImage } from "react-native";
@@ -43,6 +44,8 @@ export const ScratchCard = ({
     height: 0,
   });
 
+  const revealProgress = useSharedValue(0);
+
   const STROKE_WIDTH = useRef<number>(40);
   const totalAreaScratched = useRef<number>(0);
   const [isScratched, setIsScratched] = useState(false);
@@ -79,8 +82,12 @@ export const ScratchCard = ({
         const { width, height } = canvasLayoutMeta;
         const areaScratched = (totalAreaScratched.current / (width * height)) * 100;
 
-        if (areaScratched > 85) {
+        if (areaScratched > 60) {
           setIsScratched(true);
+          revealProgress.value = withSpring(1, {
+            damping: 50,
+            stiffness: 200,
+          });
           Vibration.vibrate(5);
         }
       }
@@ -99,7 +106,13 @@ export const ScratchCard = ({
     setIsScratched(false);
     setPaths([]);
     totalAreaScratched.current = 0;
+    revealProgress.value = 0;
   }, [imageUrl]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: revealProgress.value,
+    transform: [{ scale: 0.95 + revealProgress.value * 0.05 }],
+  }));
 
   const handleButtonPress = useCallback(() => {
     if (onButtonPress) {
@@ -110,39 +123,47 @@ export const ScratchCard = ({
   return (
     <GestureDetector gesture={pan}>
       <View style={[styles.container, style]}>
-        <Canvas onLayout={handleCanvasLayout} style={styles.canvas}>
-          <Offer imageUrl={imageUrl} width={width} height={height} />
-          {!isScratched ? (
-            <Mask
-              clip
-              mode="luminance"
-              mask={
-                <Group>
-                  <Rect x={0} y={0} width={width} height={height} color="#fff" />
-                  {paths.map((p, index) => (
-                    <Path
-                      key={p?.toSVGString() || index}
-                      path={p}
-                      strokeWidth={STROKE_WIDTH.current}
-                      style="stroke"
-                      strokeJoin="round"
-                      strokeCap="round"
-                      antiAlias
-                      color="black"
-                    />
-                  ))}
-                </Group>
-              }
-            >
-              <ScratchPattern width={width} height={height} />
-            </Mask>
-          ) : (
+        <View onLayout={handleCanvasLayout} style={styles.canvas}>
+          <Canvas style={styles.canvas}>
             <Offer imageUrl={imageUrl} width={width} height={height} />
-          )}
-        </Canvas>
+            {!isScratched ? (
+              <Mask
+                clip
+                mode="luminance"
+                mask={
+                  <Group>
+                    <Rect x={0} y={0} width={width} height={height} color="#fff" />
+                    {paths.map((p, index) => (
+                      <Path
+                        key={p?.toSVGString() || index}
+                        path={p}
+                        strokeWidth={STROKE_WIDTH.current}
+                        style="stroke"
+                        strokeJoin="round"
+                        strokeCap="round"
+                        antiAlias
+                        color="black"
+                      />
+                    ))}
+                  </Group>
+                }
+              >
+                <ScratchPattern width={width} height={height} />
+              </Mask>
+            ) : (
+              <Offer imageUrl={imageUrl} width={width} height={height} />
+            )}
+          </Canvas>
+        </View>
 
         {isScratched && showButtonOnScratch && (
-          <TouchableOpacity style={[styles.buttonOverlay, buttonStyle]} onPress={handleButtonPress} activeOpacity={0.8}></TouchableOpacity>
+          <Animated.View style={[styles.buttonOverlay, animatedStyle]}>
+            <TouchableOpacity
+              style={[styles.buttonContent, buttonStyle]}
+              onPress={handleButtonPress}
+              activeOpacity={0.8}
+            ></TouchableOpacity>
+          </Animated.View>
         )}
       </View>
     </GestureDetector>
@@ -168,7 +189,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
-
+  },
+  buttonContent: {
+    flex: 1,
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 25,

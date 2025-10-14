@@ -18,18 +18,17 @@ const IMG_HEIGHT = height * 0.75;
 interface FloatingMovieHeaderProps {
   movie: Movie;
   scrollY: SharedValue<number>;
+
+  onBack?(): void;
+
+  backButtonIcon?: string;
 }
 
-export default function FloatingMovieHeader({ movie, scrollY }: FloatingMovieHeaderProps) {
+export default function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", onBack }: FloatingMovieHeaderProps) {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const groups = useAppSelector((state) => state.favourite.groups);
-
-  const handleBack = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.goBack();
-  }, [navigation]);
 
   const isInFavourites = useMemo(() => {
     const favouritesGroup = groups.find((g) => g?.id === "1");
@@ -123,7 +122,7 @@ export default function FloatingMovieHeader({ movie, scrollY }: FloatingMovieHea
 
       <View style={styles.headerContent}>
         <PlatformBlurView isInteractive style={[styles.buttonContainer, Platform.OS === "android" && styles.androidButtonBackground]}>
-          <IconButton icon="chevron-left" size={25} onPress={handleBack} iconColor="white" />
+          <IconButton icon={backButtonIcon} size={25} onPress={onBack} iconColor="white" />
         </PlatformBlurView>
 
         <Animated.View style={[styles.movieInfoContainer, contentOpacity]}>

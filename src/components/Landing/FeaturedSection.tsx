@@ -47,14 +47,14 @@ const FeaturedSection = memo(
 
     return (
       <ImageBackground
-        style={[styles.featuredImage, { marginTop: -insets.top - 20 }]}
+        style={[styles.featuredImage, { marginTop: -insets.top - 40 }]}
         source={{
           uri: "https://image.tmdb.org/t/p/w780" + featured?.poster_path,
         }}
         defaultSource={{ uri: featured?.placeholder_poster_path }}
       >
         <LinearGradient style={styles.gradientContainer} colors={gradient}>
-          <Animated.View entering={FadeInDown.delay(500)}>
+          <Animated.View entering={FadeInDown.delay(250)}>
             <Pressable onPress={onPress}>
               <FrostedGlass style={{ padding: 15, borderBottomWidth: 0 }} container={{ borderWidth: 0 }}>
                 <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
 
   featuredImage: {
     width,
-    height: height / 1.3 + 50,
+    height: height / 1.3 + 70,
     position: "relative",
     marginBottom: 35,
   },

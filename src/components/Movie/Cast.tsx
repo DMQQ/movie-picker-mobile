@@ -7,7 +7,7 @@ import layout from "../../utils/layout";
 import FrostedGlass from "../FrostedGlass";
 
 export default function Cast({ id, type }: { id: number; type: "movie" | "tv" }) {
-  const { data, error, isLoading } = useGetMovieKeyPeopleQuery({ id, type, actorLimit: 15, includeDirector: true });
+  const { data, error, isLoading } = useGetMovieKeyPeopleQuery({ id, type, actorLimit: 20, includeDirector: true });
 
   const t = useTranslation();
 

@@ -42,8 +42,8 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({ state, descriptors, navigat
     const newIndex = state.index;
 
     indicatorPosition.value = withSpring(getIndicatorPosition(newIndex), {
-      damping: 20,
-      stiffness: 150,
+      damping: 30,
+      stiffness: 250,
     });
 
     tabScale.value = withSequence(withTiming(0.95, { duration: 100 }), withTiming(1, { duration: 150 }));

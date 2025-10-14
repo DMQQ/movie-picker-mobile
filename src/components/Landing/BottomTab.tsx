@@ -80,7 +80,7 @@ const BottomTab = memo(
         <BottomTabContainer>
           <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Favourites"))}>
             <>
-              <FontAwesome name="bookmark" size={20} color="#fff" />
+              <FontAwesome name="bookmark" size={25} color="#fff" />
               <Text style={tabStyles.buttonLabel}>{t("tabBar.favourites")}</Text>
             </>
           </TouchableOpacity>
@@ -95,14 +95,14 @@ const BottomTab = memo(
             )}
           >
             <>
-              <FontAwesome name="qrcode" size={20} color={"#fff"} />
+              <FontAwesome name="qrcode" size={25} color={"#fff"} />
               <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text>
             </>
           </TouchableOpacity>
 
           <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Games"))}>
             <>
-              <FontAwesome name="gamepad" size={20} color="#fff" />
+              <FontAwesome name="gamepad" size={25} color="#fff" />
               <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
             </>
           </TouchableOpacity>
