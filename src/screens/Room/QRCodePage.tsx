@@ -1,6 +1,6 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { CommonActions } from "@react-navigation/native";
-import { memo, useContext, useEffect, useMemo, useState } from "react";
+import { memo, useContext, useEffect, useMemo, useState, useTransition } from "react";
 import { Dimensions, Platform, Share, View } from "react-native";
 import { ActivityIndicator, Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
@@ -15,7 +15,6 @@ import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig
 import { FancySpinner } from "../../components/FancySpinner";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import SafeIOSContainer from "../../components/SafeIOSContainer";
 
 interface RoomSetupParams {
   category: string;
@@ -46,6 +45,8 @@ export default function QRCodePage({ navigation, route }: any) {
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
   const [moviesCount, setMoviesCount] = useState<number | null>(null);
+
+  const [isPending, startTransition] = useTransition();
 
   const {
     room: { users, roomId },
@@ -138,30 +139,32 @@ export default function QRCodePage({ navigation, route }: any) {
   }, [socket, qrCode]);
 
   const onJoinOwnRoom = (code: string) => {
-    socket?.emit("room:start", roomId);
-    dispatch(roomActions.setPlaying(true));
+    startTransition(() => {
+      socket?.emit("room:start", roomId);
+      dispatch(roomActions.setPlaying(true));
 
-    let gameType = "movie";
-    if (route?.params?.quickStart && roomConfig) {
-      gameType = roomConfig.type?.includes("/tv") ? "tv" : "movie";
-    } else if (category) {
-      gameType = category.includes("/movie") || category.includes("movie") ? "movie" : "tv";
-    }
+      let gameType = "movie";
+      if (route?.params?.quickStart && roomConfig) {
+        gameType = roomConfig.type?.includes("/tv") ? "tv" : "movie";
+      } else if (category) {
+        gameType = category.includes("/movie") || category.includes("movie") ? "movie" : "tv";
+      }
 
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [
-          {
-            name: "Home",
-            params: {
-              roomId: code,
-              type: gameType,
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: "Home",
+              params: {
+                roomId: code,
+                type: gameType,
+              },
             },
-          },
-        ],
-      })
-    );
+          ],
+        })
+      );
+    });
   };
 
   const insets = useSafeAreaInsets();
@@ -169,7 +172,7 @@ export default function QRCodePage({ navigation, route }: any) {
   return (
     <View style={{ flex: 1 }}>
       <PageHeading useSafeArea={false} title={t("room.qr-title")} />
-      <View style={{ position: "relative", flex: 1, padding: 15, paddingTop: 80 }}>
+      <View style={{ position: "relative", flex: 1, padding: 15, paddingTop: 80, paddingBottom: 0 }}>
         <Text
           style={{
             fontSize: 16,
@@ -221,16 +224,11 @@ export default function QRCodePage({ navigation, route }: any) {
         </Text>
 
         <Button
-          disabled={!qrCode || (moviesCount != null ? moviesCount < 5 : false) || createRoomLoading}
+          disabled={!qrCode || (moviesCount != null ? moviesCount < 5 : false) || createRoomLoading || isPending}
           mode="contained"
           style={{
             borderRadius: 100,
             marginTop: 10,
-            ...Platform.select({
-              android: {
-                marginBottom: insets.bottom,
-              },
-            }),
           }}
           contentStyle={{ padding: 7.5 }}
           onPress={() => {

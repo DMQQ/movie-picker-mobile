@@ -57,7 +57,6 @@ export default function Home({ route, navigation }: any) {
 
   useEffect(() => {
     if (route?.params?.roomId && socket?.connected) {
-      console.log("🔑 Joining room:", route?.params?.roomId);
       joinGame(route?.params?.roomId);
     }
   }, [route?.params?.roomId, socket, socket?.connected]);
@@ -72,8 +71,6 @@ export default function Home({ route, navigation }: any) {
     },
     [route.params?.type]
   );
-
-  const insets = useSafeAreaInsets();
 
   const t = useTranslation();
 

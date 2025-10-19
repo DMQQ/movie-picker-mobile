@@ -128,6 +128,15 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 1000,
     backgroundColor: Platform.OS === "android" ? "#000" : "transparent",
+
+    ...Platform.select({
+      android: {
+        backgroundColor: "#111111",
+        borderWidth: 2,
+        borderColor: "#343434ff",
+        borderRadius: 35,
+      },
+    }),
   },
   mainHeader: {
     flexDirection: "row",

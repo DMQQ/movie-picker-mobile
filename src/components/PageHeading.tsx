@@ -4,7 +4,7 @@ import * as Haptic from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { PropsWithChildren } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PlatformBlurView from "./PlatformBlurView";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
@@ -42,28 +42,20 @@ export default function PageHeading({
       <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top : 0 }]}>
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center", width: "100%" }}>
           {showBackButton && (
-            <Pressable
-              style={styles.backButton}
-              onPress={() => {
-                typeof onPress !== "undefined" ? onPress() : navigation.goBack();
+            <PlatformBlurView isInteractive style={[styles.buttonContainer]}>
+              <IconButton
+                icon="chevron-left"
+                size={25}
+                onPress={() => {
+                  typeof onPress !== "undefined" ? onPress() : navigation.goBack();
 
-                if (Platform.OS === "ios") {
-                  Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
-                }
-              }}
-            >
-              <PlatformBlurView
-                isInteractive
-                style={[
-                  Platform.OS === "android" && {
-                    backgroundColor: "rgba(0,0,0,0.5)",
-                  },
-                  { padding: 10, borderRadius: 1000 },
-                ]}
-              >
-                <Ionicons name="chevron-back" size={25} color={"#fff"} />
-              </PlatformBlurView>
-            </Pressable>
+                  if (Platform.OS === "ios") {
+                    Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+                  }
+                }}
+                iconColor="white"
+              />
+            </PlatformBlurView>
           )}
 
           <Text style={styles.headerTitle}>{title}</Text>
@@ -98,5 +90,30 @@ const styles = StyleSheet.create({
     zIndex: 1,
     top: Platform.OS === "android" ? 10 : 5,
     borderRadius: 1000,
+
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface,
+        borderWidth: 2,
+        borderColor: "#343434ff",
+      },
+    }),
+  },
+
+  buttonContainer: {
+    borderRadius: 100,
+    overflow: "hidden",
+    position: "absolute",
+    left: 15,
+    top: Platform.OS === "android" ? 0 : 5,
+    zIndex: 1,
+
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface,
+        borderWidth: 2,
+        borderColor: "#343434ff",
+      },
+    }),
   },
 });

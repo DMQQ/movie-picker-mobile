@@ -35,9 +35,10 @@ export default function DialogModals({
         routes: [{ name: "Landing" }],
       })
     );
+    socket?.emit("leave-room", route.params?.roomId);
+
     dispatch(roomActions.reset());
     ReviewManager.onGameComplete(true);
-    socket?.emit("leave-room", route.params?.roomId);
   };
 
   const t = useTranslation();

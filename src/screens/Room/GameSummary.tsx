@@ -109,6 +109,8 @@ export default function GameSummary({ route }: any) {
     return <MatchedItem {...item} summary={summary!} />;
   };
 
+  const likes = useAppSelector((st) => st.room.room.likes);
+
   if (loading) {
     return (
       <View style={{ flex: 1 }}>
@@ -195,7 +197,6 @@ export default function GameSummary({ route }: any) {
                     <Text style={styles.playerName}>{user.username}</Text>
                   </View>
                   <View style={styles.playerStats}>
-                    <Text style={[styles.playerStatus, { color: user.finished ? "#4CAF50" : "#ff4444" }]}>{user.finished ? "✓" : "✗"}</Text>
                     <Text style={styles.pickCount}>
                       {user.totalPicks} {t("game-summary.picks")}
                     </Text>
@@ -243,6 +244,30 @@ export default function GameSummary({ route }: any) {
                 {t("game-summary.no-matches-desc")}
               </Text>
               <Button onPress={handleTryAgain}>{t("game-summary.try-again")}</Button>
+            </View>
+          )}
+
+          {likes && likes.length > 0 && (
+            <View
+              style={{
+                marginTop: 30,
+              }}
+            >
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15 }}>
+                <Text style={styles.matchesTitle}>{t("game-summary.your-picks")}</Text>
+
+                <CreateCollectionFromLiked data={likes} />
+              </View>
+
+              <FlatList
+                data={likes}
+                renderItem={renderMovieItem}
+                numColumns={3}
+                keyExtractor={(item) => item.id.toString()}
+                columnWrapperStyle={styles.movieRow}
+                showsVerticalScrollIndicator={false}
+                scrollEnabled={false}
+              />
             </View>
           )}
         </View>

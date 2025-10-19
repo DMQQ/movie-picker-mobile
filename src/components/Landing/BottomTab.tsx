@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { memo, PropsWithChildren } from "react";
 import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
+import { MD2DarkTheme, Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
 import PlatformBlurView from "../PlatformBlurView";
 import { LinearGradient } from "expo-linear-gradient";
@@ -34,11 +34,15 @@ const tabStyles = StyleSheet.create({
         padding: 15,
       },
       android: {
-        backgroundColor: "#000",
+        backgroundColor: "#111111",
         bottom: 0,
         padding: 15,
         paddingBottom: 40,
         paddingTop: 20,
+        borderWidth: 2,
+        borderColor: "#343434ff",
+        borderTopRightRadius: 35,
+        borderTopLeftRadius: 35,
       },
     }),
   },
@@ -72,11 +76,13 @@ const BottomTab = memo(
 
     return (
       <>
-        <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.6)", "#000"]}
-          style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 100, zIndex: 90 }}
-          pointerEvents="none"
-        />
+        {Platform.OS === "ios" && (
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.6)", "#000"]}
+            style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 100, zIndex: 90 }}
+            pointerEvents="none"
+          />
+        )}
         <BottomTabContainer>
           <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Favourites"))}>
             <>

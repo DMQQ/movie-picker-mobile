@@ -70,7 +70,7 @@ const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path"
       <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={MD2DarkTheme.colors.placeholder} />
 
       <Text style={{ color: MD2DarkTheme.colors.placeholder, marginTop: 8 }} variant="bodyMedium">
-        Ooops :(
+        No Image
       </Text>
     </View>
   </View>

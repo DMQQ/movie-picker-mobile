@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { memo, useContext, useMemo, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Appbar, Button, MD2DarkTheme, useTheme } from "react-native-paper";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
 import { Movie } from "../../../types";
@@ -42,6 +42,7 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
     <>
       <View style={{ marginTop: 0, flexDirection: "row", alignItems: "center" }}>
         <GlassView
+          key={isHost ? "host" : "regular"}
           glassEffectStyle="clear"
           tintColor={"#ff4444"}
           style={{ borderRadius: 100, marginLeft: 10, overflow: "hidden" }}
@@ -52,7 +53,9 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
               {t("dialogs.scan-code.endGame")}
             </Button>
           ) : (
-            <Button onPress={toggleLeaveModal}>{t("dialogs.scan-code.leave")}</Button>
+            <Button onPress={toggleLeaveModal} textColor={Platform.OS === "ios" ? "#fff" : theme.colors.error}>
+              {t("dialogs.scan-code.leave")}
+            </Button>
           )}
         </GlassView>
 

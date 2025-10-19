@@ -139,7 +139,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         onEndReached={onEndReached}
         removeClippedSubviews
         onEndReachedThreshold={0.1}
-        ListHeaderComponent={<FeaturedSection navigate={navigation.navigate} />}
+        ListHeaderComponent={<FeaturedSection selectedChip={selectedChip} navigate={navigation.navigate} />}
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         getItemLayout={getItemLayout}

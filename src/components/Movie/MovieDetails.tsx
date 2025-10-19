@@ -1,5 +1,5 @@
 import { Platform, View } from "react-native";
-import { Text } from "react-native-paper";
+import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import useTranslation from "../../service/useTranslation";
@@ -42,7 +42,10 @@ export default function MovieDetails({
           borderTopLeftRadius: 20,
           ...Platform.select({
             android: {
-              backgroundColor: "rgba(0,0,0,0.5)",
+              backgroundColor: MD2DarkTheme.colors.surface + "cc",
+
+              borderWidth: 2,
+              borderColor: "#343434ff",
             },
           }),
         }}

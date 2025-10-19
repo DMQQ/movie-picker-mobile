@@ -170,7 +170,7 @@ const roomSlice = createSlice({
         payload: Movie[];
       }
     ) {
-      if (payload.length !== 0) {
+      if (payload.length > 0) {
         state.room.movies = payload;
         state.room.isFinished = false;
         state.beenFired = true;

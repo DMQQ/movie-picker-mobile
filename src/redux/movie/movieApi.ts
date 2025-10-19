@@ -85,8 +85,8 @@ export const movieApi = createApi({
       query: ({ name, page = 1 }) => `/landing/${name}/${page}`,
     }),
 
-    getFeatured: builder.query<Movie, void>({
-      query: () => `/landing/featured`,
+    getFeatured: builder.query<Movie, { selectedChip: string }>({
+      query: ({ selectedChip }) => "/landing/featured?category=" + selectedChip || "all",
     }),
 
     getSimilar: builder.query<{ name: string; results: Movie[] }, { id: number; type: "movie" | "tv"; page: number }>({
@@ -204,4 +204,6 @@ export const {
   useLazyGetAllProvidersQuery,
 
   useLazyGetCategoriesQuery,
+
+  useLazyGetFeaturedQuery,
 } = movieApi;

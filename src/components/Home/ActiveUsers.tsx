@@ -6,6 +6,8 @@ export const AVATAR_COLORS = ["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51
 export default function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () => void }) {
   const isVisible = props.showAll ? true : props.data.length > 1;
 
+  console.log("ActiveUsers rendered with data:", props.data);
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Pressable

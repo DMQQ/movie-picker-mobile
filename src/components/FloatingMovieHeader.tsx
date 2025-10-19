@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { useCallback, useMemo } from "react";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { useAnimatedStyle, withTiming, SharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -25,7 +25,6 @@ interface FloatingMovieHeaderProps {
 }
 
 export default function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", onBack }: FloatingMovieHeaderProps) {
-  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const groups = useAppSelector((state) => state.favourite.groups);
@@ -121,7 +120,7 @@ export default function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "
       )}
 
       <View style={styles.headerContent}>
-        <PlatformBlurView isInteractive style={[styles.buttonContainer, Platform.OS === "android" && styles.androidButtonBackground]}>
+        <PlatformBlurView isInteractive style={[styles.buttonContainer]}>
           <IconButton icon={backButtonIcon} size={25} onPress={onBack} iconColor="white" />
         </PlatformBlurView>
 
@@ -189,7 +188,7 @@ export default function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "
           >
             <IconButton
               icon={isInFavourites ? "heart" : "heart-outline"}
-              size={22}
+              size={25}
               onPress={handleFavouritePress}
               iconColor={isInFavourites ? "#FF6B6B" : "white"}
             />
@@ -233,6 +232,14 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 100,
     overflow: "hidden",
+
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface,
+        borderWidth: 2,
+        borderColor: "#343434ff",
+      },
+    }),
   },
   androidButtonBackground: {
     backgroundColor: "rgba(0,0,0,0.5)",
