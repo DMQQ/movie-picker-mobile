@@ -75,6 +75,7 @@ export default function Group({ navigation, route }: ScreenProps<"Group">) {
           if (match) return setMatch(undefined);
           setMatch(data?.movies?.[Math.floor(Math.random() * data?.movies.length)]);
         }}
+        containerStyle={{ bottom: 30 }}
       />
     </SafeIOSContainer>
   );

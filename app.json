@@ -52,7 +52,7 @@
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 20250926,
+      "versionCode": 202509260,
       "intentFilters": [
         {
           "action": "VIEW",

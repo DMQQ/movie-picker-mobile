@@ -364,6 +364,7 @@ const styles = StyleSheet.create({
     fontSize: 64,
     fontFamily: "Bebas",
     marginBottom: 15,
+    textAlign: "center",
   },
   content: {
     paddingTop: 15,

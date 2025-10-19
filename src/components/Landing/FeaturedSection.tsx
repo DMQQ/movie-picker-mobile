@@ -10,13 +10,14 @@ import RatingIcons from "../RatingIcons";
 import { prefetchThumbnail, ThumbnailSizes } from "../Thumbnail";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PlatformBlurView from "../PlatformBlurView";
+import Skeleton from "../Skeleton/Skeleton";
 
 const { width, height } = Dimensions.get("screen");
 
 const gradient = ["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"] as any;
 
 const FeaturedSection = (props: { navigate: any; selectedChip: string }) => {
-  const [getFeatured, { data: featured, error }] = useLazyGetFeaturedQuery();
+  const [getFeatured, { data: featured, error, isLoading }] = useLazyGetFeaturedQuery();
 
   useEffect(() => {
     getFeatured({ selectedChip: props.selectedChip || "all" });
@@ -49,7 +50,51 @@ const FeaturedSection = (props: { navigate: any; selectedChip: string }) => {
     prefetchThumbnail(featured?.poster_path, ThumbnailSizes.poster.xxlarge);
   }, [featured?.poster_path]);
 
-  if (!featured || error) return null;
+  if (error) return null;
+
+  if (isLoading || !featured) {
+    return (
+      <View style={[styles.featuredImage, Platform.OS === "ios" ? { marginTop: -insets.top - 40 } : { marginTop: insets.top - 15 }]}>
+        <View style={styles.gradientContainer}>
+          <View style={{ padding: 15 }}>
+            <Skeleton>
+              <View style={{ width: width * 0.8, height: 50, backgroundColor: "#333", borderRadius: 5 }} />
+            </Skeleton>
+            <View style={{ marginTop: 15 }}>
+              <Skeleton>
+                <View style={{ width: 120, height: 20, backgroundColor: "#333", borderRadius: 5 }} />
+              </Skeleton>
+            </View>
+            <View style={{ marginTop: 10 }}>
+              <Skeleton>
+                <View style={{ width: width * 0.9, height: 16, backgroundColor: "#333", borderRadius: 5 }} />
+              </Skeleton>
+            </View>
+            <View style={{ marginTop: 5 }}>
+              <Skeleton>
+                <View style={{ width: width * 0.7, height: 16, backgroundColor: "#333", borderRadius: 5 }} />
+              </Skeleton>
+            </View>
+            <View style={{ marginTop: 15 }}>
+              <Skeleton>
+                <View style={{ width: width * 0.95, height: 16, backgroundColor: "#333", borderRadius: 5 }} />
+              </Skeleton>
+            </View>
+            <View style={{ marginTop: 5 }}>
+              <Skeleton>
+                <View style={{ width: width * 0.85, height: 16, backgroundColor: "#333", borderRadius: 5 }} />
+              </Skeleton>
+            </View>
+            <View style={{ marginTop: 5 }}>
+              <Skeleton>
+                <View style={{ width: width * 0.6, height: 16, backgroundColor: "#333", borderRadius: 5 }} />
+              </Skeleton>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <ImageBackground

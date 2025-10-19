@@ -41,6 +41,7 @@ const tabStyles = StyleSheet.create({
         paddingTop: 20,
         borderWidth: 2,
         borderColor: "#343434ff",
+        borderRadius: 25,
         borderTopRightRadius: 35,
         borderTopLeftRadius: 35,
       },
