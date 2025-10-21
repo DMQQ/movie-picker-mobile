@@ -18,11 +18,11 @@ const ModalEnteringTransition = () => {
     animations: {
       opacity: withSpring(1),
       transform: [
-        { scale: withSpring(1) },
+        { scale: withSpring(1, { damping: 20, stiffness: 120 }) },
         {
           translateY: withSpring(0, {
-            damping: 12,
-            stiffness: 90,
+            damping: 25,
+            stiffness: 150,
           }),
         },
       ],
@@ -120,7 +120,7 @@ export default function Modal({ match, onClose, styles }: any) {
             borderWidth: 5,
             borderColor: MD2DarkTheme.colors.primary,
             borderRadius: 15,
-            marginTop: Platform.OS === "ios" ? 50 : 150,
+            marginTop: Platform.OS === "ios" ? 85 : 150,
             position: "relative",
             zIndex: 1000,
           }}

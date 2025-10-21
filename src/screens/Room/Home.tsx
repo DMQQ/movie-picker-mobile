@@ -1,19 +1,16 @@
-import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
 import HomeAppbar from "../../components/Home/Appbar";
-import DialogModals from "../../components/Home/DialogModals";
 import MatchModal from "../../components/Movie/MatchModal";
 import SwipeTile from "../../components/Movie/SwipeTiles";
 import { useAppSelector } from "../../redux/store";
-import useRoom from "../../service/useRoom";
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
 import useRoomMatches from "../../service/useRoomMatches";
-import { SocketContext } from "../../service/SocketContext";
+import useRoomContext from "./RoomContext";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -26,40 +23,36 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
+  noResultsText: {
+    fontSize: 40,
+    fontFamily: "Bebas",
+    color: "#fff",
+    width: "80%",
+    textAlign: "center",
+  },
+
+  gameStatus: { fontSize: 20, width: "80%", textAlign: "center" },
+
+  gameFinishStatus: { fontSize: 20, marginTop: 15, textAlign: "center", width: "80%" },
 });
 
 export default function Home({ route, navigation }: any) {
-  const { cards, dislikeCard, likeCard, isPlaying, joinGame, cardsLoading } = useRoom(route.params?.roomId);
-  const { socket } = useContext(SocketContext);
-  const likes = useAppSelector((state) => state.room.room.likes);
+  const { cards, dislikeCard, likeCard, isPlaying, cardsLoading, roomId } = useRoomContext();
+  const hasUserPlayed = useAppSelector((state) => state.room.room.hasUserPlayed);
   const gameEnded = useAppSelector((state) => state.room.room.gameEnded);
-
-  const [hasUserPlayed, setHasUserPlayed] = useState(false);
-
-  useEffect(() => {
-    if (likes.length > 0 || (cards.length > 0 && cards.length < 20)) {
-      setHasUserPlayed(true);
-    }
-  }, [likes.length, cards.length]);
+  const t = useTranslation();
+  const originalLength = useRef(cards.length);
 
   useEffect(() => {
     if (gameEnded && isPlaying === false) {
       const timer = setTimeout(() => {
-        navigation.replace("GameSummary", { roomId: route.params?.roomId });
+        navigation.replace("GameSummary", { roomId: roomId });
       }, 750);
 
       return () => clearTimeout(timer);
     }
-  }, [gameEnded, hasUserPlayed, isPlaying, navigation, route.params?.roomId]);
-
-  const originalLength = useRef(cards.length);
-
-  useEffect(() => {
-    if (route?.params?.roomId && socket?.connected) {
-      console.log("🔑 Joining room:", route?.params?.roomId);
-      joinGame(route?.params?.roomId);
-    }
-  }, [route?.params?.roomId, socket, socket?.connected]);
+  }, [gameEnded, hasUserPlayed, isPlaying, navigation, roomId]);
 
   const handleNavigateDetails = useCallback(
     (card: Movie) => {
@@ -71,10 +64,6 @@ export default function Home({ route, navigation }: any) {
     },
     [route.params?.type]
   );
-
-  const insets = useSafeAreaInsets();
-
-  const t = useTranslation();
 
   const renderedCards = useMemo(
     () =>
@@ -93,7 +82,7 @@ export default function Home({ route, navigation }: any) {
   );
 
   return (
-    <View style={{ flex: 1, marginBottom: insets.bottom }}>
+    <View style={{ flex: 1 }}>
       <HomeAppbar route={route} hasCards={cards.length > 0} />
 
       {isPlaying ? (
@@ -102,27 +91,15 @@ export default function Home({ route, navigation }: any) {
 
           {cards.length === 0 && !cardsLoading && (
             <View style={styles.emptyListContainer}>
-              {!gameEnded && hasUserPlayed && (
-                <Text
-                  style={{
-                    fontSize: 40,
-                    fontFamily: "Bebas",
-                    color: "#fff",
-                    width: "80%",
-                    textAlign: "center",
-                  }}
-                >
-                  {t("room.no-more-results")}
-                </Text>
-              )}
-              <Text style={{ fontSize: 20, width: "80%", textAlign: "center" }}>{gameEnded ? t("room.finished") : t("room.waiting")}</Text>
+              {!gameEnded && hasUserPlayed && <Text style={styles.noResultsText}>{t("room.no-more-results")}</Text>}
+              <Text style={styles.gameStatus}>{gameEnded ? t("room.finished") : t("room.waiting")}</Text>
             </View>
           )}
         </>
       ) : (
         <View style={styles.emptyListContainer}>
           <FancySpinner />
-          <Text style={{ fontSize: 20, marginTop: 15, textAlign: "center", width: "80%" }}>
+          <Text style={styles.gameFinishStatus}>
             {gameEnded ? t("room.finished") : cardsLoading ? t("room.loading") : t("room.awaiting-start")}
           </Text>
         </View>

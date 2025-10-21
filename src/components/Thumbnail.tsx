@@ -1,15 +1,17 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { ImageBackground, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-import FastImage, { FastImageProps } from "react-native-fast-image";
+import { Image, ImageProps } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
 
-interface ThumbnailProps extends FastImageProps {
+interface ThumbnailProps extends ImageProps {
   path: string;
   size?: number;
   container?: StyleProp<ViewStyle>;
   priority?: "low" | "high" | "normal";
   placeholder?: string;
+
+  alt?: string;
 }
 
 export const ThumbnailSizes = {
@@ -51,12 +53,6 @@ export const ThumbnailSizes = {
   },
 } as const;
 
-const priorityMap = {
-  low: FastImage.priority.low,
-  normal: FastImage.priority.normal,
-  high: FastImage.priority.high,
-};
-
 const BlurPlaceholder = ({ children, placeholder, style }: PropsWithChildren<{ placeholder?: string; style: StyleProp<ViewStyle> }>) =>
   placeholder ? (
     <ImageBackground source={{ uri: placeholder }} style={[style]}>
@@ -74,7 +70,7 @@ const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path"
       <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={MD2DarkTheme.colors.placeholder} />
 
       <Text style={{ color: MD2DarkTheme.colors.placeholder, marginTop: 8 }} variant="bodyMedium">
-        Ooops :(
+        No Image
       </Text>
     </View>
   </View>
@@ -86,15 +82,21 @@ export default function Thumbnail({ path, size = 200, container, priority = "nor
   }
 
   return (
-    <BlurPlaceholder placeholder={placeholder} style={[styles.container, container]}>
-      <FastImage
-        resizeMode={FastImage.resizeMode.cover}
+    <BlurPlaceholder style={[styles.container, container]}>
+      {rest.alt && (
+        <View style={styles.altContainer}>
+          <Text style={styles.altText}>{rest.alt}</Text>
+        </View>
+      )}
+      <Image
         {...rest}
+        priority={priority}
         source={{
           uri: `https://image.tmdb.org/t/p/w${size}` + path,
-          priority: priorityMap[priority],
         }}
         style={[styles.image, rest.style]}
+        placeholder={placeholder ? { uri: placeholder } : undefined}
+        placeholderContentFit="cover"
       />
     </BlurPlaceholder>
   );
@@ -103,7 +105,7 @@ export default function Thumbnail({ path, size = 200, container, priority = "nor
 export async function prefetchThumbnail(path: string, size: number = 200) {
   if (!path) return;
   const imageUrl = `https://image.tmdb.org/t/p/w${size}` + path;
-  FastImage.preload([{ uri: imageUrl }]);
+  Image.prefetch(imageUrl);
 }
 
 const styles = StyleSheet.create({
@@ -112,5 +114,22 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
+    zIndex: 5,
+  },
+  altContainer: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1,
+  },
+
+  altText: {
+    color: "white",
+    fontFamily: "Bebas",
+    textAlign: "center",
   },
 });

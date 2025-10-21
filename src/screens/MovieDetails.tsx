@@ -1,22 +1,19 @@
-import * as Haptics from "expo-haptics";
-import { useCallback, useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Dimensions, Platform, View } from "react-native";
-import { TouchableRipple } from "react-native-paper";
 import Animated, { interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Entypo from "react-native-vector-icons/Entypo";
 import { Movie } from "../../types";
-import FrostedGlass from "../components/FrostedGlass";
 import MovieDetails from "../components/Movie/MovieDetails";
 import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
 import Trailers from "../components/Movie/Trailers";
 import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
 import { ScreenProps } from "./types";
+import FloatingMovieHeader from "../components/FloatingMovieHeader";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("screen");
 
-export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"MovieDetails">) {
+export default function MovieDetailsScreen({ route }: ScreenProps<"MovieDetails">) {
   const scrollOffset = useSharedValue(0);
 
   const IMG_HEIGHT = useMemo(() => height * 0.75, [height]);
@@ -30,55 +27,45 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
     },
   });
 
-  const handleBack = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.goBack();
-  }, [navigation]);
+  const { data: movie = {} as Movie, isLoading: loading } = useGetMovieQuery(
+    {
+      id: movieId,
+      type: typeOfContent,
+    },
+    { refetchOnReconnect: true, refetchOnMountOrArgChange: true }
+  );
 
-  const imageStyle = useAnimatedStyle(() => {
-    if (Platform.OS === "ios") {
-      const translateY = interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]);
-
-      const scale = interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]);
-
-      return {
-        transform: [{ translateY }, { scale }],
-      };
-    } else {
-      return {
-        transform: [
-          {
-            translateY: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [-IMG_HEIGHT / 3, 0, IMG_HEIGHT / 3]),
-          },
-        ],
-      };
-    }
-  });
-
-  const { data: movie = {} as Movie, isLoading: loading } = useGetMovieQuery({
-    id: movieId,
-    type: typeOfContent,
-  });
-
-  const { data: providers = [] } = useGetMovieProvidersQuery({
-    id: movieId,
-    type: typeOfContent,
-  });
-
-  const insets = useSafeAreaInsets();
+  const { data: providers = [] } = useGetMovieProvidersQuery(
+    {
+      id: movieId,
+      type: typeOfContent,
+    },
+    { refetchOnReconnect: true, refetchOnMountOrArgChange: true }
+  );
 
   return (
     <View style={{ flex: 1 }}>
       <Animated.ScrollView
-        scrollEventThrottle={16}
         onScroll={scrollhandler}
         contentContainerStyle={{
           alignItems: "center",
+          paddingTop: IMG_HEIGHT,
         }}
-        removeClippedSubviews={false}
-        style={{ flex: 1 }}
+        overScrollMode={"never"}
+        bounces={false}
+        stickyHeaderIndices={[0]}
       >
-        <Animated.View style={imageStyle}>
+        <Animated.View
+          style={[
+            {
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 1,
+            },
+          ]}
+        >
           <Thumbnail
             size={ThumbnailSizes.poster.xxlarge}
             container={[
@@ -92,30 +79,65 @@ export default function MovieDetailsScreen({ route, navigation }: ScreenProps<"M
             priority="high"
           />
         </Animated.View>
-
-        {loading ? (
-          <MovieDetailsSkeleton />
-        ) : (
-          <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={width} />
-        )}
+        <View style={{ zIndex: 10, position: "relative" }}>
+          {loading ? (
+            <MovieDetailsSkeleton />
+          ) : (
+            <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={width} />
+          )}
+        </View>
       </Animated.ScrollView>
 
-      <Trailers id={movieId} type={typeOfContent} />
-
-      <View
-        style={{
-          position: "absolute",
-          zIndex: 100,
-          left: 5,
-          top: insets.top + 5,
-        }}
-      >
-        <FrostedGlass container={{ borderRadius: 250 }}>
-          <TouchableRipple style={{ padding: 10 }} onPress={handleBack}>
-            <Entypo name="chevron-left" size={28} color={"#fff"} />
-          </TouchableRipple>
-        </FrostedGlass>
-      </View>
+      <Actions movieId={movieId} type={typeOfContent} scrollOffset={scrollOffset} movie={movie} />
     </View>
   );
 }
+
+interface ActionsProps {
+  movieId: number;
+
+  type: "movie" | "tv";
+
+  scrollOffset: any;
+
+  movie: Movie;
+}
+
+const Actions = ({ movie, movieId, type: typeOfContent, scrollOffset }: ActionsProps) => {
+  const [backButtonPurpose, setBackButtonPurpose] = useState<"back" | "close">("back");
+  const navigation = useNavigation();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleCloseTrailers = () => {
+    setIsOpen(false);
+    setBackButtonPurpose("back");
+  };
+
+  const handleClose = () => {
+    if (backButtonPurpose === "back") {
+      navigation.goBack();
+      return;
+    }
+
+    // Trigger the trailers closing animation
+    handleCloseTrailers();
+  };
+
+  const handleOpen = () => {
+    setIsOpen(true);
+    setBackButtonPurpose("close");
+  };
+
+  return (
+    <>
+      <Trailers isOpen={isOpen} handleClose={handleCloseTrailers} handleOpen={handleOpen} id={movieId} type={typeOfContent} />
+
+      <FloatingMovieHeader
+        backButtonIcon={isOpen ? "close" : "chevron-left"}
+        onBack={handleClose}
+        movie={movie! as any}
+        scrollY={scrollOffset}
+      />
+    </>
+  );
+};

@@ -1,5 +1,5 @@
 import { Platform, View } from "react-native";
-import { Text } from "react-native-paper";
+import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import useTranslation from "../../service/useTranslation";
@@ -11,6 +11,7 @@ import Similar from "../Similar";
 import Cast from "./Cast";
 import Seasons from "./SeasonsList";
 import WatchProviders from "./WatchProviders";
+import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
 
 export default function MovieDetails({
   movie,
@@ -26,7 +27,6 @@ export default function MovieDetails({
   const t = useTranslation();
 
   const data = [
-    // `${movie?.vote_average?.toFixed(2)}/10`,
     movie?.release_date || movie?.first_air_date,
     (movie?.title || movie?.name) === (movie?.original_title || movie?.original_name)
       ? null
@@ -36,7 +36,20 @@ export default function MovieDetails({
 
   return (
     <Animated.View style={{ flex: 1 }} entering={FadeIn}>
-      <FrostedGlass blurAmount={Platform.OS === "ios" ? 50 : 100} container={{ borderBottomWidth: 0 }}>
+      <BlurViewWrapper
+        style={{
+          borderTopRightRadius: 20,
+          borderTopLeftRadius: 20,
+          ...Platform.select({
+            android: {
+              backgroundColor: MD2DarkTheme.colors.surface + "cc",
+
+              borderWidth: 2,
+              borderColor: "#343434ff",
+            },
+          }),
+        }}
+      >
         <View style={{ flex: 1, padding: 15 }}>
           <Text
             style={{
@@ -46,10 +59,10 @@ export default function MovieDetails({
               marginTop: 10,
             }}
           >
-            {movie?.title || movie?.name}
+            {movie?.title || movie?.name || "-"}
           </Text>
 
-          {movie?.tagline && (
+          {!!movie?.tagline && (
             <Text
               style={{
                 fontSize: 15,
@@ -77,7 +90,7 @@ export default function MovieDetails({
             </FrostedGlass>
           </View>
 
-          {movie?.overview && (
+          {!!movie?.overview && (
             <Text
               style={{
                 fontSize: 19,
@@ -95,12 +108,14 @@ export default function MovieDetails({
               </Text>
             )}
 
-            <Text style={{ fontSize: 15, color: "rgba(255,255,255,0.6)" }}>
-              {t("movie.details.status")}: {movie?.status}
-            </Text>
+            {!!movie?.status && (
+              <Text style={{ fontSize: 15, color: "rgba(255,255,255,0.6)" }}>
+                {t("movie.details.status")}: {movie?.status}
+              </Text>
+            )}
           </View>
 
-          <WatchProviders providers={providers || []} />
+          {providers && <WatchProviders providers={providers || []} />}
 
           <Cast id={movie?.id} type={type as "movie" | "tv"} />
 
@@ -112,7 +127,7 @@ export default function MovieDetails({
             <Text style={{ color: "gray", textAlign: "center" }}>{t("global.attributions")}</Text>
           </View>
         </View>
-      </FrostedGlass>
+      </BlurViewWrapper>
     </Animated.View>
   );
 }

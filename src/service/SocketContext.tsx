@@ -30,14 +30,14 @@ const connectionConfig = {
   },
   path: "/socket.io",
   reconnection: true,
-  reconnectionAttempts: 10,
-  reconnectionDelay: 1000,
-  timeout: 20000,
+  reconnectionAttempts: 25,
+  reconnectionDelay: 500,
+  timeout: 10000,
   forceNew: false,
   multiplex: false,
   autoConnect: true,
   pingInterval: 5000,
-  pingTimeout: 5000,
+  pingTimeout: 2500,
 } as Partial<ManagerOptions & SocketOptions>;
 
 const makeHeaders = (language: string) => {
@@ -67,8 +67,8 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const appState = useRef(AppState.currentState);
-  const reconnectTimeout = useRef<NodeJS.Timeout>();
-  const backgroundTimer = useRef<NodeJS.Timeout>();
+  const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
+  const backgroundTimer = useRef<NodeJS.Timeout | null>(null);
   const wasConnected = useRef(false);
 
   const emitter = useEventEmitter<{ reconnected: any }>();
@@ -136,8 +136,8 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
 
     return () => {
       subscription.remove();
-      clearTimeout(reconnectTimeout.current);
-      clearTimeout(backgroundTimer.current);
+      if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current);
+      if (backgroundTimer.current) clearTimeout(backgroundTimer.current);
 
       if (socketRef.current) {
         socketRef.current.removeAllListeners();
@@ -151,7 +151,6 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   useEffect(() => {
     if (wasConnected.current && socket) {
       emitter.emit("reconnected", true);
-      console.log("Emitted reconnected event");
     }
   }, [socket]);
 

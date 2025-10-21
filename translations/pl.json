@@ -279,7 +279,8 @@
       "new": "Nowości"
     },
     "list_footer": "Ładowanie więcej...",
-    "no_more_results": "Brak więcej wyników"
+    "no_more_results": "Brak więcej wyników",
+    "reached_end": "Dotarłeś do końca"
   },
   "tabBar": {
     "settings": "Ustawienia",
@@ -302,14 +303,15 @@
     "matches": "Dopasowania",
     "total-picks": "Łączne wybory",
     "player-performance": "Wyniki graczy:",
-    "picks": "wyborów",
+    "picks": "polubień",
     "matched-movies": "Dopasowane filmy",
     "failed-to-load": "Nie udało się załadować podsumowania gry",
     "add-to-favourites": "Polub",
     "remove-from-favourites": "Usuń z ulubionych",
     "no-matches": "Brak dopasowań",
     "no-matches-desc": "Niestety, nie znaleźliście wspólnych filmów w tej grze. Spróbujcie ponownie z innymi kategoriami lub ustawieniami.",
-    "try-again": "Zagraj ponownie"
+    "try-again": "Zagraj ponownie",
+    "your-picks": "Twoje polubienia"
   },
   "game-invite": {
     "social-title": "🎯 Znajdź Idealny Wybór",

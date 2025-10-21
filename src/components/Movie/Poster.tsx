@@ -56,9 +56,10 @@ const SwipeText = (props: {
       ]}
     >
       {/* BlurView background */}
-      <PlatformBlurView
+      <View
         intensity={80}
         tint="light"
+        tintColor={`${props.color}E6`}
         style={[
           styles.blurContainer,
           {
@@ -67,7 +68,8 @@ const SwipeText = (props: {
         ]}
       >
         {/* Icon container with background circle */}
-        <PlatformBlurView
+        <View
+          tintColor={`${props.color}E6`}
           intensity={60}
           tint="light"
           style={[
@@ -80,10 +82,10 @@ const SwipeText = (props: {
           ]}
         >
           {props.icon}
-        </PlatformBlurView>
+        </View>
 
         <Text style={styles.swipeText}>{props.text}</Text>
-      </PlatformBlurView>
+      </View>
     </Animated.View>
   );
 };

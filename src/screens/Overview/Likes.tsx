@@ -35,6 +35,7 @@ export default function LikesScreen() {
         match={!!match}
         fortuneWheelMovies={data}
         fortuneWheelTitle={t("matched.title")}
+        containerStyle={{ bottom: 0 }}
       />
     </View>
   );

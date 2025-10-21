@@ -74,25 +74,13 @@ const SwipeTile = ({
   onPress?: () => void;
 }) => {
   const { width, height } = useWindowDimensions();
-  const position = useSharedValue({ x: 0, y: Math.max(index * -15, -60) });
-  const scale = useSharedValue(Math.max(1 - index * 0.075, 0.85));
+  const position = useSharedValue({ x: 0, y: Math.max(index * -10, -20) });
+  const scale = useSharedValue(Math.max(1 - index * 0.05, 0.9));
 
   useEffect(() => {
-    position.value = withTiming({ x: 0, y: Math.max(index * -15, -45) }, { duration: 200 });
-    scale.value = withTiming(Math.max(1 - index * 0.075, 0.85), { duration: 200 });
+    position.value = withTiming({ x: 0, y: Math.max(index * -10, -20) }, { duration: 200 });
+    scale.value = withTiming(Math.max(1 - index * 0.05, 0.9), { duration: 200 });
   }, [index]);
-
-  const likeCard = () => {
-    setTimeout(() => {
-      actions.likeCard();
-    }, 200);
-  };
-
-  const removeCard = () => {
-    setTimeout(() => {
-      actions.removeCard();
-    }, 200);
-  };
 
   const isLeftVisible = useSharedValue(false);
   const isRightVisible = useSharedValue(false);
@@ -117,10 +105,10 @@ const SwipeTile = ({
     })
     .onEnd(() => {
       if (position.value.x > width * 0.25) {
-        runOnJS(likeCard)();
+        runOnJS(actions.likeCard)();
         position.value = withSpring({ x: width + 100, y: 100 });
       } else if (position.value.x < -width * 0.25) {
-        runOnJS(removeCard)();
+        runOnJS(actions.removeCard)();
         position.value = withSpring({ x: -width - 100, y: 100 });
       } else {
         position.value = withSpring(
@@ -154,6 +142,23 @@ const SwipeTile = ({
 
   const isPressed = useRef(false);
 
+  const likeCard = () => {
+    setTimeout(() => {
+      actions.likeCard();
+    }, 200);
+  };
+
+  const removeCard = () => {
+    setTimeout(() => {
+      actions.removeCard();
+    }, 200);
+  };
+
+  const dims = {
+    width: width * 0.9 - 20,
+    height: height * 0.65,
+  };
+
   const moveOnPress = (fn: () => any, dir: "left" | "right") => {
     return () => {
       if (isPressed.current) return;
@@ -171,11 +176,6 @@ const SwipeTile = ({
   };
 
   if (index >= 3) return null;
-
-  const dims = {
-    width: width * 0.9 - 20,
-    height: height * 0.65,
-  };
 
   return (
     <>

@@ -1,10 +1,10 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useNavigation } from "@react-navigation/native";
 import React, { memo, useEffect } from "react";
-import { Dimensions, SafeAreaView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import { IconButton, Text, useTheme } from "react-native-paper";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import useTranslation from "../service/useTranslation";
 import LikesScreen from "./Overview/Likes";
 import MatchesScreen from "./Overview/Matches";
@@ -42,8 +42,8 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({ state, descriptors, navigat
     const newIndex = state.index;
 
     indicatorPosition.value = withSpring(getIndicatorPosition(newIndex), {
-      damping: 20,
-      stiffness: 150,
+      damping: 30,
+      stiffness: 250,
     });
 
     tabScale.value = withSequence(withTiming(0.95, { duration: 100 }), withTiming(1, { duration: 150 }));
@@ -156,7 +156,7 @@ const Overview: React.FC = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <OverviewTopTabs.Navigator
-        initialLayout={{ width: Dimensions.get("window").width }}
+        initialLayout={{ width: Dimensions.get("window").width, height: Dimensions.get("screen").height }}
         initialRouteName="Matches"
         tabBar={(props) => <CustomTabBar {...props} />}
       >
@@ -183,9 +183,8 @@ const styles = StyleSheet.create({
   tabBarContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 8,
+    paddingVertical: 0,
     paddingHorizontal: 8,
-    paddingTop: 0,
   },
   backButtonContainer: {
     justifyContent: "center",

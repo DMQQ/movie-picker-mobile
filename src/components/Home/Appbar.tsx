@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { memo, useContext, useMemo, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Appbar, Button, MD2DarkTheme, useTheme } from "react-native-paper";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
 import { Movie } from "../../../types";
@@ -11,32 +11,7 @@ import useTranslation from "../../service/useTranslation";
 import { ThumbnailSizes } from "../Thumbnail";
 import ActiveUsers from "./ActiveUsers";
 import DialogModals from "./DialogModals";
-
-const SmallButton = ({ children, onPress, icon, style }: { children?: string; onPress: () => void; icon?: string; style?: any }) => {
-  const theme = useTheme();
-
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[
-        styles.smallButton,
-        {
-          backgroundColor: `${theme.colors.primary}33`,
-          borderColor: `${theme.colors.primary}66`,
-        },
-        style,
-      ]}
-      activeOpacity={0.7}
-    >
-      <View style={styles.buttonContent}>
-        {icon && (
-          <MaterialCommunityIcons name={icon as any} size={14} color={theme.colors.primary} style={[children && styles.buttonIcon]} />
-        )}
-        {children && <Text style={[styles.buttonText, { color: theme.colors.primary }]}>{children}</Text>}
-      </View>
-    </TouchableOpacity>
-  );
-};
+import { GlassView } from "expo-glass-effect";
 
 function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }; hasCards: boolean }) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
@@ -66,15 +41,25 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
   return (
     <>
       <View style={{ marginTop: 0, flexDirection: "row", alignItems: "center" }}>
-        {isHost ? (
-          <Button onPress={handleEndGame} buttonColor="transparent" textColor="#ff4444">
-            {t("dialogs.scan-code.endGame")}
-          </Button>
-        ) : (
-          <Button onPress={toggleLeaveModal}>{t("dialogs.scan-code.leave")}</Button>
-        )}
+        <GlassView
+          key={isHost ? "host" : "regular"}
+          glassEffectStyle="clear"
+          tintColor={"#ff4444"}
+          style={{ borderRadius: 100, marginLeft: 10, overflow: "hidden" }}
+          isInteractive
+        >
+          {isHost ? (
+            <Button onPress={handleEndGame} buttonColor="transparent" textColor="#fff">
+              {t("dialogs.scan-code.endGame")}
+            </Button>
+          ) : (
+            <Button onPress={toggleLeaveModal} textColor={Platform.OS === "ios" ? "#fff" : theme.colors.error}>
+              {t("dialogs.scan-code.leave")}
+            </Button>
+          )}
+        </GlassView>
 
-        <ActiveUsers data={users} />
+        <ActiveUsers data={users} onPress={() => setShowQRModal((p) => !p)} />
 
         {!hasCards && !isFinished && isPlaying && (
           <Appbar.Action
@@ -86,8 +71,6 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
             }}
           />
         )}
-
-        <SmallButton icon="qrcode-scan" onPress={() => setShowQRModal((p) => !p)} style={{ marginRight: 10 }} />
 
         <LikedMoviesPreview />
       </View>

@@ -1,47 +1,79 @@
 import { useNavigation } from "@react-navigation/native";
+import { GlassView } from "expo-glass-effect";
 import * as Haptic from "expo-haptics";
-import { Platform, StyleSheet, View } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+import { LinearGradient } from "expo-linear-gradient";
+import { PropsWithChildren } from "react";
+import { Platform, Pressable, StyleSheet, View } from "react-native";
+import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PlatformBlurView from "./PlatformBlurView";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 
 export default function PageHeading({
   title,
   onPress,
   showBackButton = true,
-}: {
+  useSafeArea = true,
+  showGradientBackground = true,
+  gradientHeight = 150,
+
+  children,
+}: PropsWithChildren<{
   title: string;
   onPress?: () => void;
   showBackButton?: boolean;
-}) {
-  const navigation = useNavigation();
-  return (
-    <View style={styles.headerTop}>
-      {showBackButton && (
-        <IconButton
-          icon="chevron-left"
-          onPress={() => {
-            typeof onPress !== "undefined" ? onPress() : navigation.goBack();
 
-            if (Platform.OS === "ios") {
-              Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
-            }
-          }}
-          size={28}
-          style={styles.backButton}
+  showGradientBackground?: boolean;
+  gradientHeight?: number;
+  useSafeArea?: boolean;
+}>) {
+  const navigation = useNavigation();
+
+  const insets = useSafeAreaInsets();
+  return (
+    <>
+      {showGradientBackground && (
+        <LinearGradient
+          colors={["#000", "rgba(0,0,0,0.6)", "transparent"]}
+          style={{ position: "absolute", top: 0, left: 0, right: 0, height: gradientHeight, zIndex: 10 }}
+          pointerEvents="none"
         />
       )}
-      <Text style={styles.headerTitle}>{title}</Text>
-    </View>
+      <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top : 0 }]}>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", width: "100%" }}>
+          {showBackButton && (
+            <PlatformBlurView isInteractive style={[styles.buttonContainer]}>
+              <IconButton
+                icon="chevron-left"
+                size={25}
+                onPress={() => {
+                  typeof onPress !== "undefined" ? onPress() : navigation.goBack();
+
+                  if (Platform.OS === "ios") {
+                    Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+                  }
+                }}
+                iconColor="white"
+              />
+            </PlatformBlurView>
+          )}
+
+          <Text style={styles.headerTitle}>{title}</Text>
+        </View>
+        {children}
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   headerTop: {
-    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
-    paddingHorizontal: 8,
-    position: "relative",
-    paddingTop: Platform.OS === "android" ? 10 : 0,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
   },
   headerTitle: {
     fontFamily: "Bebas",
@@ -54,8 +86,34 @@ const styles = StyleSheet.create({
   backButton: {
     marginRight: 8,
     position: "absolute",
-    left: 8,
+    left: 15,
     zIndex: 1,
-    top: Platform.OS === "android" ? 3 : 0,
+    top: Platform.OS === "android" ? 10 : 5,
+    borderRadius: 1000,
+
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface,
+        borderWidth: 2,
+        borderColor: "#343434ff",
+      },
+    }),
+  },
+
+  buttonContainer: {
+    borderRadius: 100,
+    overflow: "hidden",
+    position: "absolute",
+    left: 15,
+    top: Platform.OS === "android" ? 0 : 5,
+    zIndex: 1,
+
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface,
+        borderWidth: 2,
+        borderColor: "#343434ff",
+      },
+    }),
   },
 });

@@ -1,4 +1,3 @@
-import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
@@ -13,7 +12,6 @@ import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
 import PageHeading from "../components/PageHeading";
 import { useLazyGetAllProvidersQuery, useLazyGetCategoriesQuery, useLazyGetGenresQuery } from "../redux/movie/movieApi";
 import { ScreenProps } from "./types";
-// import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
 
 const { width } = Dimensions.get("screen");
 const CARD_HEIGHT = 280;
@@ -40,7 +38,7 @@ const GameCard = ({ title, description, onPress, beta, players, duration, index 
         {Animations[index]}
 
         <LinearGradient colors={["transparent", "rgba(0,0,0,0.8)"]} style={styles.cardGradient}>
-          <BlurView intensity={20} tint="dark" style={styles.cardContent}>
+          <View style={styles.cardContent}>
             <View style={styles.cardHeader}>
               <View style={{ width: "100%" }}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -63,7 +61,7 @@ const GameCard = ({ title, description, onPress, beta, players, duration, index 
                 <Text style={styles.cardDescription}>{description}</Text>
               </View>
             </View>
-          </BlurView>
+          </View>
         </LinearGradient>
       </Animated.View>
     </AnimatedRipple>
@@ -127,23 +125,9 @@ export default function GameList({ navigation }: ScreenProps<"Games">) {
 
   return (
     <SafeIOSContainer>
-      <View style={styles.header}>
-        <PageHeading title={t("voter.games")} />
+      <PageHeading title={t("voter.games")} />
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
-          {categories.map((category) => (
-            <TouchableRipple
-              key={category.id}
-              onPress={() => setSelectedCategory(category.id)}
-              style={[styles.categoryChip, selectedCategory === category.id && styles.categoryChipActive]}
-            >
-              <Text style={[styles.categoryText, selectedCategory === category.id && styles.categoryTextActive]}>{category.label}</Text>
-            </TouchableRipple>
-          ))}
-        </ScrollView>
-      </View>
-
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: 60 }}>
         {filteredGames.map((game, index) => (
           <GameCard
             index={game.index}
@@ -194,7 +178,7 @@ const styles = StyleSheet.create({
     marginRight: 40,
   },
   categoriesContainer: {
-    paddingHorizontal: 15,
+    marginTop: 8,
   },
   categoryChip: {
     paddingHorizontal: 16,
@@ -241,6 +225,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 7.5,
     justifyContent: "flex-end",
+    borderRadius: 20,
   },
   cardHeader: {
     flexDirection: "row",

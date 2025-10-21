@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 import Modal from "./Overview/Modal";
 import { ScreenProps } from "./types";
+import SafeIOSContainer from "../components/SafeIOSContainer";
 
 export default function Group({ navigation, route }: ScreenProps<"Group">) {
   const { group } = route.params;
@@ -33,10 +34,11 @@ export default function Group({ navigation, route }: ScreenProps<"Group">) {
   }, []);
 
   return (
-    <View style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom, overflow: "hidden" }}>
+    <SafeIOSContainer style={{ flex: 1, overflow: "hidden" }}>
       <PageHeading title={data?.name! || ""} />
       <View style={{ flex: 1, paddingHorizontal: 15 }}>
         <TilesList
+          contentContainerStyle={{ paddingTop: 80 }}
           data={
             data?.movies.map((m) => ({
               ...m,
@@ -73,7 +75,8 @@ export default function Group({ navigation, route }: ScreenProps<"Group">) {
           if (match) return setMatch(undefined);
           setMatch(data?.movies?.[Math.floor(Math.random() * data?.movies.length)]);
         }}
+        containerStyle={{ bottom: 30 }}
       />
-    </View>
+    </SafeIOSContainer>
   );
 }

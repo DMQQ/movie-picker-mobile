@@ -16,7 +16,13 @@ export default function useInit() {
           await new Promise((resolve) => setTimeout(resolve, 250));
           await Updates.fetchUpdateAsync();
 
-          await Updates.reloadAsync();
+          await Updates.reloadAsync({
+            reloadScreenOptions: {
+              backgroundColor: "#000",
+              fade: true,
+              image: require("../../assets/images/icon-light.png"),
+            },
+          });
         } else {
           if (update.reason) {
           }

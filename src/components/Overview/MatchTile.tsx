@@ -18,7 +18,6 @@ const MatchTile = ({ match, type: _type, navigation, posterSize = 200, onLongPre
   return (
     <TouchableRipple
       style={{
-        margin: 5,
         flex: 1,
       }}
       onPress={() =>

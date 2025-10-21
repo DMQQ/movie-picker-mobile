@@ -13,6 +13,7 @@ import useTranslation from "../service/useTranslation";
 import fillMissing from "../utils/fillMissing";
 import { shuffleInPlace } from "../utils/shuffle";
 import { throttle } from "../utils/throttle";
+import PageHeading from "../components/PageHeading";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -68,24 +69,30 @@ function FortuneWheel({ navigation, route }: any) {
 
           await Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path)));
 
-          const shuffled = shuffleInPlace(movies);
+          const shuffled = shuffleInPlace([...movies]);
 
-          setSelectedCards({
+          const newSelectedCards = {
             results: fillMissing(shuffled.slice(0, 12), 12),
             name: response.data.name || "",
-          });
+          };
+
+          setSelectedCards(newSelectedCards);
           setSignatures(shuffled.map(({ id }) => id).join("-"));
+        } else {
+          console.log("No data or results in response:", response);
         }
       };
 
       if (value) {
-        getLazySection({ name: value as string }).then(handleResponse);
+        getLazySection({ name: value as string })
+          .then(handleResponse)
+          .catch(console.error);
         return;
       }
 
-      getLazyRandomSection(selectedCards.name).then(handleResponse);
+      getLazyRandomSection(selectedCards.name).then(handleResponse).catch(console.error);
     },
-    [selectedCards.name]
+    [selectedCards.name, getLazySection, getLazyRandomSection]
   );
 
   const [isSpin, setIsSpin] = useState(false);
@@ -102,7 +109,7 @@ function FortuneWheel({ navigation, route }: any) {
       const movies = route.params?.movies as Movie[];
 
       Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path))).then(() => {
-        const shuffled = shuffleInPlace(movies);
+        const shuffled = shuffleInPlace([...movies]);
 
         setSelectedCards({
           results: fillMissing(shuffled.slice(0, 12), 12),
@@ -119,9 +126,7 @@ function FortuneWheel({ navigation, route }: any) {
 
   return (
     <SafeIOSContainer style={{ overflow: "hidden" }}>
-      <View style={{ backgroundColor: "#000", justifyContent: "space-between", zIndex: 999 }}>
-        <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} />
-      </View>
+      <PageHeading showBackButton title="" />
 
       <Animated.View
         entering={FadeIn}
@@ -193,7 +198,7 @@ export const SectionSelector = ({ navigation }: any) => {
         style={{ flex: 1 }}
         renderItem={({ item }) => (
           <TouchableRipple
-            onPress={() => navigation.popTo("FortuneWheel", { category: item.name })}
+            onPress={() => navigation.navigate("FortuneWheel", { category: item.name })}
             style={{
               marginRight: 10,
               width: Dimensions.get("window").width / 2 - 15,

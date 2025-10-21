@@ -25,7 +25,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
   const listRef = useRef<FlatList>(null);
 
   return (
-    <SafeIOSContainer style={{ marginTop: 0 }}>
+    <SafeIOSContainer>
       <PageHeading title={t("favourites.title")} />
       <View style={{ paddingHorizontal: 15, flex: 1 }}>
         <FlatList
@@ -33,6 +33,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
           showsVerticalScrollIndicator={false}
           data={groups}
           keyExtractor={(k, index) => k.id + "-" + index}
+          contentContainerStyle={{ paddingTop: 80 }}
           renderItem={({ item, index }) => (
             <AnimatedRipple
               rippleColor={"#000"}

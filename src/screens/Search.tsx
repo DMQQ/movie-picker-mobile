@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, ImageBackground, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, IconButton, MD2DarkTheme, Searchbar, Text } from "react-native-paper";
-import { useLazySearchQuery } from "../redux/movie/movieApi";
+import { useLazySearchQuery, useLazyGetSimilarQuery } from "../redux/movie/movieApi";
 
 import { FlashList } from "@shopify/flash-list";
 import { BlurView } from "expo-blur";
@@ -13,6 +13,7 @@ import FrostedGlass from "../components/FrostedGlass";
 import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import useTranslation from "../service/useTranslation";
+import PlatformBlurView from "../components/PlatformBlurView";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -101,7 +102,15 @@ const SearchScreen = ({ navigation, route }: any) => {
   const routeParamsRef = useRef(route.params);
 
   const [search, { data, isLoading, isFetching, isError }] = useLazySearchQuery();
+  const [getSimilar, { isLoading: isLoadingSimilar, isFetching: isFetchingSimilar }] = useLazyGetSimilarQuery();
   const t = useTranslation();
+
+  // Handle initial query from navigation params
+  useEffect(() => {
+    if (route?.params?.initialQuery && !searchQuery) {
+      setSearchQuery(route.params.initialQuery);
+    }
+  }, [route?.params?.initialQuery]);
 
   useEffect(() => {
     if (searchTimeout.current) {
@@ -171,6 +180,21 @@ const SearchScreen = ({ navigation, route }: any) => {
     }
 
     try {
+      // Handle similar movies mode
+      if (route?.params?.mode === "similar" && route?.params?.movieId && route?.params?.type) {
+        const response = await getSimilar({
+          id: route.params.movieId,
+          type: route.params.type,
+          page: page
+        }).unwrap();
+
+        if (response.results && page === 1) {
+          setAllResults(response.results);
+          setHasNextPage(false); // Similar movies usually don't have pagination
+        }
+        return;
+      }
+
       const params = {
         page: page,
         type: filters.type,
@@ -178,6 +202,8 @@ const SearchScreen = ({ navigation, route }: any) => {
         with_watch_providers: route?.params?.providers,
         with_people: route?.params?.people,
       } as any;
+
+      console.log('🔍 Search API params:', params);
 
       if (searchQuery.trim().length > 0) {
         params["query"] = searchQuery;
@@ -246,7 +272,7 @@ const SearchScreen = ({ navigation, route }: any) => {
 
   // Load next page
   const handleEndReached = useCallback(() => {
-    if (!isFetching && hasNextPage && !isLoadingNextPage.current) {
+    if (!(isFetching || isFetchingSimilar) && hasNextPage && !isLoadingNextPage.current) {
       const nextPage = currentPage + 1;
 
       isLoadingNextPage.current = true;
@@ -256,14 +282,14 @@ const SearchScreen = ({ navigation, route }: any) => {
         performSearch(nextPage);
       }, 100);
     }
-  }, [isFetching, hasNextPage, currentPage]);
+  }, [isFetching, isFetchingSimilar, hasNextPage, currentPage]);
 
   const handleFilterChange = useCallback((type: "movie" | "tv" | "both") => {
     setFilters((f) => ({ ...f, type }));
   }, []);
 
   const renderEmptyComponent = useCallback(() => {
-    if (isLoading && currentPage === 1)
+    if ((isLoading || isLoadingSimilar) && currentPage === 1)
       return <ActivityIndicator style={[styles.loader, { marginTop: 50 }]} animating={true} color={MD2DarkTheme.colors.primary} />;
 
     if (searchQuery.trim().length === 0 && !route?.params) {
@@ -318,15 +344,14 @@ const SearchScreen = ({ navigation, route }: any) => {
                     onPress={() => handleFilterChange(category.id)}
                     style={[
                       styles.chipWrapper,
+                      styles.chip,
                       filters.type === category.id && {
                         borderColor: "rgba(255, 255, 255, 0.3)",
                         backgroundColor: "rgba(255, 255, 255, 0.1)",
                       },
                     ]}
                   >
-                    <BlurView style={[styles.chip]} intensity={filters.type === category.id ? 15 : 5}>
-                      <Text style={[styles.chipText, filters.type === category.id && styles.chipTextActive]}>{category.label}</Text>
-                    </BlurView>
+                    <Text style={[styles.chipText, filters.type === category.id && styles.chipTextActive]}>{category.label}</Text>
                   </TouchableOpacity>
                 </Animated.View>
               ))}
@@ -335,16 +360,13 @@ const SearchScreen = ({ navigation, route }: any) => {
               onPress={() => {
                 navigation.navigate("SearchFilters", { ...route?.params, type: filters.type });
               }}
-              style={[styles.chipWrapper]}
+              style={[styles.chipWrapper, styles.chip]}
             >
-              <BlurView style={[styles.chip]} intensity={5}>
-                <Text style={[styles.chipText]}>Filters</Text>
-              </BlurView>
+              <Text style={[styles.chipText]}>Filters</Text>
             </TouchableOpacity>
           </View>
 
           <FlashList
-            estimatedItemSize={430}
             contentContainerStyle={{ padding: 15 }}
             data={allResults}
             renderItem={({ item, index }) => <MovieCard index={index} item={item} />}
@@ -356,7 +378,7 @@ const SearchScreen = ({ navigation, route }: any) => {
             onEndReached={handleEndReached}
             onEndReachedThreshold={0.5}
             ListFooterComponent={() =>
-              isFetching && currentPage > 1 ? (
+              (isFetching || isFetchingSimilar) && currentPage > 1 ? (
                 <ActivityIndicator style={styles.loader} animating={true} color={MD2DarkTheme.colors.primary} />
               ) : null
             }

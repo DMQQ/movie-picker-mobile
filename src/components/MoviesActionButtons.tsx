@@ -1,7 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import { View } from "react-native";
+import { Platform, StyleProp, View, ViewStyle } from "react-native";
 import { Button, MD2DarkTheme } from "react-native-paper";
 import useTranslation from "../service/useTranslation";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface MoviesActionButtonsProps {
   onScratchCardPress: () => void;
@@ -14,6 +15,8 @@ interface MoviesActionButtonsProps {
   }[];
 
   fortuneWheelTitle?: string;
+
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 export default function MoviesActionButtons({
@@ -21,12 +24,30 @@ export default function MoviesActionButtons({
   match,
   fortuneWheelMovies,
   fortuneWheelTitle,
+
+  containerStyle,
 }: MoviesActionButtonsProps) {
   const navigation = useNavigation<any>();
   const t = useTranslation();
 
   return (
-    <View style={{ paddingHorizontal: 15, paddingTop: 15, flexDirection: "row", gap: 15 }}>
+    <LinearGradient
+      style={[
+        Platform.OS === "android" && {},
+        {
+          flexDirection: "row",
+          gap: 15,
+          position: "absolute",
+          bottom: 15,
+          left: 15,
+          right: 15,
+          borderRadius: 100,
+          zIndex: 10,
+        },
+        containerStyle,
+      ]}
+      colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.8)"]}
+    >
       <Button
         disabled={fortuneWheelMovies.length === 0}
         mode="contained"
@@ -53,6 +74,6 @@ export default function MoviesActionButtons({
       >
         {t("favourites.wheel")}
       </Button>
-    </View>
+    </LinearGradient>
   );
 }

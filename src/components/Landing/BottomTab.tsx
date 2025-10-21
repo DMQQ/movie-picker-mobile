@@ -1,13 +1,20 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
-import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
-import { memo } from "react";
-import { Platform, StyleSheet, TouchableOpacity } from "react-native";
+import { memo, PropsWithChildren } from "react";
+import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import useTranslation from "../../service/useTranslation";
+import PlatformBlurView from "../PlatformBlurView";
+import { LinearGradient } from "expo-linear-gradient";
+
+const BottomTabContainer = ({ children }: PropsWithChildren<{}>) => {
+  return (
+    <PlatformBlurView isInteractive style={[{ flexDirection: "row" }, tabStyles.container]}>
+      {children}
+    </PlatformBlurView>
+  );
+};
 
 const tabStyles = StyleSheet.create({
   container: {
@@ -15,10 +22,31 @@ const tabStyles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: Platform.OS === "android" ? "#000" : "transparent",
+
+    zIndex: 1000,
+
+    ...Platform.select({
+      ios: {
+        left: 15,
+        right: 15,
+        bottom: 15,
+        borderRadius: 1000,
+        padding: 15,
+      },
+      android: {
+        backgroundColor: "#111111",
+        bottom: 0,
+        padding: 15,
+        paddingBottom: 40,
+        paddingTop: 20,
+        borderWidth: 2,
+        borderColor: "#343434ff",
+        borderRadius: 25,
+        borderTopRightRadius: 35,
+        borderTopLeftRadius: 35,
+        overflow: "hidden",
+      },
+    }),
   },
   button: {
     flex: 1,
@@ -28,7 +56,7 @@ const tabStyles = StyleSheet.create({
     height: "100%",
   },
   buttonLabel: {
-    fontSize: 10,
+    fontSize: 9,
     color: "rgba(255,255,255,0.9)",
     letterSpacing: 0.5,
     marginTop: 5,
@@ -38,7 +66,6 @@ const tabStyles = StyleSheet.create({
 const BottomTab = memo(
   () => {
     const t = useTranslation();
-    const insets = useSafeAreaInsets();
     const navigation = useNavigation<any>();
 
     const withTouch = (fn: () => void) => {
@@ -50,43 +77,45 @@ const BottomTab = memo(
     };
 
     return (
-      <BlurView
-        intensity={Platform.OS === "ios" ? 60 : 100}
-        tint="dark"
-        style={[{ flexDirection: "row", paddingBottom: insets.bottom, paddingTop: 10 }, tabStyles.container]}
-      >
-        <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Favourites"))}>
-          <>
-            <FontAwesome name="bookmark" size={25} color="#fff" />
-            <Text style={tabStyles.buttonLabel}>{t("tabBar.favourites")}</Text>
-          </>
-        </TouchableOpacity>
+      <>
+        {Platform.OS === "ios" && (
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.6)", "#000"]}
+            style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 100, zIndex: 90 }}
+            pointerEvents="none"
+          />
+        )}
+        <BottomTabContainer>
+          <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Favourites"))}>
+            <>
+              <FontAwesome name="bookmark" size={25} color="#fff" />
+              <Text style={tabStyles.buttonLabel}>{t("tabBar.favourites")}</Text>
+            </>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={[
-            tabStyles.button,
-            { backgroundColor: MD2DarkTheme.colors.primary, borderRadius: 10, padding: 5, paddingVertical: 10, maxWidth: 70 },
-          ]}
-          onPress={withTouch(() =>
-            navigation.navigate("QRCode", {
-              screen: "QRScanner",
-            })
-          )}
-        >
-          <>
-            <FontAwesome name="qrcode" size={30} color={"#fff"} />
-            {/* <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text> */}
-          </>
-        </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[tabStyles.button]}
+            onPress={withTouch(() =>
+              navigation.navigate("QRCode", {
+                screen: "QRScanner",
+              })
+            )}
+          >
+            <>
+              <FontAwesome name="qrcode" size={25} color={"#fff"} />
+              <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text>
+            </>
+          </TouchableOpacity>
 
-        <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Games"))}>
-          <>
-            <FontAwesome name="gamepad" size={25} color="#fff" />
-            <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
-          </>
-        </TouchableOpacity>
-      </BlurView>
+          <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Games"))}>
+            <>
+              <FontAwesome name="gamepad" size={25} color="#fff" />
+              <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
+            </>
+          </TouchableOpacity>
+        </BottomTabContainer>
+      </>
     );
   },
   () => true

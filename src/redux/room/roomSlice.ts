@@ -26,6 +26,8 @@ const initialState = {
     isGameFinished: false,
     gameEnded: false,
 
+    hasUserPlayed: false,
+
     isFinished: false,
 
     match: undefined as Movie | undefined,
@@ -34,6 +36,7 @@ const initialState = {
     movies: [] as Movie[],
     matches: [] as Movie[],
     likes: [] as Movie[],
+    dislikes: [] as Movie[],
 
     isRunning: false,
   },
@@ -170,7 +173,7 @@ const roomSlice = createSlice({
         payload: Movie[];
       }
     ) {
-      if (payload.length !== 0) {
+      if (payload.length > 0) {
         state.room.movies = payload;
         state.room.isFinished = false;
         state.beenFired = true;
@@ -199,6 +202,13 @@ const roomSlice = createSlice({
     },
 
     likeMovie(state, { payload }) {
+      state.room.hasUserPlayed = true;
+
+      state.room.likes.push(payload);
+    },
+
+    dislikeMovie(state, { payload }) {
+      state.room.hasUserPlayed = true;
       state.room.likes.push(payload);
     },
 

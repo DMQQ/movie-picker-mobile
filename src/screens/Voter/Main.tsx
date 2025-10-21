@@ -3,7 +3,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SocketProvider } from "../../service/SocketContext";
 import { MovieVoterProvider } from "../../service/useVoter";
-import ContextProvider from "../Room/ContextProvider";
+import ContextProvider from "./ContextProvider";
 import Home from "./Home";
 
 const Stack = createNativeStackNavigator();

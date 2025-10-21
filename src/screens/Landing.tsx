@@ -21,6 +21,8 @@ import { useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
 import useLanding, { SectionData } from "../service/useLanding";
 import useTranslation from "../service/useTranslation";
 import { ScreenProps } from "./types";
+import BottomTab from "../components/Landing/BottomTab";
+import Skeleton from "../components/Skeleton/Skeleton";
 
 const { width } = Dimensions.get("screen");
 
@@ -36,6 +38,73 @@ const getItemCount = (data: any) => data?.length || 0;
 const getItem = (data: any, index: number) => data[index];
 
 const AnimatedVirtualizedList = Animated.createAnimatedComponent(VirtualizedList);
+
+const LoadingSkeleton = memo(() => {
+  const movieWidth = Math.min(width * 0.25, 120);
+  const movieHeight = movieWidth * 1.5;
+
+  return (
+    <View style={skeletonStyles.container}>
+      {Array.from({ length: 2 }).map((_, sectionIndex) => (
+        <Animated.View key={sectionIndex} style={skeletonStyles.sectionContainer} entering={FadeIn.duration(600).delay(sectionIndex * 100)}>
+          <Skeleton>
+            <View style={{ width: 150, height: 25, backgroundColor: "#333", borderRadius: 5 }} />
+          </Skeleton>
+          <View style={skeletonStyles.moviesList}>
+            {Array.from({ length: 4 }).map((_, movieIndex) => (
+              <View key={movieIndex} style={skeletonStyles.movieCard}>
+                <Skeleton>
+                  <View style={{ width: movieWidth, height: movieHeight, backgroundColor: "#333", borderRadius: 8 }} />
+                </Skeleton>
+              </View>
+            ))}
+          </View>
+        </Animated.View>
+      ))}
+    </View>
+  );
+});
+
+const skeletonStyles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 15,
+    paddingBottom: 20,
+  },
+  sectionContainer: {
+    marginBottom: 40,
+  },
+  moviesList: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 15,
+  },
+  movieCard: {
+    alignItems: "center",
+  },
+});
+
+const noMoreResultsStyles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 40,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+  },
+  text: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  subtitle: {
+    color: "rgba(255, 255, 255, 0.6)",
+    fontSize: 14,
+    textAlign: "center",
+  },
+});
 
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
   const { data, onScroll, onEndReached, refreshing, onRefresh, getItemLayout, handleChipPress, selectedChip, scrollY, hasMore } =
@@ -57,6 +126,9 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
       <NoConnectionError />
 
       <AnimatedVirtualizedList
+        extraData={selectedChip}
+        overScrollMode={"never"}
+        bounces={false}
         initialNumToRender={3}
         onScroll={onScroll}
         data={data}
@@ -67,117 +139,31 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
         onEndReached={onEndReached}
         removeClippedSubviews
         onEndReachedThreshold={0.1}
-        ListHeaderComponent={<FeaturedSection navigate={navigation.navigate} />}
+        ListHeaderComponent={<FeaturedSection selectedChip={selectedChip} navigate={navigation.navigate} />}
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         getItemLayout={getItemLayout}
         style={{ flex: 1 }}
         ListFooterComponent={
-          <View style={{ height: 100 }}>
+          <View style={{ minHeight: 200 }}>
             {hasMore ? (
-              <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", flex: 1, gap: 10 }}>
-                <ActivityIndicator size="small" color="#fff" />
-                <Text style={{ textAlign: "center", color: "#fff" }}>{t("landing.list_footer")}...</Text>
-              </View>
+              <LoadingSkeleton />
             ) : (
-              <View>
-                <Text style={{ textAlign: "center", color: "#fff" }}>{t("landing.no_more_results")}</Text>
-              </View>
+              <Animated.View style={noMoreResultsStyles.container} entering={FadeIn.duration(400)}>
+                <FontAwesome name="check-circle" size={32} color="rgba(255, 255, 255, 0.6)" />
+                <Text style={noMoreResultsStyles.text}>{t("landing.no_more_results")}</Text>
+                <Text style={noMoreResultsStyles.subtitle}>{t("landing.reached_end")}</Text>
+              </Animated.View>
             )}
           </View>
         }
       />
 
-      <BottomTab navigate={navigation.navigate} />
+      <BottomTab />
       <LandingHeader selectedChip={selectedChip} onChipPress={handleChipPress} scrollY={scrollY} />
     </View>
   );
 }
-
-const tabStyles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: Platform.OS === "android" ? "#000" : "transparent",
-  },
-  button: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-    height: "100%",
-  },
-  buttonLabel: {
-    fontSize: 10,
-    color: "rgba(255,255,255,0.9)",
-    letterSpacing: 0.5,
-    marginTop: 5,
-  },
-});
-
-const BottomTab = memo(
-  ({ navigate }: { navigate: any }) => {
-    const t = useTranslation();
-    const insets = useSafeAreaInsets();
-
-    const withTouch = (fn: () => void) => {
-      return () => {
-        if (Platform.OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-        fn();
-      };
-    };
-
-    return (
-      <PlatformBlurView
-        intensity={Platform.OS === "ios" ? 60 : 100}
-        tint="dark"
-        style={[
-          { flexDirection: "row", paddingBottom: insets.bottom + (Platform.OS === "android" ? 15 : 0), paddingTop: 10 },
-          tabStyles.container,
-        ]}
-      >
-        <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigate("Favourites"))}>
-          <>
-            <FontAwesome name="bookmark" size={25} color="#fff" />
-            <Text style={tabStyles.buttonLabel}>{t("tabBar.favourites")}</Text>
-          </>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={[
-            tabStyles.button,
-            { backgroundColor: MD2DarkTheme.colors.primary, borderRadius: 10, padding: 5, paddingVertical: 10, maxWidth: 70 },
-          ]}
-          onPress={withTouch(() =>
-            navigate("QRCode", {
-              screen: "QRScanner",
-            })
-          )}
-        >
-          <>
-            <FontAwesome name="qrcode" size={30} color={"#fff"} />
-            {/* <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text> */}
-          </>
-        </TouchableOpacity>
-
-        <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigate("Games"))}>
-          <>
-            <FontAwesome name="gamepad" size={25} color="#fff" />
-            <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>
-          </>
-        </TouchableOpacity>
-      </PlatformBlurView>
-    );
-  },
-  () => true
-);
 
 interface SectionProps {
   group: { name: string; results: Movie[] };
@@ -195,7 +181,7 @@ const sectionStyles = StyleSheet.create({
   },
 });
 
-const keySectionExtractor = (item: any, index: number) => `${item.id}-${item.type || "movie"}-${index}`;
+const keySectionExtractor = (item: any, index: number) => `${item.id}-${item.type || "movie"}`;
 
 export const Section = memo(({ group }: SectionProps) => {
   const navigation = useNavigation<any>();
@@ -221,36 +207,48 @@ export const Section = memo(({ group }: SectionProps) => {
     });
   }, [page]);
 
-  const renderItem = useCallback(
-    ({ item }: { item: Movie & { type: string } }) => (
-      <SectionListItem
-        onPress={() => {
-          navigation.navigate("MovieDetails", {
-            id: item.id,
-            type: item.type,
-            img: item.poster_path,
-          });
-        }}
-        {...item}
-      />
-    ),
-    []
-  );
-
   if (movies.length === 0 && !state.isLoading) return null;
+
+  const movieWidth = Math.min(width * 0.25, 120);
+  const movieHeight = movieWidth * 1.5;
 
   return (
     <Animated.View style={sectionStyles.container} entering={FadeIn}>
       <Text style={sectionStyles.title}>{group.name}</Text>
-      <FlashList
-        onEndReached={onEndReached}
-        data={(movies || []) as any}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={keySectionExtractor}
-        renderItem={renderItem}
-        estimatedItemSize={Math.min(width * 0.25, 200)}
-      />
+      {movies.length > 0 && (
+        <FlashList
+          onEndReached={onEndReached}
+          data={(movies || []) as any}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={keySectionExtractor}
+          renderItem={({ item }) => (
+            <SectionListItem
+              onPress={() => {
+                navigation.navigate("MovieDetails", {
+                  id: item.id,
+                  type: item.type,
+                  img: item.poster_path,
+                });
+              }}
+              {...item}
+            />
+          )}
+          ListFooterComponent={
+            state.isLoading ? (
+              <View style={skeletonStyles.moviesList}>
+                {[...Array(2)].map((_, index) => (
+                  <View style={skeletonStyles.movieCard} key={index}>
+                    <Skeleton>
+                      <View style={{ width: movieWidth, height: movieHeight, backgroundColor: "#333", borderRadius: 8 }} />
+                    </Skeleton>
+                  </View>
+                ))}
+              </View>
+            ) : null
+          }
+        />
+      )}
     </Animated.View>
   );
 });
@@ -427,7 +425,7 @@ const GameInviteSection = memo(
         </View>
 
         {/* Blur Overlay with Content */}
-        <BlurView intensity={10} tint="dark" style={gameInviteStyles.blurContainer}>
+        <View style={gameInviteStyles.blurContainer}>
           <Text style={gameInviteStyles.title}>{config.title}</Text>
           <Text style={gameInviteStyles.subtitle}>{config.subtitle}</Text>
 
@@ -437,7 +435,7 @@ const GameInviteSection = memo(
               <Text style={gameInviteStyles.buttonText}>{config.buttonText}</Text>
             </LinearGradient>
           </TouchableOpacity>
-        </BlurView>
+        </View>
       </Animated.View>
     );
   }
