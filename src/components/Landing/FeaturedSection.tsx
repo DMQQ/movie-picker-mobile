@@ -9,7 +9,7 @@ import FrostedGlass from "../FrostedGlass";
 import RatingIcons from "../RatingIcons";
 import { prefetchThumbnail, ThumbnailSizes } from "../Thumbnail";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import PlatformBlurView from "../PlatformBlurView";
+import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
 import Skeleton from "../Skeleton/Skeleton";
 
 const { width, height } = Dimensions.get("screen");
@@ -17,7 +17,7 @@ const { width, height } = Dimensions.get("screen");
 const gradient = ["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.8)", "#000000"] as any;
 
 const FeaturedSection = (props: { navigate: any; selectedChip: string }) => {
-  const [getFeatured, { data: featured, error, isLoading }] = useLazyGetFeaturedQuery();
+  const [getFeatured, { data: featured, error, isLoading, ...rest }] = useLazyGetFeaturedQuery();
 
   useEffect(() => {
     getFeatured({ selectedChip: props.selectedChip || "all" });
@@ -106,8 +106,9 @@ const FeaturedSection = (props: { navigate: any; selectedChip: string }) => {
     >
       <LinearGradient style={styles.gradientContainer} colors={gradient}>
         <Animated.View entering={FadeInDown.delay(250)}>
-          <Pressable onPress={onPress}>
-            <PlatformBlurView
+          <Pressable onPress={onPress} style={{ borderRadius: 35, overflow: "hidden" }}>
+            <BlurViewWrapper
+              intensity={15}
               style={{
                 padding: 15,
                 borderBottomWidth: 0,
@@ -131,7 +132,7 @@ const FeaturedSection = (props: { navigate: any; selectedChip: string }) => {
               <Text numberOfLines={7} style={styles.overview}>
                 {featured?.overview}
               </Text>
-            </PlatformBlurView>
+            </BlurViewWrapper>
           </Pressable>
         </Animated.View>
       </LinearGradient>

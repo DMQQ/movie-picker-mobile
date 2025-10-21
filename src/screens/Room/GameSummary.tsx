@@ -1,7 +1,7 @@
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
-import { useContext, useEffect, useState } from "react";
-import { Dimensions, FlatList, ScrollView, StyleSheet, View } from "react-native";
+import { ReactNode, useContext, useEffect, useState } from "react";
+import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Avatar, Button, MD2DarkTheme, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../types";
@@ -15,6 +15,9 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
+import { AntDesign, Fontisto } from "@expo/vector-icons";
+import ThumbsUp from "../../assets/ThumbsUp";
+import { GlassView } from "expo-glass-effect";
 
 interface GameSummary {
   roomId: string;
@@ -39,6 +42,28 @@ interface GameSummary {
   totalMatches: number;
   gameEndReason: string;
 }
+
+const Badge = () => {
+  return (
+    <View style={{ position: "absolute", top: 5, left: 5, borderRadius: 100, overflow: "hidden", zIndex: 10 }}>
+      <GlassView
+        glassEffectStyle="regular"
+        tintColor={MD2DarkTheme.colors.primary + "aa"}
+        style={[
+          {
+            borderRadius: 100,
+            padding: 5,
+            borderWidth: 1,
+            borderColor: MD2DarkTheme.colors.primary,
+          },
+          Platform.OS === "android" && { backgroundColor: MD2DarkTheme.colors.primary + "cc" },
+        ]}
+      >
+        <ThumbsUp width={18} height={18} />
+      </GlassView>
+    </View>
+  );
+};
 
 export default function GameSummary({ route }: any) {
   const { roomId } = route.params;
@@ -107,6 +132,10 @@ export default function GameSummary({ route }: any) {
 
   const renderMovieItem = ({ item }: { item: Partial<Movie> }) => {
     return <MatchedItem {...item} summary={summary!} />;
+  };
+
+  const renderLikedItem = ({ item }: { item: Partial<Movie> }) => {
+    return <MatchedItem {...item} summary={summary!} badge={likes.findIndex((like) => like.id === item.id) >= 0} />;
   };
 
   const likes = useAppSelector((st) => st.room.room.likes);
@@ -261,7 +290,7 @@ export default function GameSummary({ route }: any) {
 
               <FlatList
                 data={likes}
-                renderItem={renderMovieItem}
+                renderItem={renderLikedItem}
                 numColumns={3}
                 keyExtractor={(item) => item.id.toString()}
                 columnWrapperStyle={styles.movieRow}
@@ -282,7 +311,7 @@ export default function GameSummary({ route }: any) {
   );
 }
 
-const MatchedItem = ({ summary, ...item }: Partial<Movie> & { summary: { type: string } }) => {
+const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { summary: { type: string }; badge?: boolean }) => {
   const navigation = useNavigation<any>();
   const screenWidth = Dimensions.get("window").width;
   const itemWidth = (screenWidth - 60) / 3;
@@ -320,7 +349,8 @@ const MatchedItem = ({ summary, ...item }: Partial<Movie> & { summary: { type: s
   };
 
   return (
-    <View style={[styles.movieThumbnailContainer, { width: itemWidth, gap: 5, justifyContent: "space-between" }]}>
+    <View style={[styles.movieThumbnailContainer, { width: itemWidth, gap: 5, justifyContent: "space-between", position: "relative" }]}>
+      {badge && <Badge />}
       <TouchableRipple
         onPress={() =>
           navigation.navigate("MovieDetails", {

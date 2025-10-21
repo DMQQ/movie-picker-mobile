@@ -5,14 +5,15 @@ import { roomActions } from "../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { SocketContext } from "./SocketContext";
 
-export default function useRoom(room: string) {
+export default function useRoom() {
   const dispatch = useAppDispatch();
   const { socket, emitter } = useContext(SocketContext);
   const [cardsLoading, setCardsLoading] = useState(false);
   const attemptTimeout = useRef<NodeJS.Timeout | null>(null);
+  const roomId = useAppSelector((state) => state.room.room.roomId);
 
   useEffect(() => {
-    if (!room) {
+    if (!roomId) {
       return;
     }
     async function onReconnected(args: unknown, attempt = 0) {
@@ -25,7 +26,7 @@ export default function useRoom(room: string) {
       }
 
       try {
-        const response = await joinGame(room);
+        const response = await joinGame(roomId);
         if (!response) {
           throw new Error("Failed to rejoin room after reconnection");
         }
@@ -41,14 +42,14 @@ export default function useRoom(room: string) {
     return () => {
       emitter.off("reconnected", onReconnected);
     };
-  }, [room]);
+  }, [roomId]);
 
   const runOnce = useRef(false);
   const initialCardsLength = useRef(0);
 
   const {
     nickname,
-    room: { movies: cards, roomId, isFinished },
+    room: { movies: cards, isFinished },
     isPlaying,
   } = useAppSelector((state) => state.room);
 
@@ -100,29 +101,29 @@ export default function useRoom(room: string) {
     return () => {
       socket?.offAny(handleListeners);
     };
-  }, [socket?.on, socket?.id, room]);
+  }, [socket?.on, socket?.id, roomId]);
 
   useEffect(() => {
     if (isPlaying && runOnce.current === false && cards.length === 0 && socket) {
       runOnce.current = true;
-      socket?.emit("get-movies", room);
+      socket?.emit("get-movies", roomId);
     }
-  }, [isPlaying, cards.length, room, socket]);
+  }, [isPlaying, cards.length, roomId, socket]);
 
   const removeCardLocally = (index: number) => {
     removeCard(index);
   };
 
   useEffect(() => {
-    if (isFinished && socket && room) {
-      socket?.emit("finish", room);
-      socket?.emit("get-buddy-status", room);
+    if (isFinished && socket && roomId) {
+      socket?.emit("finish", roomId);
+      socket?.emit("get-buddy-status", roomId);
     }
-  }, [isFinished, room, socket]);
+  }, [isFinished, roomId, socket]);
 
   const likeCard = async (card: Movie, index: number) => {
     socket?.emit("pick-movie", {
-      roomId: room,
+      roomId: roomId,
       index,
       swipe: { type: "like", movie: card.id },
     });
@@ -132,10 +133,11 @@ export default function useRoom(room: string) {
 
   const dislikeCard = (card: Movie, index: number) => {
     socket?.emit("pick-movie", {
-      roomId: room,
+      roomId: roomId,
       index,
       swipe: { type: "dislike", movie: card.id },
     });
+    dispatch(roomActions.dislikeMovie(card));
     removeCardLocally(index);
   };
 
@@ -163,5 +165,7 @@ export default function useRoom(room: string) {
     isPlaying,
     joinGame,
     cardsLoading,
+
+    roomId,
   };
 }

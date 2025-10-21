@@ -20,7 +20,7 @@ export const BlurViewWrapper = ({ children, ...rest }: PropsWithChildren<React.C
   return (
     <BlurView
       {...rest}
-      intensity={50}
+      intensity={rest.intensity || 50}
       tint="dark"
       style={[{ overflow: "hidden", borderWidth: 2, borderColor: "rgba(255,255,255,0.1)" }, rest.style]}
     >

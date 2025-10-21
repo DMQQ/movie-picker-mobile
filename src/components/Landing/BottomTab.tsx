@@ -10,7 +10,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const BottomTabContainer = ({ children }: PropsWithChildren<{}>) => {
   return (
-    <PlatformBlurView isInteractive style={[{ flexDirection: "row", overflow: "hidden" }, tabStyles.container]}>
+    <PlatformBlurView isInteractive style={[{ flexDirection: "row" }, tabStyles.container]}>
       {children}
     </PlatformBlurView>
   );
@@ -44,6 +44,7 @@ const tabStyles = StyleSheet.create({
         borderRadius: 25,
         borderTopRightRadius: 35,
         borderTopLeftRadius: 35,
+        overflow: "hidden",
       },
     }),
   },

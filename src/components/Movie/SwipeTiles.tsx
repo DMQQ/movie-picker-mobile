@@ -8,11 +8,11 @@ import Animated, {
   Extrapolation,
   FadeIn,
   interpolate,
-  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
+  runOnJS,
 } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import TabBar from "../Home/TabBar";
@@ -82,18 +82,6 @@ const SwipeTile = ({
     scale.value = withTiming(Math.max(1 - index * 0.05, 0.9), { duration: 200 });
   }, [index]);
 
-  const likeCard = () => {
-    setTimeout(() => {
-      actions.likeCard();
-    }, 200);
-  };
-
-  const removeCard = () => {
-    setTimeout(() => {
-      actions.removeCard();
-    }, 200);
-  };
-
   const isLeftVisible = useSharedValue(false);
   const isRightVisible = useSharedValue(false);
 
@@ -154,6 +142,25 @@ const SwipeTile = ({
 
   const isPressed = useRef(false);
 
+  if (index >= 3) return null;
+
+  const likeCard = () => {
+    setTimeout(() => {
+      actions.likeCard();
+    }, 200);
+  };
+
+  const removeCard = () => {
+    setTimeout(() => {
+      actions.removeCard();
+    }, 200);
+  };
+
+  const dims = {
+    width: width * 0.9 - 20,
+    height: height * 0.65,
+  };
+
   const moveOnPress = (fn: () => any, dir: "left" | "right") => {
     return () => {
       if (isPressed.current) return;
@@ -168,13 +175,6 @@ const SwipeTile = ({
 
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     };
-  };
-
-  if (index >= 3) return null;
-
-  const dims = {
-    width: width * 0.9 - 20,
-    height: height * 0.65,
   };
 
   return (
