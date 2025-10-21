@@ -135,7 +135,9 @@ export default function GameSummary({ route }: any) {
   };
 
   const renderLikedItem = ({ item }: { item: Partial<Movie> }) => {
-    return <MatchedItem {...item} summary={summary!} badge={likes.findIndex((like) => like.id === item.id) >= 0} />;
+    return (
+      <MatchedItem {...item} summary={summary!} badge={(summary?.matchedMovies || [])?.findIndex((like) => like.id === item.id) >= 0} />
+    );
   };
 
   const likes = useAppSelector((st) => st.room.room.likes);

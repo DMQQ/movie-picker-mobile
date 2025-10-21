@@ -8,11 +8,11 @@ import Animated, {
   Extrapolation,
   FadeIn,
   interpolate,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
-  runOnJS,
 } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import TabBar from "../Home/TabBar";
@@ -105,10 +105,10 @@ const SwipeTile = ({
     })
     .onEnd(() => {
       if (position.value.x > width * 0.25) {
-        runOnJS(likeCard)();
+        runOnJS(actions.likeCard)();
         position.value = withSpring({ x: width + 100, y: 100 });
       } else if (position.value.x < -width * 0.25) {
-        runOnJS(removeCard)();
+        runOnJS(actions.removeCard)();
         position.value = withSpring({ x: -width - 100, y: 100 });
       } else {
         position.value = withSpring(
@@ -142,8 +142,6 @@ const SwipeTile = ({
 
   const isPressed = useRef(false);
 
-  if (index >= 3) return null;
-
   const likeCard = () => {
     setTimeout(() => {
       actions.likeCard();
@@ -176,6 +174,8 @@ const SwipeTile = ({
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     };
   };
+
+  if (index >= 3) return null;
 
   return (
     <>
