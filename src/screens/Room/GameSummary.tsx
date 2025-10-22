@@ -1,7 +1,7 @@
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
-import { ReactNode, useContext, useEffect, useState } from "react";
-import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { ReactNode, useContext, useEffect, useState, useRef } from "react";
+import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View, ImageBackground, Animated } from "react-native";
 import { Avatar, Button, MD2DarkTheme, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../types";
@@ -15,9 +15,10 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
-import { AntDesign, Fontisto } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import ThumbsUp from "../../assets/ThumbsUp";
 import { GlassView } from "expo-glass-effect";
+import { BlurView } from "expo-blur";
 
 interface GameSummary {
   roomId: string;
@@ -76,6 +77,11 @@ export default function GameSummary({ route }: any) {
   const [summary, setSummary] = useState<GameSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [bgImageIndexA, setBgImageIndexA] = useState(0);
+  const [bgImageIndexB, setBgImageIndexB] = useState(1);
+  const [activeLayer, setActiveLayer] = useState<"A" | "B">("A");
+  const layerAOpacity = useRef(new Animated.Value(1)).current;
+  const layerBOpacity = useRef(new Animated.Value(0)).current;
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
@@ -104,11 +110,56 @@ export default function GameSummary({ route }: any) {
   }, [socket, roomId]);
 
   useEffect(() => {
-    // Clean up room state when component unmounts
     return () => {
       dispatch(roomActions.reset());
     };
-  }, [dispatch]);
+  }, []);
+
+  useEffect(() => {
+    if (summary?.matchedMovies && summary.matchedMovies.length > 1) {
+      const interval = setInterval(() => {
+        if (activeLayer === "A") {
+          const nextIndex = (bgImageIndexA + 1) % summary.matchedMovies.length;
+          setBgImageIndexB(nextIndex);
+
+          Animated.parallel([
+            Animated.timing(layerAOpacity, {
+              toValue: 0,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+            Animated.timing(layerBOpacity, {
+              toValue: 1,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
+            setActiveLayer("B");
+          });
+        } else {
+          const nextIndex = (bgImageIndexB + 1) % summary.matchedMovies.length;
+          setBgImageIndexA(nextIndex);
+
+          Animated.parallel([
+            Animated.timing(layerBOpacity, {
+              toValue: 0,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+            Animated.timing(layerAOpacity, {
+              toValue: 1,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
+            setActiveLayer("A");
+          });
+        }
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [summary?.matchedMovies, activeLayer, bgImageIndexA, bgImageIndexB, layerAOpacity, layerBOpacity]);
 
   const handleBackToHome = () => {
     dispatch(roomActions.reset());
@@ -169,71 +220,141 @@ export default function GameSummary({ route }: any) {
     );
   }
 
+  const backgroundUriA = summary?.matchedMovies?.[bgImageIndexA]?.poster_path
+    ? `https://image.tmdb.org/t/p/w300${summary.matchedMovies[bgImageIndexA].poster_path}`
+    : null;
+
+  const backgroundUriB = summary?.matchedMovies?.[bgImageIndexB]?.poster_path
+    ? `https://image.tmdb.org/t/p/w300${summary.matchedMovies[bgImageIndexB].poster_path}`
+    : null;
+
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {(backgroundUriA || backgroundUriB) && (
+        <>
+          {/* Layer A */}
+          {backgroundUriA && (
+            <Animated.View style={[styles.backgroundImageContainer, { opacity: layerAOpacity }]}>
+              <ImageBackground source={{ uri: backgroundUriA }} style={styles.backgroundImage} blurRadius={8}>
+                <BlurView intensity={15} style={styles.blurOverlay} />
+              </ImageBackground>
+            </Animated.View>
+          )}
+
+          {/* Layer B */}
+          {backgroundUriB && (
+            <Animated.View style={[styles.backgroundImageContainer, { opacity: layerBOpacity }]}>
+              <ImageBackground source={{ uri: backgroundUriB }} style={styles.backgroundImage} blurRadius={8}>
+                <BlurView intensity={15} style={styles.blurOverlay} />
+              </ImageBackground>
+            </Animated.View>
+          )}
+        </>
+      )}
+      <ScrollView
+        style={[
+          styles.container,
+          { paddingTop: Platform.OS === "android" ? insets.top : 0, marginTop: Platform.OS === "ios" ? -insets.top : 0 },
+        ]}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingTop: Platform.OS === "ios" ? insets.top : 0 }}
+      >
         <View style={styles.content}>
-          <View style={styles.statusContainer}>
+          <View style={styles.headerSection}>
             {summary?.gameEndReason === "all_users_finished" && (
               <LottieView source={require("../../assets/confetti.json")} autoPlay loop={false} style={styles.confetti} />
             )}
-            <Text style={[styles.statusText, { color: theme.colors.primary }]}>
-              {summary?.gameEndReason === "all_users_finished" ? t("game-summary.game-completed") : t("game-summary.game-finished")}
-            </Text>
 
-            {summary && (
-              <Text style={styles.configText}>
-                {summary.maxRounds} {t("game-summary.rounds")} •{" "}
-                {summary.type === "movie" ? t("game-summary.movies") : t("game-summary.tv-shows")} • {t("game-summary.room")}
-                {summary.roomId || roomId}
-              </Text>
-            )}
+            <View style={styles.titleContainer}>
+              <View style={styles.statusIconRow}>
+                {summary?.gameEndReason === "all_users_finished" ? (
+                  <MaterialIcons name="celebration" size={40} color="#FFD700" />
+                ) : (
+                  <MaterialIcons name="check-circle" size={40} color="#4CAF50" />
+                )}
+                <Text style={styles.statusTitle}>
+                  {summary?.gameEndReason === "all_users_finished" ? t("game-summary.game-completed") : t("game-summary.game-finished")}
+                </Text>
+              </View>
+
+              {summary && (
+                <Text style={styles.gameSubtitle}>
+                  {summary.maxRounds} {t("game-summary.rounds")} •{" "}
+                  {summary.type === "movie" ? t("game-summary.movies") : t("game-summary.tv-shows")} • {summary.roomId || roomId}
+                </Text>
+              )}
+            </View>
           </View>
 
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={[styles.statNumber, { color: theme.colors.primary }]}>{summary?.totalUsers || 0}</Text>
-              <Text style={styles.statLabel}>{t("game-summary.players")}</Text>
-            </View>
+          <View style={styles.dashboardContainer}>
+            <View style={styles.dashboardCard}>
+              <View style={styles.statRow}>
+                <View style={styles.statBlock}>
+                  <View style={styles.statHeader}>
+                    <MaterialIcons name="people" size={18} color="#64B5F6" />
+                    <Text style={styles.statTitle}>{t("game-summary.players")}</Text>
+                  </View>
+                  <Text style={[styles.statValue, { color: "#64B5F6" }]}>{summary?.totalUsers || 0}</Text>
+                </View>
 
-            <View style={styles.statItem}>
-              <Text style={[styles.statNumber, { color: theme.colors.primary }]}>{summary?.totalMatches || 0}</Text>
-              <Text style={styles.statLabel}>{t("game-summary.matches")}</Text>
-            </View>
+                <View style={styles.statDivider} />
 
-            <View style={styles.statItem}>
-              <Text style={[styles.statNumber, { color: theme.colors.primary }]}>
-                {summary?.users?.reduce((total, user) => total + user.totalPicks, 0) || 0}
-              </Text>
-              <Text style={styles.statLabel}>{t("game-summary.total-picks")}</Text>
+                <View style={styles.statBlock}>
+                  <View style={styles.statHeader}>
+                    <MaterialIcons name="favorite" size={18} color="#FF6B6B" />
+                    <Text style={styles.statTitle}>{t("game-summary.matches")}</Text>
+                  </View>
+                  <Text style={[styles.statValue, { color: "#FF6B6B" }]}>{summary?.totalMatches || 0}</Text>
+                </View>
+
+                <View style={styles.statDivider} />
+
+                <View style={styles.statBlock}>
+                  <View style={styles.statHeader}>
+                    <MaterialIcons name="touch-app" size={18} color="#81C784" />
+                    <Text style={styles.statTitle}>{t("game-summary.total-picks")}</Text>
+                  </View>
+                  <Text style={[styles.statValue, { color: "#81C784" }]}>
+                    {summary?.users?.reduce((total, user) => total + user.totalPicks, 0) || 0}
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
 
           {summary?.users && (
             <View style={styles.playersContainer}>
               <Text style={styles.playersTitle}>{t("game-summary.player-performance")}</Text>
-              {summary.users.map((user, index) => (
-                <View key={index} style={styles.playerItem}>
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-                    <Avatar.Text
-                      size={24}
-                      label={user.username?.[0].toUpperCase() || "U"}
-                      color="white"
-                      style={{
-                        borderWidth: 0.5,
-                        borderColor: "#fff",
-                        backgroundColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
-                      }}
-                    />
-                    <Text style={styles.playerName}>{user.username}</Text>
+              <View style={styles.playersGrid}>
+                {summary.users.map((user, index) => (
+                  <View key={index} style={styles.playerChip}>
+                    <View style={styles.avatarContainer}>
+                      <Avatar.Text
+                        size={28}
+                        label={user.username?.[0].toUpperCase() || "U"}
+                        color="white"
+                        style={{
+                          borderWidth: 1.5,
+                          borderColor: "rgba(255,255,255,0.4)",
+                          backgroundColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
+                        }}
+                      />
+                      <View style={[styles.playerStatusIndicator, user.finished ? styles.finishedIndicator : styles.inProgressIndicator]}>
+                        {user.finished ? (
+                          <MaterialIcons name="done" size={9} color="white" />
+                        ) : (
+                          <MaterialIcons name="more-horiz" size={8} color="white" />
+                        )}
+                      </View>
+                    </View>
+                    <Text style={styles.playerChipName}>{user.username}</Text>
+                    <View style={styles.chipMetrics}>
+                      <AntDesign name="heart" size={12} color="#FF6B6B" />
+                      <Text style={styles.chipPickCount}>{user.totalPicks}</Text>
+                    </View>
                   </View>
-                  <View style={styles.playerStats}>
-                    <Text style={styles.pickCount}>
-                      {user.totalPicks} {t("game-summary.picks")}
-                    </Text>
-                  </View>
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
           )}
 
@@ -383,20 +504,58 @@ const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { sum
 };
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: -50,
+    opacity: 0.3,
+  },
+  backgroundImageContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: -50,
+  },
+  blurOverlay: {
+    position: "absolute",
+    top: -50,
+    left: 0,
+    right: 0,
+    bottom: -50,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+  },
   container: {
     flex: 1,
     paddingHorizontal: 15,
   },
-  statusContainer: {
-    alignItems: "center",
-    marginBottom: 30,
+  headerSection: {
+    marginBottom: 20,
     position: "relative",
   },
-  statusText: {
-    fontSize: 64,
+  titleContainer: {
+    alignItems: "center",
+  },
+  statusIconRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 8,
+  },
+  statusTitle: {
+    fontSize: 55,
     fontFamily: "Bebas",
-    marginBottom: 15,
+    color: "#FFFFFF",
+    letterSpacing: 1,
+  },
+  gameSubtitle: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.7)",
+    fontWeight: "500",
     textAlign: "center",
+    letterSpacing: 0.3,
   },
   content: {
     paddingTop: 15,
@@ -413,12 +572,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
     top: -150,
   },
-  configText: {
-    fontSize: 14,
-    opacity: 0.7,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
   loadingText: {
     fontSize: 18,
     marginTop: 15,
@@ -432,60 +585,194 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: "bold",
   },
-  statsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 30,
+  dashboardContainer: {
+    marginBottom: 24,
   },
-  statItem: {
+  dashboardCard: {
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderRadius: 25,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.12)",
+  },
+  statRow: {
+    flexDirection: "row",
     alignItems: "center",
   },
-  statNumber: {
-    fontSize: 48,
+  statBlock: {
+    flex: 1,
+    alignItems: "center",
+  },
+  statHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 8,
+  },
+  statTitle: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "rgba(255,255,255,0.8)",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  statValue: {
+    fontSize: 35,
     fontWeight: "bold",
     fontFamily: "Bebas",
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
-  statLabel: {
-    fontSize: 16,
-    opacity: 0.7,
-    marginTop: 5,
-    fontWeight: "bold",
+  statDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    marginHorizontal: 15,
   },
   playersContainer: {
     marginBottom: 30,
   },
   playersTitle: {
-    fontSize: 35,
+    fontSize: 32,
     fontFamily: "Bebas",
-    marginBottom: 15,
+    marginBottom: 16,
+    color: "#FFFFFF",
+    letterSpacing: 1,
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
-  playerItem: {
+  playersGrid: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 8,
+    justifyContent: "flex-start",
+  },
+  playerChip: {
+    flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 15,
-    paddingHorizontal: 15,
-    marginBottom: 10,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    borderRadius: 25,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    paddingRight: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.15)",
+    gap: 8,
+    marginBottom: 8,
+  },
+  playerChipName: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    letterSpacing: 0.2,
+  },
+  avatarContainer: {
+    position: "relative",
+  },
+  playerStatusIndicator: {
+    position: "absolute",
+    bottom: -1,
+    right: -1,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    borderWidth: 1.5,
+    borderColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  finishedIndicator: {
+    backgroundColor: "#4CAF50",
+  },
+  inProgressIndicator: {
+    backgroundColor: "#FF9800",
+  },
+  chipMetrics: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
     backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+  },
+  chipPickCount: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  chipStatusBadge: {
+    width: 20,
+    height: 20,
     borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
   },
-  playerName: {
-    fontSize: 18,
+  finishedChipBadge: {
+    backgroundColor: "rgba(76, 175, 80, 0.2)",
+    borderColor: "rgba(76, 175, 80, 0.5)",
+  },
+  inProgressChipBadge: {
+    backgroundColor: "rgba(255, 152, 0, 0.2)",
+    borderColor: "rgba(255, 152, 0, 0.5)",
+  },
+  playerMetrics: {
+    alignItems: "center",
+    gap: 8,
+  },
+  metricItem: {
+    alignItems: "center",
+  },
+  metricIconContainer: {
+    marginBottom: 4,
+  },
+  metricNumber: {
+    fontSize: 28,
     fontWeight: "bold",
+    fontFamily: "Bebas",
+    color: "#FFFFFF",
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
-  playerStats: {
+  metricLabel: {
+    fontSize: 11,
+    opacity: 0.8,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    color: "#E0E0E0",
+  },
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 14,
+    borderWidth: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 15,
+    gap: 4,
   },
-  playerStatus: {
-    fontSize: 18,
-    fontWeight: "bold",
+  finishedBadge: {
+    backgroundColor: "rgba(76, 175, 80, 0.15)",
+    borderColor: "rgba(76, 175, 80, 0.4)",
   },
-  pickCount: {
-    fontSize: 16,
-    opacity: 0.7,
-    fontWeight: "bold",
+  inProgressBadge: {
+    backgroundColor: "rgba(255, 152, 0, 0.15)",
+    borderColor: "rgba(255, 152, 0, 0.4)",
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: "600",
+    letterSpacing: 0.3,
+  },
+  finishedText: {
+    color: "#4CAF50",
+  },
+  inProgressText: {
+    color: "#FF9800",
   },
   matchesContainer: {
     marginBottom: 30,

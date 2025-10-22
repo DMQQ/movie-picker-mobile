@@ -165,7 +165,7 @@ export default function MatchModal({ match, hideMatchModal }: { match: Movie | u
           }}
         >
           <Card>
-            <LinearGradient colors={["transparent", "transparent", theme.colors.primary]} style={styles.gradient}>
+            <LinearGradient colors={["transparent", "transparent", theme.colors.surface]} style={styles.gradient}>
               <Text style={styles.title}>{match.title || match.name}</Text>
 
               <View style={{ flexDirection: "row", paddingHorizontal: 10, marginBottom: 5 }}>

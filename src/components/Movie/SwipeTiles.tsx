@@ -105,11 +105,17 @@ const SwipeTile = ({
     })
     .onEnd(() => {
       if (position.value.x > width * 0.25) {
-        runOnJS(actions.likeCard)();
         position.value = withSpring({ x: width + 100, y: 100 });
+        setTimeout(() => {
+          "worklet";
+          runOnJS(actions.likeCard)();
+        }, 100);
       } else if (position.value.x < -width * 0.25) {
-        runOnJS(actions.removeCard)();
         position.value = withSpring({ x: -width - 100, y: 100 });
+        setTimeout(() => {
+          "worklet";
+          runOnJS(actions.removeCard)();
+        }, 100);
       } else {
         position.value = withSpring(
           { x: 0, y: 0 },

@@ -209,7 +209,7 @@ const roomSlice = createSlice({
 
     dislikeMovie(state, { payload }) {
       state.room.hasUserPlayed = true;
-      state.room.likes.push(payload);
+      state.room.dislikes.push(payload);
     },
 
     setActiveUsers(state, { payload }) {
@@ -231,6 +231,10 @@ const roomSlice = createSlice({
       state.isHost = false;
       state.isCreated = false;
       state.joined = false;
+    },
+
+    setRoomId(state, { payload }) {
+      state.room.roomId = payload;
     },
   },
 });
