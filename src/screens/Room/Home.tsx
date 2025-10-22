@@ -6,11 +6,12 @@ import { FancySpinner } from "../../components/FancySpinner";
 import HomeAppbar from "../../components/Home/Appbar";
 import MatchModal from "../../components/Movie/MatchModal";
 import SwipeTile from "../../components/Movie/SwipeTiles";
-import { useAppSelector } from "../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
 import useRoomMatches from "../../service/useRoomMatches";
 import useRoomContext from "./RoomContext";
+import { roomActions } from "../../redux/room/roomSlice";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -42,13 +43,18 @@ export default function Home({ route, navigation }: any) {
   const hasUserPlayed = useAppSelector((state) => state.room.room.hasUserPlayed);
   const gameEnded = useAppSelector((state) => state.room.room.gameEnded);
   const t = useTranslation();
+  const dispatch = useAppDispatch();
   const originalLength = useRef(cards.length);
+
+  useEffect(() => {
+    if (route.params?.roomId) dispatch(roomActions.setRoomId(route.params?.roomId));
+  }, [route.params?.roomId]);
 
   useEffect(() => {
     if (gameEnded && isPlaying === false) {
       const timer = setTimeout(() => {
         navigation.replace("GameSummary", { roomId: roomId });
-      }, 750);
+      }, 500);
 
       return () => clearTimeout(timer);
     }

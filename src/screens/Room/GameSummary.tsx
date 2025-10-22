@@ -171,7 +171,10 @@ export default function GameSummary({ route }: any) {
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={[styles.container, { paddingTop: Platform.OS === "android" ? insets.top : 0 }]}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.content}>
           <View style={styles.statusContainer}>
             {summary?.gameEndReason === "all_users_finished" && (

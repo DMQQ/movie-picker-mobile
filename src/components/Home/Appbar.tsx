@@ -12,6 +12,7 @@ import { ThumbnailSizes } from "../Thumbnail";
 import ActiveUsers from "./ActiveUsers";
 import DialogModals from "./DialogModals";
 import { GlassView } from "expo-glass-effect";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }; hasCards: boolean }) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
@@ -38,9 +39,11 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
     navigation.replace("GameSummary", { roomId });
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
     <>
-      <View style={{ marginTop: 0, flexDirection: "row", alignItems: "center" }}>
+      <View style={{ marginTop: 0, flexDirection: "row", alignItems: "center", paddingTop: Platform.OS === "android" ? insets.top : 0 }}>
         <GlassView
           key={isHost ? "host" : "regular"}
           glassEffectStyle="clear"

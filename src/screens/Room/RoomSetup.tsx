@@ -163,8 +163,6 @@ export default function RoomSetup({ navigation }: any) {
     []
   );
 
-  const insets = useSafeAreaInsets();
-
   const handleCategoryPress = useCallback((categoryPath: string) => {
     dispatch({ type: "SET_CATEGORY", payload: categoryPath });
   }, []);

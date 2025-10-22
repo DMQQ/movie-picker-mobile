@@ -9,11 +9,19 @@ import QRCodePage from "./QRCodePage";
 import QRScanner from "./QRScanner";
 import RoomSetup from "./RoomSetup";
 import { RoomContextProvider } from "./RoomContext";
+import { useEffect } from "react";
+import { useAppDispatch } from "../../redux/store";
+import { roomActions } from "../../redux/room/roomSlice";
 
 const Stack = createStackNavigator();
 
 export default function QRCode({ navigation, route }: ScreenProps<"QRCode">) {
   const t = useTranslation();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(roomActions.reset());
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
