@@ -171,8 +171,13 @@ export default function QRCodePage({ navigation, route }: any) {
 
   return (
     <View style={{ flex: 1 }}>
-      <PageHeading useSafeArea={false} title={t("room.qr-title")} />
-      <View style={{ position: "relative", flex: 1, padding: 15, paddingTop: 80, paddingBottom: 0 }}>
+      <PageHeading useSafeArea={Platform.OS === "android"} title={t("room.qr-title")} />
+      <View
+        style={[
+          { position: "relative", flex: 1, padding: 15, paddingTop: 80, paddingBottom: 0 },
+          { marginTop: Platform.OS === "android" ? 20 : 0 },
+        ]}
+      >
         <Text
           style={{
             fontSize: 16,

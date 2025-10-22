@@ -9,6 +9,8 @@ const RoomContext = createContext<ReturnType<typeof useRoom>>({
   likeCard: (...args: any) => new Promise(() => {}),
   roomId: "",
   joinGame: async () => null,
+
+  socket: null,
 });
 
 export default function useRoomContext() {
@@ -19,8 +21,10 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
   const room = useRoom();
 
   useEffect(() => {
-    if (room.roomId) room.joinGame(room.roomId);
-  }, [room.roomId]);
+    if (room.roomId && room.socket?.connected) {
+      room.joinGame(room.roomId);
+    }
+  }, [room.roomId, room.socket?.connected]);
 
   return <RoomContext.Provider value={room}>{children}</RoomContext.Provider>;
 }

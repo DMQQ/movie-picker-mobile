@@ -1,10 +1,10 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useNavigation } from "@react-navigation/native";
 import React, { memo, useEffect } from "react";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import { IconButton, Text, useTheme } from "react-native-paper";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import useTranslation from "../service/useTranslation";
 import LikesScreen from "./Overview/Likes";
 import MatchesScreen from "./Overview/Matches";
@@ -63,8 +63,18 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({ state, descriptors, navigat
     });
   };
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={[styles.tabBarContainer, { backgroundColor: "#000" }]}>
+    <View
+      style={[
+        styles.tabBarContainer,
+        { backgroundColor: "#000" },
+        Platform.OS === "android" && {
+          marginTop: insets.top,
+        },
+      ]}
+    >
       <View style={[styles.backButtonContainer, { width: BACK_BUTTON_WIDTH }]}>
         <IconButton icon="chevron-left" onPress={() => backNavigation.goBack()} size={28} iconColor={"#fff"} />
       </View>

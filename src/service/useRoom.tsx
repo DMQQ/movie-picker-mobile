@@ -167,5 +167,7 @@ export default function useRoom() {
     cardsLoading,
 
     roomId,
+
+    socket,
   };
 }

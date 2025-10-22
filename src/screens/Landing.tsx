@@ -170,7 +170,7 @@ interface SectionProps {
 }
 
 const sectionStyles = StyleSheet.create({
-  container: { paddingHorizontal: 15, height: Math.min(width * 0.25, 200) * 1.75 + 50, paddingBottom: 50 },
+  container: { paddingHorizontal: 15, minHeight: Math.min(width * 0.25, 200) * 1.75 + 50, paddingBottom: 50 },
   title: { color: "#fff", fontSize: 35, fontFamily: "Bebas", marginBottom: 10 },
   list: {
     flex: 1,

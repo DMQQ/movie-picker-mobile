@@ -223,8 +223,12 @@ export default function RoomSetup({ navigation }: any) {
 
   return (
     <View style={{ flex: 1 }}>
-      <PageHeading gradientHeight={100} useSafeArea={false} title={t("room.movie") + " Setup"} />
-      <ScrollView style={styles.flex} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: 80 }}>
+      <PageHeading gradientHeight={100} useSafeArea={Platform.OS === "android"} title={t("room.movie") + " Setup"} />
+      <ScrollView
+        style={[styles.flex, { marginTop: Platform.OS === "android" ? 20 : 0 }]}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingTop: 80 }}
+      >
         <View style={styles.contentContainer}>
           <Section title={t("room.game_time")}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>

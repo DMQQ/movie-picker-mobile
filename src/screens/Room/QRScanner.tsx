@@ -139,7 +139,7 @@ export default function QRScanner({ navigation }: any) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <PageHeading title={t("scanner.heading")} useSafeArea={false} />
+      <PageHeading title={t("scanner.heading")} useSafeArea={Platform.OS === "android"} />
 
       {hasPermission.granted && isFocused && (
         <CameraView

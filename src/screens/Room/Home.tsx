@@ -47,8 +47,14 @@ export default function Home({ route, navigation }: any) {
   const originalLength = useRef(cards.length);
 
   useEffect(() => {
-    if (route.params?.roomId) dispatch(roomActions.setRoomId(route.params?.roomId));
-  }, [route.params?.roomId]);
+    if (route.params?.roomId && !isPlaying) {
+      let timeout = setTimeout(() => {
+        dispatch(roomActions.setRoomId(route.params?.roomId));
+      }, 1);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [route.params?.roomId, dispatch]);
 
   useEffect(() => {
     if (gameEnded && isPlaying === false) {

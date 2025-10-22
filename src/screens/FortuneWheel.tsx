@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, FlatList, Image, ImageBackground, useWindowDimensions, View } from "react-native";
+import { Dimensions, FlatList, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
 import { Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -124,9 +124,19 @@ function FortuneWheel({ navigation, route }: any) {
 
   const t = useTranslation();
 
+  const insets = useSafeAreaInsets();
+
   return (
     <SafeIOSContainer style={{ overflow: "hidden" }}>
-      <PageHeading showBackButton title="" />
+      <PageHeading
+        showBackButton
+        title=""
+        styles={
+          Platform.OS === "android" && {
+            marginTop: insets.top + 30,
+          }
+        }
+      />
 
       <Animated.View
         entering={FadeIn}

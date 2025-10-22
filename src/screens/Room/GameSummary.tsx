@@ -606,11 +606,12 @@ const styles = StyleSheet.create({
   statHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 3,
     marginBottom: 8,
   },
   statTitle: {
-    fontSize: 12,
+    fontSize: 10,
+    flexWrap: "nowrap",
     fontWeight: "600",
     color: "rgba(255,255,255,0.8)",
     textTransform: "uppercase",

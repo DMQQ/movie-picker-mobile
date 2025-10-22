@@ -1,5 +1,5 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Dimensions, FlatList, ImageBackground, Keyboard, View } from "react-native";
+import { Dimensions, FlatList, ImageBackground, Keyboard, Platform, View } from "react-native";
 import { Button, Dialog, FAB, MD2DarkTheme, Text, TextInput, TouchableRipple } from "react-native-paper";
 import PageHeading from "../components/PageHeading";
 import SafeIOSContainer from "../components/SafeIOSContainer";
@@ -11,6 +11,7 @@ import { ScreenProps } from "./types";
 import { useRef, useState } from "react";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import Thumbnail from "../components/Thumbnail";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const AnimatedRipple = Animated.createAnimatedComponent(TouchableRipple);
 
@@ -24,10 +25,19 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
 
   const listRef = useRef<FlatList>(null);
 
+  const insets = useSafeAreaInsets();
+
   return (
     <SafeIOSContainer>
-      <PageHeading title={t("favourites.title")} />
-      <View style={{ paddingHorizontal: 15, flex: 1 }}>
+      <PageHeading
+        title={t("favourites.title")}
+        styles={
+          Platform.OS === "android" && {
+            marginTop: insets.top + 30,
+          }
+        }
+      />
+      <View style={{ paddingHorizontal: 15, flex: 1, marginTop: Platform.OS === "android" ? 30 : 0 }}>
         <FlatList
           ref={listRef}
           showsVerticalScrollIndicator={false}

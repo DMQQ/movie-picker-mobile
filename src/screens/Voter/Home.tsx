@@ -5,6 +5,7 @@ import {
   FlatList,
   Image,
   ImageBackground,
+  Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -427,7 +428,7 @@ export default function Home({ navigation, route }: any) {
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: Platform.OS === "android" ? 30 : 0 }}>
       {status === "idle" && renderInitialState()}
       {status === "waiting" && renderWaitingState()}
       {status === "rating" && currentMovies !== undefined && renderRatingState()}

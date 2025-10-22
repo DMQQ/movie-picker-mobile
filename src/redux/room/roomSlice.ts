@@ -235,6 +235,7 @@ const roomSlice = createSlice({
 
     setRoomId(state, { payload }) {
       state.room.roomId = payload;
+      state.qrCode = payload;
     },
   },
 });

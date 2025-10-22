@@ -25,18 +25,10 @@ export default function Group({ navigation, route }: ScreenProps<"Group">) {
 
   const [match, setMatch] = useState<(typeof groups)[number]["movies"][number] | undefined>(undefined);
 
-  const [showWheel, setShowWheel] = useState(false);
-
-  useEffect(() => {
-    navigation.addListener("blur", () => {
-      setShowWheel(false);
-    });
-  }, []);
-
   return (
     <SafeIOSContainer style={{ flex: 1, overflow: "hidden" }}>
-      <PageHeading title={data?.name! || ""} />
-      <View style={{ flex: 1, paddingHorizontal: 15 }}>
+      <PageHeading title={data?.name! || ""} styles={Platform.OS === "android" && { marginTop: insets.top + 30 }} />
+      <View style={{ flex: 1, paddingHorizontal: 15, marginTop: Platform.OS === "android" ? 30 : 0 }}>
         <TilesList
           contentContainerStyle={{ paddingTop: 80 }}
           data={

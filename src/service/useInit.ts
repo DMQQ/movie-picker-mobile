@@ -13,7 +13,6 @@ export default function useInit() {
 
         if (update.isAvailable) {
           setIsUpdating(true);
-          await new Promise((resolve) => setTimeout(resolve, 250));
           await Updates.fetchUpdateAsync();
 
           await Updates.reloadAsync({
@@ -27,14 +26,16 @@ export default function useInit() {
           if (update.reason) {
           }
         }
-      } catch (error) {}
+      } catch (error) {
+        setIsUpdating(false);
+      }
     };
 
     Promise.allSettled([
       loadAsync({
         Bebas: require("../../assets/fonts/BebasNeue-Regular.ttf"),
       }),
-      initializeApp(),
+      Promise.race([initializeApp(), new Promise((res) => setTimeout(res, 15_000))]),
     ]).finally(() => setIsLoaded(true));
   }, []);
 

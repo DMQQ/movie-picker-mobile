@@ -3,7 +3,7 @@ import { GlassView } from "expo-glass-effect";
 import * as Haptic from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { PropsWithChildren } from "react";
-import { Platform, Pressable, StyleSheet, View } from "react-native";
+import { Platform, Pressable, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PlatformBlurView from "./PlatformBlurView";
@@ -16,7 +16,7 @@ export default function PageHeading({
   useSafeArea = true,
   showGradientBackground = true,
   gradientHeight = 150,
-
+  styles: extraStyles,
   children,
 }: PropsWithChildren<{
   title: string;
@@ -26,6 +26,8 @@ export default function PageHeading({
   showGradientBackground?: boolean;
   gradientHeight?: number;
   useSafeArea?: boolean;
+
+  styles?: StyleProp<ViewStyle>;
 }>) {
   const navigation = useNavigation();
 
@@ -39,7 +41,7 @@ export default function PageHeading({
           pointerEvents="none"
         />
       )}
-      <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top : 0 }]}>
+      <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top : 0 }, extraStyles]}>
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center", width: "100%" }}>
           {showBackButton && (
             <PlatformBlurView isInteractive style={[styles.buttonContainer]}>

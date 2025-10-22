@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
-import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, Platform, ScrollView, StyleSheet, View } from "react-native";
 import { IconButton, Text, TouchableRipple } from "react-native-paper";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import useTranslation from "../service/useTranslation";
@@ -12,6 +12,7 @@ import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
 import PageHeading from "../components/PageHeading";
 import { useLazyGetAllProvidersQuery, useLazyGetCategoriesQuery, useLazyGetGenresQuery } from "../redux/movie/movieApi";
 import { ScreenProps } from "./types";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("screen");
 const CARD_HEIGHT = 280;
@@ -120,14 +121,26 @@ export default function GameList({ navigation }: ScreenProps<"Games">) {
       index: 2,
     },
   ];
+  const insets = useSafeAreaInsets();
 
   const filteredGames = selectedCategory === "all" ? games : games.filter((game) => game.category === selectedCategory);
 
   return (
     <SafeIOSContainer>
-      <PageHeading title={t("voter.games")} />
+      <PageHeading
+        title={t("voter.games")}
+        styles={
+          Platform.OS === "android" && {
+            marginTop: insets.top + 30,
+          }
+        }
+      />
 
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: 60 }}>
+      <ScrollView
+        style={[styles.container, Platform.OS === "android" && { marginTop: 30 }]}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingTop: 60 }}
+      >
         {filteredGames.map((game, index) => (
           <GameCard
             index={game.index}
