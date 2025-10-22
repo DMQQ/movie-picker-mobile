@@ -1,7 +1,7 @@
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import LottieView from "lottie-react-native";
-import { ReactNode, useContext, useEffect, useState } from "react";
-import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View, ImageBackground } from "react-native";
+import { ReactNode, useContext, useEffect, useState, useRef } from "react";
+import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View, ImageBackground, Animated } from "react-native";
 import { Avatar, Button, MD2DarkTheme, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../types";
@@ -77,6 +77,11 @@ export default function GameSummary({ route }: any) {
   const [summary, setSummary] = useState<GameSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [bgImageIndexA, setBgImageIndexA] = useState(0);
+  const [bgImageIndexB, setBgImageIndexB] = useState(1);
+  const [activeLayer, setActiveLayer] = useState<"A" | "B">("A");
+  const layerAOpacity = useRef(new Animated.Value(1)).current;
+  const layerBOpacity = useRef(new Animated.Value(0)).current;
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
@@ -105,11 +110,56 @@ export default function GameSummary({ route }: any) {
   }, [socket, roomId]);
 
   useEffect(() => {
-    // Clean up room state when component unmounts
     return () => {
       dispatch(roomActions.reset());
     };
-  }, [dispatch]);
+  }, []);
+
+  useEffect(() => {
+    if (summary?.matchedMovies && summary.matchedMovies.length > 1) {
+      const interval = setInterval(() => {
+        if (activeLayer === "A") {
+          const nextIndex = (bgImageIndexA + 1) % summary.matchedMovies.length;
+          setBgImageIndexB(nextIndex);
+
+          Animated.parallel([
+            Animated.timing(layerAOpacity, {
+              toValue: 0,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+            Animated.timing(layerBOpacity, {
+              toValue: 1,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
+            setActiveLayer("B");
+          });
+        } else {
+          const nextIndex = (bgImageIndexB + 1) % summary.matchedMovies.length;
+          setBgImageIndexA(nextIndex);
+
+          Animated.parallel([
+            Animated.timing(layerBOpacity, {
+              toValue: 0,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+            Animated.timing(layerAOpacity, {
+              toValue: 1,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
+            setActiveLayer("A");
+          });
+        }
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [summary?.matchedMovies, activeLayer, bgImageIndexA, bgImageIndexB, layerAOpacity, layerBOpacity]);
 
   const handleBackToHome = () => {
     dispatch(roomActions.reset());
@@ -170,16 +220,36 @@ export default function GameSummary({ route }: any) {
     );
   }
 
-  const backgroundImageUri = summary?.matchedMovies?.[0]?.poster_path
-    ? `https://image.tmdb.org/t/p/w500${summary.matchedMovies[0].poster_path}`
+  const backgroundUriA = summary?.matchedMovies?.[bgImageIndexA]?.poster_path
+    ? `https://image.tmdb.org/t/p/w300${summary.matchedMovies[bgImageIndexA].poster_path}`
+    : null;
+
+  const backgroundUriB = summary?.matchedMovies?.[bgImageIndexB]?.poster_path
+    ? `https://image.tmdb.org/t/p/w300${summary.matchedMovies[bgImageIndexB].poster_path}`
     : null;
 
   return (
     <View style={{ flex: 1 }}>
-      {backgroundImageUri && (
-        <ImageBackground source={{ uri: backgroundImageUri }} style={styles.backgroundImage} blurRadius={8}>
-          <BlurView intensity={20} style={styles.blurOverlay} />
-        </ImageBackground>
+      {(backgroundUriA || backgroundUriB) && (
+        <>
+          {/* Layer A */}
+          {backgroundUriA && (
+            <Animated.View style={[styles.backgroundImageContainer, { opacity: layerAOpacity }]}>
+              <ImageBackground source={{ uri: backgroundUriA }} style={styles.backgroundImage} blurRadius={8}>
+                <BlurView intensity={15} style={styles.blurOverlay} />
+              </ImageBackground>
+            </Animated.View>
+          )}
+
+          {/* Layer B */}
+          {backgroundUriB && (
+            <Animated.View style={[styles.backgroundImageContainer, { opacity: layerBOpacity }]}>
+              <ImageBackground source={{ uri: backgroundUriB }} style={styles.backgroundImage} blurRadius={8}>
+                <BlurView intensity={15} style={styles.blurOverlay} />
+              </ImageBackground>
+            </Animated.View>
+          )}
+        </>
       )}
       <ScrollView
         style={[
@@ -442,6 +512,13 @@ const styles = StyleSheet.create({
     bottom: -50,
     opacity: 0.3,
   },
+  backgroundImageContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: -50,
+  },
   blurOverlay: {
     position: "absolute",
     top: -50,
@@ -513,8 +590,8 @@ const styles = StyleSheet.create({
   },
   dashboardCard: {
     backgroundColor: "rgba(255,255,255,0.08)",
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 25,
+    padding: 15,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.12)",
   },
@@ -540,7 +617,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   statValue: {
-    fontSize: 24,
+    fontSize: 35,
     fontWeight: "bold",
     fontFamily: "Bebas",
     textShadowColor: "rgba(0, 0, 0, 0.3)",
