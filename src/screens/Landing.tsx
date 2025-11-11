@@ -4,21 +4,25 @@ import { FlashList } from "@shopify/flash-list";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, Platform, RefreshControl, StyleSheet, TouchableOpacity, View, VirtualizedList } from "react-native";
 import { ActivityIndicator, MD2DarkTheme, Text } from "react-native-paper";
-import Animated, { FadeIn } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Animated, { FadeIn, useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+
+import PagerView from "react-native-pager-view";
+import { useGetChipCategoriesQuery, useLazyGetLandingPageMoviesQuery } from "../redux/movie/movieApi";
+import { arrayInsertsAt } from "../utils/utilities";
+import uniqueBy from "../utils/unique";
 import { Movie } from "../../types";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
 import FeaturedSection from "../components/Landing/FeaturedSection";
 import LandingHeader from "../components/LandingHeader";
 import NoConnectionError from "../components/NoConnectionError";
-import PlatformBlurView from "../components/PlatformBlurView";
+
 import SectionListItem from "../components/SectionItem";
 import Thumbnail, { prefetchThumbnail } from "../components/Thumbnail";
 import { useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
-import useLanding, { SectionData } from "../service/useLanding";
+import { SectionData } from "../service/useLanding";
 import useTranslation from "../service/useTranslation";
 import { ScreenProps } from "./types";
 import BottomTab from "../components/Landing/BottomTab";
@@ -38,6 +42,182 @@ const getItemCount = (data: any) => data?.length || 0;
 const getItem = (data: any, index: number) => data[index];
 
 const AnimatedVirtualizedList = Animated.createAnimatedComponent(VirtualizedList);
+
+interface CategoryPageProps {
+  categoryId: string;
+  isActive: boolean;
+  navigation: any;
+}
+
+const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
+  const navigation = useNavigation<any>();
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState<SectionData[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const [getLandingMovies, { error }] = useLazyGetLandingPageMoviesQuery();
+  const t = useTranslation();
+
+  useEffect(() => {
+    if (data.length === 0) {
+      getLandingMovies({ skip: 0, take: 8, category: categoryId }, true).then((response) => {
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+          setHasMore(response.data.length >= 8);
+          const uniqueMovieSections = uniqueBy(response.data.filter(item => item && item.name), "name");
+          setData(
+            arrayInsertsAt(
+              uniqueMovieSections,
+              [3, 8, 14, 20],
+              [
+                { name: "Game Invite 1", results: [], type: "game" as const, gameType: "social" as const },
+                { name: "Game Invite 2", results: [], type: "game" as const, gameType: "voter" as const },
+                { name: "Game Invite 3", results: [], type: "game" as const, gameType: "fortune" as const },
+                { name: "Game Invite 4", results: [], type: "game" as const, gameType: "all-games" as const },
+              ]
+            )
+          );
+        }
+      });
+    }
+  }, [categoryId, getLandingMovies]);
+
+  const onEndReached = useCallback(() => {
+    if (error || !hasMore) return;
+
+    const nextPage = page + 1;
+    setPage(nextPage);
+
+    getLandingMovies({ skip: nextPage * 8, take: 8, category: categoryId }, true).then((response) => {
+      if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+        setHasMore(response.data.length >= 8);
+        setData((prev) => {
+          // Get existing game sections to preserve them
+          const gameSections = prev.filter((item) => item && typeof item === 'object' && "type" in item && (item as any).type === "game");
+          // Remove game sections and get only movie sections
+          const movieSections = prev.filter((item) => item && typeof item === 'object' && !("type" in item && (item as any).type === "game"));
+          // Combine with new data and remove duplicates by name
+          const newMovieSections = uniqueBy([...movieSections, ...(response.data || []).filter(item => item && item.name)], "name");
+          // Re-insert game sections at their original positions
+          return arrayInsertsAt(
+            newMovieSections,
+            [3, 8, 14, 20],
+            gameSections
+          );
+        });
+      } else {
+        setHasMore(false);
+      }
+    });
+  }, [error, hasMore, page, categoryId, getLandingMovies]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setPage(1);
+    setData([]);
+
+    getLandingMovies({ skip: 0, take: 8, category: categoryId }).then((response) => {
+      if (response.data && Array.isArray(response.data)) {
+        const uniqueMovieSections = uniqueBy(response.data.filter(item => item && item.name), "name");
+        setData(
+          arrayInsertsAt(
+            uniqueMovieSections,
+            [3, 8, 14, 20],
+            [
+              { name: "Game Invite 1", results: [], type: "game" as const, gameType: "social" as const },
+              { name: "Game Invite 2", results: [], type: "game" as const, gameType: "voter" as const },
+              { name: "Game Invite 3", results: [], type: "game" as const, gameType: "fortune" as const },
+              { name: "Game Invite 4", results: [], type: "game" as const, gameType: "all-games" as const },
+            ]
+          )
+        );
+      }
+      setRefreshing(false);
+    });
+  }, [categoryId, getLandingMovies]);
+
+  const scrollY = useSharedValue(0);
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const getItemLayout = useCallback((data: SectionData[], index: number) => {
+    const item = data?.[index];
+    const isGame = item && "type" in item && item.type === "game";
+    const itemHeight = isGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 50;
+
+    let offset = 0;
+    for (let i = 0; i < index; i++) {
+      const prevItem = data?.[i];
+      const prevIsGame = prevItem && "type" in prevItem && prevItem.type === "game";
+      offset += prevIsGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 50;
+    }
+
+    return { length: itemHeight, offset, index };
+  }, []);
+
+  const renderItem = useCallback(
+    ({ item }: { item: SectionData }) => {
+      if (!item || typeof item !== 'object') return null;
+      
+      if ("type" in item && item.type === "game") {
+        return <GameInviteSection type={item.gameType} navigation={navigation} />;
+      }
+
+      return <Section group={item} categoryId={categoryId} />;
+    },
+    [navigation, categoryId]
+  );
+
+  // Create category-specific key extractor to avoid duplicate keys
+  const categoryKeyExtractor = useCallback((item: any, index: number) => {
+    if (!item || typeof item !== 'object') return `${categoryId}-section-empty-${index}`;
+    if (item?.type === "game") {
+      return `${categoryId}-section-${item.gameType || 'unknown'}-${index}`;
+    }
+    return `${categoryId}-section-${item.name || 'unknown'}-${index}`;
+  }, [categoryId]);
+
+  return (
+    <View style={{ flex: 1 }}>
+      <AnimatedVirtualizedList
+        extraData={categoryId}
+        overScrollMode={"never"}
+        bounces={false}
+        initialNumToRender={3}
+        onScroll={onScroll}
+        data={data}
+        renderItem={renderItem as any}
+        keyExtractor={categoryKeyExtractor}
+        getItemCount={getItemCount}
+        getItem={getItem}
+        onEndReached={onEndReached}
+        removeClippedSubviews
+        onEndReachedThreshold={0.1}
+        ListHeaderComponent={<FeaturedSection selectedChip={categoryId} navigate={navigation.navigate} />}
+        contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        getItemLayout={getItemLayout}
+        style={{ flex: 1 }}
+        ListFooterComponent={
+          <View style={{ minHeight: 200 }}>
+            {hasMore ? (
+              <LoadingSkeleton />
+            ) : (
+              <Animated.View style={noMoreResultsStyles.container} entering={FadeIn.duration(400)}>
+                <FontAwesome name="check-circle" size={32} color="rgba(255, 255, 255, 0.6)" />
+                <Text style={noMoreResultsStyles.text}>{t("landing.no_more_results")}</Text>
+                <Text style={noMoreResultsStyles.subtitle}>{t("landing.reached_end")}</Text>
+              </Animated.View>
+            )}
+          </View>
+        }
+      />
+    </View>
+  );
+});
 
 const LoadingSkeleton = memo(() => {
   const movieWidth = Math.min(width * 0.25, 120);
@@ -83,6 +263,33 @@ const skeletonStyles = StyleSheet.create({
   },
 });
 
+const pageIndicatorStyles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    bottom: 100,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  blurContainer: {
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    overflow: "hidden",
+  },
+  dotsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+});
+
 const noMoreResultsStyles = StyleSheet.create({
   container: {
     alignItems: "center",
@@ -107,57 +314,63 @@ const noMoreResultsStyles = StyleSheet.create({
 });
 
 export default function Landing({ navigation }: ScreenProps<"Landing">) {
-  const { data, onScroll, onEndReached, refreshing, onRefresh, getItemLayout, handleChipPress, selectedChip, scrollY, hasMore } =
-    useLanding();
+  const [currentPage, setCurrentPage] = useState(0);
+  const [selectedChip, setSelectedChip] = useState("all");
+  const [isSwipingPage, setIsSwipingPage] = useState(false);
 
-  const renderItem = useCallback(({ item }: { item: SectionData }) => {
-    if ("type" in item && item.type === "game") {
-      return <GameInviteSection type={item.gameType} navigation={navigation} />;
+  const { data: chipCategories = [] } = useGetChipCategoriesQuery();
+
+  const handleChipPress = (chip: string) => {
+    setSelectedChip(chip);
+  };
+
+  const scrollY = useSharedValue(0);
+
+  const pagerRef = useRef<PagerView>(null);
+
+  useEffect(() => {
+    if (!isSwipingPage) {
+      const categoryIndex = chipCategories.findIndex((cat) => cat.id === selectedChip);
+      if (categoryIndex !== -1 && categoryIndex !== currentPage) {
+        setCurrentPage(categoryIndex);
+        pagerRef.current?.setPage(categoryIndex);
+      }
     }
+  }, [selectedChip, chipCategories, isSwipingPage]);
 
-    return <Section group={item} />;
-  }, []);
+  const handlePageSelected = useCallback(
+    (e: any) => {
+      const pageIndex = e.nativeEvent.position;
+      setCurrentPage(pageIndex);
+      setIsSwipingPage(false);
 
-  const t = useTranslation();
+      const category = chipCategories[pageIndex];
+      if (category && category.id !== selectedChip) {
+        setSelectedChip(category.id);
+      }
+    },
+    [chipCategories, selectedChip]
+  );
 
   return (
     <View style={{ flex: 1 }}>
       <AppLoadingOverlay />
       <NoConnectionError />
 
-      <AnimatedVirtualizedList
-        extraData={selectedChip}
-        overScrollMode={"never"}
-        bounces={false}
-        initialNumToRender={3}
-        onScroll={onScroll}
-        data={data}
-        renderItem={renderItem as any}
-        keyExtractor={keyExtractor}
-        getItemCount={getItemCount}
-        getItem={getItem}
-        onEndReached={onEndReached}
-        removeClippedSubviews
-        onEndReachedThreshold={0.1}
-        ListHeaderComponent={<FeaturedSection selectedChip={selectedChip} navigate={navigation.navigate} />}
-        contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        getItemLayout={getItemLayout}
-        style={{ flex: 1 }}
-        ListFooterComponent={
-          <View style={{ minHeight: 200 }}>
-            {hasMore ? (
-              <LoadingSkeleton />
-            ) : (
-              <Animated.View style={noMoreResultsStyles.container} entering={FadeIn.duration(400)}>
-                <FontAwesome name="check-circle" size={32} color="rgba(255, 255, 255, 0.6)" />
-                <Text style={noMoreResultsStyles.text}>{t("landing.no_more_results")}</Text>
-                <Text style={noMoreResultsStyles.subtitle}>{t("landing.reached_end")}</Text>
-              </Animated.View>
-            )}
-          </View>
-        }
-      />
+      {chipCategories.length > 0 ? (
+        <PagerView ref={pagerRef} style={{ flex: 1 }} initialPage={0} onPageSelected={handlePageSelected}>
+          {chipCategories.map((category) => (
+            <CategoryPage
+              key={category.id + category.label}
+              categoryId={category.id}
+              isActive={selectedChip === category.id}
+              navigation={navigation}
+            />
+          ))}
+        </PagerView>
+      ) : (
+        <LoadingSkeleton />
+      )}
 
       <BottomTab />
       <LandingHeader selectedChip={selectedChip} onChipPress={handleChipPress} scrollY={scrollY} />
@@ -167,6 +380,7 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
 
 interface SectionProps {
   group: { name: string; results: Movie[] };
+  categoryId?: string;
 }
 
 const sectionStyles = StyleSheet.create({
@@ -181,14 +395,18 @@ const sectionStyles = StyleSheet.create({
   },
 });
 
-const keySectionExtractor = (item: any, index: number) => `${item.id}-${item.type || "movie"}`;
-
-export const Section = memo(({ group }: SectionProps) => {
+export const Section = memo(({ group, categoryId }: SectionProps) => {
   const navigation = useNavigation<any>();
   const [page, setPage] = useState(1);
   const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
 
   const [movies, setSectionMovies] = useState<Movie[]>(() => group.results);
+
+  // Create category-specific key extractor for movies within this section
+  const movieKeyExtractor = useCallback((item: any, index: number) => 
+    `${categoryId || 'default'}-${group.name}-${item.id}-${item.type || "movie"}`, 
+    [categoryId, group.name]
+  );
 
   const onEndReached = useCallback(() => {
     if (state.isLoading || !!state.error) return;
@@ -221,7 +439,7 @@ export const Section = memo(({ group }: SectionProps) => {
           data={(movies || []) as any}
           horizontal
           showsHorizontalScrollIndicator={false}
-          keyExtractor={keySectionExtractor}
+          keyExtractor={movieKeyExtractor}
           renderItem={({ item }) => (
             <SectionListItem
               onPress={() => {
