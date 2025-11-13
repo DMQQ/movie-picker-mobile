@@ -1,17 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, View } from "react-native";
-import { useSharedValue } from "react-native-reanimated";
 import PagerView from "react-native-pager-view";
 import { useGetChipCategoriesQuery } from "../redux/movie/movieApi";
 import AppLoadingOverlay from "../components/AppLoadingOverlay";
 import LandingHeader from "../components/LandingHeader";
 import NoConnectionError from "../components/NoConnectionError";
-import { ScreenProps } from "./types";
-import BottomTab from "../components/Landing/BottomTab";
 import CategoryPage from "../components/Landing/CategoryPage";
 import CategoryPagerIndicator from "../components/Landing/CategoryPagerIndicator";
 import LoadingSkeleton from "../components/Landing/LoadingSkeleton";
-import { useNavigation } from "@react-navigation/native";
 
 export default function Landing() {
   return (
@@ -21,7 +17,6 @@ export default function Landing() {
 
       <PagerCategoryScreen />
 
-      <BottomTab />
       <LandingHeader />
     </View>
   );

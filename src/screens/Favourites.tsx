@@ -6,7 +6,7 @@ import SafeIOSContainer from "../components/SafeIOSContainer";
 import { createGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
-import { ScreenProps } from "./types";
+import { router } from "expo-router";
 
 import { useRef, useState } from "react";
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const AnimatedRipple = Animated.createAnimatedComponent(TouchableRipple);
 
-export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
+export default function Favourites() {
   const groups = useAppSelector((state) => state.favourite.groups);
   const dispatch = useAppDispatch();
   const t = useTranslation();
@@ -48,7 +48,7 @@ export default function Favourites({ navigation }: ScreenProps<"Favourites">) {
             <AnimatedRipple
               rippleColor={"#000"}
               disabled={item?.movies?.length === 0}
-              onPress={() => navigation.navigate("Group", { group: item })}
+              onPress={() => router.push({ pathname: "/group", params: { group: JSON.stringify(item) } })}
               style={{ marginBottom: 15 }}
               entering={FadeInDown.delay(Math.min((index + 1) * 75, 500))}
             >

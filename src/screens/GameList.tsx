@@ -4,6 +4,7 @@ import { Dimensions, Platform, ScrollView, StyleSheet, View } from "react-native
 import { IconButton, Text, TouchableRipple } from "react-native-paper";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import useTranslation from "../service/useTranslation";
+import { router } from "expo-router";
 
 import Animated, { FadeInDown } from "react-native-reanimated";
 import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
@@ -69,7 +70,7 @@ const GameCard = ({ title, description, onPress, beta, players, duration, index 
   );
 };
 
-export default function GameList({ navigation }: ScreenProps<"Games">) {
+export default function GameList() {
   const t = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -147,7 +148,7 @@ export default function GameList({ navigation }: ScreenProps<"Games">) {
             key={game.index}
             title={game.title}
             description={game.description}
-            onPress={() => navigation.navigate<any>(game.route, game.params)}
+            onPress={() => router.push({ pathname: game.route, params: game.params })}
             beta={game.beta}
             players={game.players}
             duration={game.duration}

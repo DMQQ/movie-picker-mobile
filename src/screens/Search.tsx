@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, ImageBackground, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, IconButton, MD2DarkTheme, Searchbar, Text } from "react-native-paper";
@@ -30,16 +30,14 @@ const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; i
     ...(item?.genres || [])?.map((g: any) => g.name),
   ].filter((v) => v !== undefined && v !== "") as any;
 
-  const navigation = useNavigation<any>();
 
   return (
     <AnimatedPressable
       entering={FadeIn.delay(index * 50)}
       onPress={() => {
-        navigation.navigate("MovieDetails", {
-          id: item.id,
-          type: item?.title ? "movie" : "tv",
-          img: item.poster_path,
+        router.push({
+          pathname: "/movie/[...params]",
+          params: { params: [item?.title ? "movie" : "tv", item.id.toString()] },
         });
       }}
       style={{
@@ -84,7 +82,8 @@ const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; i
   );
 };
 
-const SearchScreen = ({ navigation, route }: any) => {
+const SearchScreen = () => {
+  const searchParams = useLocalSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     type: "both" as "movie" | "tv" | "both",
@@ -99,7 +98,7 @@ const SearchScreen = ({ navigation, route }: any) => {
   const searchTimeout = React.useRef<NodeJS.Timeout>();
   const lastReceivedApiPage = useRef(0);
   const isLoadingNextPage = useRef(false);
-  const routeParamsRef = useRef(route.params);
+  const routeParamsRef = useRef(searchParams);
 
   const [search, { data, isLoading, isFetching, isError }] = useLazySearchQuery();
   const [getSimilar, { isLoading: isLoadingSimilar, isFetching: isFetchingSimilar }] = useLazyGetSimilarQuery();
@@ -107,10 +106,10 @@ const SearchScreen = ({ navigation, route }: any) => {
 
   // Handle initial query from navigation params
   useEffect(() => {
-    if (route?.params?.initialQuery && !searchQuery) {
-      setSearchQuery(route.params.initialQuery);
+    if (searchParams?.initialQuery && !searchQuery) {
+      setSearchQuery(searchParams.initialQuery as string);
     }
-  }, [route?.params?.initialQuery]);
+  }, [searchParams?.initialQuery]);
 
   useEffect(() => {
     if (searchTimeout.current) {
@@ -136,7 +135,7 @@ const SearchScreen = ({ navigation, route }: any) => {
 
   useEffect(() => {
     // More robust comparison by checking individual properties
-    const currentParams = route.params || {};
+    const currentParams = searchParams || {};
     const prevParams = routeParamsRef.current || {};
 
     const hasParamsChanged =
@@ -145,7 +144,7 @@ const SearchScreen = ({ navigation, route }: any) => {
       JSON.stringify(currentParams.people) !== JSON.stringify(prevParams.people);
 
     if (hasParamsChanged) {
-      routeParamsRef.current = route.params;
+      routeParamsRef.current = searchParams;
 
       // Reset search state
       setCurrentPage(1);
@@ -157,7 +156,7 @@ const SearchScreen = ({ navigation, route }: any) => {
       // Force immediate search
       performSearch(1);
     }
-  }, [route.params, filters.type]);
+  }, [searchParams, filters.type]);
 
   useEffect(() => {
     if (lastReceivedApiPage.current > 0) {
@@ -173,7 +172,7 @@ const SearchScreen = ({ navigation, route }: any) => {
 
   // Main search function
   const performSearch = async (page: number) => {
-    if (searchQuery.trim().length === 0 && !route?.params) {
+    if (searchQuery.trim().length === 0 && !searchParams) {
       setAllResults([]);
       setHasNextPage(false);
       return;
@@ -181,10 +180,10 @@ const SearchScreen = ({ navigation, route }: any) => {
 
     try {
       // Handle similar movies mode
-      if (route?.params?.mode === "similar" && route?.params?.movieId && route?.params?.type) {
+      if (searchParams?.mode === "similar" && searchParams?.movieId && searchParams?.type) {
         const response = await getSimilar({
-          id: route.params.movieId,
-          type: route.params.type,
+          id: searchParams.movieId,
+          type: searchParams.type,
           page: page
         }).unwrap();
 
@@ -198,9 +197,9 @@ const SearchScreen = ({ navigation, route }: any) => {
       const params = {
         page: page,
         type: filters.type,
-        with_genres: route?.params?.genres,
-        with_watch_providers: route?.params?.providers,
-        with_people: route?.params?.people,
+        with_genres: searchParams?.genres,
+        with_watch_providers: searchParams?.providers,
+        with_people: searchParams?.people,
       } as any;
 
       console.log('🔍 Search API params:', params);
@@ -292,7 +291,7 @@ const SearchScreen = ({ navigation, route }: any) => {
     if ((isLoading || isLoadingSimilar) && currentPage === 1)
       return <ActivityIndicator style={[styles.loader, { marginTop: 50 }]} animating={true} color={MD2DarkTheme.colors.primary} />;
 
-    if (searchQuery.trim().length === 0 && !route?.params) {
+    if (searchQuery.trim().length === 0 && !searchParams) {
       return (
         <Text style={styles.emptyText} variant="bodyLarge">
           {t("search.begin")}
@@ -300,7 +299,7 @@ const SearchScreen = ({ navigation, route }: any) => {
       );
     }
 
-    if (!isLoading && (searchQuery.trim().length > 0 || route?.params)) {
+    if (!isLoading && (searchQuery.trim().length > 0 || searchParams)) {
       return (
         <Text style={styles.emptyText} variant="bodyLarge">
           {t("search.no-results")} {searchQuery ? `"${searchQuery}"` : ""}
@@ -309,7 +308,7 @@ const SearchScreen = ({ navigation, route }: any) => {
     }
 
     return null;
-  }, [isLoading, searchQuery, currentPage, route?.params]);
+  }, [isLoading, searchQuery, currentPage, searchParams]);
 
   const categories = [
     { id: "both", label: t("voter.types.mixed") },
@@ -331,7 +330,7 @@ const SearchScreen = ({ navigation, route }: any) => {
               style={styles.searchbar}
               inputStyle={styles.searchInput}
               icon={() => (
-                <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={24} iconColor="#fff" style={{ margin: 0 }} />
+                <IconButton icon="chevron-left" onPress={() => router.back()} size={24} iconColor="#fff" style={{ margin: 0 }} />
               )}
             />
           </View>
@@ -358,7 +357,7 @@ const SearchScreen = ({ navigation, route }: any) => {
             </ScrollView>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate("SearchFilters", { ...route?.params, type: filters.type });
+                router.push({ pathname: "/search-filters", params: { ...searchParams, type: filters.type } });
               }}
               style={[styles.chipWrapper, styles.chip]}
             >

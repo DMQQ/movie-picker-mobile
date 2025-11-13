@@ -1,6 +1,5 @@
-import { CommonActions, useIsFocused } from "@react-navigation/native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Platform, ToastAndroid, Vibration, View } from "react-native";
 import { Button, Dialog, FAB, Portal, Text, TextInput, useTheme } from "react-native-paper";
 import PageHeading from "../../components/PageHeading";
@@ -8,8 +7,9 @@ import { useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
+import { router, useFocusEffect } from "expo-router";
 
-export default function QRScanner({ navigation }: any) {
+export default function QRScanner() {
   const [hasPermission, request] = useCameraPermissions();
   const [isManual, setIsManual] = useState(false);
   const theme = useTheme();
@@ -26,24 +26,7 @@ export default function QRScanner({ navigation }: any) {
       const code = c?.roomId || c?.sessionId || c;
 
       if (code[0] === "V") {
-        return navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [
-              {
-                name: "Voter",
-                state: {
-                  routes: [
-                    {
-                      name: "Home",
-                      params: { sessionId: code },
-                    },
-                  ],
-                },
-              },
-            ],
-          })
-        );
+        return router.replace(`/voter/${code}`);
       }
 
       try {
@@ -52,19 +35,7 @@ export default function QRScanner({ navigation }: any) {
         const response = await socket?.emitWithAck("join-room", code, nickname);
 
         if (response.joined) {
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [
-                {
-                  name: "Home",
-                  params: {
-                    roomId: code,
-                  },
-                },
-              ],
-            })
-          );
+          router.replace(`/room/${code}`);
           resolve(true);
         } else {
           reject(false);
@@ -121,7 +92,14 @@ export default function QRScanner({ navigation }: any) {
     !hasPermission?.granted && request();
   }, []);
 
-  const isFocused = useIsFocused();
+  const [isFocused, setIsFocused] = useState(true);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setIsFocused(true);
+      return () => setIsFocused(false);
+    }, [])
+  );
 
   const t = useTranslation();
 

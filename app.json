@@ -32,7 +32,12 @@
         }
       ],
       "expo-sqlite",
-      "expo-router"
+      [
+        "expo-router",
+        {
+          "root": "./src/app"
+        }
+      ]
     ],
     "assetBundlePatterns": [
       "**/*"

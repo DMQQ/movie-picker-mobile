@@ -8,11 +8,12 @@ import { removeFromGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 import Modal from "./Overview/Modal";
-import { ScreenProps } from "./types";
 import SafeIOSContainer from "../components/SafeIOSContainer";
+import { router, useLocalSearchParams } from "expo-router";
 
-export default function Group({ navigation, route }: ScreenProps<"Group">) {
-  const { group } = route.params;
+export default function Group() {
+  const params = useLocalSearchParams();
+  const group = JSON.parse(params.group as string);
 
   const groups = useAppSelector((st) => st.favourite.groups);
   const dispatch = useAppDispatch();
