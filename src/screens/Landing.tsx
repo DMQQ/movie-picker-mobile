@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import PagerView from "react-native-pager-view";
 import { useGetChipCategoriesQuery } from "../redux/movie/movieApi";
@@ -9,13 +9,27 @@ import NoConnectionError from "../components/NoConnectionError";
 import { ScreenProps } from "./types";
 import BottomTab from "../components/Landing/BottomTab";
 import CategoryPage from "../components/Landing/CategoryPage";
-
+import CategoryPagerIndicator from "../components/Landing/CategoryPagerIndicator";
 import LoadingSkeleton from "../components/Landing/LoadingSkeleton";
+import { useNavigation } from "@react-navigation/native";
 
-export default function Landing({ navigation }: ScreenProps<"Landing">) {
+export default function Landing() {
+  return (
+    <View style={{ flex: 1 }}>
+      <AppLoadingOverlay />
+      <NoConnectionError />
+
+      <PagerCategoryScreen />
+
+      <BottomTab />
+      <LandingHeader />
+    </View>
+  );
+}
+
+const PagerCategoryScreen = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedChip, setSelectedChip] = useState("all");
-  const [isSwipingPage, setIsSwipingPage] = useState(false);
 
   const { data: chipCategories = [] } = useGetChipCategoriesQuery();
 
@@ -23,25 +37,20 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     setSelectedChip(chip);
   };
 
-  const scrollY = useSharedValue(0);
-
   const pagerRef = useRef<PagerView>(null);
 
   useEffect(() => {
-    if (!isSwipingPage) {
-      const categoryIndex = chipCategories.findIndex((cat) => cat.id === selectedChip);
-      if (categoryIndex !== -1 && categoryIndex !== currentPage) {
-        setCurrentPage(categoryIndex);
-        pagerRef.current?.setPage(categoryIndex);
-      }
+    const categoryIndex = chipCategories.findIndex((cat) => cat.id === selectedChip);
+    if (categoryIndex !== -1 && categoryIndex !== currentPage) {
+      setCurrentPage(categoryIndex);
+      pagerRef.current?.setPage(categoryIndex);
     }
-  }, [selectedChip, chipCategories, isSwipingPage]);
+  }, [selectedChip, chipCategories]);
 
   const handlePageSelected = useCallback(
     (e: any) => {
       const pageIndex = e.nativeEvent.position;
       setCurrentPage(pageIndex);
-      setIsSwipingPage(false);
 
       const category = chipCategories[pageIndex];
       if (category && category.id !== selectedChip) {
@@ -50,42 +59,26 @@ export default function Landing({ navigation }: ScreenProps<"Landing">) {
     },
     [chipCategories, selectedChip]
   );
-
-  const handlePageScrollStateChanged = useCallback((e: any) => {
-    const state = e.nativeEvent.pageScrollState;
-    setIsSwipingPage(state === "dragging" || state === "settling");
-  }, []);
-
   return (
-    <View style={{ flex: 1 }}>
-      <AppLoadingOverlay />
-      <NoConnectionError />
-
+    <>
       {chipCategories.length > 0 ? (
-        <>
-          <PagerView
-            ref={pagerRef}
-            style={{ flex: 1 }}
-            initialPage={0}
-            onPageSelected={handlePageSelected}
-            onPageScrollStateChanged={handlePageScrollStateChanged}
-          >
-            {chipCategories.map((category) => (
-              <CategoryPage
-                key={category.id + category.label}
-                categoryId={category.id}
-                isActive={selectedChip === category.id}
-                navigation={navigation}
-              />
-            ))}
-          </PagerView>
-        </>
+        <PagerView
+          offscreenPageLimit={2}
+          pageMargin={50}
+          ref={pagerRef}
+          style={{ flex: 1 }}
+          initialPage={0}
+          onPageSelected={handlePageSelected}
+        >
+          {chipCategories.map((category, index) => (
+            <CategoryPage key={category.id} categoryId={category.id} isBecomingActive={Math.abs(currentPage - index) <= 1} />
+          ))}
+        </PagerView>
       ) : (
         <LoadingSkeleton />
       )}
 
-      <BottomTab />
-      <LandingHeader selectedChip={selectedChip} onChipPress={handleChipPress} scrollY={scrollY} />
-    </View>
+      <CategoryPagerIndicator chipCategories={chipCategories} selectedChip={selectedChip} onChipPress={handleChipPress} />
+    </>
   );
-}
+};

@@ -11,36 +11,9 @@ import useTranslation from "../service/useTranslation";
 import PlatformBlurView from "./PlatformBlurView";
 import { LinearGradient } from "expo-linear-gradient";
 
-interface LandingHeaderProps {
-  selectedChip?: string;
-  onChipPress?: (chip: string) => void;
-
-  scrollY?: SharedValue<number>;
-}
-
-const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHeaderProps) => {
+const LandingHeader = ({}) => {
   const navigation = useNavigation<any>();
-
-  const { data: chipCategories = [] } = useGetChipCategoriesQuery();
-
   const insets = useSafeAreaInsets();
-
-  const chipsAnimatedStyle = useAnimatedStyle(() => {
-    const opacity = scrollY ? interpolate(scrollY.value, [0, 60], [1, 0], Extrapolation.CLAMP) : 1;
-    const translateY = scrollY ? interpolate(scrollY.value, [0, 60], [0, -20], Extrapolation.CLAMP) : 0;
-    const height = scrollY ? interpolate(scrollY.value, [0, 60], [50, 0], Extrapolation.CLAMP) : 40;
-    const marginLeft = scrollY ? interpolate(scrollY.value, [0, 60], [0, 20], Extrapolation.CLAMP) : 0;
-    const marginRight = scrollY ? interpolate(scrollY.value, [0, 60], [0, 20], Extrapolation.CLAMP) : 0;
-
-    return {
-      opacity,
-      height,
-      marginLeft,
-      marginRight,
-      overflow: "hidden" as const,
-      transform: [{ translateY }],
-    };
-  });
 
   const nickname = useAppSelector((state) => state.room.nickname);
   const t = useTranslation();
@@ -85,33 +58,6 @@ const LandingHeader = ({ selectedChip = "all", onChipPress, scrollY }: LandingHe
                   style={styles.iconButton}
                 />
               </PlatformBlurView>
-            </Animated.View>
-
-            {/* Chip buttons */}
-            <Animated.View style={chipsAnimatedStyle}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsContainer}>
-                {chipCategories.map((category, index) => (
-                  <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>
-                    <PlatformBlurView style={styles.chipWrapper}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-                          onChipPress?.(category.id);
-                        }}
-                        style={[
-                          styles.chip,
-                          selectedChip === category.id && {
-                            backgroundColor: MD2DarkTheme.colors.primary,
-                          },
-                        ]}
-                      >
-                        <Text style={[styles.chipText, selectedChip === category.id && styles.chipTextActive]}>{category.label}</Text>
-                      </TouchableOpacity>
-                    </PlatformBlurView>
-                  </Animated.View>
-                ))}
-              </ScrollView>
             </Animated.View>
           </Animated.View>
         </View>

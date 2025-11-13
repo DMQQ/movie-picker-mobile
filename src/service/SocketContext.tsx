@@ -9,7 +9,7 @@ import { EventEmitter, useEventEmitter } from "./useEventEmitter";
 
 const isDev = envs.mode !== "production";
 
-const baseUrl = isDev ? "http://192.168.1.20:3000" : "https://movie.dmqq.dev";
+export const baseUrl = isDev ? "http://192.168.1.20:3000" : "https://movie.dmqq.dev";
 export const url = baseUrl + "/api";
 
 export const SocketContext = React.createContext<{

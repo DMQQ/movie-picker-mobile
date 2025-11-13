@@ -148,19 +148,23 @@ export default function QRScanner({ navigation }: any) {
           facing="back"
           onBarcodeScanned={isScanned ? undefined : throttle(onBarcodeScanned, 1000)}
           mute
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              width: 200,
-              height: 200,
-              borderWidth: 2,
-              borderColor: "#fff",
-              backgroundColor: "rgba(255,255,255,0.2)",
-            }}
-          />
-        </CameraView>
+        />
       )}
+
+      <View
+        style={{
+          flexDirection: "row",
+          width: 200,
+          height: 200,
+          borderWidth: 2,
+          borderColor: "#fff",
+          backgroundColor: "rgba(255,255,255,0.2)",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: [{ translateX: "-50%" }, { translateY: "-50%" }],
+        }}
+      />
 
       <Portal>
         <>
