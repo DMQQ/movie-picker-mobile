@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import { Dimensions, RefreshControl, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
@@ -52,15 +52,7 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
   const navigation = useNavigation<any>();
   const t = useTranslation();
 
-  const {
-    data,
-    isLoading,
-    isError,
-    hasMore,
-    fetchNextPage,
-    refetch,
-    isRefreshing,
-  } = useInfiniteLandingPageMovies({ categoryId });
+  const { data, isLoading, isError, hasMore, fetchNextPage, refetch, isRefreshing } = useInfiniteLandingPageMovies({ categoryId });
 
   const onEndReached = useCallback(() => {
     if (!isError && hasMore) {
@@ -156,7 +148,15 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
 });
 
 function CategoryPageMemoized(props: CategoryPageProps) {
-  if (!props.isBecomingActive) {
+  const hasRendered = useRef(false);
+
+  useEffect(() => {
+    if (props.isBecomingActive) {
+      hasRendered.current = true;
+    }
+  }, [props.isBecomingActive]);
+
+  if (!props.isBecomingActive && !hasRendered.current) {
     return <View style={{ flex: 1 }} />;
   }
 

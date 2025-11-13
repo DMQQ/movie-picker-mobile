@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
 import Skeleton from "../Skeleton/Skeleton";
 
 const { width } = Dimensions.get("screen");
@@ -30,7 +29,7 @@ const LoadingSkeleton = memo(() => {
   return (
     <View style={skeletonStyles.container}>
       {Array.from({ length: 2 }).map((_, sectionIndex) => (
-        <Animated.View key={sectionIndex} style={skeletonStyles.sectionContainer} entering={FadeIn.duration(600).delay(sectionIndex * 100)}>
+        <View key={sectionIndex} style={skeletonStyles.sectionContainer}>
           <Skeleton>
             <View style={{ width: 150, height: 25, backgroundColor: "#333", borderRadius: 5 }} />
           </Skeleton>
@@ -43,7 +42,7 @@ const LoadingSkeleton = memo(() => {
               </View>
             ))}
           </View>
-        </Animated.View>
+        </View>
       ))}
     </View>
   );

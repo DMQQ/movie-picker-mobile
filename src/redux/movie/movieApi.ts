@@ -63,6 +63,20 @@ export const movieApi = createApi({
       ],
     }),
 
+    getLandingPageMoviesInfinite: builder.query<
+      { name: string; results: Movie[] }[],
+      { categoryId: string; pageSize: number; page?: number }
+    >({
+      query: ({ categoryId, pageSize, page = 0 }) => ({
+        url: `/landing?skip=${page * pageSize}&take=${pageSize}${
+          categoryId !== "" && categoryId !== "all" ? `&category=${categoryId}` : ""
+        }`,
+      }),
+      providesTags: (result, error, arg) => [
+        { type: "LandingPageInfinite", id: `${arg.categoryId}-${arg.page || 0}` },
+      ],
+    }),
+
     getRandomSection: builder.query({
       query: (not?: string) => ({
         url: `/landing/random?not=${not}`,
@@ -97,6 +111,10 @@ export const movieApi = createApi({
 
     getFeatured: builder.query<Movie, { selectedChip: string }>({
       query: ({ selectedChip }) => "/landing/featured?category=" + selectedChip || "all",
+      providesTags: (result, error, arg) => [
+        { type: "LandingPageInfinite", id: `featured-${arg.selectedChip}` },
+      ],
+      keepUnusedDataFor: 300,
     }),
 
     getSimilar: builder.query<{ name: string; results: Movie[] }, { id: number; type: "movie" | "tv"; page: number }>({
@@ -176,6 +194,8 @@ export const {
   useGetLandingPageMoviesQuery,
   useGetLandingPageMoviesPageQuery,
   useLazyGetLandingPageMoviesPageQuery,
+  useGetLandingPageMoviesInfiniteQuery,
+  useLazyGetLandingPageMoviesInfiniteQuery,
   useGetMovieQuery,
 
   useGetRandomSectionQuery,

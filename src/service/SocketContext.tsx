@@ -7,7 +7,7 @@ import envs from "../constants/envs";
 import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "./useEventEmitter";
 
-const isDev = envs.mode !== "production";
+const isDev = true; //envs.mode !== "production";
 
 export const baseUrl = isDev ? "http://192.168.1.20:3000" : "https://movie.dmqq.dev";
 export const url = baseUrl + "/api";
