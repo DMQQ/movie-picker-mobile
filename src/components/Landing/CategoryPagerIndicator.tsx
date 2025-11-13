@@ -1,6 +1,6 @@
 import { TouchableOpacity, View, Image, StyleSheet, FlatList } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
-import { MD2DarkTheme } from "react-native-paper";
+import { MD2DarkTheme, Text } from "react-native-paper";
 import * as Haptics from "expo-haptics";
 import { useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -40,12 +40,10 @@ export default function CategoryPagerIndicator({ chipCategories, selectedChip, o
         }}
         style={[styles.chipButton, selectedChip === category.id && styles.selectedChip]}
       >
-        {category.image && category.image !== "" ? (
-          <Image resizeMode="cover" source={{ uri: baseUrl + "/assets" + category.image }} style={styles.chipImage} />
-        ) : category.logo_path && category.logo_path !== "" ? (
+        {(category.logo_path && category.logo_path !== "") || category.image ? (
           <Image
             resizeMode="contain"
-            source={{ uri: `https://image.tmdb.org/t/p/w92${category.logo_path}` }}
+            source={{ uri: `https://image.tmdb.org/t/p/w92${category.logo_path || category.image}` }}
             style={styles.chipImage}
           />
         ) : category.icon && category.icon !== "" ? (
@@ -54,7 +52,9 @@ export default function CategoryPagerIndicator({ chipCategories, selectedChip, o
             size={32}
             color={selectedChip === category.id ? MD2DarkTheme.colors.primary : MD2DarkTheme.colors.onSurface}
           />
-        ) : null}
+        ) : (
+          <Text style={{ fontSize: 10 }}>{category.label}</Text>
+        )}
       </TouchableOpacity>
     </Animated.View>
   );
