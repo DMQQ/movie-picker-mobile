@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 
@@ -8,11 +7,11 @@ import { useLazyGetSimilarQuery } from "../redux/movie/movieApi";
 import useTranslation from "../service/useTranslation";
 import SectionListItem from "./SectionItem";
 import { prefetchThumbnail, ThumbnailSizes } from "./Thumbnail";
+import { router } from "expo-router";
 
 const { width } = Dimensions.get("screen");
 
 const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
-  const navigation = useNavigation<any>();
   const [page, setPage] = useState(1);
   const [getSectionMovies, state] = useLazyGetSimilarQuery();
 
@@ -37,10 +36,13 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
       <SectionListItem
         {...item}
         onPress={() =>
-          navigation.push("MovieDetails", {
-            id: item.id,
-            type: type,
-            img: item.poster_path,
+          router.push({
+            pathname: "/movie-details",
+            params: {
+              id: item.id,
+              type: type,
+              img: item.poster_path,
+            },
           })
         }
       />
@@ -63,7 +65,6 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
         keyExtractor={keySectionExtractor}
         renderItem={renderItem}
         onEndReachedThreshold={0.5}
-        estimatedItemSize={width * 0.3 + 15}
       />
     </View>
   );
