@@ -6,6 +6,7 @@ import { Button, Dialog, MD2DarkTheme, Portal, Text, TextInput } from "react-nat
 import { createGroupFromArray } from "../redux/favourites/favourites";
 import { useAppDispatch } from "../redux/store";
 import useTranslation from "../service/useTranslation";
+import { router } from "expo-router";
 
 interface CreateCollectionFromLikedProps {
   data: any[];
@@ -14,7 +15,6 @@ interface CreateCollectionFromLikedProps {
 export default function CreateCollectionFromLiked({ data }: CreateCollectionFromLikedProps) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [text, setText] = useState("");
-  const navigation = useNavigation<any>();
   const dispatch = useAppDispatch();
   const t = useTranslation();
 
@@ -77,7 +77,7 @@ export default function CreateCollectionFromLiked({ data }: CreateCollectionFrom
                   );
                   setModalVisible(false);
                   setText("");
-                  navigation.navigate("Favourites");
+                  router.navigate("/favourites");
                 }
               }}
             >

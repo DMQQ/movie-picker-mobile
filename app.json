@@ -6,10 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon-dark.png",
     "userInterfaceStyle": "automatic",
-    "scheme": [
-      "flickmate",
-      "pl.dmq.moviepicker"
-    ],
+    "scheme": ["flickmate", "pl.dmq.moviepicker"],
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -39,9 +36,7 @@
         }
       ]
     ],
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
       "buildNumber": "20251014",
@@ -54,18 +49,14 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "pl.dmq.movie-picker",
-      "associatedDomains": [
-        "applinks:movie.dmqq.dev"
-      ]
+      "associatedDomains": ["applinks:movie.dmqq.dev"]
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
-      "permissions": [
-        "android.permission.CAMERA"
-      ],
+      "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",
       "versionCode": 202509260,
       "intentFilters": [
@@ -82,10 +73,7 @@
               "pathPrefix": "/"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
     },
@@ -98,6 +86,9 @@
       }
     },
     "runtimeVersion": "2.0.0",
+    "experiments": {
+      "typedRoutes": true
+    },
     "updates": {
       "url": "https://movie.dmqq.dev/api/manifest",
       "checkAutomatically": "ON_LOAD",

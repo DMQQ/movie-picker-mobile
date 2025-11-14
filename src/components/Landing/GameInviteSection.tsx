@@ -9,6 +9,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
 import Thumbnail from "../Thumbnail";
 import PlatformBlurView from "../PlatformBlurView";
+import { router } from "expo-router";
 
 const gameInviteStyles = StyleSheet.create({
   container: {
@@ -95,7 +96,7 @@ const backgroundImages = [
 ];
 
 const GameInviteSection = memo(
-  ({ type, navigation }: { type: "quick" | "social" | "voter" | "fortune" | "all-games"; navigation: any }) => {
+  ({ type }: { type: "quick" | "social" | "voter" | "fortune" | "all-games" }) => {
     const t = useTranslation();
 
     const getGameConfig = (gameType: typeof type) => {
@@ -107,7 +108,7 @@ const GameInviteSection = memo(
             buttonText: t("game-invite.quick-button"),
             colors: ["#6366f1", "#8b5cf6"] as const,
             icon: "gamepad",
-            navigation: () => navigation.navigate("Games"),
+            navigation: () => router.push("/games"),
           };
         case "social":
           return {
@@ -117,8 +118,8 @@ const GameInviteSection = memo(
             colors: ["#f59e0b", "#ef4444"] as const,
             icon: "users",
             navigation: () =>
-              navigation.navigate("QRCode", {
-                screen: "CreateQRCode",
+              router.push({
+                pathname: "/room/qr-code",
                 params: { quickStart: true },
               }),
           };
@@ -129,7 +130,7 @@ const GameInviteSection = memo(
             buttonText: t("game-invite.voter-button"),
             colors: ["#10b981", "#059669"] as const,
             icon: "thumbs-up",
-            navigation: () => navigation.navigate("Voter", { screen: "Home" }),
+            navigation: () => router.push("/voter-home"),
           };
         case "fortune":
           return {
@@ -138,7 +139,7 @@ const GameInviteSection = memo(
             buttonText: t("game-invite.fortune-button"),
             colors: ["#8b5cf6", "#7c3aed"] as const,
             icon: "refresh",
-            navigation: () => navigation.navigate("Fortune"),
+            navigation: () => router.push("/fortune"),
           };
         case "all-games":
           return {
@@ -147,7 +148,7 @@ const GameInviteSection = memo(
             buttonText: t("game-invite.all-games-button"),
             colors: ["#374151", "#6b7280"] as const,
             icon: "list",
-            navigation: () => navigation.navigate("Games"),
+            navigation: () => router.push("/games"),
           };
         default:
           return {
@@ -156,7 +157,7 @@ const GameInviteSection = memo(
             buttonText: "",
             colors: ["#6366f1", "#8b5cf6"] as const,
             icon: "gamepad",
-            navigation: () => navigation.navigate("Games"),
+            navigation: () => router.push("/games"),
           };
       }
     };
@@ -168,7 +169,7 @@ const GameInviteSection = memo(
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       }
       config.navigation();
-    }, [type, navigation]);
+    }, [type]);
 
     const gradientColors = config.colors;
 

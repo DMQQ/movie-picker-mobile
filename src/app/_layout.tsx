@@ -1,98 +1,114 @@
-import { DarkTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import { Platform } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { MD2DarkTheme, PaperProvider } from 'react-native-paper';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Provider } from 'react-redux';
-import { store } from '../redux/store';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Stack } from "expo-router";
+import { useEffect, useState } from "react";
+import { Image, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Button, MD2DarkTheme, PaperProvider, Text } from "react-native-paper";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
+import { loadFavorites } from "../redux/favourites/favourites";
+import { roomActions } from "../redux/room/roomSlice";
+import { store, useAppDispatch } from "../redux/store";
+import useInit from "../service/useInit";
 
-SplashScreen.preventAutoHideAsync();
+const Fallback = ({ isUpdating }: { isUpdating?: boolean }) => (
+  <View
+    style={{
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#000",
+    }}
+  >
+    <Image source={require("../../assets/images/icon-light.png")} style={{ width: 200, height: 200, marginBottom: 20 }} />
+    {isUpdating && <Text style={{ fontFamily: "Bebas", marginTop: 10, fontSize: 25 }}>App is updating, please wait...</Text>}
+  </View>
+);
+
+const theme = MD2DarkTheme;
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
-    Bebas: require('../../assets/fonts/BebasNeue-Regular.ttf'),
-  });
+  const { isLoaded, isUpdating } = useInit();
+
+  return (
+    <SafeAreaProvider style={{ flex: 1 }}>
+      <Provider store={store}>
+        <PaperProvider theme={theme}>
+          <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
+        </PaperProvider>
+      </Provider>
+    </SafeAreaProvider>
+  );
+}
+
+const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: boolean }) => {
+  const dispatch = useAppDispatch();
+
+  const [loaded, setLoaded] = useState(false);
+
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+    (async () => {
+      try {
+        const [language, regionalization] = await Promise.all([AsyncStorage.getItem("language"), AsyncStorage.getItem("regionalization")]);
 
-  if (!loaded) {
-    return null;
+        if (!language) return setShowLanguageSelector(true);
+
+        const nickname = (await AsyncStorage.getItem("nickname")) || (language === "en" ? "Guest" : "Gość");
+
+        dispatch(roomActions.setSettings({ nickname, language, regionalization: JSON.parse(regionalization || "{}") || ({} as any) }));
+      } catch (error) {
+      } finally {
+        setLoaded(true);
+      }
+    })();
+    dispatch(loadFavorites());
+  }, [showLanguageSelector]);
+
+  const chooseLanguage = (language: string) => {
+    return async () => {
+      await AsyncStorage.setItem("language", language);
+      dispatch(roomActions.setLanguage(language));
+      setShowLanguageSelector(false);
+    };
+  };
+
+  if (!loaded || !isLoaded || isUpdating) return <Fallback isUpdating={isUpdating} />;
+
+  if (showLanguageSelector) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000" }}>
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          <Button onPress={chooseLanguage("en")}>English</Button>
+          <Button onPress={chooseLanguage("pl")}>Polski</Button>
+        </View>
+      </View>
+    );
   }
 
   return (
-    <Provider store={store}>
-      <SafeAreaProvider>
-        <PaperProvider theme={MD2DarkTheme}>
-          <ThemeProvider value={DarkTheme}>
-            <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#000' }}>
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                
-                {/* Movie Details */}
-                <Stack.Screen 
-                  name="movie/[...params]" 
-                  options={{ 
-                    headerShown: false,
-                    headerTransparent: true,
-                  }} 
-                />
-                
-                {/* Modals */}
-                <Stack.Screen 
-                  name="settings" 
-                  options={{ 
-                    presentation: 'modal',
-                    ...(Platform.OS === "ios" && { 
-                      animation: "fade", 
-                      gestureEnabled: true 
-                    }),
-                  }} 
-                />
-                <Stack.Screen 
-                  name="search-filters" 
-                  options={{ 
-                    presentation: 'modal',
-                    ...(Platform.OS === "ios" && { 
-                      animation: "fade", 
-                      gestureEnabled: true 
-                    }),
-                  }} 
-                />
-                <Stack.Screen 
-                  name="region-selector" 
-                  options={{ 
-                    presentation: 'modal',
-                    ...(Platform.OS === "ios" && { 
-                      animation: "fade", 
-                      gestureEnabled: true 
-                    }),
-                  }} 
-                />
-                
-                {/* Game Screens */}
-                <Stack.Screen name="fortune" options={{ headerShown: false }} />
-                <Stack.Screen name="overview" options={{ headerShown: false }} />
-                <Stack.Screen name="group" options={{ headerShown: false }} />
-                
-                {/* Dynamic Routes */}
-                <Stack.Screen name="voter/[sessionId]" options={{ headerShown: false }} />
-                <Stack.Screen name="room/[roomId]" options={{ headerShown: false }} />
-                <Stack.Screen name="room/qr-scanner" options={{ headerShown: false }} />
-                <Stack.Screen name="room/setup" options={{ headerShown: false }} />
-                <Stack.Screen name="room/summary" options={{ headerShown: false }} />
-              </Stack>
-            </GestureHandlerRootView>
-          </ThemeProvider>
-        </PaperProvider>
-      </SafeAreaProvider>
-    </Provider>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: {
+            backgroundColor: "#000",
+          },
+        }}
+      >
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+        <Stack.Screen name="room" options={{ headerShown: false }} />
+
+        <Stack.Screen name="fortune" options={{ headerShown: false }} />
+
+        <Stack.Screen name="settings" options={{ headerShown: false }} />
+
+        <Stack.Screen name="group" options={{ headerShown: false }} />
+
+        <Stack.Screen name="search-filters" options={{ headerShown: false }} />
+      </Stack>
+    </GestureHandlerRootView>
   );
-}
+};

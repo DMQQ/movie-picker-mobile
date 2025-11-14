@@ -20,7 +20,7 @@ import QRCodeComponent from "../../components/Voter/QRCode";
 import useTranslation from "../../service/useTranslation";
 import { useMovieVoter } from "../../service/useVoter";
 
-import { CommonActions } from "@react-navigation/native";
+import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { Pressable } from "react-native-gesture-handler";
 import PageHeading from "../../components/PageHeading";
@@ -34,7 +34,10 @@ const scaleTitle = (title: string, size = 30) => {
   return size;
 };
 
-export default function Home({ navigation, route }: any) {
+import { useLocalSearchParams } from "expo-router";
+
+export default function Home() {
+  const params = useLocalSearchParams();
   const { sessionId, status, users, currentMovies, currentUserId, actions, isHost, sessionSettings, loadingInitialContent } =
     useMovieVoter();
   const [localReady, setLocalReady] = useState(false);
@@ -51,15 +54,15 @@ export default function Home({ navigation, route }: any) {
   }, [status]);
 
   useEffect(() => {
-    if (route?.params?.sessionId) {
+    if (params?.sessionId) {
       actions.setWaiting();
-      actions.joinSession(route?.params?.sessionId).catch((err) => {
+      actions.joinSession(params.sessionId as string).catch((err) => {
         if (err.message === "Session not found") {
-          navigation.goBack();
+          router.back();
         }
       });
     }
-  }, [route?.params?.sessionId]);
+  }, [params?.sessionId]);
 
   const handleSubmitRating = useCallback(
     throttle(() => {
@@ -104,14 +107,11 @@ export default function Home({ navigation, route }: any) {
   const t = useTranslation();
 
   function onGoBack() {
-    navigation.canGoBack()
-      ? navigation.goBack()
-      : navigation.dispatch(
-          CommonActions.reset({
-            index: 1,
-            routes: [{ name: "Landing" }, { name: "Games" }],
-          })
-        );
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace("/games");
+    }
   }
 
   const renderInitialState = () => (
@@ -250,10 +250,13 @@ export default function Home({ navigation, route }: any) {
                   disabled={typeof card?.id === "undefined"}
                   activeOpacity={0.9}
                   onPress={() => {
-                    navigation.navigate("MovieDetails", {
-                      id: card?.id,
-                      type: card?.title ? "movie" : "tv",
-                      img: card?.poster_path,
+                    router.push({
+                      pathname: "/movie-details",
+                      params: {
+                        id: card?.id,
+                        type: card?.title ? "movie" : "tv",
+                        img: card?.poster_path,
+                      },
                     });
                   }}
                   style={{ borderRadius: 10, overflow: "hidden" }}
@@ -437,7 +440,7 @@ export default function Home({ navigation, route }: any) {
   );
 }
 
-function Results({ navigation }: any) {
+function Results() {
   const { sessionResults, currentUserId } = useMovieVoter();
   const t = useTranslation();
 
@@ -456,7 +459,7 @@ function Results({ navigation }: any) {
       <View style={{ flex: 1 }}>
         <View style={styles.center}>
           <Text>No movies matched your preferences</Text>
-          <Button mode="contained" onPress={() => navigation.replace("Home")} style={styles.button}>
+          <Button mode="contained" onPress={() => router.replace("/")} style={styles.button}>
             {t("voter.home.quit")}
           </Button>
         </View>
@@ -487,14 +490,7 @@ function Results({ navigation }: any) {
         <IconButton
           style={{ position: "absolute", left: 10, top: 10, zIndex: 100 }}
           icon="chevron-left"
-          onPress={() =>
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 1,
-                routes: [{ name: "Landing" }, { name: "Games" }],
-              })
-            )
-          }
+          onPress={() => router.replace("/games")}
           size={28}
         />
         <Text style={{ fontSize: 30, fontFamily: "Bebas", width: "100%", textAlign: "center" }}>{t("voter.overview.title")} 🎬</Text>
@@ -507,10 +503,13 @@ function Results({ navigation }: any) {
           <View style={{ flexDirection: "row", gap: 15 }}>
             <Pressable
               onPress={() => {
-                navigation.navigate("MovieDetails", {
-                  id: card?.id,
-                  type: card?.title ? "movie" : "tv",
-                  img: card?.poster_path,
+                router.push({
+                  pathname: "/movie-details",
+                  params: {
+                    id: card?.id,
+                    type: card?.title ? "movie" : "tv",
+                    img: card?.poster_path,
+                  },
                 });
               }}
             >
@@ -550,10 +549,13 @@ function Results({ navigation }: any) {
                 key={item.movie.id}
                 style={{ marginBottom: 15, width: Dimensions.get("screen").width - 30, overflow: "hidden" }}
                 onPress={() => {
-                  navigation.navigate("MovieDetails", {
-                    id: item.movie.id,
-                    type: item?.movie?.title ? "movie" : "tv",
-                    img: item.movie.poster_path,
+                  router.push({
+                    pathname: "/movie-details",
+                    params: {
+                      id: item.movie.id,
+                      type: item?.movie?.title ? "movie" : "tv",
+                      img: item.movie.poster_path,
+                    },
                   });
                 }}
               >
@@ -597,7 +599,7 @@ function Results({ navigation }: any) {
           mode="contained"
           onPress={() => {
             ReviewManager.onGameComplete(true);
-            navigation.navigate("Landing");
+            router.replace("/");
           }}
           style={[styles.button, { marginBottom: 15 }]}
           contentStyle={{ padding: 7.5 }}

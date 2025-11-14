@@ -1,4 +1,5 @@
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import LottieView from "lottie-react-native";
 import { ReactNode, useContext, useEffect, useState, useRef } from "react";
 import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View, ImageBackground, Animated } from "react-native";
@@ -66,9 +67,9 @@ const Badge = () => {
   );
 };
 
-export default function GameSummary({ route }: any) {
-  const { roomId } = route.params;
-  const navigation = useNavigation<any>();
+export default function GameSummary() {
+  const params = useLocalSearchParams();
+  const roomId = params.roomId as string;
   const dispatch = useAppDispatch();
   const theme = useTheme();
   const { socket } = useContext(SocketContext);
@@ -163,22 +164,12 @@ export default function GameSummary({ route }: any) {
 
   const handleBackToHome = () => {
     dispatch(roomActions.reset());
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: "Landing" }],
-      })
-    );
+    router.replace("/");
   };
 
   const handleTryAgain = () => {
     dispatch(roomActions.reset());
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 1,
-        routes: [{ name: "Landing" }, { name: "QRCode" }],
-      })
-    );
+    router.replace("/room/qr-code");
   };
 
   const renderMovieItem = ({ item }: { item: Partial<Movie> }) => {
@@ -435,7 +426,6 @@ export default function GameSummary({ route }: any) {
 }
 
 const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { summary: { type: string }; badge?: boolean }) => {
-  const navigation = useNavigation<any>();
   const screenWidth = Dimensions.get("window").width;
   const itemWidth = (screenWidth - 60) / 3;
   const dispatch = useAppDispatch();
@@ -476,10 +466,13 @@ const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { sum
       {badge && <Badge />}
       <TouchableRipple
         onPress={() =>
-          navigation.navigate("MovieDetails", {
-            id: item.id,
-            type: summary?.type || "movie",
-            img: item.poster_path,
+          router.push({
+            pathname: "/movie-details",
+            params: {
+              id: item.id,
+              type: summary?.type || "movie",
+              img: item.poster_path,
+            },
           })
         }
       >

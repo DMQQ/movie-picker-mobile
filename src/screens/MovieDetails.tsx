@@ -9,17 +9,21 @@ import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
 import { ScreenProps } from "./types";
 import FloatingMovieHeader from "../components/FloatingMovieHeader";
-import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 
 const { width, height } = Dimensions.get("screen");
 
-export default function MovieDetailsScreen({ route }: ScreenProps<"MovieDetails">) {
+export default function MovieDetailsScreen() {
+  const params = useLocalSearchParams();
   const scrollOffset = useSharedValue(0);
 
+  console.log("MovieDetailsScreen params:", params);
+
   const IMG_HEIGHT = useMemo(() => height * 0.75, [height]);
-  const typeOfContent = useMemo(() => route?.params?.type, [route?.params?.type]);
-  const movieId = useMemo(() => route.params.id, [route.params.id]);
-  const posterPath = useMemo(() => route.params.img, [route.params.img]);
+  const typeOfContent = useMemo(() => params?.type as "movie" | "tv", [params?.type]);
+  const movieId = useMemo(() => Number(params.id), [params.id]);
+  const posterPath = useMemo(() => params.img as string, [params.img]);
 
   const scrollhandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -105,7 +109,6 @@ interface ActionsProps {
 
 const Actions = ({ movie, movieId, type: typeOfContent, scrollOffset }: ActionsProps) => {
   const [backButtonPurpose, setBackButtonPurpose] = useState<"back" | "close">("back");
-  const navigation = useNavigation();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleCloseTrailers = () => {
@@ -115,7 +118,7 @@ const Actions = ({ movie, movieId, type: typeOfContent, scrollOffset }: ActionsP
 
   const handleClose = () => {
     if (backButtonPurpose === "back") {
-      navigation.goBack();
+      router.back();
       return;
     }
 

@@ -1,19 +1,13 @@
-import { useLocalSearchParams } from 'expo-router';
-import { View } from 'react-native';
-import QRCodeMain from '../../screens/Room/Main';
+import { SocketProvider } from "../../service/SocketContext";
+import Home from "../../screens/Room/Home";
+import { RoomContextProvider } from "../../screens/Room/RoomContext";
 
 export default function RoomSession() {
-  const { roomId } = useLocalSearchParams();
-  
-  const route = {
-    params: {
-      roomId: roomId as string,
-    },
-  };
-  
   return (
-    <View style={{ flex: 1, backgroundColor: '#000' }}>
-      <QRCodeMain navigation={{} as any} route={route} />
-    </View>
+    <SocketProvider namespace="/swipe">
+      <RoomContextProvider>
+        <Home />
+      </RoomContextProvider>
+    </SocketProvider>
   );
 }

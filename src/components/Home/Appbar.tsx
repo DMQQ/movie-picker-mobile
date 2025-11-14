@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+// useNavigation removed - using expo-router
 import { memo, useContext, useMemo, useState } from "react";
-import { Image, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Platform, Pressable, StyleSheet, View } from "react-native";
 import { Appbar, Button, MD2DarkTheme, useTheme } from "react-native-paper";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
 import { Movie } from "../../../types";
@@ -13,8 +13,9 @@ import ActiveUsers from "./ActiveUsers";
 import DialogModals from "./DialogModals";
 import { GlassView } from "expo-glass-effect";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router } from "expo-router";
 
-function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }; hasCards: boolean }) {
+function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean }) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
 
@@ -23,7 +24,6 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
   };
   const theme = useTheme();
   const { socket } = useContext(SocketContext);
-  const navigation = useNavigation<any>();
 
   const {
     room: { isFinished, users },
@@ -34,9 +34,11 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
   const t = useTranslation();
 
   const handleEndGame = () => {
-    const roomId = route.params?.roomId;
     socket?.emit("end-game", roomId);
-    navigation.replace("GameSummary", { roomId });
+    router.replace({
+      pathname: "/game-summary",
+      params: { roomId },
+    });
   };
 
   const insets = useSafeAreaInsets();
@@ -70,7 +72,7 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
             size={22}
             icon="refresh"
             onPress={() => {
-              socket?.emit("get-movies", route.params?.roomId);
+              socket?.emit("get-movies", roomId);
             }}
           />
         )}
@@ -80,7 +82,7 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
 
       <DialogModals
         showLeaveModal={showLeaveModal}
-        route={route}
+        roomId={roomId}
         toggleLeaveModal={toggleLeaveModal}
         setShowQRModal={setShowQRModal}
         showQRModal={showQRModal}
@@ -92,7 +94,6 @@ function HomeAppbar({ route, hasCards }: { route: { params: { roomId: string } }
 export default memo(HomeAppbar);
 
 const LikedMoviesPreview = () => {
-  const navigation = useNavigation<any>();
   const likes = useAppSelector((state) => state.room.room.likes);
   const itemsToDisplay = useMemo(() => likes.toReversed().slice(0, 5), [likes]);
   const [loadedMovies, setLoadedMovies] = useState<Set<Movie>>(new Set());
@@ -104,7 +105,7 @@ const LikedMoviesPreview = () => {
   const loadedItems = Array.from(loadedMovies).reverse().slice(0, 5);
 
   return (
-    <Pressable onPress={() => navigation.navigate("Overview")}>
+    <Pressable onPress={() => router.navigate("/room/overview")}>
       <Animated.View layout={LinearTransition} style={styles.likedContainer}>
         {loadedItems.length === 0 && <PlaceholderImage />}
 
@@ -165,7 +166,6 @@ const PlaceholderImage = () => {
       </View>
     </Animated.View>
   ));
-  return;
 };
 
 const styles = StyleSheet.create({

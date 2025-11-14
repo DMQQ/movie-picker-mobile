@@ -1,8 +1,9 @@
 import { FontAwesome } from "@expo/vector-icons";
-import { CommonActions } from "@react-navigation/native";
-import { memo, useContext, useEffect, useMemo, useState, useTransition } from "react";
+import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
+import { memo, useContext, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Dimensions, Platform, Share, View } from "react-native";
-import { ActivityIndicator, Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
+import { Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { Movie } from "../../../types";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
@@ -14,7 +15,7 @@ import useTranslation from "../../service/useTranslation";
 import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
 import { FancySpinner } from "../../components/FancySpinner";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+// SafeAreaView removed as we're using a wrapper View
 
 interface RoomSetupParams {
   category: string;
@@ -37,8 +38,11 @@ interface ISocketResponse {
   };
 }
 
-export default function QRCodePage({ navigation, route }: any) {
-  const { roomSetup }: { roomSetup: RoomSetupParams } = route.params || {};
+export default function QRCodePage() {
+  const params = useLocalSearchParams();
+  console.log("QRCodePage params:", params);
+  const roomSetup = params.roomSetup ? (JSON.parse(params.roomSetup as string) as RoomSetupParams) : undefined;
+  console.log("QRCodePage roomSetup:", roomSetup);
   const { category, maxRounds, genre, providers, specialCategories } = roomSetup || {};
   const { qrCode, nickname } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
@@ -53,7 +57,21 @@ export default function QRCodePage({ navigation, route }: any) {
   } = useAppSelector((state) => state.room);
 
   const roomConfig = useMemo(() => {
-    if (!route?.params?.quickStart) {
+    console.log("Creating roomConfig with:", {
+      category,
+      maxRounds,
+      genre,
+      providers,
+      specialCategories,
+      nickname,
+      quickStart: params?.quickStart,
+    });
+
+    if (!params?.quickStart) {
+      if (!category || !nickname || !socket) {
+        console.log("Missing required data:", { category, nickname, socketExists: !!socket });
+        return null;
+      }
       return {
         type: category,
         pageRange: Math.trunc(Math.random() * 5),
@@ -87,29 +105,35 @@ export default function QRCodePage({ navigation, route }: any) {
       specialCategories: [],
     };
     return config;
-  }, [route?.params?.quickStart, category, maxRounds, genre, providers, nickname, socket]);
+  }, [params?.quickStart, category, maxRounds, genre, providers, nickname, socket]);
 
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
+  const roomCreationAttempted = useRef(false);
 
   useEffect(() => {
+    if (!roomConfig || !socket || !nickname || qrCode || roomCreationAttempted.current) {
+      return;
+    }
+
+    roomCreationAttempted.current = true;
+
     (async () => {
       try {
-        if (!roomConfig) {
-          return;
-        }
+        console.log("🎯 Starting room creation...");
         setCreateRoomLoading(true);
 
-        const response = (await socket?.emitWithAck("create-room", roomConfig)) as ISocketResponse;
+        const response = (await socket.emitWithAck("create-room", roomConfig)) as ISocketResponse;
 
         if (response) {
           console.log("💡 Room created:", response.roomId);
           dispatch(roomActions.setRoom(response.details));
           dispatch(roomActions.setQRCode(response.roomId));
 
-          socket?.emit("join-room", response.roomId, nickname);
+          socket.emit("join-room", response.roomId, nickname);
         }
       } catch (error) {
         console.log("💥 Error creating room:", error);
+        roomCreationAttempted.current = false; // Reset on error to allow retry
       } finally {
         setCreateRoomLoading(false);
       }
@@ -119,7 +143,7 @@ export default function QRCodePage({ navigation, route }: any) {
       socket?.off("active");
       socket?.off("movies");
     };
-  }, [roomConfig, route?.params, socket]);
+  }, [roomConfig, socket, nickname, qrCode, dispatch]);
 
   useEffect(() => {
     if (!socket) return;
@@ -144,34 +168,25 @@ export default function QRCodePage({ navigation, route }: any) {
       dispatch(roomActions.setPlaying(true));
 
       let gameType = "movie";
-      if (route?.params?.quickStart && roomConfig) {
+      if (params?.quickStart && roomConfig) {
         gameType = roomConfig.type?.includes("/tv") ? "tv" : "movie";
       } else if (category) {
         gameType = category.includes("/movie") || category.includes("movie") ? "movie" : "tv";
       }
 
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [
-            {
-              name: "Home",
-              params: {
-                roomId: code,
-                type: gameType,
-              },
-            },
-          ],
-        })
-      );
+      router.push({
+        pathname: "/room/[roomId]",
+        params: {
+          roomId: code,
+          type: gameType,
+        },
+      });
     });
   };
 
-  const insets = useSafeAreaInsets();
-
   return (
-    <View style={{ flex: 1 }}>
-      <PageHeading useSafeArea={Platform.OS === "android"} title={t("room.qr-title")} />
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
+      <PageHeading useSafeArea={false} title={t("room.qr-title")} />
       <View
         style={[
           { position: "relative", flex: 1, padding: 15, paddingTop: 80, paddingBottom: 0 },
@@ -190,10 +205,18 @@ export default function QRCodePage({ navigation, route }: any) {
         {createRoomLoading ? (
           <Animated.View entering={FadeInDown} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
             <FancySpinner size={100} />
+            <Text style={{ color: "#fff", marginTop: 20 }}>Creating room...</Text>
+          </Animated.View>
+        ) : qrCode ? (
+          <Animated.View entering={FadeInDown} style={{ flex: 1 }}>
+            <QrCodeBox code={qrCode} />
           </Animated.View>
         ) : (
-          <Animated.View entering={FadeInDown} style={{ flex: 1 }}>
-            <QrCodeBox code={qrCode || ""} />
+          <Animated.View entering={FadeInDown} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Text style={{ color: "#fff" }}>No QR code generated yet</Text>
+            <Text style={{ color: "#fff", marginTop: 10 }}>Room config: {roomConfig ? "✓" : "✗"}</Text>
+            <Text style={{ color: "#fff", marginTop: 5 }}>Socket: {socket ? "✓" : "✗"}</Text>
+            <Text style={{ color: "#fff", marginTop: 5 }}>Nickname: {nickname || "Not set"}</Text>
           </Animated.View>
         )}
       </View>

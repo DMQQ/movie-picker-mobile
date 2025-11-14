@@ -10,6 +10,7 @@ import { useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 import PlatformBlurView from "./PlatformBlurView";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 
 const LandingHeader = ({}) => {
   const navigation = useNavigation<any>();
@@ -41,19 +42,7 @@ const LandingHeader = ({}) => {
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-                    navigation.navigate("Settings");
-                  }}
-                  style={styles.iconButton}
-                />
-
-                <IconButton
-                  icon="magnify"
-                  size={30}
-                  iconColor="#fff"
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-                    navigation.navigate("Search");
+                    router.navigate("/settings");
                   }}
                   style={styles.iconButton}
                 />

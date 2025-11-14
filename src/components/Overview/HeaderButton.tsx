@@ -2,8 +2,9 @@ import { useContext } from "react";
 import { Button } from "react-native-paper";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
+import { router } from "expo-router";
 
-export default function HeaderButton({ navigation, room }: { navigation: any; room: string }) {
+export default function HeaderButton({ room }: { room: string }) {
   const { socket } = useContext(SocketContext);
 
   const t = useTranslation();
@@ -21,9 +22,12 @@ export default function HeaderButton({ navigation, room }: { navigation: any; ro
               name?: string;
             }[]
           ) => {
-            navigation.navigate("Overview", {
-              roomId: room,
-              matches,
+            router.push({
+              pathname: "/overview",
+              params: {
+                roomId: room,
+                matches: JSON.stringify(matches),
+              },
             });
           }
         );

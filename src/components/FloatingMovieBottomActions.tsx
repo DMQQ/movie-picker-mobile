@@ -3,12 +3,12 @@ import { useCallback, useMemo, useState } from "react";
 import { Dimensions, Platform, StyleSheet, View, Share, Linking, TouchableOpacity } from "react-native";
 import { IconButton, Text } from "react-native-paper";
 import Animated, { useAnimatedStyle, withTiming, SharedValue } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { Movie } from "../../types";
 import PlatformBlurView, { BlurViewWrapper } from "./PlatformBlurView";
 import { useGetTrailersQuery } from "../redux/movie/movieApi";
 import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 
 const { height } = Dimensions.get("screen");
 const IMG_HEIGHT = height * 0.75;
@@ -55,47 +55,50 @@ export default function FloatingMovieBottomActions({ movie, scrollY, movieId, ty
 
   const handleSmartSearchPress = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    
+
     // Extract genres
     const genres = movie.genres?.map((g: any) => g.id) || [];
-    
+
     // Extract streaming providers from nested structure
     let watchProviders: number[] = [];
-    if (providers && typeof providers === 'object') {
+    if (providers && typeof providers === "object") {
       const allProviders: any[] = [];
-      
+
       // Collect providers from all categories
-      (['flatrate', 'rent', 'buy', 'free', 'ads'] as const).forEach(category => {
+      (["flatrate", "rent", "buy", "free", "ads"] as const).forEach((category) => {
         if (Array.isArray((providers as any)[category])) {
           allProviders.push(...(providers as any)[category]);
         }
       });
-      
+
       // Extract unique provider IDs
-      const uniqueProviderIds = new Set(
-        allProviders
-          .filter((p: any) => p.provider_id)
-          .map((p: any) => p.provider_id)
-      );
-      
+      const uniqueProviderIds = new Set(allProviders.filter((p: any) => p.provider_id).map((p: any) => p.provider_id));
+
       watchProviders = Array.from(uniqueProviderIds);
     }
-    
+
     // Create search query based on genres (no initial query text for discovery)
-    const genreNames = movie.genres?.slice(0, 2).map((g: any) => g.name).join(' & ') || '';
-    
+    const genreNames =
+      movie.genres
+        ?.slice(0, 2)
+        .map((g: any) => g.name)
+        .join(" & ") || "";
+
     // If we have filters, use discovery mode (empty search), otherwise search by genre names
-    let searchQuery = '';
+    let searchQuery = "";
     if (genres.length === 0 && watchProviders.length === 0) {
       // Fallback to genre-based text search if no filters available
-      searchQuery = genreNames || typeOfContent === 'movie' ? 'action' : 'drama';
+      searchQuery = genreNames || typeOfContent === "movie" ? "action" : "drama";
     }
-    
-    navigation.navigate("Search", {
-      initialQuery: searchQuery,
-      genres: genres.length > 0 ? genres : undefined,
-      providers: watchProviders.length > 0 ? watchProviders : undefined,
-      type: typeOfContent
+
+    router.navigate({
+      pathname: "/search",
+      params: {
+        initialQuery: searchQuery,
+        genres: genres.length > 0 ? genres : undefined,
+        providers: watchProviders.length > 0 ? watchProviders : undefined,
+        type: typeOfContent,
+      },
     });
   }, [navigation, movie, typeOfContent, providers]);
 
@@ -131,7 +134,7 @@ export default function FloatingMovieBottomActions({ movie, scrollY, movieId, ty
       )}
 
       <View style={styles.actionsContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.smartSearchButton, Platform.OS === "android" && styles.androidButtonBackground]}
           onPress={handleSmartSearchPress}
           activeOpacity={0.8}

@@ -36,8 +36,12 @@ const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; i
       entering={FadeIn.delay(index * 50)}
       onPress={() => {
         router.push({
-          pathname: "/movie/[...params]",
-          params: { params: [item?.title ? "movie" : "tv", item.id.toString()] },
+          pathname: "/movie-details",
+          params: {
+            id: item.id.toString(),
+            type: item?.title ? "movie" : "tv",
+            img: item.poster_path,
+          },
         });
       }}
       style={{

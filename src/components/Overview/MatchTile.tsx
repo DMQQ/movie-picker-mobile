@@ -1,18 +1,18 @@
 import { TouchableRipple } from "react-native-paper";
 import { Movie } from "../../../types";
 import Thumbnail from "../Thumbnail";
+import { router } from "expo-router";
 
 interface MatchTileProps {
   match: Movie;
   type: string;
-  navigation: any;
   index: number;
   posterSize?: number;
 
   onLongPress?: (item: Movie) => void;
 }
 
-const MatchTile = ({ match, type: _type, navigation, posterSize = 200, onLongPress }: MatchTileProps) => {
+const MatchTile = ({ match, type: _type, posterSize = 200, onLongPress }: MatchTileProps) => {
   const type = (match?.type || _type).includes("movie") ? "movie" : "tv";
 
   return (
@@ -21,10 +21,13 @@ const MatchTile = ({ match, type: _type, navigation, posterSize = 200, onLongPre
         flex: 1,
       }}
       onPress={() =>
-        navigation.navigate("MovieDetails", {
-          id: match.id,
-          type: match?.type || type,
-          img: match.poster_path,
+        router.push({
+          pathname: "/movie-details",
+          params: {
+            id: match.id,
+            type: match?.type || type,
+            img: match.poster_path,
+          },
         })
       }
       onLongPress={() => onLongPress && onLongPress(match)}

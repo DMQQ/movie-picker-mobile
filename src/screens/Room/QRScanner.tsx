@@ -1,13 +1,15 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import React, { useContext, useEffect, useState } from "react";
 import { Platform, ToastAndroid, Vibration, View } from "react-native";
-import { Button, Dialog, FAB, Portal, Text, TextInput, useTheme } from "react-native-paper";
+import { Button, Dialog, FAB, IconButton, Portal, Text, TextInput, useTheme } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 import PageHeading from "../../components/PageHeading";
 import { useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../service/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
 import { router, useFocusEffect } from "expo-router";
+import { Label, NativeTabs } from "expo-router/unstable-native-tabs";
 
 export default function QRScanner() {
   const [hasPermission, request] = useCameraPermissions();
@@ -105,19 +107,19 @@ export default function QRScanner() {
 
   if (hasPermission === null) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
         <Text style={{ marginTop: 25, fontWeight: "bold", fontSize: 25 }}>Requesting camera permission</Text>
 
         <Button mode="contained" onPress={() => request()}>
           {t("scanner.request-permission")}
         </Button>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <PageHeading title={t("scanner.heading")} useSafeArea={Platform.OS === "android"} />
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
+      <PageHeading title={t("scanner.heading")} useSafeArea></PageHeading>
 
       {hasPermission.granted && isFocused && (
         <CameraView
@@ -178,7 +180,7 @@ export default function QRScanner() {
         </>
       </Portal>
 
-      <FAB
+      {/* <FAB
         theme={{ colors: { accent: theme.colors.primary } }}
         label={t("dialogs.qr.manual")}
         onPress={() => setIsManual(true)}
@@ -188,8 +190,8 @@ export default function QRScanner() {
           right: 0,
           bottom: 0,
         }}
-      />
-    </View>
+      /> */}
+    </SafeAreaView>
   );
 }
 

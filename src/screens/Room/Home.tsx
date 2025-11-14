@@ -12,6 +12,8 @@ import { throttle } from "../../utils/throttle";
 import useRoomMatches from "../../service/useRoomMatches";
 import useRoomContext from "./RoomContext";
 import { roomActions } from "../../redux/room/roomSlice";
+import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -38,7 +40,8 @@ const styles = StyleSheet.create({
   gameFinishStatus: { fontSize: 20, marginTop: 15, textAlign: "center", width: "80%" },
 });
 
-export default function Home({ route, navigation }: any) {
+export default function Home() {
+  const params = useLocalSearchParams();
   const { cards, dislikeCard, likeCard, isPlaying, cardsLoading, roomId } = useRoomContext();
   const hasUserPlayed = useAppSelector((state) => state.room.room.hasUserPlayed);
   const gameEnded = useAppSelector((state) => state.room.room.gameEnded);
@@ -47,34 +50,40 @@ export default function Home({ route, navigation }: any) {
   const originalLength = useRef(cards.length);
 
   useEffect(() => {
-    if (route.params?.roomId && !isPlaying) {
+    if (params?.roomId && !isPlaying) {
       let timeout = setTimeout(() => {
-        dispatch(roomActions.setRoomId(route.params?.roomId));
+        dispatch(roomActions.setRoomId(params.roomId as string));
       }, 1);
 
       return () => clearTimeout(timeout);
     }
-  }, [route.params?.roomId, dispatch]);
+  }, [params?.roomId, dispatch]);
 
   useEffect(() => {
     if (gameEnded && isPlaying === false) {
       const timer = setTimeout(() => {
-        navigation.replace("GameSummary", { roomId: roomId });
+        router.replace({
+          pathname: "/game-summary",
+          params: { roomId: roomId },
+        });
       }, 500);
 
       return () => clearTimeout(timer);
     }
-  }, [gameEnded, hasUserPlayed, isPlaying, navigation, roomId]);
+  }, [gameEnded, hasUserPlayed, isPlaying, roomId]);
 
   const handleNavigateDetails = useCallback(
     (card: Movie) => {
-      navigation.navigate("MovieDetails", {
-        id: card.id,
-        type: route.params?.type || "movie",
-        img: card.poster_path,
+      router.push({
+        pathname: "/movie-details",
+        params: {
+          id: card.id,
+          type: params?.type || "movie",
+          img: card.poster_path,
+        },
       });
     },
-    [route.params?.type]
+    [params?.type]
   );
 
   const renderedCards = useMemo(
@@ -94,8 +103,8 @@ export default function Home({ route, navigation }: any) {
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <HomeAppbar route={route} hasCards={cards.length > 0} />
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
+      <HomeAppbar roomId={params?.roomId as string} hasCards={cards.length > 0} />
 
       {isPlaying ? (
         <>
@@ -117,7 +126,7 @@ export default function Home({ route, navigation }: any) {
         </View>
       )}
 
-      <Matches roomId={route.params?.roomId} />
+      <Matches roomId={params?.roomId as string} />
     </View>
   );
 }

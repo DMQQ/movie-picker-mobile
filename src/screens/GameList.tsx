@@ -93,7 +93,7 @@ export default function GameList() {
       title: t("games.voter.swipe"),
       description: t("games.voter.swipeDescription"),
 
-      route: "QRCode",
+      route: "/room/qr-code",
       players: "1-8",
       duration: "5-10 min",
       category: "popular",
@@ -103,8 +103,7 @@ export default function GameList() {
       title: t("games.voter.title"),
       description: t("games.voter.description"),
 
-      route: "Voter",
-      params: { screen: "Home" },
+      route: "/voter-home",
       beta: true,
       players: "2",
       duration: "5-10 min",
@@ -115,7 +114,7 @@ export default function GameList() {
       title: "FortuneWheel",
       description: t("games.fortunewheel.description"),
 
-      route: "Fortune",
+      route: "/fortune",
       players: "1",
       duration: "5 min",
       category: "popular",
@@ -148,7 +147,7 @@ export default function GameList() {
             key={game.index}
             title={game.title}
             description={game.description}
-            onPress={() => router.push({ pathname: game.route, params: game.params })}
+            onPress={() => router.push(game.route)}
             beta={game.beta}
             players={game.players}
             duration={game.duration}

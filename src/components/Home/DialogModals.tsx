@@ -1,4 +1,4 @@
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 import { useContext } from "react";
 import { Dimensions, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
@@ -14,28 +14,23 @@ export default function DialogModals({
   toggleLeaveModal,
   showQRModal,
   setShowQRModal,
-  route,
+  roomId,
 }: {
   showLeaveModal: boolean;
   toggleLeaveModal: () => void;
   showQRModal: boolean;
   setShowQRModal: (a: any) => void;
-  route: { params: { roomId: string } };
+  roomId: string;
 }) {
   const qrCode = useAppSelector((state) => state.room.qrCode);
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
-  const navigation = useNavigation();
+  // navigation removed - using expo-router"
 
   const handleLeaveRoom = () => {
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: "Landing" }],
-      })
-    );
-    socket?.emit("leave-room", route.params?.roomId);
+    router.replace("/");
+    socket?.emit("leave-room", roomId);
 
     dispatch(roomActions.reset());
     ReviewManager.onGameComplete(true);

@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
@@ -18,16 +18,16 @@ interface SectionProps {
 }
 
 const sectionStyles = StyleSheet.create({
-  container: { 
-    paddingHorizontal: 15, 
-    minHeight: Math.min(width * 0.25, 200) * 1.75 + 50, 
-    paddingBottom: 50 
+  container: {
+    paddingHorizontal: 15,
+    minHeight: Math.min(width * 0.25, 200) * 1.75 + 50,
+    paddingBottom: 50,
   },
-  title: { 
-    color: "#fff", 
-    fontSize: 35, 
-    fontFamily: "Bebas", 
-    marginBottom: 10 
+  title: {
+    color: "#fff",
+    fontSize: 35,
+    fontFamily: "Bebas",
+    marginBottom: 10,
   },
   list: {
     flex: 1,
@@ -50,7 +50,6 @@ const skeletonStyles = StyleSheet.create({
 });
 
 export const Section = memo(({ group, categoryId }: SectionProps) => {
-  const navigation = useNavigation<any>();
   const [page, setPage] = useState(1);
   const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
 
@@ -58,8 +57,7 @@ export const Section = memo(({ group, categoryId }: SectionProps) => {
 
   // Create category-specific key extractor for movies within this section
   const movieKeyExtractor = useCallback(
-    (item: any, index: number) =>
-      `${categoryId || "default"}-${group.name}-${item.id}-${item.type || "movie"}`,
+    (item: any, index: number) => `${categoryId || "default"}-${group.name}-${item.id}-${item.type || "movie"}`,
     [categoryId, group.name]
   );
 
@@ -98,10 +96,14 @@ export const Section = memo(({ group, categoryId }: SectionProps) => {
           renderItem={({ item }) => (
             <SectionListItem
               onPress={() => {
-                navigation.navigate("MovieDetails", {
-                  id: item.id,
-                  type: item.type,
-                  img: item.poster_path,
+                console.log("Section item pressed:", { id: item.id, type: item.type, img: item.poster_path });
+                router.push({
+                  pathname: "/movie-details",
+                  params: {
+                    id: item.id,
+                    type: item.type,
+                    img: item.poster_path,
+                  },
                 });
               }}
               {...item}

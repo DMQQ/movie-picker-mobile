@@ -11,9 +11,9 @@ import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import { roomActions } from "../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
-import { ScreenProps } from "./types";
+import { router } from "expo-router";
 
-export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) {
+export default function SettingsScreen() {
   const lg = useAppSelector((state) => state.room.language);
   const nk = useAppSelector((state) => state.room.nickname);
   const [nickname, setNickname] = useState<string>(nk);
@@ -98,7 +98,7 @@ export default function SettingsScreen({ navigation }: ScreenProps<"Settings">) 
             </View>
 
             <ChooseRegion
-              onBack={() => navigation.navigate("RegionSelector")}
+              onBack={() => router.push("/region-selector")}
               onRegionSelect={(region) => {
                 const headers = {} as Record<string, string>;
                 headers["x-user-region"] = region.code;

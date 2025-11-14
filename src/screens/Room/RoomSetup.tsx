@@ -16,6 +16,7 @@ import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
+import { router } from "expo-router";
 
 interface RoomSetupState {
   category: string;
@@ -62,7 +63,7 @@ const roomSetupReducer = (state: RoomSetupState, action: RoomSetupAction): RoomS
   }
 };
 
-export default function RoomSetup({ navigation }: any) {
+export default function RoomSetup() {
   const t = useTranslation();
 
   const initialState: RoomSetupState = useMemo(
@@ -187,16 +188,19 @@ export default function RoomSetup({ navigation }: any) {
   }, []);
 
   const handleNextPress = useCallback(() => {
-    navigation.navigate("CreateQRCode", {
-      roomSetup: {
-        category,
-        maxRounds,
-        genre,
-        providers,
-        specialCategories,
+    router.push({
+      pathname: "/room/qr-code",
+      params: {
+        roomSetup: JSON.stringify({
+          category,
+          maxRounds,
+          genre,
+          providers,
+          specialCategories,
+        }),
       },
     });
-  }, [navigation, category, maxRounds, genre, providers, specialCategories]);
+  }, [category, maxRounds, genre, providers, specialCategories]);
 
   const handleCreateRandomSetup = () => {
     let genres = [];
@@ -204,13 +208,16 @@ export default function RoomSetup({ navigation }: any) {
       genres = [...genresData].sort(() => 0.5 - Math.random()).slice(0, 12);
     }
     const randCategory = categories[Math.floor(Math.random() * categories.length)].path;
-    navigation.navigate("CreateQRCode", {
-      roomSetup: {
-        category: randCategory,
-        maxRounds: 3,
-        genre: genres,
-        providers: providersData?.slice(0, 10).map((p) => p.provider_id) || [],
-        specialCategories: [],
+    router.push({
+      pathname: "/room/qr-code",
+      params: {
+        roomSetup: JSON.stringify({
+          category: randCategory,
+          maxRounds: 3,
+          genre: genres,
+          providers: providersData?.slice(0, 10).map((p) => p.provider_id) || [],
+          specialCategories: [],
+        }),
       },
     });
 

@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 import { memo, useCallback, useEffect, useRef } from "react";
 import { Dimensions, RefreshControl, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
@@ -49,7 +49,6 @@ interface CategoryPageProps {
 }
 
 const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
-  const navigation = useNavigation<any>();
   const t = useTranslation();
 
   const { data, isLoading, isError, hasMore, fetchNextPage, refetch, isRefreshing } = useInfiniteLandingPageMovies({ categoryId });
@@ -87,12 +86,12 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
       if (!item || typeof item !== "object") return null;
 
       if ("type" in item && item.type === "game") {
-        return <GameInviteSection type={item.gameType} navigation={navigation} />;
+        return <GameInviteSection type={item.gameType} />;
       }
 
       return <Section group={item} categoryId={categoryId} />;
     },
-    [navigation, categoryId]
+[categoryId]
   );
 
   const categoryKeyExtractor = useCallback(
@@ -122,7 +121,7 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
         onEndReached={onEndReached}
         removeClippedSubviews
         onEndReachedThreshold={0.1}
-        ListHeaderComponent={<FeaturedSection selectedChip={categoryId} navigate={navigation.navigate} />}
+        ListHeaderComponent={<FeaturedSection selectedChip={categoryId} />}
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={refetch} />}
         getItemLayout={getItemLayout}
