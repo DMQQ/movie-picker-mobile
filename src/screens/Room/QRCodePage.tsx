@@ -40,9 +40,7 @@ interface ISocketResponse {
 
 export default function QRCodePage() {
   const params = useLocalSearchParams();
-  console.log("QRCodePage params:", params);
   const roomSetup = params.roomSetup ? (JSON.parse(params.roomSetup as string) as RoomSetupParams) : undefined;
-  console.log("QRCodePage roomSetup:", roomSetup);
   const { category, maxRounds, genre, providers, specialCategories } = roomSetup || {};
   const { qrCode, nickname } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();

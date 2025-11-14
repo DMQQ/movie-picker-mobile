@@ -68,7 +68,7 @@ export default function MoviesActionButtons({
         onPress={() => {
           router.navigate({
             pathname: "/fortune",
-            params: { movies: fortuneWheelMovies, title: fortuneWheelTitle },
+            params: { movies: JSON.stringify(fortuneWheelMovies), title: fortuneWheelTitle },
           });
         }}
         buttonColor={MD2DarkTheme.colors.accent}

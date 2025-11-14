@@ -24,7 +24,9 @@ const SectionSelector = ({ navigation }: any) => {
             onPress={() => {
               router.back();
 
-              router.setParams({ category: item.name });
+              setTimeout(() => {
+                router.setParams({ category: item.name });
+              }, 100);
             }}
             style={{
               marginRight: 10,

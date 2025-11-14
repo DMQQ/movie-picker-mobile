@@ -96,9 +96,10 @@ export default function FortuneWheel() {
   }, [params?.category, handleThrowDice]);
 
   useEffect(() => {
-    if (params?.category && params?.movies) handleThrowDice();
+    if (!params?.category && !params?.movies) handleThrowDice();
+    else if (params?.category && params?.movies) handleThrowDice();
     else if (params?.movies) {
-      const movies = params?.movies as Movie[];
+      const movies = typeof params.movies === 'string' ? JSON.parse(params.movies) as Movie[] : JSON.parse((params.movies as string[])[0]) as Movie[];
 
       Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path))).then(() => {
         const shuffled = shuffleInPlace([...movies]);
