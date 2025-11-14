@@ -106,8 +106,6 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
         <Stack.Screen name="settings" options={{ headerShown: false }} />
 
         <Stack.Screen name="group" options={{ headerShown: false }} />
-
-        <Stack.Screen name="search-filters" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );

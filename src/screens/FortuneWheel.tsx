@@ -14,6 +14,7 @@ import fillMissing from "../utils/fillMissing";
 import { shuffleInPlace } from "../utils/shuffle";
 import { throttle } from "../utils/throttle";
 import PageHeading from "../components/PageHeading";
+import { router } from "expo-router";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -42,10 +43,14 @@ function FortuneWheel({ navigation, route }: any) {
     setIsSpin(false);
     if (!item) return;
     const type = item?.type === "tv" ? "tv" : "movie";
-    navigation.navigate("MovieDetails", {
-      id: item.id,
-      img: item.poster_path,
-      type: type,
+
+    router.navigate({
+      pathname: "/movie-details",
+      params: {
+        id: item.id,
+        img: item.poster_path,
+        type: type,
+      },
     });
   }, []);
 
@@ -164,7 +169,9 @@ function FortuneWheel({ navigation, route }: any) {
               <Button
                 rippleColor={"#fff"}
                 onPress={throttle(() => {
-                  navigation.navigate("SectionSelector");
+                  router.navigate({
+                    pathname: "/fortune/filters",
+                  });
                 }, 500)}
               >
                 {t("fortune-wheel.pick-category")}
@@ -208,7 +215,14 @@ export const SectionSelector = ({ navigation }: any) => {
         style={{ flex: 1 }}
         renderItem={({ item }) => (
           <TouchableRipple
-            onPress={() => navigation.navigate("FortuneWheel", { category: item.name })}
+            onPress={() =>
+              router.navigate({
+                pathname: "/fortune",
+                params: {
+                  category: item.name,
+                },
+              })
+            }
             style={{
               marginRight: 10,
               width: Dimensions.get("window").width / 2 - 15,

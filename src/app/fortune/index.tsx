@@ -1,37 +1,42 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, Image, Platform, useWindowDimensions, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Dimensions, FlatList, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
+import { Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Movie } from "../../types";
-import { FancySpinner } from "../components/FancySpinner";
-import FortuneWheelComponent from "../components/FortuneWheelComponent";
-import PageHeading from "../components/PageHeading";
-import SafeIOSContainer from "../components/SafeIOSContainer";
-import { useLazyGetRandomSectionQuery, useLazyGetSectionMoviesQuery } from "../redux/movie/movieApi";
-import useTranslation from "../service/useTranslation";
-import fillMissing from "../utils/fillMissing";
-import { shuffleInPlace } from "../utils/shuffle";
-import { throttle } from "../utils/throttle";
+import { Movie } from "../../../types";
+import { FancySpinner } from "../../components/FancySpinner";
+import FortuneWheelComponent from "../../components/FortuneWheelComponent";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
+import { useGetCategoriesQuery, useLazyGetRandomSectionQuery, useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
+import useTranslation from "../../service/useTranslation";
+import fillMissing from "../../utils/fillMissing";
+import { shuffleInPlace } from "../../utils/shuffle";
+import { throttle } from "../../utils/throttle";
+import PageHeading from "../../components/PageHeading";
+import { router, useLocalSearchParams } from "expo-router";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
 export default function FortuneWheel() {
-  const params = useLocalSearchParams<{ category?: string; movies?: string; title?: string }>();
   const [signatures, setSignatures] = useState("");
+
   const wheelRef = useRef<{ spin: Function }>(null);
+
+  const params = useLocalSearchParams();
+
+  console.log("Params:", params);
 
   const navigate = useCallback((item: Movie) => {
     setIsSpin(false);
     if (!item) return;
     const type = item?.type === "tv" ? "tv" : "movie";
-    router.push({
+    router.navigate({
       pathname: "/movie-details",
       params: {
         id: item.id,
-        type: type,
         img: item.poster_path,
+        type: type,
       },
     });
   }, []);
@@ -45,6 +50,7 @@ export default function FortuneWheel() {
   });
 
   const [getLazyRandomSection] = useLazyGetRandomSectionQuery();
+
   const [getLazySection] = useLazyGetSectionMoviesQuery();
 
   const handleThrowDice = useCallback(
@@ -52,12 +58,16 @@ export default function FortuneWheel() {
       const handleResponse = async (response: any) => {
         if (response.data && Array.isArray(response.data.results)) {
           const movies = response.data.results as Movie[];
+
           await Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path)));
+
           const shuffled = shuffleInPlace([...movies]);
+
           const newSelectedCards = {
             results: fillMissing(shuffled.slice(0, 12), 12),
             name: response.data.name || "",
           };
+
           setSelectedCards(newSelectedCards);
           setSignatures(shuffled.map(({ id }) => id).join("-"));
         } else {
@@ -86,11 +96,13 @@ export default function FortuneWheel() {
   }, [params?.category, handleThrowDice]);
 
   useEffect(() => {
-    if (!params?.category && !params.movies) handleThrowDice();
-    else if (params.movies && typeof params.movies === "string") {
-      const movies = JSON.parse(params.movies) as Movie[];
+    if (params?.category && params?.movies) handleThrowDice();
+    else if (params?.movies) {
+      const movies = params?.movies as Movie[];
+
       Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path))).then(() => {
         const shuffled = shuffleInPlace([...movies]);
+
         setSelectedCards({
           results: fillMissing(shuffled.slice(0, 12), 12),
           name: "",
@@ -98,14 +110,16 @@ export default function FortuneWheel() {
         setSignatures(shuffled.map(({ id }) => id).join("-"));
       });
     }
-  }, [params?.category, params.movies]);
+  }, [params?.category, params?.movies]);
 
   const { width, height } = useWindowDimensions();
+
   const t = useTranslation();
+
   const insets = useSafeAreaInsets();
 
   return (
-    <SafeIOSContainer style={{ overflow: "hidden" }}>
+    <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
       <PageHeading
         showBackButton
         title=""
@@ -127,12 +141,12 @@ export default function FortuneWheel() {
           <>
             <Text
               style={{
-                fontSize: params?.movies ? (params.title && params.title.length > 10 ? 55 : 70) : 70,
+                fontSize: params?.movies ? (params?.title.length > 10 ? 55 : 70) : 70,
                 fontFamily: "Bebas",
                 textAlign: "center",
               }}
             >
-              {params?.movies ? params.title : t("fortune-wheel.pick-a-movie")}
+              {params?.movies ? params?.title : t("fortune-wheel.pick-a-movie")}
             </Text>
             <View style={{ flexDirection: "row" }}>
               <Button rippleColor={"#fff"} onPress={throttle(() => handleThrowDice(), 200)}>
@@ -142,7 +156,7 @@ export default function FortuneWheel() {
               <Button
                 rippleColor={"#fff"}
                 onPress={throttle(() => {
-                  router.push("/fortune/section-selector");
+                  router.push("/fortune/filters");
                 }, 500)}
               >
                 {t("fortune-wheel.pick-category")}

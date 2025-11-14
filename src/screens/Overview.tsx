@@ -8,6 +8,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import useTranslation from "../service/useTranslation";
 import LikesScreen from "./Overview/Likes";
 import MatchesScreen from "./Overview/Matches";
+import { router } from "expo-router";
 
 const OverviewTopTabs = createMaterialTopTabNavigator();
 
@@ -106,7 +107,7 @@ const CustomTabBar: React.FC<CustomTabBarProps> = ({ state, descriptors, navigat
             });
 
             if (!isFocused && !event.defaultPrevented) {
-              navigation.navigate(route.name);
+              router.push(route.name);
             }
           };
 

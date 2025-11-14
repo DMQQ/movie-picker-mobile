@@ -36,6 +36,10 @@ export default function Favourites() {
             marginTop: insets.top + 30,
           }
         }
+        showBackButton={false}
+        showRightIconButton
+        rightIconName="plus"
+        onRightIconPress={() => setModalVisible(true)}
       />
       <View style={{ paddingHorizontal: 15, flex: 1, marginTop: Platform.OS === "android" ? 30 : 0 }}>
         <FlatList
@@ -101,13 +105,13 @@ export default function Favourites() {
         />
       </View>
 
-      <FAB
+      {/* <FAB
         style={{ position: "absolute", margin: 16, right: 5, bottom: 5, backgroundColor: MD2DarkTheme.colors.primary }}
         icon="plus"
         onPress={() => {
           setModalVisible(true);
         }}
-      />
+      /> */}
 
       <Dialog
         dismissableBackButton

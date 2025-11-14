@@ -103,7 +103,7 @@ export default function GameList() {
       title: t("games.voter.title"),
       description: t("games.voter.description"),
 
-      route: "/voter-home",
+      route: "/voter",
       beta: true,
       players: "2",
       duration: "5-10 min",

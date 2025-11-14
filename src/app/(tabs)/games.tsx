@@ -124,6 +124,7 @@ export default function GameList() {
             marginTop: insets.top + 30,
           }
         }
+        showBackButton={false}
       />
 
       <ScrollView

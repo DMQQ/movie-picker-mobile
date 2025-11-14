@@ -30,21 +30,6 @@ export default function TabLayout() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger
-        role="search"
-        name="search"
-        options={{
-          title: "Search",
-        }}
-      >
-        <Icon
-          {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="magnify" /> }
-            : { sf: "magnifyingglass" })}
-        />
-        <Label>{t("tabBar.search")}</Label>
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger
         name="qr-scanner"
         options={{
           title: "QR Scanner",
@@ -80,6 +65,15 @@ export default function TabLayout() {
             : { sf: "gamecontroller" })}
         />
         <Label>{t("tabBar.games")}</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="search" role="search">
+        <Icon
+          {...(Platform.OS === "android"
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="magnify" /> }
+            : { sf: "magnifyingglass" })}
+        />
+        <Label>{t("tabBar.search")}</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

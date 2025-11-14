@@ -6,10 +6,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import { useGetAllProvidersQuery, useGetGenresQuery } from "../redux/movie/movieApi";
 import useTranslation from "../service/useTranslation";
+import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");
 
-export default function SearchFilters({ navigation, route }: any) {
+export default function SearchFilters({ route }: any) {
   const [selectedProviders, setSelectedProviders] = useState<number[]>(route?.params?.providers || []);
   const { data: providers } = useGetAllProvidersQuery({});
   const [genres, setGenres] = useState<number[]>(route?.params?.genres || []);
@@ -46,7 +47,12 @@ export default function SearchFilters({ navigation, route }: any) {
       genres,
       people: typeof selectedPeople?.[0] === "number" ? selectedPeople : selectedPeople.map((person) => person?.id),
     };
-    navigation.popTo("Search", filters);
+
+    router.back();
+
+    setTimeout(() => {
+      router.setParams(filters);
+    }, 100);
   };
 
   const genreData = useMemo(() => {
@@ -70,7 +76,7 @@ export default function SearchFilters({ navigation, route }: any) {
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.headerContent}>
-              <IconButton icon="chevron-left" iconColor="#fff" onPress={() => navigation.pop()} size={24} style={styles.closeButton} />
+              <IconButton icon="chevron-left" iconColor="#fff" onPress={() => router.back()} size={24} style={styles.closeButton} />
 
               <Button mode="text" onPress={resetFilters} textColor={MD2DarkTheme.colors.primary} style={styles.resetButton}>
                 Reset

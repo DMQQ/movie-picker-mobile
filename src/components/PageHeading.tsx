@@ -9,16 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PlatformBlurView from "./PlatformBlurView";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 
-export default function PageHeading({
-  title,
-  onPress,
-  showBackButton = true,
-  useSafeArea = true,
-  showGradientBackground = true,
-  gradientHeight = 150,
-  styles: extraStyles,
-  children,
-}: PropsWithChildren<{
+interface PageHeadingProps extends PropsWithChildren {
   title: string;
   onPress?: () => void;
   showBackButton?: boolean;
@@ -28,7 +19,31 @@ export default function PageHeading({
   useSafeArea?: boolean;
 
   styles?: StyleProp<ViewStyle>;
-}>) {
+}
+
+interface RightIconButtonProps extends PageHeadingProps {
+  showRightIconButton?: boolean;
+
+  rightIconName?: keyof typeof AntDesign.glyphMap | keyof typeof Ionicons.glyphMap;
+  onRightIconPress?: () => void;
+}
+
+export default function PageHeading({
+  title,
+  onPress,
+  showBackButton = true,
+  useSafeArea = true,
+  showGradientBackground = true,
+  gradientHeight = 150,
+  styles: extraStyles,
+  children,
+
+  showRightIconButton = false,
+
+  rightIconName,
+
+  onRightIconPress,
+}: RightIconButtonProps) {
   const navigation = useNavigation();
 
   const insets = useSafeAreaInsets();
@@ -63,6 +78,34 @@ export default function PageHeading({
           <Text style={styles.headerTitle}>{title}</Text>
         </View>
         {children}
+
+        {showRightIconButton && (
+          <PlatformBlurView
+            isInteractive
+            style={[
+              styles.buttonContainer,
+              {
+                right: 15,
+                left: undefined,
+              },
+            ]}
+          >
+            <IconButton
+              icon={rightIconName as any}
+              size={25}
+              onPress={() => {
+                if (onRightIconPress) {
+                  onRightIconPress();
+                }
+
+                if (Platform.OS === "ios") {
+                  Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+                }
+              }}
+              iconColor="white"
+            />
+          </PlatformBlurView>
+        )}
       </View>
     </>
   );
