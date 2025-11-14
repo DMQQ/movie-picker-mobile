@@ -95,16 +95,13 @@ export const Section = memo(({ group, categoryId }: SectionProps) => {
           keyExtractor={movieKeyExtractor}
           renderItem={({ item }) => (
             <SectionListItem
-              onPress={() => {
-                console.log("Section item pressed:", { id: item.id, type: item.type, img: item.poster_path });
-                router.push({
-                  pathname: "/movie-details",
-                  params: {
-                    id: item.id,
-                    type: item.type,
-                    img: item.poster_path,
-                  },
-                });
+              href={{
+                pathname: "/movie-details",
+                params: {
+                  id: item.id,
+                  type: item.type === "tv" ? "tv" : "movie",
+                  img: item.poster_path,
+                },
               }}
               {...item}
             />

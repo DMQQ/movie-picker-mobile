@@ -26,7 +26,8 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
     getSectionMovies({ id: id, type: type, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
         setSectionMovies((prev) => prev.concat(response?.data?.results || []));
-        if (response?.data) Promise.any(response.data.results.map((i) => prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.xxlarge)));
+        if (response?.data)
+          Promise.allSettled(response.data.results.map((i) => prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.xxlarge)));
       }
     });
   }, [page]);
@@ -34,17 +35,15 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
   const renderItem = useCallback(
     ({ item }: { item: Movie & { type: string } }) => (
       <SectionListItem
+        href={{
+          pathname: "/movie-details",
+          params: {
+            id: item.id,
+            type: item.type === "tv" ? "tv" : "movie",
+            img: item.poster_path,
+          },
+        }}
         {...item}
-        onPress={() =>
-          router.push({
-            pathname: "/movie-details",
-            params: {
-              id: item.id,
-              type: type,
-              img: item.poster_path,
-            },
-          })
-        }
       />
     ),
     []

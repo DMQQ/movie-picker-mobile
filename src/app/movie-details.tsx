@@ -1,11 +1,145 @@
-import React from 'react';
-import { View } from 'react-native';
-import MovieDetailsScreen from '../screens/MovieDetails';
+import { useMemo, useState } from "react";
+import { Dimensions, View } from "react-native";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import { Movie } from "../../types";
+import MovieDetails from "../components/Movie/MovieDetails";
+import MovieDetailsSkeleton from "../components/Movie/MovieDetailsSkeleton";
+import Trailers from "../components/Movie/Trailers";
+import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
+import { useGetMovieProvidersQuery, useGetMovieQuery } from "../redux/movie/movieApi";
+import FloatingMovieHeader from "../components/FloatingMovieHeader";
+import { router, useIsPreview } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 
-export default function MovieDetailsPage() {
+const { width, height } = Dimensions.get("screen");
+
+export default function MovieDetailsScreen() {
+  const params = useLocalSearchParams();
+  const scrollOffset = useSharedValue(0);
+
+  const isPreview = useIsPreview();
+
+  const IMG_HEIGHT = useMemo(() => height * (isPreview ? 0.5 : 0.75), [height, isPreview]);
+  const typeOfContent = useMemo(() => params?.type as "movie" | "tv", [params?.type]);
+  const movieId = useMemo(() => Number(params.id), [params.id]);
+  const posterPath = useMemo(() => params.img as string, [params.img]);
+
+  const scrollhandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollOffset.value = event.contentOffset.y;
+    },
+  });
+
+  const { data: movie = {} as Movie, isLoading: loading } = useGetMovieQuery(
+    {
+      id: movieId,
+      type: typeOfContent,
+    },
+    { refetchOnReconnect: true, refetchOnMountOrArgChange: true }
+  );
+
+  const { data: providers = [] } = useGetMovieProvidersQuery(
+    {
+      id: movieId,
+      type: typeOfContent,
+    },
+    { refetchOnReconnect: true, refetchOnMountOrArgChange: true }
+  );
+
   return (
-    <View style={{ flex: 1, backgroundColor: '#000' }}>
-      <MovieDetailsScreen />
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
+      <Animated.ScrollView
+        onScroll={scrollhandler}
+        contentContainerStyle={{
+          alignItems: "center",
+          paddingTop: IMG_HEIGHT,
+        }}
+        overScrollMode={"never"}
+        bounces={false}
+        stickyHeaderIndices={[0]}
+      >
+        <Animated.View
+          style={[
+            {
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 1,
+            },
+          ]}
+        >
+          <Thumbnail
+            size={ThumbnailSizes.poster.xxlarge}
+            container={[
+              {
+                height: IMG_HEIGHT,
+                width: width,
+              },
+            ]}
+            path={posterPath || (movie?.poster_path as any)}
+            placeholder={movie?.placeholder_poster_path}
+            priority="high"
+          />
+        </Animated.View>
+        <View style={{ zIndex: 10, position: "relative" }}>
+          {loading ? (
+            <MovieDetailsSkeleton />
+          ) : (
+            <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={width} />
+          )}
+        </View>
+      </Animated.ScrollView>
+
+      {!isPreview && <Actions movieId={movieId} type={typeOfContent} scrollOffset={scrollOffset} movie={movie} />}
     </View>
   );
 }
+
+interface ActionsProps {
+  movieId: number;
+
+  type: "movie" | "tv";
+
+  scrollOffset: any;
+
+  movie: Movie;
+}
+
+const Actions = ({ movie, movieId, type: typeOfContent, scrollOffset }: ActionsProps) => {
+  const [backButtonPurpose, setBackButtonPurpose] = useState<"back" | "close">("back");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleCloseTrailers = () => {
+    setIsOpen(false);
+    setBackButtonPurpose("back");
+  };
+
+  const handleClose = () => {
+    if (backButtonPurpose === "back") {
+      router.back();
+      return;
+    }
+
+    // Trigger the trailers closing animation
+    handleCloseTrailers();
+  };
+
+  const handleOpen = () => {
+    setIsOpen(true);
+    setBackButtonPurpose("close");
+  };
+
+  return (
+    <>
+      <Trailers isOpen={isOpen} handleClose={handleCloseTrailers} handleOpen={handleOpen} id={movieId} type={typeOfContent} />
+
+      <FloatingMovieHeader
+        backButtonIcon={isOpen ? "close" : "chevron-left"}
+        onBack={handleClose}
+        movie={movie! as any}
+        scrollY={scrollOffset}
+      />
+    </>
+  );
+};

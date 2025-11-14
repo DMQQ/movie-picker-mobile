@@ -2,6 +2,7 @@ import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import { Movie } from "../../types";
 import Thumbnail from "./Thumbnail";
+import { Link } from "expo-router";
 
 const getColor = (score: number) => {
   if (score >= 7) return "#21d07a"; // Green
@@ -9,24 +10,30 @@ const getColor = (score: number) => {
   return "#db2360"; // Red
 };
 
-export const SectionListItem = (item: Movie & { onPress: () => void }) => (
-  <Pressable onPress={item.onPress} style={sectionStyles.item}>
-    <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} alt={item.name || item.title} />
-    {item.vote_average > 0 && (
-      <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(item.vote_average || 0) }]}>
-        <Text
-          style={[
-            sectionStyles.badgeItem,
-            {
-              color: item.vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
-            },
-          ]}
-        >
-          {item.vote_average ? item.vote_average.toFixed(1) + "/10" : "N/A"}
-        </Text>
+export const SectionListItem = (item: Movie & { href: { pathname: string; params: Record<string, any> } }) => (
+  <Link href={item.href as any} style={{ marginRight: 15 }}>
+    <Link.Trigger>
+      <View style={sectionStyles.item}>
+        <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} alt={item.name || item.title} />
+        {item.vote_average > 0 && (
+          <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(item.vote_average || 0) }]}>
+            <Text
+              style={[
+                sectionStyles.badgeItem,
+                {
+                  color: item.vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
+                },
+              ]}
+            >
+              {item.vote_average ? item.vote_average.toFixed(1) + "/10" : "N/A"}
+            </Text>
+          </View>
+        )}
       </View>
-    )}
-  </Pressable>
+    </Link.Trigger>
+
+    <Link.Preview />
+  </Link>
 );
 
 const { width } = Dimensions.get("screen");
