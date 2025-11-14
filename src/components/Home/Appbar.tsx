@@ -36,7 +36,7 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
   const handleEndGame = () => {
     socket?.emit("end-game", roomId);
     router.replace({
-      pathname: "/game-summary",
+      pathname: "/room/summary",
       params: { roomId },
     });
   };

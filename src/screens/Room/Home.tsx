@@ -63,7 +63,7 @@ export default function Home() {
     if (gameEnded && isPlaying === false) {
       const timer = setTimeout(() => {
         router.replace({
-          pathname: "/game-summary",
+          pathname: "/room/summary",
           params: { roomId: roomId },
         });
       }, 500);
