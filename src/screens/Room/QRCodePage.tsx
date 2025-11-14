@@ -103,7 +103,7 @@ export default function QRCodePage() {
       specialCategories: [],
     };
     return config;
-  }, [params?.quickStart, category, maxRounds, genre, providers, nickname, socket]);
+  }, [params?.quickStart, category, maxRounds, genre, providers, nickname]);
 
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
   const roomCreationAttempted = useRef(false);

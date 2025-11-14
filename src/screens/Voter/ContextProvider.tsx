@@ -50,7 +50,7 @@ const CreateRoomContext = createContext<{
   setMaxRounds: () => {},
 });
 
-export default function ContextProvider({ children, navigation }: { children: React.ReactNode; navigation: any }) {
+export default function ContextProvider({ children }: { children: React.ReactNode }) {
   const t = useTranslation();
   const [category, setCategory] = useState(getMovieCategories(t)[0].path);
   const [pageRange, setPageRange] = useState("1");

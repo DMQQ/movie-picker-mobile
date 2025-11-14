@@ -17,8 +17,6 @@ export default function RootLayout() {
 
             <Stack.Screen name="[roomId]" options={{ headerShown: false }} />
 
-            <Stack.Screen name="game-summary" options={{ headerShown: false }} />
-
             <Stack.Screen name="overview" options={{ headerShown: false }} />
           </Stack>
         </SafeAreaView>
