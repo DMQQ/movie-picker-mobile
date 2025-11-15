@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MoviesActionButtons from "../components/MoviesActionButtons";
@@ -9,18 +9,17 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 import Modal from "./Overview/Modal";
 import SafeIOSContainer from "../components/SafeIOSContainer";
-import { router, useLocalSearchParams } from "expo-router";
+import { useIsPreview, useLocalSearchParams } from "expo-router";
 
 export default function Group() {
   const params = useLocalSearchParams();
-  const group = JSON.parse(params.group as string);
 
   const groups = useAppSelector((st) => st.favourite.groups);
   const dispatch = useAppDispatch();
 
-  const data = groups.find((g) => g.id === group.id);
+  const isPreview = useIsPreview();
 
-  const t = useTranslation();
+  const data = useMemo(() => groups.find((g) => g.id === params.id), [groups, params.id, isPreview]);
 
   const insets = useSafeAreaInsets();
 
@@ -28,7 +27,8 @@ export default function Group() {
 
   return (
     <SafeIOSContainer style={{ flex: 1, overflow: "hidden" }}>
-      <PageHeading title={data?.name! || ""} styles={Platform.OS === "android" && { marginTop: insets.top + 30 }} />
+      {!isPreview && <PageHeading title={data?.name! || ""} styles={Platform.OS === "android" && { marginTop: insets.top + 30 }} />}
+
       <View style={{ flex: 1, paddingHorizontal: 15, marginTop: Platform.OS === "android" ? 30 : 0 }}>
         <TilesList
           contentContainerStyle={{ paddingTop: 80 }}

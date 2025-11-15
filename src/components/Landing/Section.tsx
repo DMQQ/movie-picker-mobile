@@ -20,8 +20,8 @@ interface SectionProps {
 const sectionStyles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,
-    minHeight: Math.min(width * 0.25, 200) * 1.75 + 50,
     paddingBottom: 50,
+    height: Math.min(width * 0.25, 200) * 1.75 + 75,
   },
   title: {
     color: "#fff",
@@ -55,7 +55,6 @@ export const Section = memo(({ group, categoryId }: SectionProps) => {
 
   const [movies, setSectionMovies] = useState<Movie[]>(() => group.results);
 
-  // Create category-specific key extractor for movies within this section
   const movieKeyExtractor = useCallback(
     (item: any, index: number) => `${categoryId || "default"}-${group.name}-${item.id}-${item.type || "movie"}`,
     [categoryId, group.name]

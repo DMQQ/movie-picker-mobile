@@ -122,6 +122,7 @@ export default function QRScanner() {
       <PageHeading
         title={t("scanner.heading")}
         useSafeArea
+        showBackButton={false}
         showRightIconButton
         rightIconName="plus"
         onRightIconPress={() => setIsManual(true)}

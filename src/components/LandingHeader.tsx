@@ -5,15 +5,15 @@ import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-
 import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { Extrapolation, FadeInUp, interpolate, SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useGetChipCategoriesQuery } from "../redux/movie/movieApi";
+
 import { useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 import PlatformBlurView from "./PlatformBlurView";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { PropsWithChildren } from "react";
 
-const LandingHeader = ({}) => {
-  const navigation = useNavigation<any>();
+const LandingHeader = ({ children }: PropsWithChildren) => {
   const insets = useSafeAreaInsets();
 
   const nickname = useAppSelector((state) => state.room.nickname);
@@ -23,7 +23,7 @@ const LandingHeader = ({}) => {
     <>
       <LinearGradient
         colors={["#000", "rgba(0,0,0,0.6)", "transparent"]}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 150, zIndex: 90 }}
+        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 200, zIndex: 90 }}
         pointerEvents="none"
       />
       <Animated.View style={[styles.container]} entering={FadeInUp}>
@@ -50,6 +50,7 @@ const LandingHeader = ({}) => {
             </Animated.View>
           </Animated.View>
         </View>
+        {children}
       </Animated.View>
     </>
   );
@@ -58,20 +59,10 @@ const LandingHeader = ({}) => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 0,
+    top: Platform.OS === "ios" ? 0 : 15,
     left: 0,
     right: 0,
     zIndex: 1000,
-    backgroundColor: Platform.OS === "android" ? "#000" : "transparent",
-
-    ...Platform.select({
-      android: {
-        backgroundColor: "#111111",
-        borderWidth: 2,
-        borderColor: "#343434ff",
-        borderRadius: 35,
-      },
-    }),
   },
   mainHeader: {
     flexDirection: "row",

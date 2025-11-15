@@ -1,4 +1,4 @@
-import { TouchableOpacity, View, Image, StyleSheet, FlatList } from "react-native";
+import { TouchableOpacity, View, Image, StyleSheet, FlatList, Platform } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import * as Haptics from "expo-haptics";
@@ -79,9 +79,10 @@ export default function CategoryPagerIndicator({ chipCategories, selectedChip, o
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 50,
+    top: Platform.OS === "android" ? 60 : 50,
     left: 0,
     right: 0,
+    zIndex: 100,
   },
   scrollContainer: {
     paddingHorizontal: 10,

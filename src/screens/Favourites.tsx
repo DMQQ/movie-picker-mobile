@@ -6,14 +6,10 @@ import SafeIOSContainer from "../components/SafeIOSContainer";
 import { createGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 
 import { useRef, useState } from "react";
-import Animated, { FadeInDown } from "react-native-reanimated";
 import Thumbnail from "../components/Thumbnail";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-const AnimatedRipple = Animated.createAnimatedComponent(TouchableRipple);
 
 export default function Favourites() {
   const groups = useAppSelector((state) => state.favourite.groups);
@@ -25,17 +21,10 @@ export default function Favourites() {
 
   const listRef = useRef<FlatList>(null);
 
-  const insets = useSafeAreaInsets();
-
   return (
     <SafeIOSContainer>
       <PageHeading
         title={t("favourites.title")}
-        styles={
-          Platform.OS === "android" && {
-            marginTop: insets.top + 30,
-          }
-        }
         showBackButton={false}
         showRightIconButton
         rightIconName="plus"
@@ -49,15 +38,19 @@ export default function Favourites() {
           keyExtractor={(k, index) => k.id + "-" + index}
           contentContainerStyle={{ paddingTop: 80 }}
           renderItem={({ item, index }) => (
-            <AnimatedRipple
-              rippleColor={"#000"}
+            <Link
               disabled={item?.movies?.length === 0}
-              onPress={() => router.push({ pathname: "/group", params: { group: JSON.stringify(item) } })}
               style={{ marginBottom: 15 }}
-              entering={FadeInDown.delay(Math.min((index + 1) * 75, 500))}
+              href={{
+                pathname: "/group/[id]",
+                params: {
+                  id: item.id,
+                  group: JSON.stringify(item),
+                },
+              }}
             >
-              <>
-                <View style={{ borderRadius: 10, overflow: "hidden" }}>
+              <Link.Trigger>
+                <View style={{ borderRadius: 10, overflow: "hidden", position: "relative" }}>
                   <ImageBackground
                     blurRadius={20}
                     style={{
@@ -94,24 +87,17 @@ export default function Favourites() {
                       ))}
                     </View>
                   </ImageBackground>
+                  <View style={{ flexDirection: "row", alignItems: "center", position: "absolute", bottom: 10, left: 15, gap: 5 }}>
+                    <Text style={{ color: "#fff", fontSize: 25, fontFamily: "Bebas" }}>{item.name}</Text>
+                    <Text style={{ fontSize: 15 }}>({item.movies.length})</Text>
+                  </View>
                 </View>
-                <View style={{ flexDirection: "row", alignItems: "center", position: "absolute", bottom: 10, left: 15, gap: 5 }}>
-                  <Text style={{ color: "#fff", fontSize: 25, fontFamily: "Bebas" }}>{item.name}</Text>
-                  <Text style={{ fontSize: 15 }}>({item.movies.length})</Text>
-                </View>
-              </>
-            </AnimatedRipple>
+              </Link.Trigger>
+              <Link.Preview />
+            </Link>
           )}
         />
       </View>
-
-      {/* <FAB
-        style={{ position: "absolute", margin: 16, right: 5, bottom: 5, backgroundColor: MD2DarkTheme.colors.primary }}
-        icon="plus"
-        onPress={() => {
-          setModalVisible(true);
-        }}
-      /> */}
 
       <Dialog
         dismissableBackButton

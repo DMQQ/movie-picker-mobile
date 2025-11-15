@@ -16,27 +16,15 @@ export default function TabLayout() {
       tintColor={MD2DarkTheme.colors.primary}
     >
       <NativeTabs.Trigger
-        name="index"
-        options={{
-          title: "Home",
-        }}
-      >
-        <Icon
-          {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="movie-check" /> }
-            : { sf: "movieclapper" })}
-        />
-        <Label>{"Explore"}</Label>
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger
         name="qr-scanner"
         options={{
           title: "QR Scanner",
         }}
       >
         <Icon
-          {...(Platform.OS === "android" ? { src: <VectorIcon family={MaterialCommunityIcons} name="qrcode-scan" /> } : { sf: "qrcode" })}
+          {...(Platform.OS === "android"
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="qrcode-scan" />, selectedColor: "#000" }
+            : { sf: "qrcode" })}
         />
         <Label>{t("tabBar.join-game")}</Label>
       </NativeTabs.Trigger>
@@ -48,9 +36,25 @@ export default function TabLayout() {
         }}
       >
         <Icon
-          {...(Platform.OS === "android" ? { src: <VectorIcon family={MaterialCommunityIcons} name="bookmark" /> } : { sf: "bookmark" })}
+          {...(Platform.OS === "android"
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="bookmark" />, selectedColor: "#000" }
+            : { sf: "bookmark" })}
         />
         <Label>{t("tabBar.favourites")}</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger
+        name="index"
+        options={{
+          title: "Home",
+        }}
+      >
+        <Icon
+          {...(Platform.OS === "android"
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="movie-check" />, selectedColor: "#000" }
+            : { sf: "movieclapper" })}
+        />
+        <Label>{"Explore"}</Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger
@@ -61,7 +65,7 @@ export default function TabLayout() {
       >
         <Icon
           {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="gamepad-variant" /> }
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="gamepad-variant" />, selectedColor: "#000" }
             : { sf: "gamecontroller" })}
         />
         <Label>{t("tabBar.games")}</Label>
@@ -70,7 +74,7 @@ export default function TabLayout() {
       <NativeTabs.Trigger name="search" role="search">
         <Icon
           {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="magnify" /> }
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="magnify" />, selectedColor: "#000" }
             : { sf: "magnifyingglass" })}
         />
         <Label>{t("tabBar.search")}</Label>

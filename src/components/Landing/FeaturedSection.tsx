@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useEffect } from "react";
 import { Dimensions, ImageBackground, Platform, Pressable, StyleSheet, View } from "react-native";
@@ -25,17 +25,6 @@ const FeaturedSection = (props: { selectedChip: string }) => {
   }, [props.selectedChip]);
 
   const insets = useSafeAreaInsets();
-
-  const onPress = () => {
-    router.push({
-      pathname: "/movie-details",
-      params: {
-        id: featured?.id,
-        type: featured?.type,
-        img: featured?.poster_path,
-      },
-    });
-  };
 
   const details = [
     featured?.release_date || featured?.first_air_date,
@@ -108,34 +97,48 @@ const FeaturedSection = (props: { selectedChip: string }) => {
     >
       <LinearGradient style={styles.gradientContainer} colors={gradient}>
         <Animated.View entering={FadeInDown.delay(250)}>
-          <Pressable onPress={onPress} style={{ borderRadius: 35, overflow: "hidden" }}>
-            <BlurViewWrapper
-              intensity={15}
-              style={{
-                padding: 15,
-                borderBottomWidth: 0,
-                ...Platform.select({
-                  android: {
-                    borderWidth: 2,
-                    borderColor: "#343434ff",
-                    backgroundColor: MD2DarkTheme.colors.surface + "cc",
-                    borderRadius: 35,
-                  },
-                }),
-              }}
-            >
-              <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
-                {featured?.title || featured?.name}
-              </Text>
-              <View style={{ flexDirection: "row", marginBottom: 10 }}>
-                <RatingIcons vote={featured?.vote_average} size={20} />
-              </View>
-              <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>{details}</Text>
-              <Text numberOfLines={7} style={styles.overview}>
-                {featured?.overview}
-              </Text>
-            </BlurViewWrapper>
-          </Pressable>
+          <Link
+            href={{
+              pathname: "/movie-details",
+              params: {
+                id: featured?.id,
+                type: featured?.type,
+                img: featured?.poster_path,
+              },
+            }}
+            style={{ borderRadius: 35, overflow: "hidden" }}
+          >
+            <Link.Trigger>
+              <BlurViewWrapper
+                intensity={15}
+                style={{
+                  padding: 15,
+                  borderBottomWidth: 0,
+                  ...Platform.select({
+                    android: {
+                      borderWidth: 2,
+                      borderColor: "#343434ff",
+                      backgroundColor: MD2DarkTheme.colors.surface + "cc",
+                      borderRadius: 35,
+                    },
+                  }),
+                }}
+              >
+                <Text style={{ fontSize: 40, fontFamily: "Bebas", lineHeight: 50 }} numberOfLines={2}>
+                  {featured?.title || featured?.name}
+                </Text>
+                <View style={{ flexDirection: "row", marginBottom: 10 }}>
+                  <RatingIcons vote={featured?.vote_average} size={20} />
+                </View>
+                <Text style={{ color: "rgba(255,255,255,0.9)", marginBottom: 10 }}>{details}</Text>
+                <Text numberOfLines={7} style={styles.overview}>
+                  {featured?.overview}
+                </Text>
+              </BlurViewWrapper>
+            </Link.Trigger>
+
+            <Link.Preview />
+          </Link>
         </Animated.View>
       </LinearGradient>
     </ImageBackground>
