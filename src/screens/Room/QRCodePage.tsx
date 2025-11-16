@@ -70,10 +70,6 @@ export default function QRCodePage() {
 
   const roomConfig = useMemo(() => {
     if (!params?.quickStart) {
-      if (!category || !nickname || !socket) {
-        console.log("Missing required data:", { category, nickname, socketExists: !!socket });
-        return null;
-      }
       return {
         type: category,
         pageRange: Math.trunc(Math.random() * 5),
@@ -83,10 +79,6 @@ export default function QRCodePage() {
         maxRounds: maxRounds || 6,
         specialCategories: specialCategories || [],
       };
-    }
-
-    if (!nickname || !socket) {
-      return null;
     }
 
     const movieCategories = getMovieCategories(t).slice(0, 3);
@@ -209,17 +201,12 @@ export default function QRCodePage() {
             <FancySpinner size={100} />
             <Text style={{ color: "#fff", marginTop: 20 }}>Creating room...</Text>
           </Animated.View>
-        ) : qrCode ? (
-          <Animated.View entering={FadeInDown} style={{ flex: 1 }}>
-            <QrCodeBox code={qrCode} />
-          </Animated.View>
         ) : (
-          <Animated.View entering={FadeInDown} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <Text style={{ color: "#fff" }}>No QR code generated yet</Text>
-            <Text style={{ color: "#fff", marginTop: 10 }}>Room config: {roomConfig ? "✓" : "✗"}</Text>
-            <Text style={{ color: "#fff", marginTop: 5 }}>Socket: {socket ? "✓" : "✗"}</Text>
-            <Text style={{ color: "#fff", marginTop: 5 }}>Nickname: {nickname || "Not set"}</Text>
-          </Animated.View>
+          qrCode && (
+            <Animated.View entering={FadeInDown} style={{ flex: 1 }}>
+              <QrCodeBox code={qrCode} />
+            </Animated.View>
+          )
         )}
       </View>
       <View style={{ paddingHorizontal: 15, paddingTop: 15, gap: 7.5 }}>

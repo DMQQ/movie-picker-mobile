@@ -1,11 +1,17 @@
-import React from "react";
 import { View } from "react-native";
 import Home from "../../screens/Voter/Home";
+import { SocketProvider } from "../../service/SocketContext";
+import { MovieVoterProvider } from "../../service/useVoter";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function VoterPage() {
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <Home />
-    </View>
+    <SocketProvider namespace="/voter">
+      <MovieVoterProvider>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
+          <Home />
+        </SafeAreaView>
+      </MovieVoterProvider>
+    </SocketProvider>
   );
 }

@@ -426,7 +426,7 @@ export default function Home() {
 
   const renderCompletedState = () => (
     <View style={styles.section}>
-      <Results navigation={navigation} />
+      <Results />
     </View>
   );
 

@@ -40,7 +40,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
-      "buildNumber": "20251014",
+      "buildNumber": "20251116",
       "supportsTablet": true,
       "icon": "./assets/images/icon.icon",
       "infoPlist": {
@@ -59,7 +59,7 @@
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202509260,
+      "versionCode": 20251116,
       "intentFilters": [
         {
           "action": "VIEW",
