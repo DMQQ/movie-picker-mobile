@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 // useNavigation removed - using expo-router
-import { memo, useContext, useMemo, useState } from "react";
+import { memo, useCallback, useContext, useMemo, useState } from "react";
 import { Image, Platform, Pressable, StyleSheet, View } from "react-native";
 import { Appbar, Button, MD2DarkTheme, useTheme } from "react-native-paper";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
@@ -43,6 +43,8 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
 
   const insets = useSafeAreaInsets();
 
+  const onActiveUsersPress = useCallback(() => setShowQRModal((p) => !p), []);
+
   return (
     <>
       <View style={{ marginTop: 0, flexDirection: "row", alignItems: "center", paddingTop: Platform.OS === "android" ? insets.top : 0 }}>
@@ -64,7 +66,7 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
           )}
         </GlassView>
 
-        <ActiveUsers data={users} onPress={() => setShowQRModal((p) => !p)} />
+        <ActiveUsers data={users} onPress={onActiveUsersPress} />
 
         {!hasCards && !isFinished && isPlaying && (
           <Appbar.Action

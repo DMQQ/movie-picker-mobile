@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, router } from "expo-router";
-import { useEffect, useState } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { Image, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider, Text } from "react-native-paper";
@@ -55,9 +55,7 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
           AsyncStorage.getItem("nickname"),
         ]);
 
-        // Check if this is first launch (no language set)
         if (!language) {
-          // Redirect to onboarding
           setLoaded(true);
           router.replace("/onboarding");
           return;

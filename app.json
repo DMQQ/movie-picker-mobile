@@ -2,11 +2,11 @@
   "expo": {
     "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon-dark.png",
     "userInterfaceStyle": "automatic",
-    "scheme": ["flickmate", "pl.dmq.moviepicker"],
+    "scheme": "flickmate",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -34,7 +34,8 @@
         {
           "root": "./src/app"
         }
-      ]
+      ],
+      "expo-quick-actions"
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -85,9 +86,10 @@
         "projectId": "ab2d7ea0-e25f-4063-a2e2-1a449547340b"
       }
     },
-    "runtimeVersion": "2.0.0",
+    "runtimeVersion": "3.0.0",
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "reactCompiler": true
     },
     "updates": {
       "url": "https://movie.dmqq.dev/api/manifest",

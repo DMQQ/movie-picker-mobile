@@ -267,7 +267,8 @@
     "close": "Close",
     "apply": "Apply filters",
     "more": "Show more",
-    "less": "Show less"
+    "less": "Show less",
+    "title": "Searching for {query}"
   },
   "cast": {
     "heading": "Cast"

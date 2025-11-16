@@ -69,7 +69,7 @@ export default function DialogModals({
             <QRCode
               backgroundColor={theme.colors.surface}
               color={theme.colors.primary}
-              value={`flickmate://swipe/${qrCode}`}
+              value={`flickmate://room/${qrCode}`}
               size={Dimensions.get("screen").width / 2}
             />
           </View>

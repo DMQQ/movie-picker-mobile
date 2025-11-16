@@ -42,12 +42,11 @@ const styles = StyleSheet.create({
 
 export default function Home() {
   const params = useLocalSearchParams();
-  const { cards, dislikeCard, likeCard, isPlaying, cardsLoading, roomId } = useRoomContext();
+  const { cards, isPlaying, cardsLoading, roomId } = useRoomContext();
   const hasUserPlayed = useAppSelector((state) => state.room.room.hasUserPlayed);
   const gameEnded = useAppSelector((state) => state.room.room.gameEnded);
   const t = useTranslation();
   const dispatch = useAppDispatch();
-  const originalLength = useRef(cards.length);
 
   useEffect(() => {
     if (params?.roomId && !isPlaying) {
@@ -72,43 +71,13 @@ export default function Home() {
     }
   }, [gameEnded, hasUserPlayed, isPlaying, roomId]);
 
-  const handleNavigateDetails = useCallback(
-    (card: Movie) => {
-      router.push({
-        pathname: "/movie/type/[type]/[id]",
-        params: {
-          id: card.id,
-          type: params?.type || "movie",
-          img: card.poster_path,
-        },
-      });
-    },
-    [params?.type]
-  );
-
-  const renderedCards = useMemo(
-    () =>
-      cards.map((card, index) => (
-        <SwipeTile
-          onPress={handleNavigateDetails.bind(null, card)}
-          length={originalLength.current}
-          key={card.id}
-          card={card}
-          index={index}
-          likeCard={throttle(() => likeCard(card, index), 500)}
-          removeCard={throttle(() => dislikeCard(card, index), 500)}
-        />
-      )),
-    [cards, dislikeCard, handleNavigateDetails, likeCard]
-  );
-
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       <HomeAppbar roomId={params?.roomId as string} hasCards={cards.length > 0} />
 
       {isPlaying ? (
         <>
-          {renderedCards}
+          <SwipeContent params={params as any} />
 
           {cards.length === 0 && !cardsLoading && (
             <View style={styles.emptyListContainer}>
@@ -130,6 +99,42 @@ export default function Home() {
     </View>
   );
 }
+
+interface SwipeContentProps {
+  params: Record<string, string | undefined>;
+}
+
+const SwipeContent = memo(({ params }: SwipeContentProps) => {
+  const { cards, dislikeCard, likeCard } = useRoomContext();
+
+  const originalLength = useRef(cards.length);
+
+  const handleNavigateDetails = useCallback(
+    (card: Movie) => {
+      router.push({
+        pathname: "/movie/type/[type]/[id]",
+        params: {
+          id: card.id,
+          type: params?.type || "movie",
+          img: card.poster_path,
+        },
+      });
+    },
+    [params?.type]
+  );
+
+  return cards.map((card, index) => (
+    <SwipeTile
+      onPress={() => handleNavigateDetails(card)}
+      length={originalLength.current}
+      key={card.id}
+      card={card}
+      index={index}
+      likeCard={throttle(() => likeCard(card, index), 500)}
+      removeCard={throttle(() => dislikeCard(card, index), 500)}
+    />
+  ));
+});
 
 const Matches = memo(({ roomId }: { roomId: string }) => {
   const { isFocused, hideMatchModal, match } = useRoomMatches(roomId);

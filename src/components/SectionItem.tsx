@@ -38,7 +38,7 @@ export const SectionListItem = (item: Movie & { href: { pathname: string; params
 
       <Link.Preview />
 
-      <Link.Menu displayInline displayAsPalette>
+      {/* <Link.Menu displayInline displayAsPalette>
         <Link.MenuAction
           title={isInGroup("1") ? "Remove from Favourites" : "Add to Favourites"}
           icon={isInGroup("1") ? "heart.fill" : "heart"}
@@ -50,7 +50,7 @@ export const SectionListItem = (item: Movie & { href: { pathname: string; params
           onPress={() => {}}
         />
         <Link.MenuAction title="Add to list" icon="list.and.film" onPress={() => {}} />
-      </Link.Menu>
+      </Link.Menu> */}
     </Link>
   );
 };
