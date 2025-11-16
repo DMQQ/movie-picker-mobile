@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useCallback, useState, ReactNode } from "react";
-import { SocketContext } from "./SocketContext";
+import { SocketContext } from "../context/SocketContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Movie } from "../../types";
 import * as Haptics from "expo-haptics";
@@ -105,14 +105,14 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     async (joinSessionId: string): Promise<void> => {
       setSessionId(joinSessionId);
       setStatus("waiting");
-      
+
       if (!socket) {
-        setError('Socket not available');
+        setError("Socket not available");
         return;
       }
-      
+
       if (!socket.connected) {
-        setError('Not connected to server');
+        setError("Not connected to server");
         return;
       }
 
@@ -120,22 +120,22 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     },
     [socket]
   );
-  
+
   const joinSessionInternal = useCallback(
     async (joinSessionId: string) => {
       try {
         const response = await socket!.emitWithAck("voter:session:join", { sessionId: joinSessionId });
-        
+
         if (response?.error) {
           setError(response.error);
           throw new Error(response.error);
         }
-        
+
         const userId = await AsyncStorage.getItem("userId");
         setCurrentUserId(userId);
         setSessionId(joinSessionId);
         setStatus("waiting");
-        
+
         const userIsHost = response?.isHost || false;
         setIsHost(userIsHost);
       } catch (error) {
@@ -155,20 +155,20 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
       if (!socket) {
-        setError('Socket not available');
+        setError("Socket not available");
         return;
       }
-      
+
       if (!sessionId) {
-        setError('No session joined');
+        setError("No session joined");
         return;
       }
-      
+
       if (!socket.connected) {
-        setError('Not connected to server');
+        setError("Not connected to server");
         return;
       }
-      
+
       socket.emit("voter:session:ready", { sessionId, ready });
     },
     [socket, sessionId]

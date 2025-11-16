@@ -13,7 +13,7 @@ import Thumbnail from "../../components/Thumbnail";
 import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { SocketContext } from "../../service/SocketContext";
+import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";

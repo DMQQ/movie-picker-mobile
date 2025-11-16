@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Episode, Movie, MovieDetails } from "../../../types";
-import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
+import { url as API_BASE_ENDPOINT } from "../../context/SocketContext";
 import prepareHeaders from "../../service/prepareHeaders";
 
 interface SearchParams {
@@ -58,9 +58,7 @@ export const movieApi = createApi({
         `/landing?skip=${params.page * 8}&take=${params.take}${
           params.category !== "" && params.category !== "all" ? `&category=${params.category}` : ""
         }`,
-      providesTags: (result, error, arg) => [
-        { type: "LandingPageInfinite", id: `${arg.category}-${arg.page}` },
-      ],
+      providesTags: (result, error, arg) => [{ type: "LandingPageInfinite", id: `${arg.category}-${arg.page}` }],
     }),
 
     getLandingPageMoviesInfinite: builder.query<
@@ -72,9 +70,7 @@ export const movieApi = createApi({
           categoryId !== "" && categoryId !== "all" ? `&category=${categoryId}` : ""
         }`,
       }),
-      providesTags: (result, error, arg) => [
-        { type: "LandingPageInfinite", id: `${arg.categoryId}-${arg.page || 0}` },
-      ],
+      providesTags: (result, error, arg) => [{ type: "LandingPageInfinite", id: `${arg.categoryId}-${arg.page || 0}` }],
     }),
 
     getRandomSection: builder.query({
@@ -111,9 +107,7 @@ export const movieApi = createApi({
 
     getFeatured: builder.query<Movie, { selectedChip: string }>({
       query: ({ selectedChip }) => "/landing/featured?category=" + selectedChip || "all",
-      providesTags: (result, error, arg) => [
-        { type: "LandingPageInfinite", id: `featured-${arg.selectedChip}` },
-      ],
+      providesTags: (result, error, arg) => [{ type: "LandingPageInfinite", id: `featured-${arg.selectedChip}` }],
       keepUnusedDataFor: 300,
     }),
 

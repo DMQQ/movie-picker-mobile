@@ -95,12 +95,13 @@ export default function MovieDetailsScreen() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
+    <View style={{ flex: 1, backgroundColor: "#000", width, height }}>
       <Animated.ScrollView
         onScroll={scrollhandler}
         contentContainerStyle={{
           alignItems: "center",
           paddingTop: IMG_HEIGHT,
+          width,
         }}
         overScrollMode={"never"}
         bounces={false}
@@ -114,6 +115,8 @@ export default function MovieDetailsScreen() {
               left: 0,
               right: 0,
               zIndex: 1,
+              width: width,
+              height: IMG_HEIGHT,
             },
           ]}
         >

@@ -6,7 +6,7 @@ import { Appbar, Button, MD2DarkTheme, useTheme } from "react-native-paper";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import { useAppSelector } from "../../redux/store";
-import { SocketContext } from "../../service/SocketContext";
+import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { ThumbnailSizes } from "../Thumbnail";
 import ActiveUsers from "./ActiveUsers";

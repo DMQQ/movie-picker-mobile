@@ -1,11 +1,8 @@
-import { useNavigation } from "@react-navigation/native";
-import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
-import { Platform, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
-import Animated, { Extrapolation, FadeInUp, interpolate, SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import { Platform, StyleSheet } from "react-native";
+import { IconButton, Text } from "react-native-paper";
+import Animated, { FadeInUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import { useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 import PlatformBlurView from "./PlatformBlurView";
@@ -23,33 +20,39 @@ const LandingHeader = ({ children }: PropsWithChildren) => {
     <>
       <LinearGradient
         colors={["#000", "rgba(0,0,0,0.6)", "transparent"]}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 200, zIndex: 90 }}
+        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 220, zIndex: 90 }}
         pointerEvents="none"
       />
-      <Animated.View style={[styles.container]} entering={FadeInUp}>
-        <View style={{ flex: 1, padding: 15, paddingTop: insets.top }}>
-          <Animated.View>
-            <Animated.View style={[styles.mainHeader]}>
-              <Text style={styles.helloText}>
-                {t("global.hello")} {nickname}!
-              </Text>
+      <Animated.View
+        style={[
+          styles.container,
+          {
+            padding: 15,
+            paddingTop: insets.top,
+          },
+        ]}
+        entering={FadeInUp}
+      >
+        <Animated.View style={[styles.mainHeader]}>
+          <Text style={styles.helloText}>
+            {t("global.hello")} {nickname}!
+          </Text>
 
-              <PlatformBlurView style={[styles.buttonsContainer, { borderRadius: 100, overflow: "hidden" }]}>
-                <IconButton
-                  icon="cog"
-                  size={25}
-                  iconColor="#fff"
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          <PlatformBlurView style={[styles.buttonsContainer, { borderRadius: 100, overflow: "hidden" }]}>
+            <IconButton
+              icon="cog"
+              size={20}
+              iconColor="#fff"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-                    router.navigate("/settings");
-                  }}
-                  style={styles.iconButton}
-                />
-              </PlatformBlurView>
-            </Animated.View>
-          </Animated.View>
-        </View>
+                router.navigate("/settings");
+              }}
+              style={styles.iconButton}
+            />
+          </PlatformBlurView>
+        </Animated.View>
+
         {children}
       </Animated.View>
     </>
@@ -83,8 +86,10 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: "row",
-    gap: 10,
-    paddingHorizontal: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 45,
+    height: 45,
   },
   buttonBlur: {
     borderRadius: 25,

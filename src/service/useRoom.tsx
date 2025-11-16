@@ -3,7 +3,7 @@ import { Movie } from "../../types";
 import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import { roomActions } from "../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
-import { SocketContext } from "./SocketContext";
+import { SocketContext } from "../context/SocketContext";
 
 export default function useRoom() {
   const dispatch = useAppDispatch();

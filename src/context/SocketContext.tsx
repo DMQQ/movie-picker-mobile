@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import envs from "../constants/envs";
 import { RootState } from "../redux/store";
-import { EventEmitter, useEventEmitter } from "./useEventEmitter";
+import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 
 const isDev = false; //envs.mode !== "production";
 

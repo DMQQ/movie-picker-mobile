@@ -10,7 +10,7 @@ import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
 import PageHeading from "../../components/PageHeading";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { SocketContext } from "../../service/SocketContext";
+import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
 import { FancySpinner } from "../../components/FancySpinner";

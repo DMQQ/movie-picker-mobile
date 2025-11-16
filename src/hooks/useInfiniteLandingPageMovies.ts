@@ -1,10 +1,10 @@
-import { useMemo, useCallback, useState, useRef, useEffect } from 'react';
-import { useGetLandingPageMoviesInfiniteQuery } from '../redux/movie/movieApi';
-import { useAppDispatch } from '../redux/store';
-import { movieApi } from '../redux/movie/movieApi';
-import { arrayInsertsAt } from '../utils/utilities';
-import uniqueBy from '../utils/unique';
-import { SectionData } from '../service/useLanding';
+import { useMemo, useCallback, useState, useRef, useEffect } from "react";
+import { useGetLandingPageMoviesInfiniteQuery } from "../redux/movie/movieApi";
+import { useAppDispatch } from "../redux/store";
+import { movieApi } from "../redux/movie/movieApi";
+import { arrayInsertsAt } from "../utils/utilities";
+import uniqueBy from "../utils/unique";
+import { SectionData } from "../types";
 
 interface UseInfiniteLandingPageMoviesOptions {
   categoryId: string;
@@ -34,18 +34,28 @@ export const useInfiniteLandingPageMovies = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const categoryRef = useRef(categoryId);
 
-  const { data: currentPageData, isLoading, isFetching, isError, error, refetch } = useGetLandingPageMoviesInfiniteQuery({
+  const {
+    data: currentPageData,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useGetLandingPageMoviesInfiniteQuery({
     categoryId,
     pageSize,
     page: 0,
   });
 
-  const gameSections = useMemo(() => [
-    { name: "Game Invite 1", results: [], type: "game" as const, gameType: "social" as const },
-    { name: "Game Invite 2", results: [], type: "game" as const, gameType: "voter" as const },
-    { name: "Game Invite 3", results: [], type: "game" as const, gameType: "fortune" as const },
-    { name: "Game Invite 4", results: [], type: "game" as const, gameType: "all-games" as const },
-  ], []);
+  const gameSections = useMemo(
+    () => [
+      { name: "Game Invite 1", results: [], type: "game" as const, gameType: "social" as const },
+      { name: "Game Invite 2", results: [], type: "game" as const, gameType: "voter" as const },
+      { name: "Game Invite 3", results: [], type: "game" as const, gameType: "fortune" as const },
+      { name: "Game Invite 4", results: [], type: "game" as const, gameType: "all-games" as const },
+    ],
+    []
+  );
 
   useEffect(() => {
     if (categoryRef.current !== categoryId) {
@@ -65,7 +75,7 @@ export const useInfiniteLandingPageMovies = ({
 
   const data = useMemo((): SectionData[] => {
     if (!allPages.length) return [];
-    
+
     const uniqueMovieSections = uniqueBy(
       allPages.filter((item: any) => item && item.name),
       "name"
@@ -75,27 +85,32 @@ export const useInfiniteLandingPageMovies = ({
 
   const fetchNextPage = useCallback(() => {
     if (!hasMore || isLoading || isFetching) return;
-    
+
     const nextPage = currentPage + 1;
-    
-    dispatch(movieApi.endpoints.getLandingPageMoviesInfinite.initiate({
-      categoryId,
-      pageSize,
-      page: nextPage,
-    })).unwrap().then((response: any) => {
-      if (response && response.length > 0) {
-        setAllPages(prev => {
-          const uniqueNewSections = uniqueBy([...prev, ...response], "name");
-          return uniqueNewSections;
-        });
-        setCurrentPage(nextPage);
-        setHasMore(response.length >= pageSize);
-      } else {
+
+    dispatch(
+      movieApi.endpoints.getLandingPageMoviesInfinite.initiate({
+        categoryId,
+        pageSize,
+        page: nextPage,
+      })
+    )
+      .unwrap()
+      .then((response: any) => {
+        if (response && response.length > 0) {
+          setAllPages((prev) => {
+            const uniqueNewSections = uniqueBy([...prev, ...response], "name");
+            return uniqueNewSections;
+          });
+          setCurrentPage(nextPage);
+          setHasMore(response.length >= pageSize);
+        } else {
+          setHasMore(false);
+        }
+      })
+      .catch(() => {
         setHasMore(false);
-      }
-    }).catch(() => {
-      setHasMore(false);
-    });
+      });
   }, [hasMore, isLoading, isFetching, currentPage, categoryId, pageSize, dispatch]);
 
   const handleRefetch = useCallback(() => {

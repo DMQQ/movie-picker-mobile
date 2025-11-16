@@ -7,7 +7,7 @@ import layout from "../../utils/layout";
 import FrostedGlass from "../FrostedGlass";
 
 export default function Cast({ id, type }: { id: number; type: "movie" | "tv" }) {
-  const { data, error, isLoading } = useGetMovieKeyPeopleQuery({ id, type, actorLimit: 20, includeDirector: true });
+  const { data, isLoading } = useGetMovieKeyPeopleQuery({ id, type, actorLimit: 20, includeDirector: true });
 
   const t = useTranslation();
 
@@ -22,7 +22,7 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
       <FlatList
         horizontal
         data={data?.actors}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => item.id.toString() + index}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <FrostedGlass style={styles.card} container={{ marginRight: 10 }}>

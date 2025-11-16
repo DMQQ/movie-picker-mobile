@@ -4,13 +4,13 @@ import { Dimensions, RefreshControl, View, VirtualizedList } from "react-native"
 import { Text } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useInfiniteLandingPageMovies } from "../../hooks/useInfiniteLandingPageMovies";
-import { SectionData } from "../../service/useLanding";
 import useTranslation from "../../service/useTranslation";
 import FeaturedSection from "./FeaturedSection";
 import Section from "./Section";
 import GameInviteSection from "./GameInviteSection";
 import LoadingSkeleton from "./LoadingSkeleton";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { SectionData } from "../../types";
 
 const { width } = Dimensions.get("screen");
 
@@ -91,7 +91,7 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
 
       return <Section group={item} categoryId={categoryId} />;
     },
-[categoryId]
+    [categoryId]
   );
 
   const categoryKeyExtractor = useCallback(

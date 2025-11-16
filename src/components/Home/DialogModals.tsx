@@ -5,7 +5,7 @@ import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { SocketContext } from "../../service/SocketContext";
+import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import ReviewManager from "../../utils/rate";
 

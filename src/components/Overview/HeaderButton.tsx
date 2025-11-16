@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Button } from "react-native-paper";
-import { SocketContext } from "../../service/SocketContext";
+import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { router } from "expo-router";
 

@@ -5,7 +5,7 @@ import { Button, Dialog, FAB, IconButton, Portal, Text, TextInput, useTheme } fr
 import { SafeAreaView } from "react-native-safe-area-context";
 import PageHeading from "../../components/PageHeading";
 import { useAppSelector } from "../../redux/store";
-import { SocketContext } from "../../service/SocketContext";
+import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
 import { router, useFocusEffect } from "expo-router";
