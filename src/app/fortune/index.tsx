@@ -32,7 +32,7 @@ export default function FortuneWheel() {
     if (!item) return;
     const type = item?.type === "tv" ? "tv" : "movie";
     router.navigate({
-      pathname: "/movie-details",
+      pathname: "/movie/type/[type]/[id]",
       params: {
         id: item.id,
         img: item.poster_path,
@@ -99,7 +99,10 @@ export default function FortuneWheel() {
     if (!params?.category && !params?.movies) handleThrowDice();
     else if (params?.category && params?.movies) handleThrowDice();
     else if (params?.movies) {
-      const movies = typeof params.movies === 'string' ? JSON.parse(params.movies) as Movie[] : JSON.parse((params.movies as string[])[0]) as Movie[];
+      const movies =
+        typeof params.movies === "string"
+          ? (JSON.parse(params.movies) as Movie[])
+          : (JSON.parse((params.movies as string[])[0]) as Movie[]);
 
       Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path))).then(() => {
         const shuffled = shuffleInPlace([...movies]);

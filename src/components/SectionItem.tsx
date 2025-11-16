@@ -3,6 +3,7 @@ import { MD2DarkTheme, Text } from "react-native-paper";
 import { Movie } from "../../types";
 import Thumbnail from "./Thumbnail";
 import { Link } from "expo-router";
+import { useQuickActions } from "./QuickActions";
 
 const getColor = (score: number) => {
   if (score >= 7) return "#21d07a"; // Green
@@ -10,31 +11,49 @@ const getColor = (score: number) => {
   return "#db2360"; // Red
 };
 
-export const SectionListItem = (item: Movie & { href: { pathname: string; params: Record<string, any> } }) => (
-  <Link href={item.href as any} style={{ marginRight: 15 }}>
-    <Link.Trigger>
-      <View style={sectionStyles.item}>
-        <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} alt={item.name || item.title} />
-        {item.vote_average > 0 && (
-          <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(item.vote_average || 0) }]}>
-            <Text
-              style={[
-                sectionStyles.badgeItem,
-                {
-                  color: item.vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
-                },
-              ]}
-            >
-              {item.vote_average ? item.vote_average.toFixed(1) + "/10" : "N/A"}
-            </Text>
-          </View>
-        )}
-      </View>
-    </Link.Trigger>
+export const SectionListItem = (item: Movie & { href: { pathname: string; params: Record<string, any> } }) => {
+  const { isInGroup, onPress } = useQuickActions({ movie: item });
 
-    <Link.Preview />
-  </Link>
-);
+  return (
+    <Link href={item.href as any} style={{ marginRight: 15 }} push>
+      <Link.Trigger>
+        <View style={sectionStyles.item}>
+          <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} alt={item.name || item.title} />
+          {item.vote_average > 0 && (
+            <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(item.vote_average || 0) }]}>
+              <Text
+                style={[
+                  sectionStyles.badgeItem,
+                  {
+                    color: item.vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
+                  },
+                ]}
+              >
+                {item.vote_average ? item.vote_average.toFixed(1) + "/10" : "N/A"}
+              </Text>
+            </View>
+          )}
+        </View>
+      </Link.Trigger>
+
+      <Link.Preview />
+
+      <Link.Menu displayInline displayAsPalette>
+        <Link.MenuAction
+          title={isInGroup("1") ? "Remove from Favourites" : "Add to Favourites"}
+          icon={isInGroup("1") ? "heart.fill" : "heart"}
+          onPress={() => {}}
+        />
+        <Link.MenuAction
+          title={isInGroup("1") ? "Remove from Watchlist" : "Add to Watchlist"}
+          icon={isInGroup("2") ? "clock" : "clock.badge.checkmark"}
+          onPress={() => {}}
+        />
+        <Link.MenuAction title="Add to list" icon="list.and.film" onPress={() => {}} />
+      </Link.Menu>
+    </Link>
+  );
+};
 
 const { width } = Dimensions.get("screen");
 

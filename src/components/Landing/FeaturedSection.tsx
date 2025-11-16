@@ -99,7 +99,7 @@ const FeaturedSection = (props: { selectedChip: string }) => {
         <Animated.View entering={FadeInDown.delay(250)}>
           <Link
             href={{
-              pathname: "/movie-details",
+              pathname: "/movie/type/[type]/[id]",
               params: {
                 id: featured?.id,
                 type: featured?.type,

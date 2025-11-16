@@ -36,7 +36,7 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
     ({ item }: { item: Movie & { type: string } }) => (
       <SectionListItem
         href={{
-          pathname: "/movie-details",
+          pathname: `/movie/type/[type]/[id]`,
           params: {
             id: item.id,
             type: item.type === "tv" ? "tv" : "movie",

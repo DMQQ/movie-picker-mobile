@@ -95,7 +95,7 @@ export const Section = memo(({ group, categoryId }: SectionProps) => {
           renderItem={({ item }) => (
             <SectionListItem
               href={{
-                pathname: "/movie-details",
+                pathname: "/movie/type/[type]/[id]",
                 params: {
                   id: item.id,
                   type: item.type === "tv" ? "tv" : "movie",

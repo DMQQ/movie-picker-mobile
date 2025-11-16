@@ -251,7 +251,7 @@ export default function Home() {
                   activeOpacity={0.9}
                   onPress={() => {
                     router.push({
-                      pathname: "/movie-details",
+                      pathname: "/movie/type/[type]/[id]",
                       params: {
                         id: card?.id,
                         type: card?.title ? "movie" : "tv",
@@ -504,7 +504,7 @@ function Results() {
             <Pressable
               onPress={() => {
                 router.push({
-                  pathname: "/movie-details",
+                  pathname: "/movie/type/[type]/[id]",
                   params: {
                     id: card?.id,
                     type: card?.title ? "movie" : "tv",
@@ -550,7 +550,7 @@ function Results() {
                 style={{ marginBottom: 15, width: Dimensions.get("screen").width - 30, overflow: "hidden" }}
                 onPress={() => {
                   router.push({
-                    pathname: "/movie-details",
+                    pathname: "/movie/type/[type]/[id]",
                     params: {
                       id: item.movie.id,
                       type: item?.movie?.title ? "movie" : "tv",

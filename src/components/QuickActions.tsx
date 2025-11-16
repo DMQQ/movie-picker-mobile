@@ -8,10 +8,9 @@ import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 
-export default function QuickActions(props: { movie: Movie; children?: ReactNode; hideLabels?: boolean }) {
+export function useQuickActions(props: { movie: Movie }) {
   const dispatch = useAppDispatch();
   const groups = useAppSelector((state) => state.favourite.groups);
-  const t = useTranslation();
 
   const isInGroup = (groupId: "1" | "2" | "999") => {
     const group = groups.find((g) => g?.id === groupId);
@@ -42,6 +41,16 @@ export default function QuickActions(props: { movie: Movie; children?: ReactNode
         })
       );
   };
+
+  return {
+    isInGroup,
+    onPress,
+  };
+}
+
+export default function QuickActions(props: { movie: Movie; children?: ReactNode; hideLabels?: boolean }) {
+  const { isInGroup, onPress } = useQuickActions({ movie: props.movie });
+  const t = useTranslation();
 
   return (
     <View style={styles.container}>

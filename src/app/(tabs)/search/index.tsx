@@ -34,7 +34,7 @@ const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; i
       entering={FadeIn.delay(index * 50)}
       onPress={() => {
         router.push({
-          pathname: "/movie-details",
+          pathname: "/movie/type/[type]/[id]",
           params: {
             id: item.id.toString(),
             type: item?.title ? "movie" : "tv",

@@ -467,7 +467,7 @@ const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { sum
       <TouchableRipple
         onPress={() =>
           router.push({
-            pathname: "/movie-details",
+            pathname: "/movie/type/[type]/[id]",
             params: {
               id: item.id,
               type: summary?.type || "movie",

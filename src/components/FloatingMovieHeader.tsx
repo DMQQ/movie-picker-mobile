@@ -143,7 +143,7 @@ export default function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "
             </Animated.View>
 
             <Animated.View style={[styles.metadataRow, textTransform]}>
-              {movie?.vote_average && movie.vote_average > 0 && (
+              {!!movie?.vote_average && movie.vote_average > 0 && (
                 <View style={styles.ratingContainer}>
                   <AntDesign name="star" size={12} color="#FFD700" />
                   <Text style={styles.ratingText}>{movie.vote_average.toFixed(1)}</Text>

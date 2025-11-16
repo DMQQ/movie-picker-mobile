@@ -45,7 +45,7 @@ function FortuneWheel({ navigation, route }: any) {
     const type = item?.type === "tv" ? "tv" : "movie";
 
     router.navigate({
-      pathname: "/movie-details",
+      pathname: "/movie/type/[type]/[id]",
       params: {
         id: item.id,
         img: item.poster_path,

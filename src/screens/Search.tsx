@@ -30,13 +30,12 @@ const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; i
     ...(item?.genres || [])?.map((g: any) => g.name),
   ].filter((v) => v !== undefined && v !== "") as any;
 
-
   return (
     <AnimatedPressable
       entering={FadeIn.delay(index * 50)}
       onPress={() => {
         router.push({
-          pathname: "/movie-details",
+          pathname: "/movie/type/[type]/[id]",
           params: {
             id: item.id.toString(),
             type: item?.title ? "movie" : "tv",
@@ -188,7 +187,7 @@ const SearchScreen = () => {
         const response = await getSimilar({
           id: searchParams.movieId,
           type: searchParams.type,
-          page: page
+          page: page,
         }).unwrap();
 
         if (response.results && page === 1) {
@@ -206,7 +205,7 @@ const SearchScreen = () => {
         with_people: searchParams?.people,
       } as any;
 
-      console.log('🔍 Search API params:', params);
+      console.log("🔍 Search API params:", params);
 
       if (searchQuery.trim().length > 0) {
         params["query"] = searchQuery;
@@ -333,9 +332,7 @@ const SearchScreen = () => {
               value={searchQuery}
               style={styles.searchbar}
               inputStyle={styles.searchInput}
-              icon={() => (
-                <IconButton icon="chevron-left" onPress={() => router.back()} size={24} iconColor="#fff" style={{ margin: 0 }} />
-              )}
+              icon={() => <IconButton icon="chevron-left" onPress={() => router.back()} size={24} iconColor="#fff" style={{ margin: 0 }} />}
             />
           </View>
 

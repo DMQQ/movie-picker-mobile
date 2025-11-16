@@ -75,7 +75,7 @@ export default function Home() {
   const handleNavigateDetails = useCallback(
     (card: Movie) => {
       router.push({
-        pathname: "/movie-details",
+        pathname: "/movie/type/[type]/[id]",
         params: {
           id: card.id,
           type: params?.type || "movie",

@@ -150,7 +150,7 @@ export default function Modal({ match, onClose, styles }: any) {
             }}
             onButtonPress={() => {
               router.push({
-                pathname: "/movie-details",
+                pathname: "/movie/type/[type]/[id]",
                 params: {
                   id: match?.id,
                   type: match?.type,

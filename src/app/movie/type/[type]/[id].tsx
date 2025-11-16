@@ -1,14 +1,14 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useGlobalSearchParams, useIsPreview, useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
 import { Dimensions, View } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-import { Movie } from "../../../types";
-import FloatingMovieHeader from "../../components/FloatingMovieHeader";
-import MovieDetails from "../../components/Movie/MovieDetails";
-import MovieDetailsSkeleton from "../../components/Movie/MovieDetailsSkeleton";
-import Trailers from "../../components/Movie/Trailers";
-import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
-import { useGetMovieProvidersQuery, useGetMovieQuery } from "../../redux/movie/movieApi";
+import { Movie } from "../../../../../types";
+import FloatingMovieHeader from "../../../../components/FloatingMovieHeader";
+import MovieDetails from "../../../../components/Movie/MovieDetails";
+import MovieDetailsSkeleton from "../../../../components/Movie/MovieDetailsSkeleton";
+import Trailers from "../../../../components/Movie/Trailers";
+import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
+import { useGetMovieQuery } from "../../../../redux/movie/movieApi";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -59,12 +59,21 @@ const Actions = ({ movie, movieId, type: typeOfContent, scrollOffset }: ActionsP
 
 export default function MovieDetailsScreen() {
   const scrollOffset = useSharedValue(0);
-  const { params, img, ...rest } = useLocalSearchParams<{ params: string[]; img?: string }>();
+  const {
+    type: typeOfContent,
+    img: posterPath,
+    id: movieId,
+  } = useLocalSearchParams<{
+    type: "movie" | "tv";
+    img?: string;
+    id: string;
+  }>();
 
-  const [typeOfContent, movieId] = params || [];
+  console.log("movie/type/[type]/id.tsx rendered with id:", movieId, "and type:", typeOfContent);
 
-  const IMG_HEIGHT = useMemo(() => height * 0.75, [height]);
-  const posterPath = img;
+  const isPreview = useIsPreview();
+
+  const IMG_HEIGHT = useMemo(() => height * (isPreview ? 0.5 : 0.75), [height, isPreview]);
 
   const scrollhandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -80,17 +89,13 @@ export default function MovieDetailsScreen() {
     { refetchOnReconnect: true, refetchOnMountOrArgChange: true, skip: !movieId || !typeOfContent }
   );
 
-  const { data: providers = [] } = useGetMovieProvidersQuery(
-    {
-      id: Number(movieId),
+  const params = useMemo(
+    () => ({
+      id: movieId,
       type: typeOfContent,
-    },
-    { refetchOnReconnect: true, refetchOnMountOrArgChange: true, skip: !movieId || !typeOfContent }
+    }),
+    [movieId, typeOfContent]
   );
-
-  if (!movieId || !typeOfContent) {
-    return null; // Or a loading/error state
-  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
@@ -129,15 +134,11 @@ export default function MovieDetailsScreen() {
           />
         </Animated.View>
         <View style={{ zIndex: 10, position: "relative" }}>
-          {loading ? (
-            <MovieDetailsSkeleton />
-          ) : (
-            <MovieDetails type={typeOfContent} movie={movie as any} providers={providers} width={width} />
-          )}
+          {loading ? <MovieDetailsSkeleton /> : <MovieDetails type={typeOfContent} movie={movie as any} params={params} />}
         </View>
       </Animated.ScrollView>
 
-      <Actions movieId={Number(movieId)} type={typeOfContent as "movie" | "tv"} scrollOffset={scrollOffset} movie={movie} />
+      {!isPreview && <Actions movieId={Number(movieId)} type={typeOfContent as "movie" | "tv"} scrollOffset={scrollOffset} movie={movie} />}
     </View>
   );
 }
