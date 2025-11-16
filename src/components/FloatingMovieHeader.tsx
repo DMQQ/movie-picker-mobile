@@ -1,5 +1,5 @@
 import * as Haptics from "expo-haptics";
-import { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { useAnimatedStyle, withTiming, SharedValue } from "react-native-reanimated";
@@ -24,7 +24,7 @@ interface FloatingMovieHeaderProps {
   backButtonIcon?: string;
 }
 
-export default function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", onBack }: FloatingMovieHeaderProps) {
+function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", onBack }: FloatingMovieHeaderProps) {
   const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const groups = useAppSelector((state) => state.favourite.groups);
@@ -198,6 +198,8 @@ export default function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "
     </Animated.View>
   );
 }
+
+export default memo(FloatingMovieHeader);
 
 const styles = StyleSheet.create({
   headerContainer: {

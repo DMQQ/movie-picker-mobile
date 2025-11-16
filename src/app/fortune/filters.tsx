@@ -4,7 +4,7 @@ import { Dimensions, FlatList, View, ImageBackground } from "react-native";
 import { IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { router } from "expo-router";
 
-const SectionSelector = ({ navigation }: any) => {
+const SectionSelector = () => {
   const { data, error } = useGetCategoriesQuery({});
 
   const insets = useSafeAreaInsets();

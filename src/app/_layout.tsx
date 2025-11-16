@@ -1,9 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Button, MD2DarkTheme, PaperProvider, Text } from "react-native-paper";
+import { MD2DarkTheme, PaperProvider, Text } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { loadFavorites } from "../redux/favourites/favourites";
@@ -46,46 +46,41 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
 
   const [loaded, setLoaded] = useState(false);
 
-  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
-
   useEffect(() => {
     (async () => {
       try {
-        const [language, regionalization] = await Promise.all([AsyncStorage.getItem("language"), AsyncStorage.getItem("regionalization")]);
+        const [language, regionalization, nickname] = await Promise.all([
+          AsyncStorage.getItem("language"),
+          AsyncStorage.getItem("regionalization"),
+          AsyncStorage.getItem("nickname"),
+        ]);
 
-        if (!language) return setShowLanguageSelector(true);
+        // Check if this is first launch (no language set)
+        if (!language) {
+          // Redirect to onboarding
+          setLoaded(true);
+          router.replace("/onboarding");
+          return;
+        }
 
-        const nickname = (await AsyncStorage.getItem("nickname")) || (language === "en" ? "Guest" : "Gość");
+        const finalNickname = nickname || (language === "en" ? "Guest" : "Gość");
 
-        dispatch(roomActions.setSettings({ nickname, language, regionalization: JSON.parse(regionalization || "{}") || ({} as any) }));
+        dispatch(
+          roomActions.setSettings({
+            nickname: finalNickname,
+            language,
+            regionalization: JSON.parse(regionalization || "{}") || ({} as any),
+          })
+        );
       } catch (error) {
       } finally {
         setLoaded(true);
       }
     })();
     dispatch(loadFavorites());
-  }, [showLanguageSelector]);
-
-  const chooseLanguage = (language: string) => {
-    return async () => {
-      await AsyncStorage.setItem("language", language);
-      dispatch(roomActions.setLanguage(language));
-      setShowLanguageSelector(false);
-    };
-  };
+  }, []);
 
   if (!loaded || !isLoaded || isUpdating) return <Fallback isUpdating={isUpdating} />;
-
-  if (showLanguageSelector) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000" }}>
-        <View style={{ flexDirection: "row", gap: 10 }}>
-          <Button onPress={chooseLanguage("en")}>English</Button>
-          <Button onPress={chooseLanguage("pl")}>Polski</Button>
-        </View>
-      </View>
-    );
-  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
@@ -106,6 +101,8 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
         <Stack.Screen name="settings" options={{ headerShown: false }} />
 
         <Stack.Screen name="group" options={{ headerShown: false }} />
+
+        <Stack.Screen name="onboarding" options={{ headerShown: false }} />
       </Stack>
     </GestureHandlerRootView>
   );

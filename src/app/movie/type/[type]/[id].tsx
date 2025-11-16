@@ -1,4 +1,4 @@
-import { router, useGlobalSearchParams, useIsPreview, useLocalSearchParams } from "expo-router";
+import { router, useIsPreview, useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
 import { Dimensions, View } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
@@ -34,7 +34,6 @@ const Actions = ({ movie, movieId, type: typeOfContent, scrollOffset }: ActionsP
       return;
     }
 
-    // Trigger the trailers closing animation
     handleCloseTrailers();
   };
 
@@ -68,8 +67,6 @@ export default function MovieDetailsScreen() {
     img?: string;
     id: string;
   }>();
-
-  console.log("movie/type/[type]/id.tsx rendered with id:", movieId, "and type:", typeOfContent);
 
   const isPreview = useIsPreview();
 

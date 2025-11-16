@@ -14,7 +14,6 @@ import PageHeading from "../../components/PageHeading";
 import { useLazyGetAllProvidersQuery, useLazyGetCategoriesQuery, useLazyGetGenresQuery } from "../../redux/movie/movieApi";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const { width } = Dimensions.get("screen");
 const CARD_HEIGHT = 280;
 
 interface GameCardProps {

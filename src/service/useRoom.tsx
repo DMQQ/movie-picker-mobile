@@ -8,7 +8,7 @@ import { SocketContext } from "./SocketContext";
 export default function useRoom() {
   const dispatch = useAppDispatch();
   const { socket, emitter } = useContext(SocketContext);
-  const [cardsLoading, setCardsLoading] = useState(false);
+  // const [cardsLoading, setCardsLoading] = useState(false);
   const attemptTimeout = useRef<NodeJS.Timeout | null>(null);
   const roomId = useAppSelector((state) => state.room.room.roomId);
 
@@ -54,10 +54,10 @@ export default function useRoom() {
   } = useAppSelector((state) => state.room);
 
   const setCards = (_movies: Movie[]) => {
-    setCardsLoading(true);
+    // setCardsLoading(true);
     initialCardsLength.current = _movies.length;
     dispatch(roomActions.addMovies(_movies));
-    setCardsLoading(false);
+    // setCardsLoading(false);
   };
 
   const removeCard = (index: number) => {
@@ -164,7 +164,7 @@ export default function useRoom() {
 
     isPlaying,
     joinGame,
-    cardsLoading,
+    cardsLoading: false,
 
     roomId,
 

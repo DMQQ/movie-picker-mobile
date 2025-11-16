@@ -40,9 +40,6 @@ interface ISocketResponse {
 
 export default function QRCodePage() {
   const params = useLocalSearchParams();
-  const roomSetup = params.roomSetup ? (JSON.parse(params.roomSetup as string) as RoomSetupParams) : undefined;
-  const { category, maxRounds, genre, providers, specialCategories } = roomSetup || {};
-  const { qrCode, nickname } = useAppSelector((state) => state.room);
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
@@ -50,21 +47,28 @@ export default function QRCodePage() {
 
   const [isPending, startTransition] = useTransition();
 
-  const {
-    room: { users, roomId },
-  } = useAppSelector((state) => state.room);
+  const { qrCode, nickname } = useAppSelector((state) => state.room);
+
+  const users = useAppSelector((state) => state.room.room.users);
+  const roomId = useAppSelector((state) => state.room.room.roomId);
+
+  const { category, maxRounds, genre, providers, specialCategories } = useMemo(() => {
+    const roomSetup = params.roomSetup ? (JSON.parse(params.roomSetup as string) as RoomSetupParams) : undefined;
+
+    if (!roomSetup) {
+      return {
+        category: null,
+        maxRounds: null,
+        genre: null,
+        providers: null,
+        specialCategories: null,
+      };
+    }
+
+    return roomSetup;
+  }, [params.roomSetup]);
 
   const roomConfig = useMemo(() => {
-    console.log("Creating roomConfig with:", {
-      category,
-      maxRounds,
-      genre,
-      providers,
-      specialCategories,
-      nickname,
-      quickStart: params?.quickStart,
-    });
-
     if (!params?.quickStart) {
       if (!category || !nickname || !socket) {
         console.log("Missing required data:", { category, nickname, socketExists: !!socket });
@@ -103,7 +107,7 @@ export default function QRCodePage() {
       specialCategories: [],
     };
     return config;
-  }, [params?.quickStart, category, maxRounds, genre, providers, nickname]);
+  }, [params?.quickStart, category, maxRounds, genre, providers, specialCategories, nickname]);
 
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
   const roomCreationAttempted = useRef(false);
