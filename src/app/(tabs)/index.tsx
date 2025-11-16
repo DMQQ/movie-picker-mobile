@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { useGetChipCategoriesQuery } from "../../redux/movie/movieApi";
@@ -22,15 +22,15 @@ export default function Landing() {
   );
 }
 
-const PagerCategoryScreen = () => {
+const PagerCategoryScreen = memo(() => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedChip, setSelectedChip] = useState("all");
 
   const { data: chipCategories = [] } = useGetChipCategoriesQuery();
 
-  const handleChipPress = (chip: string) => {
+  const handleChipPress = useCallback((chip: string) => {
     setSelectedChip(chip);
-  };
+  }, []);
 
   const pagerRef = useRef<PagerView>(null);
 
@@ -76,4 +76,4 @@ const PagerCategoryScreen = () => {
       <CategoryPagerIndicator chipCategories={chipCategories} selectedChip={selectedChip} onChipPress={handleChipPress} />
     </>
   );
-};
+});

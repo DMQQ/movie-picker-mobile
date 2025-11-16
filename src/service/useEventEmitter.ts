@@ -1,5 +1,4 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { SocketContext } from "./SocketContext";
 
 type EventMap = Record<string, any>;
 type EventKey<T extends EventMap> = string & keyof T;
@@ -31,23 +30,4 @@ export class EventEmitter<T extends EventMap> implements Emitter<T> {
 
 export const useEventEmitter = <T extends EventMap>() => {
   return useRef(new EventEmitter<T>()).current;
-};
-
-export const useEventEmitterListener = <T>(event: string) => {
-  const [state, setState] = useState<T>();
-
-  const { emitter } = useContext(SocketContext);
-
-  useEffect(() => {
-    const listener = (args: any) => {
-      setState(args);
-    };
-    emitter.on(event as any, listener);
-
-    return () => {
-      emitter.off(event as any, listener);
-    };
-  }, []);
-
-  return [state, setState];
 };

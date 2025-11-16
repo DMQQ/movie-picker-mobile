@@ -1,5 +1,5 @@
 import { router, useIsPreview, useLocalSearchParams } from "expo-router";
-import { useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { Dimensions, View } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { Movie } from "../../../../../types";
@@ -19,28 +19,28 @@ interface ActionsProps {
   movie: Movie;
 }
 
-const Actions = ({ movie, movieId, type: typeOfContent, scrollOffset }: ActionsProps) => {
+const Actions = memo(({ movie, movieId, type: typeOfContent, scrollOffset }: ActionsProps) => {
   const [backButtonPurpose, setBackButtonPurpose] = useState<"back" | "close">("back");
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleCloseTrailers = () => {
+  const handleCloseTrailers = useCallback(() => {
     setIsOpen(false);
     setBackButtonPurpose("back");
-  };
+  }, []);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (backButtonPurpose === "back") {
       router.back();
       return;
     }
 
     handleCloseTrailers();
-  };
+  }, [backButtonPurpose]);
 
-  const handleOpen = () => {
+  const handleOpen = useCallback(() => {
     setIsOpen(true);
     setBackButtonPurpose("close");
-  };
+  }, []);
 
   return (
     <>
@@ -54,7 +54,7 @@ const Actions = ({ movie, movieId, type: typeOfContent, scrollOffset }: ActionsP
       />
     </>
   );
-};
+});
 
 export default function MovieDetailsScreen() {
   const scrollOffset = useSharedValue(0);

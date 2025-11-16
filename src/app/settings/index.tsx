@@ -1,13 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { BlurView } from "expo-blur";
 import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
-import { ToastAndroid, View } from "react-native";
+import { View } from "react-native";
 import { Button, SegmentedButtons, Text, TextInput } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChooseRegion from "../../components/ChooseRegion";
 import PageHeading from "../../components/PageHeading";
-import TransparentModalScreen from "../../components/TransparentModalBackGesture";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
@@ -26,8 +24,6 @@ export default function SettingsScreen() {
       AsyncStorage.setItem("nickname", nickname);
 
       dispatch(roomActions.setSettings({ nickname, language }));
-
-      ToastAndroid.show("Nickname saved", ToastAndroid.SHORT);
     }
   };
 

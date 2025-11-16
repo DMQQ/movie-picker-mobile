@@ -1,17 +1,14 @@
-import { router, Stack, useLocalSearchParams, useNavigation } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, ImageBackground, Platform, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { ActivityIndicator, IconButton, MD2DarkTheme, Searchbar, Text } from "react-native-paper";
+import { ActivityIndicator, MD2DarkTheme, Searchbar, Text } from "react-native-paper";
 import { useLazySearchQuery, useLazyGetSimilarQuery } from "../../../redux/movie/movieApi";
-
 import { FlashList } from "@shopify/flash-list";
-import { BlurView } from "expo-blur";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Movie } from "../../../../types";
 import FrostedGlass from "../../../components/FrostedGlass";
 import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../../../components/Thumbnail";
-import TransparentModalScreen from "../../../components/TransparentModalBackGesture";
 import useTranslation from "../../../service/useTranslation";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -102,11 +99,10 @@ const SearchScreen = () => {
   const isLoadingNextPage = useRef(false);
   const routeParamsRef = useRef(searchParams);
 
-  const [search, { data, isLoading, isFetching, isError }] = useLazySearchQuery();
+  const [search, { isLoading, isFetching }] = useLazySearchQuery();
   const [getSimilar, { isLoading: isLoadingSimilar, isFetching: isFetchingSimilar }] = useLazyGetSimilarQuery();
   const t = useTranslation();
 
-  // Handle initial query from navigation params
   useEffect(() => {
     if (searchParams?.initialQuery && !searchQuery) {
       setSearchQuery(searchParams.initialQuery as string);
@@ -386,7 +382,7 @@ const SearchScreen = () => {
         </ScrollView>
         <TouchableOpacity
           onPress={() => {
-            router.push({ pathname: "/(tabs)/search/filters", params: { ...searchParams, type: filters.type } });
+            router.push({ pathname: "/search-filters", params: { ...searchParams, type: filters.type } });
           }}
           style={[styles.chipWrapper, styles.chip]}
         >

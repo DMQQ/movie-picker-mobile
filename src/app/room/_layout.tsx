@@ -11,8 +11,6 @@ export default function RootLayout() {
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="setup" options={{ headerShown: false }} />
 
-            <Stack.Screen name="qr-scanner" options={{ headerShown: false }} />
-
             <Stack.Screen name="summary" options={{ headerShown: false }} />
 
             <Stack.Screen name="[roomId]" options={{ headerShown: false }} />
