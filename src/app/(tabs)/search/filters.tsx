@@ -3,9 +3,9 @@ import React, { useMemo, useState } from "react";
 import { Dimensions, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Divider, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import TransparentModalScreen from "../components/TransparentModalBackGesture";
-import { useGetAllProvidersQuery, useGetGenresQuery } from "../redux/movie/movieApi";
-import useTranslation from "../service/useTranslation";
+import TransparentModalScreen from "../../../components/TransparentModalBackGesture";
+import { useGetAllProvidersQuery, useGetGenresQuery } from "../../../redux/movie/movieApi";
+import useTranslation from "../../../service/useTranslation";
 import { router } from "expo-router";
 
 const { width } = Dimensions.get("window");

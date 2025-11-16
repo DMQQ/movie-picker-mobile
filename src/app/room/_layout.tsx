@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SocketProvider } from "../../service/SocketContext";
-import { RoomContextProvider } from "../../screens/Room/RoomContext";
+import { RoomContextProvider } from "../../context/RoomContext";
 
 export default function RootLayout() {
   return (

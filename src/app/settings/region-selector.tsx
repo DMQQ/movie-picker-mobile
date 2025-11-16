@@ -2,13 +2,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BlurView } from "expo-blur";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ChooseRegion from "../components/ChooseRegion";
-import PageHeading from "../components/PageHeading";
-import TransparentModalScreen from "../components/TransparentModalBackGesture";
-import { roomActions } from "../redux/room/roomSlice";
-import { useAppDispatch, useAppSelector } from "../redux/store";
-import { ScreenProps } from "./types";
-import PlatformBlurView, { BlurViewWrapper } from "../components/PlatformBlurView";
+import ChooseRegion from "../../components/ChooseRegion";
+import PageHeading from "../../components/PageHeading";
+import TransparentModalScreen from "../../components/TransparentModalBackGesture";
+import { roomActions } from "../../redux/room/roomSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import PlatformBlurView, { BlurViewWrapper } from "../../components/PlatformBlurView";
+import { ScreenProps } from "../../screens/types";
 
 export default function RegionSelectorScreen({ navigation }: ScreenProps<"RegionSelector">) {
   const insets = useSafeAreaInsets();

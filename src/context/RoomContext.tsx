@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect } from "react";
-import useRoom from "../../service/useRoom";
+import useRoom from "../service/useRoom";
 
 const RoomContext = createContext<ReturnType<typeof useRoom>>({
   cards: [],

@@ -97,7 +97,7 @@ const SearchScreen = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
 
-  const searchTimeout = React.useRef<NodeJS.Timeout>();
+  const searchTimeout = React.useRef<NodeJS.Timeout>(null);
   const lastReceivedApiPage = useRef(0);
   const isLoadingNextPage = useRef(false);
   const routeParamsRef = useRef(searchParams);
@@ -386,7 +386,7 @@ const SearchScreen = () => {
         </ScrollView>
         <TouchableOpacity
           onPress={() => {
-            router.push({ pathname: "/search-filters", params: { ...searchParams, type: filters.type } });
+            router.push({ pathname: "/(tabs)/search/filters", params: { ...searchParams, type: filters.type } });
           }}
           style={[styles.chipWrapper, styles.chip]}
         >

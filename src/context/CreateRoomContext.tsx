@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
-import useTranslation from "../../service/useTranslation";
-import { getMovieCategories } from "../../utils/roomsConfig";
+import useTranslation from "../service/useTranslation";
+import { getMovieCategories } from "../utils/roomsConfig";
 
 export const useCreateRoom = () => useContext(CreateRoomContext);
 
