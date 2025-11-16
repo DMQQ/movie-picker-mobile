@@ -12,7 +12,7 @@ const getColor = (score: number) => {
 };
 
 export const SectionListItem = (item: Movie & { href: { pathname: string; params: Record<string, any> } }) => {
-  const { isInGroup, onPress } = useQuickActions({ movie: item });
+  // const { isInGroup, onPress } = useQuickActions({ movie: item });
 
   return (
     <Link href={item.href as any} style={{ marginRight: 15 }} push>
@@ -37,20 +37,6 @@ export const SectionListItem = (item: Movie & { href: { pathname: string; params
       </Link.Trigger>
 
       <Link.Preview />
-
-      {/* <Link.Menu displayInline displayAsPalette>
-        <Link.MenuAction
-          title={isInGroup("1") ? "Remove from Favourites" : "Add to Favourites"}
-          icon={isInGroup("1") ? "heart.fill" : "heart"}
-          onPress={() => {}}
-        />
-        <Link.MenuAction
-          title={isInGroup("1") ? "Remove from Watchlist" : "Add to Watchlist"}
-          icon={isInGroup("2") ? "clock" : "clock.badge.checkmark"}
-          onPress={() => {}}
-        />
-        <Link.MenuAction title="Add to list" icon="list.and.film" onPress={() => {}} />
-      </Link.Menu> */}
     </Link>
   );
 };
