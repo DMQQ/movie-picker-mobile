@@ -1,5 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { memo, PropsWithChildren } from "react";
 import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -66,7 +66,6 @@ const tabStyles = StyleSheet.create({
 const BottomTab = memo(
   () => {
     const t = useTranslation();
-    const navigation = useNavigation<any>();
 
     const withTouch = (fn: () => void) => {
       return () => {
@@ -86,7 +85,7 @@ const BottomTab = memo(
           />
         )}
         <BottomTabContainer>
-          <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Favourites"))}>
+          <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => router.push("/favourites"))}>
             <>
               <FontAwesome name="bookmark" size={25} color="#fff" />
               <Text style={tabStyles.buttonLabel}>{t("tabBar.favourites")}</Text>
@@ -97,9 +96,7 @@ const BottomTab = memo(
             activeOpacity={0.8}
             style={[tabStyles.button]}
             onPress={withTouch(() =>
-              navigation.navigate("QRCode", {
-                screen: "QRScanner",
-              })
+              router.push("/qr-scanner")
             )}
           >
             <>
@@ -108,7 +105,7 @@ const BottomTab = memo(
             </>
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => navigation.navigate("Games"))}>
+          <TouchableOpacity activeOpacity={0.8} style={tabStyles.button} onPress={withTouch(() => router.push("/games"))}>
             <>
               <FontAwesome name="gamepad" size={25} color="#fff" />
               <Text style={tabStyles.buttonLabel}>{t("tabBar.games")}</Text>

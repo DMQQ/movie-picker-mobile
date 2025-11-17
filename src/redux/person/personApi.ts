@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { url as API_BASE_ENDPOINT } from "../../service/SocketContext";
+import { url as API_BASE_ENDPOINT } from "../../context/SocketContext";
 import prepareHeaders from "../../service/prepareHeaders";
 // Define interfaces
 interface Person {

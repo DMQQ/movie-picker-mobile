@@ -42,3 +42,42 @@ export function arrayInsertsAt<T, K>(array: T[], positions: number | number[], i
 
   return result;
 }
+
+export function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function empty(value: number | string | object | any[] | null | undefined): boolean {
+  if (value === null || value === undefined) return true;
+
+  if (typeof value === "number") {
+    return isNaN(value) || !isFinite(value);
+  }
+
+  if (typeof value === "string") {
+    return value.trim().length === 0;
+  }
+
+  if (Array.isArray(value)) {
+    return value.length === 0;
+  }
+
+  if (typeof value === "object") {
+    return Object.keys(value).length === 0;
+  }
+
+  return false;
+}
+
+export function clamp(num: number, min: number, max: number): number {
+  return Math.min(Math.max(num, min), max);
+}
+
+export function isValidUrl(urlString: string): boolean {
+  try {
+    new URL(urlString);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}

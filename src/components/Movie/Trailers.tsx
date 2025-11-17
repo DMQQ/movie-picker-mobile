@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, AppState, Dimensions, Platform, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { MD2DarkTheme, Text, IconButton } from "react-native-paper";
 import Animated, {
@@ -26,7 +26,7 @@ const config = {
   mass: 0.9,
 };
 
-export default function Trailers({
+function Trailers({
   id,
   type,
   isOpen,
@@ -149,7 +149,9 @@ export default function Trailers({
   );
 }
 
-const PlayerItem = ({ name, videoKey, index, canPlay }: { name: string; videoKey: string; index: number; canPlay?: boolean }) => {
+export default memo(Trailers);
+
+const PlayerItem = memo(({ name, videoKey, index, canPlay }: { name: string; videoKey: string; index: number; canPlay?: boolean }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
@@ -179,7 +181,7 @@ const PlayerItem = ({ name, videoKey, index, canPlay }: { name: string; videoKey
       </BlurViewWrapper>
     </Animated.View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   overlay: {

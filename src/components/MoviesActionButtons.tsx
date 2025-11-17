@@ -3,6 +3,7 @@ import { Platform, StyleProp, View, ViewStyle } from "react-native";
 import { Button, MD2DarkTheme } from "react-native-paper";
 import useTranslation from "../service/useTranslation";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 
 interface MoviesActionButtonsProps {
   onScratchCardPress: () => void;
@@ -65,9 +66,9 @@ export default function MoviesActionButtons({
         icon={"dice-5"}
         mode="contained"
         onPress={() => {
-          navigation.navigate("Fortune", {
-            screen: "FortuneWheel",
-            params: { movies: fortuneWheelMovies, title: fortuneWheelTitle },
+          router.navigate({
+            pathname: "/fortune",
+            params: { movies: JSON.stringify(fortuneWheelMovies), title: fortuneWheelTitle },
           });
         }}
         buttonColor={MD2DarkTheme.colors.accent}

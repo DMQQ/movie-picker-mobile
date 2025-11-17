@@ -1,0 +1,24 @@
+import { Stack } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { SocketProvider } from "../../context/SocketContext";
+import { RoomContextProvider } from "../../context/RoomContext";
+
+export default function RootLayout() {
+  return (
+    <SocketProvider namespace="/swipe">
+      <RoomContextProvider>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="setup" options={{ headerShown: false }} />
+
+            <Stack.Screen name="summary" options={{ headerShown: false }} />
+
+            <Stack.Screen name="[roomId]" options={{ headerShown: false }} />
+
+            <Stack.Screen name="overview" options={{ headerShown: false }} />
+          </Stack>
+        </SafeAreaView>
+      </RoomContextProvider>
+    </SocketProvider>
+  );
+}

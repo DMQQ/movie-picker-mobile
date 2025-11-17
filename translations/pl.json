@@ -265,7 +265,8 @@
     "close": "Zamknij",
     "apply": "Zastosuj filtry",
     "more": "Pokaz więcej",
-    "less": "Pokaz mniej"
+    "less": "Pokaz mniej",
+    "title": "Wyszukiwanie dla {query}"
   },
   "cast": {
     "heading": "Obsada"
@@ -329,5 +330,31 @@
     "all-games-title": "🎮 Odkryj Wszystkie Gry",
     "all-games-subtitle": "Poznaj wszystkie nasze gry towarzyskie i znajdź ulubiony sposób na wybieranie filmów",
     "all-games-button": "Zobacz Wszystkie Gry"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Witamy w FlickMate",
+      "subtitle": "Skonfigurujmy Twoje preferencje"
+    },
+    "language": {
+      "title": "Wybierz Język",
+      "description": "Wybierz preferowany język aplikacji"
+    },
+    "nickname": {
+      "title": "Jak Mamy Cię Nazywać?",
+      "label": "Twój Pseudonim",
+      "placeholder": "Gość",
+      "description": "Tak będą Cię widzieć inni gracze w pokojach"
+    },
+    "region": {
+      "title": "Wybierz Region",
+      "description": "To pomoże nam pokazać filmy dostępne w Twojej okolicy"
+    },
+    "navigation": {
+      "next": "Dalej",
+      "back": "Wstecz",
+      "getStarted": "Zaczynajmy",
+      "step": "Krok {current} z {total}"
+    }
   }
 }

@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 
@@ -8,11 +7,11 @@ import { useLazyGetSimilarQuery } from "../redux/movie/movieApi";
 import useTranslation from "../service/useTranslation";
 import SectionListItem from "./SectionItem";
 import { prefetchThumbnail, ThumbnailSizes } from "./Thumbnail";
+import { router } from "expo-router";
 
 const { width } = Dimensions.get("screen");
 
 const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
-  const navigation = useNavigation<any>();
   const [page, setPage] = useState(1);
   const [getSectionMovies, state] = useLazyGetSimilarQuery();
 
@@ -27,7 +26,8 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
     getSectionMovies({ id: id, type: type, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
         setSectionMovies((prev) => prev.concat(response?.data?.results || []));
-        if (response?.data) Promise.any(response.data.results.map((i) => prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.xxlarge)));
+        if (response?.data)
+          Promise.allSettled(response.data.results.map((i) => prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.xxlarge)));
       }
     });
   }, [page]);
@@ -35,14 +35,15 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
   const renderItem = useCallback(
     ({ item }: { item: Movie & { type: string } }) => (
       <SectionListItem
-        {...item}
-        onPress={() =>
-          navigation.push("MovieDetails", {
+        href={{
+          pathname: `/movie/type/[type]/[id]`,
+          params: {
             id: item.id,
-            type: type,
+            type: item.type === "tv" ? "tv" : "movie",
             img: item.poster_path,
-          })
-        }
+          },
+        }}
+        {...item}
       />
     ),
     []
@@ -63,7 +64,6 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
         keyExtractor={keySectionExtractor}
         renderItem={renderItem}
         onEndReachedThreshold={0.5}
-        estimatedItemSize={width * 0.3 + 15}
       />
     </View>
   );

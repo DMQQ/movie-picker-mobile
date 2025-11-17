@@ -267,7 +267,8 @@
     "close": "Close",
     "apply": "Apply filters",
     "more": "Show more",
-    "less": "Show less"
+    "less": "Show less",
+    "title": "Searching for {query}"
   },
   "cast": {
     "heading": "Cast"
@@ -331,5 +332,31 @@
     "all-games-title": "🎮 Explore All Games",
     "all-games-subtitle": "Discover all our party games and find your favorite way to pick movies",
     "all-games-button": "View All Games"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to FlickMate",
+      "subtitle": "Let's get you set up with your preferences"
+    },
+    "language": {
+      "title": "Choose Your Language",
+      "description": "Select your preferred language for the app"
+    },
+    "nickname": {
+      "title": "What Should We Call You?",
+      "label": "Your Nickname",
+      "placeholder": "Guest",
+      "description": "This is how other players will see you in rooms"
+    },
+    "region": {
+      "title": "Choose Your Region",
+      "description": "This helps us show movies available in your area"
+    },
+    "navigation": {
+      "next": "Next",
+      "back": "Back",
+      "getStarted": "Get Started",
+      "step": "Step {current} of {total}"
+    }
   }
 }

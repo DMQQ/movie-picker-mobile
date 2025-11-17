@@ -1,11 +1,11 @@
-import { CommonActions, useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 import { useContext } from "react";
 import { Dimensions, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { SocketContext } from "../../service/SocketContext";
+import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import ReviewManager from "../../utils/rate";
 
@@ -14,28 +14,23 @@ export default function DialogModals({
   toggleLeaveModal,
   showQRModal,
   setShowQRModal,
-  route,
+  roomId,
 }: {
   showLeaveModal: boolean;
   toggleLeaveModal: () => void;
   showQRModal: boolean;
   setShowQRModal: (a: any) => void;
-  route: { params: { roomId: string } };
+  roomId: string;
 }) {
   const qrCode = useAppSelector((state) => state.room.qrCode);
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
-  const navigation = useNavigation();
+  // navigation removed - using expo-router"
 
   const handleLeaveRoom = () => {
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: "Landing" }],
-      })
-    );
-    socket?.emit("leave-room", route.params?.roomId);
+    router.replace("/");
+    socket?.emit("leave-room", roomId);
 
     dispatch(roomActions.reset());
     ReviewManager.onGameComplete(true);
@@ -74,7 +69,7 @@ export default function DialogModals({
             <QRCode
               backgroundColor={theme.colors.surface}
               color={theme.colors.primary}
-              value={`flickmate://swipe/${qrCode}`}
+              value={`flickmate://room/${qrCode}`}
               size={Dimensions.get("screen").width / 2}
             />
           </View>

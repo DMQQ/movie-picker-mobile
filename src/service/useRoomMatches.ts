@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useMemo } from "react";
 import { Movie } from "../../types";
 import { roomActions } from "../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
-import { SocketContext } from "./SocketContext";
+import { SocketContext } from "../context/SocketContext";
 import { useIsFocused } from "@react-navigation/native";
 
 export default function useRoomMatches(room: string) {

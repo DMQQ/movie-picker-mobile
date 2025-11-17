@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { ScrollView, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Text } from "react-native-paper";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
@@ -34,7 +34,7 @@ interface ProviderWithTypes {
   types: string[];
 }
 
-const WatchProviders = ({ providers, hideLabel = false, style }: WatchProvidersProps) => {
+const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvidersProps) => {
   const providersList = useMemo(() => {
     const providersMap = new Map<number, ProviderWithTypes>();
 
@@ -163,7 +163,7 @@ const WatchProviders = ({ providers, hideLabel = false, style }: WatchProvidersP
       <Text style={styles.attribution}>{t("global.justwatch")}</Text>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

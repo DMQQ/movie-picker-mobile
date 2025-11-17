@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { router } from "expo-router";
 import LottieView from "lottie-react-native";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Dimensions, Platform, Pressable } from "react-native";
@@ -62,7 +62,6 @@ export default function Modal({ match, onClose, styles }: any) {
   const [isLoading, setIsLoading] = useState(true);
   const animation = useRef<LottieView>(null);
   const hasAnimationPlayed = useRef(false);
-  const navigation = useNavigation<any>();
 
   useEffect(() => {
     let timeout = setTimeout(() => {
@@ -150,10 +149,13 @@ export default function Modal({ match, onClose, styles }: any) {
               height: Dimensions.get("window").height / 1.5 - 50,
             }}
             onButtonPress={() => {
-              navigation.navigate("MovieDetails", {
-                id: match?.id,
-                type: match?.type,
-                img: match?.poster_path,
+              router.push({
+                pathname: "/movie/type/[type]/[id]",
+                params: {
+                  id: match?.id,
+                  type: match?.type,
+                  img: match?.poster_path,
+                },
               });
             }}
           />

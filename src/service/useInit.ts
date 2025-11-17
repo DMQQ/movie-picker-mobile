@@ -24,6 +24,7 @@ export default function useInit() {
           });
         } else {
           if (update.reason) {
+            setIsUpdating(true);
           }
         }
       } catch (error) {
@@ -35,8 +36,11 @@ export default function useInit() {
       loadAsync({
         Bebas: require("../../assets/fonts/BebasNeue-Regular.ttf"),
       }),
-      Promise.race([initializeApp(), new Promise((res) => setTimeout(res, 15_000))]),
-    ]).finally(() => setIsLoaded(true));
+      Promise.race([initializeApp(), new Promise((res) => setTimeout(res, 7500))]),
+    ]).finally(() => {
+      setIsLoaded(true);
+      setIsUpdating(false);
+    });
   }, []);
 
   return { isLoaded, isUpdating };

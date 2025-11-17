@@ -1,0 +1,143 @@
+import { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import { StyleSheet, View } from "react-native";
+import { Text } from "react-native-paper";
+import { Movie } from "../../../types";
+import { FancySpinner } from "../../components/FancySpinner";
+import HomeAppbar from "../../components/Home/Appbar";
+import MatchModal from "../../components/Movie/MatchModal";
+import SwipeTile from "../../components/Movie/SwipeTiles";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import useTranslation from "../../service/useTranslation";
+import { throttle } from "../../utils/throttle";
+import useRoomMatches from "../../service/useRoomMatches";
+import { roomActions } from "../../redux/room/roomSlice";
+import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
+import useRoomContext from "../../context/RoomContext";
+
+const styles = StyleSheet.create({
+  navigation: {
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  emptyListContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  noResultsText: {
+    fontSize: 40,
+    fontFamily: "Bebas",
+    color: "#fff",
+    width: "80%",
+    textAlign: "center",
+  },
+
+  gameStatus: { fontSize: 20, width: "80%", textAlign: "center" },
+
+  gameFinishStatus: { fontSize: 20, marginTop: 15, textAlign: "center", width: "80%" },
+});
+
+export default function Home() {
+  const params = useLocalSearchParams();
+  const { cards, isPlaying, cardsLoading, roomId } = useRoomContext();
+  const hasUserPlayed = useAppSelector((state) => state.room.room.hasUserPlayed);
+  const gameEnded = useAppSelector((state) => state.room.room.gameEnded);
+  const t = useTranslation();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (params?.roomId && !isPlaying) {
+      let timeout = setTimeout(() => {
+        dispatch(roomActions.setRoomId(params.roomId as string));
+      }, 1);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [params?.roomId, dispatch]);
+
+  useEffect(() => {
+    if (gameEnded && isPlaying === false) {
+      const timer = setTimeout(() => {
+        router.replace({
+          pathname: "/room/summary",
+          params: { roomId: roomId },
+        });
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [gameEnded, hasUserPlayed, isPlaying, roomId]);
+
+  return (
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
+      <HomeAppbar roomId={params?.roomId as string} hasCards={cards.length > 0} />
+
+      {isPlaying ? (
+        <>
+          <SwipeContent params={params as any} />
+
+          {cards.length === 0 && !cardsLoading && (
+            <View style={styles.emptyListContainer}>
+              {!gameEnded && hasUserPlayed && <Text style={styles.noResultsText}>{t("room.no-more-results")}</Text>}
+              <Text style={styles.gameStatus}>{gameEnded ? t("room.finished") : t("room.waiting")}</Text>
+            </View>
+          )}
+        </>
+      ) : (
+        <View style={styles.emptyListContainer}>
+          <FancySpinner />
+          <Text style={styles.gameFinishStatus}>
+            {gameEnded ? t("room.finished") : cardsLoading ? t("room.loading") : t("room.awaiting-start")}
+          </Text>
+        </View>
+      )}
+
+      <Matches roomId={params?.roomId as string} />
+    </View>
+  );
+}
+
+interface SwipeContentProps {
+  params: Record<string, string | undefined>;
+}
+
+const SwipeContent = memo(({ params }: SwipeContentProps) => {
+  const { cards, dislikeCard, likeCard } = useRoomContext();
+
+  const originalLength = useRef(cards.length);
+
+  const handleNavigateDetails = useCallback(
+    (card: Movie) => {
+      router.push({
+        pathname: "/movie/type/[type]/[id]",
+        params: {
+          id: card.id,
+          type: params?.type || "movie",
+          img: card.poster_path,
+        },
+      });
+    },
+    [params?.type]
+  );
+
+  return cards.map((card, index) => (
+    <SwipeTile
+      onPress={() => handleNavigateDetails(card)}
+      length={originalLength.current}
+      key={card.id}
+      card={card}
+      index={index}
+      likeCard={throttle(() => likeCard(card, index), 500)}
+      removeCard={throttle(() => dislikeCard(card, index), 500)}
+    />
+  ));
+});
+
+const Matches = memo(({ roomId }: { roomId: string }) => {
+  const { isFocused, hideMatchModal, match } = useRoomMatches(roomId);
+
+  return isFocused && <MatchModal hideMatchModal={hideMatchModal} match={match} />;
+});
