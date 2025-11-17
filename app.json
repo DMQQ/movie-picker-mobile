@@ -1,5 +1,6 @@
 {
   "expo": {
+    "platforms": ["ios", "android"],
     "name": "FlickMate",
     "slug": "qr-mobile",
     "version": "1.3.0",
