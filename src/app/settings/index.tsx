@@ -105,6 +105,10 @@ export default function SettingsScreen() {
               AsyncStorage.setItem("regionalization", JSON.stringify(headers));
             }}
           />
+
+          <Text style={{ color: "gray" }}>
+            Update {Updates.manifest.id} - {Updates.manifest?.version} ({Updates.manifest?.createdAt?.toString().split("T")[0]})
+          </Text>
         </View>
         <View style={{ padding: 15, paddingBottom: insets.bottom, backgroundColor: "rgba(0,0,0,0.1)" }}>
           <Button

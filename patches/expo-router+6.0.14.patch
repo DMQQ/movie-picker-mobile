@@ -1,0 +1,455 @@
+diff --git a/node_modules/expo-router/ios/LinkPreview/LinkPreviewNativeView.swift b/node_modules/expo-router/ios/LinkPreview/LinkPreviewNativeView.swift
+index 5ffe4f5..145b6d6 100644
+--- a/node_modules/expo-router/ios/LinkPreview/LinkPreviewNativeView.swift
++++ b/node_modules/expo-router/ios/LinkPreview/LinkPreviewNativeView.swift
+@@ -2,9 +2,15 @@ import ExpoModulesCore
+ 
+ class NativeLinkPreviewView: ExpoView, UIContextMenuInteractionDelegate,
+   LinkPreviewModalDismissible, LinkPreviewMenuUpdatable {
+-  private var preview: NativeLinkPreviewContentView?
++  private weak var preview: NativeLinkPreviewContentView?
+   private var interaction: UIContextMenuInteraction?
+-  private var directChild: UIView?
++  private weak var directChild: UIView?
++  private var isInteractionActive: Bool = false
++  private var lastInteractionTime: TimeInterval = 0
++  private let minimumInteractionInterval: TimeInterval = 0.3
++  private weak var pendingConfiguration: UIContextMenuConfiguration?
++  private var previewControllers: Set<UIViewController> = []
++  private let maxActiveControllers = 3
+   var nextScreenId: String? {
+     didSet {
+       performUpdateOfPreloadedView()
+@@ -87,8 +93,11 @@ class NativeLinkPreviewView: ExpoView, UIContextMenuInteractionDelegate,
+             )
+             return
+           }
+-          if let interaction = self.interaction {
++          if let interaction = self.interaction, directChild == child {
+             directChild.removeInteraction(interaction)
++            self.directChild = nil
++          } else {
++            print("[expo-router] Warning: Attempted to remove interaction from mismatched child")
+           }
+           super.unmountChildComponentView(child, index: index)
+         } else {
+@@ -107,15 +116,42 @@ class NativeLinkPreviewView: ExpoView, UIContextMenuInteractionDelegate,
+     _ interaction: UIContextMenuInteraction,
+     configurationForMenuAtLocation location: CGPoint
+   ) -> UIContextMenuConfiguration? {
++    // Prevent rapid successive interactions
++    let currentTime = CACurrentMediaTime()
++    if isInteractionActive || (currentTime - lastInteractionTime) < minimumInteractionInterval {
++      print("[expo-router] Preview interaction blocked - too rapid")
++      return nil
++    }
++    
++    // Ensure we have a valid directChild before proceeding
++    guard let directChild = directChild, directChild.superview != nil else { 
++      print("[expo-router] Preview blocked - no valid child view")
++      return nil 
++    }
++    
++    // Check if interaction is still valid
++    guard self.interaction == interaction else {
++      print("[expo-router] Preview blocked - interaction mismatch")
++      return nil
++    }
++    
++    isInteractionActive = true
++    lastInteractionTime = currentTime
++    
+     onWillPreviewOpen()
+-    return UIContextMenuConfiguration(
++    let configuration = UIContextMenuConfiguration(
+       identifier: nil,
+       previewProvider: { [weak self] in
+-        self?.createPreviewViewController()
++        guard let self = self else { return nil }
++        return self.createPreviewViewController()
+       },
+       actionProvider: { [weak self] _ in
+-        self?.createContextMenu()
++        guard let self = self else { return nil }
++        return self.createContextMenu()
+       })
++    
++    pendingConfiguration = configuration
++    return configuration
+   }
+ 
+   func contextMenuInteraction(
+@@ -157,6 +193,25 @@ class NativeLinkPreviewView: ExpoView, UIContextMenuInteractionDelegate,
+     animator: UIContextMenuInteractionAnimating?
+   ) {
+     onPreviewWillClose()
++    
++    // Clear pending configuration
++    if pendingConfiguration == configuration {
++      pendingConfiguration = nil
++    }
++    
++    // Clean up any preview controllers that might be stale
++    for controller in previewControllers {
++      if let previewVC = controller as? PreviewViewController {
++        previewVC.cleanup()
++      }
++    }
++    previewControllers.removeAll()
++    
++    // Delay reset to prevent rapid reopening
++    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
++      self.isInteractionActive = false
++    }
++    
+     animator?.addCompletion {
+       self.onPreviewDidClose()
+     }
+@@ -178,13 +233,45 @@ class NativeLinkPreviewView: ExpoView, UIContextMenuInteractionDelegate,
+ 
+   private func createPreviewViewController() -> UIViewController? {
+     guard let preview = preview else {
++      NSLog("[LINKPREVIEW] No preview content view available")
+       return nil
+     }
+     
++    // Check if preview is already in use by another controller
++    if preview.next != nil {
++      NSLog("[LINKPREVIEW] Preview view already associated with controller, skipping")
++      return nil
++    }
++    
++    // Clean up any existing parent-child relationship
++    if let existingParent = preview.superview {
++      NSLog("[LINKPREVIEW] Removing preview from existing superview")
++      preview.removeFromSuperview()
++    }
++    
++    // Clean up any strong references to prevent retention cycles
++    // Note: parentViewManager property doesn't exist, removing this line
++    
+     let vc = PreviewViewController(linkPreviewNativePreview: preview)
+     let preferredSize = preview.preferredContentSize
+     vc.preferredContentSize.width = preferredSize.width
+     vc.preferredContentSize.height = preferredSize.height
++    
++    // Track this controller to prevent leaks
++    previewControllers.insert(vc)
++    
++    // Clean up old controllers if we have too many
++    if previewControllers.count > maxActiveControllers {
++      let oldControllers = Array(previewControllers.prefix(previewControllers.count - maxActiveControllers))
++      for oldVC in oldControllers {
++        if let oldPreviewVC = oldVC as? PreviewViewController {
++          oldPreviewVC.cleanup()
++        }
++        previewControllers.remove(oldVC)
++      }
++    }
++    
++    NSLog("[LINKPREVIEW] Created new PreviewViewController")
+     return vc
+   }
+ 
+@@ -208,14 +295,22 @@ class NativeLinkPreviewView: ExpoView, UIContextMenuInteractionDelegate,
+ }
+ 
+ class PreviewViewController: UIViewController {
+-  private let linkPreviewNativePreview: NativeLinkPreviewContentView
++  private weak var linkPreviewNativePreview: NativeLinkPreviewContentView?
++  
+   init(linkPreviewNativePreview: NativeLinkPreviewContentView) {
+     self.linkPreviewNativePreview = linkPreviewNativePreview
+     super.init(nibName: nil, bundle: nil)
++    NSLog("[LINKPREVIEW] PreviewViewController init")
+   }
+ 
+   override func loadView() {
+-    self.view = linkPreviewNativePreview
++    guard let preview = linkPreviewNativePreview else {
++      self.view = UIView()
++      NSLog("[LINKPREVIEW] No preview available for loadView")
++      return
++    }
++    self.view = preview
++    NSLog("[LINKPREVIEW] PreviewViewController loadView completed")
+   }
+ 
+   @available(*, unavailable)
+@@ -223,9 +318,37 @@ class PreviewViewController: UIViewController {
+     fatalError("init(coder:) has not been implemented")
+   }
+ 
+-  // TODO: Consider using setViewSize from ExpoFabricView
+   override func viewDidAppear(_ animated: Bool) {
+     super.viewDidAppear(animated)
+-    linkPreviewNativePreview.setInitialSize(bounds: self.view.bounds)
++    if let preview = linkPreviewNativePreview {
++      preview.setInitialSize(bounds: self.view.bounds)
++      NSLog("[LINKPREVIEW] PreviewViewController viewDidAppear")
++    }
++  }
++  
++  override func viewWillDisappear(_ animated: Bool) {
++    super.viewWillDisappear(animated)
++    NSLog("[LINKPREVIEW] PreviewViewController viewWillDisappear")
++    cleanup()
++  }
++  
++  func cleanup() {
++    NSLog("[LINKPREVIEW] PreviewViewController cleanup")
++    
++    // Break the view controller - view relationship
++    if let preview = linkPreviewNativePreview {
++      preview.removeFromSuperview()
++      self.linkPreviewNativePreview = nil
++    }
++    
++    // Ensure view is not referencing the preview anymore
++    if self.view == linkPreviewNativePreview {
++      self.view = UIView()
++    }
++  }
++  
++  deinit {
++    NSLog("[LINKPREVIEW] PreviewViewController deinit")
++    cleanup()
+   }
+ }
+diff --git a/node_modules/expo-router/ios/LinkPreview/LinkPreviewNativeView.swift.orig b/node_modules/expo-router/ios/LinkPreview/LinkPreviewNativeView.swift.orig
+new file mode 100644
+index 0000000..5ffe4f5
+--- /dev/null
++++ b/node_modules/expo-router/ios/LinkPreview/LinkPreviewNativeView.swift.orig
+@@ -0,0 +1,231 @@
++import ExpoModulesCore
++
++class NativeLinkPreviewView: ExpoView, UIContextMenuInteractionDelegate,
++  LinkPreviewModalDismissible, LinkPreviewMenuUpdatable {
++  private var preview: NativeLinkPreviewContentView?
++  private var interaction: UIContextMenuInteraction?
++  private var directChild: UIView?
++  var nextScreenId: String? {
++    didSet {
++      performUpdateOfPreloadedView()
++    }
++  }
++  var tabPath: TabPathPayload? {
++    didSet {
++      performUpdateOfPreloadedView()
++    }
++  }
++  private var actions: [LinkPreviewNativeActionView] = []
++
++  private let linkPreviewNativeNavigation = LinkPreviewNativeNavigation()
++
++  let onPreviewTapped = EventDispatcher()
++  let onPreviewTappedAnimationCompleted = EventDispatcher()
++  let onWillPreviewOpen = EventDispatcher()
++  let onDidPreviewOpen = EventDispatcher()
++  let onPreviewWillClose = EventDispatcher()
++  let onPreviewDidClose = EventDispatcher()
++
++  required init(appContext: AppContext? = nil) {
++    super.init(appContext: appContext)
++    self.interaction = UIContextMenuInteraction(delegate: self)
++  }
++
++  // MARK: - LinkPreviewModalDismissable
++
++  func isDismissible() -> Bool {
++    return false
++  }
++
++  // MARK: - Props
++
++  func performUpdateOfPreloadedView() {
++    if nextScreenId == nil && tabPath?.path.isEmpty != false {
++      // If we have no tab to change and no screen to push, then we can't update the preloaded view
++      return
++    }
++    // However if one these is defined then we can perform the native update
++    linkPreviewNativeNavigation.updatePreloadedView(
++      screenId: nextScreenId, tabPath: tabPath, responder: self)
++  }
++
++  // MARK: - Children
++  #if RCT_NEW_ARCH_ENABLED
++    override func mountChildComponentView(_ childComponentView: UIView, index: Int) {
++      if let previewView = childComponentView as? NativeLinkPreviewContentView {
++        preview = previewView
++      } else if let actionView = childComponentView as? LinkPreviewNativeActionView {
++        actionView.parentMenuUpdatable = self
++        actions.append(actionView)
++      } else {
++        if directChild != nil {
++          print(
++            "[expo-router] Found a second child of <Link.Trigger>. Only one is allowed. This is most likely a bug in expo-router."
++          )
++          return
++        }
++        directChild = childComponentView
++        if let interaction = self.interaction {
++          childComponentView.addInteraction(interaction)
++        }
++        super.mountChildComponentView(childComponentView, index: index)
++      }
++    }
++
++    override func unmountChildComponentView(_ child: UIView, index: Int) {
++      if child is NativeLinkPreviewContentView {
++        preview = nil
++      } else if let actionView = child as? LinkPreviewNativeActionView {
++        actions.removeAll(where: {
++          $0 == actionView
++        })
++      } else {
++        if let directChild = directChild {
++          if directChild != child {
++            print(
++              "[expo-router] Unmounting unexpected child from <Link.Trigger>. This is most likely a bug in expo-router."
++            )
++            return
++          }
++          if let interaction = self.interaction {
++            directChild.removeInteraction(interaction)
++          }
++          super.unmountChildComponentView(child, index: index)
++        } else {
++          print(
++            "[expo-router] No link child found to unmount. This is most likely a bug in expo-router."
++          )
++          return
++        }
++      }
++    }
++  #endif
++
++  // MARK: - UIContextMenuInteractionDelegate
++
++  func contextMenuInteraction(
++    _ interaction: UIContextMenuInteraction,
++    configurationForMenuAtLocation location: CGPoint
++  ) -> UIContextMenuConfiguration? {
++    onWillPreviewOpen()
++    return UIContextMenuConfiguration(
++      identifier: nil,
++      previewProvider: { [weak self] in
++        self?.createPreviewViewController()
++      },
++      actionProvider: { [weak self] _ in
++        self?.createContextMenu()
++      })
++  }
++
++  func contextMenuInteraction(
++    _ interaction: UIContextMenuInteraction,
++    configuration: UIContextMenuConfiguration,
++    highlightPreviewForItemWithIdentifier identifier: any NSCopying
++  ) -> UITargetedPreview? {
++    if let superview = self.superview {
++      if let directChild = self.directChild {
++        let target = UIPreviewTarget(
++          container: superview, center: self.convert(directChild.center, to: superview))
++
++        let parameters = UIPreviewParameters()
++        parameters.backgroundColor = .clear
++
++        return UITargetedPreview(view: directChild, parameters: parameters, target: target)
++      }
++    }
++    return nil
++  }
++
++  func contextMenuInteraction(
++    _ interaction: UIContextMenuInteraction,
++    willDisplayMenuFor configuration: UIContextMenuConfiguration,
++    animator: UIContextMenuInteractionAnimating?
++  ) {
++    // This happens when preview starts to become visible.
++    // It is not yet fully extended at this moment though
++    self.onDidPreviewOpen()
++    animator?.addCompletion {
++      // This happens around a second after the preview is opened and thus gives us no real value
++      // User could have already interacted with preview beforehand
++    }
++  }
++
++  func contextMenuInteraction(
++    _ interaction: UIContextMenuInteraction,
++    willEndFor configuration: UIContextMenuConfiguration,
++    animator: UIContextMenuInteractionAnimating?
++  ) {
++    onPreviewWillClose()
++    animator?.addCompletion {
++      self.onPreviewDidClose()
++    }
++  }
++
++  func contextMenuInteraction(
++    _ interaction: UIContextMenuInteraction,
++    willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
++    animator: UIContextMenuInteractionCommitAnimating
++  ) {
++    self.onPreviewTapped()
++    animator.addCompletion { [weak self] in
++      self?.linkPreviewNativeNavigation.pushPreloadedView()
++      self?.onPreviewTappedAnimationCompleted()
++    }
++  }
++
++  // MARK: - Context Menu Helpers
++
++  private func createPreviewViewController() -> UIViewController? {
++    guard let preview = preview else {
++      return nil
++    }
++
++    let vc = PreviewViewController(linkPreviewNativePreview: preview)
++    let preferredSize = preview.preferredContentSize
++    vc.preferredContentSize.width = preferredSize.width
++    vc.preferredContentSize.height = preferredSize.height
++    return vc
++  }
++
++  func updateMenu() {
++    self.interaction?.updateVisibleMenu { _ in
++      self.createContextMenu()
++    }
++  }
++
++  private func createContextMenu() -> UIMenu {
++    if actions.count == 1, let menu = actions[0].uiAction as? UIMenu {
++      return menu
++    }
++    return UIMenu(
++      title: "",
++      children: actions.map { action in
++        action.uiAction
++      }
++    )
++  }
++}
++
++class PreviewViewController: UIViewController {
++  private let linkPreviewNativePreview: NativeLinkPreviewContentView
++  init(linkPreviewNativePreview: NativeLinkPreviewContentView) {
++    self.linkPreviewNativePreview = linkPreviewNativePreview
++    super.init(nibName: nil, bundle: nil)
++  }
++
++  override func loadView() {
++    self.view = linkPreviewNativePreview
++  }
++
++  @available(*, unavailable)
++  required init?(coder: NSCoder) {
++    fatalError("init(coder:) has not been implemented")
++  }
++
++  // TODO: Consider using setViewSize from ExpoFabricView
++  override func viewDidAppear(_ animated: Bool) {
++    super.viewDidAppear(animated)
++    linkPreviewNativePreview.setInitialSize(bounds: self.view.bounds)
++  }
++}
