@@ -93,7 +93,7 @@ export default function SettingsScreen() {
           </View>
 
           <ChooseRegion
-            onBack={() => router.push("/region-selector")}
+            onBack={() => router.push("/settings/region-selector")}
             onRegionSelect={(region) => {
               const headers = {} as Record<string, string>;
               headers["x-user-region"] = region.code;

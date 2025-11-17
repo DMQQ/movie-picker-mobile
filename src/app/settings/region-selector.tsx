@@ -16,29 +16,27 @@ export default function RegionSelectorScreen() {
   const language = useAppSelector((state) => state.room.language);
 
   return (
-    <TransparentModalScreen>
-      <BlurViewWrapper style={{ flex: 1 }} intensity={50} tint="dark">
-        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)", paddingTop: insets.top * 2 }}>
-          <PageHeading title="Select Region" onPress={() => router.back()} />
-          <View style={{ flex: 1 }}>
-            <ChooseRegion
-              showAsSelector={true}
-              onBack={() => router.back()}
-              onRegionSelect={async (region) => {
-                const headers = {} as Record<string, string>;
-                headers["x-user-region"] = region.code;
-                headers["x-user-watch-provider"] = region.code;
-                headers["x-user-watch-region"] = region.code;
-                headers["x-user-timezone"] = region.timezone;
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
+      <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)", paddingTop: insets.top * 2 }}>
+        <PageHeading title="Select Region" onPress={() => router.back()} />
+        <View style={{ flex: 1 }}>
+          <ChooseRegion
+            showAsSelector={true}
+            onBack={() => router.back()}
+            onRegionSelect={async (region) => {
+              const headers = {} as Record<string, string>;
+              headers["x-user-region"] = region.code;
+              headers["x-user-watch-provider"] = region.code;
+              headers["x-user-watch-region"] = region.code;
+              headers["x-user-timezone"] = region.timezone;
 
-                await AsyncStorage.setItem("regionalization", JSON.stringify(headers));
-                dispatch(roomActions.setSettings({ nickname, language, regionalization: headers }));
-                router.back();
-              }}
-            />
-          </View>
+              await AsyncStorage.setItem("regionalization", JSON.stringify(headers));
+              dispatch(roomActions.setSettings({ nickname, language, regionalization: headers }));
+              router.back();
+            }}
+          />
         </View>
-      </BlurViewWrapper>
-    </TransparentModalScreen>
+      </View>
+    </View>
   );
 }
