@@ -185,7 +185,7 @@ export default function GameSummary() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: "#000" }}>
         <View style={[styles.container, styles.centered]}>
           <FancySpinner size={80} />
           <Text style={styles.loadingText}>{t("game-summary.loading")}</Text>
@@ -196,7 +196,7 @@ export default function GameSummary() {
 
   if (error) {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: "#000" }}>
         <View style={[styles.container, styles.centered]}>
           <Text style={styles.errorText}>
             {t("game-summary.error")}
