@@ -47,16 +47,6 @@ export const useInfiniteLandingPageMovies = ({
     page: 0,
   });
 
-  const gameSections = useMemo(
-    () => [
-      { name: "Game Invite 1", results: [], type: "game" as const, gameType: "social" as const },
-      { name: "Game Invite 2", results: [], type: "game" as const, gameType: "voter" as const },
-      { name: "Game Invite 3", results: [], type: "game" as const, gameType: "fortune" as const },
-      { name: "Game Invite 4", results: [], type: "game" as const, gameType: "all-games" as const },
-    ],
-    []
-  );
-
   useEffect(() => {
     if (categoryRef.current !== categoryId) {
       categoryRef.current = categoryId;
@@ -80,8 +70,8 @@ export const useInfiniteLandingPageMovies = ({
       allPages.filter((item: any) => item && item.name),
       "name"
     );
-    return arrayInsertsAt(uniqueMovieSections, [3, 8, 14, 20], gameSections) as SectionData[];
-  }, [allPages, gameSections]);
+    return uniqueMovieSections;
+  }, [allPages]);
 
   const fetchNextPage = useCallback(() => {
     if (!hasMore || isLoading || isFetching) return;

@@ -59,13 +59,6 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
     }
   }, [isError, hasMore, fetchNextPage]);
 
-  const scrollY = useSharedValue(0);
-  const onScroll = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-    },
-  });
-
   const getItemLayout = useCallback((data: SectionData[], index: number) => {
     const item = data?.[index];
     const isGame = item && "type" in item && item.type === "game";
@@ -81,46 +74,46 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
     return { length: itemHeight, offset, index };
   }, []);
 
-  const renderItem = useCallback(
-    ({ item }: { item: SectionData }) => {
-      if (!item || typeof item !== "object") return null;
+  const renderItem = useCallback(({ item }: { item: SectionData }) => {
+    if (!item || typeof item !== "object") return null;
 
-      if ("type" in item && item.type === "game") {
-        return <GameInviteSection type={item.gameType} />;
+    if ("type" in item && item.type === "game") {
+      return <GameInviteSection type={item.gameType} />;
+    }
+
+    return <Section group={item} />;
+  }, []);
+
+  const categoryKeyExtractor = useCallback(
+    (item: any) => {
+      if (item?.type === "game") {
+        return `${categoryId}-section-${item.gameType || "unknown"}`;
       }
-
-      return <Section group={item} categoryId={categoryId} />;
+      return `${categoryId}-section-${item.name || "unknown"}`;
     },
     [categoryId]
   );
 
-  const categoryKeyExtractor = useCallback(
-    (item: any, index: number) => {
-      if (!item || typeof item !== "object") return `${categoryId}-section-empty-${index}`;
-      if (item?.type === "game") {
-        return `${categoryId}-section-${item.gameType || "unknown"}-${index}`;
-      }
-      return `${categoryId}-section-${item.name || "unknown"}-${index}`;
-    },
-    [categoryId]
+  console.log(
+    categoryId,
+    data.map((d) => d.name)
   );
 
   return (
     <View style={{ flex: 1 }}>
-      <AnimatedVirtualizedList
-        extraData={categoryId}
+      <VirtualizedList
         overScrollMode={"never"}
         bounces={false}
-        initialNumToRender={3}
-        onScroll={onScroll}
+        initialNumToRender={4}
+        maxToRenderPerBatch={4}
+        windowSize={5}
         data={data}
         renderItem={renderItem as any}
         keyExtractor={categoryKeyExtractor}
         getItemCount={getItemCount}
         getItem={getItem}
         onEndReached={onEndReached}
-        removeClippedSubviews
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.25}
         ListHeaderComponent={<FeaturedSection selectedChip={categoryId} />}
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={refetch} />}

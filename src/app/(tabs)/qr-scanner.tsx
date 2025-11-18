@@ -4,8 +4,7 @@ import { Platform, ToastAndroid, Vibration, View } from "react-native";
 import { Button, Dialog, FAB, IconButton, Portal, Text, TextInput, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PageHeading from "../../components/PageHeading";
-import { useAppSelector } from "../../redux/store";
-import { SocketContext } from "../../context/SocketContext";
+
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
 import { router, useFocusEffect } from "expo-router";
@@ -17,38 +16,19 @@ export default function QRScanner() {
   const [isScanned, setIsScanned] = useState(false);
   const [isScannError, setIsScanError] = useState(false);
 
-  const nickname = useAppSelector((state) => state.room.nickname);
-
-  const { socket } = useContext(SocketContext);
-
   const joinRoom = async (c: any) => {
     return new Promise(async (resolve, reject) => {
       //@ts-ignore
       const code = c?.roomId || c?.sessionId || c;
 
       if (code[0] === "V") {
-        return router.replace(`/voter/${code}`);
-      }
+        router.replace({
+          pathname: `/voter`,
+          params: { sessionId: code },
+        });
+      } else router.replace(`/room/${code}`);
 
-      try {
-        //@ts-ignore
-
-        const response = await socket?.emitWithAck("join-room", code, nickname);
-
-        if (response.joined) {
-          router.replace(`/room/${code}`);
-          resolve(true);
-        } else {
-          reject(false);
-          setIsScanError(true);
-        }
-      } catch (error) {
-        reject(error);
-        setIsScanned(false);
-        setIsScanError(true);
-      } finally {
-        setIsManual(false);
-      }
+      resolve(true);
     });
   };
 
@@ -58,14 +38,19 @@ export default function QRScanner() {
     if (!barCodeScannerResult) return;
 
     if (barCodeScannerResult.data?.startsWith("https") || barCodeScannerResult.data?.startsWith("flickmate://")) {
-      const urlParts = barCodeScannerResult.data.split("/");
+      const urlParts = barCodeScannerResult.data.replace("flickmate://", "").replace("https://movie.dmqq.dev/", "").split("/");
+
+      console.log("Scanned URL parts:", urlParts);
 
       const type = urlParts[urlParts.length - 2];
 
       const id = urlParts[urlParts.length - 1];
 
-      if (type === "voter" || type === "swipe") {
-        return joinRoom(id).catch(() => {
+      console.log("Scanned QR code type and id:", type, id);
+
+      if (type === "room" || type === "swipe") {
+        return joinRoom(id).catch((err) => {
+          console.error("Error joining room from QR code:", err);
           setIsScanError(true);
           setIsScanned(false);
         });
@@ -77,6 +62,8 @@ export default function QRScanner() {
     if (!isValid) return;
 
     const parsed = JSON.parse(barCodeScannerResult?.data);
+
+    console.log("Scanned QR code:", parsed);
 
     try {
       Vibration.vibrate();
@@ -185,18 +172,6 @@ export default function QRScanner() {
           </Dialog>
         </>
       </Portal>
-
-      {/* <FAB
-        theme={{ colors: { accent: theme.colors.primary } }}
-        label={t("dialogs.qr.manual")}
-        onPress={() => setIsManual(true)}
-        style={{
-          position: "absolute",
-          margin: 16,
-          right: 0,
-          bottom: 0,
-        }}
-      /> */}
     </SafeAreaView>
   );
 }

@@ -14,7 +14,6 @@ const { width } = Dimensions.get("screen");
 
 interface SectionProps {
   group: { name: string; results: Movie[] };
-  categoryId?: string;
 }
 
 const sectionStyles = StyleSheet.create({
@@ -49,16 +48,13 @@ const skeletonStyles = StyleSheet.create({
   },
 });
 
-export const Section = memo(({ group, categoryId }: SectionProps) => {
+export const Section = memo(({ group }: SectionProps) => {
   const [page, setPage] = useState(1);
   const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
 
   const [movies, setSectionMovies] = useState<Movie[]>(() => group.results);
 
-  const movieKeyExtractor = useCallback(
-    (item: any, index: number) => `${categoryId || "default"}-${group.name}-${item.id}-${item.type || "movie"}`,
-    [categoryId, group.name]
-  );
+  const movieKeyExtractor = useCallback((item: any) => `section-${item.id}-${item.type}`, [group.name]);
 
   const onEndReached = useCallback(() => {
     if (state.isLoading || !!state.error) return;
@@ -85,41 +81,40 @@ export const Section = memo(({ group, categoryId }: SectionProps) => {
   return (
     <Animated.View style={sectionStyles.container} entering={FadeIn}>
       <Text style={sectionStyles.title}>{group.name}</Text>
-      {movies.length > 0 && (
-        <FlashList
-          onEndReached={onEndReached}
-          data={(movies || []) as any}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={movieKeyExtractor}
-          renderItem={({ item }) => (
-            <SectionListItem
-              href={{
-                pathname: "/movie/type/[type]/[id]",
-                params: {
-                  id: item.id,
-                  type: item.type === "tv" ? "tv" : "movie",
-                  img: item.poster_path,
-                },
-              }}
-              {...item}
-            />
-          )}
-          ListFooterComponent={
-            state.isLoading ? (
-              <View style={skeletonStyles.moviesList}>
-                {[...Array(2)].map((_, index) => (
-                  <View style={skeletonStyles.movieCard} key={index}>
-                    <Skeleton>
-                      <View style={{ width: movieWidth, height: movieHeight, backgroundColor: "#333", borderRadius: 8 }} />
-                    </Skeleton>
-                  </View>
-                ))}
-              </View>
-            ) : null
-          }
-        />
-      )}
+
+      <FlashList
+        onEndReached={onEndReached}
+        data={(movies || []) as any}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={movieKeyExtractor}
+        renderItem={({ item }) => (
+          <SectionListItem
+            href={{
+              pathname: "/movie/type/[type]/[id]",
+              params: {
+                id: item.id,
+                type: item.type === "tv" ? "tv" : "movie",
+                img: item.poster_path,
+              },
+            }}
+            {...item}
+          />
+        )}
+        ListFooterComponent={
+          state.isLoading ? (
+            <View style={skeletonStyles.moviesList}>
+              {[...Array(2)].map((_, index) => (
+                <View style={skeletonStyles.movieCard} key={index}>
+                  <Skeleton>
+                    <View style={{ width: movieWidth, height: movieHeight, backgroundColor: "#333", borderRadius: 8 }} />
+                  </Skeleton>
+                </View>
+              ))}
+            </View>
+          ) : null
+        }
+      />
     </Animated.View>
   );
 });
