@@ -92,7 +92,12 @@ const FeaturedSection = memo((props: { selectedChip: string }) => {
 
   return (
     <ImageBackground
-      style={[styles.featuredImage, Platform.OS === "ios" ? { marginTop: -insets.top - 40 } : { marginTop: insets.top - 15 }]}
+      style={[
+        styles.featuredImage,
+        Platform.OS === "ios"
+          ? { marginTop: -insets.top - 40 }
+          : { marginTop: insets.top - 110, height: styles.featuredImage.height + 110 },
+      ]}
       source={{
         uri: "https://image.tmdb.org/t/p/w780" + featured?.poster_path,
       }}

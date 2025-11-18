@@ -1,8 +1,7 @@
-import { router } from "expo-router";
 import { memo, useCallback, useEffect, useRef } from "react";
 import { Dimensions, RefreshControl, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
-import Animated, { FadeIn, useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { useInfiniteLandingPageMovies } from "../../hooks/useInfiniteLandingPageMovies";
 import useTranslation from "../../service/useTranslation";
 import FeaturedSection from "./FeaturedSection";
@@ -11,10 +10,6 @@ import GameInviteSection from "./GameInviteSection";
 import LoadingSkeleton from "./LoadingSkeleton";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { SectionData } from "../../types";
-
-const { width } = Dimensions.get("screen");
-
-const AnimatedVirtualizedList = Animated.createAnimatedComponent(VirtualizedList);
 
 const getItemCount = (data: any) => data?.length || 0;
 const getItem = (data: any, index: number) => data[index];
@@ -59,44 +54,26 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
     }
   }, [isError, hasMore, fetchNextPage]);
 
-  const getItemLayout = useCallback((data: SectionData[], index: number) => {
-    const item = data?.[index];
-    const isGame = item && "type" in item && item.type === "game";
-    const itemHeight = isGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 50;
-
-    let offset = 0;
-    for (let i = 0; i < index; i++) {
-      const prevItem = data?.[i];
-      const prevIsGame = prevItem && "type" in prevItem && prevItem.type === "game";
-      offset += prevIsGame ? 210 : Math.min(width * 0.3, 200) * 1.75 + 50;
-    }
-
-    return { length: itemHeight, offset, index };
-  }, []);
-
   const renderItem = useCallback(({ item }: { item: SectionData }) => {
     if (!item || typeof item !== "object") return null;
-
-    if ("type" in item && item.type === "game") {
-      return <GameInviteSection type={item.gameType} />;
-    }
-
     return <Section group={item} />;
   }, []);
 
-  const categoryKeyExtractor = useCallback(
-    (item: any) => {
-      if (item?.type === "game") {
-        return `${categoryId}-section-${item.gameType || "unknown"}`;
-      }
-      return `${categoryId}-section-${item.name || "unknown"}`;
-    },
-    [categoryId]
-  );
+  const categoryKeyExtractor = useCallback((item: any) => `${categoryId}-section-${item.name || "unknown"}`, [categoryId]);
 
-  console.log(
-    categoryId,
-    data.map((d) => d.name)
+  const gameTypes: ("social" | "voter" | "fortune" | "all-games")[] = ["social", "voter", "fortune", "all-games"];
+
+  const ItemSeparator = useCallback(
+    ({ leadingItem }: { leadingItem: any }) => {
+      const index = data.findIndex((item) => item === leadingItem);
+      if ((index + 1) % 5 === 0) {
+        const gameTypeIndex = Math.floor((index + 1) / 5) - 1;
+        const gameType = gameTypes[gameTypeIndex % gameTypes.length];
+        return <GameInviteSection type={gameType} />;
+      }
+      return null;
+    },
+    [data]
   );
 
   return (
@@ -117,7 +94,7 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
         ListHeaderComponent={<FeaturedSection selectedChip={categoryId} />}
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={refetch} />}
-        getItemLayout={getItemLayout}
+        ItemSeparatorComponent={ItemSeparator}
         style={{ flex: 1 }}
         ListFooterComponent={
           <View style={{ minHeight: 200 }}>

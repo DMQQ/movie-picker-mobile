@@ -1,29 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, router } from "expo-router";
-import { StrictMode, useEffect, useState } from "react";
-import { Image, View } from "react-native";
+import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { MD2DarkTheme, PaperProvider, Text } from "react-native-paper";
+import { MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { loadFavorites } from "../redux/favourites/favourites";
 import { roomActions } from "../redux/room/roomSlice";
 import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
-
-const Fallback = ({ isUpdating }: { isUpdating?: boolean }) => (
-  <View
-    style={{
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: "#000",
-    }}
-  >
-    <Image source={require("../../assets/images/icon-light.png")} style={{ width: 200, height: 200, marginBottom: 20 }} />
-    {isUpdating && <Text style={{ fontFamily: "Bebas", marginTop: 10, fontSize: 25 }}>App is updating, please wait...</Text>}
-  </View>
-);
 
 const theme = MD2DarkTheme;
 
@@ -43,11 +28,12 @@ export default function RootLayout() {
 
 const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: boolean }) => {
   const dispatch = useAppDispatch();
-
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    (async () => {
+    const initializeApp = async () => {
+      if (!isLoaded || isUpdating) return;
+
       try {
         const [language, regionalization, nickname] = await Promise.all([
           AsyncStorage.getItem("language"),
@@ -70,15 +56,18 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
             regionalization: JSON.parse(regionalization || "{}") || ({} as any),
           })
         );
-      } catch (error) {
-      } finally {
-        setLoaded(true);
-      }
-    })();
-    dispatch(loadFavorites());
-  }, []);
 
-  if (!loaded || !isLoaded || isUpdating) return <Fallback isUpdating={isUpdating} />;
+        setLoaded(true);
+        router.replace("/(tabs)");
+      } catch (error) {
+        console.error("Error during app initialization:", error);
+        setLoaded(true);
+        router.replace("/(tabs)");
+      }
+    };
+
+    initializeApp();
+  }, [isLoaded, isUpdating, dispatch]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
@@ -89,7 +78,10 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
             backgroundColor: "#000",
           },
         }}
+        initialRouteName={!loaded || !isLoaded || isUpdating ? "loading" : "(tabs)"}
       >
+        <Stack.Screen name="loading" options={{ headerShown: false }} />
+
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
         <Stack.Screen name="room" options={{ headerShown: false }} />

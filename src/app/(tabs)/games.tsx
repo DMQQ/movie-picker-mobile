@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useState } from "react";
-import { Dimensions, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { useEffect, useMemo } from "react";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { IconButton, Text, TouchableRipple } from "react-native-paper";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
@@ -70,8 +70,6 @@ const GameCard = ({ title, description, onPress, beta, players, duration, index 
 
 export default function GameList() {
   const t = useTranslation();
-  const [selectedCategory, setSelectedCategory] = useState("all");
-
   const [prefetchProviders] = useLazyGetAllProvidersQuery();
   const [prefetchSections] = useLazyGetCategoriesQuery();
   const [prefetchGengres] = useLazyGetGenresQuery();
@@ -80,51 +78,46 @@ export default function GameList() {
     Promise.all([prefetchProviders({}), prefetchSections({}), prefetchGengres({ type: "movie" }), prefetchGengres({ type: "tv" })]);
   }, []);
 
-  const games = [
-    {
-      title: t("games.voter.swipe"),
-      description: t("games.voter.swipeDescription"),
-      route: "/room/setup",
-      players: "1-8",
-      duration: "5-10 min",
-      category: "popular",
-      index: 0,
-    },
-    {
-      title: t("games.voter.title"),
-      description: t("games.voter.description"),
-      route: "/voter",
-      beta: true,
-      players: "2",
-      duration: "5-10 min",
-      category: "new",
-      index: 1,
-    },
-    {
-      title: "FortuneWheel",
-      description: t("games.fortunewheel.description"),
-      route: "/fortune",
-      players: "1",
-      duration: "5 min",
-      category: "popular",
-      index: 2,
-    },
-  ];
+  const games = useMemo(
+    () => [
+      {
+        title: t("games.voter.swipe"),
+        description: t("games.voter.swipeDescription"),
+        route: "/room/setup",
+        players: "1-8",
+        duration: "5-10 min",
+        category: "popular",
+        index: 0,
+      },
+      {
+        title: t("games.voter.title"),
+        description: t("games.voter.description"),
+        route: "/voter",
+        beta: true,
+        players: "2",
+        duration: "5-10 min",
+        category: "new",
+        index: 1,
+      },
+      {
+        title: "FortuneWheel",
+        description: t("games.fortunewheel.description"),
+        route: "/fortune",
+        players: "1",
+        duration: "5 min",
+        category: "popular",
+        index: 2,
+      },
+    ],
+    []
+  );
   const insets = useSafeAreaInsets();
 
-  const filteredGames = selectedCategory === "all" ? games : games.filter((game) => game.category === selectedCategory);
+  const filteredGames = games;
 
   return (
     <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000" }}>
-      <PageHeading
-        title={t("voter.games")}
-        styles={
-          Platform.OS === "android" && {
-            marginTop: insets.top + 30,
-          }
-        }
-        showBackButton={false}
-      />
+      <PageHeading title={t("voter.games")} showBackButton={false} extraScreenPaddingTop={Platform.OS === "android" ? 20 : 0} />
 
       <ScrollView
         style={[styles.container, Platform.OS === "android" && { marginTop: 30 }]}

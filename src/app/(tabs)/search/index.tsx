@@ -420,6 +420,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: 15,
     marginBottom: 15,
+    paddingTop: 15,
   },
   searchbar: {
     backgroundColor: "rgba(255, 255, 255, 0.08)",

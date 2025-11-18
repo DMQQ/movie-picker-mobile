@@ -55,11 +55,11 @@ const PagerCategoryScreen = memo(() => {
     [chipCategories, selectedChip]
   );
   return (
-    <>
+    <View style={{ flex: 1 }}>
       {chipCategories.length > 0 ? (
         <PagerView
           offscreenPageLimit={2}
-          pageMargin={50}
+          pageMargin={25}
           ref={pagerRef}
           style={{ flex: 1 }}
           initialPage={0}
@@ -74,6 +74,6 @@ const PagerCategoryScreen = memo(() => {
       )}
 
       <CategoryPagerIndicator chipCategories={chipCategories} selectedChip={selectedChip} onChipPress={handleChipPress} />
-    </>
+    </View>
   );
 });

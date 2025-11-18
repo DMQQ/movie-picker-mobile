@@ -24,13 +24,15 @@ export default function Group() {
 
   const [match, setMatch] = useState<(typeof groups)[number]["movies"][number] | undefined>(undefined);
 
+  console.log("RENDER GROUP", data?.movies.length);
+
   return (
     <SafeIOSContainer style={{ flex: 1, overflow: "hidden" }}>
       {!isPreview && <PageHeading title={data?.name! || ""} styles={Platform.OS === "android" && { marginTop: insets.top + 30 }} />}
 
       <View style={{ flex: 1, paddingHorizontal: 15, marginTop: Platform.OS === "android" ? 30 : 0 }}>
         <TilesList
-          contentContainerStyle={{ paddingTop: 80 }}
+          contentContainerStyle={{ paddingTop: 80, flex: 1 }}
           data={
             data?.movies.map((m) => ({
               ...m,

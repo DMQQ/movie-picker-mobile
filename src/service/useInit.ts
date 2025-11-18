@@ -22,10 +22,6 @@ export default function useInit() {
               image: require("../../assets/images/icon-light.png"),
             },
           });
-        } else {
-          if (update.reason) {
-            setIsUpdating(true);
-          }
         }
       } catch (error) {
         setIsUpdating(false);

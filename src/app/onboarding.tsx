@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   mainContent: {
-    height: "70%",
+    flex: 2,
     paddingHorizontal: 15,
   },
   stepContainer: {

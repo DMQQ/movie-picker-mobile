@@ -73,7 +73,10 @@ export const Section = memo(({ group }: SectionProps) => {
     });
   }, [page]);
 
-  if (movies.length === 0 && !state.isLoading) return null;
+  if (movies.length === 0 && !state.isLoading) {
+    console.log("No movies found for section:", group.name);
+    return null;
+  }
 
   const movieWidth = Math.min(width * 0.25, 120);
   const movieHeight = movieWidth * 1.5;

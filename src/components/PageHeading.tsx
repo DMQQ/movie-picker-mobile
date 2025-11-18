@@ -26,6 +26,8 @@ interface RightIconButtonProps extends PageHeadingProps {
 
   rightIconName?: keyof typeof AntDesign.glyphMap | keyof typeof Ionicons.glyphMap;
   onRightIconPress?: () => void;
+
+  extraScreenPaddingTop?: number;
 }
 
 export default function PageHeading({
@@ -43,6 +45,8 @@ export default function PageHeading({
   rightIconName,
 
   onRightIconPress,
+
+  extraScreenPaddingTop = 0,
 }: RightIconButtonProps) {
   const navigation = useNavigation();
 
@@ -56,13 +60,13 @@ export default function PageHeading({
           pointerEvents="none"
         />
       )}
-      <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top : 0 }, extraStyles]}>
+      <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top + extraScreenPaddingTop : 0 }, extraStyles]}>
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center", width: "100%" }}>
           {showBackButton && (
             <PlatformBlurView isInteractive style={[styles.buttonContainer]}>
               <IconButton
                 icon="chevron-left"
-                size={25}
+                size={20}
                 onPress={() => {
                   typeof onPress !== "undefined" ? onPress() : navigation.goBack();
 
@@ -92,7 +96,7 @@ export default function PageHeading({
           >
             <IconButton
               icon={rightIconName as any}
-              size={25}
+              size={20}
               onPress={() => {
                 if (onRightIconPress) {
                   onRightIconPress();
@@ -156,7 +160,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       android: {
         backgroundColor: MD2DarkTheme.colors.surface,
-        borderWidth: 2,
+        borderWidth: 1,
         borderColor: "#343434ff",
       },
     }),

@@ -2,7 +2,6 @@ import { useMemo, useCallback, useState, useRef, useEffect } from "react";
 import { useGetLandingPageMoviesInfiniteQuery } from "../redux/movie/movieApi";
 import { useAppDispatch } from "../redux/store";
 import { movieApi } from "../redux/movie/movieApi";
-import { arrayInsertsAt } from "../utils/utilities";
 import uniqueBy from "../utils/unique";
 import { SectionData } from "../types";
 
@@ -67,9 +66,9 @@ export const useInfiniteLandingPageMovies = ({
     if (!allPages.length) return [];
 
     const uniqueMovieSections = uniqueBy(
-      allPages.filter((item: any) => item && item.name),
+      allPages.filter((item: any) => item && item.name && (!("type" in item) || item.type !== "game")),
       "name"
-    );
+    ).filter((section) => Array.isArray(section.results) && section.results.length > 0);
     return uniqueMovieSections;
   }, [allPages]);
 

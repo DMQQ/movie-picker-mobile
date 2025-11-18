@@ -21,6 +21,8 @@ export default function QRScanner() {
       //@ts-ignore
       const code = c?.roomId || c?.sessionId || c;
 
+      console.log("Joining room with code:", code);
+
       if (code[0] === "V") {
         router.replace({
           pathname: `/voter`,
@@ -48,7 +50,7 @@ export default function QRScanner() {
 
       console.log("Scanned QR code type and id:", type, id);
 
-      if (type === "room" || type === "swipe") {
+      if (type === "room" || type === "swipe" || type === "voter") {
         return joinRoom(id).catch((err) => {
           console.error("Error joining room from QR code:", err);
           setIsScanError(true);
@@ -112,6 +114,7 @@ export default function QRScanner() {
         showRightIconButton
         rightIconName="plus"
         onRightIconPress={() => setIsManual(true)}
+        extraScreenPaddingTop={Platform.OS === "android" ? 20 : 0}
       ></PageHeading>
 
       {hasPermission.granted && isFocused && (

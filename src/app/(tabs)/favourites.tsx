@@ -3,18 +3,22 @@ import { Dimensions, FlatList, ImageBackground, Keyboard, Platform, View } from 
 import { Button, Dialog, FAB, MD2DarkTheme, Text, TextInput, TouchableRipple } from "react-native-paper";
 import PageHeading from "../../components/PageHeading";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
-import { createGroup } from "../../redux/favourites/favourites";
+import { createGroup, loadFavorites } from "../../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
 import { Link, router } from "expo-router";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Thumbnail from "../../components/Thumbnail";
 
 export default function Favourites() {
   const groups = useAppSelector((state) => state.favourite.groups);
   const dispatch = useAppDispatch();
   const t = useTranslation();
+
+  useEffect(() => {
+    dispatch(loadFavorites());
+  }, []);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [text, setText] = useState("");
@@ -29,6 +33,8 @@ export default function Favourites() {
         showRightIconButton
         rightIconName="plus"
         onRightIconPress={() => setModalVisible(true)}
+        useSafeArea
+        extraScreenPaddingTop={Platform.OS === "android" ? 20 : 0}
       />
       <View style={{ paddingHorizontal: 15, flex: 1, marginTop: Platform.OS === "android" ? 30 : 0 }}>
         <FlatList
