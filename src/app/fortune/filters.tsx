@@ -5,7 +5,7 @@ import { IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-pa
 import { router } from "expo-router";
 
 const SectionSelector = () => {
-  const { data, error } = useGetCategoriesQuery({});
+  const { data } = useGetCategoriesQuery({});
 
   const insets = useSafeAreaInsets();
 
@@ -16,7 +16,7 @@ const SectionSelector = () => {
       </View>
       <FlatList
         numColumns={2}
-        data={data}
+        data={data?.filter((category) => category.results && category.results.length > 0) || []}
         contentContainerStyle={{ gap: 10, padding: 10, paddingBottom: 50 }}
         style={{ flex: 1 }}
         renderItem={({ item }) => (
@@ -38,7 +38,7 @@ const SectionSelector = () => {
             <ImageBackground
               blurRadius={10}
               source={{
-                uri: "https://image.tmdb.org/t/p/w200" + item.results[0].poster_path,
+                uri: "https://image.tmdb.org/t/p/w200" + item?.results?.[0]?.poster_path,
               }}
               style={{
                 width: "100%",
