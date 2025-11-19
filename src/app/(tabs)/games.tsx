@@ -109,9 +109,8 @@ export default function GameList() {
         index: 2,
       },
     ],
-    []
+    [t]
   );
-  const insets = useSafeAreaInsets();
 
   const filteredGames = games;
 
