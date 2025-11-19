@@ -5,11 +5,10 @@ import { Button, SegmentedButtons, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInDown, FadeIn, FadeInUp } from "react-native-reanimated";
 import ChooseRegion from "../components/ChooseRegion";
-import { roomActions } from "../redux/room/roomSlice";
-import { useAppDispatch } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 
 import * as Updates from "expo-updates";
+import { router } from "expo-router";
 
 interface Region {
   code: string;
@@ -154,8 +153,6 @@ const OnboardingNavigation: React.FC<NavigationProps> = ({ step, isLoading, canG
 };
 
 export default function OnboardingScreen() {
-  const dispatch = useAppDispatch();
-
   const [step, setStep] = useState(1);
   const [language, setLanguage] = useState("en");
   const [nickname, setNickname] = useState("");
@@ -172,7 +169,7 @@ export default function OnboardingScreen() {
     } else if (step === 3 && nickname.trim().length > 0 && selectedRegion && !isLoading) {
       setIsLoading(true);
       try {
-        await Promise.all([
+        await Promise.allSettled([
           SecureStore.setItemAsync("language", language),
           SecureStore.setItemAsync("nickname", nickname),
           SecureStore.setItemAsync(
@@ -186,28 +183,21 @@ export default function OnboardingScreen() {
           ),
         ]);
 
-        dispatch(
-          roomActions.setSettings({
-            nickname,
-            language,
-            regionalization: {
-              "x-user-region": selectedRegion.code,
-              "x-user-watch-provider": selectedRegion.code,
-              "x-user-watch-region": selectedRegion.code,
-              "x-user-timezone": selectedRegion.timezone,
+        if (Updates.isEnabled) {
+          await Updates.reloadAsync({
+            reloadScreenOptions: {
+              backgroundColor: "#000",
+              fade: true,
+              image: require("../../assets/images/icon-light.png"),
             },
-          })
-        );
-
-        Updates.reloadAsync({
-          reloadScreenOptions: {
-            backgroundColor: "#000",
-            fade: true,
-            image: require("../../assets/images/icon-light.png"),
-          },
-        });
+          });
+        } else {
+          console.log("Updates not enabled, using fallback reload");
+          setIsLoading(false);
+          router.replace("/(tabs)");
+        }
       } catch (error) {
-        console.error("Failed to save onboarding data:", error);
+        console.error("Failed to save onboarding data or reload:", error);
         setIsLoading(false);
       }
     }

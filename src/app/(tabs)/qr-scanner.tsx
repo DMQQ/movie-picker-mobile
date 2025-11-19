@@ -1,5 +1,5 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Platform, ToastAndroid, Vibration, View } from "react-native";
 import { Button, Dialog, Portal, Text, TextInput, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,7 +7,8 @@ import PageHeading from "../../components/PageHeading";
 
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
-import { router, useFocusEffect } from "expo-router";
+import { router } from "expo-router";
+import { useIsFocused } from "@react-navigation/native";
 import { url } from "../../context/SocketContext";
 import envs from "../../constants/envs";
 
@@ -95,18 +96,14 @@ export default function QRScanner() {
     }
   };
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
+    if (!isFocused) return;
+
+    console.log("Requesting camera permission...");
     !hasPermission?.granted && request();
-  }, []);
-
-  const [isFocused, setIsFocused] = useState(true);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setIsFocused(true);
-      return () => setIsFocused(false);
-    }, [])
-  );
+  }, [isFocused, hasPermission?.granted]);
 
   const t = useTranslation();
 
