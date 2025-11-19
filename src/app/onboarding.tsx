@@ -9,7 +9,7 @@ import { roomActions } from "../redux/room/roomSlice";
 import { useAppDispatch } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 
-import Updates from "expo-updates";
+import * as Updates from "expo-updates";
 
 interface Region {
   code: string;
