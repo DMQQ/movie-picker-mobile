@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChooseRegion from "../../components/ChooseRegion";
@@ -30,7 +30,7 @@ export default function RegionSelectorScreen() {
               headers["x-user-watch-region"] = region.code;
               headers["x-user-timezone"] = region.timezone;
 
-              await AsyncStorage.setItem("regionalization", JSON.stringify(headers));
+              await SecureStore.setItemAsync("regionalization", JSON.stringify(headers));
               dispatch(roomActions.setSettings({ nickname, language, regionalization: headers }));
               router.back();
             }}

@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Image, View, StyleSheet } from "react-native";
@@ -172,9 +172,9 @@ export default function OnboardingScreen() {
       setIsLoading(true);
       try {
         await Promise.all([
-          AsyncStorage.setItem("language", language),
-          AsyncStorage.setItem("nickname", nickname),
-          AsyncStorage.setItem(
+          SecureStore.setItemAsync("language", language),
+          SecureStore.setItemAsync("nickname", nickname),
+          SecureStore.setItemAsync(
             "regionalization",
             JSON.stringify({
               "x-user-region": selectedRegion.code,

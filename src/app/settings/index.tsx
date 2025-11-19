@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -21,7 +21,7 @@ export default function SettingsScreen() {
 
   const handleSaveNickname = () => {
     if (nickname.trim().length !== 0) {
-      AsyncStorage.setItem("nickname", nickname);
+      SecureStore.setItemAsync("nickname", nickname);
 
       dispatch(roomActions.setSettings({ nickname, language }));
     }
@@ -29,7 +29,7 @@ export default function SettingsScreen() {
 
   const handleSaveLanguage = async () => {
     if (language === lg) return;
-    await AsyncStorage.setItem("language", language);
+    await SecureStore.setItemAsync("language", language);
 
     dispatch(roomActions.setSettings({ nickname, language }));
   };
@@ -102,7 +102,7 @@ export default function SettingsScreen() {
               headers["x-user-timezone"] = region.timezone;
 
               dispatch(roomActions.setSettings({ nickname, language, regionalization: headers }));
-              AsyncStorage.setItem("regionalization", JSON.stringify(headers));
+              SecureStore.setItemAsync("regionalization", JSON.stringify(headers));
             }}
           />
 

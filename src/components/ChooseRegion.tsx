@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 import { useFocusEffect } from "@react-navigation/native";
 import { reloadAsync } from "expo-updates";
 import { useCallback, useEffect, useState } from "react";
@@ -75,7 +75,7 @@ const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: Choose
   const [selectedRegion, setSelectedRegion] = useState(regions[0]);
 
   const loadSelectedRegion = useCallback(async () => {
-    const regionalization = await AsyncStorage.getItem("regionalization");
+    const regionalization = await SecureStore.getItemAsync("regionalization");
 
     if (regionalization) {
       const headers = JSON.parse(regionalization) as Record<string, string>;
@@ -99,7 +99,7 @@ const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: Choose
 
   const onSettingsChange = async (settings: any) => {
     try {
-      await AsyncStorage.setItem("regionalization", JSON.stringify(settings));
+      await SecureStore.setItemAsync("regionalization", JSON.stringify(settings));
 
       await reloadAsync();
     } catch (error) {

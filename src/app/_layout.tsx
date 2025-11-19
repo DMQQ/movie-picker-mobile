@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 import { ErrorBoundary, Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -38,9 +38,9 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
 
       try {
         const [language, regionalization, nickname] = await Promise.all([
-          AsyncStorage.getItem("language"),
-          AsyncStorage.getItem("regionalization"),
-          AsyncStorage.getItem("nickname"),
+          SecureStore.getItemAsync("language"),
+          SecureStore.getItemAsync("regionalization"),
+          SecureStore.getItemAsync("nickname"),
         ]);
 
         if (!language) {

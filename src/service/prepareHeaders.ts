@@ -1,16 +1,17 @@
-import { BaseQueryApi } from "@reduxjs/toolkit/query";
 import * as Updates from "expo-updates";
 import { Platform } from "react-native";
 import envs from "../constants/envs";
-import type { RootState } from "../redux/store";
+import * as SecureStore from "expo-secure-store";
+
+const language = SecureStore.getItem("language") || "en"
+const regionalization = (JSON.parse(SecureStore.getItem("regionalization") ?? '{}') || {}) as Record<string, string>
 
 export default function prepareHeaders(
   headers: Headers,
-  { getState }: Pick<BaseQueryApi, "getState" | "extra" | "endpoint" | "type" | "forced">
 ) {
   headers.set("authorization", `Bearer ${envs.server_auth_token}`);
 
-  headers.set("X-User-Language", (getState() as RootState)?.room?.language || "en");
+  headers.set("X-User-Language", (language || "en"))
   headers.set("x-platform", Platform.OS);
 
   const updateId = Updates.updateId;
@@ -19,8 +20,7 @@ export default function prepareHeaders(
     headers.set("x-update-manifest-id", Updates?.manifest?.id || "unknown");
   }
 
-  const state = getState() as RootState;
-  const userLanguage = state?.room?.language || "en";
+  const userLanguage = language 
 
   const defaultHeaders =
     userLanguage === "pl" || userLanguage === "pl-PL"
@@ -39,9 +39,8 @@ export default function prepareHeaders(
           "x-user-watch-region": "US",
         };
 
-  const regionalization = Object.keys(state?.room?.regionalization).length > 0 ? state?.room?.regionalization : defaultHeaders;
 
-  Object.entries(regionalization).forEach(([key, value]) => {
+  Object.entries( Object.keys(regionalization || {}).length > 0 ? regionalization : defaultHeaders).forEach(([key, value]) => {
     headers.set(key, value);
   });
 
