@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInDown, FadeIn, FadeInUp } from "react-native-reanimated";
 import ChooseRegion from "../components/ChooseRegion";
 import useTranslation from "../service/useTranslation";
-
+import { reloadAppAsync } from "expo";
 import * as Updates from "expo-updates";
 import { router } from "expo-router";
 
@@ -183,19 +183,21 @@ export default function OnboardingScreen() {
           ),
         ]);
 
-        if (Updates.isEnabled) {
-          await Updates.reloadAsync({
-            reloadScreenOptions: {
-              backgroundColor: "#000",
-              fade: true,
-              image: require("../../assets/images/icon-light.png"),
-            },
-          });
-        } else {
-          console.log("Updates not enabled, using fallback reload");
-          setIsLoading(false);
-          router.replace("/(tabs)");
-        }
+        // if (Updates.isEnabled) {
+        //   await Updates.reloadAsync({
+        //     reloadScreenOptions: {
+        //       backgroundColor: "#000",
+        //       fade: true,
+        //       image: require("../../assets/images/icon-light.png"),
+        //     },
+        //   });
+        // } else {
+        //   console.log("Updates not enabled, using fallback reload");
+        //   setIsLoading(false);
+        //   router.replace("/(tabs)");
+        // }
+
+        await reloadAppAsync("load with new options");
       } catch (error) {
         console.error("Failed to save onboarding data or reload:", error);
         setIsLoading(false);
