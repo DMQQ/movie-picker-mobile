@@ -1,13 +1,12 @@
 import { AntDesign } from "@expo/vector-icons";
 import { Dimensions, FlatList, ImageBackground, Keyboard, Platform, View } from "react-native";
-import { Button, Dialog, FAB, MD2DarkTheme, Text, TextInput, TouchableRipple } from "react-native-paper";
+import { Button, Dialog, MD2DarkTheme, Text, TextInput } from "react-native-paper";
 import PageHeading from "../../components/PageHeading";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { createGroup, loadFavorites } from "../../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
-import { Link, router } from "expo-router";
-
+import { Link } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import Thumbnail from "../../components/Thumbnail";
 
@@ -99,7 +98,6 @@ export default function Favourites() {
                   </View>
                 </View>
               </Link.Trigger>
-              <Link.Preview />
             </Link>
           )}
         />

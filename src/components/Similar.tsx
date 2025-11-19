@@ -32,23 +32,6 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
     });
   }, [page]);
 
-  const renderItem = useCallback(
-    ({ item }: { item: Movie & { type: string } }) => (
-      <SectionListItem
-        href={{
-          pathname: `/movie/type/[type]/[id]`,
-          params: {
-            id: item.id,
-            type: item.type === "tv" ? "tv" : "movie",
-            img: item.poster_path,
-          },
-        }}
-        {...item}
-      />
-    ),
-    []
-  );
-
   const t = useTranslation();
 
   if (!movies.length) return null;
@@ -62,7 +45,19 @@ const Similar = memo(({ id, type }: { id: number; type: "movie" | "tv" }) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={keySectionExtractor}
-        renderItem={renderItem}
+        renderItem={({ item }) => (
+          <SectionListItem
+            href={{
+              pathname: `/movie/type/[type]/[id]`,
+              params: {
+                id: item.id,
+                type: item.type === "tv" ? "tv" : "movie",
+                img: item.poster_path,
+              },
+            }}
+            {...item}
+          />
+        )}
         onEndReachedThreshold={0.5}
       />
     </View>

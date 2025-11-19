@@ -12,7 +12,6 @@ export default function TabLayout() {
       blurEffect="dark"
       iconColor={MD2DarkTheme.colors.primary}
       indicatorColor={MD2DarkTheme.colors.primary}
-      minimizeBehavior="onScrollDown"
       tintColor={MD2DarkTheme.colors.primary}
     >
       <NativeTabs.Trigger
@@ -54,7 +53,7 @@ export default function TabLayout() {
             ? { src: <VectorIcon family={MaterialCommunityIcons} name="movie-check" />, selectedColor: "#000" }
             : { sf: "movieclapper" })}
         />
-        <Label>{t('tabBar.explore')}</Label>
+        <Label>{t("tabBar.explore")}</Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger

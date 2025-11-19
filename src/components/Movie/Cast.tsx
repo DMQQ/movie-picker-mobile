@@ -26,7 +26,7 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <FrostedGlass style={styles.card} container={{ marginRight: 10 }}>
-            <Thumbnail size={200} path={item.profile_path || ""} container={styles.image} />
+            <Thumbnail priority="low" size={200} path={item.profile_path || ""} container={styles.image} />
             <View style={{ paddingTop: 0 }}>
               <Text style={styles.character} numberOfLines={1}>
                 {item.character === "Self" ? item.name : item.character}
@@ -46,7 +46,7 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <FrostedGlass style={styles.directorContainer} container={{ marginRight: 15 }}>
-            {item?.profile_path && <Thumbnail path={item?.profile_path || ""} container={styles.directorImage} />}
+            {item?.profile_path && <Thumbnail priority="low" path={item?.profile_path || ""} container={styles.directorImage} />}
 
             <View
               style={{
