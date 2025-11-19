@@ -10,6 +10,7 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
 import { router } from "expo-router";
+import { reloadAppAsync } from "expo";
 
 export default function SettingsScreen() {
   const lg = useAppSelector((state) => state.room.language);
@@ -119,13 +120,15 @@ export default function SettingsScreen() {
             contentStyle={{ padding: 7.5 }}
             mode="contained"
             onPress={async () =>
-              await Updates.reloadAsync({
-                reloadScreenOptions: {
-                  backgroundColor: "#000",
-                  fade: true,
-                  image: require("../../../assets/images/icon-light.png"),
-                },
-              })
+              Platform.OS === "ios"
+                ? await Updates.reloadAsync({
+                    reloadScreenOptions: {
+                      backgroundColor: "#000",
+                      fade: true,
+                      image: require("../../../assets/images/icon-light.png"),
+                    },
+                  })
+                : await reloadAppAsync("manual reload from settings")
             }
           >
             {t("settings.apply")}

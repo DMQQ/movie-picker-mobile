@@ -1,6 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
-import { Image, View, StyleSheet } from "react-native";
+import { Image, View, StyleSheet, Platform } from "react-native";
 import { Button, SegmentedButtons, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInDown, FadeIn, FadeInUp } from "react-native-reanimated";
@@ -8,7 +8,6 @@ import ChooseRegion from "../components/ChooseRegion";
 import useTranslation from "../service/useTranslation";
 import { reloadAppAsync } from "expo";
 import * as Updates from "expo-updates";
-import { router } from "expo-router";
 
 interface Region {
   code: string;
@@ -155,7 +154,7 @@ const OnboardingNavigation: React.FC<NavigationProps> = ({ step, isLoading, canG
 export default function OnboardingScreen() {
   const [step, setStep] = useState(1);
   const [language, setLanguage] = useState("en");
-  const [nickname, setNickname] = useState("");
+  const [nickname, setNickname] = useState("Guest");
   const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -183,21 +182,15 @@ export default function OnboardingScreen() {
           ),
         ]);
 
-        // if (Updates.isEnabled) {
-        //   await Updates.reloadAsync({
-        //     reloadScreenOptions: {
-        //       backgroundColor: "#000",
-        //       fade: true,
-        //       image: require("../../assets/images/icon-light.png"),
-        //     },
-        //   });
-        // } else {
-        //   console.log("Updates not enabled, using fallback reload");
-        //   setIsLoading(false);
-        //   router.replace("/(tabs)");
-        // }
-
-        await reloadAppAsync("load with new options");
+        Platform.OS === "ios"
+          ? await Updates.reloadAsync({
+              reloadScreenOptions: {
+                backgroundColor: "#000",
+                fade: true,
+                image: require("../../assets/images/icon-light.png"),
+              },
+            })
+          : await reloadAppAsync("load with new options");
       } catch (error) {
         console.error("Failed to save onboarding data or reload:", error);
         setIsLoading(false);

@@ -110,11 +110,9 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
         );
 
         setLoaded(true);
-        router.replace("/(tabs)");
       } catch (error) {
         console.error("Error during app initialization:", error);
         setLoaded(true);
-        router.replace("/(tabs)");
       }
     };
 
@@ -130,10 +128,8 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
             backgroundColor: "#000",
           },
         }}
-        initialRouteName={!loaded || !isLoaded || isUpdating ? "loading" : "(tabs)"}
+        initialRouteName={"(tabs)"}
       >
-        <Stack.Screen name="loading" options={{ headerShown: false }} />
-
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
         <Stack.Screen name="room" options={{ headerShown: false }} />
