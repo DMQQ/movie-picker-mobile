@@ -66,7 +66,7 @@ export default function PageHeading({
             <PlatformBlurView isInteractive style={[styles.buttonContainer]}>
               <IconButton
                 icon="chevron-left"
-                size={20}
+                size={25}
                 onPress={() => {
                   typeof onPress !== "undefined" ? onPress() : navigation.goBack();
 
@@ -96,7 +96,7 @@ export default function PageHeading({
           >
             <IconButton
               icon={rightIconName as any}
-              size={20}
+              size={25}
               onPress={() => {
                 if (onRightIconPress) {
                   onRightIconPress();

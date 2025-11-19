@@ -1,14 +1,14 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Stack, router } from "expo-router";
+import { ErrorBoundary, Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
-import { loadFavorites } from "../redux/favourites/favourites";
 import { roomActions } from "../redux/room/roomSlice";
 import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
+import AppErrorBoundary from "../components/ErrorBoundary";
 
 const theme = MD2DarkTheme;
 
@@ -16,13 +16,15 @@ export default function RootLayout() {
   const { isLoaded, isUpdating } = useInit();
 
   return (
-    <SafeAreaProvider style={{ flex: 1 }}>
-      <Provider store={store}>
-        <PaperProvider theme={theme}>
-          <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
-        </PaperProvider>
-      </Provider>
-    </SafeAreaProvider>
+    <AppErrorBoundary>
+      <SafeAreaProvider style={{ flex: 1 }}>
+        <Provider store={store}>
+          <PaperProvider theme={theme}>
+            <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
+          </PaperProvider>
+        </Provider>
+      </SafeAreaProvider>
+    </AppErrorBoundary>
   );
 }
 
