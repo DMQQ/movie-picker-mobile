@@ -290,7 +290,8 @@
     "favourites": "Favourites",
     "join-game": "Join game",
     "games": "Games",
-    "search": "Search"
+    "search": "Search",
+    "explore": "Explore"
   },
   "game-summary": {
     "loading": "Loading game summary...",

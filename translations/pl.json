@@ -288,7 +288,8 @@
     "favourites": "Ulubione",
     "join-game": "Dołącz do gry",
     "games": "Gry",
-    "search": "Szukaj"
+    "search": "Szukaj",
+    "explore": "Eksploruj"
   },
   "game-summary": {
     "loading": "Ładowanie podsumowania gry...",

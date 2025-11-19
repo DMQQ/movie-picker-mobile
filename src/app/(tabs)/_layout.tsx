@@ -54,7 +54,7 @@ export default function TabLayout() {
             ? { src: <VectorIcon family={MaterialCommunityIcons} name="movie-check" />, selectedColor: "#000" }
             : { sf: "movieclapper" })}
         />
-        <Label>{"Explore"}</Label>
+        <Label>{t('tabBar.explore')}</Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger

@@ -3,15 +3,11 @@ import { Platform } from "react-native";
 import envs from "../constants/envs";
 import * as SecureStore from "expo-secure-store";
 
-const language = SecureStore.getItem("language") || "en"
-const regionalization = (JSON.parse(SecureStore.getItem("regionalization") ?? '{}') || {}) as Record<string, string>
+const language = SecureStore.getItem("language") || "en";
+const regionalization = (JSON.parse(SecureStore.getItem("regionalization") ?? "{}") || {}) as Record<string, string>;
 
-export default function prepareHeaders(
-  headers: Headers,
-) {
+export default function prepareHeaders(headers: Headers) {
   headers.set("authorization", `Bearer ${envs.server_auth_token}`);
-
-  headers.set("X-User-Language", (language || "en"))
   headers.set("x-platform", Platform.OS);
 
   const updateId = Updates.updateId;
@@ -20,10 +16,10 @@ export default function prepareHeaders(
     headers.set("x-update-manifest-id", Updates?.manifest?.id || "unknown");
   }
 
-  const userLanguage = language 
+  const userLanguage = language === "pl" || language === "pl-PL" ? "pl-PL" : "en-US";
 
   const defaultHeaders =
-    userLanguage === "pl" || userLanguage === "pl-PL"
+    userLanguage === "pl-PL"
       ? {
           "x-user-language": "pl-PL",
           "x-user-region": "PL",
@@ -39,10 +35,11 @@ export default function prepareHeaders(
           "x-user-watch-region": "US",
         };
 
-
-  Object.entries( Object.keys(regionalization || {}).length > 0 ? regionalization : defaultHeaders).forEach(([key, value]) => {
+  Object.entries(Object.keys(regionalization || {}).length > 0 ? regionalization : defaultHeaders).forEach(([key, value]) => {
     headers.set(key, value);
   });
+
+  headers.set("x-user-language", userLanguage);
 
   return headers;
 }

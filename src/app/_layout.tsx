@@ -1,5 +1,6 @@
 import * as SecureStore from "expo-secure-store";
-import { ErrorBoundary, Stack, router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
@@ -12,8 +13,57 @@ import AppErrorBoundary from "../components/ErrorBoundary";
 
 const theme = MD2DarkTheme;
 
+const migrationFlag = "migration_complete";
+
+const isMigrated = SecureStore.getItem(migrationFlag) === "true";
+
+async function migrateToSecureStore() {
+  try {
+    if (isMigrated) return;
+
+    const keysToMigrate = ["language", "regionalization", "nickname", "userId", "favourites"];
+
+    const [secureStoreValues, asyncStorageValues] = await Promise.all([
+      Promise.all(keysToMigrate.map((key) => SecureStore.getItemAsync(key))),
+      Promise.all(keysToMigrate.map((key) => AsyncStorage.getItem(key))),
+    ]);
+
+    const migrateOperations: Promise<void>[] = [];
+    const cleanupOperations: Promise<void>[] = [];
+
+    keysToMigrate.forEach((key, index) => {
+      const secureValue = secureStoreValues[index];
+      const asyncValue = asyncStorageValues[index];
+
+      if (asyncValue && !secureValue) {
+        migrateOperations.push(SecureStore.setItemAsync(key, asyncValue));
+        cleanupOperations.push(AsyncStorage.removeItem(key));
+      }
+    });
+
+    if (migrateOperations.length > 0) {
+      await Promise.all([...migrateOperations, ...cleanupOperations]);
+    }
+
+    await SecureStore.setItemAsync("migration_complete", "true");
+  } catch (error) {
+
+  }
+}
+
 export default function RootLayout() {
   const { isLoaded, isUpdating } = useInit();
+  const [migrationComplete, setMigrationComplete] = useState(false);
+
+  useEffect(() => {
+    migrateToSecureStore().then(() => {
+      setMigrationComplete(true);
+    });
+  }, []);
+
+  if (!migrationComplete) {
+    return null;
+  }
 
   return (
     <AppErrorBoundary>

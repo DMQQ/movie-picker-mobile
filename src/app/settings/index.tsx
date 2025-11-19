@@ -28,14 +28,13 @@ export default function SettingsScreen() {
   };
 
   const handleSaveLanguage = async () => {
-    if (language === lg) return;
     await SecureStore.setItemAsync("language", language);
 
     dispatch(roomActions.setSettings({ nickname, language }));
   };
 
   useEffect(() => {
-    let nickTimeoutId = setTimeout(handleSaveNickname, 1500);
+    let nickTimeoutId = setTimeout(handleSaveNickname, 500);
 
     return () => {
       clearTimeout(nickTimeoutId);
@@ -43,7 +42,7 @@ export default function SettingsScreen() {
   }, [nickname, language]);
 
   useEffect(() => {
-    let languageTimeoutId = setTimeout(handleSaveLanguage, 1500);
+    let languageTimeoutId = setTimeout(handleSaveLanguage, 500);
 
     return () => {
       clearTimeout(languageTimeoutId);
