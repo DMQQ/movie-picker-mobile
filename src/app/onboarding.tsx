@@ -1,5 +1,4 @@
 import * as SecureStore from "expo-secure-store";
-import { router } from "expo-router";
 import { useState } from "react";
 import { Image, View, StyleSheet } from "react-native";
 import { Button, SegmentedButtons, Text, TextInput } from "react-native-paper";
@@ -9,6 +8,8 @@ import ChooseRegion from "../components/ChooseRegion";
 import { roomActions } from "../redux/room/roomSlice";
 import { useAppDispatch } from "../redux/store";
 import useTranslation from "../service/useTranslation";
+
+import Updates from "expo-updates";
 
 interface Region {
   code: string;
@@ -198,7 +199,13 @@ export default function OnboardingScreen() {
           })
         );
 
-        router.replace("/");
+        Updates.reloadAsync({
+          reloadScreenOptions: {
+            backgroundColor: "#000",
+            fade: true,
+            image: require("../../assets/images/icon-light.png"),
+          },
+        });
       } catch (error) {
         console.error("Failed to save onboarding data:", error);
         setIsLoading(false);

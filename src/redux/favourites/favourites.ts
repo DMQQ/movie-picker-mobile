@@ -29,7 +29,7 @@ const initialState: FavoritesState = {
   error: null,
 };
 
-const STORAGE_KEY = "favorites_groups";
+export const STORAGE_KEY = "favorites_groups";
 
 const makeDefaultGroups = () => {
   return [

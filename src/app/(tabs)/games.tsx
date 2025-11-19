@@ -122,7 +122,7 @@ export default function GameList() {
       <ScrollView
         style={[styles.container, Platform.OS === "android" && { marginTop: 30 }]}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: 60 }}
+        contentContainerStyle={{ paddingTop: 60, paddingBottom: Platform.OS === "android" ? 60 : 0 }}
       >
         {filteredGames.map((game, index) => (
           <GameCard

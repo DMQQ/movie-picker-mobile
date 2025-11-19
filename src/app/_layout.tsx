@@ -10,6 +10,7 @@ import { roomActions } from "../redux/room/roomSlice";
 import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
+import { STORAGE_KEY } from "../redux/favourites/favourites";
 
 const theme = MD2DarkTheme;
 
@@ -21,7 +22,7 @@ async function migrateToSecureStore() {
   try {
     if (isMigrated) return;
 
-    const keysToMigrate = ["language", "regionalization", "nickname", "userId", "favourites"];
+    const keysToMigrate = ["language", "regionalization", "nickname", "userId", STORAGE_KEY];
 
     const [secureStoreValues, asyncStorageValues] = await Promise.all([
       Promise.all(keysToMigrate.map((key) => SecureStore.getItemAsync(key))),
@@ -46,9 +47,7 @@ async function migrateToSecureStore() {
     }
 
     await SecureStore.setItemAsync("migration_complete", "true");
-  } catch (error) {
-
-  }
+  } catch (error) {}
 }
 
 export default function RootLayout() {

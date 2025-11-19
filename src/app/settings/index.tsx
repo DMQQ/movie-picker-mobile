@@ -1,7 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { Button, SegmentedButtons, Text, TextInput } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChooseRegion from "../../components/ChooseRegion";
@@ -54,8 +54,9 @@ export default function SettingsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
+      <PageHeading title={t("settings.heading")} extraScreenPaddingTop={Platform.OS === "android" ? 20 : 0} />
+
       <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)", paddingTop: 100 }}>
-        <PageHeading title={t("settings.heading")} />
         <View style={{ paddingHorizontal: 15, flex: 1 }}>
           <View style={{ marginTop: 20 }}>
             <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Nickname</Text>
@@ -116,7 +117,15 @@ export default function SettingsScreen() {
             }}
             contentStyle={{ padding: 7.5 }}
             mode="contained"
-            onPress={async () => await Updates.reloadAsync()}
+            onPress={async () =>
+              await Updates.reloadAsync({
+                reloadScreenOptions: {
+                  backgroundColor: "#000",
+                  fade: true,
+                  image: require("../../../assets/images/icon-light.png"),
+                },
+              })
+            }
           >
             {t("settings.apply")}
           </Button>
