@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
   overview: { fontSize: 16, color: "rgba(255,255,255,0.95)", fontWeight: "500" },
 
   blurView: {
+    width: "100%",
     padding: 15,
     borderBottomWidth: 0,
     ...Platform.select({

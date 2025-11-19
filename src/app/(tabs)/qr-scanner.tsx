@@ -1,13 +1,15 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, ToastAndroid, Vibration, View } from "react-native";
-import { Button, Dialog, FAB, IconButton, Portal, Text, TextInput, useTheme } from "react-native-paper";
+import { Button, Dialog, Portal, Text, TextInput, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PageHeading from "../../components/PageHeading";
 
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
 import { router, useFocusEffect } from "expo-router";
+import { url } from "../../context/SocketContext";
+import envs from "../../constants/envs";
 
 export default function QRScanner() {
   const [hasPermission, request] = useCameraPermissions();
@@ -21,16 +23,32 @@ export default function QRScanner() {
       //@ts-ignore
       const code = c?.roomId || c?.sessionId || c;
 
-      console.log("Joining room with code:", code);
-
-      if (code[0] === "V") {
-        router.replace({
-          pathname: `/voter`,
-          params: { sessionId: code },
+      try {
+        const response = await fetch(`${url}/room/verify/${code}`, {
+          headers: {
+            authorization: `Bearer ${envs.server_auth_token}`,
+          },
         });
-      } else router.replace(`/room/${code}`);
 
-      resolve(true);
+        const data = await response.json();
+
+        if (!data.exists) {
+          reject(new Error("Room does not exist"));
+          return;
+        }
+
+        if (code[0] === "V") {
+          router.replace({
+            pathname: `/voter`,
+            params: { sessionId: code },
+          });
+        } else router.replace(`/room/${code}`);
+
+        resolve(true);
+      } catch (error) {
+        console.error("Failed to verify room:", error);
+        reject(error);
+      }
     });
   };
 
@@ -65,13 +83,12 @@ export default function QRScanner() {
 
     const parsed = JSON.parse(barCodeScannerResult?.data);
 
-    console.log("Scanned QR code:", parsed);
-
     try {
       Vibration.vibrate();
 
       await joinRoom(parsed);
     } catch (error) {
+      setIsScanError(true);
       if (Platform.OS === "android") ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
     } finally {
       setIsScanned(false);
@@ -170,7 +187,13 @@ export default function QRScanner() {
             <Dialog.Title>{t("dialogs.qr.manual")}</Dialog.Title>
 
             <Dialog.Actions>
-              <ManualCodeInput joinRoom={joinRoom} />
+              <ManualCodeInput
+                joinRoom={joinRoom}
+                onError={() => {
+                  setIsManual(false);
+                  setIsScanError(true);
+                }}
+              />
             </Dialog.Actions>
           </Dialog>
         </>
@@ -179,12 +202,14 @@ export default function QRScanner() {
   );
 }
 
-const ManualCodeInput = ({ joinRoom }: { joinRoom: (code: string) => Promise<any> }) => {
+const ManualCodeInput = ({ joinRoom, onError }: { joinRoom: (code: string) => Promise<any>; onError: () => void }) => {
   const [code, setCode] = useState("");
 
   const onManualPress = async () => {
     if (code) {
-      joinRoom(code.toUpperCase()).catch(() => {});
+      joinRoom(code.toUpperCase()).catch(() => {
+        onError();
+      });
     } else {
       ToastAndroid.show("Invalid code", ToastAndroid.SHORT);
     }

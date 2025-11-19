@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Button, Chip, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import { Button, Chip, IconButton, MD2DarkTheme, Text, TouchableRipple, Dialog, Portal, useTheme } from "react-native-paper";
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from "react-native-reanimated";
 import { FancySpinner } from "../../components/FancySpinner";
 import QuickActions from "../../components/QuickActions";
@@ -27,6 +27,8 @@ import PageHeading from "../../components/PageHeading";
 import { useGetAllProvidersQuery, useGetGenresQuery } from "../../redux/movie/movieApi";
 import ReviewManager from "../../utils/rate";
 import { throttle } from "../../utils/throttle";
+import { url as apiUrl } from "../../context/SocketContext";
+import envs from "../../constants/envs";
 
 const scaleTitle = (title: string, size = 30) => {
   if (title.length > 30) return size * 0.75;
@@ -46,6 +48,8 @@ export default function Home() {
     mood: 1,
     uniqueness: 2,
   });
+  const theme = useTheme();
+  const [showError, setShowError] = useState(false);
 
   useEffect(() => {
     if (status !== "waiting") {
@@ -54,14 +58,36 @@ export default function Home() {
   }, [status]);
 
   useEffect(() => {
-    if (params?.sessionId) {
-      actions.setWaiting();
-      actions.joinSession(params.sessionId as string).catch((err) => {
-        if (err.message === "Session not found") {
-          router.back();
+    const verifyAndJoinSession = async () => {
+      if (params?.sessionId) {
+        try {
+          const response = await fetch(`${apiUrl}/room/verify/${params.sessionId}`, {
+            headers: {
+              authorization: `Bearer ${envs.server_auth_token}`,
+            },
+          });
+
+          const data = await response.json();
+
+          if (!data.exists) {
+            setShowError(true);
+            return;
+          }
+
+          actions.setWaiting();
+          actions.joinSession(params.sessionId as string).catch((err) => {
+            if (err.message === "Session not found") {
+              setShowError(true);
+            }
+          });
+        } catch (error) {
+          console.error("Failed to verify session:", error);
+          setShowError(true);
         }
-      });
-    }
+      }
+    };
+
+    verifyAndJoinSession();
   }, [params?.sessionId]);
 
   const handleSubmitRating = useCallback(
@@ -436,6 +462,31 @@ export default function Home() {
       {status === "waiting" && renderWaitingState()}
       {status === "rating" && currentMovies !== undefined && renderRatingState()}
       {status === "completed" && renderCompletedState()}
+
+      <Portal>
+        <Dialog
+          dismissable={false}
+          visible={showError}
+          style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
+        >
+          <Dialog.Title>{t("dialogs.qr.error")}</Dialog.Title>
+
+          <Dialog.Content>
+            <Text>{t("dialogs.qr.error-desc")}</Text>
+          </Dialog.Content>
+
+          <Dialog.Actions>
+            <Button
+              onPress={() => {
+                setShowError(false);
+                router.replace("/(tabs)");
+              }}
+            >
+              {t("dialogs.qr.close")}
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 }

@@ -1,6 +1,6 @@
-import { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
 import HomeAppbar from "../../components/Home/Appbar";
@@ -14,6 +14,8 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import useRoomContext from "../../context/RoomContext";
+import { url } from "../../context/SocketContext";
+import envs from "../../constants/envs";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -47,15 +49,39 @@ export default function Home() {
   const gameEnded = useAppSelector((state) => state.room.room.gameEnded);
   const t = useTranslation();
   const dispatch = useAppDispatch();
+  const theme = useTheme();
+  const [showError, setShowError] = useState(false);
 
   useEffect(() => {
-    if (params?.roomId && !isPlaying) {
-      let timeout = setTimeout(() => {
-        dispatch(roomActions.setRoomId(params.roomId as string));
-      }, 1);
+    const verifyAndJoinRoom = async () => {
+      if (params?.roomId && !isPlaying) {
+        try {
+          const response = await fetch(`${url}/room/verify/${params.roomId}`, {
+            headers: {
+              authorization: `Bearer ${envs.server_auth_token}`,
+            },
+          });
 
-      return () => clearTimeout(timeout);
-    }
+          const data = await response.json();
+
+          if (!data.exists) {
+            setShowError(true);
+            return;
+          }
+
+          let timeout = setTimeout(() => {
+            dispatch(roomActions.setRoomId(params.roomId as string));
+          }, 1);
+
+          return () => clearTimeout(timeout);
+        } catch (error) {
+          console.error("Failed to verify room:", error);
+          setShowError(true);
+        }
+      }
+    };
+
+    verifyAndJoinRoom();
   }, [params?.roomId, dispatch]);
 
   useEffect(() => {
@@ -96,6 +122,31 @@ export default function Home() {
       )}
 
       <Matches roomId={params?.roomId as string} />
+
+      <Portal>
+        <Dialog
+          dismissable={false}
+          visible={showError}
+          style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
+        >
+          <Dialog.Title>{t("dialogs.qr.error")}</Dialog.Title>
+
+          <Dialog.Content>
+            <Text>{t("dialogs.qr.error-desc")}</Text>
+          </Dialog.Content>
+
+          <Dialog.Actions>
+            <Button
+              onPress={() => {
+                setShowError(false);
+                router.replace("/(tabs)");
+              }}
+            >
+              {t("dialogs.qr.close")}
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </View>
   );
 }
