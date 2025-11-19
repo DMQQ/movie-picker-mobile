@@ -107,7 +107,8 @@ export default function SettingsScreen() {
           />
 
           <Text style={{ color: "gray" }}>
-            Update {Updates.manifest.id} - {Updates.manifest?.version} ({Updates.manifest?.createdAt?.toString().split("T")[0]})
+            Update {Updates.manifest.id} {"\n"}Version: {Updates.manifest?.version}
+            {"\n"}Created at: ({Updates.manifest?.createdAt?.toString().split("T")[0]})
           </Text>
         </View>
         <View style={{ padding: 15, paddingBottom: insets.bottom, backgroundColor: "rgba(0,0,0,0.1)" }}>
