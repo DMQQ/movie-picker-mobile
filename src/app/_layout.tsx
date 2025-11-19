@@ -11,6 +11,7 @@ import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
+import { View } from "react-native";
 
 const theme = MD2DarkTheme;
 
@@ -61,12 +62,12 @@ export default function RootLayout() {
   }, []);
 
   if (!migrationComplete) {
-    return null;
+    return <View style={{ flex: 1, backgroundColor: "#000" }} />;
   }
 
   return (
     <AppErrorBoundary>
-      <SafeAreaProvider style={{ flex: 1 }}>
+      <SafeAreaProvider style={{ flex: 1, backgroundColor: "#000" }}>
         <Provider store={store}>
           <PaperProvider theme={theme}>
             <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
