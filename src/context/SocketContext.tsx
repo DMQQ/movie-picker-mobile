@@ -2,14 +2,20 @@ import * as SecureStore from "expo-secure-store";
 import React, { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { useSelector } from "react-redux";
-import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
+import socketIOClient, {
+  ManagerOptions,
+  Socket,
+  SocketOptions,
+} from "socket.io-client";
 import envs from "../constants/envs";
 import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 
-const isDev = false; // envs.mode !== "production";
+const isDev = false; //envs.mode !== "production";
 
-export const baseUrl = isDev ? "http://192.168.1.20:3000" : "https://movie.dmqq.dev";
+export const baseUrl = isDev
+  ? "http://192.168.1.20:3000"
+  : "https://movie.dmqq.dev";
 export const url = baseUrl + "/api";
 
 export const SocketContext = React.createContext<{
@@ -62,7 +68,13 @@ const makeHeaders = (language: string) => {
   return Object.fromEntries(headers);
 };
 
-export const SocketProvider = ({ children, namespace }: { children: React.ReactNode; namespace: "/swipe" | "/voter" }) => {
+export const SocketProvider = ({
+  children,
+  namespace,
+}: {
+  children: React.ReactNode;
+  namespace: "/swipe" | "/voter";
+}) => {
   const language = useSelector((st: RootState) => st.room.language);
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -75,7 +87,9 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
 
   const initializeSocket = async () => {
     try {
-      const userId = (await SecureStore.getItemAsync("userId")) || Math.random().toString(36).substring(7);
+      const userId =
+        (await SecureStore.getItemAsync("userId")) ||
+        Math.random().toString(36).substring(7);
       await SecureStore.setItemAsync("userId", userId);
 
       const newSocket = socketIOClient(baseUrl + namespace, {
@@ -123,7 +137,10 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   };
 
   const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-    if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
       reconnect();
     }
     appState.current = nextAppState;
@@ -132,7 +149,10 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   useEffect(() => {
     initializeSocket();
 
-    const subscription = AppState.addEventListener("change", handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange,
+    );
 
     return () => {
       subscription.remove();
@@ -162,7 +182,14 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
     }
   };
 
-  const memoizedValue = React.useMemo(() => ({ socket, reconnect, emitter }), [socket]);
+  const memoizedValue = React.useMemo(
+    () => ({ socket, reconnect, emitter }),
+    [socket],
+  );
 
-  return <SocketContext.Provider value={memoizedValue}>{children}</SocketContext.Provider>;
+  return (
+    <SocketContext.Provider value={memoizedValue}>
+      {children}
+    </SocketContext.Provider>
+  );
 };

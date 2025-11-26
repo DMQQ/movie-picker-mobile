@@ -10,87 +10,83 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import PlatformBlurView from "../PlatformBlurView";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
+import { memo } from "react";
 
-const SwipeText = (props: {
-  text: string;
-  rotate: string;
-  color: string;
-  right: boolean;
-  icon?: React.ReactNode;
-  isVisible?: SharedValue<boolean>;
-}) => {
-  const animatedStyle = useAnimatedStyle(() => {
-    if (!props.isVisible) return {};
+const SwipeText = memo(
+  (props: {
+    text: string;
+    rotate: string;
+    color: string;
+    right: boolean;
+    icon?: React.ReactNode;
+    isVisible?: SharedValue<boolean>;
+  }) => {
+    const animatedStyle = useAnimatedStyle(() => {
+      if (!props.isVisible) return {};
 
-    const isVisible = props.isVisible.value;
+      const isVisible = props.isVisible.value;
 
-    return {
-      opacity: withTiming(isVisible ? 1 : 0, {
-        duration: 200,
-        easing: Easing.out(Easing.cubic),
-      }),
-      transform: [
-        { rotate: props.rotate },
-        {
-          scale: withSpring(isVisible ? 1 : 0.8, {
-            damping: 15,
-            stiffness: 200,
-          }),
-        },
-      ],
-    };
-  });
-
-  return (
-    <Animated.View
-      style={[
-        animatedStyle,
-        {
-          top: props.text === "LIKE" ? 40 : 60,
-          right: props.right ? 25 : undefined,
-          left: props.right ? undefined : 25,
-        },
-        styles.swipe,
-      ]}
-    >
-      {/* BlurView background */}
-      <View
-        intensity={80}
-        tint="light"
-        tintColor={`${props.color}E6`}
-        style={[
-          styles.blurContainer,
+      return {
+        opacity: withTiming(isVisible ? 1 : 0, {
+          duration: 200,
+          easing: Easing.out(Easing.cubic),
+        }),
+        transform: [
+          { rotate: props.rotate },
           {
-            backgroundColor: `${props.color}E6`, // Add transparency to the color
+            scale: withSpring(isVisible ? 1 : 0.8, {
+              damping: 15,
+              stiffness: 200,
+            }),
           },
+        ],
+      };
+    });
+
+    return (
+      <Animated.View
+        style={[
+          animatedStyle,
+          {
+            top: props.text === "LIKE" ? 40 : 60,
+            right: props.right ? 25 : undefined,
+            left: props.right ? undefined : 25,
+          },
+          styles.swipe,
         ]}
       >
-        {/* Icon container with background circle */}
+        {/* BlurView background */}
         <View
-          tintColor={`${props.color}E6`}
-          intensity={60}
-          tint="light"
           style={[
-            styles.iconContainer,
+            styles.blurContainer,
             {
-              backgroundColor: "rgba(255,255,255,0.2)",
-              borderWidth: 1,
-              borderColor: "rgba(255,255,255,0.3)",
+              backgroundColor: `${props.color}E6`, // Add transparency to the color
             },
           ]}
         >
-          {props.icon}
+          {/* Icon container with background circle */}
+          <View
+            style={[
+              styles.iconContainer,
+              {
+                backgroundColor: "rgba(255,255,255,0.2)",
+                borderWidth: 1,
+                borderColor: "rgba(255,255,255,0.3)",
+              },
+            ]}
+          >
+            {props.icon}
+          </View>
+
+          <Text style={styles.swipeText}>{props.text}</Text>
         </View>
+      </Animated.View>
+    );
+  },
+);
 
-        <Text style={styles.swipeText}>{props.text}</Text>
-      </View>
-    </Animated.View>
-  );
-};
-
-export default function Poster(props: {
+function Poster(props: {
   card: {
     poster_path: string;
     placeholder_poster_path?: string;
@@ -117,11 +113,15 @@ export default function Poster(props: {
     if (!props.translate) return {};
 
     return {
-      opacity: interpolate(props.translate.value.x, [-width / 1.5, 0, width / 1.5], [1, 0, 1]),
+      opacity: interpolate(
+        props.translate.value.x,
+        [-width / 1.5, 0, width / 1.5],
+        [1, 0, 1],
+      ),
       backgroundColor: interpolateColor(
         props.translate.value.x,
         [-width, 0, width],
-        ["rgba(255,0,0,0.6)", "rgba(0,0,0,0)", "rgba(0,255,0,0.6)"]
+        ["rgba(255,0,0,0.6)", "rgba(0,0,0,0)", "rgba(0,255,0,0.6)"],
       ),
     };
   });
@@ -145,7 +145,14 @@ export default function Poster(props: {
           />
 
           <SwipeText
-            icon={<Ionicons name="heart" size={32} color="#fff" style={{ transform: [{ translateY: 2 }] }} />}
+            icon={
+              <Ionicons
+                name="heart"
+                size={32}
+                color="#fff"
+                style={{ transform: [{ translateY: 2 }] }}
+              />
+            }
             isVisible={props.isLeftVisible}
             text="LIKE"
             color="#42DCA3"
@@ -231,3 +238,5 @@ const styles = StyleSheet.create({
     overflow: "hidden", // Important for BlurView
   },
 });
+
+export default memo(Poster);

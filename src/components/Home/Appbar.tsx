@@ -15,7 +15,13 @@ import { GlassView } from "expo-glass-effect";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
-function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean }) {
+function HomeAppbar({
+  roomId,
+  hasCards,
+}: {
+  roomId: string;
+  hasCards: boolean;
+}) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
 
@@ -47,7 +53,14 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
 
   return (
     <>
-      <View style={{ marginTop: 0, flexDirection: "row", alignItems: "center", paddingTop: Platform.OS === "android" ? insets.top : 0 }}>
+      <View
+        style={{
+          marginTop: 0,
+          flexDirection: "row",
+          alignItems: "center",
+          paddingTop: Platform.OS === "android" ? insets.top : 0,
+        }}
+      >
         <GlassView
           key={isHost ? "host" : "regular"}
           glassEffectStyle="clear"
@@ -56,11 +69,18 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
           isInteractive
         >
           {isHost ? (
-            <Button onPress={handleEndGame} buttonColor="transparent" textColor="#fff">
+            <Button
+              onPress={handleEndGame}
+              buttonColor="transparent"
+              textColor="#fff"
+            >
               {t("dialogs.scan-code.endGame")}
             </Button>
           ) : (
-            <Button onPress={toggleLeaveModal} textColor={Platform.OS === "ios" ? "#fff" : theme.colors.error}>
+            <Button
+              onPress={toggleLeaveModal}
+              textColor={Platform.OS === "ios" ? "#fff" : theme.colors.error}
+            >
               {t("dialogs.scan-code.leave")}
             </Button>
           )}
@@ -95,7 +115,7 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
 
 export default memo(HomeAppbar);
 
-const LikedMoviesPreview = () => {
+const LikedMoviesPreview = memo(() => {
   const likes = useAppSelector((state) => state.room.room.likes);
   const itemsToDisplay = useMemo(() => likes.toReversed().slice(0, 5), [likes]);
   const [loadedMovies, setLoadedMovies] = useState<Set<Movie>>(new Set());
@@ -112,7 +132,11 @@ const LikedMoviesPreview = () => {
         {loadedItems.length === 0 && <PlaceholderImage />}
 
         {itemsToDisplay.map((movie) => (
-          <PrefetchedImage key={`prefetch-${movie.id}`} movie={movie} onLoaded={handleImageLoaded} />
+          <PrefetchedImage
+            key={`prefetch-${movie.id}`}
+            movie={movie}
+            onLoaded={handleImageLoaded}
+          />
         ))}
 
         {loadedItems.map((movie, index) => (
@@ -131,28 +155,35 @@ const LikedMoviesPreview = () => {
       </Animated.View>
     </Pressable>
   );
-};
+});
 
-const PrefetchedImage = ({ movie, onLoaded }: { movie: Movie; onLoaded: (movie: Movie) => void }) => {
+const PrefetchedImage = memo(
+  ({ movie, onLoaded }: { movie: Movie; onLoaded: (movie: Movie) => void }) => {
+    const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
+
+    return (
+      <Image
+        style={{ width: 1, height: 1, position: "absolute", opacity: 0 }}
+        source={{ uri, width: 25, height: 40, cache: "force-cache" }}
+        onLoad={() => onLoaded(movie)}
+        onError={() => onLoaded(movie)}
+      />
+    );
+  },
+);
+
+const LikedMovieImage = memo(({ movie }: { movie: Movie }) => {
   const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
 
   return (
     <Image
-      style={{ width: 1, height: 1, position: "absolute", opacity: 0 }}
+      style={styles.likedImage}
       source={{ uri, width: 25, height: 40, cache: "force-cache" }}
-      onLoad={() => onLoaded(movie)}
-      onError={() => onLoaded(movie)}
     />
   );
-};
+});
 
-const LikedMovieImage = ({ movie }: { movie: Movie }) => {
-  const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
-
-  return <Image style={styles.likedImage} source={{ uri, width: 25, height: 40, cache: "force-cache" }} />;
-};
-
-const PlaceholderImage = () => {
+const PlaceholderImage = memo(() => {
   return Array.from(new Array(3).keys()).map((index) => (
     <Animated.View
       key={`placeholder-${index}`}
@@ -163,12 +194,22 @@ const PlaceholderImage = () => {
         zIndex: 4 - index,
       }}
     >
-      <View style={[styles.likedImage, { backgroundColor: MD2DarkTheme.colors.surface }]}>
-        <MaterialCommunityIcons name="movie" size={20} color="rgba(255,255,255,0.3)" style={{ alignSelf: "center", marginTop: 10 }} />
+      <View
+        style={[
+          styles.likedImage,
+          { backgroundColor: MD2DarkTheme.colors.surface },
+        ]}
+      >
+        <MaterialCommunityIcons
+          name="movie"
+          size={20}
+          color="rgba(255,255,255,0.3)"
+          style={{ alignSelf: "center", marginTop: 10 }}
+        />
       </View>
     </Animated.View>
   ));
-};
+});
 
 const styles = StyleSheet.create({
   smallButton: {

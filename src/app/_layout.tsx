@@ -13,6 +13,8 @@ import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
 import { View } from "react-native";
 
+import * as QuickActions from "expo-quick-actions";
+
 const theme = MD2DarkTheme;
 
 const migrationFlag = "migration_complete";
@@ -118,6 +120,17 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
 
     initializeApp();
   }, [isLoaded, isUpdating, dispatch]);
+
+  useEffect(() => {
+    QuickActions.setItems([
+      {
+        id: "uninstall",
+        title: "Dont leave me!",
+        subtitle: "Can I ask why?",
+        icon: "symbol:questionmark",
+      },
+    ]);
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
