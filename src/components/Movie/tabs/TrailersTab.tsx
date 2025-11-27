@@ -48,6 +48,7 @@ function TrailersTab({ id, type }: TrailersTabProps) {
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
+      nestedScrollEnabled={true}
       renderItem={({ item, index }) => (
         <PlayerItem canPlay={canPlay} index={index} name={item.name} videoKey={item.key} />
       )}

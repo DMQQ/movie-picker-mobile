@@ -179,17 +179,17 @@ function MovieDetails({
 
   const pagerPages = useMemo(() => {
     const pages = [
-      <View key="details" style={styles.page}>
+      <View key="details" style={styles.page} collapsable={false}>
         <DetailsTab movie={movie} providers={providers} />
       </View>,
-      <View key="cast" style={styles.page}>
+      <View key="cast" style={styles.page} collapsable={false}>
         <CastTab id={movie?.id} type={type as "movie" | "tv"} />
       </View>,
     ];
 
     if (hasSimilar) {
       pages.push(
-        <View key="similar" style={styles.page}>
+        <View key="similar" style={styles.page} collapsable={false}>
           <SimilarTab id={movie?.id} type={type as "movie" | "tv"} />
         </View>,
       );
@@ -197,7 +197,7 @@ function MovieDetails({
 
     if (hasTrailers) {
       pages.push(
-        <View key="trailers" style={styles.page}>
+        <View key="trailers" style={styles.page} collapsable={false}>
           <TrailersTab id={movie?.id} type={type} />
         </View>,
       );
@@ -205,7 +205,7 @@ function MovieDetails({
 
     if (isTVShow) {
       pages.push(
-        <View key="seasons" style={styles.page}>
+        <View key="seasons" style={styles.page} collapsable={false}>
           <SeasonsTab id={movie?.id} seasons={(movie?.seasons as any) || []} />
         </View>,
       );
@@ -331,7 +331,11 @@ const styles = StyleSheet.create({
 
   rating: { flexDirection: "row", marginBottom: 10 },
 
-  quickActions: { paddingVertical: 20, paddingLeft: 5, borderRadius: 20 },
+  quickActions: {
+    paddingVertical: 20,
+    paddingLeft: 5,
+    borderRadius: 20,
+  },
 
   text: { fontSize: 15, color: "rgba(255,255,255,0.6)" },
 
@@ -339,21 +343,12 @@ const styles = StyleSheet.create({
 
   tabBarContainer: {
     borderRadius: 15,
-    borderBottomWidth: 2,
-    borderBottomColor: "rgba(255,255,255,0.15)",
-    borderTopWidth: 1,
-    borderTopColor: "rgba(255,255,255,0.08)",
-    marginTop: 10,
-    overflow: "hidden",
     ...Platform.select({
       ios: {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
-      },
-      android: {
-        elevation: 4,
       },
     }),
   },

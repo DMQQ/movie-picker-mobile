@@ -53,6 +53,7 @@ function SimilarTab({ id, type }: SimilarTabProps) {
       numColumns={3}
       showsVerticalScrollIndicator={false}
       keyExtractor={keySectionExtractor}
+      nestedScrollEnabled={true}
       renderItem={({ item }) => (
         <View style={styles.itemWrapper}>
           <SectionListItem

@@ -33,6 +33,7 @@ export default function Cast({
         keyExtractor={(item, index) => item.id.toString() + index}
         showsHorizontalScrollIndicator={false}
         numColumns={2}
+        nestedScrollEnabled={true}
         renderItem={({ item }) => (
           <FrostedGlass style={styles.card} container={{ marginRight: 10 }}>
             <Thumbnail
@@ -58,6 +59,7 @@ export default function Cast({
         data={data?.directors}
         keyExtractor={(item) => item.id.toString()}
         showsHorizontalScrollIndicator={false}
+        nestedScrollEnabled={true}
         renderItem={({ item }) => (
           <FrostedGlass
             style={styles.directorContainer}

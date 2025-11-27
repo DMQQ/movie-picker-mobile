@@ -9,7 +9,7 @@ interface SeasonsTabProps {
 
 function SeasonsTab({ id, seasons }: SeasonsTabProps) {
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false} nestedScrollEnabled={true}>
       <Seasons id={id} seasons={seasons} />
     </ScrollView>
   );

@@ -53,6 +53,7 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
         horizontal
         data={seasonsList}
         keyExtractor={(item) => item.id.toString()}
+        nestedScrollEnabled={true}
         renderItem={({ item }) => (
           <Pressable
             onPress={() => {

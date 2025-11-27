@@ -1,9 +1,10 @@
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { Movie } from "../../../../types";
 import useTranslation from "../../../service/useTranslation";
 import WatchProviders from "../WatchProviders";
 import { memo } from "react";
+import { ScrollView } from "react-native-gesture-handler";
 
 interface DetailsTabProps {
   movie: Movie & Record<string, string>;
@@ -20,6 +21,7 @@ function DetailsTab({ movie, providers }: DetailsTabProps) {
       style={styles.container}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.contentContainer}
+      nestedScrollEnabled={true}
     >
       {!!movie?.overview && (
         <Text style={styles.overview}>{movie?.overview}</Text>
