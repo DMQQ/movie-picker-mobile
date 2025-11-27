@@ -44,7 +44,7 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
   if (seasons?.length === 0 || seasons === undefined) return null;
 
   return (
-    <View style={{ marginTop: 30 }}>
+    <View style={{ marginTop: 15, paddingBottom: 20 }}>
       <Text style={{ fontSize: 35, marginBottom: 10, fontFamily: "Bebas" }}>
         {t("movie.details.season")} {seasons.length}
       </Text>
@@ -68,7 +68,9 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
               }}
               container={{
                 marginRight: 15,
-                ...(item.season_number === selectedSeason ? { borderColor: MD2DarkTheme.colors.primary } : {}),
+                ...(item.season_number === selectedSeason
+                  ? { borderColor: MD2DarkTheme.colors.primary }
+                  : {}),
               }}
             >
               {item.poster_path?.length > 0 && (
@@ -82,10 +84,22 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
                 />
               )}
 
-              <View style={{ flex: 1, alignItems: "flex-start", padding: 10, paddingRight: 20, justifyContent: "space-between" }}>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "flex-start",
+                  padding: 10,
+                  paddingRight: 20,
+                  justifyContent: "space-between",
+                }}
+              >
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 20, fontFamily: "Bebas" }}>{item.name}</Text>
-                  <Text style={{ color: "#9E9E9E", marginTop: 2.5, fontSize: 12 }}>
+                  <Text style={{ fontSize: 20, fontFamily: "Bebas" }}>
+                    {item.name}
+                  </Text>
+                  <Text
+                    style={{ color: "#9E9E9E", marginTop: 2.5, fontSize: 12 }}
+                  >
                     {t("movie.details.episode")} ({item.episode_count})
                   </Text>
                   <Text
@@ -100,7 +114,13 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
                 </View>
 
                 {item.vote_average > 0 && (
-                  <View style={{ flex: 1, justifyContent: "space-between", flexDirection: "row" }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "space-between",
+                      flexDirection: "row",
+                    }}
+                  >
                     <RatingIcons vote={item.vote_average} size={15} />
                   </View>
                 )}

@@ -43,6 +43,7 @@ import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import ThumbsUp from "../../assets/ThumbsUp";
 import { GlassView } from "expo-glass-effect";
 import { BlurView } from "expo-blur";
+import GameRatingPill from "../../components/GameRatingPill";
 
 interface GameSummary {
   roomId: string;
@@ -212,7 +213,6 @@ export default function GameSummary() {
           matchedMovies={summary?.matchedMovies! || []}
         />
       )}
-
       <ScrollView
         style={[
           styles.container,
@@ -474,7 +474,14 @@ export default function GameSummary() {
         </View>
       </ScrollView>
 
-      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
+      <GameRatingPill roomId={roomId} />
+
+      <View
+        style={{
+          paddingHorizontal: 15,
+          paddingTop: 15,
+        }}
+      >
         <Button
           mode="contained"
           onPress={handleBackToHome}

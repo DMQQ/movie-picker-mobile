@@ -27,17 +27,16 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
   if (!data || !data?.episodes || data?.episodes?.length === 0) return null;
 
   return (
-    <Animated.View style={{ marginTop: 30 }} layout={LinearTransition}>
+    <Animated.View style={{ marginTop: 30, paddingBottom: 30 }} layout={LinearTransition}>
       <Text style={{ fontSize: 35, fontFamily: "Bebas", color: "#fff", marginBottom: 10 }}>
         {t("movie.details.season")} {season}{" "}
         <Text style={{ fontSize: 20, fontFamily: "Bebas" }}>{data?.episodes.length ? `(${data?.episodes.length})` : ""}</Text>
       </Text>
       {data?.episodes.slice(0, showAll ? data?.episodes.length : 5).map((item: Episode, index) => (
-        <Animated.View key={item.id} entering={FadeIn.delay(index * 50)}>
+        <Animated.View key={item.id} entering={FadeIn.delay(index * 50)} style={{ marginBottom: 15 }}>
           <FrostedGlass
             container={{
-              width: Dimensions.get("screen").width - 30,
-              marginBottom: 15,
+              width: Dimensions.get("screen").width - 60,
               borderRadius: 20,
             }}
           >
@@ -70,7 +69,7 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
         </Animated.View>
       ))}
       {(data?.episodes.length || 0) > 5 && (
-        <View style={{ alignItems: "center", marginTop: 10 }}>
+        <View style={{ alignItems: "center", marginTop: 10, marginBottom: 20 }}>
           <Pressable onPress={() => setShowAll((p) => !p)}>
             <Text>{showAll ? t("movie.details.show_less") : `${t("movie.details.show_more")}`}</Text>
           </Pressable>

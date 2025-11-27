@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import Seasons from "../SeasonsList";
 import { memo } from "react";
 
@@ -9,9 +9,9 @@ interface SeasonsTabProps {
 
 function SeasonsTab({ id, seasons }: SeasonsTabProps) {
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Seasons id={id} seasons={seasons} />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -21,5 +21,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 10,
+    paddingHorizontal: 15,
   },
 });

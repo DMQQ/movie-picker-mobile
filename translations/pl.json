@@ -301,7 +301,7 @@
   "game-summary": {
     "loading": "Ładowanie podsumowania gry...",
     "error": "Błąd: ",
-    "back-to-home": "Powrót do głównego menu",
+    "back-to-home": "Zamknij",
     "game-completed": "Gra zakończona!",
     "game-finished": "Gra zakończona!",
     "rounds": "rund",
