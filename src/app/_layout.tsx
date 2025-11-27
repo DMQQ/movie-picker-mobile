@@ -25,7 +25,13 @@ async function migrateToSecureStore() {
   try {
     if (isMigrated) return;
 
-    const keysToMigrate = ["language", "regionalization", "nickname", "userId", STORAGE_KEY];
+    const keysToMigrate = [
+      "language",
+      "regionalization",
+      "nickname",
+      "userId",
+      STORAGE_KEY,
+    ];
 
     const [secureStoreValues, asyncStorageValues] = await Promise.all([
       Promise.all(keysToMigrate.map((key) => SecureStore.getItemAsync(key))),
@@ -80,7 +86,13 @@ export default function RootLayout() {
   );
 }
 
-const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: boolean }) => {
+const RootNavigator = ({
+  isLoaded,
+  isUpdating,
+}: {
+  isLoaded: boolean;
+  isUpdating: boolean;
+}) => {
   const dispatch = useAppDispatch();
   const [loaded, setLoaded] = useState(false);
 
@@ -101,14 +113,15 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
           return;
         }
 
-        const finalNickname = nickname || (language === "en" ? "Guest" : "Gość");
+        const finalNickname =
+          nickname || (language === "en" ? "Guest" : "Gość");
 
         dispatch(
           roomActions.setSettings({
             nickname: finalNickname,
             language,
             regionalization: JSON.parse(regionalization || "{}") || ({} as any),
-          })
+          }),
         );
 
         setLoaded(true);
@@ -125,9 +138,9 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
     QuickActions.setItems([
       {
         id: "uninstall",
-        title: "Dont leave me!",
-        subtitle: "Can I ask why?",
-        icon: "symbol:questionmark",
+        title: "Thanks for trying us!",
+        subtitle: "We'd love to have you back",
+        icon: "symbol:hand.wave",
       },
     ]);
   }, []);
