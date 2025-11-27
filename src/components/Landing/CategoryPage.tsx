@@ -1,5 +1,10 @@
 import { memo, useCallback, useEffect, useRef } from "react";
-import { Dimensions, RefreshControl, View, VirtualizedList } from "react-native";
+import {
+  Dimensions,
+  RefreshControl,
+  View,
+  VirtualizedList,
+} from "react-native";
 import { Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useInfiniteLandingPageMovies } from "../../hooks/useInfiniteLandingPageMovies";
@@ -43,10 +48,25 @@ interface CategoryPageProps {
   isBecomingActive?: boolean;
 }
 
+const gameTypes: ("social" | "voter" | "fortune" | "all-games")[] = [
+  "social",
+  "voter",
+  "fortune",
+  "all-games",
+];
+
 const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
   const t = useTranslation();
 
-  const { data, isLoading, isError, hasMore, fetchNextPage, refetch, isRefreshing } = useInfiniteLandingPageMovies({ categoryId });
+  const {
+    data,
+    isLoading,
+    isError,
+    hasMore,
+    fetchNextPage,
+    refetch,
+    isRefreshing,
+  } = useInfiniteLandingPageMovies({ categoryId });
 
   const onEndReached = useCallback(() => {
     if (!isError && hasMore) {
@@ -59,9 +79,10 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
     return <Section group={item} />;
   }, []);
 
-  const categoryKeyExtractor = useCallback((item: any) => `${categoryId}-section-${item.name || "unknown"}`, [categoryId]);
-
-  const gameTypes: ("social" | "voter" | "fortune" | "all-games")[] = ["social", "voter", "fortune", "all-games"];
+  const categoryKeyExtractor = useCallback(
+    (item: any) => `${categoryId}-section-${item.name || "unknown"}`,
+    [categoryId],
+  );
 
   const ItemSeparator = useCallback(
     ({ leadingItem }: { leadingItem: any }) => {
@@ -73,7 +94,7 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
       }
       return null;
     },
-    [data]
+    [data],
   );
 
   return (
@@ -93,7 +114,9 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
         onEndReachedThreshold={0.25}
         ListHeaderComponent={<FeaturedSection selectedChip={categoryId} />}
         contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={refetch} />}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />
+        }
         ItemSeparatorComponent={ItemSeparator}
         style={{ flex: 1 }}
         ListFooterComponent={
@@ -103,10 +126,21 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
             ) : hasMore ? (
               <LoadingSkeleton />
             ) : (
-              <Animated.View style={noMoreResultsStyles.container} entering={FadeIn.duration(400)}>
-                <FontAwesome name="check-circle" size={32} color="rgba(255, 255, 255, 0.6)" />
-                <Text style={noMoreResultsStyles.text}>{t("landing.no_more_results")}</Text>
-                <Text style={noMoreResultsStyles.subtitle}>{t("landing.reached_end")}</Text>
+              <Animated.View
+                style={noMoreResultsStyles.container}
+                entering={FadeIn.duration(400)}
+              >
+                <FontAwesome
+                  name="check-circle"
+                  size={32}
+                  color="rgba(255, 255, 255, 0.6)"
+                />
+                <Text style={noMoreResultsStyles.text}>
+                  {t("landing.no_more_results")}
+                </Text>
+                <Text style={noMoreResultsStyles.subtitle}>
+                  {t("landing.reached_end")}
+                </Text>
               </Animated.View>
             )}
           </View>

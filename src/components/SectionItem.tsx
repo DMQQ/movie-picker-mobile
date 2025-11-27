@@ -12,23 +12,40 @@ const getColor = (score: number) => {
 };
 
 export const SectionListItem = memo(
-  (item: Movie & { href: { pathname: string; params: Record<string, any> } }) => {
+  (
+    item: Movie & { href: { pathname: string; params: Record<string, any> } },
+  ) => {
     return (
       <Link href={item.href as any} style={{ marginRight: 15 }} push>
         <Link.Trigger>
           <View style={sectionStyles.item}>
-            <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} alt={item.name || item.title} />
+            <Thumbnail
+              path={item.poster_path}
+              size={185}
+              container={sectionStyles.image}
+              alt={item.name || item.title}
+            />
             {item.vote_average > 0 && (
-              <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(item.vote_average || 0) }]}>
+              <View
+                style={[
+                  sectionStyles.badgeContainer,
+                  { backgroundColor: getColor(item.vote_average || 0) },
+                ]}
+              >
                 <Text
                   style={[
                     sectionStyles.badgeItem,
                     {
-                      color: item.vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
+                      color:
+                        item.vote_average < 4
+                          ? "rgba(255,255,255,0.7)"
+                          : "rgba(0,0,0,0.9)",
                     },
                   ]}
                 >
-                  {item.vote_average ? item.vote_average.toFixed(1) + "/10" : "N/A"}
+                  {item.vote_average
+                    ? item.vote_average.toFixed(1) + "/10"
+                    : "N/A"}
                 </Text>
               </View>
             )}
@@ -39,7 +56,7 @@ export const SectionListItem = memo(
       </Link>
     );
   },
-  (prev, next) => prev.id === next.id && prev.type === next.type
+  (prev, next) => prev.id === next.id && prev.type === next.type,
 );
 
 const { width } = Dimensions.get("screen");

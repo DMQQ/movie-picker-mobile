@@ -1,14 +1,32 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, FlatList, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
-import { Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import {
+  Dimensions,
+  FlatList,
+  Image,
+  ImageBackground,
+  Platform,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import {
+  Button,
+  IconButton,
+  MD2DarkTheme,
+  Text,
+  TouchableRipple,
+} from "react-native-paper";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
 import FortuneWheelComponent from "../../components/FortuneWheelComponent";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
-import { useGetCategoriesQuery, useLazyGetRandomSectionQuery, useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
+import {
+  useGetCategoriesQuery,
+  useLazyGetRandomSectionQuery,
+  useLazyGetSectionMoviesQuery,
+} from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
 import fillMissing from "../../utils/fillMissing";
 import { shuffleInPlace } from "../../utils/shuffle";
@@ -24,8 +42,6 @@ export default function FortuneWheel() {
   const wheelRef = useRef<{ spin: Function }>(null);
 
   const params = useLocalSearchParams();
-
-  console.log("Params:", params);
 
   const navigate = useCallback((item: Movie) => {
     setIsSpin(false);
@@ -59,7 +75,13 @@ export default function FortuneWheel() {
         if (response.data && Array.isArray(response.data.results)) {
           const movies = response.data.results as Movie[];
 
-          await Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path)));
+          await Promise.allSettled(
+            movies.map((movie) =>
+              Image.prefetch(
+                "https://image.tmdb.org/t/p/w200" + movie.poster_path,
+              ),
+            ),
+          );
 
           const shuffled = shuffleInPlace([...movies]);
 
@@ -82,9 +104,11 @@ export default function FortuneWheel() {
         return;
       }
 
-      getLazyRandomSection(selectedCards.name).then(handleResponse).catch(console.error);
+      getLazyRandomSection(selectedCards.name)
+        .then(handleResponse)
+        .catch(console.error);
     },
-    [selectedCards.name, getLazySection, getLazyRandomSection]
+    [selectedCards.name, getLazySection, getLazyRandomSection],
   );
 
   const [isSpin, setIsSpin] = useState(false);
@@ -104,7 +128,11 @@ export default function FortuneWheel() {
           ? (JSON.parse(params.movies) as Movie[])
           : (JSON.parse((params.movies as string[])[0]) as Movie[]);
 
-      Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path))).then(() => {
+      Promise.allSettled(
+        movies.map((movie) =>
+          Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path),
+        ),
+      ).then(() => {
         const shuffled = shuffleInPlace([...movies]);
 
         setSelectedCards({
@@ -137,7 +165,14 @@ export default function FortuneWheel() {
       <Animated.View
         entering={FadeIn}
         exiting={FadeOut}
-        style={{ justifyContent: "center", alignItems: "center", height: height - 350, position: "absolute", top: 0, width }}
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          height: height - 350,
+          position: "absolute",
+          top: 0,
+          width,
+        }}
       >
         {isSpin && <FancySpinner size={150} />}
 
@@ -145,7 +180,11 @@ export default function FortuneWheel() {
           <>
             <Text
               style={{
-                fontSize: params?.movies ? (params?.title.length > 10 ? 55 : 70) : 70,
+                fontSize: params?.movies
+                  ? params?.title.length > 10
+                    ? 55
+                    : 70
+                  : 70,
                 fontFamily: "Bebas",
                 textAlign: "center",
               }}
@@ -153,7 +192,10 @@ export default function FortuneWheel() {
               {params?.movies ? params?.title : t("fortune-wheel.pick-a-movie")}
             </Text>
             <View style={{ flexDirection: "row" }}>
-              <Button rippleColor={"#fff"} onPress={throttle(() => handleThrowDice(), 200)}>
+              <Button
+                rippleColor={"#fff"}
+                onPress={throttle(() => handleThrowDice(), 200)}
+              >
                 {t("fortune-wheel.random-category")}
               </Button>
 

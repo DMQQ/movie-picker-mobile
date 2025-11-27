@@ -35,6 +35,13 @@
       "air_date": "Air Date",
       "show_more": "Show More",
       "show_less": "Show Less"
+    },
+    "tabs": {
+      "details": "Details",
+      "cast": "Cast",
+      "similar": "Similar",
+      "trailers": "Trailers",
+      "seasons": "Seasons"
     }
   },
   "match": {

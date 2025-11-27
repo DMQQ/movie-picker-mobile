@@ -35,6 +35,13 @@
       "air_date": "Data emisji",
       "show_more": "Zobacz więcej",
       "show_less": "Zobacz mniej"
+    },
+    "tabs": {
+      "details": "Szczegóły",
+      "cast": "Obsada",
+      "similar": "Podobne",
+      "trailers": "Zwiastuny",
+      "seasons": "Sezony"
     }
   },
   "match": {

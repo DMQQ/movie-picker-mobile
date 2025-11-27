@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { useGetChipCategoriesQuery } from "../../redux/movie/movieApi";
@@ -35,7 +35,9 @@ const PagerCategoryScreen = memo(() => {
   const pagerRef = useRef<PagerView>(null);
 
   useEffect(() => {
-    const categoryIndex = chipCategories.findIndex((cat) => cat.id === selectedChip);
+    const categoryIndex = chipCategories.findIndex(
+      (cat) => cat.id === selectedChip,
+    );
     if (categoryIndex !== -1 && categoryIndex !== currentPage) {
       setCurrentPage(categoryIndex);
       pagerRef.current?.setPage(categoryIndex);
@@ -52,8 +54,21 @@ const PagerCategoryScreen = memo(() => {
         setSelectedChip(category.id);
       }
     },
-    [chipCategories, selectedChip]
+    [chipCategories, selectedChip],
   );
+
+  const categories = useMemo(
+    () =>
+      chipCategories.map((category, index) => (
+        <CategoryPage
+          key={category.id}
+          categoryId={category.id}
+          isBecomingActive={Math.abs(currentPage - index) <= 1}
+        />
+      )),
+    [chipCategories?.length, currentPage],
+  );
+
   return (
     <View style={{ flex: 1 }}>
       {chipCategories.length > 0 ? (
@@ -65,15 +80,17 @@ const PagerCategoryScreen = memo(() => {
           initialPage={0}
           onPageSelected={handlePageSelected}
         >
-          {chipCategories.map((category, index) => (
-            <CategoryPage key={category.id} categoryId={category.id} isBecomingActive={Math.abs(currentPage - index) <= 1} />
-          ))}
+          {categories}
         </PagerView>
       ) : (
         <LoadingSkeleton />
       )}
 
-      <CategoryPagerIndicator chipCategories={chipCategories} selectedChip={selectedChip} onChipPress={handleChipPress} />
+      <CategoryPagerIndicator
+        chipCategories={chipCategories}
+        selectedChip={selectedChip}
+        onChipPress={handleChipPress}
+      />
     </View>
   );
 });

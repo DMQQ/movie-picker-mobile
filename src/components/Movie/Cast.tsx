@@ -6,8 +6,19 @@ import Thumbnail from "../Thumbnail";
 import layout from "../../utils/layout";
 import FrostedGlass from "../FrostedGlass";
 
-export default function Cast({ id, type }: { id: number; type: "movie" | "tv" }) {
-  const { data, isLoading } = useGetMovieKeyPeopleQuery({ id, type, actorLimit: 20, includeDirector: true });
+export default function Cast({
+  id,
+  type,
+}: {
+  id: number;
+  type: "movie" | "tv";
+}) {
+  const { data, isLoading } = useGetMovieKeyPeopleQuery({
+    id,
+    type,
+    actorLimit: 20,
+    includeDirector: true,
+  });
 
   const t = useTranslation();
 
@@ -17,16 +28,19 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
 
   return (
     <View style={styles.container}>
-      <Text style={{ color: "#fff", fontSize: 45, fontFamily: "Bebas", lineHeight: 45, marginBottom: 10 }}>{t("cast.heading")}</Text>
-
       <FlatList
-        horizontal
         data={data?.actors}
         keyExtractor={(item, index) => item.id.toString() + index}
         showsHorizontalScrollIndicator={false}
+        numColumns={2}
         renderItem={({ item }) => (
           <FrostedGlass style={styles.card} container={{ marginRight: 10 }}>
-            <Thumbnail priority="low" size={200} path={item.profile_path || ""} container={styles.image} />
+            <Thumbnail
+              priority="low"
+              size={200}
+              path={item.profile_path || ""}
+              container={styles.image}
+            />
             <View style={{ paddingTop: 0 }}>
               <Text style={styles.character} numberOfLines={1}>
                 {item.character === "Self" ? item.name : item.character}
@@ -45,8 +59,17 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
         keyExtractor={(item) => item.id.toString()}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
-          <FrostedGlass style={styles.directorContainer} container={{ marginRight: 15 }}>
-            {item?.profile_path && <Thumbnail priority="low" path={item?.profile_path || ""} container={styles.directorImage} />}
+          <FrostedGlass
+            style={styles.directorContainer}
+            container={{ marginRight: 15 }}
+          >
+            {item?.profile_path && (
+              <Thumbnail
+                priority="low"
+                path={item?.profile_path || ""}
+                container={styles.directorImage}
+              />
+            )}
 
             <View
               style={{
@@ -54,9 +77,21 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
                 flex: 1,
               }}
             >
-              <Text style={{ color: "#fff", fontSize: 22.5, fontFamily: "Bebas" }}>{item?.name}</Text>
+              <Text
+                style={{ color: "#fff", fontSize: 22.5, fontFamily: "Bebas" }}
+              >
+                {item?.name}
+              </Text>
 
-              <Text style={{ color: "rgba(255,255,255,0.95)", fontSize: 16, fontFamily: "Bebas" }}>{item?.job}</Text>
+              <Text
+                style={{
+                  color: "rgba(255,255,255,0.95)",
+                  fontSize: 16,
+                  fontFamily: "Bebas",
+                }}
+              >
+                {item?.job}
+              </Text>
             </View>
           </FrostedGlass>
         )}
@@ -66,9 +101,7 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 30,
-  },
+  container: {},
   card: {
     padding: 15,
     borderRadius: 25,
