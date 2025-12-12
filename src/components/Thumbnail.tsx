@@ -97,6 +97,10 @@ export default function Thumbnail({ path, size = 200, container, priority = "nor
         style={[styles.image, rest.style]}
         placeholder={placeholder ? { uri: placeholder } : undefined}
         placeholderContentFit="cover"
+        cachePolicy="disk"
+        recyclingKey={path}
+        contentFit="cover"
+        transition={200}
       />
     </BlurPlaceholder>
   );

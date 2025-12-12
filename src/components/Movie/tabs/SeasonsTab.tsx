@@ -20,7 +20,5 @@ export default memo(SeasonsTab);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 10,
-    paddingHorizontal: 15,
   },
 });

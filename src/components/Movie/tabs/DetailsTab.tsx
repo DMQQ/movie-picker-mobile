@@ -23,15 +23,12 @@ function DetailsTab({ movie, providers }: DetailsTabProps) {
       contentContainerStyle={styles.contentContainer}
       nestedScrollEnabled={true}
     >
-      {!!movie?.overview && (
-        <Text style={styles.overview}>{movie?.overview}</Text>
-      )}
+      {!!movie?.overview && <Text style={styles.overview}>{movie?.overview}</Text>}
 
       <View style={styles.info}>
         {!!movie?.runtime && (
           <Text style={styles.text}>
-            {t("movie.details.runtime")}: {movie?.runtime}{" "}
-            {t("movie.details.minutes")}
+            {t("movie.details.runtime")}: {movie?.runtime} {t("movie.details.minutes")}
           </Text>
         )}
 
@@ -52,6 +49,7 @@ export default memo(DetailsTab);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingHorizontal: 15,
   },
   contentContainer: {
     paddingTop: 15,

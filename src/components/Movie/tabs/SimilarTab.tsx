@@ -4,7 +4,6 @@ import { FlashList } from "@shopify/flash-list";
 import { Movie } from "../../../../types";
 import { useLazyGetSimilarQuery } from "../../../redux/movie/movieApi";
 import SectionListItem from "../../SectionItem";
-import { prefetchThumbnail, ThumbnailSizes } from "../../Thumbnail";
 import { Text } from "react-native-paper";
 
 const { width } = Dimensions.get("screen");
@@ -28,12 +27,6 @@ function SimilarTab({ id, type }: SimilarTabProps) {
     getSectionMovies({ id: id, type: type, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
         setSectionMovies((prev) => prev.concat(response?.data?.results || []));
-        if (response?.data)
-          Promise.allSettled(
-            response.data.results.map((i) =>
-              prefetchThumbnail(i.poster_path, ThumbnailSizes.poster.xxlarge),
-            ),
-          );
       }
     });
   }, [page]);

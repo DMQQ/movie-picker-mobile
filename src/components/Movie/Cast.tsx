@@ -6,13 +6,7 @@ import Thumbnail from "../Thumbnail";
 import layout from "../../utils/layout";
 import FrostedGlass from "../FrostedGlass";
 
-export default function Cast({
-  id,
-  type,
-}: {
-  id: number;
-  type: "movie" | "tv";
-}) {
+export default function Cast({ id, type }: { id: number; type: "movie" | "tv" }) {
   const { data, isLoading } = useGetMovieKeyPeopleQuery({
     id,
     type,
@@ -34,14 +28,11 @@ export default function Cast({
         showsHorizontalScrollIndicator={false}
         numColumns={2}
         nestedScrollEnabled={true}
+        overScrollMode="never"
+        bounces={false}
         renderItem={({ item }) => (
           <FrostedGlass style={styles.card} container={{ marginRight: 10 }}>
-            <Thumbnail
-              priority="low"
-              size={200}
-              path={item.profile_path || ""}
-              container={styles.image}
-            />
+            <Thumbnail priority="low" size={200} path={item.profile_path || ""} container={styles.image} />
             <View style={{ paddingTop: 0 }}>
               <Text style={styles.character} numberOfLines={1}>
                 {item.character === "Self" ? item.name : item.character}
@@ -60,18 +51,10 @@ export default function Cast({
         keyExtractor={(item) => item.id.toString()}
         showsHorizontalScrollIndicator={false}
         nestedScrollEnabled={true}
+        bounces={false}
         renderItem={({ item }) => (
-          <FrostedGlass
-            style={styles.directorContainer}
-            container={{ marginRight: 15 }}
-          >
-            {item?.profile_path && (
-              <Thumbnail
-                priority="low"
-                path={item?.profile_path || ""}
-                container={styles.directorImage}
-              />
-            )}
+          <FrostedGlass style={styles.directorContainer} container={{ marginRight: 15 }}>
+            {item?.profile_path && <Thumbnail priority="low" path={item?.profile_path || ""} container={styles.directorImage} />}
 
             <View
               style={{
@@ -79,11 +62,7 @@ export default function Cast({
                 flex: 1,
               }}
             >
-              <Text
-                style={{ color: "#fff", fontSize: 22.5, fontFamily: "Bebas" }}
-              >
-                {item?.name}
-              </Text>
+              <Text style={{ color: "#fff", fontSize: 22.5, fontFamily: "Bebas" }}>{item?.name}</Text>
 
               <Text
                 style={{

@@ -45,6 +45,8 @@ export const movieApi = createApi({
     baseUrl: API_BASE_ENDPOINT,
     prepareHeaders: prepareHeaders,
   }),
+  keepUnusedDataFor: 60,
+  refetchOnMountOrArgChange: 300,
   endpoints: (builder) => ({
     getLandingPageMovies: builder.query<{ name: string; results: Movie[] }[], LandingPageParams>({
       query: (params = { skip: 0, take: 5, category: "" }) =>
@@ -108,7 +110,6 @@ export const movieApi = createApi({
     getFeatured: builder.query<Movie, { selectedChip: string }>({
       query: ({ selectedChip }) => "/landing/featured?category=" + selectedChip || "all",
       providesTags: (result, error, arg) => [{ type: "LandingPageInfinite", id: `featured-${arg.selectedChip}` }],
-      keepUnusedDataFor: 300,
     }),
 
     getSimilar: builder.query<{ name: string; results: Movie[] }, { id: number; type: "movie" | "tv"; page: number }>({

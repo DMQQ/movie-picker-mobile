@@ -19,7 +19,7 @@ export default memo(CastTab);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingTop: 10,
+    paddingHorizontal: 15,
   },
 });

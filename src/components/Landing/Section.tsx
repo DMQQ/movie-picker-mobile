@@ -8,7 +8,6 @@ import { Movie } from "../../../types";
 import { useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
 import SectionListItem from "../SectionItem";
 import Skeleton from "../Skeleton/Skeleton";
-import { prefetchThumbnail } from "../Thumbnail";
 
 const { width } = Dimensions.get("screen");
 
@@ -66,8 +65,6 @@ export const Section = memo(({ group }: SectionProps) => {
 
     getSectionMovies({ name: group.name, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
-        Promise.allSettled(response.data.results.map((i) => prefetchThumbnail(i.poster_path, 185)));
-
         setSectionMovies((prev) => prev.concat(response?.data?.results || []));
       }
     });
