@@ -35,8 +35,9 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
       {data?.episodes.slice(0, showAll ? data?.episodes.length : 5).map((item: Episode, index) => (
         <Animated.View key={item.id} entering={FadeIn.delay(index * 50)} style={{ marginBottom: 15 }}>
           <FrostedGlass
+            style={{ flex: 0 }}
             container={{
-              width: Dimensions.get("screen").width - 60,
+              width: Dimensions.get("screen").width - 30,
               borderRadius: 20,
             }}
           >
@@ -45,7 +46,7 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
                 <Thumbnail
                   path={item.still_path || item.still_path}
                   style={{
-                    height: 75,
+                    height: 100,
                     width: 125,
                     borderRadius: 10,
                   }}

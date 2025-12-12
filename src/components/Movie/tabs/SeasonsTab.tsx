@@ -9,9 +9,9 @@ interface SeasonsTabProps {
 
 function SeasonsTab({ id, seasons }: SeasonsTabProps) {
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false} nestedScrollEnabled={true}>
+    <View style={styles.container}>
       <Seasons id={id} seasons={seasons} />
-    </ScrollView>
+    </View>
   );
 }
 
@@ -19,6 +19,7 @@ export default memo(SeasonsTab);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    paddingHorizontal: 15,
+    minHeight: 400,
   },
 });

@@ -115,24 +115,26 @@ function MovieDetails({
   return (
     <Animated.View entering={FadeIn}>
       <BlurViewWrapper style={styles.blurWrapper}>
-        <Text style={styles.heading}>{movie?.title || movie?.name || "-"}</Text>
+        <View style={{ padding: 15 }}>
+          <Text style={styles.heading}>{movie?.title || movie?.name || "-"}</Text>
 
-        {!!movie?.tagline && <Text style={styles.tagline}>{movie?.tagline ? `"${movie?.tagline}"` : ""}</Text>}
+          {!!movie?.tagline && <Text style={styles.tagline}>{movie?.tagline ? `"${movie?.tagline}"` : ""}</Text>}
 
-        <View style={styles.rating}>
-          <RatingIcons size={20} vote={movie?.vote_average} />
-        </View>
+          <View style={styles.rating}>
+            <RatingIcons size={20} vote={movie?.vote_average} />
+          </View>
 
-        <Text style={styles.categories}>{data.join(" | ")}</Text>
+          <Text style={styles.categories}>{data.join(" | ")}</Text>
 
-        <View style={{ paddingVertical: 15 }}>
-          <PlatformBlurView style={styles.quickActions}>
-            <QuickActions movie={movie}>
-              <View style={{ flex: 1 }}>
-                <CustomFavourite movie={movie} />
-              </View>
-            </QuickActions>
-          </PlatformBlurView>
+          <View style={{ paddingVertical: 15 }}>
+            <PlatformBlurView style={styles.quickActions}>
+              <QuickActions movie={movie}>
+                <View style={{ flex: 1 }}>
+                  <CustomFavourite movie={movie} />
+                </View>
+              </QuickActions>
+            </PlatformBlurView>
+          </View>
         </View>
 
         <MovieTabs
@@ -167,8 +169,6 @@ const styles = StyleSheet.create({
         borderColor: "#343434ff",
       },
     }),
-
-    padding: 15,
   },
 
   heading: {

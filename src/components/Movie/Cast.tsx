@@ -1,7 +1,6 @@
-import { FlatList, View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
 import { Text } from "react-native-paper";
-import useTranslation from "../../service/useTranslation";
 import Thumbnail from "../Thumbnail";
 import layout from "../../utils/layout";
 import FrostedGlass from "../FrostedGlass";
@@ -14,26 +13,16 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
     includeDirector: true,
   });
 
-  const t = useTranslation();
-
-  if (data?.actors.length === 0 && data?.directors.length === 0 && !isLoading) {
-    return null;
-  }
+  if (!isLoading && !data?.actors?.length && !data?.directors?.length) return null;
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={data?.actors}
-        keyExtractor={(item, index) => item.id.toString() + index}
-        showsHorizontalScrollIndicator={false}
-        numColumns={2}
-        nestedScrollEnabled={true}
-        overScrollMode="never"
-        bounces={false}
-        renderItem={({ item }) => (
-          <FrostedGlass style={styles.card} container={{ marginRight: 10 }}>
+      <View style={styles.actorsRow}>
+        {data?.actors?.map((item, index) => (
+          <FrostedGlass key={item.id.toString() + index} style={styles.card} container={{ marginBottom: 12 }}>
             <Thumbnail priority="low" size={200} path={item.profile_path || ""} container={styles.image} />
-            <View style={{ paddingTop: 0 }}>
+
+            <View style={styles.textWrap}>
               <Text style={styles.character} numberOfLines={1}>
                 {item.character === "Self" ? item.name : item.character}
               </Text>
@@ -42,27 +31,16 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
               </Text>
             </View>
           </FrostedGlass>
-        )}
-      />
-      <FlatList
-        style={{ marginTop: 30 }}
-        horizontal
-        data={data?.directors}
-        keyExtractor={(item) => item.id.toString()}
-        showsHorizontalScrollIndicator={false}
-        nestedScrollEnabled={true}
-        bounces={false}
-        renderItem={({ item }) => (
-          <FrostedGlass style={styles.directorContainer} container={{ marginRight: 15 }}>
-            {item?.profile_path && <Thumbnail priority="low" path={item?.profile_path || ""} container={styles.directorImage} />}
+        ))}
+      </View>
 
-            <View
-              style={{
-                gap: 5,
-                flex: 1,
-              }}
-            >
-              <Text style={{ color: "#fff", fontSize: 22.5, fontFamily: "Bebas" }}>{item?.name}</Text>
+      <ScrollView horizontal style={{ marginTop: 30 }} showsHorizontalScrollIndicator={false} overScrollMode="never">
+        {data?.directors?.map((item) => (
+          <FrostedGlass key={item.id.toString()} style={styles.directorContainer} container={{ marginRight: 15 }}>
+            {item.profile_path && <Thumbnail priority="low" path={item.profile_path} container={styles.directorImage} />}
+
+            <View style={{ gap: 5, flex: 1 }}>
+              <Text style={{ color: "#fff", fontSize: 22.5, fontFamily: "Bebas" }}>{item.name}</Text>
 
               <Text
                 style={{
@@ -71,34 +49,48 @@ export default function Cast({ id, type }: { id: number; type: "movie" | "tv" })
                   fontFamily: "Bebas",
                 }}
               >
-                {item?.job}
+                {item.job}
               </Text>
             </View>
           </FrostedGlass>
-        )}
-      />
+        ))}
+      </ScrollView>
     </View>
   );
 }
 
+const CARD_GAP = 12;
+const CARD_WIDTH = Math.min(layout.screen.width * 0.5 - CARD_GAP * 1.5, 220);
+
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    minHeight: 400,
+  },
+  actorsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginHorizontal: 0,
+  },
   card: {
-    padding: 15,
-    borderRadius: 25,
-    maxWidth: Math.min(layout.screen.width * 0.45 - 2, 200),
+    width: CARD_WIDTH,
+    padding: 12,
+    borderRadius: 20,
+    flex: 0,
   },
   image: {
-    width: Math.min(layout.screen.width * 0.45 - 30, 170),
-    height: Math.min(layout.screen.width * 0.45 - 30, 170) * 1.2,
+    width: "100%",
+    height: CARD_WIDTH * 1.15,
     borderRadius: 10,
-    marginBottom: 8,
+    marginBottom: 10,
+  },
+  textWrap: {
+    paddingTop: 0,
   },
   character: {
     fontFamily: "Bebas",
-    fontSize: 19,
+    fontSize: 18,
     color: "#fff",
-    flexWrap: "wrap",
   },
   actor: {
     fontSize: 14,
@@ -110,8 +102,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 15,
     borderRadius: 100,
-    paddingRight: 15,
     alignItems: "center",
+    flex: 0,
   },
 
   directorImage: {

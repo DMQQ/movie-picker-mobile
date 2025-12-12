@@ -15,14 +15,7 @@ function DetailsTab({ movie, providers }: DetailsTabProps) {
   const t = useTranslation();
 
   return (
-    <ScrollView
-      overScrollMode="never"
-      bounces={false}
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.contentContainer}
-      nestedScrollEnabled={true}
-    >
+    <View style={styles.container}>
       {!!movie?.overview && <Text style={styles.overview}>{movie?.overview}</Text>}
 
       <View style={styles.info}>
@@ -40,7 +33,7 @@ function DetailsTab({ movie, providers }: DetailsTabProps) {
       </View>
 
       {providers && <WatchProviders providers={providers as any} />}
-    </ScrollView>
+    </View>
   );
 }
 
@@ -48,12 +41,11 @@ export default memo(DetailsTab);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingHorizontal: 15,
-  },
-  contentContainer: {
     paddingTop: 15,
+    minHeight: 400,
   },
+
   overview: {
     fontSize: 19,
     color: "rgba(255,255,255,0.95)",
