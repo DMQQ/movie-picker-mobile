@@ -42,6 +42,9 @@
       "similar": "Podobne",
       "trailers": "Zwiastuny",
       "seasons": "Sezony"
+    },
+    "similar": {
+      "load_more": "Załaduj więcej"
     }
   },
   "match": {

@@ -112,7 +112,10 @@ export const movieApi = createApi({
       providesTags: (result, error, arg) => [{ type: "LandingPageInfinite", id: `featured-${arg.selectedChip}` }],
     }),
 
-    getSimilar: builder.query<{ name: string; results: Movie[] }, { id: number; type: "movie" | "tv"; page: number }>({
+    getSimilar: builder.query<
+      { name: string; results: Movie[]; page: number; total_pages: number },
+      { id: number; type: "movie" | "tv"; page: number }
+    >({
       query: ({ id, type, page }) => `/similar/${type}/${id}?page=${page || 1}`,
     }),
 

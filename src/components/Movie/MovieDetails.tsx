@@ -27,6 +27,8 @@ function MovieDetails({
 }) {
   const t = useTranslation();
 
+  console.log({ movie: { id: movie?.id, type: movie?.type, title: movie?.title || movie?.name }, type });
+
   const { data: providers = [] } = useGetMovieProvidersQuery(
     {
       id: Number(params.id),
@@ -76,7 +78,7 @@ function MovieDetails({
           ? null
           : movie?.original_title || movie?.original_name,
         ...(movie?.genres || [])?.map((g: any) => g.name),
-      ].filter((v) => v !== undefined && v !== "" && v !== null) as string[],
+      ].filter((v) => v !== undefined && v !== "" && v !== null && typeof v === "string") as string[],
     [movie]
   );
 
@@ -116,7 +118,9 @@ function MovieDetails({
     <Animated.View entering={FadeIn}>
       <BlurViewWrapper style={styles.blurWrapper}>
         <View style={{ padding: 15 }}>
-          <Text style={styles.heading}>{movie?.title || movie?.name || "-"}</Text>
+          <Text numberOfLines={3} style={styles.heading}>
+            {movie?.title || movie?.name || "-"}
+          </Text>
 
           {!!movie?.tagline && <Text style={styles.tagline}>{movie?.tagline ? `"${movie?.tagline}"` : ""}</Text>}
 

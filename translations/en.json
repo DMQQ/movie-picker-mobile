@@ -42,6 +42,9 @@
       "similar": "Similar",
       "trailers": "Trailers",
       "seasons": "Seasons"
+    },
+    "similar": {
+      "load_more": "Load More"
     }
   },
   "match": {

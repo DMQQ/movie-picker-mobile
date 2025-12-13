@@ -1,5 +1,5 @@
 import { memo, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, AppState, Dimensions, FlatList, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, AppState, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useGetTrailersQuery } from "../../../redux/movie/movieApi";
@@ -43,17 +43,14 @@ function TrailersTab({ id, type }: TrailersTabProps) {
   }
 
   return (
-    <FlatList
-      data={filteredItems}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={styles.scrollContent}
-      showsVerticalScrollIndicator={false}
-      nestedScrollEnabled={true}
-      renderItem={({ item, index }) => (
-        <PlayerItem canPlay={canPlay} index={index} name={item.name} videoKey={item.key} />
-      )}
-      ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
-    />
+    <View style={styles.scrollContent}>
+      {filteredItems.map((item, index) => (
+        <View key={item.id}>
+          <PlayerItem canPlay={canPlay} index={index} name={item.name} videoKey={item.key} />
+          {index < filteredItems.length - 1 && <View style={{ height: 20 }} />}
+        </View>
+      ))}
+    </View>
   );
 }
 

@@ -4,6 +4,8 @@ import { Movie } from "../../../../types";
 import { useLazyGetSimilarQuery } from "../../../redux/movie/movieApi";
 import SectionListItem from "../../SectionItem";
 import { Text } from "react-native-paper";
+import useTranslation from "../../../service/useTranslation";
+import uniqueBy from "../../../utils/unique";
 
 const { width } = Dimensions.get("screen");
 
@@ -16,11 +18,16 @@ function SimilarTab({ id, type }: SimilarTabProps) {
   const [page, setPage] = useState(1);
   const [getSectionMovies, state] = useLazyGetSimilarQuery();
   const [movies, setSectionMovies] = useState<Movie[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+
+  const t = useTranslation();
 
   useEffect(() => {
     getSectionMovies({ id: id, type: type, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
-        setSectionMovies((prev) => prev.concat(response?.data?.results || []));
+        setHasMore(response?.data ? response.data.page < response.data.total_pages : false);
+
+        setSectionMovies((prev) => uniqueBy(prev.concat(response?.data?.results || []), "id"));
       }
     });
   }, [page, id, type]);
@@ -43,13 +50,13 @@ function SimilarTab({ id, type }: SimilarTabProps) {
     <View style={styles.container}>
       <View style={styles.gridContainer}>
         {movies.map((item, index) => (
-          <View key={`${item.id}-${item.type}-${index}`} style={styles.itemWrapper}>
+          <View key={`${item.id}-${type}-${index}`} style={styles.itemWrapper}>
             <SectionListItem
               href={{
                 pathname: `/movie/type/[type]/[id]`,
                 params: {
                   id: item.id,
-                  type: item.type === "tv" ? "tv" : "movie",
+                  type: type,
                   img: item.poster_path,
                 },
               }}
@@ -59,15 +66,17 @@ function SimilarTab({ id, type }: SimilarTabProps) {
         ))}
       </View>
 
-      <View style={styles.footer}>
-        {state.isLoading ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <TouchableOpacity style={styles.loadMoreButton} onPress={handleLoadMore} activeOpacity={0.7}>
-            <Text style={styles.loadMoreText}>Load More</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      {hasMore && (
+        <View style={styles.footer}>
+          {state.isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <TouchableOpacity style={styles.loadMoreButton} onPress={handleLoadMore} activeOpacity={0.7}>
+              <Text style={styles.loadMoreText}>{t("movie.similar.load_more")}</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </View>
   );
 }

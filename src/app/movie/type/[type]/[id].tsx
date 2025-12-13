@@ -6,7 +6,6 @@ import { Movie } from "../../../../../types";
 import FloatingMovieHeader from "../../../../components/FloatingMovieHeader";
 import MovieDetails from "../../../../components/Movie/MovieDetails";
 import MovieDetailsSkeleton from "../../../../components/Movie/MovieDetailsSkeleton";
-import Trailers from "../../../../components/Movie/Trailers";
 import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
 import { useGetMovieQuery } from "../../../../redux/movie/movieApi";
 
