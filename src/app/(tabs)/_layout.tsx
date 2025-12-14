@@ -9,7 +9,7 @@ export default function TabLayout() {
   return (
     <NativeTabs
       backgroundColor={"#000"}
-      blurEffect="dark"
+      // blurEffect="dark"
       iconColor={MD2DarkTheme.colors.primary}
       indicatorColor={MD2DarkTheme.colors.primary}
       tintColor={MD2DarkTheme.colors.primary}

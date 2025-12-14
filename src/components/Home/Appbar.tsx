@@ -15,13 +15,7 @@ import { GlassView } from "expo-glass-effect";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
-function HomeAppbar({
-  roomId,
-  hasCards,
-}: {
-  roomId: string;
-  hasCards: boolean;
-}) {
+function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean }) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
 
@@ -59,6 +53,8 @@ function HomeAppbar({
           flexDirection: "row",
           alignItems: "center",
           paddingTop: Platform.OS === "android" ? insets.top : 0,
+          position: "relative",
+          justifyContent: "space-between",
         }}
       >
         <GlassView
@@ -69,24 +65,25 @@ function HomeAppbar({
           isInteractive
         >
           {isHost ? (
-            <Button
-              onPress={handleEndGame}
-              buttonColor="transparent"
-              textColor="#fff"
-            >
+            <Button onPress={handleEndGame} buttonColor="transparent" textColor="#fff">
               {t("dialogs.scan-code.endGame")}
             </Button>
           ) : (
-            <Button
-              onPress={toggleLeaveModal}
-              textColor={Platform.OS === "ios" ? "#fff" : theme.colors.error}
-            >
+            <Button onPress={toggleLeaveModal} textColor={Platform.OS === "ios" ? "#fff" : theme.colors.error}>
               {t("dialogs.scan-code.leave")}
             </Button>
           )}
         </GlassView>
 
-        <ActiveUsers data={users} onPress={onActiveUsersPress} />
+        <View
+          style={{
+            position: "absolute",
+            left: "50%",
+            transform: [{ translateX: "-50%" }],
+          }}
+        >
+          <ActiveUsers data={users} onPress={onActiveUsersPress} />
+        </View>
 
         {!hasCards && !isFinished && isPlaying && (
           <Appbar.Action
@@ -132,11 +129,7 @@ const LikedMoviesPreview = memo(() => {
         {loadedItems.length === 0 && <PlaceholderImage />}
 
         {itemsToDisplay.map((movie) => (
-          <PrefetchedImage
-            key={`prefetch-${movie.id}`}
-            movie={movie}
-            onLoaded={handleImageLoaded}
-          />
+          <PrefetchedImage key={`prefetch-${movie.id}`} movie={movie} onLoaded={handleImageLoaded} />
         ))}
 
         {loadedItems.map((movie, index) => (
@@ -157,30 +150,23 @@ const LikedMoviesPreview = memo(() => {
   );
 });
 
-const PrefetchedImage = memo(
-  ({ movie, onLoaded }: { movie: Movie; onLoaded: (movie: Movie) => void }) => {
-    const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
-
-    return (
-      <Image
-        style={{ width: 1, height: 1, position: "absolute", opacity: 0 }}
-        source={{ uri, width: 25, height: 40, cache: "force-cache" }}
-        onLoad={() => onLoaded(movie)}
-        onError={() => onLoaded(movie)}
-      />
-    );
-  },
-);
-
-const LikedMovieImage = memo(({ movie }: { movie: Movie }) => {
+const PrefetchedImage = memo(({ movie, onLoaded }: { movie: Movie; onLoaded: (movie: Movie) => void }) => {
   const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
 
   return (
     <Image
-      style={styles.likedImage}
+      style={{ width: 1, height: 1, position: "absolute", opacity: 0 }}
       source={{ uri, width: 25, height: 40, cache: "force-cache" }}
+      onLoad={() => onLoaded(movie)}
+      onError={() => onLoaded(movie)}
     />
   );
+});
+
+const LikedMovieImage = memo(({ movie }: { movie: Movie }) => {
+  const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
+
+  return <Image style={styles.likedImage} source={{ uri, width: 25, height: 40, cache: "force-cache" }} />;
 });
 
 const PlaceholderImage = memo(() => {
@@ -194,18 +180,8 @@ const PlaceholderImage = memo(() => {
         zIndex: 4 - index,
       }}
     >
-      <View
-        style={[
-          styles.likedImage,
-          { backgroundColor: MD2DarkTheme.colors.surface },
-        ]}
-      >
-        <MaterialCommunityIcons
-          name="movie"
-          size={20}
-          color="rgba(255,255,255,0.3)"
-          style={{ alignSelf: "center", marginTop: 10 }}
-        />
+      <View style={[styles.likedImage, { backgroundColor: MD2DarkTheme.colors.surface }]}>
+        <MaterialCommunityIcons name="movie" size={20} color="rgba(255,255,255,0.3)" style={{ alignSelf: "center", marginTop: 10 }} />
       </View>
     </Animated.View>
   ));

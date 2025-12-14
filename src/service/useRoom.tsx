@@ -8,7 +8,6 @@ import { SocketContext } from "../context/SocketContext";
 export default function useRoom() {
   const dispatch = useAppDispatch();
   const { socket, emitter } = useContext(SocketContext);
-  // const [cardsLoading, setCardsLoading] = useState(false);
   const attemptTimeout = useRef<NodeJS.Timeout | null>(null);
   const roomId = useAppSelector((state) => state.room.room.roomId);
 
@@ -70,9 +69,7 @@ export default function useRoom() {
 
       Promise.allSettled(
         _cards.movies.map((card: Movie) => prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge))
-      ).catch((err) => {
-        console.error("Error prefetching thumbnails:", err);
-      });
+      ).catch(console.error);
     };
 
     const handleRoomState = (data: any) => {

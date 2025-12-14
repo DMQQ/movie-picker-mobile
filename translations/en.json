@@ -81,6 +81,9 @@
     "game_time_short": "Short",
     "game_time_medium": "Medium",
     "game_time_long": "Long",
+    "continuing-game": "Continuing game with same players",
+    "play-again-prompt": "Would you like to play another round with the same players?",
+    "waiting-for-host-decision": "Waiting for host to decide to play next game...",
     "genres": {
       "all_movies": "All movies",
       "now_playing": "Now playing",
@@ -325,7 +328,11 @@
     "no-matches": "No matches",
     "no-matches-desc": "Unfortunately, you didn't find any common movies in this game. Try again with different categories or settings.",
     "try-again": "Play Again",
-    "your-picks": "Twoje likes"
+    "your-picks": "Twoje likes",
+    "play-again": "Play Again",
+    "leave-room": "Leave Room",
+    "play-again-failed": "Failed to restart game. Please try again.",
+    "view-summary": "View Summary"
   },
   "game-invite": {
     "social-title": "🎯 Find Your Perfect Match",

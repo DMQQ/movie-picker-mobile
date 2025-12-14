@@ -8,6 +8,7 @@ import ChooseRegion from "../components/ChooseRegion";
 import useTranslation from "../service/useTranslation";
 import { reloadAppAsync } from "expo";
 import * as Updates from "expo-updates";
+import { router } from "expo-router";
 
 interface Region {
   code: string;
@@ -181,6 +182,8 @@ export default function OnboardingScreen() {
             })
           ),
         ]);
+
+        if (__DEV__) return router.navigate("/(tabs)/index");
 
         Platform.OS === "ios"
           ? await Updates.reloadAsync({

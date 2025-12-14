@@ -1,16 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
-import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
-import { Text } from "react-native-paper";
-import Animated, {
-  useAnimatedStyle,
-  withSpring,
-  withSequence,
-  useSharedValue,
-  FadeIn,
-} from "react-native-reanimated";
+import { useState, useEffect, useContext } from "react";
+import { View, StyleSheet, TouchableOpacity, Platform, Modal } from "react-native";
+import { Text, Button } from "react-native-paper";
+import Animated, { withSpring, withSequence, useSharedValue, FadeIn, FadeOut } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { SocketContext } from "../context/SocketContext";
+import FrostedGlass from "./FrostedGlass";
 
 interface GameRatingPillProps {
   roomId: string;
@@ -38,46 +33,27 @@ const RATING_CONFIG = {
 
 export default function GameRatingPill({ roomId }: GameRatingPillProps) {
   const { socket } = useContext(SocketContext);
-  const [hasRated, setHasRated] = useState(false);
   const [selectedRating, setSelectedRating] = useState<RatingType | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isChecking, setIsChecking] = useState(true);
-
+  const [showModal, setShowModal] = useState(false);
   const scale = useSharedValue(1);
 
   useEffect(() => {
-    checkExistingRating();
-  }, [roomId, socket]);
+    const timer = setTimeout(() => {
+      setShowModal(true);
+    }, 3000);
 
-  const checkExistingRating = async () => {
-    if (!socket || !roomId) return;
-
-    setIsChecking(true);
-    try {
-      const response = await socket.emitWithAck("check-user-rating", roomId);
-
-      if (response.success && response.hasRated) {
-        setHasRated(true);
-        setSelectedRating(response.rating);
-      }
-    } catch (error) {
-      console.error("Failed to check rating:", error);
-    } finally {
-      setIsChecking(false);
-    }
-  };
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleRatingPress = async (rating: RatingType) => {
-    if (hasRated || isSubmitting || !socket) return;
+    if (isSubmitting || !socket) return;
 
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
 
-    scale.value = withSequence(
-      withSpring(0.9, { damping: 10 }),
-      withSpring(1.0, { damping: 10 }),
-    );
+    scale.value = withSequence(withSpring(0.9, { damping: 10 }), withSpring(1.0, { damping: 10 }));
 
     setIsSubmitting(true);
     setSelectedRating(rating);
@@ -89,15 +65,15 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
       });
 
       if (response.success) {
-        setHasRated(true);
+        setShowModal(false);
 
         if (Platform.OS !== "web") {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
       } else {
         if (response.error === "Rating already submitted") {
-          setHasRated(true);
           setSelectedRating(response.existingRating || rating);
+          setShowModal(false);
         } else {
           setSelectedRating(null);
           console.error("Failed to submit rating:", response.error);
@@ -111,104 +87,114 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
     }
   };
 
-  if (isChecking) return null;
-
-  if (hasRated) return null;
+  const handleSkip = () => {
+    setShowModal(false);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+  };
 
   return (
-    <Animated.View style={styles.container} entering={FadeIn}>
-      <BlurView
-        intensity={Platform.OS === "ios" ? 30 : 80}
-        style={[styles.blurContainer]}
-      >
-        <View
-          style={[
-            styles.content,
-            Platform.OS === "android" && styles.androidBackground,
-          ]}
-        >
-          <View style={styles.ratingsRow}>
-            {(Object.keys(RATING_CONFIG) as RatingType[]).map((ratingKey) => {
-              const config = RATING_CONFIG[ratingKey];
-              const isSelected = selectedRating === ratingKey;
+    <Modal visible={showModal} transparent animationType="fade" statusBarTranslucent>
+      <View style={styles.modalOverlay}>
+        <FrostedGlass style={styles.modalContent}>
+          <Animated.View style={styles.modalInner} entering={FadeIn} exiting={FadeOut}>
+            <Text style={styles.modalTitle}>How was this game?</Text>
+            <Text style={styles.modalSubtitle}>I really appreciate all feedback to make this app better! 🙏</Text>
 
-              return (
-                <TouchableOpacity
-                  key={ratingKey}
-                  style={[
-                    styles.ratingButton,
-                    isSelected && styles.ratingButtonSelected,
-                  ]}
-                  onPress={() => handleRatingPress(ratingKey)}
-                  disabled={hasRated || isSubmitting}
-                  activeOpacity={0.7}
-                >
-                  <Text style={styles.emoji}>{config.emoji}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
-        <Text style={styles.promptText}>Rate this game</Text>
-      </BlurView>
-    </Animated.View>
+            <View style={styles.ratingsRow}>
+              {(Object.keys(RATING_CONFIG) as RatingType[]).map((ratingKey) => {
+                const config = RATING_CONFIG[ratingKey];
+                const isSelected = selectedRating === ratingKey;
+
+                return (
+                  <TouchableOpacity
+                    key={ratingKey}
+                    style={[styles.ratingButton, isSelected && styles.ratingButtonSelected]}
+                    onPress={() => handleRatingPress(ratingKey)}
+                    disabled={isSubmitting}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.emoji}>{config.emoji}</Text>
+                    <Text style={styles.label}>{config.label}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            <Button mode="text" onPress={handleSkip} disabled={isSubmitting} textColor="rgba(255, 255, 255, 0.6)" style={styles.skipButton}>
+              Skip
+            </Button>
+          </Animated.View>
+        </FrostedGlass>
+      </View>
+    </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-    bottom: 60,
-    left: "50%",
-    transform: [
-      {
-        translateX: "-50%",
-      },
-    ],
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
   },
-  blurContainer: {
-    borderRadius: 30,
+  modalContent: {
+    width: "100%",
+    maxWidth: 400,
+    borderRadius: 24,
     overflow: "hidden",
-    paddingHorizontal: 4,
-    paddingVertical: 4,
+    flex: 0,
   },
-  content: {
+  modalInner: {
+    padding: 30,
     alignItems: "center",
   },
-  androidBackground: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-  },
-  promptText: {
-    fontSize: 10,
-    color: "rgba(255, 255, 255, 0.8)",
-    marginBottom: 8,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
+  modalTitle: {
+    fontSize: 32,
+    fontFamily: "Bebas",
+    color: "#fff",
     textAlign: "center",
-    marginTop: 2.5,
+    marginBottom: 8,
+    letterSpacing: 1.2,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: "rgba(255, 255, 255, 0.75)",
+    textAlign: "center",
+    marginBottom: 30,
+    lineHeight: 20,
+    paddingHorizontal: 10,
   },
   ratingsRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: 16,
+    marginBottom: 20,
   },
   ratingButton: {
     alignItems: "center",
-    padding: 4,
-    borderRadius: 100,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    justifyContent: "center",
+    padding: 12,
+    borderRadius: 16,
+    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    minWidth: 80,
+    gap: 6,
   },
   ratingButtonSelected: {
-    backgroundColor: "rgba(255, 255, 255, 0.15)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.3)",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.4)",
   },
   emoji: {
-    fontSize: 28,
+    fontSize: 45,
   },
   label: {
-    fontSize: 11,
+    fontSize: 12,
     color: "rgba(255, 255, 255, 0.9)",
     fontWeight: "600",
+  },
+  skipButton: {
+    marginTop: 5,
   },
 });

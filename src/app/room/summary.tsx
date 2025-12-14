@@ -1,32 +1,9 @@
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import LottieView from "lottie-react-native";
-import {
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-  memo,
-} from "react";
-import {
-  Dimensions,
-  FlatList,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-  ImageBackground,
-  Animated,
-} from "react-native";
-import {
-  Avatar,
-  Button,
-  MD2DarkTheme,
-  Text,
-  TouchableRipple,
-  useTheme,
-} from "react-native-paper";
+import { ReactNode, useContext, useEffect, useState, useRef, memo } from "react";
+import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View, ImageBackground, Animated } from "react-native";
+import { Avatar, Button, MD2DarkTheme, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../types";
 import CreateCollectionFromLiked from "../../components/CreateCollectionFromLiked";
@@ -38,7 +15,6 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
-import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import ThumbsUp from "../../assets/ThumbsUp";
 import { GlassView } from "expo-glass-effect";
@@ -125,6 +101,7 @@ export default function GameSummary() {
         const response = await socket.emitWithAck("get-game-summary", roomId);
 
         if (response.success) {
+          if (response.summary?.type) response.summary.type = response.summary.type.includes("movie") ? "movie" : "tv";
           setSummary(response.summary);
         } else {
           setError(response.error);
@@ -161,15 +138,7 @@ export default function GameSummary() {
 
   const renderLikedItem = ({ item }: { item: Partial<Movie> }) => {
     return (
-      <MatchedItem
-        {...item}
-        summary={summary!}
-        badge={
-          (summary?.matchedMovies || [])?.findIndex(
-            (like) => like.id === item.id,
-          ) >= 0
-        }
-      />
+      <MatchedItem {...item} summary={summary!} badge={(summary?.matchedMovies || [])?.findIndex((like) => like.id === item.id) >= 0} />
     );
   };
 
@@ -194,11 +163,7 @@ export default function GameSummary() {
             {t("game-summary.error")}
             {error}
           </Text>
-          <Button
-            mode="contained"
-            onPress={handleBackToHome}
-            style={styles.backButton}
-          >
+          <Button mode="contained" onPress={handleBackToHome} style={styles.backButton}>
             {t("game-summary.back-to-home")}
           </Button>
         </View>
@@ -208,11 +173,7 @@ export default function GameSummary() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      {(summary?.matchedMovies?.length || 0) > 0 && (
-        <AnimatedBackgroundImage
-          matchedMovies={summary?.matchedMovies! || []}
-        />
-      )}
+      {(summary?.matchedMovies?.length || 0) > 0 && <AnimatedBackgroundImage matchedMovies={summary?.matchedMovies! || []} />}
       <ScrollView
         style={[
           styles.container,
@@ -229,12 +190,7 @@ export default function GameSummary() {
         <View style={styles.content}>
           <View style={styles.headerSection}>
             {summary?.gameEndReason === "all_users_finished" && (
-              <LottieView
-                source={require("../../assets/confetti.json")}
-                autoPlay
-                loop={false}
-                style={styles.confetti}
-              />
+              <LottieView source={require("../../assets/confetti.json")} autoPlay loop={false} style={styles.confetti} />
             )}
 
             <View style={styles.titleContainer}>
@@ -242,26 +198,17 @@ export default function GameSummary() {
                 {summary?.gameEndReason === "all_users_finished" ? (
                   <MaterialIcons name="celebration" size={40} color="#FFD700" />
                 ) : (
-                  <MaterialIcons
-                    name="check-circle"
-                    size={40}
-                    color="#4CAF50"
-                  />
+                  <MaterialIcons name="check-circle" size={40} color="#4CAF50" />
                 )}
                 <Text style={styles.statusTitle}>
-                  {summary?.gameEndReason === "all_users_finished"
-                    ? t("game-summary.game-completed")
-                    : t("game-summary.game-finished")}
+                  {summary?.gameEndReason === "all_users_finished" ? t("game-summary.game-completed") : t("game-summary.game-finished")}
                 </Text>
               </View>
 
               {summary && (
                 <Text style={styles.gameSubtitle}>
                   {summary.maxRounds} {t("game-summary.rounds")} •{" "}
-                  {summary.type === "movie"
-                    ? t("game-summary.movies")
-                    : t("game-summary.tv-shows")}{" "}
-                  • {summary.roomId || roomId}
+                  {summary.type === "movie" ? t("game-summary.movies") : t("game-summary.tv-shows")} • {summary.roomId || roomId}
                 </Text>
               )}
             </View>
@@ -273,13 +220,9 @@ export default function GameSummary() {
                 <View style={styles.statBlock}>
                   <View style={styles.statHeader}>
                     <MaterialIcons name="people" size={18} color="#64B5F6" />
-                    <Text style={styles.statTitle}>
-                      {t("game-summary.players")}
-                    </Text>
+                    <Text style={styles.statTitle}>{t("game-summary.players")}</Text>
                   </View>
-                  <Text style={[styles.statValue, { color: "#64B5F6" }]}>
-                    {summary?.totalUsers || 0}
-                  </Text>
+                  <Text style={[styles.statValue, { color: "#64B5F6" }]}>{summary?.totalUsers || 0}</Text>
                 </View>
 
                 <View style={styles.statDivider} />
@@ -287,13 +230,9 @@ export default function GameSummary() {
                 <View style={styles.statBlock}>
                   <View style={styles.statHeader}>
                     <MaterialIcons name="favorite" size={18} color="#FF6B6B" />
-                    <Text style={styles.statTitle}>
-                      {t("game-summary.matches")}
-                    </Text>
+                    <Text style={styles.statTitle}>{t("game-summary.matches")}</Text>
                   </View>
-                  <Text style={[styles.statValue, { color: "#FF6B6B" }]}>
-                    {summary?.totalMatches || 0}
-                  </Text>
+                  <Text style={[styles.statValue, { color: "#FF6B6B" }]}>{summary?.totalMatches || 0}</Text>
                 </View>
 
                 <View style={styles.statDivider} />
@@ -301,15 +240,10 @@ export default function GameSummary() {
                 <View style={styles.statBlock}>
                   <View style={styles.statHeader}>
                     <MaterialIcons name="touch-app" size={18} color="#81C784" />
-                    <Text style={styles.statTitle}>
-                      {t("game-summary.total-picks")}
-                    </Text>
+                    <Text style={styles.statTitle}>{t("game-summary.total-picks")}</Text>
                   </View>
                   <Text style={[styles.statValue, { color: "#81C784" }]}>
-                    {summary?.users?.reduce(
-                      (total, user) => total + user.totalPicks,
-                      0,
-                    ) || 0}
+                    {summary?.users?.reduce((total, user) => total + user.totalPicks, 0) || 0}
                   </Text>
                 </View>
               </View>
@@ -318,9 +252,7 @@ export default function GameSummary() {
 
           {summary?.users && (
             <View style={styles.playersContainer}>
-              <Text style={styles.playersTitle}>
-                {t("game-summary.player-performance")}
-              </Text>
+              <Text style={styles.playersTitle}>{t("game-summary.player-performance")}</Text>
               <View style={styles.playersGrid}>
                 {summary.users.map((user, index) => (
                   <View key={index} style={styles.playerChip}>
@@ -332,35 +264,21 @@ export default function GameSummary() {
                         style={{
                           borderWidth: 1.5,
                           borderColor: "rgba(255,255,255,0.4)",
-                          backgroundColor:
-                            AVATAR_COLORS[index % AVATAR_COLORS.length],
+                          backgroundColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
                         }}
                       />
-                      <View
-                        style={[
-                          styles.playerStatusIndicator,
-                          user.finished
-                            ? styles.finishedIndicator
-                            : styles.inProgressIndicator,
-                        ]}
-                      >
+                      <View style={[styles.playerStatusIndicator, user.finished ? styles.finishedIndicator : styles.inProgressIndicator]}>
                         {user.finished ? (
                           <MaterialIcons name="done" size={9} color="white" />
                         ) : (
-                          <MaterialIcons
-                            name="more-horiz"
-                            size={8}
-                            color="white"
-                          />
+                          <MaterialIcons name="more-horiz" size={8} color="white" />
                         )}
                       </View>
                     </View>
                     <Text style={styles.playerChipName}>{user.username}</Text>
                     <View style={styles.chipMetrics}>
                       <AntDesign name="heart" size={12} color="#FF6B6B" />
-                      <Text style={styles.chipPickCount}>
-                        {user.totalPicks}
-                      </Text>
+                      <Text style={styles.chipPickCount}>{user.totalPicks}</Text>
                     </View>
                   </View>
                 ))}
@@ -378,9 +296,7 @@ export default function GameSummary() {
                   marginBottom: 15,
                 }}
               >
-                <Text style={styles.matchesTitle}>
-                  {t("game-summary.matched-movies")}
-                </Text>
+                <Text style={styles.matchesTitle}>{t("game-summary.matched-movies")}</Text>
 
                 <CreateCollectionFromLiked data={summary.matchedMovies} />
               </View>
@@ -392,9 +308,7 @@ export default function GameSummary() {
                     alignItems: "center",
                   }}
                 >
-                  <Text style={{ color: "#fff", fontSize: 16 }}>
-                    {t("game-summary.no-matches")}
-                  </Text>
+                  <Text style={{ color: "#fff", fontSize: 16 }}>{t("game-summary.no-matches")}</Text>
                 </View>
               ) : (
                 <FlatList
@@ -417,11 +331,7 @@ export default function GameSummary() {
                 marginTop: 30,
               }}
             >
-              <Text
-                style={{ color: "#fff", fontSize: 45, fontFamily: "Bebas" }}
-              >
-                {t("game-summary.no-matches")}
-              </Text>
+              <Text style={{ color: "#fff", fontSize: 45, fontFamily: "Bebas" }}>{t("game-summary.no-matches")}</Text>
               <Text
                 style={{
                   color: "#fff",
@@ -433,9 +343,7 @@ export default function GameSummary() {
               >
                 {t("game-summary.no-matches-desc")}
               </Text>
-              <Button onPress={handleTryAgain}>
-                {t("game-summary.try-again")}
-              </Button>
+              <Button onPress={handleTryAgain}>{t("game-summary.try-again")}</Button>
             </View>
           )}
 
@@ -453,9 +361,7 @@ export default function GameSummary() {
                   marginBottom: 15,
                 }}
               >
-                <Text style={styles.matchesTitle}>
-                  {t("game-summary.your-picks")}
-                </Text>
+                <Text style={styles.matchesTitle}>{t("game-summary.your-picks")}</Text>
 
                 <CreateCollectionFromLiked data={likes} />
               </View>
@@ -482,12 +388,7 @@ export default function GameSummary() {
           paddingTop: 15,
         }}
       >
-        <Button
-          mode="contained"
-          onPress={handleBackToHome}
-          style={styles.backButton}
-          contentStyle={styles.backButtonContent}
-        >
+        <Button mode="contained" onPress={handleBackToHome} style={styles.backButton} contentStyle={styles.backButtonContent}>
           {t("game-summary.back-to-home")}
         </Button>
       </View>
@@ -495,124 +396,93 @@ export default function GameSummary() {
   );
 }
 
-const AnimatedBackgroundImage = memo(
-  ({ matchedMovies }: { matchedMovies: Partial<Movie>[] }) => {
-    const [bgImageIndexA, setBgImageIndexA] = useState(0);
-    const [bgImageIndexB, setBgImageIndexB] = useState(1);
-    const [activeLayer, setActiveLayer] = useState<"A" | "B">("A");
-    const layerAOpacity = useRef(new Animated.Value(1)).current;
-    const layerBOpacity = useRef(new Animated.Value(0)).current;
+const AnimatedBackgroundImage = memo(({ matchedMovies }: { matchedMovies: Partial<Movie>[] }) => {
+  const [bgImageIndexA, setBgImageIndexA] = useState(0);
+  const [bgImageIndexB, setBgImageIndexB] = useState(1);
+  const [activeLayer, setActiveLayer] = useState<"A" | "B">("A");
+  const layerAOpacity = useRef(new Animated.Value(1)).current;
+  const layerBOpacity = useRef(new Animated.Value(0)).current;
 
-    useEffect(() => {
-      if (matchedMovies && matchedMovies.length > 1) {
-        const interval = setInterval(() => {
-          if (activeLayer === "A") {
-            const nextIndex = (bgImageIndexA + 1) % matchedMovies.length;
-            setBgImageIndexB(nextIndex);
+  useEffect(() => {
+    if (matchedMovies && matchedMovies.length > 1) {
+      const interval = setInterval(() => {
+        if (activeLayer === "A") {
+          const nextIndex = (bgImageIndexA + 1) % matchedMovies.length;
+          setBgImageIndexB(nextIndex);
 
-            Animated.parallel([
-              Animated.timing(layerAOpacity, {
-                toValue: 0,
-                duration: 1000,
-                useNativeDriver: true,
-              }),
-              Animated.timing(layerBOpacity, {
-                toValue: 1,
-                duration: 1000,
-                useNativeDriver: true,
-              }),
-            ]).start(() => {
-              setActiveLayer("B");
-            });
-          } else {
-            const nextIndex = (bgImageIndexB + 1) % matchedMovies.length;
-            setBgImageIndexA(nextIndex);
+          Animated.parallel([
+            Animated.timing(layerAOpacity, {
+              toValue: 0,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+            Animated.timing(layerBOpacity, {
+              toValue: 1,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
+            setActiveLayer("B");
+          });
+        } else {
+          const nextIndex = (bgImageIndexB + 1) % matchedMovies.length;
+          setBgImageIndexA(nextIndex);
 
-            Animated.parallel([
-              Animated.timing(layerBOpacity, {
-                toValue: 0,
-                duration: 1000,
-                useNativeDriver: true,
-              }),
-              Animated.timing(layerAOpacity, {
-                toValue: 1,
-                duration: 1000,
-                useNativeDriver: true,
-              }),
-            ]).start(() => {
-              setActiveLayer("A");
-            });
-          }
-        }, 5000);
+          Animated.parallel([
+            Animated.timing(layerBOpacity, {
+              toValue: 0,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+            Animated.timing(layerAOpacity, {
+              toValue: 1,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+          ]).start(() => {
+            setActiveLayer("A");
+          });
+        }
+      }, 5000);
 
-        return () => clearInterval(interval);
-      }
-    }, [
-      matchedMovies,
-      activeLayer,
-      bgImageIndexA,
-      bgImageIndexB,
-      layerAOpacity,
-      layerBOpacity,
-    ]);
+      return () => clearInterval(interval);
+    }
+  }, [matchedMovies, activeLayer, bgImageIndexA, bgImageIndexB, layerAOpacity, layerBOpacity]);
 
-    const backgroundUriA = matchedMovies?.[bgImageIndexA]?.poster_path
-      ? `https://image.tmdb.org/t/p/w300${matchedMovies[bgImageIndexA].poster_path}`
-      : null;
+  const backgroundUriA = matchedMovies?.[bgImageIndexA]?.poster_path
+    ? `https://image.tmdb.org/t/p/w300${matchedMovies[bgImageIndexA].poster_path}`
+    : null;
 
-    const backgroundUriB = matchedMovies?.[bgImageIndexB]?.poster_path
-      ? `https://image.tmdb.org/t/p/w300${matchedMovies[bgImageIndexB].poster_path}`
-      : null;
+  const backgroundUriB = matchedMovies?.[bgImageIndexB]?.poster_path
+    ? `https://image.tmdb.org/t/p/w300${matchedMovies[bgImageIndexB].poster_path}`
+    : null;
 
-    return (
-      (backgroundUriA || backgroundUriB) && (
-        <>
-          {/* Layer A */}
-          {backgroundUriA && (
-            <Animated.View
-              style={[
-                styles.backgroundImageContainer,
-                { opacity: layerAOpacity },
-              ]}
-            >
-              <ImageBackground
-                source={{ uri: backgroundUriA }}
-                style={styles.backgroundImage}
-                blurRadius={8}
-              >
-                <BlurView intensity={15} style={styles.blurOverlay} />
-              </ImageBackground>
-            </Animated.View>
-          )}
+  return (
+    (backgroundUriA || backgroundUriB) && (
+      <>
+        {/* Layer A */}
+        {backgroundUriA && (
+          <Animated.View style={[styles.backgroundImageContainer, { opacity: layerAOpacity }]}>
+            <ImageBackground source={{ uri: backgroundUriA }} style={styles.backgroundImage} blurRadius={8}>
+              <BlurView intensity={15} style={styles.blurOverlay} />
+            </ImageBackground>
+          </Animated.View>
+        )}
 
-          {/* Layer B */}
-          {backgroundUriB && (
-            <Animated.View
-              style={[
-                styles.backgroundImageContainer,
-                { opacity: layerBOpacity },
-              ]}
-            >
-              <ImageBackground
-                source={{ uri: backgroundUriB }}
-                style={styles.backgroundImage}
-                blurRadius={8}
-              >
-                <BlurView intensity={15} style={styles.blurOverlay} />
-              </ImageBackground>
-            </Animated.View>
-          )}
-        </>
-      )
-    );
-  },
-);
+        {/* Layer B */}
+        {backgroundUriB && (
+          <Animated.View style={[styles.backgroundImageContainer, { opacity: layerBOpacity }]}>
+            <ImageBackground source={{ uri: backgroundUriB }} style={styles.backgroundImage} blurRadius={8}>
+              <BlurView intensity={15} style={styles.blurOverlay} />
+            </ImageBackground>
+          </Animated.View>
+        )}
+      </>
+    )
+  );
+});
 
-const MatchedItem = ({
-  summary,
-  badge = false,
-  ...item
-}: Partial<Movie> & { summary: { type: string }; badge?: boolean }) => {
+const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { summary: { type: string }; badge?: boolean }) => {
   const screenWidth = Dimensions.get("window").width;
   const itemWidth = (screenWidth - 60) / 3;
   const dispatch = useAppDispatch();
@@ -634,7 +504,7 @@ const MatchedItem = ({
           removeFromGroup({
             groupId: "1",
             movieId: item.id!,
-          }),
+          })
         )
       : dispatch(
           addToGroup({
@@ -644,7 +514,7 @@ const MatchedItem = ({
               type: item.type as "movie" | "tv",
             },
             groupId: "1",
-          }),
+          })
         );
   };
 
@@ -666,18 +536,14 @@ const MatchedItem = ({
           router.push({
             pathname: "/movie/type/[type]/[id]",
             params: {
-              id: item.id,
+              id: item.id!,
               type: summary?.type || "movie",
               img: item.poster_path,
             },
           })
         }
       >
-        <Thumbnail
-          size={200}
-          path={item.poster_path!}
-          style={styles.movieThumbnail}
-        />
+        <Thumbnail size={200} path={item.poster_path!} style={styles.movieThumbnail} />
       </TouchableRipple>
       <View style={{ flex: 1, justifyContent: "space-between" }}>
         <Text style={styles.movieTitleSmall} numberOfLines={2}>
@@ -687,19 +553,13 @@ const MatchedItem = ({
         <Button
           style={{
             marginTop: 10,
-            borderColor: isInGroup1
-              ? MD2DarkTheme.colors.error
-              : MD2DarkTheme.colors.primary,
+            borderColor: isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary,
           }}
           mode="outlined"
           onPress={onPress}
-          textColor={
-            isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary
-          }
+          textColor={isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary}
         >
-          {!isInGroup1
-            ? t("game-summary.add-to-favourites")
-            : "" + t("game-summary.remove-from-favourites")}
+          {!isInGroup1 ? t("game-summary.add-to-favourites") : "" + t("game-summary.remove-from-favourites")}
         </Button>
       </View>
     </View>

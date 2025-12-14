@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Pressable, View } from "react-native";
 import { Avatar, MD2DarkTheme } from "react-native-paper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export const AVATAR_COLORS = ["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3"];
 
@@ -22,19 +23,41 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
       >
         {isVisible ? (
           props.data.slice(0, 6).map((nick, n) => (
-            <Avatar.Text
+            <View
               key={n}
-              size={24}
-              label={nick?.[0]?.toUpperCase()}
-              color="white"
               style={{
                 transform: [{ translateX: -n * 6.5 }],
                 zIndex: n + 1,
-                borderWidth: 0.5,
-                borderColor: "#fff",
-                backgroundColor: AVATAR_COLORS[n % AVATAR_COLORS.length],
+                position: "relative",
               }}
-            />
+            >
+              <Avatar.Text
+                size={24}
+                label={nick?.[0]?.toUpperCase()}
+                color="white"
+                style={{
+                  borderWidth: 0.5,
+                  borderColor: "#fff",
+                  backgroundColor: AVATAR_COLORS[n % AVATAR_COLORS.length],
+                }}
+              />
+              {n === 0 && (
+                <MaterialCommunityIcons
+                  name="crown"
+                  size={12}
+                  color="#FFD700"
+                  style={{
+                    position: "absolute",
+                    top: -10,
+                    left: "50%",
+                    transform: [{ translateX: -5 }],
+                    textShadowColor: "rgba(0, 0, 0, 0.5)",
+                    textShadowOffset: { width: 0, height: 1 },
+                    textShadowRadius: 2,
+                  }}
+                />
+              )}
+            </View>
           ))
         ) : (
           <Avatar.Icon

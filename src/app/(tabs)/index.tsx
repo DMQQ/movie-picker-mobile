@@ -71,7 +71,7 @@ const PagerCategoryScreen = memo(() => {
     <View style={{ flex: 1 }}>
       {chipCategories.length > 0 ? (
         <PagerView
-          offscreenPageLimit={0}
+          offscreenPageLimit={2}
           pageMargin={25}
           ref={pagerRef}
           style={{ flex: 1 }}
