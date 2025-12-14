@@ -71,7 +71,6 @@ export const Section = memo(({ group }: SectionProps) => {
   }, [page]);
 
   if (movies.length === 0 && !state.isLoading) {
-    console.log("No movies found for section:", group.name);
     return null;
   }
 

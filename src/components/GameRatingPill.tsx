@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { View, StyleSheet, TouchableOpacity, Platform, Modal } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Platform, Modal, Dimensions } from "react-native";
 import { Text, Button } from "react-native-paper";
 import Animated, { withSpring, withSequence, useSharedValue, FadeIn, FadeOut } from "react-native-reanimated";
 import { BlurView } from "expo-blur";
@@ -97,7 +97,7 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
   return (
     <Modal visible={showModal} transparent animationType="fade" statusBarTranslucent>
       <View style={styles.modalOverlay}>
-        <FrostedGlass style={styles.modalContent}>
+        <FrostedGlass style={styles.modalContent} container={{ borderRadius: 35 }}>
           <Animated.View style={styles.modalInner} entering={FadeIn} exiting={FadeOut}>
             <Text style={styles.modalTitle}>How was this game?</Text>
             <Text style={styles.modalSubtitle}>I really appreciate all feedback to make this app better! 🙏</Text>
@@ -141,9 +141,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    width: "100%",
-    maxWidth: 400,
-    borderRadius: 24,
+    width: Dimensions.get("window").width - 30,
+    borderRadius: 35,
     overflow: "hidden",
     flex: 0,
   },

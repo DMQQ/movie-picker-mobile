@@ -5,6 +5,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import useTranslation from "../../service/useTranslation";
 import FrostedGlass from "../FrostedGlass";
 import Thumbnail from "../Thumbnail";
+import PlatformBlurView from "../PlatformBlurView";
 
 interface WatchProvidersProps {
   providers: {
@@ -105,7 +106,7 @@ const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvi
     <View style={[styles.container, style]}>
       {!hideLabel && <Text style={styles.title}>Streaming</Text>}
 
-      <FrostedGlass style={styles.frostedGlass} container={styles.frostedGlassContainer}>
+      <PlatformBlurView style={styles.frostedGlass} container={styles.frostedGlassContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           {providersList.map((provider) => (
             <View key={provider.provider_id} style={styles.providerContainer}>
@@ -124,7 +125,7 @@ const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvi
             </View>
           ))}
         </ScrollView>
-      </FrostedGlass>
+      </PlatformBlurView>
 
       {/* Legend */}
       <View style={styles.legendContainer}>

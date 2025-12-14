@@ -1,6 +1,6 @@
 import { BlurView } from "expo-blur";
 import React from "react";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 interface FrostedGlassProps {
   children?: React.ReactNode;
@@ -15,7 +15,19 @@ interface FrostedGlassProps {
 const FrostedGlass: React.FC<FrostedGlassProps> = ({ children, style, blurAmount = 10, borderRadius = 16, opacity = 0.8, container }) => {
   return (
     <View style={[styles.container, { borderRadius }, container]}>
-      <BlurView style={[StyleSheet.absoluteFill, { borderRadius }]} tint="dark" intensity={blurAmount} />
+      <BlurView
+        style={[
+          StyleSheet.absoluteFill,
+          Platform.OS === "android"
+            ? {
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+              }
+            : {},
+          { borderRadius },
+        ]}
+        tint="dark"
+        intensity={blurAmount}
+      />
       <View style={[styles.overlay, { borderRadius, opacity }]} />
       <View style={[styles.content, style]}>{children}</View>
     </View>

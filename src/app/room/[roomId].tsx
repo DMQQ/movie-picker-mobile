@@ -1,5 +1,5 @@
 import { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { Dimensions, Modal, StyleSheet, View } from "react-native";
+import { Dimensions, Modal, Platform, StyleSheet, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
@@ -17,6 +17,7 @@ import useRoomContext from "../../context/RoomContext";
 import { url, SocketContext } from "../../context/SocketContext";
 import envs from "../../constants/envs";
 import FrostedGlass from "../../components/FrostedGlass";
+import PlatformBlurView from "../../components/PlatformBlurView";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -48,7 +49,16 @@ const styles = StyleSheet.create({
   modalContent: {
     width: Dimensions.get("window").width - 30,
     overflow: "hidden",
-    flex: 0,
+    borderRadius: 40,
+    maxHeight: "50%",
+
+    ...Platform.select({
+      android: {
+        backgroundColor: "rgba(0, 0, 0, 0.25)",
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 0.18)",
+      },
+    }),
   },
   modalInner: {
     padding: 15,
@@ -85,7 +95,7 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
   },
   spinnerContainer: {
-    marginBottom: 25,
+    paddingVertical: 35,
   },
 });
 
@@ -233,8 +243,6 @@ export default function Home() {
         </View>
       )}
 
-      <Matches roomId={params?.roomId as string} />
-
       <Portal>
         <Dialog dismissable={false} visible={showError} style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}>
           <Dialog.Title>{t("dialogs.qr.error")}</Dialog.Title>
@@ -258,7 +266,7 @@ export default function Home() {
 
       <Modal visible={showPlayAgainDialog} transparent animationType="fade" statusBarTranslucent>
         <View style={styles.modalOverlay}>
-          <FrostedGlass style={styles.modalContent} container={{ borderRadius: 40 }}>
+          <PlatformBlurView style={styles.modalContent}>
             <View style={styles.modalInner}>
               <Text style={styles.modalTitle}>{t("game-summary.game-completed")}</Text>
               <Text style={styles.modalText}>{t("room.play-again-prompt")}</Text>
@@ -286,22 +294,20 @@ export default function Home() {
                 </Button>
               </View>
             </View>
-          </FrostedGlass>
+          </PlatformBlurView>
         </View>
       </Modal>
 
       <Modal visible={waitingForHost} transparent animationType="fade" statusBarTranslucent>
         <View style={styles.modalOverlay}>
-          <FrostedGlass style={styles.modalContent} container={{ borderRadius: 40 }}>
+          <PlatformBlurView style={styles.modalContent}>
             <View style={styles.modalInner}>
               <Text style={styles.modalTitle}>{t("game-summary.game-completed")}</Text>
 
-              <View style={styles.waitingContainer}>
-                <View style={styles.spinnerContainer}>
-                  <FancySpinner size={60} />
-                </View>
-                <Text style={styles.modalText}>{t("room.waiting-for-host-decision")}</Text>
+              <View style={styles.spinnerContainer}>
+                <FancySpinner size={60} />
               </View>
+              <Text style={styles.modalText}>{t("room.waiting-for-host-decision")}</Text>
 
               <View style={styles.buttonContainer}>
                 <Button mode="outlined" onPress={handleViewSummary} style={styles.button} contentStyle={styles.buttonContent}>
@@ -309,9 +315,11 @@ export default function Home() {
                 </Button>
               </View>
             </View>
-          </FrostedGlass>
+          </PlatformBlurView>
         </View>
       </Modal>
+
+      <Matches roomId={params?.roomId as string} />
     </View>
   );
 }

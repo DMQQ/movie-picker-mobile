@@ -32,10 +32,10 @@ function MovieTabs({ movie, type, providers, tabs }: MovieTabsProps) {
   const translateX = useSharedValue(0);
   const containerHeight = useSharedValue(500);
 
-  const updateActiveTab = useCallback((index: number) => {
+  const updateActiveTab = (index: number) => {
     setActiveTab(index);
     setVisitedTabs((prev) => new Set(prev).add(index));
-  }, []);
+  };
 
   useEffect(() => {
     translateX.value = withSpring(-activeTab * width, {
@@ -72,7 +72,8 @@ function MovieTabs({ movie, type, providers, tabs }: MovieTabsProps) {
       } else {
         translateX.value = withSpring(-activeTab * width, { damping: 50 });
       }
-    });
+    })
+    .activeOffsetX([-10, 10]);
 
   const handlePageLayout = useCallback((index: number, event: LayoutChangeEvent) => {
     const { height } = event.nativeEvent.layout;

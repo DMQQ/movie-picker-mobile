@@ -80,6 +80,7 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
             position: "absolute",
             left: "50%",
             transform: [{ translateX: "-50%" }],
+            marginTop: Platform.OS === "android" ? insets.top : 0,
           }}
         >
           <ActiveUsers data={users} onPress={onActiveUsersPress} />

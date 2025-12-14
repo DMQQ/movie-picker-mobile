@@ -200,8 +200,6 @@ const SearchScreen = () => {
         with_people: searchParams?.people,
       } as any;
 
-      console.log("🔍 Search API params:", params);
-
       if (searchQuery.trim().length > 0) {
         params["query"] = searchQuery;
       } else {
