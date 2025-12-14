@@ -40,6 +40,8 @@ const styles = StyleSheet.create({
   gameFinishStatus: { fontSize: 20, marginTop: 15, textAlign: "center", width: "80%" },
   spinnerContainer: {
     paddingVertical: 35,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
@@ -163,11 +165,22 @@ export default function Home() {
     });
   }, [roomId]);
 
+  const handleEndGame = useCallback(() => {
+    if (!socket || !roomId) return;
+    socket?.emit("end-game", roomId);
+    setShowPlayAgainDialog(false);
+    router.replace({
+      pathname: "/room/summary",
+      params: { roomId },
+    });
+  }, [socket, roomId]);
+
   const playAgainActions: UserInputModalAction[] = [
     {
-      label: t("game-summary.view-summary"),
-      mode: "outlined",
-      onPress: handleViewSummary,
+      label: t("dialogs.scan-code.endGame"),
+      mode: "text" as const,
+      textColor: "rgba(255, 100, 100, 0.9)",
+      onPress: handleEndGame,
       disabled: playAgainLoading,
     },
     {

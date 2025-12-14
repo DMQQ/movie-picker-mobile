@@ -329,10 +329,10 @@
     "no-matches-desc": "Unfortunately, you didn't find any common movies in this game. Try again with different categories or settings.",
     "try-again": "Play Again",
     "your-picks": "Twoje likes",
-    "play-again": "Play Again",
+    "play-again": "Continue Playing",
     "leave-room": "Leave Room",
     "play-again-failed": "Failed to restart game. Please try again.",
-    "view-summary": "View Summary"
+    "view-summary": "Leave Game"
   },
   "game-rating": {
     "title": "How was this game?",

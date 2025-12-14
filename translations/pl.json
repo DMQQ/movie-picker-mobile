@@ -327,10 +327,10 @@
     "no-matches-desc": "Niestety, nie znaleźliście wspólnych filmów w tej grze. Spróbujcie ponownie z innymi kategoriami lub ustawieniami.",
     "try-again": "Zagraj ponownie",
     "your-picks": "Twoje polubienia",
-    "play-again": "Zagraj ponownie",
+    "play-again": "Kontynuuj grę",
     "leave-room": "Opuść pokój",
     "play-again-failed": "Nie udało się ponownie rozpocząć gry. Spróbuj ponownie.",
-    "view-summary": "Zobacz podsumowanie"
+    "view-summary": "Opuść grę"
   },
   "game-rating": {
     "title": "Jak oceniasz tę grę?",
