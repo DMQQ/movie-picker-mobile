@@ -334,6 +334,10 @@
     "play-again-failed": "Failed to restart game. Please try again.",
     "view-summary": "View Summary"
   },
+  "game-rating": {
+    "title": "How was this game?",
+    "subtitle": "I really appreciate all feedback to make this app better! 🙏"
+  },
   "game-invite": {
     "social-title": "🎯 Find Your Perfect Match",
     "social-subtitle": "Swipe with friends and discover movies you'll both love",

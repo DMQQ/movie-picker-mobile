@@ -332,6 +332,10 @@
     "play-again-failed": "Nie udało się ponownie rozpocząć gry. Spróbuj ponownie.",
     "view-summary": "Zobacz podsumowanie"
   },
+  "game-rating": {
+    "title": "Jak oceniasz tę grę?",
+    "subtitle": "Bardzo doceniam wszystkie opinie, które pomagają mi ulepszyć tę aplikację! 🙏"
+  },
   "game-invite": {
     "social-title": "🎯 Znajdź Idealny Wybór",
     "social-subtitle": "Przesuwaj z przyjaciółmi i odkrywaj filmy, które pokochacie",

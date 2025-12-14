@@ -1,5 +1,5 @@
 import { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { Dimensions, Modal, Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
@@ -16,8 +16,7 @@ import { useLocalSearchParams } from "expo-router";
 import useRoomContext from "../../context/RoomContext";
 import { url, SocketContext } from "../../context/SocketContext";
 import envs from "../../constants/envs";
-import FrostedGlass from "../../components/FrostedGlass";
-import PlatformBlurView from "../../components/PlatformBlurView";
+import UserInputModal, { UserInputModalAction } from "../../components/UserInputModal";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -39,61 +38,6 @@ const styles = StyleSheet.create({
   },
   gameStatus: { fontSize: 20, width: "80%", textAlign: "center" },
   gameFinishStatus: { fontSize: 20, marginTop: 15, textAlign: "center", width: "80%" },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  modalContent: {
-    width: Dimensions.get("window").width - 30,
-    overflow: "hidden",
-    borderRadius: 40,
-    maxHeight: "50%",
-
-    ...Platform.select({
-      android: {
-        backgroundColor: "rgba(0, 0, 0, 0.25)",
-        borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.18)",
-      },
-    }),
-  },
-  modalInner: {
-    padding: 15,
-    paddingTop: 30,
-  },
-  modalTitle: {
-    fontSize: 42,
-    fontFamily: "Bebas",
-    color: "#fff",
-    textAlign: "center",
-    marginBottom: 12,
-    letterSpacing: 1.5,
-  },
-  modalText: {
-    fontSize: 15,
-    color: "rgba(255, 255, 255, 0.85)",
-    textAlign: "center",
-    marginBottom: 32,
-    lineHeight: 22,
-  },
-  buttonContainer: {
-    gap: 10,
-  },
-  button: {
-    borderRadius: 100,
-    overflow: "hidden",
-  },
-  buttonContent: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-  },
-  waitingContainer: {
-    alignItems: "center",
-    paddingVertical: 30,
-  },
   spinnerContainer: {
     paddingVertical: 35,
   },
@@ -219,6 +163,30 @@ export default function Home() {
     });
   }, [roomId]);
 
+  const playAgainActions: UserInputModalAction[] = [
+    {
+      label: t("game-summary.view-summary"),
+      mode: "outlined",
+      onPress: handleViewSummary,
+      disabled: playAgainLoading,
+    },
+    {
+      label: t("game-summary.play-again"),
+      mode: "contained",
+      onPress: handlePlayAgain,
+      disabled: playAgainLoading,
+      loading: playAgainLoading,
+    },
+  ];
+
+  const waitingActions: UserInputModalAction[] = [
+    {
+      label: t("game-summary.view-summary"),
+      mode: "outlined",
+      onPress: handleViewSummary,
+    },
+  ];
+
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       <HomeAppbar roomId={params?.roomId as string} hasCards={cards.length > 0} />
@@ -264,60 +232,27 @@ export default function Home() {
         </Dialog>
       </Portal>
 
-      <Modal visible={showPlayAgainDialog} transparent animationType="fade" statusBarTranslucent>
-        <View style={styles.modalOverlay}>
-          <PlatformBlurView style={styles.modalContent}>
-            <View style={styles.modalInner}>
-              <Text style={styles.modalTitle}>{t("game-summary.game-completed")}</Text>
-              <Text style={styles.modalText}>{t("room.play-again-prompt")}</Text>
+      <UserInputModal
+        visible={showPlayAgainDialog}
+        title={t("game-summary.game-completed")}
+        subtitle={t("room.play-again-prompt")}
+        actions={playAgainActions}
+        statusBarTranslucent
+        maxHeight="50%"
+      />
 
-              <View style={styles.buttonContainer}>
-                <Button
-                  mode="outlined"
-                  onPress={handleViewSummary}
-                  disabled={playAgainLoading}
-                  style={styles.button}
-                  contentStyle={styles.buttonContent}
-                >
-                  {t("game-summary.view-summary")}
-                </Button>
-
-                <Button
-                  mode="contained"
-                  onPress={handlePlayAgain}
-                  disabled={playAgainLoading}
-                  loading={playAgainLoading}
-                  style={styles.button}
-                  contentStyle={styles.buttonContent}
-                >
-                  {t("game-summary.play-again")}
-                </Button>
-              </View>
-            </View>
-          </PlatformBlurView>
+      <UserInputModal
+        visible={waitingForHost}
+        title={t("game-summary.game-completed")}
+        subtitle={t("room.waiting-for-host-decision")}
+        actions={waitingActions}
+        statusBarTranslucent
+        maxHeight="50%"
+      >
+        <View style={styles.spinnerContainer}>
+          <FancySpinner size={60} />
         </View>
-      </Modal>
-
-      <Modal visible={waitingForHost} transparent animationType="fade" statusBarTranslucent>
-        <View style={styles.modalOverlay}>
-          <PlatformBlurView style={styles.modalContent}>
-            <View style={styles.modalInner}>
-              <Text style={styles.modalTitle}>{t("game-summary.game-completed")}</Text>
-
-              <View style={styles.spinnerContainer}>
-                <FancySpinner size={60} />
-              </View>
-              <Text style={styles.modalText}>{t("room.waiting-for-host-decision")}</Text>
-
-              <View style={styles.buttonContainer}>
-                <Button mode="outlined" onPress={handleViewSummary} style={styles.button} contentStyle={styles.buttonContent}>
-                  {t("game-summary.view-summary")}
-                </Button>
-              </View>
-            </View>
-          </PlatformBlurView>
-        </View>
-      </Modal>
+      </UserInputModal>
 
       <Matches roomId={params?.roomId as string} />
     </View>

@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from "react";
-import { View, StyleSheet, TouchableOpacity, Platform, Modal, Dimensions } from "react-native";
-import { Text, Button } from "react-native-paper";
-import Animated, { withSpring, withSequence, useSharedValue, FadeIn, FadeOut } from "react-native-reanimated";
-import { BlurView } from "expo-blur";
+import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
+import { Text } from "react-native-paper";
+import { withSpring, withSequence, useSharedValue } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { SocketContext } from "../context/SocketContext";
-import FrostedGlass from "./FrostedGlass";
+import UserInputModal, { UserInputModalAction } from "./UserInputModal";
+import useTranslation from "../service/useTranslation";
 
 interface GameRatingPillProps {
   roomId: string;
@@ -33,6 +33,7 @@ const RATING_CONFIG = {
 
 export default function GameRatingPill({ roomId }: GameRatingPillProps) {
   const { socket } = useContext(SocketContext);
+  const t = useTranslation();
   const [selectedRating, setSelectedRating] = useState<RatingType | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -94,82 +95,52 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
     }
   };
 
+  const actions: UserInputModalAction[] = [
+    {
+      label: "Skip",
+      mode: "text",
+      textColor: "rgba(255, 255, 255, 0.6)",
+      onPress: handleSkip,
+      disabled: isSubmitting,
+    },
+  ];
+
   return (
-    <Modal visible={showModal} transparent animationType="fade" statusBarTranslucent>
-      <View style={styles.modalOverlay}>
-        <FrostedGlass style={styles.modalContent} container={{ borderRadius: 35 }}>
-          <Animated.View style={styles.modalInner} entering={FadeIn} exiting={FadeOut}>
-            <Text style={styles.modalTitle}>How was this game?</Text>
-            <Text style={styles.modalSubtitle}>I really appreciate all feedback to make this app better! 🙏</Text>
+    <UserInputModal
+      visible={showModal}
+      title={t("game-rating.title")}
+      subtitle={t("game-rating.subtitle")}
+      actions={actions}
+      statusBarTranslucent
+    >
+      <View style={styles.ratingsRow}>
+        {(Object.keys(RATING_CONFIG) as RatingType[]).map((ratingKey) => {
+          const config = RATING_CONFIG[ratingKey];
+          const isSelected = selectedRating === ratingKey;
 
-            <View style={styles.ratingsRow}>
-              {(Object.keys(RATING_CONFIG) as RatingType[]).map((ratingKey) => {
-                const config = RATING_CONFIG[ratingKey];
-                const isSelected = selectedRating === ratingKey;
-
-                return (
-                  <TouchableOpacity
-                    key={ratingKey}
-                    style={[styles.ratingButton, isSelected && styles.ratingButtonSelected]}
-                    onPress={() => handleRatingPress(ratingKey)}
-                    disabled={isSubmitting}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={styles.emoji}>{config.emoji}</Text>
-                    <Text style={styles.label}>{config.label}</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-
-            <Button mode="text" onPress={handleSkip} disabled={isSubmitting} textColor="rgba(255, 255, 255, 0.6)" style={styles.skipButton}>
-              Skip
-            </Button>
-          </Animated.View>
-        </FrostedGlass>
+          return (
+            <TouchableOpacity
+              key={ratingKey}
+              style={[styles.ratingButton, isSelected && styles.ratingButtonSelected]}
+              onPress={() => handleRatingPress(ratingKey)}
+              disabled={isSubmitting}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.emoji}>{config.emoji}</Text>
+              <Text style={styles.label}>{config.label}</Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
-    </Modal>
+    </UserInputModal>
   );
 }
 
 const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  modalContent: {
-    width: Dimensions.get("window").width - 30,
-    borderRadius: 35,
-    overflow: "hidden",
-    flex: 0,
-  },
-  modalInner: {
-    padding: 30,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 32,
-    fontFamily: "Bebas",
-    color: "#fff",
-    textAlign: "center",
-    marginBottom: 8,
-    letterSpacing: 1.2,
-  },
-  modalSubtitle: {
-    fontSize: 14,
-    color: "rgba(255, 255, 255, 0.75)",
-    textAlign: "center",
-    marginBottom: 30,
-    lineHeight: 20,
-    paddingHorizontal: 10,
-  },
   ratingsRow: {
     flexDirection: "row",
     gap: 16,
-    marginBottom: 20,
+    justifyContent: "center",
   },
   ratingButton: {
     alignItems: "center",
@@ -192,8 +163,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "rgba(255, 255, 255, 0.9)",
     fontWeight: "600",
-  },
-  skipButton: {
-    marginTop: 5,
   },
 });
