@@ -230,7 +230,7 @@ export default function RoomSetup() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <PageHeading gradientHeight={100} useSafeArea={Platform.OS === "android"} title={t("room.movie") + " Setup"} />
+      <PageHeading gradientHeight={100} useSafeArea={Platform.OS === "android"} title={t("room.movie")} />
       <ScrollView
         style={[styles.flex, { marginTop: Platform.OS === "android" ? 20 : 0 }]}
         showsVerticalScrollIndicator={false}

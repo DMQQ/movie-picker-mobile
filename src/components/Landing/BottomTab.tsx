@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { memo, PropsWithChildren } from "react";
 import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
 import PlatformBlurView from "../PlatformBlurView";
 import { LinearGradient } from "expo-linear-gradient";
@@ -92,13 +92,7 @@ const BottomTab = memo(
             </>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={[tabStyles.button]}
-            onPress={withTouch(() =>
-              router.push("/qr-scanner")
-            )}
-          >
+          <TouchableOpacity activeOpacity={0.8} style={[tabStyles.button]} onPress={withTouch(() => router.push("/qr-scanner"))}>
             <>
               <FontAwesome name="qrcode" size={25} color={"#fff"} />
               <Text style={[tabStyles.buttonLabel, { color: "#fff" }]}>{t("tabBar.join-game")}</Text>

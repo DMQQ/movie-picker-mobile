@@ -1,7 +1,7 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useEffect, useState } from "react";
-import { Platform, ToastAndroid, Vibration, View } from "react-native";
-import { Button, Dialog, Portal, Text, TextInput, useTheme } from "react-native-paper";
+import { Platform, StyleSheet, ToastAndroid, Vibration, View } from "react-native";
+import { Button, Dialog, MD2DarkTheme, Portal, Text, TextInput, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PageHeading from "../../components/PageHeading";
 
@@ -12,6 +12,13 @@ import { useIsFocused } from "@react-navigation/native";
 import { url } from "../../context/SocketContext";
 import envs from "../../constants/envs";
 
+type JoinRoomParams =
+  | {
+      roomId?: string;
+      sessionId?: string;
+    }
+  | string;
+
 export default function QRScanner() {
   const [hasPermission, request] = useCameraPermissions();
   const [isManual, setIsManual] = useState(false);
@@ -19,10 +26,9 @@ export default function QRScanner() {
   const [isScanned, setIsScanned] = useState(false);
   const [isScannError, setIsScanError] = useState(false);
 
-  const joinRoom = async (c: any) => {
+  const joinRoom = async (c: JoinRoomParams) => {
     return new Promise(async (resolve, reject) => {
-      //@ts-ignore
-      const code = c?.roomId || c?.sessionId || c;
+      const code = (typeof c === "string" ? c : c?.roomId || c?.sessionId) as string;
 
       try {
         const response = await fetch(`${url}/room/verify/${code}`, {
@@ -61,13 +67,9 @@ export default function QRScanner() {
     if (barCodeScannerResult.data?.startsWith("https") || barCodeScannerResult.data?.startsWith("flickmate://")) {
       const urlParts = barCodeScannerResult.data.replace("flickmate://", "").replace("https://movie.dmqq.dev/", "").split("/");
 
-      console.log("Scanned URL parts:", urlParts);
-
       const type = urlParts[urlParts.length - 2];
 
       const id = urlParts[urlParts.length - 1];
-
-      console.log("Scanned QR code type and id:", type, id);
 
       if (type === "room" || type === "swipe" || type === "voter") {
         return joinRoom(id).catch((err) => {
@@ -126,9 +128,11 @@ export default function QRScanner() {
         useSafeArea
         showBackButton={false}
         showRightIconButton
-        rightIconName="plus"
+        // rightIconName="plus"
         onRightIconPress={() => setIsManual(true)}
         extraScreenPaddingTop={Platform.OS === "android" ? 20 : 0}
+        rightIconTitle="Join"
+        tintColor={MD2DarkTheme.colors.primary}
       ></PageHeading>
 
       {hasPermission.granted && isFocused && (
@@ -141,20 +145,47 @@ export default function QRScanner() {
         />
       )}
 
-      <View
-        style={{
-          flexDirection: "row",
-          width: 200,
-          height: 200,
-          borderWidth: 2,
-          borderColor: "#fff",
-          backgroundColor: "rgba(255,255,255,0.2)",
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: [{ translateX: "-50%" }, { translateY: "-50%" }],
-        }}
-      />
+      {/* Scanner Frame with Corner Brackets */}
+      <View style={styles.scannerFrame}>
+        {/* Semi-transparent center */}
+        <View style={styles.scannerBackground} />
+
+        {/* Top Left Corner */}
+        <View
+          style={[
+            styles.corner,
+            styles.cornerTopLeft,
+            { borderColor: theme.colors.primary, shadowColor: theme.colors.primary },
+          ]}
+        />
+
+        {/* Top Right Corner */}
+        <View
+          style={[
+            styles.corner,
+            styles.cornerTopRight,
+            { borderColor: theme.colors.primary, shadowColor: theme.colors.primary },
+          ]}
+        />
+
+        {/* Bottom Left Corner */}
+        <View
+          style={[
+            styles.corner,
+            styles.cornerBottomLeft,
+            { borderColor: theme.colors.primary, shadowColor: theme.colors.primary },
+          ]}
+        />
+
+        {/* Bottom Right Corner */}
+        <View
+          style={[
+            styles.corner,
+            styles.cornerBottomRight,
+            { borderColor: theme.colors.primary, shadowColor: theme.colors.primary },
+          ]}
+        />
+      </View>
 
       <Portal>
         <>
@@ -215,7 +246,7 @@ const ManualCodeInput = ({ joinRoom, onError }: { joinRoom: (code: string) => Pr
   const t = useTranslation();
 
   return (
-    <View style={{ flex: 1, paddingHorizontal: 10 }}>
+    <View style={styles.manualInputContainer}>
       <TextInput
         mode="outlined"
         label="Enter code"
@@ -225,23 +256,85 @@ const ManualCodeInput = ({ joinRoom, onError }: { joinRoom: (code: string) => Pr
         textAlign="center"
         onSubmitEditing={onManualPress}
         onChangeText={setCode}
-        // Add these props to help prevent double input
         autoCapitalize="characters"
         autoComplete="off"
         autoCorrect={false}
-        style={{
-          marginBottom: 10,
-          borderRadius: 20,
-          textTransform: "uppercase",
-          textAlign: "center",
-          fontSize: 20,
-          letterSpacing: 1,
-        }}
+        style={styles.textInput}
       />
 
-      <Button mode="text" onPress={onManualPress} style={{ marginTop: 10 }}>
+      <Button mode="text" onPress={onManualPress} style={styles.joinButton}>
         {t("scanner.join")}
       </Button>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  scannerFrame: {
+    width: 250,
+    height: 250,
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [{ translateX: -125 }, { translateY: -125 }],
+  },
+  scannerBackground: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderRadius: 20,
+  },
+  corner: {
+    position: "absolute",
+    width: 50,
+    height: 50,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  cornerTopLeft: {
+    top: 0,
+    left: 0,
+    borderTopWidth: 4,
+    borderLeftWidth: 4,
+    borderTopLeftRadius: 20,
+  },
+  cornerTopRight: {
+    top: 0,
+    right: 0,
+    borderTopWidth: 4,
+    borderRightWidth: 4,
+    borderTopRightRadius: 20,
+  },
+  cornerBottomLeft: {
+    bottom: 0,
+    left: 0,
+    borderBottomWidth: 4,
+    borderLeftWidth: 4,
+    borderBottomLeftRadius: 20,
+  },
+  cornerBottomRight: {
+    bottom: 0,
+    right: 0,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+    borderBottomRightRadius: 20,
+  },
+  manualInputContainer: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
+  textInput: {
+    marginBottom: 10,
+    borderRadius: 20,
+    textTransform: "uppercase",
+    textAlign: "center",
+    fontSize: 20,
+    letterSpacing: 1,
+  },
+  joinButton: {
+    marginTop: 10,
+  },
+});

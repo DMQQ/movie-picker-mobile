@@ -28,6 +28,10 @@ interface RightIconButtonProps extends PageHeadingProps {
   onRightIconPress?: () => void;
 
   extraScreenPaddingTop?: number;
+
+  rightIconTitle?: string;
+
+  tintColor?: string;
 }
 
 export default function PageHeading({
@@ -43,6 +47,10 @@ export default function PageHeading({
   showRightIconButton = false,
 
   rightIconName,
+
+  rightIconTitle,
+
+  tintColor = undefined,
 
   onRightIconPress,
 
@@ -86,17 +94,17 @@ export default function PageHeading({
         {showRightIconButton && (
           <PlatformBlurView
             isInteractive
+            tintColor={tintColor}
             style={[
               styles.buttonContainer,
               {
                 right: 15,
                 left: undefined,
               },
+              rightIconTitle && { flexDirection: "row", alignItems: "center", justifyContent: "center" },
             ]}
           >
-            <IconButton
-              icon={rightIconName as any}
-              size={25}
+            <Pressable
               onPress={() => {
                 if (onRightIconPress) {
                   onRightIconPress();
@@ -106,8 +114,29 @@ export default function PageHeading({
                   Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
                 }
               }}
-              iconColor="white"
-            />
+            >
+              {rightIconName && (
+                <IconButton
+                  icon={rightIconName as any}
+                  size={25}
+                  onPress={() => {
+                    if (onRightIconPress) {
+                      onRightIconPress();
+                    }
+
+                    if (Platform.OS === "ios") {
+                      Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+                    }
+                  }}
+                  iconColor="white"
+                />
+              )}
+              {rightIconTitle && (
+                <Text style={[{ color: "#fff", fontSize: 16, fontWeight: "600" }, !rightIconName && { padding: 15 }]}>
+                  {rightIconTitle}
+                </Text>
+              )}
+            </Pressable>
           </PlatformBlurView>
         )}
       </View>

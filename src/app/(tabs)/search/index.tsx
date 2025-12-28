@@ -313,52 +313,17 @@ const SearchScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {Platform.OS === "android" && (
-        <View style={styles.searchContainer}>
-          <Searchbar
-            placeholder={t("search.search-placeholder")}
-            onChangeText={setSearchQuery}
-            value={searchQuery}
-            style={styles.searchbar}
-            inputStyle={styles.searchInput}
-          />
-        </View>
-      )}
+      <View style={styles.searchContainer}>
+        <Searchbar
+          placeholder={t("search.search-placeholder")}
+          onChangeText={setSearchQuery}
+          value={searchQuery}
+          style={styles.searchbar}
+          inputStyle={styles.searchInput}
+        />
+      </View>
 
-      <Stack.Screen
-        options={{
-          headerTitle: t("search.title", { query: searchQuery }),
-          headerShown: Platform.OS === "ios",
-          headerSearchBarOptions: {
-            placement: "automatic",
-            placeholder: "Search",
-            onChangeText: (event) => {
-              setSearchQuery(event.nativeEvent.text);
-            },
-          },
-
-          headerTitleStyle: {
-            color: "#fff",
-          },
-
-          headerStyle: {
-            backgroundColor: "#0000",
-          },
-
-          title: t("search.title", { query: searchQuery }),
-
-          headerTintColor: "#fff",
-        }}
-      />
-
-      <View
-        style={[
-          styles.chipContainer,
-          {
-            marginTop: Platform.OS === "ios" ? 60 : 0,
-          },
-        ]}
-      >
+      <View style={[styles.chipContainer]}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
           {categories.map((category, index) => (
             <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>

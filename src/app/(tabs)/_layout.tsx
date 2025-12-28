@@ -9,25 +9,14 @@ export default function TabLayout() {
   return (
     <NativeTabs
       backgroundColor={"#000"}
-      // blurEffect="dark"
+      blurEffect="dark"
+      backBehavior="none"
+      minimizeBehavior="onScrollDown"
+      shadowColor={"rgba(0,0,0,0.25)"}
       iconColor={MD2DarkTheme.colors.primary}
       indicatorColor={MD2DarkTheme.colors.primary}
       tintColor={MD2DarkTheme.colors.primary}
     >
-      <NativeTabs.Trigger
-        name="qr-scanner"
-        options={{
-          title: "QR Scanner",
-        }}
-      >
-        <Icon
-          {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="qrcode-scan" />, selectedColor: "#000" }
-            : { sf: "qrcode" })}
-        />
-        <Label>{t("tabBar.join-game")}</Label>
-      </NativeTabs.Trigger>
-
       <NativeTabs.Trigger
         name="favourites"
         options={{
@@ -70,13 +59,28 @@ export default function TabLayout() {
         <Label>{t("tabBar.games")}</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="search" role="search">
+      <NativeTabs.Trigger name="search">
         <Icon
           {...(Platform.OS === "android"
             ? { src: <VectorIcon family={MaterialCommunityIcons} name="magnify" />, selectedColor: "#000" }
             : { sf: "magnifyingglass" })}
         />
         <Label>{t("tabBar.search")}</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger
+        role="search"
+        name="qr-scanner"
+        options={{
+          title: "QR Scanner",
+        }}
+      >
+        <Icon
+          {...(Platform.OS === "android"
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="camera" />, selectedColor: "#000" }
+            : { sf: "camera" })}
+        />
+        <Label>{t("tabBar.join-game")}</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

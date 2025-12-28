@@ -1,7 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-// useNavigation removed - using expo-router
 import { memo, useCallback, useContext, useMemo, useState } from "react";
-import { Image, Platform, Pressable, StyleSheet, View } from "react-native";
+import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { Appbar, Button, MD2DarkTheme, useTheme } from "react-native-paper";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
 import { Movie } from "../../../types";
@@ -14,6 +13,7 @@ import DialogModals from "./DialogModals";
 import { GlassView } from "expo-glass-effect";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import { Image } from "expo-image";
 
 function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean }) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
@@ -116,31 +116,20 @@ export default memo(HomeAppbar);
 const LikedMoviesPreview = memo(() => {
   const likes = useAppSelector((state) => state.room.room.likes);
   const itemsToDisplay = useMemo(() => likes.toReversed().slice(0, 5), [likes]);
-  const [loadedMovies, setLoadedMovies] = useState<Set<Movie>>(new Set());
-
-  const handleImageLoaded = (movie: Movie) => {
-    setLoadedMovies((prev) => new Set([...prev, movie]));
-  };
-
-  const loadedItems = Array.from(loadedMovies).reverse().slice(0, 5);
 
   return (
     <Pressable onPress={() => router.navigate("/room/overview")}>
       <Animated.View layout={LinearTransition} style={styles.likedContainer}>
-        {loadedItems.length === 0 && <PlaceholderImage />}
+        {itemsToDisplay.length === 0 && <PlaceholderImage />}
 
-        {itemsToDisplay.map((movie) => (
-          <PrefetchedImage key={`prefetch-${movie.id}`} movie={movie} onLoaded={handleImageLoaded} />
-        ))}
-
-        {loadedItems.map((movie, index) => (
+        {itemsToDisplay.map((movie, index) => (
           <Animated.View
             entering={FadeIn}
             key={`display-${movie.id}`}
             style={{
               position: "absolute",
               transform: [{ translateX: index * 5 }],
-              zIndex: loadedItems.length - index,
+              zIndex: itemsToDisplay.length - index,
             }}
           >
             <LikedMovieImage movie={movie} />
@@ -151,23 +140,14 @@ const LikedMoviesPreview = memo(() => {
   );
 });
 
-const PrefetchedImage = memo(({ movie, onLoaded }: { movie: Movie; onLoaded: (movie: Movie) => void }) => {
-  const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
-
-  return (
-    <Image
-      style={{ width: 1, height: 1, position: "absolute", opacity: 0 }}
-      source={{ uri, width: 25, height: 40, cache: "force-cache" }}
-      onLoad={() => onLoaded(movie)}
-      onError={() => onLoaded(movie)}
-    />
-  );
-});
-
 const LikedMovieImage = memo(({ movie }: { movie: Movie }) => {
   const uri = `https://image.tmdb.org/t/p/w${ThumbnailSizes.logo.tiny}${movie.poster_path}`;
 
-  return <Image style={styles.likedImage} source={{ uri, width: 25, height: 40, cache: "force-cache" }} />;
+  return (
+    <View style={{ backgroundColor: MD2DarkTheme.colors.surface }}>
+      <Image style={styles.likedImage} cachePolicy={"disk"} source={{ uri, width: 25, height: 40 }} />
+    </View>
+  );
 });
 
 const PlaceholderImage = memo(() => {

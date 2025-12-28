@@ -1,4 +1,4 @@
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { memo, useContext, useEffect, useMemo, useRef, useState, useTransition } from "react";
@@ -179,22 +179,8 @@ export default function QRCodePage() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <PageHeading useSafeArea={false} title={t("room.qr-title")} />
-      <View
-        style={[
-          { position: "relative", flex: 1, padding: 15, paddingTop: 80, paddingBottom: 0 },
-          { marginTop: Platform.OS === "android" ? 20 : 0 },
-        ]}
-      >
-        <Text
-          style={{
-            fontSize: 16,
-            color: "#fff",
-          }}
-        >
-          {t("room.qr-subtitle")}
-        </Text>
-
+      <PageHeading showGradientBackground={false} useSafeArea={false} title={t("room.qr-title")} />
+      <View style={[{ position: "relative", flex: 1, paddingHorizontal: 15 }, { marginTop: Platform.OS === "android" ? 20 : 0 }]}>
         {createRoomLoading ? (
           <Animated.View entering={FadeInDown} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
             <FancySpinner size={100} />
@@ -258,13 +244,79 @@ export default function QRCodePage() {
   );
 }
 
+const TutorialTips = () => {
+  const theme = useTheme();
+  const t = useTranslation();
+
+  const tips = [
+    {
+      icon: "camera" as const,
+      text: t("room.tutorial.native-camera"),
+    },
+    {
+      icon: "qrcode-scan" as const,
+      text: t("room.tutorial.in-app-scanner"),
+    },
+    {
+      icon: "account-multiple-plus" as const,
+      text: t("room.tutorial.join-during-game"),
+    },
+  ];
+
+  return (
+    <View
+      style={{
+        marginTop: 15,
+        paddingHorizontal: 10,
+        gap: 10,
+      }}
+    >
+      {tips.map((tip, index) => (
+        <View
+          key={index}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            width: "80%",
+          }}
+        >
+          <View
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 18,
+              backgroundColor: theme.colors.primary + "20",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <MaterialCommunityIcons name={tip.icon} size={20} color={theme.colors.primary} />
+          </View>
+          <Text
+            style={{
+              flex: 1,
+              fontSize: 14,
+              color: "#fff",
+              opacity: 0.85,
+            }}
+          >
+            {tip.text}
+          </Text>
+        </View>
+      ))}
+    </View>
+  );
+};
+
 const QrCodeBox = memo(({ code }: { code: string }) => {
   const theme = useTheme();
+  const t = useTranslation();
 
   const shareCode = async (code: string) => {
     Share.share({
-      message: "Hey! Join my room on FlickMate: " + code,
-      title: "Join my room on FlickMate!",
+      message: t("room.share.message", { code }),
+      title: t("room.share.title"),
       url: "https://movie.dmqq.dev/swipe/" + code.toUpperCase(),
     });
   };
@@ -279,9 +331,16 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
     >
       <View
         style={{
-          padding: 10,
+          padding: 15,
           borderColor: theme.colors.primary,
           borderWidth: 5,
+          borderRadius: 20,
+          backgroundColor: theme.colors.surface,
+          shadowColor: theme.colors.primary,
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.3,
+          shadowRadius: 15,
+          elevation: 10,
         }}
       >
         <QRCode
@@ -293,15 +352,45 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
       </View>
 
       <Button
-        icon={() => <FontAwesome name="share" size={24} color={MD2DarkTheme.colors.primary} />}
         onPress={async () => {
           shareCode(code);
         }}
-        contentStyle={{ flexDirection: "row-reverse" }}
-        style={{ marginTop: 15 }}
+        style={{ marginTop: 10 }}
       >
-        <Text style={{ fontSize: 25, letterSpacing: 1, color: theme.colors.primary }}>{code || "Loading..."}</Text>
+        <View>
+          {!!code ? (
+            <View style={{ flexDirection: "row", gap: 5, justifyContent: "center", alignItems: "center" }}>
+              {code.split("").map((char, index) => (
+                <Text
+                  key={index}
+                  style={{
+                    fontSize: 20,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {char}
+                </Text>
+              ))}
+            </View>
+          ) : (
+            <Text>Loading</Text>
+          )}
+          <Text
+            style={{
+              marginTop: 5,
+              opacity: 0.7,
+              textAlign: "center",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {t("room.share.button")} <FontAwesome name="share" size={14} color={theme.colors.primary} />
+          </Text>
+        </View>
       </Button>
+
+      <TutorialTips />
     </View>
   );
 });

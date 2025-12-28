@@ -72,7 +72,17 @@
     "page-range-desc": "Select the number of pages to search",
     "qr-title": "Scan to join!",
     "active": "Active users",
-    "qr-subtitle": "Share this code with your friends to join the game",
+    "qr-subtitle": "Let your friends scan the code with the camera app or the in app scanner to join the room, or share the room code by holding down the code below. You can also start the game by yourself if you wish",
+    "tutorial": {
+      "native-camera": "Use your native camera app",
+      "in-app-scanner": "Or use the in-app scanner",
+      "join-during-game": "Players can join during the game"
+    },
+    "share": {
+      "message": "Hey! Join my room on FlickMate: {code}",
+      "title": "Join my room on FlickMate!",
+      "button": "Share Code"
+    },
     "page-range": "Tired of the same old movies? Increase your chances of finding something new by randomizing your search.",
     "provider_desc": "Select the streaming providers you want to include in your search. You can choose multiple providers or none to see everything.",
     "genre_desc": "Select the genres of movies and series you want to watch. You can choose multiple genres or none to see everything.",

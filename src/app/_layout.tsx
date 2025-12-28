@@ -87,7 +87,7 @@ export default function RootLayout() {
 
 const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: boolean }) => {
   const dispatch = useAppDispatch();
-  const [loaded, setLoaded] = useState(false);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -101,7 +101,6 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
         ]);
 
         if (!language) {
-          setLoaded(true);
           router.replace("/onboarding");
           return;
         }
@@ -115,11 +114,10 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
             regionalization: JSON.parse(regionalization || "{}") || ({} as any),
           })
         );
-
-        setLoaded(true);
       } catch (error) {
         console.error("Error during app initialization:", error);
-        setLoaded(true);
+      } finally {
+        setSettingsLoaded(true);
       }
     };
 
@@ -136,6 +134,10 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
       },
     ]);
   }, []);
+
+  if (!settingsLoaded) {
+    return <View style={{ flex: 1, backgroundColor: "#000" }} />;
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
