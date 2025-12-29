@@ -15,6 +15,7 @@ import useTranslation from "../../service/useTranslation";
 import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
 import { FancySpinner } from "../../components/FancySpinner";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { hash } from "../../utils/hash";
 
 interface RoomSetupParams {
   category: string;
@@ -42,7 +43,8 @@ export default function QRCodePage() {
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
-  const [moviesCount, setMoviesCount] = useState<number | null>(null);
+  const [moviesCount, setMoviesCount] = useState<number | null>(0);
+  const hashOptionsRef = useRef<string>("");
 
   const [isPending, startTransition] = useTransition();
 
@@ -51,7 +53,7 @@ export default function QRCodePage() {
   const users = useAppSelector((state) => state.room.room.users);
   const roomId = useAppSelector((state) => state.room.room.roomId);
 
-  const { category, maxRounds, genre, providers, specialCategories, cacheKey } = useMemo(() => {
+  const { category, maxRounds, genre, providers, specialCategories } = useMemo(() => {
     const roomSetup = params.roomSetup ? (JSON.parse(params.roomSetup as string) as RoomSetupParams) : undefined;
 
     if (!roomSetup) {
@@ -80,11 +82,6 @@ export default function QRCodePage() {
         specialCategories: specialCategories || [],
       };
 
-      // Add cacheKey if present
-      if (cacheKey) {
-        config.cacheKey = cacheKey;
-      }
-
       return config;
     }
 
@@ -106,7 +103,7 @@ export default function QRCodePage() {
       specialCategories: [],
     };
     return config;
-  }, [params?.quickStart, category, maxRounds, genre, providers, specialCategories, cacheKey, nickname]);
+  }, [params?.quickStart, category, maxRounds, genre, providers, specialCategories, nickname]);
 
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
   const roomCreationAttempted = useRef(false);
@@ -144,10 +141,11 @@ export default function QRCodePage() {
       socket?.off("active");
       socket?.off("movies");
     };
-  }, [roomConfig, socket, nickname, qrCode, dispatch]);
+  }, [roomConfig, socket, nickname, qrCode]);
 
   useEffect(() => {
     if (!socket) return;
+
     socket?.on("active", (users: string[]) => {
       dispatch(roomActions.setActiveUsers(users));
     });

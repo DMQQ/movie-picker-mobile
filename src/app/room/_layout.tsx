@@ -2,12 +2,24 @@ import { Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SocketProvider } from "../../context/SocketContext";
 import { RoomContextProvider } from "../../context/RoomContext";
+import { useEffect } from "react";
+import { useAppDispatch } from "../../redux/store";
+import { roomActions } from "../../redux/room/roomSlice";
 
 export default function RootLayout() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    return () => {
+      console.log("Resetting room state on unmount of RootLayout");
+      dispatch(roomActions.reset());
+    };
+  }, []);
+
   return (
-    <SocketProvider namespace="/swipe">
-      <RoomContextProvider>
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
+      <SocketProvider namespace="/swipe">
+        <RoomContextProvider>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="setup" options={{ headerShown: false }} />
 
@@ -17,8 +29,8 @@ export default function RootLayout() {
 
             <Stack.Screen name="overview" options={{ headerShown: false }} />
           </Stack>
-        </SafeAreaView>
-      </RoomContextProvider>
-    </SocketProvider>
+        </RoomContextProvider>
+      </SocketProvider>
+    </SafeAreaView>
   );
 }

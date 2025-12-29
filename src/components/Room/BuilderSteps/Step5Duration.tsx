@@ -3,24 +3,10 @@ import { View, StyleSheet, ScrollView, ActivityIndicator, Pressable } from "reac
 import { Text, Banner, useTheme } from "react-native-paper";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
-import { useValidateRoomConfigMutation } from "../../../redux/movie/movieApi";
+// import { useValidateRoomConfigMutation } from "../../../redux/movie/movieApi";
 import useTranslation from "../../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import { setMaxRounds } from "../../../redux/roomBuilder/roomBuilderSlice";
-
-interface Genre {
-  id: number;
-  name: string;
-}
-
-interface Step5DurationProps {
-  selectedDuration: number;
-  onSelectDuration: (rounds: number) => void;
-  category: string;
-  genres: Genre[];
-  providers: number[];
-  specialCategories: string[];
-}
 
 const PricingCard = React.memo(({ option, index, selectedDuration, onSelectDuration }: any) => {
   const scale = useSharedValue(1);
@@ -57,13 +43,13 @@ const PricingCard = React.memo(({ option, index, selectedDuration, onSelectDurat
 
 const Step5Duration: React.FC = React.memo(() => {
   const dispatch = useAppDispatch();
-  const { maxRounds: selectedDuration, category, genres, providers, specialCategories } = useAppSelector((state) => state.builder);
+  const selectedDuration = useAppSelector((state) => state.builder.maxRounds);
 
   const onSelectDuration = (rounds: number) => {
     dispatch(setMaxRounds(rounds));
   };
 
-  const [validateConfig, { data: validationResult, isLoading: isValidating }] = useValidateRoomConfigMutation();
+  // const [validateConfig, { data: validationResult, isLoading: isValidating }] = useValidateRoomConfigMutation();
   const t = useTranslation();
 
   const gameTimeOptions = useMemo(
@@ -96,30 +82,30 @@ const Step5Duration: React.FC = React.memo(() => {
     [t]
   );
 
-  useEffect(() => {
-    if (category) {
-      validateConfig({
-        category,
-        genres: genres.map((g) => g.id),
-        providers,
-        specialCategories,
-      });
-    }
-  }, [category, genres, providers, specialCategories]);
+  // useEffect(() => {
+  //   if (category) {
+  //     validateConfig({
+  //       category,
+  //       genres: genres.map((g) => g.id),
+  //       providers,
+  //       specialCategories,
+  //     });
+  //   }
+  // }, [category, genres, providers, specialCategories]);
 
-  const hasWarnings = validationResult && validationResult.warnings.length > 0;
-  const isLowContent = validationResult && validationResult.estimatedCount < 50;
+  // const hasWarnings = validationResult && validationResult.warnings.length > 0;
+  // const isLowContent = validationResult && validationResult.estimatedCount < 50;
 
   return (
     <View style={styles.container}>
-      {isValidating && (
+      {/* {isValidating && (
         <View style={styles.validatingContainer}>
           <ActivityIndicator size="small" />
           <Text style={styles.validatingText}>{t("room.builder.step5.validating")}</Text>
         </View>
-      )}
+      )} */}
 
-      {hasWarnings && (
+      {/* {hasWarnings && (
         <Banner visible={true} icon="alert" style={[styles.banner, isLowContent && styles.warningBanner]}>
           {validationResult.warnings[0]}
           {validationResult.estimatedCount > 0 && (
@@ -128,7 +114,7 @@ const Step5Duration: React.FC = React.memo(() => {
             </Text>
           )}
         </Banner>
-      )}
+      )} */}
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {gameTimeOptions.map((option, index) => (

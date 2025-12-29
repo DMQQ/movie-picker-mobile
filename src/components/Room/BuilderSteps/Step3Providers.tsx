@@ -15,27 +15,30 @@ const Step3Providers = () => {
   const [rememberProviders, setRememberProviders] = useState(false);
   const selectedProviders = useAppSelector((state) => state.builder.providers);
   const { clearPreferences, preferences: savedProviders, savePreferences } = useBuilderPreferences();
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // useEffect(() => {
-  //   if (savedProviders?.providers && savedProviders.providers.length > 0) {
-  //     dispatch(setProviders(savedProviders.providers));
-  //     setRememberProviders(true);
-  //   }
-  // }, [savedProviders]);
+  useEffect(() => {
+    if (savedProviders?.providers && savedProviders.providers.length > 0) {
+      dispatch(setProviders(savedProviders.providers));
+      setRememberProviders(true);
+    }
+    setIsInitialLoad(false);
+  }, []);
 
-  // useEffect(() => {
-  //   if (rememberProviders && selectedProviders.length > 0) {
-  //     savePreferences({ providers: selectedProviders });
-  //   }
-  // }, [rememberProviders, selectedProviders]);
-
-  console.log({ savedProviders });
+  useEffect(() => {
+    if (!isInitialLoad && rememberProviders && selectedProviders.length > 0) {
+      savePreferences({ providers: selectedProviders });
+    }
+  }, [rememberProviders, selectedProviders, isInitialLoad]);
 
   const hasSavedProviders = savedProviders && savedProviders.providers.length > 0;
 
   const onToggleRememberProviders = (remember: boolean) => {
     setRememberProviders(remember);
     if (!remember) {
+      clearPreferences();
+    } else if (selectedProviders.length > 0) {
+      savePreferences({ providers: selectedProviders });
     }
   };
 

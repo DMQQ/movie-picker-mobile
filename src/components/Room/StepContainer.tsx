@@ -97,7 +97,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
             mode="contained"
             style={[styles.nextButton, !showBackButton && styles.nextButtonFullWidth]}
             contentStyle={styles.nextButtonContent}
-            disabled={!canGoNext}
+            disabled={!canGoNext()}
             onPress={handleNext}
           >
             {nextButtonText || (isLastStep ? t("room.builder.createRoom") : t("room.builder.next"))}
