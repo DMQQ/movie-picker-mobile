@@ -1,25 +1,17 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, IconButton, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
-import Animated, {
-  FadeIn,
-  FadeOut,
-  useAnimatedScrollHandler,
-  useSharedValue,
-  useAnimatedStyle,
-  interpolate,
-} from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import BuilderProgress from "./BuilderSteps/BuilderProgress";
-import { AnimatedScrollView } from "react-native-reanimated/lib/typescript/component/ScrollView";
 import useTranslation from "../../service/useTranslation";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { router } from "expo-router";
+import { goBack, goNext } from "../../redux/roomBuilder/roomBuilderSlice";
 
 interface StepContainerProps {
   currentStep: number;
   totalSteps: number;
-  onBack: () => void;
-  onNext: () => void;
-  canGoNext: boolean;
   isLastStep?: boolean;
   nextButtonText?: string;
   footerSubtitle?: string;
@@ -29,72 +21,84 @@ interface StepContainerProps {
 const StepContainer: React.FC<StepContainerProps> = ({
   currentStep,
   totalSteps,
-  onBack,
-  onNext,
-  canGoNext,
   isLastStep = false,
   nextButtonText,
   children,
 
   footerSubtitle,
 }) => {
+  const dispatch = useAppDispatch();
   const t = useTranslation();
-  const scrollViewRef = React.useRef<AnimatedScrollView>(null);
+  const category = useAppSelector((state) => state.builder.category);
+  const state = useAppSelector((state) => state.builder);
   const showBackButton = currentStep > 1;
-  const scrollY = useSharedValue(0);
 
-  useEffect(() => {
-    scrollViewRef.current?.scrollTo({ y: 0, animated: false });
-  }, [currentStep]);
+  const canGoNext = () => {
+    switch (currentStep) {
+      case 1:
+        return !!category;
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+        return true;
+      default:
+        return false;
+    }
+  };
 
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-    },
-  });
+  const handleNext = () => {
+    if (currentStep === 5) {
+      handleCreateRoom();
+    } else {
+      dispatch(goNext());
+    }
+  };
 
-  const parallaxStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateY: interpolate(scrollY.value, [0, 300], [0, -50], "clamp"),
-        },
-      ],
-    };
-  });
+  const handleCreateRoom = () => {
+    router.push({
+      pathname: "/room/qr-code",
+      params: {
+        roomSetup: JSON.stringify({
+          category: state.category,
+          maxRounds: state.maxRounds,
+          genre: state.genres,
+          providers: state.providers,
+          specialCategories: state.specialCategories,
+        }),
+      },
+    });
+  };
+
+  const memoChildren = React.useMemo(() => children, [children]);
 
   return (
     <View style={styles.container}>
-      <Animated.ScrollView
-        ref={scrollViewRef}
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-      >
+      <View style={[styles.scrollView, styles.scrollContent]}>
         <Animated.View
           key={`step-${currentStep}`}
           entering={FadeIn.duration(300)}
           exiting={FadeOut.duration(200)}
-          style={[styles.stepContent, parallaxStyle]}
+          style={[styles.stepContent]}
         >
-          {children}
+          {memoChildren}
         </Animated.View>
-      </Animated.ScrollView>
+      </View>
 
       <LinearGradient style={styles.buttonContainer} colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}>
         {footerSubtitle && <Text style={styles.footerSubtitle}>{footerSubtitle}</Text>}
 
         <View style={styles.navigationRow}>
-          {showBackButton && <IconButton icon="arrow-left" size={24} onPress={onBack} mode="contained" style={styles.backButton} />}
+          {showBackButton && (
+            <IconButton icon="arrow-left" size={24} onPress={() => dispatch(goBack())} mode="contained" style={styles.backButton} />
+          )}
 
           <Button
             mode="contained"
             style={[styles.nextButton, !showBackButton && styles.nextButtonFullWidth]}
             contentStyle={styles.nextButtonContent}
             disabled={!canGoNext}
-            onPress={onNext}
+            onPress={handleNext}
           >
             {nextButtonText || (isLastStep ? t("room.builder.createRoom") : t("room.builder.next"))}
           </Button>

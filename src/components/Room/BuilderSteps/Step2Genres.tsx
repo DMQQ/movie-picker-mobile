@@ -1,26 +1,22 @@
 import React from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { Text } from "react-native-paper";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useGetGenresWithThumbnailsQuery } from "../../../redux/movie/movieApi";
 import SwipeableGenreCard from "./SwipeableGenreCard";
 import SkeletonCard from "../SkeletonCard";
-import useTranslation from "../../../service/useTranslation";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import { toggleGenre } from "../../../redux/roomBuilder/roomBuilderSlice";
 
 interface Genre {
   id: number;
   name: string;
 }
 
-interface Step2GenresProps {
-  gameType: "movie" | "tv";
-  selectedGenres: Genre[];
-  onToggleGenre: (genre: Genre) => void;
-}
-
-const Step2Genres: React.FC<Step2GenresProps> = ({ gameType, selectedGenres, onToggleGenre }) => {
+const Step2Genres: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const gameType = useAppSelector((state) => state.builder.gameType);
+  const selectedGenres = useAppSelector((state) => state.builder.genres);
   const { data: genres, isLoading } = useGetGenresWithThumbnailsQuery({ type: gameType });
-  const t = useTranslation();
   const scrollX = useSharedValue(0);
 
   const scrollHandler = useAnimatedScrollHandler({
@@ -35,6 +31,10 @@ const Step2Genres: React.FC<Step2GenresProps> = ({ gameType, selectedGenres, onT
 
   const cardWidth = Dimensions.get("window").width * 0.75;
   const cardHeight = Dimensions.get("window").height * 0.65;
+
+  const onToggleGenre = (genre: Genre) => {
+    dispatch(toggleGenre(genre));
+  };
 
   return (
     <View style={styles.container}>

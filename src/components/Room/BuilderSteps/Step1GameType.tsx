@@ -2,23 +2,29 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-import {
-  useGetMovieCategoriesWithThumbnailsQuery,
-  useGetTVCategoriesWithThumbnailsQuery,
-} from "../../../redux/movie/movieApi";
+import { useGetMovieCategoriesWithThumbnailsQuery, useGetTVCategoriesWithThumbnailsQuery } from "../../../redux/movie/movieApi";
 import PosterCard from "./PosterCard";
 import SkeletonCard from "../SkeletonCard";
 import useTranslation from "../../../service/useTranslation";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import { setCategory } from "../../../redux/roomBuilder/roomBuilderSlice";
 
-interface Step1GameTypeProps {
-  selectedCategory: string;
-  onSelectCategory: (categoryPath: string, gameType: "movie" | "tv") => void;
-}
-
-const Step1GameType: React.FC<Step1GameTypeProps> = ({ selectedCategory, onSelectCategory }) => {
+const Step1GameType: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { data: movieCategories, isLoading: moviesLoading } = useGetMovieCategoriesWithThumbnailsQuery();
   const { data: tvCategories, isLoading: tvLoading } = useGetTVCategoriesWithThumbnailsQuery();
   const t = useTranslation();
+
+  const selectedCategory = useAppSelector((state) => state.builder.category);
+
+  const onSelectCategory = (categoryPath: string, gameType: "movie" | "tv") => {
+    dispatch(
+      setCategory({
+        path: categoryPath,
+        type: gameType,
+      })
+    );
+  };
 
   const movieScrollX = useSharedValue(0);
   const tvScrollX = useSharedValue(0);
@@ -72,7 +78,6 @@ const Step1GameType: React.FC<Step1GameTypeProps> = ({ selectedCategory, onSelec
         </Animated.ScrollView>
       </View>
 
-      {/* TV Shows Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>{t("room.builder.step1.tv")}</Text>
         <Animated.ScrollView
@@ -126,7 +131,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   section: {
-    marginBottom: 32,
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 24,

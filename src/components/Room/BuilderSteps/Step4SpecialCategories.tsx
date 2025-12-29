@@ -5,17 +5,20 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import SelectionCard from "../SelectionCard";
 import SkeletonCard from "../SkeletonCard";
 import { useGetSpecialCategoriesWithThumbnailsQuery } from "../../../redux/movie/movieApi";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import { toggleSpecialCategory } from "../../../redux/roomBuilder/roomBuilderSlice";
 
-interface Step4SpecialCategoriesProps {
-  selectedCategories: string[];
-  onToggleCategory: (categoryId: string) => void;
-  gameType: "movie" | "tv";
-}
-
-const Step4SpecialCategories: React.FC<Step4SpecialCategoriesProps> = React.memo(({ selectedCategories, onToggleCategory, gameType }) => {
+const Step4SpecialCategories: React.FC = React.memo(() => {
+  const dispatch = useAppDispatch();
+  const selectedCategories = useAppSelector((state) => state.builder.specialCategories);
+  const gameType = useAppSelector((state) => state.builder.gameType);
   const { data: categoriesWithThumbnails, isLoading } = useGetSpecialCategoriesWithThumbnailsQuery({ type: gameType });
 
   const scrollX = useSharedValue(0);
+
+  const onToggleCategory = (categoryId: string) => {
+    dispatch(toggleSpecialCategory(categoryId));
+  };
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {

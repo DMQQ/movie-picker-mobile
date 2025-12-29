@@ -5,6 +5,8 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { useValidateRoomConfigMutation } from "../../../redux/movie/movieApi";
 import useTranslation from "../../../service/useTranslation";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import { setMaxRounds } from "../../../redux/roomBuilder/roomBuilderSlice";
 
 interface Genre {
   id: number;
@@ -32,18 +34,8 @@ const PricingCard = React.memo(({ option, index, selectedDuration, onSelectDurat
 
   return (
     <Animated.View entering={FadeIn.duration(400).delay(index * 100)} style={styles.pricingCardContainer}>
-      <Pressable
-        onPress={() => onSelectDuration(option.value)}
-        onPressIn={() => (scale.value = 0.95)}
-        onPressOut={() => (scale.value = 1)}
-      >
-        <Animated.View
-          style={[
-            styles.pricingCard,
-            animatedStyle,
-            isSelected && { borderColor: theme.colors.primary, borderWidth: 3 },
-          ]}
-        >
+      <Pressable onPress={() => onSelectDuration(option.value)} onPressIn={() => (scale.value = 0.95)} onPressOut={() => (scale.value = 1)}>
+        <Animated.View style={[styles.pricingCard, animatedStyle, isSelected && { borderColor: theme.colors.primary, borderWidth: 3 }]}>
           <View style={[styles.iconBadge, { backgroundColor: option.iconData.color }]}>
             <IconComponent name={option.iconData.name} size={28} color="#fff" />
           </View>
@@ -63,18 +55,15 @@ const PricingCard = React.memo(({ option, index, selectedDuration, onSelectDurat
   );
 });
 
-PricingCard.displayName = "PricingCard";
+const Step5Duration: React.FC = React.memo(() => {
+  const dispatch = useAppDispatch();
+  const { maxRounds: selectedDuration, category, genres, providers, specialCategories } = useAppSelector((state) => state.builder);
 
-const Step5Duration: React.FC<Step5DurationProps> = React.memo(({
-  selectedDuration,
-  onSelectDuration,
-  category,
-  genres,
-  providers,
-  specialCategories,
-}) => {
-  const [validateConfig, { data: validationResult, isLoading: isValidating }] =
-    useValidateRoomConfigMutation();
+  const onSelectDuration = (rounds: number) => {
+    dispatch(setMaxRounds(rounds));
+  };
+
+  const [validateConfig, { data: validationResult, isLoading: isValidating }] = useValidateRoomConfigMutation();
   const t = useTranslation();
 
   const gameTimeOptions = useMemo(
@@ -107,7 +96,6 @@ const Step5Duration: React.FC<Step5DurationProps> = React.memo(({
     [t]
   );
 
-  // Validate configuration when entering this step
   useEffect(() => {
     if (category) {
       validateConfig({
@@ -124,7 +112,6 @@ const Step5Duration: React.FC<Step5DurationProps> = React.memo(({
 
   return (
     <View style={styles.container}>
-      {/* Validation Banner */}
       {isValidating && (
         <View style={styles.validatingContainer}>
           <ActivityIndicator size="small" />
@@ -133,11 +120,7 @@ const Step5Duration: React.FC<Step5DurationProps> = React.memo(({
       )}
 
       {hasWarnings && (
-        <Banner
-          visible={true}
-          icon="alert"
-          style={[styles.banner, isLowContent && styles.warningBanner]}
-        >
+        <Banner visible={true} icon="alert" style={[styles.banner, isLowContent && styles.warningBanner]}>
           {validationResult.warnings[0]}
           {validationResult.estimatedCount > 0 && (
             <Text style={styles.estimateText}>
@@ -147,11 +130,7 @@ const Step5Duration: React.FC<Step5DurationProps> = React.memo(({
         </Banner>
       )}
 
-      {/* Duration Options */}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {gameTimeOptions.map((option, index) => (
           <PricingCard
             key={option.value}
@@ -162,43 +141,6 @@ const Step5Duration: React.FC<Step5DurationProps> = React.memo(({
           />
         ))}
       </ScrollView>
-
-      {/* Summary */}
-      {!isValidating && validationResult && (
-        <View style={styles.summaryContainer}>
-          <Text style={styles.summaryTitle}>{t("room.builder.step5.summary")}</Text>
-          <Text style={styles.summaryText}>
-            • {t("room.builder.step5.rounds", {
-              count: selectedDuration,
-              label: gameTimeOptions.find((o) => o.value === selectedDuration)?.label || ""
-            })}
-          </Text>
-          {genres.length > 0 && (
-            <Text style={styles.summaryText}>
-              • {t("room.builder.step5.genresSelected", {
-                count: genres.length,
-                plural: genres.length !== 1 ? "s" : ""
-              })}
-            </Text>
-          )}
-          {providers.length > 0 && (
-            <Text style={styles.summaryText}>
-              • {t("room.builder.step5.providersSelected", {
-                count: providers.length,
-                plural: providers.length !== 1 ? "s" : ""
-              })}
-            </Text>
-          )}
-          {specialCategories.length > 0 && (
-            <Text style={styles.summaryText}>
-              • {t("room.builder.step5.filtersApplied", {
-                count: specialCategories.length,
-                plural: specialCategories.length !== 1 ? "s" : ""
-              })}
-            </Text>
-          )}
-        </View>
-      )}
     </View>
   );
 });

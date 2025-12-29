@@ -4,28 +4,47 @@ import { Text, Switch, Button } from "react-native-paper";
 import { useGetAllProvidersQuery } from "../../../redux/movie/movieApi";
 import ProviderList from "../ProviderList";
 import useTranslation from "../../../service/useTranslation";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import { useBuilderPreferences } from "../../../hooks/useBuilderPreferences";
+import { setProviders } from "../../../redux/roomBuilder/roomBuilderSlice";
 
-interface Step3ProvidersProps {
-  selectedProviders: number[];
-  onUpdateProviders: (providers: number[]) => void;
-  savedProviders: number[] | null;
-  onToggleRememberProviders: (remember: boolean) => void;
-  onClearSavedProviders: () => void;
-  rememberProviders: boolean;
-}
-
-const Step3Providers: React.FC<Step3ProvidersProps> = ({
-  selectedProviders,
-  onUpdateProviders,
-  savedProviders,
-  onToggleRememberProviders,
-  onClearSavedProviders,
-  rememberProviders,
-}) => {
+const Step3Providers = () => {
+  const dispatch = useAppDispatch();
   const { data: providers, isLoading } = useGetAllProvidersQuery({});
   const t = useTranslation();
+  const [rememberProviders, setRememberProviders] = useState(false);
+  const selectedProviders = useAppSelector((state) => state.builder.providers);
+  const { clearPreferences, preferences: savedProviders, savePreferences } = useBuilderPreferences();
+
+  useEffect(() => {
+    if (savedProviders?.providers && savedProviders.providers.length > 0) {
+      dispatch(setProviders(savedProviders.providers));
+      setRememberProviders(true);
+    }
+  }, [savedProviders]);
+
+  useEffect(() => {
+    if (rememberProviders && selectedProviders.length > 0) {
+      savePreferences({ providers: selectedProviders });
+    }
+  }, [rememberProviders, selectedProviders]);
 
   const hasSavedProviders = savedProviders && savedProviders.length > 0;
+
+  const onToggleRememberProviders = (remember: boolean) => {
+    setRememberProviders(remember);
+    if (!remember) {
+    }
+  };
+
+  const onClearSavedProviders = async () => {
+    await clearPreferences();
+    setRememberProviders(false);
+  };
+
+  const onToggleProvider = (providerId: number[]) => {
+    dispatch(setProviders(providerId));
+  };
 
   return (
     <View style={styles.container}>
@@ -49,7 +68,7 @@ const Step3Providers: React.FC<Step3ProvidersProps> = ({
       <ProviderList
         providers={providers || []}
         selectedProviders={selectedProviders}
-        onToggleProvider={onUpdateProviders}
+        onToggleProvider={onToggleProvider}
         isCategorySelected={true}
         vertical
         isLoading={isLoading}

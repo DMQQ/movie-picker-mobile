@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Platform } from "react-native";
 import { router } from "expo-router";
 import PageHeading from "../../components/PageHeading";
@@ -8,172 +8,59 @@ import Step2Genres from "../../components/Room/BuilderSteps/Step2Genres";
 import Step3Providers from "../../components/Room/BuilderSteps/Step3Providers";
 import Step4SpecialCategories from "../../components/Room/BuilderSteps/Step4SpecialCategories";
 import Step5Duration from "../../components/Room/BuilderSteps/Step5Duration";
-import { useRoomBuilder } from "../../hooks/useRoomBuilder";
-import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
 import useTranslation from "../../service/useTranslation";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 
 export default function RoomSetup() {
   const t = useTranslation();
-  const { state, actions } = useRoomBuilder();
-  const { preferences, savePreferences, clearPreferences } = useBuilderPreferences();
-  const [rememberProviders, setRememberProviders] = useState(false);
+  const dispatch = useAppDispatch();
 
-  // Load saved preferences on mount
   useEffect(() => {
-    if (preferences?.providers && preferences.providers.length > 0) {
-      actions.setProviders(preferences.providers);
-      setRememberProviders(true);
+    return () => {
+      dispatch(reset());
+    };
+  }, []);
+
+  const currentStep = useAppSelector((state) => state.builder.currentStep);
+
+  const getStepTitle = useCallback(() => {
+    if (currentStep >= 1 && currentStep <= 5) {
+      return t(`room.builder.step${currentStep}.title`);
     }
-  }, [preferences]);
+    return t("room.movie");
+  }, [currentStep, t]);
 
-  // Save preferences when toggle changes
-  useEffect(() => {
-    if (rememberProviders && state.providers.length > 0) {
-      savePreferences({ providers: state.providers });
+  const getStepSubtitle = useCallback(() => {
+    if (currentStep >= 1 && currentStep <= 5) {
+      return t(`room.builder.step${currentStep}.subtitle`);
     }
-  }, [rememberProviders, state.providers]);
+    return "";
+  }, [currentStep, t]);
 
-  const handleToggleRememberProviders = (remember: boolean) => {
-    setRememberProviders(remember);
-    if (!remember) {
-      // Don't clear immediately, just stop saving
-    }
-  };
-
-  const handleClearSavedProviders = async () => {
-    await clearPreferences();
-    setRememberProviders(false);
-  };
-
-  const canGoNext = () => {
-    switch (state.currentStep) {
+  const renderStep = useMemo(() => {
+    switch (currentStep) {
       case 1:
-        return !!state.category; // Category is required
+        return <Step1GameType key="step1" />;
       case 2:
+        return <Step2Genres key="step2" />;
       case 3:
+        return <Step3Providers key="step3" />;
       case 4:
+        return <Step4SpecialCategories key="step4" />;
       case 5:
-        return true; // All other steps are optional
-      default:
-        return false;
-    }
-  };
-
-  const handleNext = () => {
-    if (state.currentStep === 5) {
-      // Final step - create room
-      handleCreateRoom();
-    } else {
-      actions.goNext();
-    }
-  };
-
-  const handleCreateRoom = () => {
-    router.push({
-      pathname: "/room/qr-code",
-      params: {
-        roomSetup: JSON.stringify({
-          category: state.category,
-          maxRounds: state.maxRounds,
-          genre: state.genres,
-          providers: state.providers,
-          specialCategories: state.specialCategories,
-        }),
-      },
-    });
-  };
-
-  const getStepTitle = () => {
-    switch (state.currentStep) {
-      case 1:
-        return t("room.builder.step1.title");
-      case 2:
-        return t("room.builder.step2.title");
-      case 3:
-        return t("room.builder.step3.title");
-      case 4:
-        return t("room.builder.step4.title");
-      case 5:
-        return t("room.builder.step5.title");
-      default:
-        return t("room.movie");
-    }
-  };
-
-  const getStepSubtitle = () => {
-    switch (state.currentStep) {
-      case 1:
-        return t("room.builder.step1.subtitle");
-      case 2:
-        return t("room.builder.step2.subtitle");
-      case 3:
-        return t("room.builder.step3.subtitle");
-      case 4:
-        return t("room.builder.step4.subtitle");
-      case 5:
-        return t("room.builder.step5.subtitle");
-      default:
-        return "";
-    }
-  };
-
-  const renderStep = () => {
-    switch (state.currentStep) {
-      case 1:
-        return <Step1GameType selectedCategory={state.category} onSelectCategory={actions.setCategory} />;
-      case 2:
-        return <Step2Genres gameType={state.gameType} selectedGenres={state.genres} onToggleGenre={actions.toggleGenre} />;
-      case 3:
-        return (
-          <Step3Providers
-            selectedProviders={state.providers}
-            onUpdateProviders={actions.setProviders}
-            savedProviders={preferences?.providers || null}
-            onToggleRememberProviders={handleToggleRememberProviders}
-            onClearSavedProviders={handleClearSavedProviders}
-            rememberProviders={rememberProviders}
-          />
-        );
-      case 4:
-        return (
-          <Step4SpecialCategories
-            key="step4"
-            selectedCategories={state.specialCategories}
-            onToggleCategory={actions.toggleSpecialCategory}
-            gameType={state.gameType}
-          />
-        );
-      case 5:
-        return (
-          <Step5Duration
-            key="step5"
-            selectedDuration={state.maxRounds}
-            onSelectDuration={actions.setMaxRounds}
-            category={state.category}
-            genres={state.genres}
-            providers={state.providers}
-            specialCategories={state.specialCategories}
-          />
-        );
+        return <Step5Duration key="step5" />;
       default:
         return null;
     }
-  };
+  }, [currentStep]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       <PageHeading gradientHeight={100} showGradientBackground={false} useSafeArea={Platform.OS === "android"} title={getStepTitle()} />
 
-      <StepContainer
-        currentStep={state.currentStep}
-        totalSteps={5}
-        onBack={actions.goBack}
-        onNext={handleNext}
-        canGoNext={canGoNext()}
-        isLastStep={state.currentStep === 5}
-        footerSubtitle={getStepSubtitle()}
-      >
-        {renderStep()}
+      <StepContainer currentStep={currentStep} totalSteps={5} isLastStep={currentStep === 5} footerSubtitle={getStepSubtitle()}>
+        {renderStep}
       </StepContainer>
     </View>
   );
