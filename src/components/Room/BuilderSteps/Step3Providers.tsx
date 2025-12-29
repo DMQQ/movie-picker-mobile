@@ -16,20 +16,22 @@ const Step3Providers = () => {
   const selectedProviders = useAppSelector((state) => state.builder.providers);
   const { clearPreferences, preferences: savedProviders, savePreferences } = useBuilderPreferences();
 
-  useEffect(() => {
-    if (savedProviders?.providers && savedProviders.providers.length > 0) {
-      dispatch(setProviders(savedProviders.providers));
-      setRememberProviders(true);
-    }
-  }, [savedProviders]);
+  // useEffect(() => {
+  //   if (savedProviders?.providers && savedProviders.providers.length > 0) {
+  //     dispatch(setProviders(savedProviders.providers));
+  //     setRememberProviders(true);
+  //   }
+  // }, [savedProviders]);
 
-  useEffect(() => {
-    if (rememberProviders && selectedProviders.length > 0) {
-      savePreferences({ providers: selectedProviders });
-    }
-  }, [rememberProviders, selectedProviders]);
+  // useEffect(() => {
+  //   if (rememberProviders && selectedProviders.length > 0) {
+  //     savePreferences({ providers: selectedProviders });
+  //   }
+  // }, [rememberProviders, selectedProviders]);
 
-  const hasSavedProviders = savedProviders && savedProviders.length > 0;
+  console.log({ savedProviders });
+
+  const hasSavedProviders = savedProviders && savedProviders.providers.length > 0;
 
   const onToggleRememberProviders = (remember: boolean) => {
     setRememberProviders(remember);
@@ -48,7 +50,6 @@ const Step3Providers = () => {
 
   return (
     <View style={styles.container}>
-      {/* Remember Providers Toggle */}
       <View style={styles.rememberContainer}>
         <View style={styles.rememberContent}>
           <Text style={styles.rememberLabel}>{t("room.builder.step3.remember")}</Text>
@@ -57,7 +58,6 @@ const Step3Providers = () => {
         <Switch value={rememberProviders} onValueChange={onToggleRememberProviders} />
       </View>
 
-      {/* Clear Saved Preferences Button */}
       {hasSavedProviders && (
         <Button mode="text" onPress={onClearSavedProviders} style={styles.clearButton} compact>
           {t("room.builder.step3.clear")}

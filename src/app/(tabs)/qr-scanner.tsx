@@ -151,40 +151,16 @@ export default function QRScanner() {
         <View style={styles.scannerBackground} />
 
         {/* Top Left Corner */}
-        <View
-          style={[
-            styles.corner,
-            styles.cornerTopLeft,
-            { borderColor: theme.colors.primary, shadowColor: theme.colors.primary },
-          ]}
-        />
+        <View style={[styles.corner, styles.cornerTopLeft, { borderColor: theme.colors.primary }]} />
 
         {/* Top Right Corner */}
-        <View
-          style={[
-            styles.corner,
-            styles.cornerTopRight,
-            { borderColor: theme.colors.primary, shadowColor: theme.colors.primary },
-          ]}
-        />
+        <View style={[styles.corner, styles.cornerTopRight, { borderColor: theme.colors.primary }]} />
 
         {/* Bottom Left Corner */}
-        <View
-          style={[
-            styles.corner,
-            styles.cornerBottomLeft,
-            { borderColor: theme.colors.primary, shadowColor: theme.colors.primary },
-          ]}
-        />
+        <View style={[styles.corner, styles.cornerBottomLeft, { borderColor: theme.colors.primary }]} />
 
         {/* Bottom Right Corner */}
-        <View
-          style={[
-            styles.corner,
-            styles.cornerBottomRight,
-            { borderColor: theme.colors.primary, shadowColor: theme.colors.primary },
-          ]}
-        />
+        <View style={[styles.corner, styles.cornerBottomRight, { borderColor: theme.colors.primary }]} />
       </View>
 
       <Portal>
@@ -289,10 +265,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 50,
     height: 50,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 8,
-    elevation: 5,
   },
   cornerTopLeft: {
     top: 0,

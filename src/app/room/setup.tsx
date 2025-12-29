@@ -57,7 +57,7 @@ export default function RoomSetup() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <PageHeading gradientHeight={100} showGradientBackground={false} useSafeArea={Platform.OS === "android"} title={getStepTitle()} />
+      <PageHeading gradientHeight={100} showGradientBackground={false} useSafeArea={false} title={getStepTitle()} />
 
       <StepContainer currentStep={currentStep} totalSteps={5} isLastStep={currentStep === 5} footerSubtitle={getStepSubtitle()}>
         {renderStep}

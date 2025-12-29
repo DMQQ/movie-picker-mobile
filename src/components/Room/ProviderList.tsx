@@ -3,6 +3,7 @@
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { MD2DarkTheme, TouchableRipple, Text } from "react-native-paper";
 import SkeletonCard from "./SkeletonCard";
+import { useMemo } from "react";
 
 type Provider = { provider_id: number; logo_path: string; provider_name: string };
 
@@ -23,7 +24,10 @@ const ProviderIcon = ({ item, isSelected, onToggleProvider, vertical }: any) => 
       style={[vertical ? styles.providerWrapperVertical : styles.providerWrapper, isSelected && styles.selectedProvider]}
     >
       <>
-        <Image source={{ uri: `https://image.tmdb.org/t/p/w300${item.logo_path}` }} style={vertical ? styles.providerLogoVertical : styles.providerLogo} />
+        <Image
+          source={{ uri: `https://image.tmdb.org/t/p/w300${item.logo_path}` }}
+          style={vertical ? styles.providerLogoVertical : styles.providerLogo}
+        />
         {vertical && item.provider_name && (
           <Text style={styles.providerName} numberOfLines={1}>
             {item.provider_name}
@@ -42,8 +46,6 @@ const ProviderList = ({
   vertical = false,
   isLoading = false,
 }: ProviderListProps) => {
-  // The onToggleProvider function received from props should now handle the logic
-  // of adding or removing an ID from the state array in your context.
   const handleToggle = (providerId: number) => {
     const newProviders = selectedProviders.includes(providerId)
       ? selectedProviders.filter((id) => id !== providerId)
@@ -52,7 +54,6 @@ const ProviderList = ({
   };
 
   if (vertical) {
-    // Group providers into rows of 3
     const providerRows = [];
     for (let i = 0; i < providers.length; i += 3) {
       providerRows.push(providers.slice(i, i + 3));
@@ -89,12 +90,13 @@ const ProviderList = ({
     );
   }
 
-  // Group providers into columns of 2 for the two-row layout
-  const providerColumns = [];
-  for (let i = 0; i < providers.length; i += 2) {
-    providerColumns.push(providers.slice(i, i + 2));
-  }
-
+  const providerColumns = useMemo(() => {
+    const cols = [];
+    for (let i = 0; i < providers.length; i += 2) {
+      cols.push(providers.slice(i, i + 2));
+    }
+    return cols;
+  }, [providers]);
   return (
     <View style={styles.container}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEnabled={isCategorySelected}>

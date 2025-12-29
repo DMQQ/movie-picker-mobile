@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useGetGenresWithThumbnailsQuery } from "../../../redux/movie/movieApi";
@@ -11,6 +11,9 @@ interface Genre {
   id: number;
   name: string;
 }
+
+const cardWidth = Dimensions.get("window").width * 0.75;
+const cardHeight = Dimensions.get("window").height * 0.65;
 
 const Step2Genres: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -29,46 +32,44 @@ const Step2Genres: React.FC = () => {
     return selectedGenres.some((g) => g.id === genreId);
   };
 
-  const cardWidth = Dimensions.get("window").width * 0.75;
-  const cardHeight = Dimensions.get("window").height * 0.65;
-
   const onToggleGenre = (genre: Genre) => {
     dispatch(toggleGenre(genre));
   };
 
   return (
     <View style={styles.container}>
-      <Animated.ScrollView
+      <Animated.FlatList
+        initialNumToRender={2}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
         onScroll={scrollHandler}
-        scrollEventThrottle={16}
         snapToInterval={cardWidth + 16}
-        decelerationRate="fast"
-      >
-        {isLoading ? (
-          <>
-            {[1, 2, 3].map((item) => (
-              <SkeletonCard key={item} width={cardWidth} height={cardHeight} borderRadius={16} />
-            ))}
-          </>
-        ) : (
-          genres?.map((genre, index) => (
-            <SwipeableGenreCard
-              key={genre.id}
-              genreName={genre.name}
-              posterUrl={genre.representative_poster}
-              isSelected={isGenreSelected(genre.id)}
-              onPress={() => onToggleGenre({ id: genre.id, name: genre.name })}
-              delay={index * 50}
-              vertical={false}
-              scrollX={scrollX}
-              index={index}
-            />
-          ))
+        data={genres}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item: genre, index }) => (
+          <SwipeableGenreCard
+            key={genre.id}
+            genreName={genre.name}
+            posterUrl={genre.representative_poster}
+            isSelected={isGenreSelected(genre.id)}
+            onPress={() => onToggleGenre({ id: genre.id, name: genre.name })}
+            delay={index * 50}
+            vertical={false}
+            scrollX={scrollX}
+            index={index}
+          />
         )}
-      </Animated.ScrollView>
+        ListEmptyComponent={
+          isLoading ? (
+            <>
+              {[1, 2, 3].map((item) => (
+                <SkeletonCard key={item} width={cardWidth} height={cardHeight} borderRadius={16} />
+              ))}
+            </>
+          ) : null
+        }
+      />
     </View>
   );
 };
@@ -93,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Step2Genres;
+export default memo(Step2Genres);

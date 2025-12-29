@@ -1,16 +1,7 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, AppState, Dimensions, Platform, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { MD2DarkTheme, Text, IconButton } from "react-native-paper";
-import Animated, {
-  FadeIn,
-  FadeInDown,
-  FadeInLeft,
-  FadeOut,
-  FadeOutLeft,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
+import { MD2DarkTheme, Text } from "react-native-paper";
+import Animated, { FadeInDown, FadeInLeft, FadeOutLeft, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { useGetTrailersQuery } from "../../redux/movie/movieApi";
 import { hexToRgba } from "../../utils/hexToRgb";
 import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
@@ -44,7 +35,7 @@ function Trailers({
   const insets = useSafeAreaInsets();
 
   const filteredItems = useMemo(() => {
-    return trailers?.filter((v) => v.site === "YouTube" && v.official).slice(0, 3) || [];
+    return trailers?.slice(0, 3) || [];
   }, [trailers]);
 
   const animatedValue = useAnimatedStyle(() => ({

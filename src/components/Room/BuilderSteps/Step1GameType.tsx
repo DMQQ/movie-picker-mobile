@@ -1,5 +1,5 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React, { memo } from "react";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useGetMovieCategoriesWithThumbnailsQuery, useGetTVCategoriesWithThumbnailsQuery } from "../../../redux/movie/movieApi";
@@ -42,76 +42,71 @@ const Step1GameType: React.FC = () => {
   });
 
   return (
-    <View style={styles.container}>
-      {/* Movies Section */}
+    <ScrollView style={styles.container}>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>{t("room.builder.step1.movies")}</Text>
-        <Animated.ScrollView
+
+        <Animated.FlatList
+          initialNumToRender={2}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
           onScroll={movieScrollHandler}
-          scrollEventThrottle={16}
-        >
-          {moviesLoading ? (
-            <>
-              {[1, 2, 3, 4].map((item) => (
-                <SkeletonCard key={item} width={200} height={300} borderRadius={12} />
-              ))}
-            </>
-          ) : (
-            movieCategories?.map((category, index) => (
-              <PosterCard
-                key={category.id}
-                posterUrl={category.featured_poster}
-                label={category.label}
-                isSelected={selectedCategory === category.path}
-                onPress={() => onSelectCategory(category.path, "movie")}
-                delay={index * 50}
-                large
-                scrollX={movieScrollX}
-                index={index}
-                cardWidth={200}
-              />
-            ))
+          data={movieCategories}
+          keyExtractor={(item, index) => (moviesLoading ? index.toString() : item.id.toString())}
+          renderItem={({ item: category, index }) => (
+            <PosterCard
+              key={category.id}
+              posterUrl={category.featured_poster}
+              label={category.label}
+              isSelected={selectedCategory === category.path}
+              onPress={() => onSelectCategory(category.path, "movie")}
+              delay={index * 50}
+              large
+              scrollX={movieScrollX}
+              index={index}
+              cardWidth={200}
+            />
           )}
-        </Animated.ScrollView>
+          ListEmptyComponent={
+            <View>
+              {moviesLoading && [1, 2, 3, 4].map((item) => <SkeletonCard key={item} width={200} height={300} borderRadius={12} />)}
+            </View>
+          }
+        />
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>{t("room.builder.step1.tv")}</Text>
-        <Animated.ScrollView
+
+        <Animated.FlatList
+          initialNumToRender={2}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
           onScroll={tvScrollHandler}
-          scrollEventThrottle={16}
-        >
-          {tvLoading ? (
-            <>
-              {[1, 2, 3, 4].map((item) => (
-                <SkeletonCard key={item} width={200} height={300} borderRadius={12} />
-              ))}
-            </>
-          ) : (
-            tvCategories?.map((category, index) => (
-              <PosterCard
-                key={category.id}
-                posterUrl={category.featured_poster}
-                label={category.label}
-                isSelected={selectedCategory === category.path}
-                onPress={() => onSelectCategory(category.path, "tv")}
-                delay={index * 50}
-                large
-                scrollX={tvScrollX}
-                index={index}
-                cardWidth={200}
-              />
-            ))
+          data={tvCategories}
+          keyExtractor={(item, index) => (tvLoading ? index.toString() : item.id.toString())}
+          renderItem={({ item: category, index }) => (
+            <PosterCard
+              key={category.id}
+              posterUrl={category.featured_poster}
+              label={category.label}
+              isSelected={selectedCategory === category.path}
+              onPress={() => onSelectCategory(category.path, "tv")}
+              delay={index * 50}
+              large
+              scrollX={tvScrollX}
+              index={index}
+              cardWidth={200}
+            />
           )}
-        </Animated.ScrollView>
+          ListEmptyComponent={
+            <View>{tvLoading && [1, 2, 3, 4].map((item) => <SkeletonCard key={item} width={200} height={300} borderRadius={12} />)}</View>
+          }
+        />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -144,4 +139,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Step1GameType;
+export default memo(Step1GameType);

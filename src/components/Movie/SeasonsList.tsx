@@ -107,19 +107,18 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
                   >
                     {item.air_date}
                   </Text>
+                  {item.vote_average > 0 && (
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "space-between",
+                        flexDirection: "row",
+                      }}
+                    >
+                      <RatingIcons vote={item.vote_average} size={15} />
+                    </View>
+                  )}
                 </View>
-
-                {item.vote_average > 0 && (
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: "space-between",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <RatingIcons vote={item.vote_average} size={15} />
-                  </View>
-                )}
               </View>
             </FrostedGlass>
           </Pressable>

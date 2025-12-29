@@ -11,7 +11,6 @@ import { ThumbnailSizes } from "../Thumbnail";
 import ActiveUsers from "./ActiveUsers";
 import DialogModals from "./DialogModals";
 import { GlassView } from "expo-glass-effect";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { Image } from "expo-image";
 
@@ -41,8 +40,6 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
     });
   };
 
-  const insets = useSafeAreaInsets();
-
   const onActiveUsersPress = useCallback(() => setShowQRModal((p) => !p), []);
 
   return (
@@ -52,7 +49,6 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
           marginTop: 0,
           flexDirection: "row",
           alignItems: "center",
-          paddingTop: Platform.OS === "android" ? insets.top : 0,
           position: "relative",
           justifyContent: "space-between",
         }}
@@ -80,7 +76,6 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
             position: "absolute",
             left: "50%",
             transform: [{ translateX: "-50%" }],
-            marginTop: Platform.OS === "android" ? insets.top : 0,
           }}
         >
           <ActiveUsers data={users} onPress={onActiveUsersPress} />

@@ -196,6 +196,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingLeft: 5,
     borderRadius: 20,
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface + "cc",
+        borderRadius: 20,
+      },
+    }),
   },
 
   text: { fontSize: 15, color: "rgba(255,255,255,0.6)" },

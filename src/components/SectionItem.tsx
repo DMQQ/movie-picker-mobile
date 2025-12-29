@@ -3,6 +3,7 @@ import { MD2DarkTheme, Text } from "react-native-paper";
 import { Movie } from "../../types";
 import Thumbnail from "./Thumbnail";
 import { Link } from "expo-router";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 const getColor = (score: number) => {
   if (score >= 7) return "#21d07a"; // Green
@@ -11,30 +12,46 @@ const getColor = (score: number) => {
 };
 
 export const SectionListItem = (item: Movie & { href: { pathname: string; params: Record<string, any> } }) => {
-  return (
-    <Link href={item.href as any} style={{ marginRight: 15 }} push>
-      <Link.Trigger>
-        <View style={sectionStyles.item}>
-          <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} alt={item.name || item.title} />
-          {item.vote_average > 0 && (
-            <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(item.vote_average || 0) }]}>
-              <Text
-                style={[
-                  sectionStyles.badgeItem,
-                  {
-                    color: item.vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
-                  },
-                ]}
-              >
-                {item.vote_average ? item.vote_average.toFixed(1) + "/10" : "N/A"}
-              </Text>
-            </View>
-          )}
-        </View>
-      </Link.Trigger>
+  const scale = useSharedValue(1);
 
-      <Link.Preview />
-    </Link>
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: withSpring(scale.value) }],
+  }));
+
+  const handlePressIn = () => {
+    scale.value = 0.95;
+  };
+
+  const handlePressOut = () => {
+    scale.value = 1;
+  };
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <Link href={item.href as any} style={{ marginRight: 15 }} push onPressIn={handlePressIn} onPressOut={handlePressOut}>
+        <Link.Trigger>
+          <View style={[sectionStyles.item]}>
+            <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} alt={item.name || item.title} />
+            {item.vote_average > 0 && (
+              <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(item.vote_average || 0) }]}>
+                <Text
+                  style={[
+                    sectionStyles.badgeItem,
+                    {
+                      color: item.vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
+                    },
+                  ]}
+                >
+                  {item.vote_average ? item.vote_average.toFixed(1) + "/10" : "N/A"}
+                </Text>
+              </View>
+            )}
+          </View>
+        </Link.Trigger>
+
+        <Link.Preview />
+      </Link>
+    </Animated.View>
   );
 };
 

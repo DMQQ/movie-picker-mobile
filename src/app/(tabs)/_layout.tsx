@@ -32,20 +32,6 @@ export default function TabLayout() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger
-        name="index"
-        options={{
-          title: "Home",
-        }}
-      >
-        <Icon
-          {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="movie-check" />, selectedColor: "#000" }
-            : { sf: "movieclapper" })}
-        />
-        <Label>{t("tabBar.explore")}</Label>
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger
         name="games"
         options={{
           title: "Games",
@@ -57,6 +43,20 @@ export default function TabLayout() {
             : { sf: "gamecontroller" })}
         />
         <Label>{t("tabBar.games")}</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger
+        name="index"
+        options={{
+          title: "Home",
+        }}
+      >
+        <Icon
+          {...(Platform.OS === "android"
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="movie-check" />, selectedColor: "#000" }
+            : { sf: "movieclapper" })}
+        />
+        <Label>{t("tabBar.explore")}</Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="search">

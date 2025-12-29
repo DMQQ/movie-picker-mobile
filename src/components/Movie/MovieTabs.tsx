@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, View, TouchableOpacity, LayoutChangeEvent, ScrollView } from "react-native";
+import { Dimensions, StyleSheet, View, TouchableOpacity, LayoutChangeEvent, ScrollView, Platform } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import { memo, useState, useCallback, useEffect } from "react";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS, withSpring } from "react-native-reanimated";
@@ -159,9 +159,15 @@ export default memo(MovieTabs);
 
 const styles = StyleSheet.create({
   tabBarContainer: {
-    borderRadius: 15,
+    borderRadius: 20,
     marginBottom: 10,
     marginHorizontal: 15,
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface + "cc",
+        borderRadius: 20,
+      },
+    }),
   },
   tabBarScrollContainer: {
     paddingHorizontal: 8,
