@@ -113,6 +113,65 @@
       "qr-code": "Zeskanuj kod QR",
       "randomize": "Losuj wyniki",
       "extra-settings": "Dodatkowe ustawienia"
+    },
+    "builder": {
+      "next": "Dalej",
+      "createRoom": "Utwórz pokój",
+      "step1": {
+        "title": "Co chcesz obejrzeć?",
+        "subtitle": "Wybierz kategorię, aby rozpocząć",
+        "movies": "Filmy",
+        "tv": "Seriale"
+      },
+      "step2": {
+        "title": "Wybierz ulubione gatunki",
+        "subtitle": "Wybierz jeden lub więcej gatunków (lub pomiń, aby wybrać wszystkie)",
+        "selected": "Wybrano {count} gatunek{plural}"
+      },
+      "step3": {
+        "title": "Gdzie oglądasz?",
+        "subtitle": "Wybierz swoje serwisy streamingowe (lub pomiń, aby wybrać wszystkie)",
+        "remember": "Zapamiętaj moje wybory",
+        "saved": "Zapisane preferencje załadowane",
+        "clear": "Wyczyść zapisane preferencje",
+        "selected": "Wybrano {count} dostawc{plural}"
+      },
+      "step4": {
+        "title": "Jakieś preferencje?",
+        "subtitle": "Wybierz filtry, aby zawęzić wybory (lub pomiń)",
+        "selected": "Zastosowano {count} filtr{plural}"
+      },
+      "step5": {
+        "title": "Jak długo chcesz grać?",
+        "subtitle": "Wybierz liczbę rund",
+        "validating": "Sprawdzanie dostępnych treści...",
+        "summary": "Podsumowanie gry",
+        "rounds": "{count} rund{plural} ({label})",
+        "genresSelected": "Wybrano {count} gatunek{plural}",
+        "providersSelected": "{count} serwis{plural} streamingowy{plural}",
+        "filtersApplied": "Zastosowano {count} filtr{plural}",
+        "gameTime": {
+          "quick": {
+            "label": "Szybka gra",
+            "duration": "Około 5 minut",
+            "rounds": "3 rundy",
+            "bestFor": "Idealne na szybką decyzję"
+          },
+          "standard": {
+            "label": "Standardowa gra",
+            "duration": "Około 10 minut",
+            "rounds": "6 rund",
+            "bestFor": "Świetne ze znajomym"
+          },
+          "extended": {
+            "label": "Wydłużona sesja",
+            "duration": "Około 15 minut",
+            "rounds": "10 rund",
+            "bestFor": "Najlepsze dla większych grup"
+          }
+        }
+      },
+      "loading": "Ładowanie..."
     }
   },
   "fortune-wheel": {

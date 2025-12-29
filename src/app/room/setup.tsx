@@ -1,338 +1,180 @@
-// src/screens/Room/RoomSetup/RoomSetup.tsx
-
-import { useCallback, useMemo, useReducer } from "react";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import { Button, IconButton } from "react-native-paper";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import PageHeading from "../../components/PageHeading";
-import CategoryList from "../../components/Room/CategoryList";
-import GenreList, { Genre } from "../../components/Room/GenreList";
-import ProviderList from "../../components/Room/ProviderList";
-import Section from "../../components/Room/Section";
-import SelectionCard from "../../components/Room/SelectionCard";
-import { useGetAllProvidersQuery, useGetGenresQuery } from "../../redux/movie/movieApi";
-import useTranslation from "../../service/useTranslation";
-import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
-import { LinearGradient } from "expo-linear-gradient";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import SafeIOSContainer from "../../components/SafeIOSContainer";
+import { useEffect, useState } from "react";
+import { View, Platform } from "react-native";
 import { router } from "expo-router";
-
-interface RoomSetupState {
-  category: string;
-  maxRounds: number;
-  genre: Genre[];
-  providers: number[];
-  specialCategories: string[];
-}
-
-type RoomSetupAction =
-  | { type: "SET_CATEGORY"; payload: string }
-  | { type: "SET_MAX_ROUNDS"; payload: number }
-  | { type: "SET_GENRE"; payload: Genre[] }
-  | { type: "TOGGLE_GENRE"; payload: Genre }
-  | { type: "SET_PROVIDERS"; payload: number[] }
-  | { type: "TOGGLE_SPECIAL_CATEGORY"; payload: string };
-
-const roomSetupReducer = (state: RoomSetupState, action: RoomSetupAction): RoomSetupState => {
-  switch (action.type) {
-    case "SET_CATEGORY":
-      return { ...state, category: action.payload };
-    case "SET_MAX_ROUNDS":
-      return { ...state, maxRounds: action.payload };
-    case "SET_GENRE":
-      return { ...state, genre: action.payload };
-    case "TOGGLE_GENRE":
-      const genreExists = state.genre.some((g) => g.id === action.payload.id);
-      return {
-        ...state,
-        genre: genreExists ? state.genre.filter((g) => g.id !== action.payload.id) : [...state.genre, action.payload],
-      };
-    case "SET_PROVIDERS":
-      return { ...state, providers: action.payload };
-    case "TOGGLE_SPECIAL_CATEGORY":
-      const specialCategoryExists = state.specialCategories.includes(action.payload);
-      return {
-        ...state,
-        specialCategories: specialCategoryExists
-          ? state.specialCategories.filter((cat) => cat !== action.payload)
-          : [...state.specialCategories, action.payload],
-      };
-    default:
-      return state;
-  }
-};
+import PageHeading from "../../components/PageHeading";
+import StepContainer from "../../components/Room/StepContainer";
+import Step1GameType from "../../components/Room/BuilderSteps/Step1GameType";
+import Step2Genres from "../../components/Room/BuilderSteps/Step2Genres";
+import Step3Providers from "../../components/Room/BuilderSteps/Step3Providers";
+import Step4SpecialCategories from "../../components/Room/BuilderSteps/Step4SpecialCategories";
+import Step5Duration from "../../components/Room/BuilderSteps/Step5Duration";
+import { useRoomBuilder } from "../../hooks/useRoomBuilder";
+import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
+import useTranslation from "../../service/useTranslation";
 
 export default function RoomSetup() {
   const t = useTranslation();
+  const { state, actions } = useRoomBuilder();
+  const { preferences, savePreferences, clearPreferences } = useBuilderPreferences();
+  const [rememberProviders, setRememberProviders] = useState(false);
 
-  const initialState: RoomSetupState = useMemo(
-    () => ({
-      category: getMovieCategories(t)[0]?.path || "",
-      maxRounds: 3,
-      genre: [],
-      providers: [],
-      specialCategories: [],
-    }),
-    [t]
-  );
-
-  const [state, dispatch] = useReducer(roomSetupReducer, initialState);
-  const { category, maxRounds, genre, providers, specialCategories } = state;
-
-  const isCategorySelected = !!category;
-  const mediaType = useMemo(() => (category.includes("tv") ? "tv" : "movie"), [category]);
-
-  const { data: genresData = [], isLoading: genresLoading } = useGetGenresQuery({ type: mediaType }, { skip: !isCategorySelected });
-  const { data: providersData } = useGetAllProvidersQuery({});
-
-  const categories = useMemo(() => {
-    const movies = getMovieCategories(t);
-    const series = getSeriesCategories(t);
-    return [...movies, ...series];
-  }, [t]);
-
-  const gameTimeOptions = useMemo(
-    () => [
-      {
-        value: 3,
-        label: t("room.game_time_short") + " (5min)",
-        iconData: { component: MaterialIcons, name: "flash-on", color: "#FF6B35" },
-      },
-      {
-        value: 6,
-        label: t("room.game_time_medium") + " (10min)",
-        iconData: { component: MaterialIcons, name: "schedule", color: "#4ECDC4" },
-      },
-      {
-        value: 10,
-        label: t("room.game_time_long") + " (20min)",
-        iconData: { component: MaterialIcons, name: "hourglass-empty", color: "#FFD23F" },
-      },
-    ],
-    [t]
-  );
-
-  const specialCategoryOptions = useMemo(
-    () => [
-      {
-        id: "oscar",
-        label: "Oscar Winners",
-        iconData: { component: MaterialIcons, name: "emoji-events", color: "#FFD700" },
-      },
-      {
-        id: "pg13",
-        label: "PG-13",
-        iconData: { component: MaterialIcons, name: "child-care", color: "#4CAF50" },
-      },
-      {
-        id: "r_rated",
-        label: "18+ Only",
-        iconData: { component: MaterialIcons, name: "warning", color: "#FF5722" },
-      },
-      {
-        id: "short_runtime",
-        label: "<90m",
-        iconData: { component: MaterialIcons, name: "schedule", color: "#4CAF50" },
-      },
-      {
-        id: "long_runtime",
-        label: ">90m",
-        iconData: { component: MaterialIcons, name: "hourglass-full", color: "#FF9800" },
-      },
-      {
-        id: "90s",
-        label: "90s",
-        iconData: { component: MaterialIcons, name: "album", color: "#9C27B0" },
-      },
-      {
-        id: "2000s",
-        label: "2000s",
-        iconData: { component: MaterialIcons, name: "phone-android", color: "#2196F3" },
-      },
-      {
-        id: "2010s",
-        label: "2010s",
-        iconData: { component: MaterialIcons, name: "tablet", color: "#FF9800" },
-      },
-      {
-        id: "2020s",
-        label: "2020s",
-        iconData: { component: MaterialIcons, name: "wifi", color: "#00BCD4" },
-      },
-    ],
-    []
-  );
-
-  const handleCategoryPress = useCallback((categoryPath: string) => {
-    dispatch({ type: "SET_CATEGORY", payload: categoryPath });
-  }, []);
-
-  const handleMaxRoundsPress = useCallback((rounds: number) => {
-    dispatch({ type: "SET_MAX_ROUNDS", payload: rounds });
-  }, []);
-
-  const handleGenrePress = useCallback((genreItem: Genre) => {
-    dispatch({ type: "TOGGLE_GENRE", payload: genreItem });
-  }, []);
-
-  const handleProviderToggle = useCallback((newProviders: number[]) => {
-    dispatch({
-      type: "SET_PROVIDERS",
-      payload: newProviders,
-    });
-  }, []);
-
-  const handleSpecialCategoryToggle = useCallback((categoryId: string) => {
-    dispatch({ type: "TOGGLE_SPECIAL_CATEGORY", payload: categoryId });
-  }, []);
-
-  const handleNextPress = useCallback(() => {
-    router.push({
-      pathname: "/room/qr-code",
-      params: {
-        roomSetup: JSON.stringify({
-          category,
-          maxRounds,
-          genre,
-          providers,
-          specialCategories,
-        }),
-      },
-    });
-  }, [category, maxRounds, genre, providers, specialCategories]);
-
-  const handleCreateRandomSetup = () => {
-    let genres = [];
-    if (genresData.length > 0) {
-      genres = [...genresData].sort(() => 0.5 - Math.random()).slice(0, 12);
+  // Load saved preferences on mount
+  useEffect(() => {
+    if (preferences?.providers && preferences.providers.length > 0) {
+      actions.setProviders(preferences.providers);
+      setRememberProviders(true);
     }
-    const randCategory = categories[Math.floor(Math.random() * categories.length)].path;
+  }, [preferences]);
+
+  // Save preferences when toggle changes
+  useEffect(() => {
+    if (rememberProviders && state.providers.length > 0) {
+      savePreferences({ providers: state.providers });
+    }
+  }, [rememberProviders, state.providers]);
+
+  const handleToggleRememberProviders = (remember: boolean) => {
+    setRememberProviders(remember);
+    if (!remember) {
+      // Don't clear immediately, just stop saving
+    }
+  };
+
+  const handleClearSavedProviders = async () => {
+    await clearPreferences();
+    setRememberProviders(false);
+  };
+
+  const canGoNext = () => {
+    switch (state.currentStep) {
+      case 1:
+        return !!state.category; // Category is required
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+        return true; // All other steps are optional
+      default:
+        return false;
+    }
+  };
+
+  const handleNext = () => {
+    if (state.currentStep === 5) {
+      // Final step - create room
+      handleCreateRoom();
+    } else {
+      actions.goNext();
+    }
+  };
+
+  const handleCreateRoom = () => {
     router.push({
       pathname: "/room/qr-code",
       params: {
         roomSetup: JSON.stringify({
-          category: randCategory,
-          maxRounds: 3,
-          genre: genres,
-          providers: providersData?.slice(0, 10).map((p) => p.provider_id) || [],
-          specialCategories: [],
+          category: state.category,
+          maxRounds: state.maxRounds,
+          genre: state.genres,
+          providers: state.providers,
+          specialCategories: state.specialCategories,
         }),
       },
     });
+  };
 
-    handleProviderToggle(providersData?.slice(0, 10).map((p) => p.provider_id) || []);
-    handleCategoryPress(randCategory);
-    if (genresData.length > 0) {
-      dispatch({ type: "SET_GENRE", payload: genres });
+  const getStepTitle = () => {
+    switch (state.currentStep) {
+      case 1:
+        return t("room.builder.step1.title");
+      case 2:
+        return t("room.builder.step2.title");
+      case 3:
+        return t("room.builder.step3.title");
+      case 4:
+        return t("room.builder.step4.title");
+      case 5:
+        return t("room.builder.step5.title");
+      default:
+        return t("room.movie");
+    }
+  };
+
+  const getStepSubtitle = () => {
+    switch (state.currentStep) {
+      case 1:
+        return t("room.builder.step1.subtitle");
+      case 2:
+        return t("room.builder.step2.subtitle");
+      case 3:
+        return t("room.builder.step3.subtitle");
+      case 4:
+        return t("room.builder.step4.subtitle");
+      case 5:
+        return t("room.builder.step5.subtitle");
+      default:
+        return "";
+    }
+  };
+
+  const renderStep = () => {
+    switch (state.currentStep) {
+      case 1:
+        return <Step1GameType selectedCategory={state.category} onSelectCategory={actions.setCategory} />;
+      case 2:
+        return <Step2Genres gameType={state.gameType} selectedGenres={state.genres} onToggleGenre={actions.toggleGenre} />;
+      case 3:
+        return (
+          <Step3Providers
+            selectedProviders={state.providers}
+            onUpdateProviders={actions.setProviders}
+            savedProviders={preferences?.providers || null}
+            onToggleRememberProviders={handleToggleRememberProviders}
+            onClearSavedProviders={handleClearSavedProviders}
+            rememberProviders={rememberProviders}
+          />
+        );
+      case 4:
+        return (
+          <Step4SpecialCategories
+            key="step4"
+            selectedCategories={state.specialCategories}
+            onToggleCategory={actions.toggleSpecialCategory}
+            gameType={state.gameType}
+          />
+        );
+      case 5:
+        return (
+          <Step5Duration
+            key="step5"
+            selectedDuration={state.maxRounds}
+            onSelectDuration={actions.setMaxRounds}
+            category={state.category}
+            genres={state.genres}
+            providers={state.providers}
+            specialCategories={state.specialCategories}
+          />
+        );
+      default:
+        return null;
     }
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <PageHeading gradientHeight={100} useSafeArea={Platform.OS === "android"} title={t("room.movie")} />
-      <ScrollView
-        style={[styles.flex, { marginTop: Platform.OS === "android" ? 20 : 0 }]}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: 80 }}
+      <PageHeading gradientHeight={100} showGradientBackground={false} useSafeArea={Platform.OS === "android"} title={getStepTitle()} />
+
+      <StepContainer
+        currentStep={state.currentStep}
+        totalSteps={5}
+        onBack={actions.goBack}
+        onNext={handleNext}
+        canGoNext={canGoNext()}
+        isLastStep={state.currentStep === 5}
+        footerSubtitle={getStepSubtitle()}
       >
-        <View style={styles.contentContainer}>
-          <Section title={t("room.game_time")}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {gameTimeOptions.map((option) => (
-                <SelectionCard
-                  key={option.value}
-                  label={option.label}
-                  iconData={option.iconData}
-                  isSelected={maxRounds === option.value}
-                  onPress={() => handleMaxRoundsPress(option.value)}
-                />
-              ))}
-            </ScrollView>
-          </Section>
-
-          <Section title={`${t("room.movie")} & ${t("room.series")}`}>
-            <CategoryList categories={categories} selectedCategory={category} onCategoryPress={(cat) => handleCategoryPress(cat.path)} />
-          </Section>
-
-          <Section title={t("room.genre")} disabled={!isCategorySelected}>
-            <GenreList
-              genres={genresData}
-              selectedGenres={genre}
-              onGenrePress={handleGenrePress}
-              isLoading={genresLoading}
-              isCategorySelected={isCategorySelected}
-            />
-          </Section>
-
-          <Section title={t("room.specialCategories")} disabled={!isCategorySelected}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {specialCategoryOptions.map((option) => (
-                <SelectionCard
-                  key={option.id}
-                  label={option.label}
-                  iconData={option.iconData}
-                  isSelected={specialCategories.includes(option.id)}
-                  onPress={() => handleSpecialCategoryToggle(option.id)}
-                />
-              ))}
-            </ScrollView>
-          </Section>
-
-          <Section title={t("room.providers")} disabled={!isCategorySelected}>
-            <ProviderList
-              providers={providersData || []}
-              selectedProviders={providers}
-              onToggleProvider={handleProviderToggle}
-              isCategorySelected={isCategorySelected}
-            />
-          </Section>
-        </View>
-        <View style={{ height: 80 }} />
-      </ScrollView>
-
-      <LinearGradient style={[styles.buttonContainer]} colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.8)"]}>
-        <Button
-          mode="contained"
-          style={styles.nextButton}
-          contentStyle={styles.nextButtonContent}
-          disabled={!isCategorySelected}
-          onPress={handleNextPress}
-        >
-          {t("room.next")}
-        </Button>
-
-        <IconButton icon="dice-5" size={30} onPress={handleCreateRandomSetup} />
-      </LinearGradient>
+        {renderStep()}
+      </StepContainer>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-  },
-  contentContainer: {
-    paddingHorizontal: 15,
-    paddingBottom: 20, // Reduced padding as button is outside scrollview
-  },
-  buttonContainer: {
-    paddingHorizontal: 15,
-    paddingTop: 15,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    position: "absolute",
-    bottom: 0,
-    height: 100,
-    left: 0,
-    right: 0,
-  },
-  nextButton: {
-    borderRadius: 100,
-    flex: 1,
-  },
-  nextButtonContent: {
-    paddingVertical: 7.5,
-  },
-});

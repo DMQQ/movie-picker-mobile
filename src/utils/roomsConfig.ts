@@ -19,9 +19,9 @@ export const getMovieCategories = (t: (key: string) => string) => [
   { label: t("room.genres.upcoming"), path: "/movie/upcoming" },
   {
     label: t("room.genres.now_playing"),
-    path: `/discover/movie?primary_release_date.gte=${getFormattedDate(
-      -60
-    )}&primary_release_date.lte=${getFormattedDate()}&sort_by=release_date.desc`,
+    path: `/discover/movie?primary_release_date.gte=${getFormattedDate(-60)}&primary_release_date.lte=${getFormattedDate(
+      60
+    )}&sort_by=release_date.desc`,
   },
 ];
 

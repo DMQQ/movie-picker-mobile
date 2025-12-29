@@ -113,6 +113,65 @@
       "qr-code": "Scan QR code",
       "randomize": "Randomize Search",
       "extra-settings": "Extra Settings"
+    },
+    "builder": {
+      "next": "Next",
+      "createRoom": "Create Room",
+      "step1": {
+        "title": "What do you want to watch?",
+        "subtitle": "Choose a category to get started",
+        "movies": "Movies",
+        "tv": "TV Shows"
+      },
+      "step2": {
+        "title": "Pick your favorite genres",
+        "subtitle": "Select one or more genres (or skip to choose all)",
+        "selected": "{count} genre{plural} selected"
+      },
+      "step3": {
+        "title": "Where do you watch?",
+        "subtitle": "Select your streaming services (or skip to choose all)",
+        "remember": "Remember my choices",
+        "saved": "Saved preferences loaded",
+        "clear": "Clear saved preferences",
+        "selected": "{count} provider{plural} selected"
+      },
+      "step4": {
+        "title": "Any preferences?",
+        "subtitle": "Select filters to narrow down your choices (or skip)",
+        "selected": "{count} filter{plural} applied"
+      },
+      "step5": {
+        "title": "How long do you want to play?",
+        "subtitle": "Select the number of rounds",
+        "validating": "Checking available content...",
+        "summary": "Game Summary",
+        "rounds": "{count} rounds ({label})",
+        "genresSelected": "{count} genre{plural} selected",
+        "providersSelected": "{count} streaming service{plural}",
+        "filtersApplied": "{count} filter{plural} applied",
+        "gameTime": {
+          "quick": {
+            "label": "Quick Match",
+            "duration": "About 5 minutes",
+            "rounds": "3 rounds",
+            "bestFor": "Perfect for a quick decision"
+          },
+          "standard": {
+            "label": "Standard Game",
+            "duration": "About 10 minutes",
+            "rounds": "6 rounds",
+            "bestFor": "Great with a friend"
+          },
+          "extended": {
+            "label": "Extended Session",
+            "duration": "About 15 minutes",
+            "rounds": "10 rounds",
+            "bestFor": "Best for larger groups"
+          }
+        }
+      },
+      "loading": "Loading..."
     }
   },
   "fortune-wheel": {

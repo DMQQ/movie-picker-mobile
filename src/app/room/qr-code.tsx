@@ -21,8 +21,8 @@ interface RoomSetupParams {
   maxRounds: number;
   genre: { id: number; name: string }[];
   providers: number[];
-
   specialCategories: string[];
+  cacheKey?: string;
 }
 
 interface ISocketResponse {
@@ -51,7 +51,7 @@ export default function QRCodePage() {
   const users = useAppSelector((state) => state.room.room.users);
   const roomId = useAppSelector((state) => state.room.room.roomId);
 
-  const { category, maxRounds, genre, providers, specialCategories } = useMemo(() => {
+  const { category, maxRounds, genre, providers, specialCategories, cacheKey } = useMemo(() => {
     const roomSetup = params.roomSetup ? (JSON.parse(params.roomSetup as string) as RoomSetupParams) : undefined;
 
     if (!roomSetup) {
@@ -61,6 +61,7 @@ export default function QRCodePage() {
         genre: null,
         providers: null,
         specialCategories: null,
+        cacheKey: null,
       };
     }
 
@@ -69,7 +70,7 @@ export default function QRCodePage() {
 
   const roomConfig = useMemo(() => {
     if (!params?.quickStart) {
-      return {
+      const config: any = {
         type: category,
         pageRange: Math.trunc(Math.random() * 5),
         genre: genre?.map((g) => g.id) || [],
@@ -78,6 +79,13 @@ export default function QRCodePage() {
         maxRounds: maxRounds || 6,
         specialCategories: specialCategories || [],
       };
+
+      // Add cacheKey if present
+      if (cacheKey) {
+        config.cacheKey = cacheKey;
+      }
+
+      return config;
     }
 
     const movieCategories = getMovieCategories(t).slice(0, 3);
@@ -98,7 +106,7 @@ export default function QRCodePage() {
       specialCategories: [],
     };
     return config;
-  }, [params?.quickStart, category, maxRounds, genre, providers, specialCategories, nickname]);
+  }, [params?.quickStart, category, maxRounds, genre, providers, specialCategories, cacheKey, nickname]);
 
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
   const roomCreationAttempted = useRef(false);

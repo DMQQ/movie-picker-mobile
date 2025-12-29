@@ -38,6 +38,47 @@ interface SearchResults {
   results: any[]; // Replace with your actual movie/show type
 }
 
+interface CategoryWithThumbnails {
+  id: string;
+  label: string;
+  path: string;
+  type: "movie" | "tv";
+  thumbnails: string[];
+  featured_poster: string;
+}
+
+interface GenreWithThumbnail {
+  id: number;
+  name: string;
+  representative_poster: string;
+  representative_title: string;
+}
+
+interface SpecialCategoryWithThumbnail {
+  id: string;
+  label: string;
+  representative_poster: string;
+  representative_title: string;
+}
+
+interface RoomConfig {
+  category: string;
+  genres: number[];
+  providers: number[];
+  specialCategories: string[];
+}
+
+interface ValidationResult {
+  isValid: boolean;
+  estimatedCount: number;
+  warnings: string[];
+}
+
+interface PrefetchResult {
+  cacheKey: string;
+  estimatedCount: number;
+}
+
 export const movieApi = createApi({
   reducerPath: "movieApi",
   tagTypes: ["Search", "SearchResults", "LandingPageInfinite"],
@@ -150,6 +191,38 @@ export const movieApi = createApi({
       query: ({ type, id }) => `/${type}/${id}/trailers`,
     }),
 
+    getMovieCategoriesWithThumbnails: builder.query<CategoryWithThumbnails[], void>({
+      query: () => "/movie/categories/movie/thumbnails",
+    }),
+
+    getTVCategoriesWithThumbnails: builder.query<CategoryWithThumbnails[], void>({
+      query: () => "/movie/categories/tv/thumbnails",
+    }),
+
+    getGenresWithThumbnails: builder.query<GenreWithThumbnail[], { type: "movie" | "tv" }>({
+      query: ({ type }) => `/movie/genres/${type}/thumbnails`,
+    }),
+
+    getSpecialCategoriesWithThumbnails: builder.query<SpecialCategoryWithThumbnail[], { type: "movie" | "tv" }>({
+      query: ({ type }) => `/movie/special-categories/${type}/thumbnails`,
+    }),
+
+    validateRoomConfig: builder.mutation<ValidationResult, RoomConfig>({
+      query: (config) => ({
+        url: "/room/validate",
+        method: "POST",
+        body: config,
+      }),
+    }),
+
+    prefetchRoomContent: builder.mutation<PrefetchResult, RoomConfig & { maxRounds?: number }>({
+      query: (config) => ({
+        url: "/room/prefetch",
+        method: "POST",
+        body: config,
+      }),
+    }),
+
     search: builder.query<SearchResults, SearchParams & { operation?: "replace" | "append" }>({
       query: (params) => {
         // Remove operation parameter from API request
@@ -236,4 +309,11 @@ export const {
   useLazyGetCategoriesQuery,
 
   useLazyGetFeaturedQuery,
+
+  useGetMovieCategoriesWithThumbnailsQuery,
+  useGetTVCategoriesWithThumbnailsQuery,
+  useGetGenresWithThumbnailsQuery,
+  useGetSpecialCategoriesWithThumbnailsQuery,
+  useValidateRoomConfigMutation,
+  usePrefetchRoomContentMutation,
 } = movieApi;
