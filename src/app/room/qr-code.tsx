@@ -106,18 +106,27 @@ export default function QRCodePage() {
   }, [params?.quickStart, category, maxRounds, genre, providers, specialCategories, nickname]);
 
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
-  const roomCreationAttempted = useRef(false);
 
   useEffect(() => {
-    if (!roomConfig || !socket || !nickname || qrCode || roomCreationAttempted.current) {
+    if (!roomConfig || !socket || !nickname) return;
+
+    const configHash = hash(JSON.stringify(roomConfig)).toString();
+
+    if (hashOptionsRef.current === configHash) {
       return;
     }
 
-    roomCreationAttempted.current = true;
+    hashOptionsRef.current = configHash;
 
     (async () => {
       try {
-        console.log("🎯 Starting room creation...");
+        if (qrCode && roomId) {
+          console.log("🔄 Updating room settings for:", roomId);
+          socket.emit("update-room-config", { roomId, config: roomConfig });
+          return;
+        }
+
+        console.log("🎯 Creating new room...");
         setCreateRoomLoading(true);
 
         const response = (await socket.emitWithAck("create-room", roomConfig)) as ISocketResponse;
@@ -130,18 +139,12 @@ export default function QRCodePage() {
           socket.emit("join-room", response.roomId, nickname);
         }
       } catch (error) {
-        console.log("💥 Error creating room:", error);
-        roomCreationAttempted.current = false; // Reset on error to allow retry
+        hashOptionsRef.current = "";
       } finally {
         setCreateRoomLoading(false);
       }
     })();
-
-    return () => {
-      socket?.off("active");
-      socket?.off("movies");
-    };
-  }, [roomConfig, socket, nickname, qrCode]);
+  }, [roomConfig, socket, nickname]);
 
   useEffect(() => {
     if (!socket) return;

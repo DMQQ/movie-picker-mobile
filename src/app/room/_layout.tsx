@@ -1,10 +1,11 @@
 import { Stack } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SocketProvider } from "../../context/SocketContext";
 import { RoomContextProvider } from "../../context/RoomContext";
 import { useEffect } from "react";
 import { useAppDispatch } from "../../redux/store";
 import { roomActions } from "../../redux/room/roomSlice";
+import { View } from "react-native";
 
 export default function RootLayout() {
   const dispatch = useAppDispatch();
@@ -16,8 +17,10 @@ export default function RootLayout() {
     };
   }, []);
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
+    <View style={{ flex: 1, backgroundColor: "#000", paddingTop: insets.top, paddingBottom: insets.bottom }}>
       <SocketProvider namespace="/swipe">
         <RoomContextProvider>
           <Stack screenOptions={{ headerShown: false }}>
@@ -31,6 +34,6 @@ export default function RootLayout() {
           </Stack>
         </RoomContextProvider>
       </SocketProvider>
-    </SafeAreaView>
+    </View>
   );
 }
