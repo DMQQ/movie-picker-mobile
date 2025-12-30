@@ -50,12 +50,14 @@ export default function Home() {
   const { cards, isPlaying, cardsLoading, roomId } = useRoomContext();
   const hasUserPlayed = useAppSelector((state) => state.room.room.hasUserPlayed);
   const gameEnded = useAppSelector((state) => state.room.room.gameEnded);
+  const canContinue = useAppSelector((state) => state.room.room.canContinue);
   const isHost = useAppSelector((state) => state.room.isHost);
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
   const dispatch = useAppDispatch();
   const theme = useTheme();
   const [showError, setShowError] = useState(false);
+  const [showContinueDialog, setShowContinueDialog] = useState(false);
   const [showPlayAgainDialog, setShowPlayAgainDialog] = useState(false);
   const [playAgainLoading, setPlayAgainLoading] = useState(false);
   const [waitingForHost, setWaitingForHost] = useState(false);
@@ -111,13 +113,21 @@ export default function Home() {
 
   useEffect(() => {
     if (gameEnded && isPlaying === false) {
+      if (!canContinue) {
+        router.replace({
+          pathname: "/room/summary",
+          params: { roomId },
+        });
+
+        return;
+      }
       if (isHost) {
         setShowPlayAgainDialog(true);
       } else {
         setWaitingForHost(true);
       }
     }
-  }, [gameEnded, isPlaying, isHost]);
+  }, [gameEnded, isPlaying, isHost, canContinue]);
 
   useEffect(() => {
     if (!socket) return;

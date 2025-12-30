@@ -25,6 +25,7 @@ const initialState = {
 
     isGameFinished: false,
     gameEnded: false,
+    canContinue: false,
 
     hasUserPlayed: false,
 
@@ -89,6 +90,7 @@ const roomSlice = createSlice({
         }
         state.room.gameEnded = payload.gameEnded;
       }
+      if (payload.canContinue !== undefined) state.room.canContinue = payload.canContinue;
       if (payload.isStarted !== undefined) state.room.isRunning = payload.isStarted;
       if (payload.isGameFinished !== undefined) state.room.isGameFinished = payload.isGameFinished;
       if (payload.isRunning !== undefined) state.room.isRunning = payload.isRunning;
