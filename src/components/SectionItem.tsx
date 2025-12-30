@@ -33,7 +33,7 @@ export const SectionListItem = ({ poster_path, vote_average, name, title, href, 
   };
 
   return (
-    <Animated.View style={[animatedStyle, !imageWidth && { marginRight: 15 }]}>
+    <Animated.View key={poster_path} style={[animatedStyle, !imageWidth && { marginRight: 15 }]}>
       <Link href={href as any} push onPressIn={handlePressIn} onPressOut={handlePressOut}>
         <Link.Trigger>
           <View style={[sectionStyles.item]}>

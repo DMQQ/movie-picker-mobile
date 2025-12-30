@@ -137,7 +137,7 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
             </Animated.View>
 
             <Animated.View style={[styles.metadataRow, textTransform]}>
-              {!!movie?.vote_average && movie.vote_average > 0 && (
+              {(movie?.vote_average || 0) > 0 && (
                 <View style={styles.ratingContainer}>
                   <AntDesign name="star" size={12} color="#FFD700" />
                   <Text style={styles.ratingText}>{movie.vote_average.toFixed(1)}</Text>
@@ -146,15 +146,17 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
 
               {movie?.release_date && <Text style={styles.metadataText}>{new Date(movie.release_date).getFullYear()}</Text>}
 
-              {movie?.runtime && movie.runtime > 0 && (
+              {movie?.runtime > 0 && (
                 <Text style={styles.metadataText}>
                   {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m
                 </Text>
               )}
 
-              {(movie as any)?.number_of_episodes && <Text style={styles.metadataText}>{(movie as any).number_of_episodes} episodes</Text>}
+              {(movie as any)?.number_of_episodes > 0 && (
+                <Text style={styles.metadataText}>{(movie as any).number_of_episodes} episodes</Text>
+              )}
 
-              {(movie as any)?.number_of_seasons && (
+              {(movie as any)?.number_of_seasons > 0 && (
                 <Text style={styles.metadataText}>
                   {(movie as any).number_of_seasons} season{(movie as any).number_of_seasons > 1 ? "s" : ""}
                 </Text>
