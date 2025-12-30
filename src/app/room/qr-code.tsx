@@ -109,10 +109,8 @@ export default function QRCodePage() {
 
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
 
-  // Initialize movie count from existing movies in Redux
   useEffect(() => {
     if (existingMovies && existingMovies.length > 0) {
-      console.log("📦 Found existing movies in state:", existingMovies.length);
       setMoviesCount(existingMovies.length);
       setIsLoadingMovies(false);
     }

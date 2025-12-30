@@ -8,7 +8,9 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "build:android": "npx eas build -p android --profile preview",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "deeplink:ios": "xcrun simctl openurl booted",
+    "deeplink:android": "adb shell am start -W -a android.intent.action.VIEW -d"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

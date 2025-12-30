@@ -88,7 +88,7 @@ export default memo(SimilarTab);
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingTop: 10,
   },
   gridContainer: {

@@ -238,7 +238,13 @@ const roomSlice = createSlice({
     },
 
     reset(state) {
-      state = initialState;
+      const language = state.language;
+      const nickname = state.nickname;
+      const regionalization = { ...state.regionalization };
+      Object.assign(state, initialState);
+      state.language = language;
+      state.nickname = nickname;
+      state.regionalization = regionalization;
     },
 
     setRoomId(state, { payload }) {

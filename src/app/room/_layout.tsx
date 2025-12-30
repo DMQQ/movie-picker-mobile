@@ -6,14 +6,15 @@ import { useEffect } from "react";
 import { useAppDispatch } from "../../redux/store";
 import { roomActions } from "../../redux/room/roomSlice";
 import { View } from "react-native";
+import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 
 export default function RootLayout() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     return () => {
-      console.log("Resetting room state on unmount of RootLayout");
       dispatch(roomActions.reset());
+      dispatch(reset());
     };
   }, []);
 
@@ -31,6 +32,8 @@ export default function RootLayout() {
             <Stack.Screen name="[roomId]" options={{ headerShown: false }} />
 
             <Stack.Screen name="overview" options={{ headerShown: false }} />
+
+            <Stack.Screen name="qr-code" options={{ headerShown: false }} />
           </Stack>
         </RoomContextProvider>
       </SocketProvider>

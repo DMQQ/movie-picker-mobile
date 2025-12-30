@@ -76,21 +76,13 @@ export const roomBuilderSlice = createSlice({
     setCacheKey: (state, action: PayloadAction<string>) => {
       state.cacheKey = action.payload;
     },
-    reset: () => initialState,
+    reset: (state) => {
+      Object.assign(state, initialState);
+    },
   },
 });
 
-export const {
-  goToStep,
-  goBack,
-  goNext,
-  setCategory,
-  toggleGenre,
-  setProviders,
-  toggleSpecialCategory,
-  setMaxRounds,
-  setCacheKey,
-  reset,
-} = roomBuilderSlice.actions;
+export const { goToStep, goBack, goNext, setCategory, toggleGenre, setProviders, toggleSpecialCategory, setMaxRounds, setCacheKey, reset } =
+  roomBuilderSlice.actions;
 
 export default roomBuilderSlice.reducer;

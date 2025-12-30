@@ -20,6 +20,7 @@ import ThumbsUp from "../../assets/ThumbsUp";
 import { GlassView } from "expo-glass-effect";
 import { BlurView } from "expo-blur";
 import GameRatingPill from "../../components/GameRatingPill";
+import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 
 interface GameSummary {
   roomId: string;
@@ -119,16 +120,21 @@ export default function GameSummary() {
   useEffect(() => {
     return () => {
       dispatch(roomActions.reset());
+      dispatch(reset());
     };
   }, []);
 
   const handleBackToHome = () => {
     dispatch(roomActions.reset());
+    dispatch(reset());
+
     router.replace("/");
   };
 
   const handleTryAgain = () => {
     dispatch(roomActions.reset());
+    dispatch(reset());
+
     router.replace("/room/qr-code");
   };
 

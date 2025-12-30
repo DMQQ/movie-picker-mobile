@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import ReviewManager from "../../utils/rate";
+import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 
 export default function DialogModals({
   showLeaveModal,
@@ -33,6 +34,7 @@ export default function DialogModals({
     socket?.emit("leave-room", roomId);
 
     dispatch(roomActions.reset());
+    dispatch(reset());
     ReviewManager.onGameComplete(true);
   };
 
