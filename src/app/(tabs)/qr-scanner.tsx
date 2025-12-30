@@ -2,15 +2,14 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, ToastAndroid, Vibration, View } from "react-native";
 import { Button, Dialog, MD2DarkTheme, Portal, Text, TextInput, useTheme } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import PageHeading from "../../components/PageHeading";
-
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
 import { router } from "expo-router";
 import { useIsFocused } from "@react-navigation/native";
 import { url } from "../../context/SocketContext";
 import envs from "../../constants/envs";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
 
 type JoinRoomParams =
   | {
@@ -111,18 +110,18 @@ export default function QRScanner() {
 
   if (hasPermission === null) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
+      <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
         <Text style={{ marginTop: 25, fontWeight: "bold", fontSize: 25 }}>Requesting camera permission</Text>
 
         <Button mode="contained" onPress={() => request()}>
           {t("scanner.request-permission")}
         </Button>
-      </SafeAreaView>
+      </SafeIOSContainer>
     );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#000" }}>
+    <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000" }}>
       <PageHeading
         title={t("scanner.heading")}
         useSafeArea
@@ -202,7 +201,7 @@ export default function QRScanner() {
           </Dialog>
         </>
       </Portal>
-    </SafeAreaView>
+    </SafeIOSContainer>
   );
 }
 

@@ -2,13 +2,13 @@ import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import { Image, View, StyleSheet, Platform } from "react-native";
 import { Button, SegmentedButtons, Text, TextInput } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInDown, FadeIn, FadeInUp } from "react-native-reanimated";
 import ChooseRegion from "../components/ChooseRegion";
 import useTranslation from "../service/useTranslation";
 import { reloadAppAsync } from "expo";
 import * as Updates from "expo-updates";
 import { router } from "expo-router";
+import SafeIOSContainer from "../components/SafeIOSContainer";
 
 interface Region {
   code: string;
@@ -223,11 +223,11 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeIOSContainer style={styles.container}>
       <OnboardingHeader step={step} totalSteps={totalSteps} />
       <View style={styles.mainContent}>{renderCurrentStep()}</View>
       <OnboardingNavigation step={step} isLoading={isLoading} canGoNext={canGoNext} onBack={handleBack} onNext={handleNext} />
-    </SafeAreaView>
+    </SafeIOSContainer>
   );
 }
 

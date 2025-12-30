@@ -1,11 +1,11 @@
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, ImageBackground, Platform, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, ImageBackground, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, MD2DarkTheme, Searchbar, Text } from "react-native-paper";
 import { useLazySearchQuery, useLazyGetSimilarQuery } from "../../../redux/movie/movieApi";
 import { FlashList } from "@shopify/flash-list";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../../types";
 import FrostedGlass from "../../../components/FrostedGlass";
 import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../../../components/Thumbnail";
@@ -28,7 +28,7 @@ const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; i
 
   return (
     <AnimatedPressable
-      entering={FadeIn.delay(index * 50)}
+      entering={FadeIn.delay(Math.min(index * 50, 500))}
       onPress={() => {
         router.push({
           pathname: "/movie/type/[type]/[id]",
@@ -311,8 +311,10 @@ const SearchScreen = () => {
     { id: "tv", label: t("voter.types.series") },
   ] as { id: "movie" | "tv" | "both"; label: string }[];
 
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.searchContainer}>
         <Searchbar
           placeholder={t("search.search-placeholder")}
@@ -371,7 +373,7 @@ const SearchScreen = () => {
         }
         ListEmptyComponent={renderEmptyComponent}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

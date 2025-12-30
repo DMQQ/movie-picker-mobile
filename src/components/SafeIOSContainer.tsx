@@ -1,7 +1,10 @@
 import { ReactNode } from "react";
-import { StyleProp, ViewStyle } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleProp, View, ViewStyle } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SafeIOSContainer({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
-  return <SafeAreaView style={[{ flex: 1, backgroundColor: "#000" }, style]}>{children}</SafeAreaView>;
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={[{ flex: 1, backgroundColor: "#000", paddingTop: insets.top, paddingBottom: insets.bottom }, style]}>{children}</View>
+  );
 }
