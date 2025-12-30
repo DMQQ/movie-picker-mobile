@@ -2,7 +2,7 @@ import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { memo, useContext, useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { Dimensions, Platform, Share, View } from "react-native";
+import { Dimensions, Platform, Share, View, StyleSheet } from "react-native";
 import { Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { Movie } from "../../../types";
@@ -43,7 +43,8 @@ export default function QRCodePage() {
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
-  const [moviesCount, setMoviesCount] = useState<number | null>(0);
+  const [moviesCount, setMoviesCount] = useState<number | null>(null);
+  const [isLoadingMovies, setIsLoadingMovies] = useState(false);
   const hashOptionsRef = useRef<string>("");
 
   const [isPending, startTransition] = useTransition();
@@ -52,6 +53,7 @@ export default function QRCodePage() {
 
   const users = useAppSelector((state) => state.room.room.users);
   const roomId = useAppSelector((state) => state.room.room.roomId);
+  const existingMovies = useAppSelector((state) => state.room.room.movies);
 
   const { category, maxRounds, genre, providers, specialCategories } = useMemo(() => {
     const roomSetup = params.roomSetup ? (JSON.parse(params.roomSetup as string) as RoomSetupParams) : undefined;
@@ -107,6 +109,15 @@ export default function QRCodePage() {
 
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
 
+  // Initialize movie count from existing movies in Redux
+  useEffect(() => {
+    if (existingMovies && existingMovies.length > 0) {
+      console.log("📦 Found existing movies in state:", existingMovies.length);
+      setMoviesCount(existingMovies.length);
+      setIsLoadingMovies(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (!roomConfig || !socket || !nickname) return;
 
@@ -122,12 +133,18 @@ export default function QRCodePage() {
       try {
         if (qrCode && roomId) {
           console.log("🔄 Updating room settings for:", roomId);
+          // Only show loading if we don't already have movies
+          if (existingMovies.length === 0) {
+            setIsLoadingMovies(true);
+            setMoviesCount(null);
+          }
           socket.emit("update-room-config", { roomId, config: roomConfig });
           return;
         }
 
         console.log("🎯 Creating new room...");
         setCreateRoomLoading(true);
+        setIsLoadingMovies(true);
 
         const response = (await socket.emitWithAck("create-room", roomConfig)) as ISocketResponse;
 
@@ -140,6 +157,7 @@ export default function QRCodePage() {
         }
       } catch (error) {
         hashOptionsRef.current = "";
+        setIsLoadingMovies(false);
       } finally {
         setCreateRoomLoading(false);
       }
@@ -149,20 +167,40 @@ export default function QRCodePage() {
   useEffect(() => {
     if (!socket) return;
 
-    socket?.on("active", (users: string[]) => {
+    const handleActive = (users: string[]) => {
       dispatch(roomActions.setActiveUsers(users));
-    });
+    };
 
-    socket?.on("movies", ({ movies }: { movies: Movie[] }) => {
+    const handleMovies = ({ movies }: { movies: Movie[] }) => {
+      console.log("📬 Received movies:", movies.length);
       setMoviesCount(movies.length);
+      setIsLoadingMovies(false);
       if (!!movies) dispatch(roomActions.addMovies(movies));
-    });
+    };
+
+    socket.on("active", handleActive);
+    socket.on("movies", handleMovies);
 
     return () => {
-      socket?.off("active");
-      socket?.off("movies");
+      socket.off("active", handleActive);
+      socket.off("movies", handleMovies);
     };
-  }, [socket, qrCode]);
+  }, [socket]);
+
+  // Timeout for loading state in case movies never arrive
+  useEffect(() => {
+    if (!isLoadingMovies) return;
+
+    const timeout = setTimeout(() => {
+      if (moviesCount === null) {
+        console.log("⏱️ Movies loading timeout - setting to 0");
+        setMoviesCount(0);
+        setIsLoadingMovies(false);
+      }
+    }, 10000); // 10 second timeout
+
+    return () => clearTimeout(timeout);
+  }, [isLoadingMovies, moviesCount]);
 
   const onJoinOwnRoom = (code: string) => {
     startTransition(() => {
@@ -187,66 +225,52 @@ export default function QRCodePage() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
+    <View style={styles.container}>
       <PageHeading showGradientBackground={false} useSafeArea={false} title={t("room.qr-title")} />
-      <View style={[{ position: "relative", flex: 1, paddingHorizontal: 15 }, { marginTop: Platform.OS === "android" ? 20 : 0 }]}>
+      <View style={[styles.contentContainer, Platform.OS === "android" && styles.contentContainerAndroid]}>
         {createRoomLoading ? (
-          <Animated.View entering={FadeInDown} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <Animated.View entering={FadeInDown} style={styles.loadingContainer}>
             <FancySpinner size={100} />
-            <Text style={{ color: "#fff", marginTop: 20 }}>Creating room...</Text>
+            <Text style={styles.loadingText}>Creating room...</Text>
           </Animated.View>
         ) : (
           qrCode && (
-            <Animated.View entering={FadeInDown} style={{ flex: 1 }}>
+            <Animated.View entering={FadeInDown} style={styles.qrCodeContainer}>
               <QrCodeBox code={qrCode} />
             </Animated.View>
           )
         )}
       </View>
-      <View style={{ paddingHorizontal: 15, paddingTop: 15, gap: 7.5 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            height: 25,
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ fontSize: 16 }}>{t("room.active")}:</Text>
-          <View style={{ flexDirection: "row", gap: 5 }}>
+      <View style={styles.bottomSection}>
+        <View style={styles.activeUsersRow}>
+          <Text style={styles.activeUsersLabel}>{t("room.active")}:</Text>
+          <View style={styles.avatarsContainer}>
             {users.map((nick, index) => (
-              <View
-                key={nick + index}
-                style={{
-                  flexDirection: "row",
-                  backgroundColor: "#000",
-                  gap: 5,
-                  borderRadius: 100,
-                  alignItems: "center",
-                }}
-              >
+              <View key={nick + index} style={styles.avatarWrapper}>
                 <Avatar.Text size={25} label={nick[0].toUpperCase()} style={{ backgroundColor: AVATAR_COLORS[index % 5] }} />
               </View>
             ))}
           </View>
         </View>
-        <Text style={{ color: "gray" }}>
-          {moviesCount != null && moviesCount < 15 ? t("room.lower-results-count", { count: moviesCount }) : ""}
-        </Text>
+
+        {isLoadingMovies ? (
+          <Text style={styles.infoText}>Checking available movies...</Text>
+        ) : moviesCount === 0 ? (
+          <Text style={styles.warningText}>{t("room.too-restricted")}</Text>
+        ) : moviesCount != null && moviesCount < 15 ? (
+          <Text style={styles.warningText}>{t("room.lower-results-count", { count: moviesCount })}</Text>
+        ) : null}
 
         <Button
-          disabled={!qrCode || (moviesCount != null ? moviesCount < 5 : false) || createRoomLoading || isPending}
+          disabled={!qrCode || isLoadingMovies || (moviesCount != null && moviesCount < 5) || createRoomLoading || isPending}
           mode="contained"
-          style={{
-            borderRadius: 100,
-            marginTop: 10,
-          }}
-          contentStyle={{ padding: 7.5 }}
+          style={styles.startButton}
+          contentStyle={styles.startButtonContent}
           onPress={() => {
             onJoinOwnRoom(qrCode);
           }}
         >
-          {moviesCount === 0 ? t("room.too-restricted") : "start"}
+          {isLoadingMovies ? "Loading..." : moviesCount === 0 ? t("room.too-restricted") : "Start"}
         </Button>
       </View>
     </View>
@@ -273,45 +297,13 @@ const TutorialTips = () => {
   ];
 
   return (
-    <View
-      style={{
-        marginTop: 15,
-        paddingHorizontal: 10,
-        gap: 10,
-      }}
-    >
+    <View style={styles.tutorialContainer}>
       {tips.map((tip, index) => (
-        <View
-          key={index}
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 12,
-            width: "80%",
-          }}
-        >
-          <View
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 18,
-              backgroundColor: theme.colors.primary + "20",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
+        <View key={index} style={styles.tipRow}>
+          <View style={[styles.tipIconContainer, { backgroundColor: theme.colors.primary + "20" }]}>
             <MaterialCommunityIcons name={tip.icon} size={20} color={theme.colors.primary} />
           </View>
-          <Text
-            style={{
-              flex: 1,
-              fontSize: 14,
-              color: "#fff",
-              opacity: 0.85,
-            }}
-          >
-            {tip.text}
-          </Text>
+          <Text style={styles.tipText}>{tip.text}</Text>
         </View>
       ))}
     </View>
@@ -331,26 +323,16 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
   };
 
   return (
-    <View
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-        flex: 1,
-      }}
-    >
+    <View style={styles.qrBoxContainer}>
       <View
-        style={{
-          padding: 15,
-          borderColor: theme.colors.primary,
-          borderWidth: 5,
-          borderRadius: 20,
-          backgroundColor: theme.colors.surface,
-          shadowColor: theme.colors.primary,
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.3,
-          shadowRadius: 15,
-          elevation: 10,
-        }}
+        style={[
+          styles.qrCodeWrapper,
+          {
+            borderColor: theme.colors.primary,
+            backgroundColor: theme.colors.surface,
+            shadowColor: theme.colors.primary,
+          },
+        ]}
       >
         <QRCode
           backgroundColor={theme.colors.surface}
@@ -364,19 +346,13 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         onPress={async () => {
           shareCode(code);
         }}
-        style={{ marginTop: 10 }}
+        style={styles.shareButton}
       >
         <View>
           {!!code ? (
-            <View style={{ flexDirection: "row", gap: 5, justifyContent: "center", alignItems: "center" }}>
+            <View style={styles.codeRow}>
               {code.split("").map((char, index) => (
-                <Text
-                  key={index}
-                  style={{
-                    fontSize: 20,
-                    fontWeight: "bold",
-                  }}
-                >
+                <Text key={index} style={styles.codeChar}>
                   {char}
                 </Text>
               ))}
@@ -384,16 +360,7 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
           ) : (
             <Text>Loading</Text>
           )}
-          <Text
-            style={{
-              marginTop: 5,
-              opacity: 0.7,
-              textAlign: "center",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          <Text style={styles.shareButtonText}>
             {t("room.share.button")} <FontAwesome name="share" size={14} color={theme.colors.primary} />
           </Text>
         </View>
@@ -402,4 +369,126 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
       <TutorialTips />
     </View>
   );
+});
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+  },
+  contentContainer: {
+    position: "relative",
+    flex: 1,
+    paddingHorizontal: 15,
+  },
+  contentContainerAndroid: {
+    marginTop: 20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    color: "#fff",
+    marginTop: 20,
+  },
+  qrCodeContainer: {
+    flex: 1,
+  },
+  bottomSection: {
+    paddingHorizontal: 15,
+    paddingTop: 15,
+    gap: 7.5,
+  },
+  activeUsersRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: 25,
+    alignItems: "center",
+  },
+  activeUsersLabel: {
+    fontSize: 16,
+  },
+  avatarsContainer: {
+    flexDirection: "row",
+    gap: 5,
+  },
+  avatarWrapper: {
+    flexDirection: "row",
+    backgroundColor: "#000",
+    gap: 5,
+    borderRadius: 100,
+    alignItems: "center",
+  },
+  warningText: {
+    color: "#ff6b6b",
+  },
+  infoText: {
+    color: "#888",
+    fontStyle: "italic",
+  },
+  startButton: {
+    borderRadius: 100,
+    marginTop: 10,
+  },
+  startButtonContent: {
+    padding: 7.5,
+  },
+  tutorialContainer: {
+    marginTop: 15,
+    paddingHorizontal: 10,
+    gap: 10,
+  },
+  tipRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    width: "80%",
+  },
+  tipIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  tipText: {
+    flex: 1,
+    fontSize: 14,
+    color: "#fff",
+    opacity: 0.85,
+  },
+  qrBoxContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+  },
+  qrCodeWrapper: {
+    padding: 15,
+    borderWidth: 5,
+    borderRadius: 20,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 10,
+  },
+  shareButton: {
+    marginTop: 10,
+  },
+  codeRow: {
+    flexDirection: "row",
+    gap: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  codeChar: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  shareButtonText: {
+    marginTop: 5,
+    opacity: 0.7,
+    textAlign: "center",
+  },
 });
