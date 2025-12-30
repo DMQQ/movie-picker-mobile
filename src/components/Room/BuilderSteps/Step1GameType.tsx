@@ -54,10 +54,9 @@ const Step1GameType: React.FC = () => {
           contentContainerStyle={styles.scrollContent}
           onScroll={movieScrollHandler}
           data={movieCategories}
-          keyExtractor={(item, index) => (moviesLoading ? index.toString() : item.id.toString())}
+          keyExtractor={(item) => item.id.toString()}
           renderItem={({ item: category, index }) => (
             <PosterCard
-              key={category.id}
               posterUrl={category.featured_poster}
               label={category.label}
               isSelected={selectedCategoryId === category.id}

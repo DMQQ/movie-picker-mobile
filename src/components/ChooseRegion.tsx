@@ -4,6 +4,7 @@ import { reloadAsync } from "expo-updates";
 import { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { List, Searchbar, Text } from "react-native-paper";
+import useTranslation from "../service/useTranslation";
 
 const regions = [
   // North America
@@ -71,6 +72,7 @@ interface ChooseRegionProps {
 }
 
 const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: ChooseRegionProps) => {
+  const t = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRegion, setSelectedRegion] = useState(regions[0]);
 
@@ -133,7 +135,7 @@ const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: Choose
     return (
       <View style={styles.selectorContainer}>
         <View style={styles.selectorContent}>
-          <Searchbar placeholder="Search regions..." onChangeText={setSearchQuery} value={searchQuery} style={styles.searchbar} />
+          <Searchbar placeholder={t("settings.search-regions")} onChangeText={setSearchQuery} value={searchQuery} style={styles.searchbar} />
 
           <ScrollView style={styles.regionList}>
             {filteredRegions.map((region) => (
@@ -155,10 +157,10 @@ const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: Choose
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Region & Language Settings</Text>
+      <Text style={styles.title}>{t("settings.region-language-settings")}</Text>
 
       <List.Item
-        title="Selected Region"
+        title={t("settings.selected-region")}
         description={`${selectedRegion.name} (${selectedRegion.code})`}
         left={(props) => <List.Icon {...props} icon="map-marker" />}
         onPress={() => onBack && onBack()}
@@ -167,7 +169,7 @@ const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: Choose
       />
 
       <List.Item
-        title="Timezone"
+        title={t("settings.timezone")}
         description={selectedRegion.timezone}
         left={(props) => <List.Icon {...props} icon="clock-outline" />}
         style={styles.listItem}

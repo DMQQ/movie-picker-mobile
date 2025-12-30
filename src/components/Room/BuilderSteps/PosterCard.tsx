@@ -128,9 +128,9 @@ const styles = StyleSheet.create({
   gradient: {
     position: "absolute",
     bottom: -2,
+    top: -2,
     left: -2,
     right: -2,
-    height: 92,
     justifyContent: "flex-end",
     padding: 10,
     borderBottomLeftRadius: 12,

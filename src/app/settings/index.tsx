@@ -60,13 +60,13 @@ export default function SettingsScreen() {
       <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)", paddingTop: 100 }}>
         <View style={{ paddingHorizontal: 15, flex: 1 }}>
           <View style={{ marginTop: 20 }}>
-            <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Nickname</Text>
+            <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>{t("settings.nickname")}</Text>
 
             <TextInput
               value={nickname}
               onChangeText={setNickname}
               mode="outlined"
-              label={"Nickname"}
+              label={t("settings.nickname-label")}
               style={{ backgroundColor: "transparent", marginTop: 5 }}
             />
 
@@ -74,7 +74,7 @@ export default function SettingsScreen() {
           </View>
 
           <View style={{ marginTop: 35 }}>
-            <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>Application language</Text>
+            <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>{t("settings.application-language")}</Text>
 
             <SegmentedButtons
               buttons={[
@@ -108,8 +108,10 @@ export default function SettingsScreen() {
           />
 
           <Text style={{ color: "gray" }}>
-            Update {Updates.manifest.id} {"\n"}Version: {Updates.manifest?.version}
-            {"\n"}Created at: ({Updates.manifest?.createdAt?.toString().split("T")[0]})
+            {t("settings.update")} {Updates.manifest?.id} {"\n"}
+            {t("settings.version")}: {(Updates.manifest as any)?.version}
+            {"\n"}
+            {t("settings.created-at")}: ({(Updates.manifest as any)?.createdAt?.toString().split("T")[0]})
           </Text>
         </View>
         <View style={{ padding: 15, paddingBottom: insets.bottom, backgroundColor: "rgba(0,0,0,0.1)" }}>
