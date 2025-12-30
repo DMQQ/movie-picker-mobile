@@ -9,6 +9,7 @@ interface RoomBuilderState {
   currentStep: number;
   gameType: "movie" | "tv";
   category: string;
+  categoryId: string;
   genres: Genre[];
   providers: number[];
   specialCategories: string[];
@@ -20,6 +21,7 @@ const initialState: RoomBuilderState = {
   currentStep: 1,
   gameType: "movie",
   category: "",
+  categoryId: "",
   genres: [],
   providers: [],
   specialCategories: [],
@@ -40,8 +42,9 @@ export const roomBuilderSlice = createSlice({
     goNext: (state) => {
       state.currentStep = Math.min(5, state.currentStep + 1);
     },
-    setCategory: (state, action: PayloadAction<{ path: string; type: "movie" | "tv" }>) => {
+    setCategory: (state, action: PayloadAction<{ id: string; path: string; type: "movie" | "tv" }>) => {
       state.category = action.payload.path;
+      state.categoryId = action.payload.id;
       // Reset genres when changing category type
       if (state.gameType !== action.payload.type) {
         state.genres = [];

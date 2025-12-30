@@ -117,6 +117,7 @@
     "builder": {
       "next": "Next",
       "createRoom": "Create Room",
+      "leaveStepConfirmation": "Are you sure you want to go back? Your progress will be lost.",
       "step1": {
         "title": "What do you want to watch?",
         "subtitle": "Choose a category to get started",
@@ -210,6 +211,12 @@
     "create": "Create"
   },
 
+  "common": {
+    "confirmation": "Confirmation",
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No"
+  },
   "global": {
     "justwatch": "The movie availabilities are powered by JustWatch",
     "attributions": "Movies povered by The Movie Database API And JustWatch",

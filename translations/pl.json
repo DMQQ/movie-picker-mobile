@@ -117,6 +117,7 @@
     "builder": {
       "next": "Dalej",
       "createRoom": "Utwórz pokój",
+      "leaveStepConfirmation": "Czy na pewno chcesz wrócić? Twój postęp zostanie utracony.",
       "step1": {
         "title": "Co chcesz obejrzeć?",
         "subtitle": "Wybierz kategorię, aby rozpocząć",
@@ -208,6 +209,12 @@
     "input-label": "Wprowadź nazwę dla nowej kolekcji",
     "cancel": "Anuluj",
     "create": "Stwórz"
+  },
+  "common": {
+    "confirmation": "Potwierdzenie",
+    "cancel": "Anuluj",
+    "yes": "Tak",
+    "no": "Nie"
   },
   "global": {
     "justwatch": "Dostępność filmów wspierana przez JustWatch",

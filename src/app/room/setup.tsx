@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { View, Platform } from "react-native";
+import { View, Platform, Alert } from "react-native";
 import { router } from "expo-router";
 import PageHeading from "../../components/PageHeading";
 import StepContainer from "../../components/Room/StepContainer";
@@ -55,9 +55,40 @@ export default function RoomSetup() {
     }
   }, [currentStep]);
 
+  const handleBackPress = useCallback(() => {
+    if (currentStep > 1) {
+      Alert.alert(
+        t("common.confirmation"),
+        t("room.builder.leaveStepConfirmation"),
+        [
+          {
+            text: t("common.cancel"),
+            style: "cancel",
+          },
+          {
+            text: t("common.yes"),
+            style: "destructive",
+            onPress: () => {
+              router.back();
+            },
+          },
+        ],
+        { cancelable: true }
+      );
+    } else {
+      router.back();
+    }
+  }, [currentStep]);
+
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <PageHeading gradientHeight={100} showGradientBackground={false} useSafeArea={false} title={getStepTitle()} />
+      <PageHeading
+        onPress={handleBackPress}
+        gradientHeight={100}
+        showGradientBackground={false}
+        useSafeArea={false}
+        title={getStepTitle()}
+      />
 
       <StepContainer currentStep={currentStep} totalSteps={5} isLastStep={currentStep === 5} footerSubtitle={getStepSubtitle()}>
         {renderStep}

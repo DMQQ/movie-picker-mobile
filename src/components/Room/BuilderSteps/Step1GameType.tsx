@@ -15,11 +15,12 @@ const Step1GameType: React.FC = () => {
   const { data: tvCategories, isLoading: tvLoading } = useGetTVCategoriesWithThumbnailsQuery();
   const t = useTranslation();
 
-  const selectedCategory = useAppSelector((state) => state.builder.category);
+  const selectedCategoryId = useAppSelector((state) => state.builder.categoryId);
 
-  const onSelectCategory = (categoryPath: string, gameType: "movie" | "tv") => {
+  const onSelectCategory = (categoryId: string, categoryPath: string, gameType: "movie" | "tv") => {
     dispatch(
       setCategory({
+        id: categoryId,
         path: categoryPath,
         type: gameType,
       })
@@ -59,8 +60,8 @@ const Step1GameType: React.FC = () => {
               key={category.id}
               posterUrl={category.featured_poster}
               label={category.label}
-              isSelected={selectedCategory === category.path}
-              onPress={() => onSelectCategory(category.path, "movie")}
+              isSelected={selectedCategoryId === category.id}
+              onPress={() => onSelectCategory(category.id, category.path, "movie")}
               delay={index * 50}
               large
               scrollX={movieScrollX}
@@ -92,8 +93,8 @@ const Step1GameType: React.FC = () => {
               key={category.id}
               posterUrl={category.featured_poster}
               label={category.label}
-              isSelected={selectedCategory === category.path}
-              onPress={() => onSelectCategory(category.path, "tv")}
+              isSelected={selectedCategoryId === category.id}
+              onPress={() => onSelectCategory(category.id, category.path, "tv")}
               delay={index * 50}
               large
               scrollX={tvScrollX}
