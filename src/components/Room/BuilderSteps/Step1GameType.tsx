@@ -69,7 +69,7 @@ const Step1GameType: React.FC = () => {
             />
           )}
           ListEmptyComponent={
-            <View>
+            <View style={{ flexDirection: "row", gap: 12 }}>
               {moviesLoading && [1, 2, 3, 4].map((item) => <SkeletonCard key={item} width={200} height={300} borderRadius={12} />)}
             </View>
           }
@@ -102,7 +102,14 @@ const Step1GameType: React.FC = () => {
             />
           )}
           ListEmptyComponent={
-            <View>{tvLoading && [1, 2, 3, 4].map((item) => <SkeletonCard key={item} width={200} height={300} borderRadius={12} />)}</View>
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 12,
+              }}
+            >
+              {tvLoading && [1, 2, 3, 4].map((item) => <SkeletonCard key={item} width={200} height={300} borderRadius={12} />)}
+            </View>
           }
         />
       </View>

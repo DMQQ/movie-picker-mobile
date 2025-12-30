@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Switch, Button } from "react-native-paper";
 import { useGetAllProvidersQuery } from "../../../redux/movie/movieApi";
