@@ -1,13 +1,38 @@
 import React from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
-import { Button, IconButton, Text } from "react-native-paper";
+import { View, StyleSheet } from "react-native";
+import { Button, IconButton, MD2DarkTheme, Text, useTheme } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 import BuilderProgress from "./BuilderSteps/BuilderProgress";
 import useTranslation from "../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { router } from "expo-router";
 import { goBack, goNext } from "../../redux/roomBuilder/roomBuilderSlice";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+interface DetailsTabProps {
+  currentStep: number;
+  totalSteps: number;
+}
+
+const DetailsTab = ({ currentStep, totalSteps }: DetailsTabProps) => {
+  const isRoomCreated = useAppSelector((state) => state.room.isCreated);
+  const qrCode = useAppSelector((state) => state.room.qrCode);
+
+  return (
+    <View
+      style={[
+        styles.progressRow,
+        {
+          justifyContent: isRoomCreated && qrCode ? "space-between" : "center",
+        },
+      ]}
+    >
+      {isRoomCreated && qrCode && <RoomActiveIndicator />}
+      <BuilderProgress currentStep={currentStep} totalSteps={totalSteps} />
+    </View>
+  );
+};
 
 interface StepContainerProps {
   currentStep: number;
@@ -17,6 +42,31 @@ interface StepContainerProps {
   footerSubtitle?: string;
   children: React.ReactNode;
 }
+
+const RoomActiveIndicator: React.FC = () => {
+  const theme = useTheme();
+  const t = useTranslation();
+  const opacity = useSharedValue(1);
+
+  React.useEffect(() => {
+    opacity.value = withRepeat(withSequence(withTiming(0.5, { duration: 800 }), withTiming(1, { duration: 800 })), -1, false);
+  }, []);
+
+  const pulseStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  return (
+    <Animated.View entering={FadeIn} style={styles.roomActiveContainer}>
+      <Animated.View style={[pulseStyle, styles.pulseIconContainer]}>
+        <View style={[styles.iconCircle, { backgroundColor: theme.colors.primary + "25" }]}>
+          <MaterialCommunityIcons name="account-multiple" size={10} color={theme.colors.primary} />
+        </View>
+      </Animated.View>
+      <Text style={styles.roomActiveText}>{t("room.builder.roomActive")}</Text>
+    </Animated.View>
+  );
+};
 
 const StepContainer: React.FC<StepContainerProps> = ({
   currentStep,
@@ -103,7 +153,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
             {nextButtonText || (isLastStep ? t("room.builder.createRoom") : t("room.builder.next"))}
           </Button>
         </View>
-        <BuilderProgress currentStep={currentStep} totalSteps={totalSteps} />
+        <DetailsTab currentStep={currentStep} totalSteps={totalSteps} />
       </LinearGradient>
     </View>
   );
@@ -159,6 +209,33 @@ const styles = StyleSheet.create({
   },
   nextButtonContent: {
     paddingVertical: 8,
+  },
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 8,
+  },
+  roomActiveContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  pulseIconContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  iconCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  roomActiveText: {
+    fontSize: 11,
+    color: MD2DarkTheme.colors.primary,
+    opacity: 0.8,
   },
 });
 

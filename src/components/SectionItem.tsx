@@ -11,7 +11,13 @@ const getColor = (score: number) => {
   return "#db2360"; // Red
 };
 
-export const SectionListItem = (item: Movie & { href: { pathname: string; params: Record<string, any> } }) => {
+interface SectionListItemProps extends Movie {
+  href: { pathname: string; params: Record<string, any> };
+
+  imageWidth?: number;
+}
+
+export const SectionListItem = ({ poster_path, vote_average, name, title, href, imageWidth }: SectionListItemProps) => {
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -27,22 +33,36 @@ export const SectionListItem = (item: Movie & { href: { pathname: string; params
   };
 
   return (
-    <Animated.View style={animatedStyle}>
-      <Link href={item.href as any} style={{ marginRight: 15 }} push onPressIn={handlePressIn} onPressOut={handlePressOut}>
+    <Animated.View style={[animatedStyle, !imageWidth && { marginRight: 15 }]}>
+      <Link href={href as any} push onPressIn={handlePressIn} onPressOut={handlePressOut}>
         <Link.Trigger>
           <View style={[sectionStyles.item]}>
-            <Thumbnail path={item.poster_path} size={185} container={sectionStyles.image} alt={item.name || item.title} />
-            {item.vote_average > 0 && (
-              <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(item.vote_average || 0) }]}>
+            <Thumbnail
+              path={poster_path}
+              size={185}
+              container={[
+                sectionStyles.image,
+
+                imageWidth !== undefined
+                  ? {
+                      width: imageWidth,
+                      height: imageWidth * 1.5,
+                    }
+                  : undefined,
+              ]}
+              alt={name || title}
+            />
+            {vote_average > 0 && (
+              <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(vote_average || 0) }]}>
                 <Text
                   style={[
                     sectionStyles.badgeItem,
                     {
-                      color: item.vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
+                      color: vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
                     },
                   ]}
                 >
-                  {item.vote_average ? item.vote_average.toFixed(1) + "/10" : "N/A"}
+                  {vote_average ? vote_average.toFixed(1) + "/10" : "N/A"}
                 </Text>
               </View>
             )}
@@ -71,14 +91,14 @@ const sectionStyles = StyleSheet.create({
 
   badgeContainer: {
     position: "absolute",
-    right: -2,
+    right: 0,
     bottom: 0,
     backgroundColor: MD2DarkTheme.colors.surface,
     paddingHorizontal: 5,
     paddingVertical: 3,
-    transform: [{ skewX: "-10deg" }],
+    transform: [{ skewX: "-5deg" }],
     borderTopLeftRadius: 8,
-    borderBottomRightRadius: 6,
+    borderBottomRightRadius: 2,
   },
 
   badgeItem: {

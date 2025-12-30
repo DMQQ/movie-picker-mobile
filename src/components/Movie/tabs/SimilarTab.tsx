@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Dimensions, StyleSheet, View, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Movie } from "../../../../types";
 import { useLazyGetSimilarQuery } from "../../../redux/movie/movieApi";
@@ -8,6 +8,8 @@ import useTranslation from "../../../service/useTranslation";
 import uniqueBy from "../../../utils/unique";
 
 const { width } = Dimensions.get("screen");
+
+const imageWidth = (width - 60) / 3;
 
 interface SimilarTabProps {
   id: number;
@@ -61,6 +63,7 @@ function SimilarTab({ id, type }: SimilarTabProps) {
                 },
               }}
               {...item}
+              imageWidth={imageWidth}
             />
           </View>
         ))}
@@ -92,11 +95,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "flex-start",
+    gap: 15,
   },
   itemWrapper: {
-    width: (width - 20) / 3 - 7,
-    marginHorizontal: 3.5,
-    marginBottom: 10,
+    width: imageWidth,
   },
   emptyContainer: {
     padding: 20,

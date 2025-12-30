@@ -43,7 +43,7 @@ const Step1GameType: React.FC = () => {
   });
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>{t("room.builder.step1.movies")}</Text>
 

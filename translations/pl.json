@@ -172,7 +172,8 @@
           }
         }
       },
-      "loading": "Ładowanie..."
+      "loading": "Ładowanie...",
+      "roomActive": "Pokój gotowy"
     }
   },
   "fortune-wheel": {

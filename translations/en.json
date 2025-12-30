@@ -172,7 +172,8 @@
           }
         }
       },
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "roomActive": "Room is ready"
     }
   },
   "fortune-wheel": {
