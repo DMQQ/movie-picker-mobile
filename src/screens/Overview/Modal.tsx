@@ -16,13 +16,13 @@ const ModalEnteringTransition = () => {
       transform: [{ scale: 0.8 }, { translateY: 100 }],
     },
     animations: {
-      opacity: withSpring(1),
+      opacity: withSpring(1, { damping: 40, stiffness: 300 }),
       transform: [
-        { scale: withSpring(1, { damping: 20, stiffness: 120 }) },
+        { scale: withSpring(1, { damping: 35, stiffness: 250 }) },
         {
           translateY: withSpring(0, {
-            damping: 25,
-            stiffness: 150,
+            damping: 38,
+            stiffness: 280,
           }),
         },
       ],
