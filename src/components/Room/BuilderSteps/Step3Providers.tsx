@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Switch, Button } from "react-native-paper";
 import { useGetAllProvidersQuery } from "../../../redux/movie/movieApi";
@@ -15,21 +15,23 @@ const Step3Providers = () => {
   const [rememberProviders, setRememberProviders] = useState(false);
   const selectedProviders = useAppSelector((state) => state.builder.providers);
   const { clearPreferences, preferences: savedProviders, savePreferences } = useBuilderPreferences();
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
-    if (savedProviders?.providers && savedProviders.providers.length > 0) {
+    if (!hasInitialized.current && savedProviders?.providers && savedProviders.providers.length > 0) {
       dispatch(setProviders(savedProviders.providers));
       setRememberProviders(true);
+      hasInitialized.current = true;
+    } else if (!hasInitialized.current && savedProviders !== null) {
+      hasInitialized.current = true;
     }
-    setIsInitialLoad(false);
-  }, []);
+  }, [dispatch, savedProviders]);
 
   useEffect(() => {
-    if (!isInitialLoad && rememberProviders && selectedProviders.length > 0) {
+    if (hasInitialized.current && rememberProviders && selectedProviders.length > 0) {
       savePreferences({ providers: selectedProviders });
     }
-  }, [rememberProviders, selectedProviders, isInitialLoad]);
+  }, [rememberProviders, selectedProviders, savePreferences]);
 
   const hasSavedProviders = savedProviders && savedProviders.providers.length > 0;
 

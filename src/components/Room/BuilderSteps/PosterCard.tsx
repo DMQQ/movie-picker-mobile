@@ -1,9 +1,8 @@
 import React from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable, Image } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import Thumbnail from "../../Thumbnail";
 
 interface PosterCardProps {
   posterUrl: string;
@@ -56,6 +55,7 @@ const PosterCard: React.FC<PosterCardProps> = ({
   };
 
   const size = large ? 500 : 300;
+  const imageUrl = `https://image.tmdb.org/t/p/w${size}${posterUrl}`;
 
   return (
     <Animated.View entering={FadeIn.duration(400).delay(delay)} style={styles.container}>
@@ -68,7 +68,7 @@ const PosterCard: React.FC<PosterCardProps> = ({
           ]}
         >
           <Animated.View style={[styles.imageContainer, imageParallaxStyle]}>
-            <Thumbnail path={posterUrl} size={size} priority="high" container={styles.posterImage} contentFit="cover" />
+            <Image source={{ uri: imageUrl }} style={styles.posterImage} resizeMode="cover" />
           </Animated.View>
 
           <LinearGradient colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]} style={styles.gradient}>

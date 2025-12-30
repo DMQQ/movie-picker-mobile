@@ -10,18 +10,24 @@ export default function NoConnectionError() {
   const [isServerOkay, setIsServerOkay] = useState(true);
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     const checkServer = async () => {
       try {
         const response = await fetch(url + "/health");
 
         setIsServerOkay(response.ok);
-      } catch (error) {}
+      } catch {}
     };
 
     checkServer();
+
+    return () => {
+      abortController.abort();
+    };
   }, [isConnected]);
 
-  if (isConnected && isServerOkay) {
+  if (isServerOkay) {
     return null;
   }
 
