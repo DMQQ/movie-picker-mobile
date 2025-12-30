@@ -124,7 +124,6 @@ export default function MovieDetailsScreen() {
               },
             ]}
             path={posterPath || (movie?.poster_path as any)}
-            placeholder={movie?.placeholder_poster_path}
             priority="high"
           />
         </Animated.View>

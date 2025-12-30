@@ -89,7 +89,7 @@ export default function FortuneWheel() {
 
   useEffect(() => {
     if (params?.category) {
-      handleThrowDice(params.category);
+      handleThrowDice(params.category as string);
     }
   }, [params?.category, handleThrowDice]);
 
@@ -103,7 +103,7 @@ export default function FortuneWheel() {
             ? (JSON.parse(params.movies) as Movie[])
             : (JSON.parse((params.movies as string[])[0]) as Movie[]);
 
-        await Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path)));
+        Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path)));
 
         const shuffled = shuffleInPlace([...movies]);
 

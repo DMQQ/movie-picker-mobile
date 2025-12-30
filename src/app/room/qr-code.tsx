@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { memo, useContext, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Dimensions, Platform, Share, View, StyleSheet } from "react-native";
-import { Avatar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
+import { Avatar, Button, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { Movie } from "../../../types";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";

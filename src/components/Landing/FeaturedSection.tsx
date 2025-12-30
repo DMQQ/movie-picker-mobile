@@ -1,7 +1,7 @@
 import { Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useMemo } from "react";
-import { Dimensions, ImageBackground, Platform, StyleSheet, View } from "react-native";
+import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useGetFeaturedQuery } from "../../redux/movie/movieApi";
@@ -9,6 +9,8 @@ import RatingIcons from "../RatingIcons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BlurViewWrapper } from "../PlatformBlurView";
 import Skeleton from "../Skeleton/Skeleton";
+import { ImageBackground } from "expo-image";
+import { ThumbnailSizes } from "../Thumbnail";
 
 const FeaturedSectionSkeleton = memo(() => {
   const insets = useSafeAreaInsets();
@@ -101,7 +103,12 @@ const FeaturedSection = memo((props: { selectedChip: string }) => {
       source={{
         uri: "https://image.tmdb.org/t/p/w780" + featured?.poster_path,
       }}
-      defaultSource={{ uri: featured?.placeholder_poster_path }}
+      placeholder={`https://image.tmdb.org/t/p/w${ThumbnailSizes.poster.tiny}` + featured?.poster_path}
+      placeholderContentFit="cover"
+      cachePolicy="disk"
+      recyclingKey={featured?.poster_path}
+      contentFit="cover"
+      transition={200}
     >
       <LinearGradient style={styles.gradientContainer} colors={gradient}>
         <Animated.View entering={FadeInDown.delay(250)}>

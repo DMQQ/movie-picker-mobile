@@ -126,13 +126,7 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
 
         <Animated.View style={[styles.movieInfoContainer, contentOpacity]}>
           <Animated.View style={[styles.posterContainer, posterTransform]}>
-            <Thumbnail
-              size={ThumbnailSizes.poster.small}
-              container={[styles.posterThumbnail]}
-              path={movie?.poster_path}
-              placeholder={movie?.placeholder_poster_path}
-              priority="low"
-            />
+            <Thumbnail size={ThumbnailSizes.poster.small} container={[styles.posterThumbnail]} path={movie?.poster_path} priority="low" />
           </Animated.View>
 
           <View style={styles.textContainer}>

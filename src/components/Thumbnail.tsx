@@ -1,6 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { PropsWithChildren, useState } from "react";
-import { ImageBackground, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Image, ImageProps } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
 
@@ -9,7 +8,6 @@ interface ThumbnailProps extends ImageProps {
   size?: number;
   container?: StyleProp<ViewStyle>;
   priority?: "low" | "high" | "normal";
-  placeholder?: string;
 
   alt?: string;
 }
@@ -53,15 +51,6 @@ export const ThumbnailSizes = {
   },
 } as const;
 
-const BlurPlaceholder = ({ children, placeholder, style }: PropsWithChildren<{ placeholder?: string; style: StyleProp<ViewStyle> }>) =>
-  placeholder ? (
-    <ImageBackground source={{ uri: placeholder }} style={[style]}>
-      {children}
-    </ImageBackground>
-  ) : (
-    <View style={[style]}>{children}</View>
-  );
-
 const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path">) => (
   <View style={[styles.container, container]}>
     <View
@@ -70,24 +59,20 @@ const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path"
       <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={MD2DarkTheme.colors.placeholder} />
 
       <Text style={{ color: MD2DarkTheme.colors.placeholder, marginTop: 8 }} variant="bodyMedium">
-        No Image
+        {rest.alt || "No Image Available"}
       </Text>
     </View>
   </View>
 );
 
-export default function Thumbnail({ path, size = 200, container, priority = "normal", placeholder, ...rest }: ThumbnailProps) {
+export default function Thumbnail({ path, size = 200, container, priority = "normal", ...rest }: ThumbnailProps) {
   if (!path) {
     return <NoImage size={size} container={container} {...rest} />;
   }
 
   return (
-    <BlurPlaceholder style={[styles.container, container]}>
-      {rest.alt && (
-        <View style={styles.altContainer}>
-          <Text style={styles.altText}>{rest.alt}</Text>
-        </View>
-      )}
+    <View style={[styles.container, container]}>
+      {rest.alt && <Text style={styles.altText}>{rest.alt}</Text>}
       <Image
         {...rest}
         priority={priority}
@@ -95,14 +80,14 @@ export default function Thumbnail({ path, size = 200, container, priority = "nor
           uri: `https://image.tmdb.org/t/p/w${size}` + path,
         }}
         style={[styles.image, rest.style]}
-        placeholder={placeholder ? { uri: placeholder } : undefined}
+        placeholder={`https://image.tmdb.org/t/p/w${ThumbnailSizes.poster.tiny}` + path}
         placeholderContentFit="cover"
         cachePolicy="disk"
         recyclingKey={path}
         contentFit="cover"
         transition={200}
       />
-    </BlurPlaceholder>
+    </View>
   );
 }
 
@@ -113,7 +98,7 @@ export async function prefetchThumbnail(path: string, size: number = 200) {
 }
 
 const styles = StyleSheet.create({
-  container: { overflow: "hidden" },
+  container: { overflow: "hidden", justifyContent: "center", alignItems: "center" },
   image: {
     flex: 1,
     width: "100%",
@@ -135,5 +120,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontFamily: "Bebas",
     textAlign: "center",
+    position: "absolute",
+    width: "100%",
   },
 });

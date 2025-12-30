@@ -14,14 +14,7 @@ import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
 import { memo } from "react";
 
 const SwipeText = memo(
-  (props: {
-    text: string;
-    rotate: string;
-    color: string;
-    right: boolean;
-    icon?: React.ReactNode;
-    isVisible?: SharedValue<boolean>;
-  }) => {
+  (props: { text: string; rotate: string; color: string; right: boolean; icon?: React.ReactNode; isVisible?: SharedValue<boolean> }) => {
     const animatedStyle = useAnimatedStyle(() => {
       if (!props.isVisible) return {};
 
@@ -83,13 +76,12 @@ const SwipeText = memo(
         </View>
       </Animated.View>
     );
-  },
+  }
 );
 
 function Poster(props: {
   card: {
     poster_path: string;
-    placeholder_poster_path?: string;
   };
   translate?: SharedValue<{
     x: number;
@@ -113,15 +105,11 @@ function Poster(props: {
     if (!props.translate) return {};
 
     return {
-      opacity: interpolate(
-        props.translate.value.x,
-        [-width / 1.5, 0, width / 1.5],
-        [1, 0, 1],
-      ),
+      opacity: interpolate(props.translate.value.x, [-width / 1.5, 0, width / 1.5], [1, 0, 1]),
       backgroundColor: interpolateColor(
         props.translate.value.x,
         [-width, 0, width],
-        ["rgba(255,0,0,0.6)", "rgba(0,0,0,0)", "rgba(0,255,0,0.6)"],
+        ["rgba(255,0,0,0.6)", "rgba(0,0,0,0)", "rgba(0,255,0,0.6)"]
       ),
     };
   });
@@ -145,14 +133,7 @@ function Poster(props: {
           />
 
           <SwipeText
-            icon={
-              <Ionicons
-                name="heart"
-                size={32}
-                color="#fff"
-                style={{ transform: [{ translateY: 2 }] }}
-              />
-            }
+            icon={<Ionicons name="heart" size={32} color="#fff" style={{ transform: [{ translateY: 2 }] }} />}
             isVisible={props.isLeftVisible}
             text="LIKE"
             color="#42DCA3"
@@ -174,7 +155,6 @@ function Poster(props: {
 
       <Thumbnail
         path={props.card.poster_path}
-        placeholder={props.card.placeholder_poster_path}
         size={ThumbnailSizes.poster.xxlarge}
         container={{ borderRadius: 19, ...imageDimensions }}
         style={{ borderRadius: 19, ...imageDimensions }}
