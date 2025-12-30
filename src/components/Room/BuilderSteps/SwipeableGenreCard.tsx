@@ -4,6 +4,7 @@ import { Text, useTheme } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import Thumbnail from "../../Thumbnail";
 
 interface SwipeableGenreCardProps {
   genreName: string;
@@ -54,8 +55,6 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
     scale.value = 1;
   };
 
-  const fullPosterUrl = posterUrl ? `https://image.tmdb.org/t/p/w780${posterUrl}` : "";
-
   return (
     <Animated.View entering={FadeIn.duration(400).delay(delay)} style={vertical ? styles.containerVertical : styles.container}>
       <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
@@ -66,9 +65,11 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
             isSelected && { borderColor: theme.colors.primary, borderWidth: 3 },
           ]}
         >
-          {fullPosterUrl ? (
-            <View style={styles.background}>
-              <Animated.Image source={{ uri: fullPosterUrl }} style={[styles.backgroundImage, imageParallaxStyle]} resizeMode="cover" />
+          {posterUrl ? (
+            <>
+              <Animated.View style={[styles.background, imageParallaxStyle]}>
+                <Thumbnail path={posterUrl} size={780} priority="high" container={styles.backgroundImage} contentFit="cover" />
+              </Animated.View>
               <LinearGradient colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]} style={styles.gradient}>
                 <Text style={vertical ? styles.genreNameVertical : styles.genreName}>{genreName}</Text>
                 {isSelected && (
@@ -77,7 +78,7 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
                   </View>
                 )}
               </LinearGradient>
-            </View>
+            </>
           ) : (
             <View style={[styles.background, styles.placeholder]}>
               <LinearGradient colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]} style={styles.gradient}>
@@ -123,25 +124,33 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
   },
   background: {
-    width: "100%",
-    height: "100%",
-    overflow: "hidden",
-  },
-  backgroundImage: {
     position: "absolute",
     width: "120%",
     height: "100%",
     left: "-10%",
+    overflow: "hidden",
+  },
+  backgroundImage: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
     borderRadius: 16,
   },
   placeholder: {
     backgroundColor: "#2a2a2a",
   },
   gradient: {
-    flex: 1,
+    position: "absolute",
+    bottom: -3,
+    left: -3,
+    right: -3,
+    top: 0,
     justifyContent: "flex-end",
     paddingHorizontal: 20,
     paddingBottom: 24,
+    borderRadius: 16,
   },
   genreName: {
     color: "#fff",

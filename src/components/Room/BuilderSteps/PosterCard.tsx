@@ -1,8 +1,9 @@
 import React from "react";
-import { View, StyleSheet, Pressable, Image } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
+import Thumbnail from "../../Thumbnail";
 
 interface PosterCardProps {
   posterUrl: string;
@@ -54,7 +55,7 @@ const PosterCard: React.FC<PosterCardProps> = ({
     scale.value = 1;
   };
 
-  const imageUrl = posterUrl ? `https://image.tmdb.org/t/p/w500${posterUrl}` : "";
+  const size = large ? 500 : 300;
 
   return (
     <Animated.View entering={FadeIn.duration(400).delay(delay)} style={styles.container}>
@@ -66,9 +67,9 @@ const PosterCard: React.FC<PosterCardProps> = ({
             isSelected && { borderColor: theme.colors.primary, borderWidth: 3 },
           ]}
         >
-          <View style={styles.imageContainer}>
-            <Animated.Image source={{ uri: imageUrl }} style={[styles.posterImage, imageParallaxStyle]} resizeMode="cover" />
-          </View>
+          <Animated.View style={[styles.imageContainer, imageParallaxStyle]}>
+            <Thumbnail path={posterUrl} size={size} priority="high" container={styles.posterImage} contentFit="cover" />
+          </Animated.View>
 
           <LinearGradient colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]} style={styles.gradient}>
             <Text style={styles.label} numberOfLines={2}>
@@ -111,25 +112,29 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     position: "absolute",
-    width: "100%",
-    height: "100%",
+    width: "125%",
+    height: "105%",
+    left: "-10%",
     overflow: "hidden",
   },
   posterImage: {
     position: "absolute",
-    width: "120%",
+    top: 0,
+    left: 0,
+    width: "100%",
     height: "100%",
-    left: "-10%",
     borderRadius: 12,
   },
   gradient: {
     position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 90,
+    bottom: -2,
+    left: -2,
+    right: -2,
+    height: 92,
     justifyContent: "flex-end",
     padding: 10,
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
   },
   label: {
     color: "#fff",
