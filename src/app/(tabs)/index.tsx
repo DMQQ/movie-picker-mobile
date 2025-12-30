@@ -26,7 +26,7 @@ const PagerCategoryScreen = memo(() => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedChip, setSelectedChip] = useState("all");
 
-  const { data: chipCategories = [], error } = useGetChipCategoriesQuery();
+  const { data: chipCategories = [] } = useGetChipCategoriesQuery();
 
   const handleChipPress = useCallback((chip: string) => {
     setSelectedChip(chip);

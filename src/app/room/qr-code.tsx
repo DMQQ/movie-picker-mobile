@@ -133,16 +133,15 @@ export default function QRCodePage() {
       try {
         if (qrCode && roomId) {
           console.log("🔄 Updating room settings for:", roomId);
-          // Only show loading if we don't already have movies
+
           if (existingMovies.length === 0) {
             setIsLoadingMovies(true);
             setMoviesCount(null);
           }
-          socket.emit("update-room-config", { roomId, config: roomConfig });
+          socket.emit("room:update-config", { roomId, config: roomConfig });
           return;
         }
 
-        console.log("🎯 Creating new room...");
         setCreateRoomLoading(true);
         setIsLoadingMovies(true);
 
@@ -187,17 +186,15 @@ export default function QRCodePage() {
     };
   }, [socket]);
 
-  // Timeout for loading state in case movies never arrive
   useEffect(() => {
     if (!isLoadingMovies) return;
 
     const timeout = setTimeout(() => {
       if (moviesCount === null) {
-        console.log("⏱️ Movies loading timeout - setting to 0");
         setMoviesCount(0);
         setIsLoadingMovies(false);
       }
-    }, 10000); // 10 second timeout
+    }, 10000);
 
     return () => clearTimeout(timeout);
   }, [isLoadingMovies, moviesCount]);
