@@ -1,16 +1,21 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Image, ImageProps } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
+import { Image as RNImage, ImageProps as RNImageProps } from "react-native";
 
-interface ThumbnailProps extends ImageProps {
+type Shared<T extends boolean> = {
   path: string;
   size?: number;
   container?: StyleProp<ViewStyle>;
   priority?: "low" | "high" | "normal";
 
   alt?: string;
-}
+
+  isFlashListItem?: T;
+};
+
+type ThumbnailProps<T extends boolean> = T extends true ? Shared<T> & Omit<RNImageProps, "source"> : Shared<T> & Omit<ImageProps, "source">;
 
 export const ThumbnailSizes = {
   poster: {
@@ -51,7 +56,7 @@ export const ThumbnailSizes = {
   },
 } as const;
 
-const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path">) => (
+const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps<boolean>, "path">) => (
   <View style={[styles.container, container]}>
     <View
       style={[styles.image, rest.style, { justifyContent: "center", alignItems: "center", backgroundColor: MD2DarkTheme.colors.surface }]}
@@ -65,16 +70,34 @@ const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path"
   </View>
 );
 
-export default function Thumbnail({ path, size = 200, container, priority = "normal", ...rest }: ThumbnailProps) {
+export default function Thumbnail<T extends boolean>({ path, size = 200, container, priority = "normal", ...rest }: ThumbnailProps<T>) {
   if (!path) {
     return <NoImage size={size} container={container} {...rest} />;
   }
 
+  if (rest.isFlashListItem) {
+    const { alt, isFlashListItem, ...rnImageProps } = rest as Omit<ThumbnailProps<true>, "priority" | "path" | "size" | "container">;
+    return (
+      <View style={[styles.container, container]}>
+        {alt && <Text style={styles.altText}>{alt}</Text>}
+        <RNImage
+          {...rnImageProps}
+          resizeMode="cover"
+          source={{
+            uri: `https://image.tmdb.org/t/p/w${size}` + path,
+          }}
+          style={[styles.image, rnImageProps.style]}
+        />
+      </View>
+    );
+  }
+
+  const { alt, isFlashListItem, ...expoImageProps } = rest as Omit<ThumbnailProps<false>, "priority" | "path" | "size" | "container">;
   return (
     <View style={[styles.container, container]}>
-      {rest.alt && <Text style={styles.altText}>{rest.alt}</Text>}
+      {alt && <Text style={styles.altText}>{alt}</Text>}
       <Image
-        {...rest}
+        {...expoImageProps}
         priority={priority}
         source={{
           uri: `https://image.tmdb.org/t/p/w${size}` + path,
