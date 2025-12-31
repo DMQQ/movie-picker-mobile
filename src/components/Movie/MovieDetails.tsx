@@ -8,6 +8,7 @@ import QuickActions from "../QuickActions";
 import RatingIcons from "../RatingIcons";
 import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
 import { useGetMovieProvidersQuery, useGetSimilarQuery, useGetTrailersQuery } from "../../redux/movie/movieApi";
+import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
 import { memo, useMemo } from "react";
 import MovieTabs from "./MovieTabs";
 
@@ -26,8 +27,6 @@ function MovieDetails({
   };
 }) {
   const t = useTranslation();
-
-  console.log({ movie: { id: movie?.id, type: movie?.type, title: movie?.title || movie?.name }, type });
 
   const { data: providers = [] } = useGetMovieProvidersQuery(
     {
@@ -56,6 +55,18 @@ function MovieDetails({
     {
       id: Number(params.id),
       type: params.type,
+    },
+    {
+      skip: !params.id || !params.type,
+    }
+  );
+
+  const { data: castData } = useGetMovieKeyPeopleQuery(
+    {
+      id: Number(params.id),
+      type: params.type as "movie" | "tv",
+      actorLimit: 20,
+      includeDirector: true,
     },
     {
       skip: !params.id || !params.type,
@@ -149,6 +160,9 @@ function MovieDetails({
           isTVShow={isTVShow}
           hasSimilar={hasSimilar}
           hasTrailers={hasTrailers}
+          similarData={similarData}
+          trailersData={trailersData}
+          castData={castData}
         />
 
         <View style={styles.attributions}>

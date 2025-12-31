@@ -98,6 +98,7 @@ export const Section = memo(({ group }: SectionProps) => {
               },
             }}
             {...item}
+            isFlashListItem
           />
         )}
         ListFooterComponent={

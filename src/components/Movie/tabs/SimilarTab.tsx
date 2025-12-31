@@ -9,22 +9,27 @@ import uniqueBy from "../../../utils/unique";
 
 const { width } = Dimensions.get("screen");
 
-const imageWidth = (width - 60) / 3;
+const imageWidth = (width - 65) / 3;
 
 interface SimilarTabProps {
   id: number;
   type: "movie" | "tv";
+  initialData?: { results: Movie[]; page: number; total_pages: number };
 }
 
-function SimilarTab({ id, type }: SimilarTabProps) {
-  const [page, setPage] = useState(1);
+function SimilarTab({ id, type, initialData }: SimilarTabProps) {
+  const [page, setPage] = useState(initialData?.page || 1);
   const [getSectionMovies, state] = useLazyGetSimilarQuery();
-  const [movies, setSectionMovies] = useState<Movie[]>([]);
-  const [hasMore, setHasMore] = useState(true);
+  const [movies, setSectionMovies] = useState<Movie[]>(initialData?.results || []);
+  const [hasMore, setHasMore] = useState(initialData ? initialData.page < initialData.total_pages : true);
 
   const t = useTranslation();
 
   useEffect(() => {
+    if (initialData && page === initialData.page) {
+      return;
+    }
+
     getSectionMovies({ id: id, type: type, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
         setHasMore(response?.data ? response.data.page < response.data.total_pages : false);
@@ -32,7 +37,7 @@ function SimilarTab({ id, type }: SimilarTabProps) {
         setSectionMovies((prev) => uniqueBy(prev.concat(response?.data?.results || []), "id"));
       }
     });
-  }, [page, id, type]);
+  }, [page, id, type, initialData]);
 
   const handleLoadMore = () => {
     if (!state.isLoading) {

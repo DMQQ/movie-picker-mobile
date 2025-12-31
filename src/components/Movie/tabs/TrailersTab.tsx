@@ -2,7 +2,6 @@ import { memo, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, AppState, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { useGetTrailersQuery } from "../../../redux/movie/movieApi";
 import { hexToRgba } from "../../../utils/hexToRgb";
 import { BlurViewWrapper } from "../../PlatformBlurView";
 import YoutubeIframe from "react-native-youtube-iframe";
@@ -10,17 +9,15 @@ import YoutubeIframe from "react-native-youtube-iframe";
 const { width } = Dimensions.get("window");
 
 interface TrailersTabProps {
-  id: number;
-  type: string;
+  initialData?: any[];
 }
 
-function TrailersTab({ id, type }: TrailersTabProps) {
-  const { data: trailers } = useGetTrailersQuery({ id, type });
+function TrailersTab({ initialData }: TrailersTabProps) {
   const [canPlay, setCanPlay] = useState(false);
 
   const filteredItems = useMemo(() => {
-    return trailers?.filter((v) => v.site === "YouTube" && v.official).slice(0, 5) || [];
-  }, [trailers]);
+    return initialData?.filter((v) => v.site === "YouTube").slice(0, 5) || [];
+  }, [initialData]);
 
   useEffect(() => {
     const sub = AppState.addEventListener("change", (state) => {

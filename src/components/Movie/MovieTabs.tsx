@@ -21,9 +21,12 @@ interface MovieTabsProps {
   isTVShow: boolean;
   hasSimilar: boolean;
   hasTrailers: boolean;
+  similarData?: { results: Movie[]; page: number; total_pages: number };
+  trailersData?: any[];
+  castData?: any;
 }
 
-function MovieTabs({ movie, type, providers, tabs }: MovieTabsProps) {
+function MovieTabs({ movie, type, providers, tabs, similarData, trailersData, castData }: MovieTabsProps) {
   const [activeTab, setActiveTab] = useState(0);
 
   const [visitedTabs, setVisitedTabs] = useState<Set<number>>(new Set([0]));
@@ -52,9 +55,11 @@ function MovieTabs({ movie, type, providers, tabs }: MovieTabsProps) {
   }, [activeTab, tabHeights]);
 
   const pan = Gesture.Pan()
-    .activeOffsetX([-10, 10])
     .onUpdate((e) => {
-      translateX.value = -activeTab * width + e.translationX;
+      const newValue = -activeTab * width + e.translationX;
+      const minValue = -(tabs.length - 1) * width;
+      const maxValue = 0;
+      translateX.value = Math.max(minValue, Math.min(maxValue, newValue));
     })
     .onEnd((e) => {
       if (e.translationX < -width * 0.2 || e.velocityX < -500) {
@@ -106,11 +111,11 @@ function MovieTabs({ movie, type, providers, tabs }: MovieTabsProps) {
       case "details":
         return <DetailsTab movie={movie} providers={providers} />;
       case "cast":
-        return <CastTab id={movie?.id} type={type as "movie" | "tv"} />;
+        return <CastTab id={movie?.id} type={type as "movie" | "tv"} initialData={castData} />;
       case "similar":
-        return <SimilarTab id={movie?.id} type={type as "movie" | "tv"} />;
+        return <SimilarTab id={movie?.id} type={type as "movie" | "tv"} initialData={similarData} />;
       case "trailers":
-        return <TrailersTab id={movie?.id} type={type} />;
+        return <TrailersTab initialData={trailersData} />;
       case "seasons":
         return <SeasonsTab id={movie?.id} seasons={(movie?.seasons as any) || []} />;
       default:

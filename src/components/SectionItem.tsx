@@ -15,9 +15,19 @@ interface SectionListItemProps extends Movie {
   href: { pathname: string; params: Record<string, any> };
 
   imageWidth?: number;
+
+  isFlashListItem?: boolean;
 }
 
-export const SectionListItem = ({ poster_path, vote_average, name, title, href, imageWidth }: SectionListItemProps) => {
+export const SectionListItem = ({
+  poster_path,
+  vote_average,
+  name,
+  title,
+  href,
+  imageWidth,
+  isFlashListItem = false,
+}: SectionListItemProps) => {
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -51,7 +61,7 @@ export const SectionListItem = ({ poster_path, vote_average, name, title, href, 
                   : undefined,
               ]}
               alt={name || title}
-              isFlashListItem
+              isFlashListItem={isFlashListItem}
             />
             {vote_average > 0 && (
               <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(vote_average || 0) }]}>

@@ -5,13 +5,18 @@ import Thumbnail from "../Thumbnail";
 import layout from "../../utils/layout";
 import FrostedGlass from "../FrostedGlass";
 
-export default function Cast({ id, type }: { id: number; type: "movie" | "tv" }) {
-  const { data, isLoading } = useGetMovieKeyPeopleQuery({
-    id,
-    type,
-    actorLimit: 20,
-    includeDirector: true,
-  });
+export default function Cast({ id, type, initialData }: { id: number; type: "movie" | "tv"; initialData?: any }) {
+  const { data: fetchedData, isLoading } = useGetMovieKeyPeopleQuery(
+    {
+      id,
+      type,
+      actorLimit: 20,
+      includeDirector: true,
+    },
+    { skip: !!initialData }
+  );
+
+  const data = initialData || fetchedData;
 
   if (!isLoading && !data?.actors?.length && !data?.directors?.length) return null;
 
