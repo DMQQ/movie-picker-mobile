@@ -1,6 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
-import { Dimensions, FlatList, ImageBackground, Keyboard, Platform, View } from "react-native";
-import { Button, Dialog, MD2DarkTheme, Text, TextInput } from "react-native-paper";
+import { Dimensions, FlatList, ImageBackground, Platform, View } from "react-native";
+import { MD2DarkTheme, Text, TextInput } from "react-native-paper";
 import PageHeading from "../../components/PageHeading";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { createGroup, loadFavorites } from "../../redux/favourites/favourites";
@@ -9,6 +9,7 @@ import useTranslation from "../../service/useTranslation";
 import { Link } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import Thumbnail from "../../components/Thumbnail";
+import UserInputModal from "../../components/UserInputModal";
 
 export default function Favourites() {
   const groups = useAppSelector((state) => state.favourite.groups);
@@ -24,6 +25,17 @@ export default function Favourites() {
 
   const listRef = useRef<FlatList>(null);
 
+  const handleCreateGroup = () => {
+    if (text) {
+      dispatch(createGroup(text.trim()));
+      setModalVisible(false);
+      setText("");
+      setTimeout(() => {
+        listRef.current?.scrollToEnd({ animated: true });
+      }, 200);
+    }
+  };
+
   return (
     <SafeIOSContainer>
       <PageHeading
@@ -35,7 +47,7 @@ export default function Favourites() {
         useSafeArea
         extraScreenPaddingTop={Platform.OS === "android" ? 20 : 0}
       />
-      <View style={{ paddingHorizontal: 15, flex: 1, marginTop: Platform.OS === "android" ? 30 : 0 }}>
+      <View style={{ paddingHorizontal: 15, flex: 1, marginTop: Platform.OS === "android" ? 30 : 0, paddingBottom: 45 }}>
         <FlatList
           ref={listRef}
           showsVerticalScrollIndicator={false}
@@ -103,40 +115,39 @@ export default function Favourites() {
         />
       </View>
 
-      <Dialog
-        dismissableBackButton
+      <UserInputModal
         visible={isModalVisible}
-        onDismiss={() => setModalVisible(false)}
-        style={{ backgroundColor: MD2DarkTheme.colors.surface }}
+        onDismiss={() => {
+          setModalVisible(false);
+          setText("");
+        }}
+        title={t("favourites.create.title")}
+        dismissable
+        actionsLayout="horizontal"
+        actions={[
+          {
+            label: t("favourites.create.cancel"),
+            onPress: () => {
+              setModalVisible(false);
+              setText("");
+            },
+            mode: "outlined",
+          },
+          {
+            label: t("favourites.create.create"),
+            onPress: handleCreateGroup,
+            mode: "contained",
+          },
+        ]}
       >
-        <Dialog.Title>{t("favourites.create.title")}</Dialog.Title>
-        <Dialog.Content>
-          <TextInput
-            onSubmitEditing={() => Keyboard.dismiss()}
-            value={text}
-            onChangeText={setText}
-            label={t("favourites.create.name")}
-            mode="outlined"
-          />
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button onPress={() => setModalVisible(false)}> {t("favourites.create.cancel")}</Button>
-          <Button
-            onPress={() => {
-              if (text) {
-                dispatch(createGroup(text.trim()));
-                setModalVisible(false);
-                setText("");
-                setTimeout(() => {
-                  listRef.current?.scrollToEnd({ animated: true });
-                }, 200);
-              }
-            }}
-          >
-            {t("favourites.create.create")}
-          </Button>
-        </Dialog.Actions>
-      </Dialog>
+        <TextInput
+          onSubmitEditing={handleCreateGroup}
+          value={text}
+          onChangeText={setText}
+          label={t("favourites.create.name")}
+          mode="outlined"
+        />
+      </UserInputModal>
     </SafeIOSContainer>
   );
 }

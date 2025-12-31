@@ -5,14 +5,12 @@ import { IconButton, Text, TouchableRipple } from "react-native-paper";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import { router } from "expo-router";
-
 import Animated, { FadeInDown } from "react-native-reanimated";
 import FortuneWheelAnimation from "../../components/GameListAnimations/FortuneWheelAnimation";
 import SwiperAnimation from "../../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../../components/GameListAnimations/VoterAnimation";
 import PageHeading from "../../components/PageHeading";
 import { useLazyGetAllProvidersQuery, useLazyGetCategoriesQuery, useLazyGetGenresQuery } from "../../redux/movie/movieApi";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CARD_HEIGHT = 280;
 
@@ -121,7 +119,7 @@ export default function GameList() {
       <ScrollView
         style={[styles.container, Platform.OS === "android" && { marginTop: 30 }]}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: 60, paddingBottom: Platform.OS === "android" ? 60 : 0 }}
+        contentContainerStyle={{ paddingTop: 60, paddingBottom: 60 }}
       >
         {filteredGames.map((game, index) => (
           <GameCard

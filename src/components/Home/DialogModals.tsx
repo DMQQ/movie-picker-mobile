@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import { useContext } from "react";
 import { Dimensions, View } from "react-native";
-import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -9,6 +9,7 @@ import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import ReviewManager from "../../utils/rate";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
+import UserInputModal from "../UserInputModal";
 
 export default function DialogModals({
   showLeaveModal,
@@ -41,56 +42,60 @@ export default function DialogModals({
   const t = useTranslation();
 
   return (
-    <Portal>
-      <Dialog visible={showLeaveModal} style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}>
-        <Dialog.Title>{t("dialogs.leave-room.title")}</Dialog.Title>
-        <Dialog.Content>
-          <Text>{t("dialogs.leave-room.message")}</Text>
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button onPress={toggleLeaveModal}>{t("dialogs.leave-room.cancel")}</Button>
-          <Button onPress={handleLeaveRoom}>{t("dialogs.leave-room.leave")}</Button>
-        </Dialog.Actions>
-      </Dialog>
+    <>
+      <UserInputModal
+        visible={showLeaveModal}
+        onDismiss={toggleLeaveModal}
+        title={t("dialogs.leave-room.title")}
+        subtitle={t("dialogs.leave-room.message")}
+        dismissable
+        actions={[
+          {
+            label: t("dialogs.leave-room.cancel"),
+            onPress: toggleLeaveModal,
+            mode: "outlined",
+          },
+          {
+            label: t("dialogs.leave-room.leave"),
+            onPress: handleLeaveRoom,
+            mode: "contained",
+          },
+        ]}
+      />
 
-      <Dialog
+      <UserInputModal
         visible={showQRModal}
-        style={{
-          backgroundColor: theme.colors.surface,
-          borderRadius: 10,
-          paddingBottom: 10,
-        }}
+        onDismiss={() => setShowQRModal(false)}
+        title={t("dialogs.scan-code.title")}
+        subtitle={t("dialogs.scan-code.message")}
+        dismissable
+        actions={[
+          {
+            label: t("dialogs.scan-code.close"),
+            onPress: () => setShowQRModal(false),
+            mode: "contained",
+          },
+        ]}
       >
-        <Dialog.Title>{t("dialogs.scan-code.title")}</Dialog.Title>
-        <Dialog.Content>
-          <Text>{t("dialogs.scan-code.message")}</Text>
-        </Dialog.Content>
-
-        <Dialog.Content>
-          <View style={{ alignItems: "center", justifyContent: "center" }}>
-            <QRCode
-              backgroundColor={theme.colors.surface}
-              color={theme.colors.primary}
-              value={`flickmate://room/${qrCode}`}
-              size={Dimensions.get("screen").width / 2}
-            />
-          </View>
-          <Text
-            style={{
-              color: theme.colors.primary,
-              textAlign: "center",
-              marginTop: 5,
-              fontSize: 18,
-            }}
-          >
-            {qrCode}
-          </Text>
-        </Dialog.Content>
-
-        <Dialog.Actions>
-          <Button onPress={() => setShowQRModal(false)}>{t("dialogs.scan-code.close")}</Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <QRCode
+            backgroundColor={theme.colors.surface}
+            color={theme.colors.primary}
+            value={`flickmate://room/${qrCode}`}
+            size={Dimensions.get("screen").width / 2}
+          />
+        </View>
+        <Text
+          style={{
+            color: theme.colors.primary,
+            textAlign: "center",
+            marginTop: 5,
+            fontSize: 18,
+          }}
+        >
+          {qrCode}
+        </Text>
+      </UserInputModal>
+    </>
   );
 }

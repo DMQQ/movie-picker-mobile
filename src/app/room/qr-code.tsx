@@ -169,7 +169,6 @@ export default function QRCodePage() {
     };
 
     const handleMovies = ({ movies }: { movies: Movie[] }) => {
-      console.log("📬 Received movies:", movies.length);
       setMoviesCount(movies.length);
       setIsLoadingMovies(false);
       if (!!movies) dispatch(roomActions.addMovies(movies));

@@ -1,7 +1,7 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import { Movie } from "../../types";
-import Thumbnail from "./Thumbnail";
+import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import { Link } from "expo-router";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
@@ -42,7 +42,7 @@ export const SectionListItem = ({ poster_path, vote_average, name, title, href, 
           <View style={[sectionStyles.item]}>
             <Thumbnail
               path={poster_path}
-              size={185}
+              size={ThumbnailSizes.poster.small}
               container={[
                 sectionStyles.image,
 

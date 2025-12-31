@@ -26,6 +26,7 @@ interface UserInputModalProps {
   width?: number;
   maxHeight?: string;
   enableHaptics?: boolean;
+  actionsLayout?: "vertical" | "horizontal";
 }
 
 export default function UserInputModal({
@@ -40,6 +41,7 @@ export default function UserInputModal({
   width = Dimensions.get("window").width - 30,
   maxHeight = "80%",
   enableHaptics = true,
+  actionsLayout = "vertical",
 }: UserInputModalProps) {
   const handleActionPress = (action: UserInputModalAction) => {
     if (enableHaptics && Platform.OS !== "web") {
@@ -58,17 +60,23 @@ export default function UserInputModal({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" statusBarTranslucent={statusBarTranslucent} onRequestClose={dismissable ? onDismiss : undefined}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      statusBarTranslucent={statusBarTranslucent}
+      onRequestClose={dismissable ? onDismiss : undefined}
+    >
       <View style={styles.modalOverlay} onTouchEnd={handleBackdropPress}>
         <PlatformBlurView style={[styles.modalContent, { width, maxHeight }]} onTouchEnd={(e) => e.stopPropagation()}>
-          <Animated.View style={styles.modalInner} entering={FadeIn} exiting={FadeOut}>
+          <Animated.View style={styles.modalInner}>
             <Text style={styles.modalTitle}>{title}</Text>
             {subtitle && <Text style={styles.modalSubtitle}>{subtitle}</Text>}
 
             {children && <View style={styles.contentContainer}>{children}</View>}
 
             {actions.length > 0 && (
-              <View style={styles.actionsContainer}>
+              <View style={[styles.actionsContainer, actionsLayout === "horizontal" && styles.actionsContainerHorizontal]}>
                 {actions.map((action, index) => (
                   <Button
                     key={index}
@@ -77,7 +85,7 @@ export default function UserInputModal({
                     disabled={action.disabled}
                     loading={action.loading}
                     textColor={action.textColor}
-                    style={styles.actionButton}
+                    style={[styles.actionButton, actionsLayout === "horizontal" && styles.actionButtonHorizontal]}
                     contentStyle={styles.actionButtonContent}
                   >
                     {action.label}
@@ -140,9 +148,15 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 10,
   },
+  actionsContainerHorizontal: {
+    flexDirection: "row",
+  },
   actionButton: {
     borderRadius: 100,
     overflow: "hidden",
+  },
+  actionButtonHorizontal: {
+    flex: 1,
   },
   actionButtonContent: {
     paddingVertical: 10,

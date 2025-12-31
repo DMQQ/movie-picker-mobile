@@ -1,7 +1,7 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, ToastAndroid, Vibration, View } from "react-native";
-import { Button, Dialog, MD2DarkTheme, Portal, Text, TextInput, useTheme } from "react-native-paper";
+import { Button, MD2DarkTheme, Text, TextInput, useTheme } from "react-native-paper";
 import PageHeading from "../../components/PageHeading";
 import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
@@ -10,6 +10,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { url } from "../../context/SocketContext";
 import envs from "../../constants/envs";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
+import UserInputModal from "../../components/UserInputModal";
 
 type JoinRoomParams =
   | {
@@ -24,6 +25,7 @@ export default function QRScanner() {
   const theme = useTheme();
   const [isScanned, setIsScanned] = useState(false);
   const [isScannError, setIsScanError] = useState(false);
+  const [manualCode, setManualCode] = useState("");
 
   const joinRoom = async (c: JoinRoomParams) => {
     return new Promise(async (resolve, reject) => {
@@ -108,6 +110,24 @@ export default function QRScanner() {
 
   const t = useTranslation();
 
+  const onManualJoin = async () => {
+    if (manualCode) {
+      joinRoom(manualCode.toUpperCase())
+        .then(() => {
+          setManualCode("");
+          setIsManual(false);
+        })
+        .catch(() => {
+          setIsManual(false);
+          setIsScanError(true);
+        });
+    } else {
+      if (Platform.OS === "android") {
+        ToastAndroid.show("Invalid code", ToastAndroid.SHORT);
+      }
+    }
+  };
+
   if (hasPermission === null) {
     return (
       <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
@@ -162,87 +182,54 @@ export default function QRScanner() {
         <View style={[styles.corner, styles.cornerBottomRight, { borderColor: theme.colors.primary }]} />
       </View>
 
-      <Portal>
-        <>
-          <Dialog
-            dismissable={true}
-            onDismiss={() => setIsScanError(false)}
-            visible={isScannError}
-            style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
-          >
-            <Dialog.Title>{t("dialogs.qr.error")}</Dialog.Title>
+      <UserInputModal
+        visible={isScannError}
+        onDismiss={() => setIsScanError(false)}
+        title={t("dialogs.qr.error")}
+        subtitle={t("dialogs.qr.error-desc")}
+        dismissable
+        actions={[
+          {
+            label: t("dialogs.qr.close"),
+            onPress: () => setIsScanError(false),
+            mode: "contained",
+          },
+        ]}
+      />
 
-            <Dialog.Content>
-              <Text>{t("dialogs.qr.error-desc")}</Text>
-            </Dialog.Content>
-
-            <Dialog.Actions>
-              <Button onPress={() => setIsScanError(false)}>{t("dialogs.qr.close")}</Button>
-            </Dialog.Actions>
-          </Dialog>
-
-          <Dialog
-            dismissable={true}
-            onDismiss={() => setIsManual(false)}
-            visible={isManual}
-            style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
-          >
-            <Dialog.Title>{t("dialogs.qr.manual")}</Dialog.Title>
-
-            <Dialog.Actions>
-              <ManualCodeInput
-                joinRoom={joinRoom}
-                onError={() => {
-                  setIsManual(false);
-                  setIsScanError(true);
-                }}
-              />
-            </Dialog.Actions>
-          </Dialog>
-        </>
-      </Portal>
+      <UserInputModal
+        visible={isManual}
+        onDismiss={() => {
+          setIsManual(false);
+          setManualCode("");
+        }}
+        title={t("dialogs.qr.manual")}
+        dismissable
+        actions={[
+          {
+            label: t("scanner.join"),
+            onPress: onManualJoin,
+            mode: "contained",
+          },
+        ]}
+      >
+        <TextInput
+          mode="outlined"
+          label="Enter code"
+          value={manualCode}
+          maxLength={7}
+          autoFocus
+          onSubmitEditing={onManualJoin}
+          onChangeText={setManualCode}
+          autoCapitalize="characters"
+          autoComplete="off"
+          autoCorrect={false}
+          style={styles.textInput}
+        />
+      </UserInputModal>
     </SafeIOSContainer>
   );
 }
-
-const ManualCodeInput = ({ joinRoom, onError }: { joinRoom: (code: string) => Promise<any>; onError: () => void }) => {
-  const [code, setCode] = useState("");
-
-  const onManualPress = async () => {
-    if (code) {
-      joinRoom(code.toUpperCase()).catch(() => {
-        onError();
-      });
-    } else {
-      ToastAndroid.show("Invalid code", ToastAndroid.SHORT);
-    }
-  };
-
-  const t = useTranslation();
-
-  return (
-    <View style={styles.manualInputContainer}>
-      <TextInput
-        mode="outlined"
-        label="Enter code"
-        value={code}
-        maxLength={7}
-        autoFocus
-        textAlign="center"
-        onSubmitEditing={onManualPress}
-        onChangeText={setCode}
-        autoCapitalize="characters"
-        autoComplete="off"
-        autoCorrect={false}
-        style={styles.textInput}
-      />
-
-      <Button mode="text" onPress={onManualPress} style={styles.joinButton}>
-        {t("scanner.join")}
-      </Button>
-    </View>
-  );
-};
 
 const styles = StyleSheet.create({
   scannerFrame: {
@@ -293,19 +280,9 @@ const styles = StyleSheet.create({
     borderRightWidth: 4,
     borderBottomRightRadius: 20,
   },
-  manualInputContainer: {
-    flex: 1,
-    paddingHorizontal: 10,
-  },
   textInput: {
-    marginBottom: 10,
     borderRadius: 20,
-    textTransform: "uppercase",
-    textAlign: "center",
     fontSize: 20,
     letterSpacing: 1,
-  },
-  joinButton: {
-    marginTop: 10,
   },
 });

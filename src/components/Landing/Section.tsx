@@ -47,13 +47,15 @@ const skeletonStyles = StyleSheet.create({
   },
 });
 
+const drawDistance = width * 2.25;
+
 export const Section = memo(({ group }: SectionProps) => {
   const [page, setPage] = useState(1);
   const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
 
   const [movies, setSectionMovies] = useState<Movie[]>(() => group.results);
 
-  const movieKeyExtractor = useCallback((item: any) => `section-${item.id}-${item.type}`, [group.name]);
+  const movieKeyExtractor = useCallback((item: any) => `section-${item.id}-${item.type}`, []);
 
   const onEndReached = useCallback(() => {
     if (state.isLoading || !!state.error) return;
@@ -87,6 +89,7 @@ export const Section = memo(({ group }: SectionProps) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={movieKeyExtractor}
+        drawDistance={drawDistance}
         renderItem={({ item }) => (
           <SectionListItem
             href={{

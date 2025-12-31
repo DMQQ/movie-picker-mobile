@@ -1,13 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useEffect, useRef } from "react";
-import {
-  Dimensions,
-  Platform,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { Dimensions, Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
 import Animated, {
@@ -84,10 +78,7 @@ const SwipeTile = ({
   const scale = useSharedValue(Math.max(1 - index * 0.05, 0.9));
 
   useEffect(() => {
-    position.value = withTiming(
-      { x: 0, y: Math.max(index * -10, -20) },
-      { duration: 200 },
-    );
+    position.value = withTiming({ x: 0, y: Math.max(index * -10, -20) }, { duration: 200 });
     scale.value = withTiming(Math.max(1 - index * 0.05, 0.9), {
       duration: 200,
     });
@@ -133,7 +124,7 @@ const SwipeTile = ({
           {
             damping: 15,
             stiffness: 200,
-          },
+          }
         );
         isLeftVisible.value = false;
         isRightVisible.value = false;
@@ -142,12 +133,7 @@ const SwipeTile = ({
     .enabled(index === 0);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const rotate = interpolate(
-      position.value.x,
-      [-width * 0.35, width * 0.35],
-      [-10, 10],
-      Extrapolation.CLAMP,
-    );
+    const rotate = interpolate(position.value.x, [-width * 0.35, width * 0.35], [-10, 10], Extrapolation.CLAMP);
 
     return {
       transform: [
@@ -202,15 +188,9 @@ const SwipeTile = ({
   return (
     <>
       <GestureDetector gesture={moveGesture}>
-        <Animated.View
-          style={[animatedStyle, { zIndex: 1000 - index }]}
-          entering={index > 1 ? FadeIn : undefined}
-        >
+        <Animated.View style={[animatedStyle, { zIndex: 1000 - index }]} entering={index > 1 ? FadeIn : undefined}>
           <View style={styles.container}>
-            <LinearGradient
-              colors={["transparent", "rgba(0,0,0,0.2)", "rgba(0,0,0,0.9)"]}
-              style={[styles.gradientContainer, dims]}
-            >
+            <LinearGradient colors={["transparent", "rgba(0,0,0,0.2)", "rgba(0,0,0,0.9)"]} style={[styles.gradientContainer, dims]}>
               <Text style={styles.title}>{card.title || card.name}</Text>
               <View
                 style={{
@@ -228,10 +208,7 @@ const SwipeTile = ({
               )}
 
               <Text style={styles.release_date}>
-                {card.genres
-                  ? `${card?.genres?.map((m) => m.name).join(", ")}`
-                  : ""}{" "}
-                {"•"} {card.release_date || card.first_air_date}
+                {card.genres ? `${card?.genres?.map((m) => m.name).join(", ")}` : ""} {"•"} {card.release_date || card.first_air_date}
               </Text>
             </LinearGradient>
 

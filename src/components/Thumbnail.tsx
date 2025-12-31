@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Image, ImageProps } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
 
@@ -58,7 +58,7 @@ const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path"
     >
       <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={MD2DarkTheme.colors.placeholder} />
 
-      <Text style={{ color: MD2DarkTheme.colors.placeholder, marginTop: 8 }} variant="bodyMedium">
+      <Text style={{ color: MD2DarkTheme.colors.placeholder, marginTop: 8, textAlign: "center" }} variant="bodyMedium">
         {rest.alt || "No Image Available"}
       </Text>
     </View>
@@ -82,7 +82,7 @@ export default function Thumbnail({ path, size = 200, container, priority = "nor
         style={[styles.image, rest.style]}
         placeholder={`https://image.tmdb.org/t/p/w${ThumbnailSizes.poster.tiny}` + path}
         placeholderContentFit="cover"
-        cachePolicy="disk"
+        cachePolicy="memory-disk"
         recyclingKey={path}
         contentFit="cover"
         transition={200}
