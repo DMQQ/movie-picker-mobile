@@ -57,6 +57,8 @@ interface GenreWithThumbnail {
 interface SpecialCategoryWithThumbnail {
   id: string;
   label: string;
+  icon: string;
+  iconColor: string;
   representative_poster: string;
   representative_title: string;
 }

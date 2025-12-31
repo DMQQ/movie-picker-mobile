@@ -118,8 +118,8 @@ const SelectionCard = React.memo(
                   </LinearGradient>
                 </>
               ) : (
-                <View style={[styles.background, styles.placeholder]}>
-                  <LinearGradient colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]} style={styles.gradient}>
+                <View style={styles.placeholderContainer}>
+                  <LinearGradient colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]} style={styles.placeholderGradient}>
                     <IconComponent name={iconData.name} size={40} color={color} />
                     <Text style={[styles.labelTextVertical, { color: isSelected ? theme.colors.primary : "#fff" }]}>{label}</Text>
                     {isSelected && (
@@ -207,6 +207,21 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     backgroundColor: "#2a2a2a",
+  },
+  placeholderContainer: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#2a2a2a",
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  placeholderGradient: {
+    flex: 1,
+    justifyContent: "flex-end",
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+    gap: 12,
   },
   labelText: {
     marginLeft: 10,

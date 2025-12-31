@@ -27,69 +27,20 @@ const Step4SpecialCategories: React.FC = React.memo(() => {
   });
 
   const specialCategoryOptions = useMemo(() => {
-    const baseOptions = [
-      {
-        id: "oscar",
-        label: "Oscar Winners",
-        iconData: { component: MaterialIcons, name: "emoji-events", color: "#FFD700" },
-      },
-      {
-        id: "pg13",
-        label: "PG-13",
-        iconData: { component: MaterialIcons, name: "child-care", color: "#4CAF50" },
-      },
-      {
-        id: "r_rated",
-        label: "18+ Only",
-        iconData: { component: MaterialIcons, name: "warning", color: "#FF5722" },
-      },
-      {
-        id: "short_runtime",
-        label: "<90m",
-        iconData: { component: MaterialIcons, name: "schedule", color: "#4CAF50" },
-      },
-      {
-        id: "long_runtime",
-        label: ">90m",
-        iconData: { component: MaterialIcons, name: "hourglass-full", color: "#FF9800" },
-      },
-      {
-        id: "90s",
-        label: "90s",
-        iconData: { component: MaterialIcons, name: "album", color: "#9C27B0" },
-      },
-      {
-        id: "2000s",
-        label: "2000s",
-        iconData: { component: MaterialIcons, name: "phone-android", color: "#2196F3" },
-      },
-      {
-        id: "2010s",
-        label: "2010s",
-        iconData: { component: MaterialIcons, name: "tablet", color: "#FF9800" },
-      },
-      {
-        id: "2020s",
-        label: "2020s",
-        iconData: { component: MaterialIcons, name: "wifi", color: "#00BCD4" },
-      },
-    ];
-
-    // Merge with fetched thumbnails
-    if (!categoriesWithThumbnails) {
-      return baseOptions.map((option) => ({
-        ...option,
-        posterUrl: "",
-      }));
+    if (!categoriesWithThumbnails || categoriesWithThumbnails.length === 0) {
+      return [];
     }
 
-    return baseOptions.map((option) => {
-      const thumbnailData = categoriesWithThumbnails.find((cat) => cat.id === option.id);
-      return {
-        ...option,
-        posterUrl: thumbnailData?.representative_poster || "",
-      };
-    });
+    return categoriesWithThumbnails.map((category) => ({
+      id: category.id,
+      label: category.label,
+      iconData: {
+        component: MaterialIcons,
+        name: category.icon,
+        color: category.iconColor,
+      },
+      posterUrl: category.representative_poster,
+    }));
   }, [categoriesWithThumbnails]);
 
   const cardWidth = Dimensions.get("window").width * 0.75;
