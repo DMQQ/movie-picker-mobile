@@ -1,5 +1,5 @@
-import { memo, useCallback, useEffect, useRef } from "react";
-import { Dimensions, RefreshControl, View, VirtualizedList } from "react-native";
+import { memo, useCallback } from "react";
+import { RefreshControl, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useInfiniteLandingPageMovies } from "../../hooks/useInfiniteLandingPageMovies";
@@ -77,11 +77,12 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
   return (
     <View style={{ flex: 1 }}>
       <VirtualizedList
+        removeClippedSubviews={false}
         overScrollMode={"never"}
         bounces={false}
         initialNumToRender={4}
         maxToRenderPerBatch={4}
-        windowSize={3}
+        windowSize={12}
         data={data}
         renderItem={renderItem as any}
         keyExtractor={categoryKeyExtractor}

@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Image, ImageProps } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
 
@@ -82,7 +82,8 @@ export default function Thumbnail({ path, size = 200, container, priority = "nor
         style={[styles.image, rest.style]}
         placeholder={`https://image.tmdb.org/t/p/w${ThumbnailSizes.poster.tiny}` + path}
         placeholderContentFit="cover"
-        cachePolicy="memory-disk"
+        // cachePolicy={Platform.OS === "android" ? "disk" : "memory-disk"}
+        cachePolicy={"disk"}
         recyclingKey={path}
         contentFit="cover"
         transition={200}
