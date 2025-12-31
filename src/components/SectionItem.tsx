@@ -3,7 +3,7 @@ import { MD2DarkTheme, Text } from "react-native-paper";
 import { Movie } from "../../types";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import { Link } from "expo-router";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { useState } from "react";
 
 const getColor = (score: number) => {
   if (score >= 7) return "#21d07a"; // Green
@@ -28,23 +28,9 @@ export const SectionListItem = ({
   imageWidth,
   isFlashListItem = false,
 }: SectionListItemProps) => {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: withSpring(scale.value) }],
-  }));
-
-  const handlePressIn = () => {
-    scale.value = 0.95;
-  };
-
-  const handlePressOut = () => {
-    scale.value = 1;
-  };
-
   return (
-    <Animated.View style={[animatedStyle, !imageWidth && { marginRight: 15 }]}>
-      <Link href={href as any} push onPressIn={handlePressIn} onPressOut={handlePressOut}>
+    <View style={[!imageWidth && { marginRight: 15 }]}>
+      <Link href={href as any} push>
         <Link.Trigger>
           <View style={[sectionStyles.item]}>
             <Thumbnail
@@ -82,7 +68,7 @@ export const SectionListItem = ({
 
         <Link.Preview />
       </Link>
-    </Animated.View>
+    </View>
   );
 };
 
