@@ -36,7 +36,7 @@ function MovieDetails({
     {
       refetchOnReconnect: true,
       refetchOnMountOrArgChange: true,
-      skip: !params.id || !params.type,
+      skip: !params.id || !params.type || Number.isNaN(Number(params.id)),
     }
   );
 

@@ -1,13 +1,11 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
-import Animated, { FadeIn } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
-import Thumbnail from "../Thumbnail";
+import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
 import PlatformBlurView from "../PlatformBlurView";
 import { router } from "expo-router";
 
@@ -98,70 +96,73 @@ const backgroundImages = [
 const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" | "fortune" | "all-games" }) => {
   const t = useTranslation();
 
-  const getGameConfig = (gameType: typeof type) => {
-    switch (gameType) {
-      case "quick":
-        return {
-          title: t("game-invite.quick-title"),
-          subtitle: t("game-invite.quick-subtitle"),
-          buttonText: t("game-invite.quick-button"),
-          colors: ["#6366f1", "#8b5cf6"] as const,
-          icon: "gamepad",
-          navigation: () => router.push("/games"),
-        };
-      case "social":
-        return {
-          title: t("game-invite.social-title"),
-          subtitle: t("game-invite.social-subtitle"),
-          buttonText: t("game-invite.social-button"),
-          colors: ["#f59e0b", "#ef4444"] as const,
-          icon: "users",
-          navigation: () =>
-            router.push({
-              pathname: "/room/qr-code",
-              params: { quickStart: "true" },
-            }),
-        };
-      case "voter":
-        return {
-          title: t("game-invite.voter-title"),
-          subtitle: t("game-invite.voter-subtitle"),
-          buttonText: t("game-invite.voter-button"),
-          colors: ["#10b981", "#059669"] as const,
-          icon: "thumbs-up",
-          navigation: () => router.push("/voter"),
-        };
-      case "fortune":
-        return {
-          title: t("game-invite.fortune-title"),
-          subtitle: t("game-invite.fortune-subtitle"),
-          buttonText: t("game-invite.fortune-button"),
-          colors: ["#8b5cf6", "#7c3aed"] as const,
-          icon: "refresh",
-          navigation: () => router.push("/fortune"),
-        };
-      case "all-games":
-        return {
-          title: t("game-invite.all-games-title"),
-          subtitle: t("game-invite.all-games-subtitle"),
-          buttonText: t("game-invite.all-games-button"),
-          colors: ["#374151", "#6b7280"] as const,
-          icon: "list",
-          navigation: () => router.push("/games"),
-        };
-      default:
-        return {
-          title: "",
-          subtitle: "",
-          buttonText: "",
-          colors: ["#6366f1", "#8b5cf6"] as const,
-          icon: "gamepad",
-          navigation: () => router.push("/games"),
-        };
-    }
-  };
+  const getGameConfig = useCallback(
+    (gameType: typeof type) => {
+      switch (gameType) {
+        case "quick":
+          return {
+            title: t("game-invite.quick-title"),
+            subtitle: t("game-invite.quick-subtitle"),
+            buttonText: t("game-invite.quick-button"),
+            colors: ["#6366f1", "#8b5cf6"] as const,
+            icon: "gamepad",
+            navigation: () => router.push("/games"),
+          };
+        case "social":
+          return {
+            title: t("game-invite.social-title"),
+            subtitle: t("game-invite.social-subtitle"),
+            buttonText: t("game-invite.social-button"),
+            colors: ["#f59e0b", "#ef4444"] as const,
+            icon: "users",
+            navigation: () =>
+              router.push({
+                pathname: "/room/qr-code",
+                params: { quickStart: "true" },
+              }),
+          };
+        case "voter":
+          return {
+            title: t("game-invite.voter-title"),
+            subtitle: t("game-invite.voter-subtitle"),
+            buttonText: t("game-invite.voter-button"),
+            colors: ["#10b981", "#059669"] as const,
+            icon: "thumbs-up",
+            navigation: () => router.push("/voter"),
+          };
+        case "fortune":
+          return {
+            title: t("game-invite.fortune-title"),
+            subtitle: t("game-invite.fortune-subtitle"),
+            buttonText: t("game-invite.fortune-button"),
+            colors: ["#8b5cf6", "#7c3aed"] as const,
+            icon: "refresh",
+            navigation: () => router.push("/fortune"),
+          };
+        case "all-games":
+          return {
+            title: t("game-invite.all-games-title"),
+            subtitle: t("game-invite.all-games-subtitle"),
+            buttonText: t("game-invite.all-games-button"),
+            colors: ["#374151", "#6b7280"] as const,
+            icon: "list",
+            navigation: () => router.push("/games"),
+          };
+        default:
+          return {
+            title: "",
+            subtitle: "",
+            buttonText: "",
+            colors: ["#6366f1", "#8b5cf6"] as const,
+            icon: "gamepad",
+            navigation: () => router.push("/games"),
+          };
+      }
+    },
+    [t]
+  );
 
-  const config = getGameConfig(type);
+  const config = useMemo(() => getGameConfig(type), [getGameConfig, type]);
 
   const handleGamePress = useCallback(() => {
     if (Platform.OS === "ios") {
@@ -173,15 +174,19 @@ const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" |
   const gradientColors = config.colors;
 
   return (
-    <Animated.View style={gameInviteStyles.container} entering={FadeIn.delay(200)}>
-      {/* Background Movies */}
+    <View style={gameInviteStyles.container}>
       <View style={gameInviteStyles.backgroundMovies}>
         {backgroundImages.slice(0, 6).map((image, index) => (
-          <Thumbnail key={`${image}`} path={image} size={185} container={gameInviteStyles.movieThumbnail} priority="low" />
+          <Thumbnail
+            key={`${image}`}
+            path={image}
+            size={ThumbnailSizes.poster.tiny}
+            container={gameInviteStyles.movieThumbnail}
+            priority="low"
+          />
         ))}
       </View>
 
-      {/* Blur Overlay with Content */}
       <PlatformBlurView intensity={10} tint="dark" style={gameInviteStyles.blurContainer}>
         <Text style={gameInviteStyles.title}>{config.title}</Text>
         <Text style={gameInviteStyles.subtitle}>{config.subtitle}</Text>
@@ -193,8 +198,8 @@ const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" |
           </LinearGradient>
         </TouchableOpacity>
       </PlatformBlurView>
-    </Animated.View>
+    </View>
   );
 });
 
-export default GameInviteSection;
+export default memo(GameInviteSection);

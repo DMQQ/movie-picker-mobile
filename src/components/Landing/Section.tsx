@@ -1,5 +1,3 @@
-import { router } from "expo-router";
-import { FlashList } from "@shopify/flash-list";
 import { memo, useCallback, useEffect, useState } from "react";
 import { Dimensions, StyleSheet, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
@@ -19,7 +17,6 @@ interface SectionProps {
 const sectionStyles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,
-    paddingBottom: 50,
     height: Math.min(width * 0.25, 200) * 1.75 + 75,
   },
   title: {
@@ -52,7 +49,7 @@ const getItem = (data: Movie[], index: number) => data[index];
 
 const getItemCount = (data: Movie[]) => data.length;
 
-const getItemLayout = (data: Movie[] | null | undefined, index: number) => {
+const getItemLayout = (_: Movie[] | null | undefined, index: number) => {
   const movieWidth = Math.min(width * 0.25, 120);
   return { length: movieWidth + 15, offset: (movieWidth + 15) * index, index };
 };
@@ -68,16 +65,18 @@ const renderItem = ({ item }: { item: Movie }) => (
       },
     }}
     {...item}
-    // isFlashListItem
   />
 );
+
+const movieWidth = Math.min(width * 0.25, 120);
+const movieHeight = movieWidth * 1.5;
 
 export const Section = memo(
   ({ group }: SectionProps) => {
     const [page, setPage] = useState(1);
     const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
 
-    const [movies, setSectionMovies] = useState<Movie[]>(() => group.results);
+    const [movies, setSectionMovies] = useState<Movie[]>(group.results);
 
     const movieKeyExtractor = useCallback((item: any) => `section-${item.id}-${item.type}`, []);
 
@@ -89,19 +88,16 @@ export const Section = memo(
     useEffect(() => {
       if (page === 1) return;
 
-      getSectionMovies({ name: group.name, page }).then((response) => {
+      getSectionMovies({ name: group.name, page }, true).then((response) => {
         if (response.data && Array.isArray(response.data.results)) {
           setSectionMovies((prev) => uniqueBy(prev.concat(response?.data?.results || []), "id"));
         }
       });
     }, [page]);
 
-    if (movies.length === 0 && !state.isLoading) {
+    if (movies.length === 0) {
       return null;
     }
-
-    const movieWidth = Math.min(width * 0.25, 120);
-    const movieHeight = movieWidth * 1.5;
 
     return (
       <Animated.View style={sectionStyles.container} entering={FadeIn}>

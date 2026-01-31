@@ -29,46 +29,44 @@ export const SectionListItem = ({
   isFlashListItem = false,
 }: SectionListItemProps) => {
   return (
-    <View style={[!imageWidth && { marginRight: 15 }]}>
-      <Link href={href as any} push>
-        <Link.Trigger>
-          <View style={[sectionStyles.item]}>
-            <Thumbnail
-              path={poster_path}
-              size={ThumbnailSizes.poster.small}
-              container={[
-                sectionStyles.image,
+    <Link href={href as any} push style={[!imageWidth && { marginRight: 15 }]}>
+      <Link.Trigger>
+        <View style={[sectionStyles.item]}>
+          <Thumbnail
+            path={poster_path}
+            size={ThumbnailSizes.poster.small}
+            container={[
+              sectionStyles.image,
 
-                imageWidth !== undefined
-                  ? {
-                      width: imageWidth,
-                      height: imageWidth * 1.5,
-                    }
-                  : undefined,
-              ]}
-              alt={name || title}
-              isFlashListItem={isFlashListItem}
-            />
-            {vote_average > 0 && (
-              <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(vote_average || 0) }]}>
-                <Text
-                  style={[
-                    sectionStyles.badgeItem,
-                    {
-                      color: vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
-                    },
-                  ]}
-                >
-                  {vote_average ? vote_average.toFixed(1) + "/10" : "N/A"}
-                </Text>
-              </View>
-            )}
-          </View>
-        </Link.Trigger>
+              imageWidth !== undefined
+                ? {
+                    width: imageWidth,
+                    height: imageWidth * 1.5,
+                  }
+                : undefined,
+            ]}
+            alt={name || title}
+            isFlashListItem={isFlashListItem}
+          />
+          {vote_average > 0 && (
+            <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(vote_average || 0) }]}>
+              <Text
+                style={[
+                  sectionStyles.badgeItem,
+                  {
+                    color: vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
+                  },
+                ]}
+              >
+                {vote_average ? vote_average.toFixed(1) + "/10" : "N/A"}
+              </Text>
+            </View>
+          )}
+        </View>
+      </Link.Trigger>
 
-        <Link.Preview />
-      </Link>
-    </View>
+      <Link.Preview />
+    </Link>
   );
 };
 

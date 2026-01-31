@@ -111,7 +111,7 @@ const FeaturedSection = memo((props: { selectedChip: string }) => {
       transition={200}
     >
       <LinearGradient style={styles.gradientContainer} colors={gradient}>
-        <Animated.View entering={FadeInDown.delay(250)}>
+        <Animated.View>
           <Link
             href={{
               pathname: "/movie/type/[type]/[id]",

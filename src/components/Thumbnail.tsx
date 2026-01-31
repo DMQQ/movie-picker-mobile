@@ -75,23 +75,6 @@ export default function Thumbnail<T extends boolean>({ path, size = 200, contain
     return <NoImage size={size} container={container} {...rest} />;
   }
 
-  // if (rest.isFlashListItem) {
-  //   const { alt, isFlashListItem, ...rnImageProps } = rest as Omit<ThumbnailProps<true>, "priority" | "path" | "size" | "container">;
-  //   return (
-  //     <View style={[styles.container, container]}>
-  //       {alt && <Text style={styles.altText}>{alt}</Text>}
-  //       <RNImage
-  //         {...rnImageProps}
-  //         resizeMode="cover"
-  //         source={{
-  //           uri: `https://image.tmdb.org/t/p/w${size}` + path,
-  //         }}
-  //         style={[styles.image, rnImageProps.style]}
-  //       />
-  //     </View>
-  //   );
-  // }
-
   const { alt, isFlashListItem, ...expoImageProps } = rest as Omit<ThumbnailProps<false>, "priority" | "path" | "size" | "container">;
   return (
     <View style={[styles.container, container]}>
@@ -105,7 +88,6 @@ export default function Thumbnail<T extends boolean>({ path, size = 200, contain
         style={[styles.image, rest.style]}
         placeholder={`https://image.tmdb.org/t/p/w${ThumbnailSizes.poster.tiny}` + path}
         placeholderContentFit="cover"
-        // cachePolicy={Platform.OS === "android" ? "disk" : "memory-disk"}
         cachePolicy={"disk"}
         recyclingKey={path}
         contentFit="cover"
