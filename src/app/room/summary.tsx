@@ -128,7 +128,7 @@ export default function GameSummary() {
     dispatch(roomActions.reset());
     dispatch(reset());
 
-    router.replace("/");
+    router.replace("/app/");
   };
 
   const handleTryAgain = () => {

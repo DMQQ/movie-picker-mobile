@@ -82,7 +82,10 @@
       ]
     },
     "web": {
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icon-dark.png",
+      "bundler": "metro",
+      "output": "single",
+      "baseUrl": "/app"
     },
     "extra": {
       "eas": {

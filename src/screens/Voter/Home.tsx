@@ -506,7 +506,7 @@ function Results() {
       <View style={{ flex: 1 }}>
         <View style={styles.center}>
           <Text>No movies matched your preferences</Text>
-          <Button mode="contained" onPress={() => router.replace("/")} style={styles.button}>
+          <Button mode="contained" onPress={() => router.replace("/app/")} style={styles.button}>
             {t("voter.home.quit")}
           </Button>
         </View>
@@ -646,7 +646,7 @@ function Results() {
           mode="contained"
           onPress={() => {
             ReviewManager.onGameComplete(true);
-            router.replace("/");
+            router.replace("/app/");
           }}
           style={[styles.button, { marginBottom: 15 }]}
           contentStyle={{ padding: 7.5 }}

@@ -31,7 +31,7 @@ export default function DialogModals({
   // navigation removed - using expo-router"
 
   const handleLeaveRoom = () => {
-    router.replace("/");
+    router.replace("/app/");
     socket?.emit("leave-room", roomId);
 
     dispatch(roomActions.reset());

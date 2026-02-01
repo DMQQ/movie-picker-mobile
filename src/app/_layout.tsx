@@ -120,7 +120,7 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
                 nickname: "Guest",
                 language: "en",
                 regionalization: defaultRegionalization,
-              })
+              }),
             );
           } else {
             router.replace("/onboarding");
@@ -134,7 +134,7 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
               nickname: finalNickname,
               language,
               regionalization: JSON.parse(regionalization || "{}") || ({} as any),
-            })
+            }),
           );
         }
       } catch (error) {
@@ -157,10 +157,6 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
       },
     ]);
   }, []);
-
-  if (!settingsLoaded) {
-    return <View style={{ flex: 1, backgroundColor: "#000" }} />;
-  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>

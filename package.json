@@ -2,6 +2,7 @@
   "name": "qr-mobile",
   "version": "1.0.0",
   "main": "expo-router/entry",
+  "homepage": "/app",
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo run:android",
