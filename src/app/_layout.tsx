@@ -1,6 +1,7 @@
 import * as SecureStore from "expo-secure-store";
+import * as Localization from "expo-localization";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Stack, router } from "expo-router";
+import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
@@ -12,6 +13,27 @@ import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
 import { View } from "react-native";
+
+function getDeviceSettings() {
+  const locales = Localization.getLocales();
+  const calendars = Localization.getCalendars();
+  const deviceLocale = locales[0];
+  const deviceCalendar = calendars[0];
+
+  const language = deviceLocale?.languageCode === "pl" ? "pl" : "en";
+  const regionCode = deviceLocale?.regionCode || "US";
+
+  return {
+    language,
+    nickname: language === "pl" ? "Gość" : "Guest",
+    regionalization: {
+      "x-user-region": regionCode || "US",
+      "x-user-watch-provider": regionCode === "PL" ? "PL" : "US",
+      "x-user-watch-region": regionCode || "US",
+      "x-user-timezone": deviceCalendar?.timeZone || "America/New_York",
+    },
+  };
+}
 
 import { Image } from "expo-image";
 
@@ -94,15 +116,23 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
       if (!isLoaded || isUpdating) return;
 
       try {
-        const [language, regionalization, nickname] = await Promise.all([
+        let [language, regionalization, nickname] = await Promise.all([
           SecureStore.getItemAsync("language"),
           SecureStore.getItemAsync("regionalization"),
           SecureStore.getItemAsync("nickname"),
         ]);
 
         if (!language) {
-          router.replace("/onboarding");
-          return;
+          const deviceSettings = getDeviceSettings();
+          language = deviceSettings.language;
+          nickname = deviceSettings.nickname;
+          regionalization = JSON.stringify(deviceSettings.regionalization);
+
+          await Promise.all([
+            SecureStore.setItemAsync("language", language),
+            SecureStore.setItemAsync("nickname", nickname),
+            SecureStore.setItemAsync("regionalization", regionalization),
+          ]);
         }
 
         const finalNickname = nickname || (language === "en" ? "Guest" : "Gość");
@@ -112,10 +142,10 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
             nickname: finalNickname,
             language,
             regionalization: JSON.parse(regionalization || "{}") || ({} as any),
-          })
+          }),
         );
       } catch (error) {
-        console.error("Error during app initialization:", error);
+        console.error("[RootNavigator] Error:", error);
       } finally {
         setSettingsLoaded(true);
       }

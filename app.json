@@ -3,7 +3,7 @@
     "platforms": ["ios", "android"],
     "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon-dark.png",
     "userInterfaceStyle": "automatic",
@@ -20,7 +20,24 @@
           "cameraPermission": "FlickMate uses your camera to scan QR codes for joining movie games. You can also join manually without camera access."
         }
       ],
-      "expo-font",
+      [
+        "expo-font",
+        {
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "Bebas",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/Bebas.ttf",
+                    "weight": 400
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -37,7 +54,8 @@
         }
       ],
       "expo-quick-actions",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-localization"
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -62,7 +80,7 @@
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202511200,
+      "versionCode": 202511201,
       "intentFilters": [
         {
           "action": "VIEW",
@@ -89,7 +107,7 @@
         "projectId": "ab2d7ea0-e25f-4063-a2e2-1a449547340b"
       }
     },
-    "runtimeVersion": "3.0.0",
+    "runtimeVersion": "3.0.1",
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
@@ -97,7 +115,8 @@
     "updates": {
       "url": "https://movie.dmqq.dev/api/manifest",
       "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "runtimeVersion": "3.0.1"
     }
   }
 }

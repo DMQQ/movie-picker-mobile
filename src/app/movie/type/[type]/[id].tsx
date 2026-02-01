@@ -77,7 +77,7 @@ export default function MovieDetailsScreen() {
       refetchOnReconnect: true,
       refetchOnMountOrArgChange: true,
       skip: !movieId || !typeOfContent,
-    }
+    },
   );
 
   const params = useMemo(
@@ -85,7 +85,7 @@ export default function MovieDetailsScreen() {
       id: movieId,
       type: typeOfContent,
     }),
-    [movieId, typeOfContent]
+    [movieId, typeOfContent],
   );
 
   return (

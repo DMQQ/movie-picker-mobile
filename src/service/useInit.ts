@@ -1,43 +1,34 @@
-import { loadAsync } from "expo-font";
 import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
 
 export default function useInit() {
-  const [isLoaded, setIsLoaded] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const { isUpdateAvailable, isUpdatePending, checkError, downloadError } = Updates.useUpdates();
+
+  console.log("[useInit] isUpdateAvailable:", isUpdateAvailable);
+  console.log("[useInit] isUpdatePending:", isUpdatePending);
+
+  if (checkError) {
+    console.error("[useInit] Update check error:", checkError);
+  }
+
+  if (downloadError) {
+    console.error("[useInit] Update download error:", downloadError);
+  }
+
   useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        const update = await Updates.checkForUpdateAsync();
+    if (isUpdateAvailable) {
+      setIsUpdating(true);
+      Updates.fetchUpdateAsync();
+    }
+  }, [isUpdateAvailable]);
 
-        if (update.isAvailable) {
-          setIsUpdating(true);
-          await Updates.fetchUpdateAsync();
+  useEffect(() => {
+    if (isUpdatePending) {
+      Updates.reloadAsync();
+    }
+  }, [isUpdatePending]);
 
-          await Updates.reloadAsync({
-            reloadScreenOptions: {
-              backgroundColor: "#000",
-              fade: true,
-              image: require("../../assets/images/icon-light.png"),
-            },
-          });
-        }
-      } catch (error) {
-        setIsUpdating(false);
-      }
-    };
-
-    Promise.allSettled([
-      loadAsync({
-        Bebas: require("../../assets/fonts/BebasNeue-Regular.ttf"),
-      }),
-      Promise.race([initializeApp(), new Promise((res) => setTimeout(res, 7500))]),
-    ]).finally(() => {
-      setIsLoaded(true);
-      setIsUpdating(false);
-    });
-  }, []);
-
-  return { isLoaded, isUpdating };
+  return { isLoaded: true, isUpdating };
 }

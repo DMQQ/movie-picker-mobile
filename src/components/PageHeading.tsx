@@ -1,5 +1,4 @@
 import { useNavigation } from "@react-navigation/native";
-import { GlassView } from "expo-glass-effect";
 import * as Haptic from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { PropsWithChildren } from "react";
@@ -118,7 +117,7 @@ export default function PageHeading({
               {rightIconName && (
                 <IconButton
                   icon={rightIconName as any}
-                  size={25}
+                  size={20}
                   onPress={() => {
                     if (onRightIconPress) {
                       onRightIconPress();
@@ -183,7 +182,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "absolute",
     left: 15,
-    top: Platform.OS === "android" ? 0 : 5,
+    top: Platform.OS === "android" ? 5 : 5,
     zIndex: 1,
 
     ...Platform.select({
