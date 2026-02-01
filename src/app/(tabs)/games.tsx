@@ -107,14 +107,14 @@ export default function GameList() {
         index: 2,
       },
     ],
-    [t]
+    [t],
   );
 
   const filteredGames = games;
 
   return (
     <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000" }}>
-      <PageHeading title={t("voter.games")} showBackButton={false} extraScreenPaddingTop={Platform.OS === "android" ? 20 : 0} />
+      <PageHeading title={t("voter.games")} showBackButton={false} extraScreenPaddingTop={Platform.OS === "android" ? 0 : 0} />
 
       <ScrollView
         style={[styles.container, Platform.OS === "android" && { marginTop: 30 }]}

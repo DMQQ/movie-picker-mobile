@@ -146,7 +146,7 @@ export const movieApi = createApi({
       query: ({ type, genres }) => `/movie/max-count?type=${type}&genres=${genres}`,
     }),
 
-    getSectionMovies: builder.query<{ name: string; results: Movie[] }, SectionParams>({
+    getSectionMovies: builder.query<{ name: string; results: Movie[]; totalPagesCount: number }, SectionParams>({
       query: ({ name, page = 1 }) => `/landing/${name}/${page}`,
     }),
 

@@ -45,7 +45,7 @@ export default function Favourites() {
         rightIconName="plus"
         onRightIconPress={() => setModalVisible(true)}
         useSafeArea
-        extraScreenPaddingTop={Platform.OS === "android" ? 20 : 0}
+        extraScreenPaddingTop={Platform.OS === "android" ? 0 : 0}
       />
       <View style={{ paddingHorizontal: 15, flex: 1, marginTop: Platform.OS === "android" ? 30 : 0, paddingBottom: 45 }}>
         <FlatList

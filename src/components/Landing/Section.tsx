@@ -45,12 +45,14 @@ const skeletonStyles = StyleSheet.create({
   },
 });
 
+const movieWidth = Math.min(width * 0.25, 200);
+const movieHeight = movieWidth * 1.5;
+
 const getItem = (data: Movie[], index: number) => data[index];
 
 const getItemCount = (data: Movie[]) => data.length;
 
 const getItemLayout = (_: Movie[] | null | undefined, index: number) => {
-  const movieWidth = Math.min(width * 0.25, 120);
   return { length: movieWidth + 15, offset: (movieWidth + 15) * index, index };
 };
 
@@ -68,28 +70,26 @@ const renderItem = ({ item }: { item: Movie }) => (
   />
 );
 
-const movieWidth = Math.min(width * 0.25, 120);
-const movieHeight = movieWidth * 1.5;
-
 export const Section = memo(
   ({ group }: SectionProps) => {
     const [page, setPage] = useState(1);
     const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
-
+    const [hasMore, setHasMore] = useState(true);
     const [movies, setSectionMovies] = useState<Movie[]>(group.results);
 
     const movieKeyExtractor = useCallback((item: any) => `section-${item.id}-${item.type}`, []);
 
     const onEndReached = useCallback(() => {
-      if (state.isLoading || !!state.error) return;
+      if (state.isLoading || !!state.error || !hasMore) return;
       setPage((prev) => prev + 1);
-    }, [state.isLoading, state.error]);
+    }, [state.isLoading, state.error, hasMore]);
 
     useEffect(() => {
       if (page === 1) return;
 
       getSectionMovies({ name: group.name, page }, true).then((response) => {
         if (response.data && Array.isArray(response.data.results)) {
+          setHasMore(page < response.data.totalPagesCount);
           setSectionMovies((prev) => uniqueBy(prev.concat(response?.data?.results || []), "id"));
         }
       });
@@ -133,7 +133,7 @@ export const Section = memo(
   },
   (prevProps, nextProps) => {
     return prevProps.group.name === nextProps.group.name && prevProps.group.results.length === nextProps.group.results.length;
-  }
+  },
 );
 
 export default Section;

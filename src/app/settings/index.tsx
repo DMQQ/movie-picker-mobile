@@ -55,7 +55,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <PageHeading title={t("settings.heading")} extraScreenPaddingTop={Platform.OS === "android" ? 20 : 0} />
+      <PageHeading title={t("settings.heading")} extraScreenPaddingTop={Platform.OS === "android" ? 0 : 0} />
 
       <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)", paddingTop: 100 }}>
         <View style={{ paddingHorizontal: 15, flex: 1 }}>

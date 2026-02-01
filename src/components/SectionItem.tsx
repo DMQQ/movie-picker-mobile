@@ -3,7 +3,6 @@ import { MD2DarkTheme, Text } from "react-native-paper";
 import { Movie } from "../../types";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import { Link } from "expo-router";
-import { useState } from "react";
 
 const getColor = (score: number) => {
   if (score >= 7) return "#21d07a"; // Green
