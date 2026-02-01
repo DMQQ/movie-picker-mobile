@@ -100,6 +100,7 @@ export default function PageHeading({
               {
                 right: 15,
                 left: undefined,
+                width: 60,
               },
               rightIconTitle && { flexDirection: "row", alignItems: "center", justifyContent: "center" },
             ]}

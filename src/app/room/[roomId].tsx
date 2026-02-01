@@ -211,7 +211,7 @@ export default function Home() {
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
+    <View style={{ flex: 1, backgroundColor: "#000", overflow: "hidden" }}>
       <HomeAppbar roomId={params?.roomId as string} hasCards={cards.length > 0} />
 
       {isPlaying ? (
@@ -302,7 +302,7 @@ const SwipeContent = memo(({ params }: SwipeContentProps) => {
         },
       });
     },
-    [params?.type]
+    [params?.type],
   );
 
   return cards.map((card, index) => (

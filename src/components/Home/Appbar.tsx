@@ -46,7 +46,7 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
     <>
       <View
         style={{
-          marginTop: 0,
+          marginTop: 15,
           flexDirection: "row",
           alignItems: "center",
           position: "relative",
@@ -75,7 +75,7 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
           style={{
             position: "absolute",
             left: "50%",
-            transform: [{ translateX: "-50%" }],
+            ...(Platform.OS === "web" ? { transform: "translateX(-50%)" as any } : { transform: [{ translateX: "-50%" }] }),
           }}
         >
           <ActiveUsers data={users} onPress={onActiveUsersPress} />
@@ -123,7 +123,7 @@ const LikedMoviesPreview = memo(() => {
             key={`display-${movie.id}`}
             style={{
               position: "absolute",
-              transform: [{ translateX: index * 5 }],
+              ...(Platform.OS === "web" ? { transform: `translateX(${index * 5}px)` as any } : { transform: [{ translateX: index * 5 }] }),
               zIndex: itemsToDisplay.length - index,
             }}
           >
@@ -152,7 +152,7 @@ const PlaceholderImage = memo(() => {
       entering={FadeIn}
       style={{
         position: "absolute",
-        transform: [{ translateX: index * 5 }],
+        ...(Platform.OS === "web" ? { transform: `translateX(${index * 5}px)` as any } : { transform: [{ translateX: index * 5 }] }),
         zIndex: 4 - index,
       }}
     >

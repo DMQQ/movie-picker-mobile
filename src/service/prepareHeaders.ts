@@ -1,10 +1,10 @@
 import * as Updates from "expo-updates";
 import { Platform } from "react-native";
 import envs from "../constants/envs";
-import * as SecureStore from "expo-secure-store";
+import { storage } from "../utils/storage";
 
-const language = SecureStore.getItem("language") || "en";
-const regionalization = (JSON.parse(SecureStore.getItem("regionalization") ?? "{}") || {}) as Record<string, string>;
+const language = storage.getItem("language") || "en";
+const regionalization = (JSON.parse(storage.getItem("regionalization") ?? "{}") || {}) as Record<string, string>;
 
 export default function prepareHeaders(headers: Headers) {
   headers.set("authorization", `Bearer ${envs.server_auth_token}`);

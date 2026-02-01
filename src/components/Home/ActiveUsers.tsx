@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Pressable, View } from "react-native";
+import { Platform, Pressable, View } from "react-native";
 import { Avatar, MD2DarkTheme } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -24,7 +24,9 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
             <View
               key={n}
               style={{
-                transform: [{ translateX: -n * 6.5 }],
+                ...(Platform.OS === "web"
+                  ? { transform: `translateX(${-n * 6.5}px)` as any }
+                  : { transform: [{ translateX: -n * 6.5 }] }),
                 zIndex: n + 1,
                 position: "relative",
               }}
@@ -48,7 +50,9 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
                     position: "absolute",
                     top: -10,
                     left: "50%",
-                    transform: [{ translateX: -5 }],
+                    ...(Platform.OS === "web"
+                      ? { transform: "translateX(-5px)" as any }
+                      : { transform: [{ translateX: -5 }] }),
                     textShadowColor: "rgba(0, 0, 0, 0.5)",
                     textShadowOffset: { width: 0, height: 1 },
                     textShadowRadius: 2,
@@ -73,7 +77,9 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
           size={24}
           icon="plus"
           style={{
-            transform: [{ translateX: -props.data.length * 6.5 }],
+            ...(Platform.OS === "web"
+              ? { transform: `translateX(${-props.data.length * 6.5}px)` as any }
+              : { transform: [{ translateX: -props.data.length * 6.5 }] }),
             zIndex: (props.data?.length || 0) + 1,
             borderWidth: 0.5,
             borderColor: "#fff",

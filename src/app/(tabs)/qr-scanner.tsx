@@ -238,7 +238,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: "50%",
     left: "50%",
-    transform: [{ translateX: -125 }, { translateY: -125 }],
+    ...(Platform.OS === "web"
+      ? { transform: "translateX(-125px) translateY(-125px)" as any }
+      : { transform: [{ translateX: -125 }, { translateY: -125 }] }),
   },
   scannerBackground: {
     position: "absolute",
@@ -284,5 +286,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     fontSize: 20,
     letterSpacing: 1,
+    height: 60,
   },
 });

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import * as SecureStore from "expo-secure-store";
+import { storage } from "../utils/storage";
 
 const PREFERENCES_KEY = "room_builder_preferences";
 
@@ -20,7 +20,7 @@ export const useBuilderPreferences = () => {
   const loadPreferences = useCallback(async () => {
     try {
       setIsLoading(true);
-      const saved = await SecureStore.getItemAsync(PREFERENCES_KEY);
+      const saved = await storage.getItemAsync(PREFERENCES_KEY);
       if (saved) {
         const parsed = JSON.parse(saved) as BuilderPreferences;
         setPreferences(parsed);
@@ -42,7 +42,7 @@ export const useBuilderPreferences = () => {
         savedAt: Date.now(),
       };
 
-      await SecureStore.setItemAsync(PREFERENCES_KEY, JSON.stringify(toSave));
+      await storage.setItemAsync(PREFERENCES_KEY, JSON.stringify(toSave));
       setPreferences(toSave);
       return true;
     } catch (error) {
@@ -53,7 +53,7 @@ export const useBuilderPreferences = () => {
 
   const clearPreferences = useCallback(async () => {
     try {
-      await SecureStore.deleteItemAsync(PREFERENCES_KEY);
+      await storage.deleteItemAsync(PREFERENCES_KEY);
       setPreferences(null);
       return true;
     } catch (error) {

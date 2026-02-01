@@ -6,7 +6,7 @@ import { useGetTrailersQuery } from "../../redux/movie/movieApi";
 import { hexToRgba } from "../../utils/hexToRgb";
 import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
 import { Entypo } from "@expo/vector-icons";
-import YoutubeIframe from "react-native-youtube-iframe";
+import YoutubePlayer from "../YoutubePlayer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
@@ -158,7 +158,7 @@ const PlayerItem = memo(({ name, videoKey, index, canPlay }: { name: string; vid
               </Text>
             </View>
           )}
-          <YoutubeIframe
+          <YoutubePlayer
             play={isPlaying && canPlay}
             width={width - 60}
             height={(width - 60) * 0.5625}

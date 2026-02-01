@@ -4,7 +4,7 @@ import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { hexToRgba } from "../../../utils/hexToRgb";
 import { BlurViewWrapper } from "../../PlatformBlurView";
-import YoutubeIframe from "react-native-youtube-iframe";
+import YoutubePlayer from "../../YoutubePlayer";
 
 const { width } = Dimensions.get("window");
 
@@ -69,7 +69,7 @@ const PlayerItem = memo(({ name, videoKey, index, canPlay }: { name: string; vid
               </Text>
             </View>
           )}
-          <YoutubeIframe
+          <YoutubePlayer
             play={isPlaying && canPlay}
             width={width - 30}
             height={(width - 30) * 0.5625}

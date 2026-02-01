@@ -104,7 +104,7 @@ export default function Home() {
         });
       }
     }, 1000),
-    [currentMovies, localRatings, actions]
+    [currentMovies, localRatings, actions],
   );
 
   const handleReady = () => {
@@ -124,7 +124,7 @@ export default function Home() {
           Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path),
           Image.prefetch("https://image.tmdb.org/t/p/w500" + movie?.backdrop_path),
         ])
-        .flat()
+        .flat(),
     ).finally(() => {
       imagesPrefetched.current = true;
     });
@@ -151,7 +151,7 @@ export default function Home() {
           <PickCategory
             category={sessionSettings.category}
             setCategory={(category: string) => {
-              actions.setSessionSettings((p) => ({ ...p, category } as any));
+              actions.setSessionSettings((p) => ({ ...p, category }) as any);
             }}
           />
           <PickGenres
@@ -457,18 +457,14 @@ export default function Home() {
   );
 
   return (
-    <View style={{ flex: 1, paddingTop: Platform.OS === "android" ? 30 : 0 }}>
+    <View style={{ flex: 1, paddingTop: Platform.OS === "android" ? 30 : 0, paddingBottom: 15 }}>
       {status === "idle" && renderInitialState()}
       {status === "waiting" && renderWaitingState()}
       {status === "rating" && currentMovies !== undefined && renderRatingState()}
       {status === "completed" && renderCompletedState()}
 
       <Portal>
-        <Dialog
-          dismissable={false}
-          visible={showError}
-          style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
-        >
+        <Dialog dismissable={false} visible={showError} style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}>
           <Dialog.Title>{t("dialogs.qr.error")}</Dialog.Title>
 
           <Dialog.Content>
@@ -781,7 +777,7 @@ const PickProviders = ({ providers, setProviders }: { setProviders: any; provide
         <TouchableRipple
           onPress={() =>
             setProviders((p: number[]) =>
-              p.includes(item.provider_id) ? p.filter((i) => i !== item.provider_id) : [...p, item.provider_id]
+              p.includes(item.provider_id) ? p.filter((i) => i !== item.provider_id) : [...p, item.provider_id],
             )
           }
           style={{

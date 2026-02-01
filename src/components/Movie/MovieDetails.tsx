@@ -11,6 +11,7 @@ import { useGetMovieProvidersQuery, useGetSimilarQuery, useGetTrailersQuery } fr
 import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
 import { memo, useMemo } from "react";
 import MovieTabs from "./MovieTabs";
+import { BlurView } from "expo-blur";
 
 function MovieDetails({
   movie,
@@ -37,7 +38,7 @@ function MovieDetails({
       refetchOnReconnect: true,
       refetchOnMountOrArgChange: true,
       skip: !params.id || !params.type,
-    }
+    },
   );
 
   const { data: similarData } = useGetSimilarQuery(
@@ -48,7 +49,7 @@ function MovieDetails({
     },
     {
       skip: !params.id || !params.type,
-    }
+    },
   );
 
   const { data: trailersData } = useGetTrailersQuery(
@@ -58,7 +59,7 @@ function MovieDetails({
     },
     {
       skip: !params.id || !params.type,
-    }
+    },
   );
 
   const { data: castData } = useGetMovieKeyPeopleQuery(
@@ -70,7 +71,7 @@ function MovieDetails({
     },
     {
       skip: !params.id || !params.type,
-    }
+    },
   );
 
   const hasSimilar = useMemo(() => {
@@ -90,7 +91,7 @@ function MovieDetails({
           : movie?.original_title || movie?.original_name,
         ...(movie?.genres || [])?.map((g: any) => g.name),
       ].filter((v) => v !== undefined && v !== "" && v !== null && typeof v === "string") as string[],
-    [movie]
+    [movie],
   );
 
   const isTVShow = type === "tv";
@@ -141,14 +142,17 @@ function MovieDetails({
 
           <Text style={styles.categories}>{data.join(" | ")}</Text>
 
-          <View style={{ paddingVertical: 15 }}>
-            <PlatformBlurView style={styles.quickActions}>
+          <View style={{ paddingVertical: 15 }} pointerEvents="none">
+            <PlatformBlurView style={[styles.quickActions, { opacity: 0.2 }]}>
               <QuickActions movie={movie}>
                 <View style={{ flex: 1 }}>
                   <CustomFavourite movie={movie} />
                 </View>
               </QuickActions>
             </PlatformBlurView>
+            <BlurView intensity={1000} style={[StyleSheet.absoluteFill, { flex: 1, justifyContent: "center", alignItems: "center" }]}>
+              <Text>Only in app</Text>
+            </BlurView>
           </View>
         </View>
 

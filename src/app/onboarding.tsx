@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import { storage } from "../utils/storage";
 import { useState } from "react";
 import { Image, View, StyleSheet, Platform } from "react-native";
 import { Button, SegmentedButtons, Text, TextInput } from "react-native-paper";
@@ -170,9 +170,9 @@ export default function OnboardingScreen() {
       setIsLoading(true);
       try {
         await Promise.allSettled([
-          SecureStore.setItemAsync("language", language),
-          SecureStore.setItemAsync("nickname", nickname),
-          SecureStore.setItemAsync(
+          storage.setItemAsync("language", language),
+          storage.setItemAsync("nickname", nickname),
+          storage.setItemAsync(
             "regionalization",
             JSON.stringify({
               "x-user-region": selectedRegion.code,

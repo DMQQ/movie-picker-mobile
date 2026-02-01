@@ -105,6 +105,8 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
     },
   ];
 
+  if (Platform.OS === "web") return null;
+
   return (
     <UserInputModal
       visible={showModal}

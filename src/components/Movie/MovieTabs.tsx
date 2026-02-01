@@ -128,7 +128,7 @@ function MovieTabs({ movie, type, providers, tabs, similarData, trailersData, ca
   };
 
   return (
-    <View>
+    <View style={{ maxWidth: width }}>
       <PlatformBlurView style={styles.tabBarContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabBarScrollContainer}>
           {tabs.map((tab, index) => (

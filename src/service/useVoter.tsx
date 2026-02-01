@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useCallback, useState, ReactNode } from "react";
 import { SocketContext } from "../context/SocketContext";
-import * as SecureStore from "expo-secure-store";
+import { storage } from "../utils/storage";
 import { Movie } from "../../types";
 import * as Haptics from "expo-haptics";
 
@@ -93,12 +93,12 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    const userId = await SecureStore.getItemAsync("userId");
+    const userId = await storage.getItemAsync("userId");
     setCurrentUserId(userId);
     setSessionId(sessionId);
     setStatus("waiting");
     setIsHost(true);
-    SecureStore.setItemAsync("voterSessionId", sessionId);
+    storage.setItemAsync("voterSessionId", sessionId);
   }, [socket, sessionSettings]);
 
   const joinSession = useCallback(
@@ -131,7 +131,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
           throw new Error(response.error);
         }
 
-        const userId = await SecureStore.getItemAsync("userId");
+        const userId = await storage.getItemAsync("userId");
         setCurrentUserId(userId);
         setSessionId(joinSessionId);
         setStatus("waiting");
@@ -253,7 +253,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     socket.on("voter:error", handleError);
 
     // Get initial user ID
-    SecureStore.getItemAsync("userId").then((userId) => {
+    storage.getItemAsync("userId").then((userId) => {
       setCurrentUserId(userId);
     });
 

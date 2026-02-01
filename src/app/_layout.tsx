@@ -1,4 +1,3 @@
-import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -11,7 +10,9 @@ import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
+import { storage } from "../utils/storage";
+import WebDownloadModal from "../components/WebDownloadModal";
 
 import { Image } from "expo-image";
 
@@ -24,16 +25,16 @@ const theme = MD2DarkTheme;
 
 const migrationFlag = "migration_complete";
 
-const isMigrated = SecureStore.getItem(migrationFlag) === "true";
+const isMigrated = Platform.OS === "web" || storage.getItem(migrationFlag) === "true";
 
 async function migrateToSecureStore() {
   try {
-    if (isMigrated) return;
+    if (Platform.OS === "web" || isMigrated) return;
 
     const keysToMigrate = ["language", "regionalization", "nickname", "userId", STORAGE_KEY];
 
     const [secureStoreValues, asyncStorageValues] = await Promise.all([
-      Promise.all(keysToMigrate.map((key) => SecureStore.getItemAsync(key))),
+      Promise.all(keysToMigrate.map((key) => storage.getItemAsync(key))),
       Promise.all(keysToMigrate.map((key) => AsyncStorage.getItem(key))),
     ]);
 
@@ -45,7 +46,7 @@ async function migrateToSecureStore() {
       const asyncValue = asyncStorageValues[index];
 
       if (asyncValue && !secureValue) {
-        migrateOperations.push(SecureStore.setItemAsync(key, asyncValue));
+        migrateOperations.push(storage.setItemAsync(key, asyncValue));
         cleanupOperations.push(AsyncStorage.removeItem(key));
       }
     });
@@ -54,7 +55,7 @@ async function migrateToSecureStore() {
       await Promise.all([...migrateOperations, ...cleanupOperations]);
     }
 
-    await SecureStore.setItemAsync("migration_complete", "true");
+    await storage.setItemAsync("migration_complete", "true");
   } catch (error) {}
 }
 
@@ -95,25 +96,47 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
 
       try {
         const [language, regionalization, nickname] = await Promise.all([
-          SecureStore.getItemAsync("language"),
-          SecureStore.getItemAsync("regionalization"),
-          SecureStore.getItemAsync("nickname"),
+          storage.getItemAsync("language"),
+          storage.getItemAsync("regionalization"),
+          storage.getItemAsync("nickname"),
         ]);
 
         if (!language) {
-          router.replace("/onboarding");
-          return;
+          if (Platform.OS === "web") {
+            // Skip onboarding on web, use English defaults
+            const defaultRegionalization = {
+              "x-user-region": "US",
+              "x-user-watch-provider": "US",
+              "x-user-watch-region": "US",
+              "x-user-timezone": "America/New_York",
+            };
+            await Promise.all([
+              storage.setItemAsync("language", "en"),
+              storage.setItemAsync("nickname", "Guest"),
+              storage.setItemAsync("regionalization", JSON.stringify(defaultRegionalization)),
+            ]);
+            dispatch(
+              roomActions.setSettings({
+                nickname: "Guest",
+                language: "en",
+                regionalization: defaultRegionalization,
+              })
+            );
+          } else {
+            router.replace("/onboarding");
+            return;
+          }
+        } else {
+          const finalNickname = nickname || (language === "en" ? "Guest" : "Gość");
+
+          dispatch(
+            roomActions.setSettings({
+              nickname: finalNickname,
+              language,
+              regionalization: JSON.parse(regionalization || "{}") || ({} as any),
+            })
+          );
         }
-
-        const finalNickname = nickname || (language === "en" ? "Guest" : "Gość");
-
-        dispatch(
-          roomActions.setSettings({
-            nickname: finalNickname,
-            language,
-            regionalization: JSON.parse(regionalization || "{}") || ({} as any),
-          })
-        );
       } catch (error) {
         console.error("Error during app initialization:", error);
       } finally {
@@ -164,6 +187,7 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
 
         <Stack.Screen name="search-filters" options={{ headerShown: false }} />
       </Stack>
+      <WebDownloadModal />
     </GestureHandlerRootView>
   );
 };

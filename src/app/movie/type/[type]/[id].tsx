@@ -77,7 +77,7 @@ export default function MovieDetailsScreen() {
       refetchOnReconnect: true,
       refetchOnMountOrArgChange: true,
       skip: !movieId || !typeOfContent,
-    }
+    },
   );
 
   const params = useMemo(
@@ -85,16 +85,15 @@ export default function MovieDetailsScreen() {
       id: movieId,
       type: typeOfContent,
     }),
-    [movieId, typeOfContent]
+    [movieId, typeOfContent],
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000", width, height }}>
+    <View style={{ flex: 1, backgroundColor: "#000", maxWidth: width }}>
       <Animated.ScrollView
         onScroll={scrollhandler}
         contentContainerStyle={{
           alignItems: "center",
-          paddingTop: IMG_HEIGHT,
           width,
         }}
         overScrollMode={"never"}
@@ -102,31 +101,17 @@ export default function MovieDetailsScreen() {
         stickyHeaderIndices={[0]}
         nestedScrollEnabled
       >
-        <Animated.View
-          style={[
+        <Thumbnail
+          size={ThumbnailSizes.poster.xxlarge}
+          container={[
             {
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: 1,
-              width: width,
               height: IMG_HEIGHT,
+              width: width,
             },
           ]}
-        >
-          <Thumbnail
-            size={ThumbnailSizes.poster.xxlarge}
-            container={[
-              {
-                height: IMG_HEIGHT,
-                width: width,
-              },
-            ]}
-            path={posterPath || (movie?.poster_path as any)}
-            priority="high"
-          />
-        </Animated.View>
+          path={posterPath || (movie?.poster_path as any)}
+          priority="high"
+        />
         <View style={{ zIndex: 10, position: "relative" }}>
           {loading ? <MovieDetailsSkeleton /> : <MovieDetails type={typeOfContent} movie={movie as any} params={params} />}
         </View>

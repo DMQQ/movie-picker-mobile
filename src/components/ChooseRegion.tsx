@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import { storage } from "../utils/storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { reloadAsync } from "expo-updates";
 import { useCallback, useEffect, useState } from "react";
@@ -77,7 +77,7 @@ const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: Choose
   const [selectedRegion, setSelectedRegion] = useState(regions[0]);
 
   const loadSelectedRegion = useCallback(async () => {
-    const regionalization = await SecureStore.getItemAsync("regionalization");
+    const regionalization = await storage.getItemAsync("regionalization");
 
     if (regionalization) {
       const headers = JSON.parse(regionalization) as Record<string, string>;
@@ -101,7 +101,7 @@ const ChooseRegion = ({ onBack, onRegionSelect, showAsSelector = false }: Choose
 
   const onSettingsChange = async (settings: any) => {
     try {
-      await SecureStore.setItemAsync("regionalization", JSON.stringify(settings));
+      await storage.setItemAsync("regionalization", JSON.stringify(settings));
 
       await reloadAsync();
     } catch (error) {

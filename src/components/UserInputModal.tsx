@@ -1,9 +1,8 @@
 import { ReactNode } from "react";
-import { View, StyleSheet, Modal, Dimensions, Platform } from "react-native";
+import { View, StyleSheet, Modal, Dimensions, Platform, Pressable } from "react-native";
 import { Text, Button } from "react-native-paper";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
-import PlatformBlurView from "./PlatformBlurView";
 
 export interface UserInputModalAction {
   label: string;
@@ -67,8 +66,8 @@ export default function UserInputModal({
       statusBarTranslucent={statusBarTranslucent}
       onRequestClose={dismissable ? onDismiss : undefined}
     >
-      <View style={styles.modalOverlay} onTouchEnd={handleBackdropPress}>
-        <PlatformBlurView style={[styles.modalContent, { width, maxHeight }]} onTouchEnd={(e) => e.stopPropagation()}>
+      <Pressable style={styles.modalOverlay} onPress={handleBackdropPress}>
+        <Pressable style={[styles.modalContent, { width, maxWidth: 400 }]} onPress={(e) => e.stopPropagation()}>
           <Animated.View style={styles.modalInner}>
             <Text style={styles.modalTitle}>{title}</Text>
             {subtitle && <Text style={styles.modalSubtitle}>{subtitle}</Text>}
@@ -94,8 +93,8 @@ export default function UserInputModal({
               </View>
             )}
           </Animated.View>
-        </PlatformBlurView>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }
@@ -111,9 +110,13 @@ const styles = StyleSheet.create({
   modalContent: {
     borderRadius: 35,
     overflow: "hidden",
-    flex: 0,
     ...Platform.select({
       android: {
+        backgroundColor: "#000",
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 0.18)",
+      },
+      web: {
         backgroundColor: "#000",
         borderWidth: 1,
         borderColor: "rgba(255, 255, 255, 0.18)",

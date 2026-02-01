@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import { storage } from "../../utils/storage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Movie } from "../../../types";
 
@@ -55,10 +55,10 @@ const makeDefaultGroups = () => {
 };
 
 export const loadFavorites = createAsyncThunk("favorites/load", async () => {
-  const data = await SecureStore.getItemAsync(STORAGE_KEY);
+  const data = await storage.getItemAsync(STORAGE_KEY);
 
   if (!data) {
-    await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify({ groups: makeDefaultGroups() }));
+    await storage.setItemAsync(STORAGE_KEY, JSON.stringify({ groups: makeDefaultGroups() }));
 
     return { groups: makeDefaultGroups() };
   }
@@ -67,7 +67,7 @@ export const loadFavorites = createAsyncThunk("favorites/load", async () => {
 });
 
 export const createGroup = createAsyncThunk("favorites/createGroup", async (name: string) => {
-  const data = await SecureStore.getItemAsync(STORAGE_KEY);
+  const data = await storage.getItemAsync(STORAGE_KEY);
   const storage = data ? JSON.parse(data) : { groups: [] };
 
   const group: FavoriteGroup = {
@@ -81,12 +81,12 @@ export const createGroup = createAsyncThunk("favorites/createGroup", async (name
     groups: [...storage.groups, group],
   };
 
-  await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(updated));
+  await storage.setItemAsync(STORAGE_KEY, JSON.stringify(updated));
   return group;
 });
 
 export const addToGroup = createAsyncThunk("favorites/addToGroup", async ({ item, groupId }: { item: FavoriteItem; groupId: string }) => {
-  const data = await SecureStore.getItemAsync(STORAGE_KEY);
+  const data = await storage.getItemAsync(STORAGE_KEY);
   const storage = data ? JSON.parse(data) : { groups: [] };
 
   const updated = {
@@ -109,14 +109,14 @@ export const addToGroup = createAsyncThunk("favorites/addToGroup", async ({ item
     }),
   };
 
-  await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(updated));
+  await storage.setItemAsync(STORAGE_KEY, JSON.stringify(updated));
   return updated.groups;
 });
 
 export const removeFromGroup = createAsyncThunk(
   "favorites/removeFromGroup",
   async ({ movieId, groupId }: { movieId: number; groupId: string }) => {
-    const data = await SecureStore.getItemAsync(STORAGE_KEY);
+    const data = await storage.getItemAsync(STORAGE_KEY);
     const storage = data ? JSON.parse(data) : { groups: [] };
 
     const updated = {
@@ -139,13 +139,13 @@ export const removeFromGroup = createAsyncThunk(
       }),
     };
 
-    await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(updated));
+    await storage.setItemAsync(STORAGE_KEY, JSON.stringify(updated));
     return updated.groups;
   }
 );
 
 export const deleteGroup = createAsyncThunk("favorites/deleteGroup", async (groupId: string) => {
-  const data = await SecureStore.getItemAsync(STORAGE_KEY);
+  const data = await storage.getItemAsync(STORAGE_KEY);
   const storage = data ? JSON.parse(data) : { groups: [] };
 
   const updated = {
@@ -153,7 +153,7 @@ export const deleteGroup = createAsyncThunk("favorites/deleteGroup", async (grou
     groups: storage.groups.filter((group: FavoriteGroup) => group.id !== groupId),
   };
 
-  await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(updated));
+  await storage.setItemAsync(STORAGE_KEY, JSON.stringify(updated));
   return groupId;
 });
 
@@ -161,7 +161,7 @@ export const createGroupFromArray = createAsyncThunk(
   "favourites/createGroupFromArray",
   async ({ name, movies }: { name: string; movies: Movie[] }) => {
     try {
-      const data = await SecureStore.getItemAsync(STORAGE_KEY);
+      const data = await storage.getItemAsync(STORAGE_KEY);
       const storage = data ? JSON.parse(data) : { groups: [] };
 
       const group: FavoriteGroup = {
@@ -179,7 +179,7 @@ export const createGroupFromArray = createAsyncThunk(
         groups: [...storage.groups, group],
       };
 
-      await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(updated));
+      await storage.setItemAsync(STORAGE_KEY, JSON.stringify(updated));
       return group;
     } catch (error) {
       throw new Error("createGroupFromArray failed: " + error);
