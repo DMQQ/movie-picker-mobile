@@ -82,17 +82,10 @@ async function migrateToSecureStore() {
 
 export default function RootLayout() {
   const { isLoaded, isUpdating } = useInit();
-  const [migrationComplete, setMigrationComplete] = useState(false);
 
   useEffect(() => {
-    migrateToSecureStore().then(() => {
-      setMigrationComplete(true);
-    });
+    migrateToSecureStore();
   }, []);
-
-  if (!migrationComplete) {
-    return <View style={{ flex: 1, backgroundColor: "#000" }} />;
-  }
 
   return (
     <AppErrorBoundary>

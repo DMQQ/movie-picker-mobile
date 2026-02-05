@@ -1,5 +1,5 @@
 import { Platform, Pressable, View, useWindowDimensions } from "react-native";
-import { Icon } from "react-native-paper";
+import { Icon, Text } from "react-native-paper";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -11,13 +11,15 @@ const AnimatedButton = ({
   size = 25,
   isLike = false,
   isDislike = false,
+  text,
 }: {
   onPress: () => void;
-  icon: string;
+  icon?: string;
   color?: string;
   size?: number;
   isLike?: boolean;
   isDislike?: boolean;
+  text?: string;
 }) => {
   const scale = useSharedValue(1);
 
@@ -63,6 +65,7 @@ const AnimatedButton = ({
         {
           borderRadius: 100,
           padding: 15,
+          paddingHorizontal: 25,
           backgroundColor: getBackgroundColor(),
           borderWidth: isLike || isDislike ? 2 : 1,
           borderColor: getBorderColor(),
@@ -83,7 +86,19 @@ const AnimatedButton = ({
         },
       ]}
     >
-      <Icon source={icon} size={size} color={isLike || isDislike ? "#fff" : color} />
+      {icon && <Icon source={icon} size={size} color={isLike || isDislike ? "#fff" : color} />}
+      {text && (
+        <Text
+          style={{
+            color: isLike || isDislike ? "#fff" : color,
+            fontSize: 15,
+            textAlign: "center",
+            fontWeight: "600",
+          }}
+        >
+          {text}
+        </Text>
+      )}
     </AnimatedPressable>
   );
 };

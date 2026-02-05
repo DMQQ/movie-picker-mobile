@@ -50,7 +50,7 @@ export const SectionListItem = ({ poster_path, vote_average, name, title, href, 
                   },
                 ]}
               >
-                {vote_average ? vote_average.toFixed(1) + "/10" : "N/A"}
+                {vote_average ? Math.trunc(vote_average * 10) + "%" : "N/A"}
               </Text>
             </View>
           )}
@@ -90,7 +90,7 @@ const sectionStyles = StyleSheet.create({
     fontSize: 10,
     transform: [{ skewX: "10deg" }],
     color: "rgba(255,255,255,0.8)",
-    fontWeight: "600",
+    fontWeight: "800",
   },
 });
 

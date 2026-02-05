@@ -14,6 +14,7 @@ import * as Haptics from "expo-haptics";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
 import { Movie } from "../../../types";
+import useTranslation from "../../service/useTranslation";
 
 const { width, height } = Dimensions.get("screen");
 const HERO_HEIGHT = height * 0.72;
@@ -63,22 +64,72 @@ const FeaturedQuickActions = ({ movie }: { movie: Movie }) => {
 
 const FeaturedSectionSkeleton = memo(() => {
   return (
-    <View style={[styles.skeletonContainer, { height: HERO_HEIGHT }]}>
+    <View style={[styles.featuredContainer]}>
       <View style={styles.gradientContainer}>
         <View style={styles.contentWrapper}>
-          <View style={styles.topContentContainer}>
+          <View style={[styles.topContentContainer, { alignItems: "flex-end" }]}>
             <Skeleton>
-              <View style={styles.skeletonThumbnail} />
+              <View
+                style={{
+                  width: 105,
+                  height: 155,
+                  borderRadius: 12,
+                  backgroundColor: "#222",
+                }}
+              />
             </Skeleton>
-            <View style={styles.detailsContainer}>
+
+            <View style={[styles.detailsContainer, { gap: 10 }]}>
               <Skeleton>
-                <View style={{ width: "90%", height: 32, backgroundColor: "#333", borderRadius: 5, marginBottom: 8 }} />
+                <View style={{ width: "85%", height: 32, backgroundColor: "#222", borderRadius: 4, marginBottom: 12 }} />
+              </Skeleton>
+
+              <Skeleton>
+                <View style={{ width: "60%", height: 14, backgroundColor: "#222", borderRadius: 4, marginBottom: 12 }} />
+              </Skeleton>
+
+              <View style={styles.ratingContainer}>
+                <Skeleton>
+                  <View style={{ width: 100, height: 16, backgroundColor: "#222", borderRadius: 4 }} />
+                </Skeleton>
+              </View>
+
+              {/* Genres */}
+              <View style={[styles.genreContainer, { marginTop: 8 }]}>
+                {[1, 2].map((i) => (
+                  <Skeleton key={i}>
+                    <View style={{ width: 55, height: 22, backgroundColor: "#222", borderRadius: 6 }} />
+                  </Skeleton>
+                ))}
+              </View>
+            </View>
+          </View>
+
+          {/* Overview Block - This fills the gap between thumbnail and buttons */}
+          <View style={{ marginTop: 20, marginBottom: 20, gap: 10 }}>
+            <Skeleton>
+              <View style={{ width: "100%", height: 14, backgroundColor: "#222", borderRadius: 4, marginBottom: 8 }} />
+            </Skeleton>
+            <Skeleton>
+              <View style={{ width: "90%", height: 14, backgroundColor: "#222", borderRadius: 4, marginBottom: 8 }} />
+            </Skeleton>
+            <Skeleton>
+              <View style={{ width: "40%", height: 14, backgroundColor: "#222", borderRadius: 4 }} />
+            </Skeleton>
+          </View>
+
+          {/* Action Row */}
+          <View style={styles.actionRow}>
+            <Skeleton>
+              <View style={{ width: width * 0.5, height: 42, backgroundColor: "#222", borderRadius: 100 }} />
+            </Skeleton>
+
+            <View style={styles.quickActionsRow}>
+              <Skeleton>
+                <View style={{ width: 44, height: 44, backgroundColor: "#222", borderRadius: 22 }} />
               </Skeleton>
               <Skeleton>
-                <View style={{ width: "60%", height: 16, backgroundColor: "#333", borderRadius: 5, marginBottom: 15 }} />
-              </Skeleton>
-              <Skeleton>
-                <View style={{ width: "40%", height: 16, backgroundColor: "#333", borderRadius: 5 }} />
+                <View style={{ width: 44, height: 44, backgroundColor: "#222", borderRadius: 22 }} />
               </Skeleton>
             </View>
           </View>
@@ -91,6 +142,7 @@ const FeaturedSectionSkeleton = memo(() => {
 const gradient = ["transparent", "rgba(0,0,0,0.1)", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.8)", "#000000"];
 
 const FeaturedSection = memo((props: { selectedChip: string }) => {
+  const t = useTranslation();
   const {
     data: featured,
     error,
@@ -100,7 +152,7 @@ const FeaturedSection = memo((props: { selectedChip: string }) => {
   });
 
   const genres = useMemo(() => {
-    return (featured?.genres || []).slice(0, 3);
+    return (featured?.genres || []).slice(0, 3) as unknown as string[];
   }, [featured]);
 
   const imageUrl = useMemo(() => {
@@ -174,7 +226,7 @@ const FeaturedSection = memo((props: { selectedChip: string }) => {
                       </View>
 
                       <View style={styles.genreContainer}>
-                        {genres.map((genre: string) => {
+                        {genres.map((genre) => {
                           return (
                             <View key={genre} style={styles.genreChip}>
                               <Text style={styles.genreText}>{genre}</Text>
@@ -211,7 +263,7 @@ const FeaturedSection = memo((props: { selectedChip: string }) => {
                     contentStyle={{ height: 42 }}
                     icon="arrow-right"
                   >
-                    See Details
+                    {t("movie.details.show_more")}
                   </Button>
                 </Link>
 
