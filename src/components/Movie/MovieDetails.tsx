@@ -37,7 +37,7 @@ function MovieDetails({
       refetchOnReconnect: true,
       refetchOnMountOrArgChange: true,
       skip: !params.id || !params.type || Number.isNaN(Number(params.id)),
-    }
+    },
   );
 
   const { data: similarData } = useGetSimilarQuery(
@@ -48,7 +48,7 @@ function MovieDetails({
     },
     {
       skip: !params.id || !params.type,
-    }
+    },
   );
 
   const { data: trailersData } = useGetTrailersQuery(
@@ -58,7 +58,7 @@ function MovieDetails({
     },
     {
       skip: !params.id || !params.type,
-    }
+    },
   );
 
   const { data: castData } = useGetMovieKeyPeopleQuery(
@@ -70,7 +70,7 @@ function MovieDetails({
     },
     {
       skip: !params.id || !params.type,
-    }
+    },
   );
 
   const hasSimilar = useMemo(() => {
@@ -90,7 +90,7 @@ function MovieDetails({
           : movie?.original_title || movie?.original_name,
         ...(movie?.genres || [])?.map((g: any) => g.name),
       ].filter((v) => v !== undefined && v !== "" && v !== null && typeof v === "string") as string[],
-    [movie]
+    [movie],
   );
 
   const isTVShow = type === "tv";
@@ -214,6 +214,8 @@ const styles = StyleSheet.create({
       android: {
         backgroundColor: MD2DarkTheme.colors.surface + "cc",
         borderRadius: 20,
+        borderWidth: 2,
+        borderColor: "#343434ff",
       },
     }),
   },

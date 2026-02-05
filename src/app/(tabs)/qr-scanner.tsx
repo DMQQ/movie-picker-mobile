@@ -147,9 +147,7 @@ export default function QRScanner() {
         useSafeArea
         showBackButton={false}
         showRightIconButton
-        // rightIconName="plus"
         onRightIconPress={() => setIsManual(true)}
-        extraScreenPaddingTop={Platform.OS === "android" ? 20 : 0}
         rightIconTitle="Join"
         tintColor={MD2DarkTheme.colors.primary}
       ></PageHeading>

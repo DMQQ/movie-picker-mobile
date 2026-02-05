@@ -1,6 +1,6 @@
 import { memo, useCallback, useMemo } from "react";
-import { ScrollView, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-import { Text } from "react-native-paper";
+import { Platform, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { MD2DarkTheme, Text } from "react-native-paper";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import useTranslation from "../../service/useTranslation";
 import FrostedGlass from "../FrostedGlass";
@@ -176,8 +176,18 @@ const styles = StyleSheet.create({
     lineHeight: 35,
   },
   frostedGlass: {
-    padding: 15,
+    marginTop: 15,
+    padding: 10,
+    paddingHorizontal: 15,
     borderRadius: 15,
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface + "cc",
+        borderWidth: 2,
+        borderColor: "#343434ff",
+        borderRadius: 15,
+      },
+    }),
   },
   frostedGlassContainer: {
     height: 95,

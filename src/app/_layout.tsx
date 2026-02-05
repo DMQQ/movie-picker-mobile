@@ -28,7 +28,7 @@ function getDeviceSettings() {
     nickname: language === "pl" ? "Gość" : "Guest",
     regionalization: {
       "x-user-region": regionCode || "US",
-      "x-user-watch-provider": regionCode === "PL" ? "PL" : "US",
+      "x-user-watch-provider": regionCode || "US",
       "x-user-watch-region": regionCode || "US",
       "x-user-timezone": deviceCalendar?.timeZone || "America/New_York",
     },

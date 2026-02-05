@@ -1,7 +1,6 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { Dimensions, StyleSheet, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
-import Animated, { FadeIn } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import { useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
 import SectionListItem from "../SectionItem";
@@ -93,21 +92,23 @@ export const Section = memo(
           setSectionMovies((prev) => uniqueBy(prev.concat(response?.data?.results || []), "id"));
         }
       });
-    }, [page]);
+    }, [page, group.name]);
 
     if (movies.length === 0) {
       return null;
     }
 
     return (
-      <Animated.View style={sectionStyles.container} entering={FadeIn}>
+      <View style={sectionStyles.container}>
         <Text style={sectionStyles.title}>{group.name}</Text>
 
         <VirtualizedList
           getItem={getItem}
           getItemCount={getItemCount}
           getItemLayout={getItemLayout}
+          removeClippedSubviews={true}
           initialNumToRender={4}
+          windowSize={3}
           onEndReached={onEndReached}
           data={(movies || []) as any}
           horizontal
@@ -128,7 +129,7 @@ export const Section = memo(
             ) : null
           }
         />
-      </Animated.View>
+      </View>
     );
   },
   (prevProps, nextProps) => {

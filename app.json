@@ -70,7 +70,7 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "pl.dmq.movie-picker",
-      "associatedDomains": ["applinks:movie.dmqq.dev"],
+      "associatedDomains": ["applinks:flickmate.app"],
       "appleTeamId": "55RA6Q9VSR"
     },
     "android": {
@@ -80,7 +80,7 @@
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202511201,
+      "versionCode": 202511202,
       "intentFilters": [
         {
           "action": "VIEW",
@@ -91,7 +91,7 @@
             },
             {
               "scheme": "https",
-              "host": "movie.dmqq.dev",
+              "host": "flickmate.app",
               "pathPrefix": "/"
             }
           ],
@@ -113,7 +113,7 @@
       "reactCompiler": true
     },
     "updates": {
-      "url": "https://movie.dmqq.dev/api/manifest",
+      "url": "https://flickmate.app/api/manifest",
       "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 0,
       "runtimeVersion": "3.0.1"

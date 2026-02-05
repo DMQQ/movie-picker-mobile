@@ -7,9 +7,9 @@ import envs from "../constants/envs";
 import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 
-const isDev = false; //envs.mode !== "production";
+const isDev = envs.mode !== "production";
 
-export const baseUrl = isDev ? "http://192.168.1.20:3000" : "https://movie.dmqq.dev";
+export const baseUrl = isDev ? "http://192.168.1.20:3000" : "https://flickmate.app";
 export const url = baseUrl + "/api";
 
 export const SocketContext = React.createContext<{

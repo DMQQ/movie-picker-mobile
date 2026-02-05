@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 10,
+    height: 60,
   },
   headerTitle: {
     fontFamily: "Bebas",

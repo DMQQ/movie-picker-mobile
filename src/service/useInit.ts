@@ -1,8 +1,19 @@
 import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
+import { Platform } from "react-native";
+import { loadAsync } from "expo-font";
 
 export default function useInit() {
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(Platform.OS !== "ios");
+
+  useEffect(() => {
+    loadAsync({
+      Bebas: require("../../assets/fonts/Bebas.ttf"),
+    }).then(() => {
+      setIsLoaded(true);
+    });
+  }, []);
 
   const { isUpdateAvailable, isUpdatePending, checkError, downloadError } = Updates.useUpdates();
 
@@ -30,5 +41,5 @@ export default function useInit() {
     }
   }, [isUpdatePending]);
 
-  return { isLoaded: true, isUpdating };
+  return { isLoaded: isLoaded, isUpdating };
 }

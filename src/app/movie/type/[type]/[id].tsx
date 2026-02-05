@@ -1,6 +1,6 @@
 import { router, useIsPreview, useLocalSearchParams } from "expo-router";
 import { memo, useCallback, useMemo, useState } from "react";
-import { Dimensions, View } from "react-native";
+import { Dimensions, Platform, View } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { Movie } from "../../../../../types";
 import FloatingMovieHeader from "../../../../components/FloatingMovieHeader";

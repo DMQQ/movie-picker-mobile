@@ -171,6 +171,8 @@ const styles = StyleSheet.create({
       android: {
         backgroundColor: MD2DarkTheme.colors.surface + "cc",
         borderRadius: 20,
+        borderWidth: 2,
+        borderColor: "#343434ff",
       },
     }),
   },

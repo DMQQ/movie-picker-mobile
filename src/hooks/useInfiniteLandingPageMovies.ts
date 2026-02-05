@@ -1,45 +1,40 @@
-import { useMemo, useCallback, useState, useRef, useEffect } from "react";
-import { useGetLandingPageMoviesInfiniteQuery } from "../redux/movie/movieApi";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useGetLandingPageMoviesInfiniteQuery, movieApi } from "../redux/movie/movieApi";
 import { useAppDispatch } from "../redux/store";
-import { movieApi } from "../redux/movie/movieApi";
-import uniqueBy from "../utils/unique";
 import { SectionData } from "../types";
 
-interface UseInfiniteLandingPageMoviesOptions {
-  categoryId: string;
-  pageSize?: number;
-}
+const appendUnique = (currentItems: SectionData[], newItems: SectionData[]) => {
+  const existingNames = new Set(currentItems.map((item) => item.name));
+  const uniqueNewItems = newItems.filter((item) => {
+    if (!item || !item.name || (item as any).type === "game") return false;
+    if (!Array.isArray(item.results) || item.results.length === 0) return false;
 
-interface UseInfiniteLandingPageMoviesResult {
-  data: SectionData[];
-  isLoading: boolean;
-  isFetching: boolean;
-  isError: boolean;
-  error: any;
-  hasMore: boolean;
-  fetchNextPage: () => void;
-  refetch: () => void;
-  isRefreshing: boolean;
-}
+    if (existingNames.has(item.name)) return false;
 
-export const useInfiniteLandingPageMovies = ({
-  categoryId,
-  pageSize = 8,
-}: UseInfiniteLandingPageMoviesOptions): UseInfiniteLandingPageMoviesResult => {
+    existingNames.add(item.name);
+    return true;
+  });
+
+  if (uniqueNewItems.length === 0) return currentItems;
+  return [...currentItems, ...uniqueNewItems];
+};
+
+export const useInfiniteLandingPageMovies = ({ categoryId, pageSize = 8 }: { categoryId: string; pageSize?: number }) => {
   const dispatch = useAppDispatch();
-  const [allPages, setAllPages] = useState<{ name: string; results: any[] }[]>([]);
+
+  const [data, setData] = useState<SectionData[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const categoryRef = useRef(categoryId);
+
+  const loadingRef = useRef(false);
 
   const {
-    data: currentPageData,
+    data: initialData,
     isLoading,
     isFetching,
     isError,
-    error,
-    refetch,
+    refetch: refetchQuery,
   } = useGetLandingPageMoviesInfiniteQuery({
     categoryId,
     pageSize,
@@ -47,80 +42,66 @@ export const useInfiniteLandingPageMovies = ({
   });
 
   useEffect(() => {
-    if (categoryRef.current !== categoryId) {
-      categoryRef.current = categoryId;
-      setAllPages([]);
-      setCurrentPage(0);
-      setHasMore(true);
-    }
+    setData([]);
+    setCurrentPage(0);
+    setHasMore(true);
+    loadingRef.current = false;
   }, [categoryId]);
 
   useEffect(() => {
-    if (currentPageData && currentPage === 0) {
-      setAllPages(currentPageData);
-      setHasMore(currentPageData.length >= pageSize);
+    if (initialData && currentPage === 0) {
+      const processed = appendUnique([], initialData);
+      setData(processed);
+      setHasMore(initialData.length >= pageSize);
     }
-  }, [currentPageData, currentPage, pageSize]);
+  }, [initialData, currentPage, pageSize]);
 
-  const data = useMemo((): SectionData[] => {
-    if (!allPages.length) return [];
+  const fetchNextPage = useCallback(async () => {
+    if (!hasMore || loadingRef.current || isFetching) return;
 
-    const uniqueMovieSections = uniqueBy(
-      allPages.filter((item: any) => item && item.name && (!("type" in item) || item.type !== "game")),
-      "name"
-    ).filter((section) => Array.isArray(section.results) && section.results.length > 0);
-    return uniqueMovieSections;
-  }, [allPages]);
-
-  const fetchNextPage = useCallback(() => {
-    if (!hasMore || isLoading || isFetching) return;
-
+    loadingRef.current = true;
     const nextPage = currentPage + 1;
 
-    dispatch(
-      movieApi.endpoints.getLandingPageMoviesInfinite.initiate({
-        categoryId,
-        pageSize,
-        page: nextPage,
-      })
-    )
-      .unwrap()
-      .then((response: any) => {
-        if (response && response.length > 0) {
-          setAllPages((prev) => {
-            const uniqueNewSections = uniqueBy([...prev, ...response], "name");
-            return uniqueNewSections;
-          });
-          setCurrentPage(nextPage);
-          setHasMore(response.length >= pageSize);
-        } else {
-          setHasMore(false);
-        }
-      })
-      .catch(() => {
-        setHasMore(false);
-      });
-  }, [hasMore, isLoading, isFetching, currentPage, categoryId, pageSize, dispatch]);
+    try {
+      const result = await dispatch(
+        movieApi.endpoints.getLandingPageMoviesInfinite.initiate({
+          categoryId,
+          pageSize,
+          page: nextPage,
+        }),
+      ).unwrap();
 
-  const handleRefetch = useCallback(() => {
+      if (result && result.length > 0) {
+        setData((prev) => appendUnique(prev, result));
+        setCurrentPage(nextPage);
+        setHasMore(result.length >= pageSize);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Fetch next page failed", error);
+      setHasMore(false);
+    } finally {
+      loadingRef.current = false;
+    }
+  }, [hasMore, isFetching, currentPage, categoryId, pageSize, dispatch]);
+
+  const refetch = useCallback(() => {
     setIsRefreshing(true);
-    setAllPages([]);
     setCurrentPage(0);
     setHasMore(true);
-    refetch().finally(() => {
+    refetchQuery().finally(() => {
       setIsRefreshing(false);
     });
-  }, [refetch]);
+  }, [refetchQuery]);
 
   return {
     data,
-    isLoading: isLoading && currentPage === 0,
-    isFetching,
+    isLoading: isLoading && data.length === 0,
     isError,
-    error,
     hasMore,
     fetchNextPage,
-    refetch: handleRefetch,
+    refetch,
     isRefreshing,
   };
 };

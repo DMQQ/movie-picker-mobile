@@ -2,20 +2,17 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Image, ImageProps } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import { Image as RNImage, ImageProps as RNImageProps } from "react-native";
 
-type Shared<T extends boolean> = {
+type Shared = {
   path: string;
   size?: number;
   container?: StyleProp<ViewStyle>;
   priority?: "low" | "high" | "normal";
-
+  showsPlaceholder?: boolean;
   alt?: string;
-
-  isFlashListItem?: T;
 };
 
-type ThumbnailProps<T extends boolean> = T extends true ? Shared<T> & Omit<RNImageProps, "source"> : Shared<T> & Omit<ImageProps, "source">;
+type ThumbnailProps = Shared & Omit<ImageProps, "source">;
 
 export const ThumbnailSizes = {
   poster: {
@@ -56,7 +53,7 @@ export const ThumbnailSizes = {
   },
 } as const;
 
-const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps<boolean>, "path">) => (
+const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path">) => (
   <View style={[styles.container, container]}>
     <View
       style={[styles.image, rest.style, { justifyContent: "center", alignItems: "center", backgroundColor: MD2DarkTheme.colors.surface }]}
@@ -70,28 +67,35 @@ const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps<boolean
   </View>
 );
 
-export default function Thumbnail<T extends boolean>({ path, size = 200, container, priority = "normal", ...rest }: ThumbnailProps<T>) {
+export default function Thumbnail({
+  path,
+  alt,
+  showsPlaceholder = true,
+  size = 200,
+  container,
+  priority = "normal",
+  ...rest
+}: ThumbnailProps) {
   if (!path) {
-    return <NoImage size={size} container={container} {...rest} />;
+    return <NoImage size={size} container={container} alt={alt} {...rest} />;
   }
 
-  const { alt, isFlashListItem, ...expoImageProps } = rest as Omit<ThumbnailProps<false>, "priority" | "path" | "size" | "container">;
   return (
     <View style={[styles.container, container]}>
       {alt && <Text style={styles.altText}>{alt}</Text>}
       <Image
-        {...expoImageProps}
+        {...rest}
         priority={priority}
         source={{
           uri: `https://image.tmdb.org/t/p/w${size}` + path,
         }}
         style={[styles.image, rest.style]}
-        placeholder={`https://image.tmdb.org/t/p/w${ThumbnailSizes.poster.tiny}` + path}
         placeholderContentFit="cover"
         cachePolicy={"disk"}
         recyclingKey={path}
         contentFit="cover"
         transition={200}
+        {...(showsPlaceholder && { placeholder: `https://image.tmdb.org/t/p/w${ThumbnailSizes.poster.tiny}` + path })}
       />
     </View>
   );

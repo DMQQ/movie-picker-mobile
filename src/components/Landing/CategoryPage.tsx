@@ -11,7 +11,7 @@ import LoadingSkeleton from "./LoadingSkeleton";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { SectionData } from "../../types";
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get("screen");
 
 const getItemCount = (data: any) => data?.length || 0;
 const getItem = (data: any, index: number) => data[index];
@@ -43,13 +43,20 @@ interface CategoryPageProps {
   categoryId: string;
 }
 
-const sectionHeight = Math.min(width * 0.25, 200) * 1.75 + 75;
+const SECTION_HEIGHT = Math.min(width * 0.25, 200) * 1.75 + 75;
 
-const getItemLayout = (_: any, index: number) => ({
-  length: sectionHeight,
-  offset: sectionHeight * (index % 5 === 0 && index !== 0 ? 2 : 1) * index,
-  index,
-});
+const GAME_SECTION_EXTRA_HEIGHT = SECTION_HEIGHT;
+
+const getItemLayout = (_: any, index: number) => {
+  const gameSectionsBefore = index === 0 ? 0 : Math.floor((index - 1) / 5);
+  const offset = index * SECTION_HEIGHT + gameSectionsBefore * GAME_SECTION_EXTRA_HEIGHT;
+  const isGameItem = index % 5 === 0 && index !== 0;
+  const length = isGameItem ? SECTION_HEIGHT + GAME_SECTION_EXTRA_HEIGHT : SECTION_HEIGHT;
+
+  return { length, offset, index };
+};
+
+const categoryKeyExtractor = (item: any) => item.name.toString();
 
 const gameTypes: ("social" | "voter" | "fortune" | "all-games")[] = ["social", "voter", "fortune", "all-games"];
 
@@ -67,22 +74,21 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
   const renderItem = useCallback(({ item, index }: { item: SectionData; index: number }) => {
     if (!item || typeof item !== "object") return null;
     return (
-      <Fragment>
+      <View>
         {index % 5 === 0 && index !== 0 ? <GameInviteSection type={gameTypes[(index / 5 - 1) % gameTypes.length]} /> : null}
 
         <Section group={item} />
-      </Fragment>
+      </View>
     );
   }, []);
-
-  const categoryKeyExtractor = useCallback((item: any) => `${categoryId}-section-${item.name || "unknown"}`, [categoryId]);
 
   return (
     <VirtualizedList
       removeClippedSubviews={false}
       overScrollMode={"never"}
       bounces={false}
-      initialNumToRender={3}
+      windowSize={5}
+      initialNumToRender={5}
       data={data}
       renderItem={renderItem}
       keyExtractor={categoryKeyExtractor}
@@ -96,7 +102,7 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
       refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={refetch} />}
       style={{ flex: 1 }}
       ListFooterComponent={
-        <View style={{ height: 200 }}>
+        <View style={{ height: 250 }}>
           {isLoading || hasMore ? (
             <LoadingSkeleton />
           ) : (

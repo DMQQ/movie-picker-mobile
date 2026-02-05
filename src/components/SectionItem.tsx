@@ -18,15 +18,7 @@ interface SectionListItemProps extends Movie {
   isFlashListItem?: boolean;
 }
 
-export const SectionListItem = ({
-  poster_path,
-  vote_average,
-  name,
-  title,
-  href,
-  imageWidth,
-  isFlashListItem = false,
-}: SectionListItemProps) => {
+export const SectionListItem = ({ poster_path, vote_average, name, title, href, imageWidth }: SectionListItemProps) => {
   return (
     <Link href={href as any} push style={[!imageWidth && { marginRight: 15 }]}>
       <Link.Trigger>
@@ -45,7 +37,8 @@ export const SectionListItem = ({
                 : undefined,
             ]}
             alt={name || title}
-            isFlashListItem={isFlashListItem}
+            showsPlaceholder={false}
+            priority="low"
           />
           {vote_average > 0 && (
             <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(vote_average || 0) }]}>
@@ -85,14 +78,12 @@ const sectionStyles = StyleSheet.create({
 
   badgeContainer: {
     position: "absolute",
-    right: 0,
-    bottom: 0,
+    right: 5,
+    top: 5,
     backgroundColor: MD2DarkTheme.colors.surface,
     paddingHorizontal: 5,
     paddingVertical: 3,
-    transform: [{ skewX: "-5deg" }],
-    borderTopLeftRadius: 8,
-    borderBottomRightRadius: 2,
+    borderRadius: 5,
   },
 
   badgeItem: {

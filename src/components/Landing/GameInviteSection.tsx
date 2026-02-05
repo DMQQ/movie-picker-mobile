@@ -2,30 +2,33 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback, useMemo } from "react";
-import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Dimensions, Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
 import PlatformBlurView from "../PlatformBlurView";
 import { router } from "expo-router";
 
+const { width } = Dimensions.get("screen");
+const SECTION_HEIGHT = Math.min(width * 0.25, 200) * 1.75 + 75;
+
 const gameInviteStyles = StyleSheet.create({
   container: {
-    marginHorizontal: 15,
     borderRadius: 16,
     overflow: "hidden",
-    minHeight: 180,
-    marginBottom: 30,
+    height: SECTION_HEIGHT,
   },
   backgroundMovies: {
     position: "absolute",
     top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    left: 15,
+    right: 15,
+    bottom: 30,
     flexDirection: "row",
     flexWrap: "wrap",
-    opacity: 0.3,
+    opacity: 0.5,
+    borderRadius: 16,
+    overflow: "hidden",
   },
   movieThumbnail: {
     width: "33.33%",
@@ -33,10 +36,10 @@ const gameInviteStyles = StyleSheet.create({
     opacity: 0.6,
   },
   blurContainer: {
+    flex: 1,
     padding: 20,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 180,
   },
   title: {
     fontSize: 28,
@@ -159,7 +162,7 @@ const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" |
           };
       }
     },
-    [t]
+    [t],
   );
 
   const config = useMemo(() => getGameConfig(type), [getGameConfig, type]);

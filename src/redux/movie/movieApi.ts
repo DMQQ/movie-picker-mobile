@@ -150,7 +150,7 @@ export const movieApi = createApi({
       query: ({ name, page = 1 }) => `/landing/${name}/${page}`,
     }),
 
-    getFeatured: builder.query<Movie, { selectedChip: string }>({
+    getFeatured: builder.query<Movie & { tagline: string; genres: string[] }, { selectedChip: string }>({
       query: ({ selectedChip }) => "/landing/featured?category=" + selectedChip || "all",
       providesTags: (result, error, arg) => [{ type: "LandingPageInfinite", id: `featured-${arg.selectedChip}` }],
     }),
