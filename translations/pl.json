@@ -427,9 +427,10 @@
     "social-title": "🎯 Znajdź Idealny Wybór",
     "social-subtitle": "Przesuwaj z przyjaciółmi i odkrywaj filmy, które pokochacie",
     "social-button": "Zagraj w Dopasowanie",
-    "quick-title": "🎮 Rzuć Wyzwanie Znajomym",
-    "quick-subtitle": "Myślisz, że znasz świetne filmy? Udowodnij to!",
-    "quick-button": "Rozpocznij Grę Filmową",
+    "quick-title": "🎬 Wybierz Film Teraz",
+    "quick-subtitle": "Zacznij przesuwać od razu z losowymi filmami",
+    "quick-button": "Szybka Gra",
+    "quick-custom-button": "Własny Pokój",
     "voter-title": "🗳️ Głosuj Razem",
     "voter-subtitle": "Oceniaj filmy z przyjaciółmi i znajdź wspólne ulubione",
     "voter-button": "Rozpocznij Głosowanie",
@@ -464,6 +465,36 @@
       "back": "Wstecz",
       "getStarted": "Zaczynajmy",
       "step": "Krok {current} z {total}"
+    },
+    "features": {
+      "header": "Odkryj FlickMate",
+      "skip": "Pomiń",
+      "next": "Dalej",
+      "getStarted": "Zaczynajmy",
+      "welcome": {
+        "title": "Wybieraj Filmy Razem",
+        "description": "Koniec z niekończącym się scrollowaniem. Znajdź idealny film ze znajomymi dzięki zabawnym grom."
+      },
+      "swiper": {
+        "title": "Przesuwaj i Dopasowuj",
+        "description": "Przesuń w prawo filmy, które lubisz. Gdy wszyscy się zgodzą, macie film na wieczór!"
+      },
+      "voter": {
+        "title": "Głosujcie Razem",
+        "description": "Oceniaj filmy ze znajomym. Porównaj wybory i odkryj, co oboje chcecie obejrzeć."
+      },
+      "fortune": {
+        "title": "Zakręć Kołem",
+        "description": "Nie możesz się zdecydować? Niech los wybierze! Zakręć kołem z ulubionymi lub losowymi filmami."
+      },
+      "favorites": {
+        "title": "Organizuj Swoje Wybory",
+        "description": "Zapisuj filmy w własnych grupach. Śledź co obejrzałeś i co jest następne na liście."
+      },
+      "browse": {
+        "title": "Przeglądaj i Odkrywaj",
+        "description": "Eksploruj popularne filmy, filtruj według gatunku lub serwisu streamingowego, zapisuj ulubione do własnych kolekcji."
+      }
     }
   }
 }

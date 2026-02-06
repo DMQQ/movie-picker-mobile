@@ -429,9 +429,10 @@
     "social-title": "🎯 Find Your Perfect Match",
     "social-subtitle": "Swipe with friends and discover movies you'll both love",
     "social-button": "Play Matching Game",
-    "quick-title": "🎮 Challenge Your Friends",
-    "quick-subtitle": "Think you know great movies? Prove it!",
-    "quick-button": "Start Movie Game",
+    "quick-title": "🎬 Pick a Movie Now",
+    "quick-subtitle": "Start swiping instantly with random movies",
+    "quick-button": "Quick Play",
+    "quick-custom-button": "Custom Room",
     "voter-title": "🗳️ Vote Together",
     "voter-subtitle": "Rate movies with friends and find your shared favorites",
     "voter-button": "Start Voting",
@@ -466,6 +467,36 @@
       "back": "Back",
       "getStarted": "Get Started",
       "step": "Step {current} of {total}"
+    },
+    "features": {
+      "header": "Discover FlickMate",
+      "skip": "Skip",
+      "next": "Next",
+      "getStarted": "Get Started",
+      "welcome": {
+        "title": "Pick Movies Together",
+        "description": "No more endless scrolling. Find the perfect movie with friends using fun games and smart tools."
+      },
+      "swiper": {
+        "title": "Swipe & Match",
+        "description": "Swipe right on movies you like. When everyone matches, you've found your movie night pick!"
+      },
+      "voter": {
+        "title": "Vote Together",
+        "description": "Rank movies with a friend. Compare your choices and discover what you both want to watch."
+      },
+      "fortune": {
+        "title": "Spin the Wheel",
+        "description": "Can't decide? Let fate choose! Spin the wheel with your favorites or random picks."
+      },
+      "favorites": {
+        "title": "Organize Your Picks",
+        "description": "Save movies to custom groups. Track what you've watched and what's next on your list."
+      },
+      "browse": {
+        "title": "Browse & Discover",
+        "description": "Explore trending movies, filter by genre or streaming service, and save your favorites to custom collections."
+      }
     }
   }
 }

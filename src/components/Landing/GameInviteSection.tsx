@@ -84,6 +84,27 @@ const gameInviteStyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
+  buttonRow: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  buttonHalf: {
+    minWidth: 140,
+    flex: 1,
+  },
+  secondaryButton: {
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
+  },
+  secondaryButtonInner: {
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: 8,
+  },
 });
 
 const backgroundImages = [
@@ -109,7 +130,13 @@ const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" |
             buttonText: t("game-invite.quick-button"),
             colors: ["#6366f1", "#8b5cf6"] as const,
             icon: "gamepad",
-            navigation: () => router.push("/games"),
+            navigation: () =>
+              router.push({
+                pathname: "/room/qr-code",
+                params: { quickStart: "true" },
+              }),
+            secondaryButtonText: t("game-invite.quick-custom-button"),
+            secondaryNavigation: () => router.push("/room/setup"),
           };
         case "social":
           return {
@@ -118,11 +145,7 @@ const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" |
             buttonText: t("game-invite.social-button"),
             colors: ["#f59e0b", "#ef4444"] as const,
             icon: "users",
-            navigation: () =>
-              router.push({
-                pathname: "/room/qr-code",
-                params: { quickStart: "true" },
-              }),
+            navigation: () => router.push("/room/setup"),
           };
         case "voter":
           return {
@@ -172,9 +195,19 @@ const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" |
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
     config.navigation();
-  }, [type]);
+  }, [config]);
+
+  const handleSecondaryPress = useCallback(() => {
+    if (Platform.OS === "ios") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    }
+    if (config.secondaryNavigation) {
+      config.secondaryNavigation();
+    }
+  }, [config]);
 
   const gradientColors = config.colors;
+  const hasSecondaryButton = !!config.secondaryButtonText;
 
   return (
     <View style={gameInviteStyles.container}>
@@ -194,12 +227,23 @@ const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" |
         <Text style={gameInviteStyles.title}>{config.title}</Text>
         <Text style={gameInviteStyles.subtitle}>{config.subtitle}</Text>
 
-        <TouchableOpacity style={gameInviteStyles.button} onPress={handleGamePress} activeOpacity={0.8}>
-          <LinearGradient colors={gradientColors} style={gameInviteStyles.buttonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-            <FontAwesome name={config.icon as any} size={18} color="#fff" />
-            <Text style={gameInviteStyles.buttonText}>{config.buttonText}</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        <View style={hasSecondaryButton ? gameInviteStyles.buttonRow : undefined}>
+          <TouchableOpacity style={[gameInviteStyles.button, hasSecondaryButton && gameInviteStyles.buttonHalf]} onPress={handleGamePress} activeOpacity={0.8}>
+            <LinearGradient colors={gradientColors} style={gameInviteStyles.buttonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+              <FontAwesome name={config.icon as any} size={18} color="#fff" />
+              <Text style={gameInviteStyles.buttonText}>{config.buttonText}</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+
+          {hasSecondaryButton && (
+            <TouchableOpacity style={[gameInviteStyles.button, gameInviteStyles.buttonHalf, gameInviteStyles.secondaryButton]} onPress={handleSecondaryPress} activeOpacity={0.8}>
+              <View style={gameInviteStyles.secondaryButtonInner}>
+                <FontAwesome name="sliders" size={18} color="#fff" />
+                <Text style={gameInviteStyles.buttonText}>{config.secondaryButtonText}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
       </PlatformBlurView>
     </View>
   );

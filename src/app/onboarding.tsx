@@ -1,232 +1,203 @@
 import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
-import { Image, View, StyleSheet, Platform } from "react-native";
-import { Button, SegmentedButtons, Text, TextInput } from "react-native-paper";
-import Animated, { FadeInDown, FadeIn, FadeInUp } from "react-native-reanimated";
-import ChooseRegion from "../components/ChooseRegion";
-import useTranslation from "../service/useTranslation";
-import { reloadAppAsync } from "expo";
-import * as Updates from "expo-updates";
+import { Dimensions, Image, StyleSheet, View } from "react-native";
+import { Button, IconButton, Text } from "react-native-paper";
+import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, SlideInRight, SlideOutLeft } from "react-native-reanimated";
 import { router } from "expo-router";
 import SafeIOSContainer from "../components/SafeIOSContainer";
+import useTranslation from "../service/useTranslation";
+import { LinearGradient } from "expo-linear-gradient";
+import { useAppSelector } from "../redux/store";
+import SwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
+import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
+import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
+import BrowseAnimation from "../components/GameListAnimations/BrowseAnimation";
 
-interface Region {
-  code: string;
-  name: string;
-  language: string;
-  timezone: string;
+const { width, height } = Dimensions.get("screen");
+
+interface FeatureSlide {
+  id: string;
+  titleKey: string;
+  descriptionKey: string;
+  Animation: React.ComponentType;
+  players?: string;
+  duration?: string;
 }
 
-interface OnboardingHeaderProps {
-  step: number;
-  totalSteps: number;
-}
+const features: FeatureSlide[] = [
+  {
+    id: "swiper",
+    titleKey: "onboarding.features.swiper.title",
+    descriptionKey: "onboarding.features.swiper.description",
+    Animation: SwiperAnimation,
+    players: "1-8",
+    duration: "3-10 min",
+  },
+  {
+    id: "voter",
+    titleKey: "onboarding.features.voter.title",
+    descriptionKey: "onboarding.features.voter.description",
+    Animation: VoterAnimation,
+    players: "2",
+    duration: "5-10 min",
+  },
+  {
+    id: "fortune",
+    titleKey: "onboarding.features.fortune.title",
+    descriptionKey: "onboarding.features.fortune.description",
+    Animation: FortuneWheelAnimation,
+    players: "1",
+    duration: "1 min",
+  },
+  {
+    id: "browse",
+    titleKey: "onboarding.features.browse.title",
+    descriptionKey: "onboarding.features.browse.description",
+    Animation: BrowseAnimation,
+  },
+];
 
-interface LanguageStepProps {
-  language: string;
-  onLanguageChange: (language: string) => void;
-}
-
-interface NicknameStepProps {
-  nickname: string;
-  onNicknameChange: (nickname: string) => void;
-}
-
-interface RegionStepProps {
-  selectedRegion: Region | null;
-  onRegionSelect: (region: Region) => void;
-}
-
-interface NavigationProps {
-  step: number;
-  isLoading: boolean;
-  canGoNext: boolean;
-  onBack: () => void;
-  onNext: () => void;
-}
-
-const OnboardingHeader: React.FC<OnboardingHeaderProps> = ({ step, totalSteps }) => {
-  const t = useTranslation();
+const GamePreviewCard = ({
+  slide,
+  t
+}: {
+  slide: FeatureSlide;
+  t: (key: string) => string;
+}) => {
+  const Animation = slide.Animation;
 
   return (
-    <Animated.View entering={FadeInUp.delay(200)} style={styles.header}>
-      <Image source={require("../../assets/images/icon-light.png")} style={styles.headerIcon} />
-      <Text style={styles.headerTitle}>{t("onboarding.welcome.title")}</Text>
-      <Text style={styles.stepIndicator}>{t("onboarding.navigation.step", { current: step, total: totalSteps })}</Text>
-    </Animated.View>
-  );
-};
-
-const LanguageStep: React.FC<LanguageStepProps> = ({ language, onLanguageChange }) => {
-  const t = useTranslation();
-
-  return (
-    <Animated.View entering={FadeIn} style={styles.stepContainer}>
-      <View style={styles.content}>
-        <Text style={styles.stepTitle}>{t("onboarding.language.title")}</Text>
-        <Text style={styles.stepDescription}>{t("onboarding.language.description")}</Text>
-
-        <SegmentedButtons
-          buttons={[
-            {
-              label: "English",
-              value: "en",
-            },
-            {
-              label: "Polski",
-              value: "pl",
-            },
-          ]}
-          onValueChange={onLanguageChange}
-          value={language}
-          style={styles.segmentedButtons}
-        />
+    <Animated.View
+      entering={SlideInRight.duration(300)}
+      exiting={SlideOutLeft.duration(300)}
+      style={styles.gameCard}
+    >
+      <View style={styles.animationContainer}>
+        <Animation />
       </View>
-    </Animated.View>
-  );
-};
 
-const NicknameStep: React.FC<NicknameStepProps> = ({ nickname, onNicknameChange }) => {
-  const t = useTranslation();
-
-  return (
-    <Animated.View entering={FadeIn} style={styles.stepContainer}>
-      <View style={styles.content}>
-        <Text style={styles.stepTitle}>{t("onboarding.nickname.title")}</Text>
-        <Text style={styles.stepDescription}>{t("onboarding.nickname.description")}</Text>
-
-        <TextInput
-          value={nickname}
-          onChangeText={onNicknameChange}
-          mode="outlined"
-          label={t("onboarding.nickname.label")}
-          placeholder={t("onboarding.nickname.placeholder")}
-          style={styles.textInput}
-        />
-      </View>
-    </Animated.View>
-  );
-};
-
-const RegionStep: React.FC<RegionStepProps> = ({ onRegionSelect }) => {
-  const t = useTranslation();
-
-  return (
-    <Animated.View entering={FadeIn} style={styles.stepContainer}>
-      <View style={styles.content}>
-        <Text style={styles.stepTitle}>{t("onboarding.region.title")}</Text>
-        <Text style={styles.stepDescription}>{t("onboarding.region.description")}</Text>
-
-        <View style={styles.regionContainer}>
-          <ChooseRegion showAsSelector={true} onRegionSelect={onRegionSelect} />
+      <LinearGradient
+        colors={["transparent", "rgba(0,0,0,0.9)"]}
+        style={styles.cardGradient}
+      >
+        <View style={styles.cardContent}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>{t(slide.titleKey)}</Text>
+            <View style={styles.cardMeta}>
+              {slide.players && (
+                <View style={styles.metaItem}>
+                  <IconButton icon="account-group" size={16} iconColor="#fff" style={styles.metaIcon} />
+                  <Text style={styles.metaText}>{slide.players}</Text>
+                </View>
+              )}
+              {slide.duration && (
+                <View style={styles.metaItem}>
+                  <IconButton icon="clock-outline" size={16} iconColor="#fff" style={styles.metaIcon} />
+                  <Text style={styles.metaText}>{slide.duration}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+          <Text style={styles.cardDescription}>{t(slide.descriptionKey)}</Text>
         </View>
-      </View>
+      </LinearGradient>
     </Animated.View>
   );
 };
 
-const OnboardingNavigation: React.FC<NavigationProps> = ({ step, isLoading, canGoNext, onBack, onNext }) => {
-  const t = useTranslation();
-
+const PageIndicator = ({ currentPage, totalPages }: { currentPage: number; totalPages: number }) => {
   return (
-    <Animated.View entering={FadeInDown.delay(400)} style={styles.navigationContainer}>
-      <View style={styles.navigationButtons}>
-        {step > 1 && (
-          <Button mode="outlined" onPress={onBack} style={styles.navButton} contentStyle={styles.navButtonContent} disabled={isLoading}>
-            {t("onboarding.navigation.back")}
-          </Button>
-        )}
-
-        <Button
-          mode="contained"
-          onPress={onNext}
-          disabled={!canGoNext || isLoading}
-          style={[styles.navButton, step === 1 ? styles.singleButton : null]}
-          contentStyle={styles.navButtonContent}
-          loading={isLoading && step === 3}
-        >
-          {step === 3 ? t("onboarding.navigation.getStarted") : t("onboarding.navigation.next")}
-        </Button>
-      </View>
-    </Animated.View>
+    <View style={styles.pageIndicator}>
+      {Array.from({ length: totalPages }).map((_, index) => (
+        <View
+          key={index}
+          style={[
+            styles.dot,
+            currentPage === index && styles.activeDot,
+          ]}
+        />
+      ))}
+    </View>
   );
 };
 
 export default function OnboardingScreen() {
-  const [step, setStep] = useState(1);
-  const [language, setLanguage] = useState("en");
-  const [nickname, setNickname] = useState("Guest");
-  const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
+  const t = useTranslation();
+  const language = useAppSelector((state) => state.room.language) || "en";
+  const regionalization = useAppSelector((state) => state.room.regionalization);
+  const nickname = useAppSelector((state) => state.room.nickname);
+  const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  const totalSteps = 3;
-
-  const handleNext = async () => {
-    if (step === 1 && language) {
-      setStep(2);
-    } else if (step === 2 && selectedRegion) {
-      setStep(3);
-    } else if (step === 3 && nickname.trim().length > 0 && selectedRegion && !isLoading) {
-      setIsLoading(true);
-      try {
-        await Promise.allSettled([
-          SecureStore.setItemAsync("language", language),
-          SecureStore.setItemAsync("nickname", nickname),
-          SecureStore.setItemAsync(
-            "regionalization",
-            JSON.stringify({
-              "x-user-region": selectedRegion.code,
-              "x-user-watch-provider": selectedRegion.code,
-              "x-user-watch-region": selectedRegion.code,
-              "x-user-timezone": selectedRegion.timezone,
-            })
-          ),
-        ]);
-
-        if (__DEV__) return router.navigate("/(tabs)/index");
-
-        Platform.OS === "ios"
-          ? await Updates.reloadAsync({
-              reloadScreenOptions: {
-                backgroundColor: "#000",
-                fade: true,
-                image: require("../../assets/images/icon-light.png"),
-              },
-            })
-          : await reloadAppAsync("load with new options");
-      } catch (error) {
-        console.error("Failed to save onboarding data or reload:", error);
-        setIsLoading(false);
-      }
+  const handleComplete = async () => {
+    setIsLoading(true);
+    try {
+      await Promise.all([
+        SecureStore.setItemAsync("language", language),
+        SecureStore.setItemAsync("nickname", nickname || (language === "en" ? "Guest" : "Gość")),
+        SecureStore.setItemAsync("regionalization", JSON.stringify(regionalization || {})),
+      ]);
+      router.replace("/(tabs)");
+    } catch (error) {
+      console.error("Failed to save onboarding state:", error);
+      router.replace("/(tabs)");
     }
   };
 
-  const handleBack = () => {
-    if (step > 1) {
-      setStep(step - 1);
+  const handleNext = () => {
+    if (currentPage < features.length - 1) {
+      setCurrentPage(currentPage + 1);
+    } else {
+      handleComplete();
     }
   };
 
-  const canGoNext = (step === 1 && !!language) || (step === 3 && nickname.trim().length > 0) || (step === 2 && !!selectedRegion);
-
-  const renderCurrentStep = () => {
-    switch (step) {
-      case 1:
-        return <LanguageStep language={language} onLanguageChange={setLanguage} />;
-      case 2:
-        return <RegionStep selectedRegion={selectedRegion} onRegionSelect={setSelectedRegion} />;
-      case 3:
-        return <NicknameStep nickname={nickname} onNicknameChange={setNickname} />;
-      default:
-        return null;
-    }
+  const handleSkip = () => {
+    handleComplete();
   };
+
+  const isLastPage = currentPage === features.length - 1;
+  const currentSlide = features[currentPage];
 
   return (
     <SafeIOSContainer style={styles.container}>
-      <OnboardingHeader step={step} totalSteps={totalSteps} />
-      <View style={styles.mainContent}>{renderCurrentStep()}</View>
-      <OnboardingNavigation step={step} isLoading={isLoading} canGoNext={canGoNext} onBack={handleBack} onNext={handleNext} />
+      <Animated.View entering={FadeInUp.delay(200)} style={styles.header}>
+        <Image source={require("../../assets/images/icon-light.png")} style={styles.headerIcon} />
+        <Text style={styles.headerTitle}>{t("onboarding.features.header")}</Text>
+        <Text style={styles.headerSubtitle}>{t("onboarding.features.welcome.description")}</Text>
+      </Animated.View>
+
+      <View style={styles.content}>
+        <GamePreviewCard key={currentSlide.id} slide={currentSlide} t={t} />
+      </View>
+
+      <Animated.View entering={FadeInDown.delay(400)} style={styles.footer}>
+        <PageIndicator currentPage={currentPage} totalPages={features.length} />
+
+        <View style={styles.buttonContainer}>
+          {!isLastPage && (
+            <Button
+              mode="text"
+              onPress={handleSkip}
+              textColor="#888"
+              style={styles.skipButton}
+            >
+              {t("onboarding.features.skip")}
+            </Button>
+          )}
+
+          <Button
+            mode="contained"
+            onPress={handleNext}
+            loading={isLoading}
+            disabled={isLoading}
+            style={[styles.nextButton, isLastPage && styles.fullWidthButton]}
+            contentStyle={styles.nextButtonContent}
+          >
+            {isLastPage ? t("onboarding.features.getStarted") : t("onboarding.features.next")}
+          </Button>
+        </View>
+      </Animated.View>
     </SafeIOSContainer>
   );
 }
@@ -238,88 +209,124 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    paddingHorizontal: 15,
-    paddingTop: 15,
-    paddingBottom: 30,
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 15,
   },
   headerIcon: {
-    width: 80,
-    height: 80,
-    marginBottom: 16,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontFamily: "Bebas",
-    color: "#fff",
-    textAlign: "center",
+    width: 50,
+    height: 50,
     marginBottom: 8,
   },
-  stepIndicator: {
-    fontSize: 14,
-    color: "#888",
-    textAlign: "center",
-  },
-  mainContent: {
-    flex: 2,
-    paddingHorizontal: 15,
-  },
-  stepContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-    paddingTop: 60,
-  },
-  content: {
-    alignItems: "center",
-  },
-  stepTitle: {
+  headerTitle: {
     fontSize: 24,
     fontFamily: "Bebas",
     color: "#fff",
     textAlign: "center",
-    marginBottom: 12,
   },
-  stepDescription: {
-    fontSize: 16,
-    color: "#ccc",
+  headerSubtitle: {
+    fontSize: 14,
+    color: "#888",
     textAlign: "center",
-    marginBottom: 32,
-    lineHeight: 22,
-    paddingHorizontal: 15,
+    marginTop: 4,
   },
-  segmentedButtons: {
-    width: "100%",
-    maxWidth: 400,
-  },
-  textInput: {
-    backgroundColor: "transparent",
-    width: "100%",
-    maxWidth: 400,
-  },
-  regionContainer: {
+  content: {
     flex: 1,
-    width: "100%",
-    maxWidth: 400,
-    minHeight: 300,
+    paddingHorizontal: 20,
+    justifyContent: "center",
   },
-  navigationContainer: {
-    paddingHorizontal: 15,
+  gameCard: {
+    height: height * 0.55,
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: "#1a1a1a",
   },
-  navigationButtons: {
+  animationContainer: {
+    flex: 1,
+    overflow: "hidden",
+  },
+  cardGradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingTop: 60,
+  },
+  cardContent: {
+    padding: 20,
+  },
+  cardHeader: {
     flexDirection: "row",
-    gap: 12,
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
   },
-  navButton: {
+  cardTitle: {
+    fontSize: 28,
+    fontFamily: "Bebas",
+    color: "#fff",
+  },
+  cardMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  metaItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 8,
+  },
+  metaIcon: {
+    margin: 0,
+    marginRight: -8,
+  },
+  metaText: {
+    color: "#fff",
+    fontSize: 12,
+  },
+  cardDescription: {
+    fontSize: 15,
+    color: "rgba(255,255,255,0.8)",
+    lineHeight: 22,
+  },
+  footer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    paddingTop: 15,
+  },
+  pageIndicator: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
+    gap: 8,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#444",
+  },
+  activeDot: {
+    backgroundColor: "#fff",
+    width: 24,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  skipButton: {
+    flex: 1,
+  },
+  nextButton: {
     flex: 1,
     borderRadius: 25,
+    marginLeft: 10,
   },
-  singleButton: {
-    marginLeft: "auto",
-    flex: 0,
-    minWidth: 120,
+  fullWidthButton: {
+    marginLeft: 0,
   },
-  navButtonContent: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    paddingBottom: 15,
+  nextButtonContent: {
+    paddingVertical: 8,
   },
 });
