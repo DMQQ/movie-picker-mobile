@@ -243,7 +243,8 @@
   "scanner": {
     "request-permission": "Poproś o pozwolenie",
     "heading": "Zeskanuj kod QR",
-    "join": "Dołącz do gry"
+    "join": "Dołącz do gry",
+    "button": "Dołącz"
   },
   "settings": {
     "hello": "Cześć",
@@ -397,7 +398,7 @@
     "settings": "Ustawienia",
     "favourites": "Ulubione",
     "join-game": "Dołącz do gry",
-    "games": "Gry",
+    "games": "Decyduj",
     "search": "Szukaj",
     "explore": "Eksploruj"
   },

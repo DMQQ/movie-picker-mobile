@@ -37,20 +37,6 @@ const LandingHeader = ({ children }: PropsWithChildren) => {
           <Text style={styles.helloText}>
             {t("global.hello")} {nickname}!
           </Text>
-
-          <PlatformBlurView style={[styles.buttonsContainer, { borderRadius: 100, overflow: "hidden" }]}>
-            <IconButton
-              icon="cog"
-              size={20}
-              iconColor="#fff"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-                router.navigate("/settings");
-              }}
-              style={styles.iconButton}
-            />
-          </PlatformBlurView>
         </Animated.View>
 
         {children}

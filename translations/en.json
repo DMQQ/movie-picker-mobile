@@ -244,7 +244,8 @@
   "scanner": {
     "request-permission": "Request permission",
     "heading": "Scan QR code",
-    "join": "Join the game"
+    "join": "Join the game",
+    "button": "Join"
   },
   "settings": {
     "hello": "Hello",
@@ -353,7 +354,7 @@
       "description": "Picking movies easy and fun! Vote on movies or series in three categories to get your top picks."
     },
     "fortunewheel": {
-      "title": "Fortune Wheel",
+      "title": "Spin & Watch",
       "description": "Spin the wheel of fortune to make random selections or decisions. Perfect for undecided or making quick picks!"
     },
     "random": {
@@ -399,7 +400,7 @@
     "settings": "Settings",
     "favourites": "Favourites",
     "join-game": "Join game",
-    "games": "Games",
+    "games": "Decide",
     "search": "Search",
     "explore": "Explore"
   },

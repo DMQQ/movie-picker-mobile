@@ -184,7 +184,7 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
 
         <Stack.Screen name="fortune" options={{ headerShown: false }} />
 
-        <Stack.Screen name="settings" options={{ headerShown: false }} />
+        <Stack.Screen name="qr-scanner" options={{ headerShown: false, presentation: "modal" }} />
 
         <Stack.Screen name="group" options={{ headerShown: false }} />
 
