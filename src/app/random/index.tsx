@@ -186,6 +186,8 @@ export default function RandomMovie() {
                   <MaterialCommunityIcons name="dice-multiple" size={100} color="rgba(255,255,255,0.9)" />
                 </Animated.View>
                 <Text style={styles.frontText}>{isLoading ? t("games.random.revealing") : t("games.random.hint")}</Text>
+
+                <RandomQuestionMarks />
               </View>
             </Animated.View>
 
@@ -273,6 +275,35 @@ export default function RandomMovie() {
   );
 }
 
+const RandomQuestionMarks = () => {
+  return (
+    <>
+      {[...Array(7)].map((_, index) => {
+        const segmentHeight = CARD_HEIGHT / 7;
+        const randomTop = index * segmentHeight + Math.random() * (segmentHeight - 30);
+
+        const horizontalBias = index % 2 === 0 ? 0.1 : 0.5;
+        const randomLeft = Math.random() * (CARD_WIDTH * 0.4) + CARD_WIDTH * horizontalBias;
+
+        return (
+          <MaterialCommunityIcons
+            key={index}
+            name="help"
+            size={Math.trunc(Math.random() * 20 + 15)}
+            color="rgba(255,255,255,0.15)"
+            style={{
+              position: "absolute",
+              top: randomTop,
+              left: randomLeft,
+              transform: [{ rotate: `${Math.random() * 15}deg` }],
+            }}
+          />
+        );
+      })}
+    </>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -308,6 +339,8 @@ const styles = StyleSheet.create({
   },
   frontFace: {
     backgroundColor: PRIMARY_COLOR,
+    borderWidth: 3,
+    borderColor: "rgba(255,255,255,0.2)",
   },
   backFace: {
     backgroundColor: "#1e1e1e",
