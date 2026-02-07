@@ -9,6 +9,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import FortuneWheelAnimation from "../../components/GameListAnimations/FortuneWheelAnimation";
 import SwiperAnimation from "../../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../../components/GameListAnimations/VoterAnimation";
+import RandomMovieAnimation from "../../components/GameListAnimations/RandomMovieAnimation";
 import PageHeading from "../../components/PageHeading";
 import { useLazyGetAllProvidersQuery, useLazyGetCategoriesQuery, useLazyGetGenresQuery } from "../../redux/movie/movieApi";
 
@@ -25,7 +26,7 @@ interface GameCardProps {
   index: number;
 }
 
-const Animations = [<SwiperAnimation />, <VoterAnimation />, <FortuneWheelAnimation />];
+const Animations = [<SwiperAnimation />, <VoterAnimation />, <FortuneWheelAnimation />, <RandomMovieAnimation />];
 
 const AnimatedRipple = Animated.createAnimatedComponent(TouchableRipple);
 
@@ -105,6 +106,15 @@ export default function GameList() {
         duration: "1 min",
         category: "popular",
         index: 2,
+      },
+      {
+        title: t("games.random.title"),
+        description: t("games.random.description"),
+        route: "/random",
+        players: "1",
+        duration: "< 1 min",
+        category: "popular",
+        index: 3,
       },
     ],
     [t],

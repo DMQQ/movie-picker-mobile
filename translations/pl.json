@@ -353,6 +353,16 @@
     "fortunewheel": {
       "title": "Koło Fortuny",
       "description": "Zakręć kołem fortuny i losuj! Idealne dla niezdecydowanych lub szybkich decyzji!"
+    },
+    "random": {
+      "title": "Losowy Film",
+      "description": "Jedno kliknięcie, jeden film. Błyskawiczna losowa rekomendacja gdy nie wiesz co obejrzeć.",
+      "mystery": "???",
+      "reveal": "Odkryj Film",
+      "revealing": "Szukam...",
+      "try-again": "Losuj Ponownie",
+      "view-details": "Szczegóły",
+      "hint": "Dotknij aby odkryć swój następny film"
     }
   },
   "search": {
@@ -437,6 +447,9 @@
     "fortune-title": "🎰 Kręć Kołem",
     "fortune-subtitle": "Nie możesz się zdecydować? Pozwól kołu fortuny wybrać za Ciebie!",
     "fortune-button": "Kręć Kołem",
+    "random-title": "🎲 Czujesz Szczęście?",
+    "random-subtitle": "Jedno kliknięcie, jeden film. Błyskawiczny losowy wybór!",
+    "random-button": "Losowy Film",
     "all-games-title": "🎮 Odkryj Wszystkie Gry",
     "all-games-subtitle": "Poznaj wszystkie nasze gry towarzyskie i znajdź ulubiony sposób na wybieranie filmów",
     "all-games-button": "Zobacz Wszystkie Gry"

@@ -117,7 +117,7 @@ const backgroundImages = [
   "/cpf7vsRZ0MYRQcnLWteD5jK9ymT.jpg",
 ];
 
-const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" | "fortune" | "all-games" }) => {
+const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" | "fortune" | "random" | "all-games" }) => {
   const t = useTranslation();
 
   const getGameConfig = useCallback(
@@ -164,6 +164,15 @@ const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" |
             colors: ["#8b5cf6", "#7c3aed"] as const,
             icon: "refresh",
             navigation: () => router.push("/fortune"),
+          };
+        case "random":
+          return {
+            title: t("game-invite.random-title"),
+            subtitle: t("game-invite.random-subtitle"),
+            buttonText: t("game-invite.random-button"),
+            colors: ["#ec4899", "#db2777"] as const,
+            icon: "random",
+            navigation: () => router.push("/random"),
           };
         case "all-games":
           return {

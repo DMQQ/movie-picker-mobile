@@ -355,6 +355,16 @@
     "fortunewheel": {
       "title": "Fortune Wheel",
       "description": "Spin the wheel of fortune to make random selections or decisions. Perfect for undecided or making quick picks!"
+    },
+    "random": {
+      "title": "Random Pick",
+      "description": "One tap, one movie. Instant random recommendation when you can't decide what to watch.",
+      "mystery": "???",
+      "reveal": "Reveal Movie",
+      "revealing": "Finding...",
+      "try-again": "Try Again",
+      "view-details": "Details",
+      "hint": "Tap to discover your next movie"
     }
   },
   "search": {
@@ -439,6 +449,9 @@
     "fortune-title": "🎰 Spin to Decide",
     "fortune-subtitle": "Can't choose? Let the wheel of fortune pick for you!",
     "fortune-button": "Spin the Wheel",
+    "random-title": "🎲 Feeling Lucky?",
+    "random-subtitle": "One tap, one movie. Instant random pick!",
+    "random-button": "Random Movie",
     "all-games-title": "🎮 Explore All Games",
     "all-games-subtitle": "Discover all our party games and find your favorite way to pick movies",
     "all-games-button": "View All Games"

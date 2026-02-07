@@ -54,7 +54,7 @@ const getItemLayout = (_: any, index: number) => {
 
 const categoryKeyExtractor = (item: any) => item.name.toString();
 
-const gameTypes: ("social" | "quick" | "voter" | "fortune" | "all-games")[] = ["social", "quick", "voter", "fortune", "all-games"];
+const gameTypes: ("social" | "quick" | "voter" | "fortune" | "random" | "all-games")[] = ["social", "quick", "voter", "fortune", "random", "all-games"];
 
 const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
   const t = useTranslation();
