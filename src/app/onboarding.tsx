@@ -57,29 +57,16 @@ const features: FeatureSlide[] = [
   },
 ];
 
-const GamePreviewCard = ({
-  slide,
-  t
-}: {
-  slide: FeatureSlide;
-  t: (key: string) => string;
-}) => {
+const GamePreviewCard = ({ slide, t }: { slide: FeatureSlide; t: (key: string) => string }) => {
   const Animation = slide.Animation;
 
   return (
-    <Animated.View
-      entering={SlideInRight.duration(300)}
-      exiting={SlideOutLeft.duration(300)}
-      style={styles.gameCard}
-    >
+    <Animated.View entering={SlideInRight.duration(300)} exiting={SlideOutLeft.duration(300)} style={styles.gameCard}>
       <View style={styles.animationContainer}>
         <Animation />
       </View>
 
-      <LinearGradient
-        colors={["transparent", "rgba(0,0,0,0.9)"]}
-        style={styles.cardGradient}
-      >
+      <LinearGradient colors={["transparent", "rgba(0,0,0,0.9)"]} style={styles.cardGradient}>
         <View style={styles.cardContent}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>{t(slide.titleKey)}</Text>
@@ -109,13 +96,7 @@ const PageIndicator = ({ currentPage, totalPages }: { currentPage: number; total
   return (
     <View style={styles.pageIndicator}>
       {Array.from({ length: totalPages }).map((_, index) => (
-        <View
-          key={index}
-          style={[
-            styles.dot,
-            currentPage === index && styles.activeDot,
-          ]}
-        />
+        <View key={index} style={[styles.dot, currentPage === index && styles.activeDot]} />
       ))}
     </View>
   );
@@ -176,12 +157,7 @@ export default function OnboardingScreen() {
 
         <View style={styles.buttonContainer}>
           {!isLastPage && (
-            <Button
-              mode="text"
-              onPress={handleSkip}
-              textColor="#888"
-              style={styles.skipButton}
-            >
+            <Button mode="text" onPress={handleSkip} textColor="#888" style={styles.skipButton}>
               {t("onboarding.features.skip")}
             </Button>
           )}
@@ -277,7 +253,6 @@ const styles = StyleSheet.create({
   },
   metaIcon: {
     margin: 0,
-    marginRight: -8,
   },
   metaText: {
     color: "#fff",

@@ -10,13 +10,13 @@ import PlatformBlurView from "../PlatformBlurView";
 import { router } from "expo-router";
 
 const { width } = Dimensions.get("screen");
-const SECTION_HEIGHT = Math.min(width * 0.25, 200) * 1.75 + 75;
+export const GAME_SECTION_HEIGHT = Math.min(width * 0.25, 200) * 1.75 + 50;
 
 const gameInviteStyles = StyleSheet.create({
   container: {
     borderRadius: 16,
     overflow: "hidden",
-    height: SECTION_HEIGHT,
+    height: GAME_SECTION_HEIGHT,
   },
   backgroundMovies: {
     position: "absolute",
@@ -228,7 +228,11 @@ const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" |
         <Text style={gameInviteStyles.subtitle}>{config.subtitle}</Text>
 
         <View style={hasSecondaryButton ? gameInviteStyles.buttonRow : undefined}>
-          <TouchableOpacity style={[gameInviteStyles.button, hasSecondaryButton && gameInviteStyles.buttonHalf]} onPress={handleGamePress} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={[gameInviteStyles.button, hasSecondaryButton && gameInviteStyles.buttonHalf]}
+            onPress={handleGamePress}
+            activeOpacity={0.8}
+          >
             <LinearGradient colors={gradientColors} style={gameInviteStyles.buttonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
               <FontAwesome name={config.icon as any} size={18} color="#fff" />
               <Text style={gameInviteStyles.buttonText}>{config.buttonText}</Text>
@@ -236,7 +240,11 @@ const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" |
           </TouchableOpacity>
 
           {hasSecondaryButton && (
-            <TouchableOpacity style={[gameInviteStyles.button, gameInviteStyles.buttonHalf, gameInviteStyles.secondaryButton]} onPress={handleSecondaryPress} activeOpacity={0.8}>
+            <TouchableOpacity
+              style={[gameInviteStyles.button, gameInviteStyles.buttonHalf, gameInviteStyles.secondaryButton]}
+              onPress={handleSecondaryPress}
+              activeOpacity={0.8}
+            >
               <View style={gameInviteStyles.secondaryButtonInner}>
                 <FontAwesome name="sliders" size={18} color="#fff" />
                 <Text style={gameInviteStyles.buttonText}>{config.secondaryButtonText}</Text>
