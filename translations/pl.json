@@ -183,6 +183,25 @@
     "pick-category": "Wybierz Kategorię",
     "pick-a-movie": "Zakręć kołem!"
   },
+  "filters": {
+    "title": "Filtry",
+    "type": "Rodzaj",
+    "movie": "Filmy",
+    "tv": "Seriale",
+    "both": "Wszystko",
+    "providers": "Serwisy streamingowe",
+    "genres": "Gatunki",
+    "decade": "Dekada",
+    "all": "Wszystkie",
+    "90s": "Lata 90.",
+    "2000s": "Lata 2000.",
+    "2010s": "Lata 2010.",
+    "2020s": "Lata 2020.",
+    "apply": "Zastosuj filtry",
+    "clear": "Wyczyść",
+    "active": "{count} filtr{plural} aktywny",
+    "categories": "Kategorie"
+  },
   "likes": {
     "title": "Twoje polubienia",
     "empty": "Jeszcze nie polubiłeś żadnych filmów",

@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
-import { Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
+import { Badge, Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -27,6 +27,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { Canvas, RadialGradient, Rect, vec } from "@shopify/react-native-skia";
+import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CARD_WIDTH = screenWidth * 0.9;
@@ -38,6 +39,7 @@ export default function RandomMovie() {
   const insets = useSafeAreaInsets();
   const [getRandomSection] = useLazyGetRandomSectionQuery();
   const [getMovieDetails] = useLazyGetMovieQuery();
+  const { getFilterParams, hasActiveFilters } = useMediaFilters();
 
   const [movie, setMovie] = useState<Movie | null>(null);
   const [details, setDetails] = useState<MovieDetails | null>(null);
@@ -91,7 +93,8 @@ export default function RandomMovie() {
       diceRotate.value = withRepeat(withTiming(360, { duration: 800, easing: Easing.linear }), -1, false);
 
       try {
-        const response = await getRandomSection("");
+        const filterParams = getFilterParams();
+        const response = await getRandomSection(filterParams);
         if (response.data?.results?.length > 0) {
           const randomIndex = Math.floor(Math.random() * response.data.results.length);
           const selectedMovie = response.data.results[randomIndex];
@@ -117,7 +120,7 @@ export default function RandomMovie() {
         diceRotate.value = 0;
       }
     }
-  }, [isLoading, isRevealed, getRandomSection, getMovieDetails, resetCard, revealCard, triggerHaptic, diceRotate]);
+  }, [isLoading, isRevealed, getRandomSection, getMovieDetails, resetCard, revealCard, triggerHaptic, diceRotate, getFilterParams]);
 
   const handleViewDetails = useCallback(() => {
     if (!movie) return;
@@ -168,7 +171,11 @@ export default function RandomMovie() {
           showBackButton
           title={t("games.random.title")}
           styles={{ marginTop: Platform.OS === "android" ? insets.top + 20 : 0 }}
-        />
+        >
+          <View style={styles.filterButtonWrapper}>
+            <FilterButton size={22} />
+          </View>
+        </PageHeading>
 
         <View style={styles.content}>
           <View style={styles.cardContainer}>
@@ -308,6 +315,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#000",
+  },
+  filterButtonWrapper: {
+    position: "absolute",
+    right: 15,
+    top: Platform.OS === "android" ? 5 : 5,
+    zIndex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 100,
   },
   safeArea: {
     flex: 1,

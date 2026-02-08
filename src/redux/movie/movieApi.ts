@@ -31,6 +31,14 @@ interface SectionParams {
   page?: number;
 }
 
+interface RandomSectionParams {
+  not?: string;
+  type?: "movie" | "tv" | "both";
+  providers?: number[];
+  genres?: number[];
+  decade?: string;
+}
+
 interface SearchResults {
   page: number;
   total_pages: number;
@@ -119,9 +127,33 @@ export const movieApi = createApi({
     }),
 
     getRandomSection: builder.query({
-      query: (not?: string) => ({
-        url: `/landing/random?not=${not}`,
-      }),
+      query: (params?: RandomSectionParams | string) => {
+        // Handle legacy string parameter for backward compatibility
+        if (typeof params === "string") {
+          return { url: `/landing/random?not=${params}` };
+        }
+
+        const searchParams = new URLSearchParams();
+
+        if (params?.not) {
+          searchParams.append("not", params.not);
+        }
+        if (params?.type && params.type !== "both") {
+          searchParams.append("type", params.type);
+        }
+        if (params?.providers?.length) {
+          searchParams.append("providers", params.providers.join(","));
+        }
+        if (params?.genres?.length) {
+          searchParams.append("genres", params.genres.join(","));
+        }
+        if (params?.decade && params.decade !== "all") {
+          searchParams.append("decade", params.decade);
+        }
+
+        const queryString = searchParams.toString();
+        return { url: `/landing/random${queryString ? `?${queryString}` : ""}` };
+      },
     }),
 
     getMovie: builder.query<

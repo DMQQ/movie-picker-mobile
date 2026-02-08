@@ -1,20 +1,20 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, FlatList, Image, ImageBackground, Platform, useWindowDimensions, View } from "react-native";
-import { Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import { Dimensions, Image, Platform, StyleSheet, useWindowDimensions, View } from "react-native";
+import { Button, MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
 import FortuneWheelComponent from "../../components/FortuneWheelComponent";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
-import { useGetCategoriesQuery, useLazyGetRandomSectionQuery, useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
+import { useLazyGetRandomSectionQuery, useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
 import fillMissing from "../../utils/fillMissing";
 import { shuffleInPlace } from "../../utils/shuffle";
 import { throttle } from "../../utils/throttle";
 import PageHeading from "../../components/PageHeading";
 import { router, useLocalSearchParams } from "expo-router";
+import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -24,6 +24,8 @@ export default function FortuneWheel() {
   const wheelRef = useRef<{ spin: Function }>(null);
 
   const params = useLocalSearchParams();
+
+  const { getFilterParams } = useMediaFilters();
 
   const navigate = useCallback((item: Movie) => {
     setIsSpin(false);
@@ -80,12 +82,19 @@ export default function FortuneWheel() {
         return;
       }
 
-      getLazyRandomSection(selectedCards.name).then(handleResponse).catch(console.error);
+      const filterParams = getFilterParams();
+      getLazyRandomSection({ not: selectedCards.name, ...filterParams }).then(handleResponse).catch(console.error);
     },
-    [selectedCards.name, getLazySection, getLazyRandomSection]
+    [selectedCards.name, getLazySection, getLazyRandomSection, getFilterParams]
   );
 
   const [isSpin, setIsSpin] = useState(false);
+
+  const handleFiltersApplied = useCallback(() => {
+    if (!params?.category && !params?.movies) {
+      handleThrowDice();
+    }
+  }, [handleThrowDice, params?.category, params?.movies]);
 
   useEffect(() => {
     if (params?.category) {
@@ -95,9 +104,11 @@ export default function FortuneWheel() {
 
   useEffect(() => {
     const bootstrap = async () => {
-      if (!params?.category && !params?.movies) handleThrowDice();
-      else if (params?.category && params?.movies) handleThrowDice();
-      else if (params?.movies) {
+      if (!params?.category && !params?.movies) {
+        handleThrowDice();
+      } else if (params?.category && params?.movies) {
+        handleThrowDice();
+      } else if (params?.movies) {
         const movies =
           typeof params.movies === "string"
             ? (JSON.parse(params.movies) as Movie[])
@@ -134,7 +145,11 @@ export default function FortuneWheel() {
             marginTop: insets.top + 30,
           }
         }
-      />
+      >
+        <View style={fortuneStyles.filterButtonWrapper}>
+          <FilterButton size={22} onApply={handleFiltersApplied} />
+        </View>
+      </PageHeading>
 
       <Animated.View
         entering={FadeIn}
@@ -172,7 +187,7 @@ export default function FortuneWheel() {
                   router.push("/fortune/filters");
                 }, 500)}
               >
-                {t("fortune-wheel.pick-category")}
+                {t("filters.categories")}
               </Button>
             </View>
           </>
@@ -195,3 +210,14 @@ export default function FortuneWheel() {
     </SafeIOSContainer>
   );
 }
+
+const fortuneStyles = StyleSheet.create({
+  filterButtonWrapper: {
+    position: "absolute",
+    right: 15,
+    top: Platform.OS === "android" ? 5 : 5,
+    zIndex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 100,
+  },
+});

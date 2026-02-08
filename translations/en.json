@@ -183,6 +183,25 @@
     "pick-category": "Pick Category",
     "pick-a-movie": "Spin the wheel!"
   },
+  "filters": {
+    "title": "Filters",
+    "type": "Kind",
+    "movie": "Movies",
+    "tv": "TV Shows",
+    "both": "Both",
+    "providers": "Streaming Services",
+    "genres": "Genres",
+    "decade": "Decade",
+    "all": "All",
+    "90s": "90s",
+    "2000s": "2000s",
+    "2010s": "2010s",
+    "2020s": "2020s",
+    "apply": "Apply Filters",
+    "clear": "Clear All",
+    "active": "{count} filter{plural} active",
+    "categories": "Categories"
+  },
   "likes": {
     "title": "Your likes",
     "empty": "You haven't liked any movies yet",
