@@ -83,9 +83,11 @@ export default function FortuneWheel() {
       }
 
       const filterParams = getFilterParams();
-      getLazyRandomSection({ not: selectedCards.name, ...filterParams }).then(handleResponse).catch(console.error);
+      getLazyRandomSection({ not: selectedCards.name, ...filterParams })
+        .then(handleResponse)
+        .catch(console.error);
     },
-    [selectedCards.name, getLazySection, getLazyRandomSection, getFilterParams]
+    [selectedCards.name, getLazySection, getLazyRandomSection, getFilterParams],
   );
 
   const [isSpin, setIsSpin] = useState(false);
@@ -137,15 +139,7 @@ export default function FortuneWheel() {
 
   return (
     <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
-      <PageHeading
-        showBackButton
-        title=""
-        styles={
-          Platform.OS === "android" && {
-            marginTop: insets.top + 30,
-          }
-        }
-      >
+      <PageHeading showBackButton title="">
         <View style={fortuneStyles.filterButtonWrapper}>
           <FilterButton size={22} onApply={handleFiltersApplied} />
         </View>
@@ -215,7 +209,7 @@ const fortuneStyles = StyleSheet.create({
   filterButtonWrapper: {
     position: "absolute",
     right: 15,
-    top: Platform.OS === "android" ? 5 : 5,
+    top: 25,
     zIndex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 100,

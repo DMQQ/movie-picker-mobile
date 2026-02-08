@@ -167,11 +167,7 @@ export default function RandomMovie() {
       />
 
       <SafeIOSContainer style={styles.safeArea}>
-        <PageHeading
-          showBackButton
-          title={t("games.random.title")}
-          styles={{ marginTop: Platform.OS === "android" ? insets.top + 20 : 0 }}
-        >
+        <PageHeading showBackButton title={t("games.random.title")}>
           <View style={styles.filterButtonWrapper}>
             <FilterButton size={22} />
           </View>
@@ -319,7 +315,7 @@ const styles = StyleSheet.create({
   filterButtonWrapper: {
     position: "absolute",
     right: 15,
-    top: Platform.OS === "android" ? 5 : 5,
+    top: 20,
     zIndex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 100,

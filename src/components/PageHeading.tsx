@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     flex: 1,
     textAlign: "center",
-    paddingTop: 10,
+    paddingTop: 15,
   },
   backButton: {
     marginRight: 8,

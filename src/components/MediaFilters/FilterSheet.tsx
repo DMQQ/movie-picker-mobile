@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Chip, IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -16,13 +16,24 @@ import useTranslation from "../../service/useTranslation";
 import TypeSelector from "./TypeSelector";
 import DecadeSelector from "./DecadeSelector";
 import ProviderList from "../Room/ProviderList";
-import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
+import { useFilterPreferences } from "../../hooks/useFilterPreferences";
 
 function ProvidersSection() {
   const t = useTranslation();
   const dispatch = useAppDispatch();
   const selectedProviders = useAppSelector((state) => state.mediaFilters.selectedProviders);
   const { data: providers = [], isLoading } = useGetAllProvidersQuery({});
+  const { savePreferences } = useFilterPreferences();
+  const lastSavedRef = useRef<string>("");
+
+  // Save when providers change
+  useEffect(() => {
+    const key = selectedProviders.join(",");
+    if (key !== lastSavedRef.current && selectedProviders.length > 0) {
+      lastSavedRef.current = key;
+      savePreferences({ providers: selectedProviders });
+    }
+  }, [selectedProviders, savePreferences]);
 
   const handleToggle = useCallback(
     (newProviders: number[]) => {

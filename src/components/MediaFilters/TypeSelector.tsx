@@ -13,10 +13,7 @@ interface TypeSelectorProps {
 export default function TypeSelector({ value, onChange }: TypeSelectorProps) {
   const t = useTranslation();
 
-  const handleValueChange = useCallback(
-    (val: string) => onChange(val as MediaType),
-    [onChange]
-  );
+  const handleValueChange = useCallback((val: string) => onChange(val as MediaType), [onChange]);
 
   const buttons = useMemo(
     () => [
@@ -39,17 +36,12 @@ export default function TypeSelector({ value, onChange }: TypeSelectorProps) {
         labelStyle: value === "tv" ? styles.selectedLabel : styles.label,
       },
     ],
-    [value, t]
+    [value, t],
   );
 
   return (
     <View style={styles.container}>
-      <SegmentedButtons
-        value={value}
-        onValueChange={handleValueChange}
-        buttons={buttons}
-        style={styles.segmentedButtons}
-      />
+      <SegmentedButtons value={value} onValueChange={handleValueChange} buttons={buttons} style={styles.segmentedButtons} />
     </View>
   );
 }
@@ -57,20 +49,19 @@ export default function TypeSelector({ value, onChange }: TypeSelectorProps) {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 0,
+    borderRadius: 10,
+    overflow: "hidden",
   },
   segmentedButtons: {
     backgroundColor: "#1a1a1a",
-    borderRadius: 14,
   },
   button: {
     backgroundColor: "#1a1a1a",
     borderColor: "#333",
-    borderRadius: 14,
   },
   selectedButton: {
     backgroundColor: MD2DarkTheme.colors.primary,
     borderColor: MD2DarkTheme.colors.primary,
-    borderRadius: 14,
   },
   label: {
     color: "#999",
