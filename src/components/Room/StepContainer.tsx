@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { Button, IconButton, MD2DarkTheme, Text, useTheme } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
@@ -122,6 +122,13 @@ const StepContainer: React.FC<StepContainerProps> = ({
 
   const memoChildren = React.useMemo(() => children, [children]);
 
+  const handleQuickStart = useCallback(() => {
+    router.push({
+      pathname: "/room/qr-code",
+      params: { quickStart: "true" },
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={[styles.scrollView, styles.scrollContent]}>
@@ -152,6 +159,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
           >
             {nextButtonText || (isLastStep ? t("room.builder.createRoom") : t("room.builder.next"))}
           </Button>
+          {currentStep === 1 && <IconButton onPress={handleQuickStart} icon={"dice-5"} />}
         </View>
         <DetailsTab currentStep={currentStep} totalSteps={totalSteps} />
       </LinearGradient>

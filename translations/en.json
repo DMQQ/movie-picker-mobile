@@ -119,7 +119,7 @@
       "createRoom": "Create Room",
       "leaveStepConfirmation": "Are you sure you want to go back? Your progress will be lost.",
       "step1": {
-        "title": "What do you want to watch?",
+        "title": "What's your pick?",
         "subtitle": "Choose a category to get started",
         "movies": "Movies",
         "tv": "TV Shows"

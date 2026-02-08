@@ -16,6 +16,7 @@ import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig
 import { FancySpinner } from "../../components/FancySpinner";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { hash } from "../../utils/hash";
+import { useGetMovieCategoriesWithThumbnailsQuery, useGetTVCategoriesWithThumbnailsQuery } from "../../redux/movie/movieApi";
 
 interface RoomSetupParams {
   category: string;
@@ -46,14 +47,14 @@ export default function QRCodePage() {
   const [moviesCount, setMoviesCount] = useState<number | null>(null);
   const [isLoadingMovies, setIsLoadingMovies] = useState(false);
   const hashOptionsRef = useRef<string>("");
-
   const [isPending, startTransition] = useTransition();
-
   const { qrCode, nickname } = useAppSelector((state) => state.room);
-
   const users = useAppSelector((state) => state.room.room.users);
   const roomId = useAppSelector((state) => state.room.room.roomId);
   const existingMovies = useAppSelector((state) => state.room.room.movies);
+
+  const movieCategoriesQuery = useGetMovieCategoriesWithThumbnailsQuery();
+  const tvCategoriesQuery = useGetTVCategoriesWithThumbnailsQuery();
 
   const { category, maxRounds, genre, providers, specialCategories } = useMemo(() => {
     const roomSetup = params.roomSetup ? (JSON.parse(params.roomSetup as string) as RoomSetupParams) : undefined;
@@ -87,8 +88,8 @@ export default function QRCodePage() {
       return config;
     }
 
-    const movieCategories = getMovieCategories(t).slice(0, 3);
-    const seriesCategories = getSeriesCategories(t).slice(0, 3);
+    const movieCategories = movieCategoriesQuery.data?.slice(0, 3) || [];
+    const seriesCategories = tvCategoriesQuery.data?.slice(0, 3) || [];
 
     const randomMovie = movieCategories[Math.floor(Math.random() * movieCategories.length)];
     const randomSeries = seriesCategories[Math.floor(Math.random() * seriesCategories.length)];
@@ -105,7 +106,17 @@ export default function QRCodePage() {
       specialCategories: [],
     };
     return config;
-  }, [params?.quickStart, category, maxRounds, genre, providers, specialCategories, nickname]);
+  }, [
+    params?.quickStart,
+    category,
+    maxRounds,
+    genre,
+    providers,
+    specialCategories,
+    nickname,
+    movieCategoriesQuery.data,
+    tvCategoriesQuery.data,
+  ]);
 
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
 

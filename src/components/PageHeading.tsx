@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "absolute",
     left: 15,
-    top: Platform.OS === "android" ? 5 : 5,
+    top: Platform.OS === "android" ? 10 : 5,
     zIndex: 1,
 
     ...Platform.select({
