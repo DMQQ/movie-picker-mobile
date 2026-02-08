@@ -1,12 +1,11 @@
 import * as SecureStore from "expo-secure-store";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ChooseRegion from "../../components/ChooseRegion";
-import PageHeading from "../../components/PageHeading";
-import TransparentModalScreen from "../../components/TransparentModalBackGesture";
-import { roomActions } from "../../redux/room/roomSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { BlurViewWrapper } from "../../components/PlatformBlurView";
+import ChooseRegion from "../../../components/ChooseRegion";
+import PageHeading from "../../../components/PageHeading";
+import { roomActions } from "../../../redux/room/roomSlice";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import { BlurViewWrapper } from "../../../components/PlatformBlurView";
 import { router } from "expo-router";
 
 export default function RegionSelectorScreen() {

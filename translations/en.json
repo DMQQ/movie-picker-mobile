@@ -119,7 +119,7 @@
       "createRoom": "Create Room",
       "leaveStepConfirmation": "Are you sure you want to go back? Your progress will be lost.",
       "step1": {
-        "title": "What do you want to watch?",
+        "title": "What's your pick?",
         "subtitle": "Choose a category to get started",
         "movies": "Movies",
         "tv": "TV Shows"
@@ -183,6 +183,25 @@
     "pick-category": "Pick Category",
     "pick-a-movie": "Spin the wheel!"
   },
+  "filters": {
+    "title": "Filters",
+    "type": "Kind",
+    "movie": "Movies",
+    "tv": "TV Shows",
+    "both": "Both",
+    "providers": "Streaming Services",
+    "genres": "Genres",
+    "decade": "Decade",
+    "all": "All",
+    "90s": "90s",
+    "2000s": "2000s",
+    "2010s": "2010s",
+    "2020s": "2020s",
+    "apply": "Apply Filters",
+    "clear": "Clear All",
+    "active": "{count} filter{plural} active",
+    "categories": "Categories"
+  },
   "likes": {
     "title": "Your likes",
     "empty": "You haven't liked any movies yet",
@@ -244,7 +263,8 @@
   "scanner": {
     "request-permission": "Request permission",
     "heading": "Scan QR code",
-    "join": "Join the game"
+    "join": "Join the game",
+    "button": "Join"
   },
   "settings": {
     "hello": "Hello",
@@ -353,8 +373,18 @@
       "description": "Picking movies easy and fun! Vote on movies or series in three categories to get your top picks."
     },
     "fortunewheel": {
-      "title": "Fortune Wheel",
+      "title": "Spin & Watch",
       "description": "Spin the wheel of fortune to make random selections or decisions. Perfect for undecided or making quick picks!"
+    },
+    "random": {
+      "title": "Random Pick",
+      "description": "One tap, one movie. Instant random recommendation when you can't decide what to watch.",
+      "mystery": "???",
+      "reveal": "Reveal Movie",
+      "revealing": "Finding...",
+      "try-again": "Try Again",
+      "view-details": "Details",
+      "hint": "Tap to discover your next movie"
     }
   },
   "search": {
@@ -389,7 +419,7 @@
     "settings": "Settings",
     "favourites": "Favourites",
     "join-game": "Join game",
-    "games": "Games",
+    "games": "Decide",
     "search": "Search",
     "explore": "Explore"
   },
@@ -429,15 +459,19 @@
     "social-title": "🎯 Find Your Perfect Match",
     "social-subtitle": "Swipe with friends and discover movies you'll both love",
     "social-button": "Play Matching Game",
-    "quick-title": "🎮 Challenge Your Friends",
-    "quick-subtitle": "Think you know great movies? Prove it!",
-    "quick-button": "Start Movie Game",
+    "quick-title": "🎬 Pick a Movie Now",
+    "quick-subtitle": "Start swiping instantly with random movies",
+    "quick-button": "Quick Play",
+    "quick-custom-button": "Custom Room",
     "voter-title": "🗳️ Vote Together",
     "voter-subtitle": "Rate movies with friends and find your shared favorites",
     "voter-button": "Start Voting",
     "fortune-title": "🎰 Spin to Decide",
     "fortune-subtitle": "Can't choose? Let the wheel of fortune pick for you!",
     "fortune-button": "Spin the Wheel",
+    "random-title": "🎲 Feeling Lucky?",
+    "random-subtitle": "One tap, one movie. Instant random pick!",
+    "random-button": "Random Movie",
     "all-games-title": "🎮 Explore All Games",
     "all-games-subtitle": "Discover all our party games and find your favorite way to pick movies",
     "all-games-button": "View All Games"
@@ -466,6 +500,36 @@
       "back": "Back",
       "getStarted": "Get Started",
       "step": "Step {current} of {total}"
+    },
+    "features": {
+      "header": "Discover FlickMate",
+      "skip": "Skip",
+      "next": "Next",
+      "getStarted": "Get Started",
+      "welcome": {
+        "title": "Pick Movies Together",
+        "description": "No more endless scrolling. Find the perfect movie with friends using fun games and smart tools."
+      },
+      "swiper": {
+        "title": "Swipe & Match",
+        "description": "Swipe right on movies you like. When everyone matches, you've found your movie night pick!"
+      },
+      "voter": {
+        "title": "Vote Together",
+        "description": "Rank movies with a friend. Compare your choices and discover what you both want to watch."
+      },
+      "fortune": {
+        "title": "Spin the Wheel",
+        "description": "Can't decide? Let fate choose! Spin the wheel with your favorites or random picks."
+      },
+      "favorites": {
+        "title": "Organize Your Picks",
+        "description": "Save movies to custom groups. Track what you've watched and what's next on your list."
+      },
+      "browse": {
+        "title": "Browse & Discover",
+        "description": "Explore trending movies, filter by genre or streaming service, and save your favorites to custom collections."
+      }
     }
   }
 }

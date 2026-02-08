@@ -2,15 +2,15 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, ToastAndroid, Vibration, View } from "react-native";
 import { Button, MD2DarkTheme, Text, TextInput, useTheme } from "react-native-paper";
-import PageHeading from "../../components/PageHeading";
-import useTranslation from "../../service/useTranslation";
-import { throttle } from "../../utils/throttle";
+import PageHeading from "../components/PageHeading";
+import useTranslation from "../service/useTranslation";
+import { throttle } from "../utils/throttle";
 import { router } from "expo-router";
 import { useIsFocused } from "@react-navigation/native";
-import { url } from "../../context/SocketContext";
-import envs from "../../constants/envs";
-import SafeIOSContainer from "../../components/SafeIOSContainer";
-import UserInputModal from "../../components/UserInputModal";
+import { url } from "../context/SocketContext";
+import envs from "../constants/envs";
+import SafeIOSContainer from "../components/SafeIOSContainer";
+import UserInputModal from "../components/UserInputModal";
 
 type JoinRoomParams =
   | {
@@ -145,7 +145,7 @@ export default function QRScanner() {
       <PageHeading
         title={t("scanner.heading")}
         useSafeArea
-        showBackButton={false}
+        showBackButton
         showRightIconButton
         onRightIconPress={() => setIsManual(true)}
         rightIconTitle="Join"

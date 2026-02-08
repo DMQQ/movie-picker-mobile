@@ -5,6 +5,7 @@ import { movieApi } from "./movie/movieApi";
 import { favoritesSlice } from "./favourites/favourites";
 import { personApi } from "./person/personApi";
 import { roomBuilderSlice } from "./roomBuilder/roomBuilderSlice";
+import { mediaFiltersSlice } from "./mediaFilters/mediaFiltersSlice";
 
 const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ const store = configureStore({
     [personApi?.reducerPath]: personApi.reducer,
     favourite: favoritesSlice.reducer,
     builder: roomBuilderSlice.reducer,
+    mediaFilters: mediaFiltersSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([movieApi.middleware, personApi.middleware]),
 });

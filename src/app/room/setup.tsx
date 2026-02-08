@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { View, Platform, Alert } from "react-native";
+import { useCallback, useEffect, useMemo } from "react";
+import { View, Alert } from "react-native";
 import { router } from "expo-router";
 import PageHeading from "../../components/PageHeading";
 import StepContainer from "../../components/Room/StepContainer";
@@ -73,7 +73,7 @@ export default function RoomSetup() {
             },
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     } else {
       router.back();
@@ -84,6 +84,7 @@ export default function RoomSetup() {
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       <PageHeading
         onPress={handleBackPress}
+        showBackButton={currentStep === 1}
         gradientHeight={100}
         showGradientBackground={false}
         useSafeArea={false}

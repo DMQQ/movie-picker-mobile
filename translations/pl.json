@@ -183,6 +183,25 @@
     "pick-category": "Wybierz Kategorię",
     "pick-a-movie": "Zakręć kołem!"
   },
+  "filters": {
+    "title": "Filtry",
+    "type": "Rodzaj",
+    "movie": "Filmy",
+    "tv": "Seriale",
+    "both": "Wszystko",
+    "providers": "Serwisy streamingowe",
+    "genres": "Gatunki",
+    "decade": "Dekada",
+    "all": "Wszystkie",
+    "90s": "Lata 90.",
+    "2000s": "Lata 2000.",
+    "2010s": "Lata 2010.",
+    "2020s": "Lata 2020.",
+    "apply": "Zastosuj filtry",
+    "clear": "Wyczyść",
+    "active": "{count} filtr{plural} aktywny",
+    "categories": "Kategorie"
+  },
   "likes": {
     "title": "Twoje polubienia",
     "empty": "Jeszcze nie polubiłeś żadnych filmów",
@@ -243,7 +262,8 @@
   "scanner": {
     "request-permission": "Poproś o pozwolenie",
     "heading": "Zeskanuj kod QR",
-    "join": "Dołącz do gry"
+    "join": "Dołącz do gry",
+    "button": "Dołącz"
   },
   "settings": {
     "hello": "Cześć",
@@ -353,6 +373,16 @@
     "fortunewheel": {
       "title": "Koło Fortuny",
       "description": "Zakręć kołem fortuny i losuj! Idealne dla niezdecydowanych lub szybkich decyzji!"
+    },
+    "random": {
+      "title": "Losowy Film",
+      "description": "Jedno kliknięcie, jeden film. Błyskawiczna losowa rekomendacja gdy nie wiesz co obejrzeć.",
+      "mystery": "???",
+      "reveal": "Odkryj Film",
+      "revealing": "Szukam...",
+      "try-again": "Losuj Ponownie",
+      "view-details": "Szczegóły",
+      "hint": "Dotknij aby odkryć swój następny film"
     }
   },
   "search": {
@@ -387,7 +417,7 @@
     "settings": "Ustawienia",
     "favourites": "Ulubione",
     "join-game": "Dołącz do gry",
-    "games": "Gry",
+    "games": "Decyduj",
     "search": "Szukaj",
     "explore": "Eksploruj"
   },
@@ -427,15 +457,19 @@
     "social-title": "🎯 Znajdź Idealny Wybór",
     "social-subtitle": "Przesuwaj z przyjaciółmi i odkrywaj filmy, które pokochacie",
     "social-button": "Zagraj w Dopasowanie",
-    "quick-title": "🎮 Rzuć Wyzwanie Znajomym",
-    "quick-subtitle": "Myślisz, że znasz świetne filmy? Udowodnij to!",
-    "quick-button": "Rozpocznij Grę Filmową",
+    "quick-title": "🎬 Wybierz Film Teraz",
+    "quick-subtitle": "Zacznij przesuwać od razu z losowymi filmami",
+    "quick-button": "Szybka Gra",
+    "quick-custom-button": "Własny Pokój",
     "voter-title": "🗳️ Głosuj Razem",
     "voter-subtitle": "Oceniaj filmy z przyjaciółmi i znajdź wspólne ulubione",
     "voter-button": "Rozpocznij Głosowanie",
     "fortune-title": "🎰 Kręć Kołem",
     "fortune-subtitle": "Nie możesz się zdecydować? Pozwól kołu fortuny wybrać za Ciebie!",
     "fortune-button": "Kręć Kołem",
+    "random-title": "🎲 Czujesz Szczęście?",
+    "random-subtitle": "Jedno kliknięcie, jeden film. Błyskawiczny losowy wybór!",
+    "random-button": "Losowy Film",
     "all-games-title": "🎮 Odkryj Wszystkie Gry",
     "all-games-subtitle": "Poznaj wszystkie nasze gry towarzyskie i znajdź ulubiony sposób na wybieranie filmów",
     "all-games-button": "Zobacz Wszystkie Gry"
@@ -464,6 +498,36 @@
       "back": "Wstecz",
       "getStarted": "Zaczynajmy",
       "step": "Krok {current} z {total}"
+    },
+    "features": {
+      "header": "Odkryj FlickMate",
+      "skip": "Pomiń",
+      "next": "Dalej",
+      "getStarted": "Zaczynajmy",
+      "welcome": {
+        "title": "Wybieraj Filmy Razem",
+        "description": "Koniec z niekończącym się scrollowaniem. Znajdź idealny film ze znajomymi dzięki zabawnym grom."
+      },
+      "swiper": {
+        "title": "Przesuwaj i Dopasowuj",
+        "description": "Przesuń w prawo filmy, które lubisz. Gdy wszyscy się zgodzą, macie film na wieczór!"
+      },
+      "voter": {
+        "title": "Głosujcie Razem",
+        "description": "Oceniaj filmy ze znajomym. Porównaj wybory i odkryj, co oboje chcecie obejrzeć."
+      },
+      "fortune": {
+        "title": "Zakręć Kołem",
+        "description": "Nie możesz się zdecydować? Niech los wybierze! Zakręć kołem z ulubionymi lub losowymi filmami."
+      },
+      "favorites": {
+        "title": "Organizuj Swoje Wybory",
+        "description": "Zapisuj filmy w własnych grupach. Śledź co obejrzałeś i co jest następne na liście."
+      },
+      "browse": {
+        "title": "Przeglądaj i Odkrywaj",
+        "description": "Eksploruj popularne filmy, filtruj według gatunku lub serwisu streamingowego, zapisuj ulubione do własnych kolekcji."
+      }
     }
   }
 }

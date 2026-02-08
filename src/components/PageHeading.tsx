@@ -113,6 +113,7 @@ export default function PageHeading({
                   Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
                 }
               }}
+              style={{ flexDirection: "row", gap: 4, alignItems: "center", justifyContent: "center" }}
             >
               {rightIconName && (
                 <IconButton
@@ -131,7 +132,7 @@ export default function PageHeading({
                 />
               )}
               {rightIconTitle && (
-                <Text style={[{ color: "#fff", fontSize: 16, fontWeight: "600" }, !rightIconName && { padding: 15 }]}>
+                <Text style={[{ color: "#fff", fontSize: 16, fontWeight: "600", paddingRight: 10 }, !rightIconName && { padding: 15 }]}>
                   {rightIconTitle}
                 </Text>
               )}
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     flex: 1,
     textAlign: "center",
-    paddingTop: 10,
+    paddingTop: 15,
   },
   backButton: {
     marginRight: 8,
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "absolute",
     left: 15,
-    top: Platform.OS === "android" ? 5 : 5,
+    top: Platform.OS === "android" ? 10 : 5,
     zIndex: 1,
 
     ...Platform.select({

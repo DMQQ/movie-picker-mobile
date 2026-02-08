@@ -1,22 +1,22 @@
 import { memo, useCallback, useEffect, useState } from "react";
-import { Dimensions, StyleSheet, View, VirtualizedList } from "react-native";
+import { StyleSheet, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
 import { Movie } from "../../../types";
 import { useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
-import SectionListItem from "../SectionItem";
+import SectionListItem, { SECTION_ITEM_WIDTH, SECTION_ITEM_HEIGHT } from "../SectionItem";
 import Skeleton from "../Skeleton/Skeleton";
 import uniqueBy from "../../utils/unique";
-
-const { width } = Dimensions.get("screen");
 
 interface SectionProps {
   group: { name: string; results: Movie[] };
 }
 
+export const SECTION_HEIGHT = SECTION_ITEM_HEIGHT + 80;
+
 const sectionStyles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,
-    height: Math.min(width * 0.25, 200) * 1.75 + 75,
+    height: SECTION_HEIGHT,
   },
   title: {
     color: "#fff",
@@ -44,15 +44,12 @@ const skeletonStyles = StyleSheet.create({
   },
 });
 
-const movieWidth = Math.min(width * 0.25, 200);
-const movieHeight = movieWidth * 1.5;
-
 const getItem = (data: Movie[], index: number) => data[index];
 
 const getItemCount = (data: Movie[]) => data.length;
 
 const getItemLayout = (_: Movie[] | null | undefined, index: number) => {
-  return { length: movieWidth + 15, offset: (movieWidth + 15) * index, index };
+  return { length: SECTION_ITEM_WIDTH + 15, offset: (SECTION_ITEM_WIDTH + 15) * index, index };
 };
 
 const renderItem = ({ item }: { item: Movie }) => (
@@ -121,7 +118,7 @@ export const Section = memo(
                 {[...Array(2)].map((_, index) => (
                   <View style={skeletonStyles.movieCard} key={index}>
                     <Skeleton>
-                      <View style={{ width: movieWidth, height: movieHeight, backgroundColor: "#333", borderRadius: 8 }} />
+                      <View style={{ width: SECTION_ITEM_WIDTH, height: SECTION_ITEM_HEIGHT, backgroundColor: "#333", borderRadius: 8 }} />
                     </Skeleton>
                   </View>
                 ))}

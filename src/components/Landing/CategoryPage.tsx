@@ -1,17 +1,15 @@
 import { Fragment, memo, useCallback } from "react";
-import { Dimensions, RefreshControl, View, VirtualizedList } from "react-native";
+import { RefreshControl, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useInfiniteLandingPageMovies } from "../../hooks/useInfiniteLandingPageMovies";
 import useTranslation from "../../service/useTranslation";
 import FeaturedSection from "./FeaturedSection";
-import Section from "./Section";
-import GameInviteSection from "./GameInviteSection";
+import Section, { SECTION_HEIGHT } from "./Section";
+import GameInviteSection, { GAME_SECTION_HEIGHT } from "./GameInviteSection";
 import LoadingSkeleton from "./LoadingSkeleton";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { SectionData } from "../../types";
-
-const { width } = Dimensions.get("screen");
 
 const getItemCount = (data: any) => data?.length || 0;
 const getItem = (data: any, index: number) => data[index];
@@ -43,14 +41,12 @@ interface CategoryPageProps {
   categoryId: string;
 }
 
-const SECTION_HEIGHT = Math.min(width * 0.25, 200) * 1.75 + 75;
-
-const GAME_SECTION_EXTRA_HEIGHT = SECTION_HEIGHT;
+const GAME_SECTION_EXTRA_HEIGHT = GAME_SECTION_HEIGHT;
 
 const getItemLayout = (_: any, index: number) => {
-  const gameSectionsBefore = index === 0 ? 0 : Math.floor((index - 1) / 5);
-  const offset = index * SECTION_HEIGHT + gameSectionsBefore * GAME_SECTION_EXTRA_HEIGHT;
-  const isGameItem = index % 5 === 0 && index !== 0;
+  const gameItemsBefore = Math.ceil(index / 5);
+  const offset = index * SECTION_HEIGHT + gameItemsBefore * GAME_SECTION_EXTRA_HEIGHT;
+  const isGameItem = index % 5 === 0;
   const length = isGameItem ? SECTION_HEIGHT + GAME_SECTION_EXTRA_HEIGHT : SECTION_HEIGHT;
 
   return { length, offset, index };
@@ -58,7 +54,7 @@ const getItemLayout = (_: any, index: number) => {
 
 const categoryKeyExtractor = (item: any) => item.name.toString();
 
-const gameTypes: ("social" | "voter" | "fortune" | "all-games")[] = ["social", "voter", "fortune", "all-games"];
+const gameTypes: ("social" | "quick" | "voter" | "fortune" | "random" | "all-games")[] = ["social", "quick", "voter", "fortune", "random", "all-games"];
 
 const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
   const t = useTranslation();
@@ -73,9 +69,11 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
 
   const renderItem = useCallback(({ item, index }: { item: SectionData; index: number }) => {
     if (!item || typeof item !== "object") return null;
+    const showGameSection = index % 5 === 0;
+    const gameTypeIndex = index === 0 ? 0 : Math.floor(index / 5);
     return (
       <View>
-        {index % 5 === 0 && index !== 0 ? <GameInviteSection type={gameTypes[(index / 5 - 1) % gameTypes.length]} /> : null}
+        {showGameSection ? <GameInviteSection type={gameTypes[gameTypeIndex % gameTypes.length]} /> : null}
 
         <Section group={item} />
       </View>

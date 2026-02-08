@@ -9,7 +9,7 @@ import uniqueBy from "../../../utils/unique";
 
 const { width } = Dimensions.get("screen");
 
-const imageWidth = (width - 65) / 3;
+const imageWidth = (width - 45) / 2;
 
 interface SimilarTabProps {
   id: number;

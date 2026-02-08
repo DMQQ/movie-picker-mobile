@@ -1,7 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import * as Localization from "expo-localization";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
@@ -103,6 +103,7 @@ export default function RootLayout() {
 const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: boolean }) => {
   const dispatch = useAppDispatch();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
+  const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -115,17 +116,13 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
           SecureStore.getItemAsync("nickname"),
         ]);
 
+        const isFirstTimeUser = !language;
+
         if (!language) {
           const deviceSettings = getDeviceSettings();
           language = deviceSettings.language;
           nickname = deviceSettings.nickname;
           regionalization = JSON.stringify(deviceSettings.regionalization);
-
-          await Promise.all([
-            SecureStore.setItemAsync("language", language),
-            SecureStore.setItemAsync("nickname", nickname),
-            SecureStore.setItemAsync("regionalization", regionalization),
-          ]);
         }
 
         const finalNickname = nickname || (language === "en" ? "Guest" : "Gość");
@@ -137,8 +134,11 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
             regionalization: JSON.parse(regionalization || "{}") || ({} as any),
           }),
         );
+
+        setNeedsOnboarding(isFirstTimeUser);
       } catch (error) {
         console.error("[RootNavigator] Error:", error);
+        setNeedsOnboarding(false);
       } finally {
         setSettingsLoaded(true);
       }
@@ -158,20 +158,26 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
     ]);
   }, []);
 
-  if (!settingsLoaded) {
+  useEffect(() => {
+    if (settingsLoaded && needsOnboarding) {
+      router.replace("/onboarding");
+    }
+  }, [settingsLoaded, needsOnboarding]);
+
+  if (!settingsLoaded || needsOnboarding === null) {
     return <View style={{ flex: 1, backgroundColor: "#000" }} />;
   }
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
       <Stack
+        initialRouteName="(tabs)"
         screenOptions={{
           headerShown: false,
           contentStyle: {
             backgroundColor: "#000",
           },
         }}
-        initialRouteName={"(tabs)"}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
@@ -179,7 +185,7 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
 
         <Stack.Screen name="fortune" options={{ headerShown: false }} />
 
-        <Stack.Screen name="settings" options={{ headerShown: false }} />
+        <Stack.Screen name="qr-scanner" options={{ headerShown: false, presentation: "modal" }} />
 
         <Stack.Screen name="group" options={{ headerShown: false }} />
 
