@@ -26,12 +26,14 @@ function ProvidersSection() {
   const { savePreferences } = useFilterPreferences();
   const lastSavedRef = useRef<string>("");
 
-  // Save when providers change
   useEffect(() => {
     const key = selectedProviders.join(",");
     if (key !== lastSavedRef.current && selectedProviders.length > 0) {
       lastSavedRef.current = key;
       savePreferences({ providers: selectedProviders });
+    } else if (key === "" && lastSavedRef.current !== "") {
+      lastSavedRef.current = "";
+      savePreferences({ providers: [] });
     }
   }, [selectedProviders, savePreferences]);
 

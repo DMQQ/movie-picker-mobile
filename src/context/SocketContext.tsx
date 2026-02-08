@@ -139,11 +139,14 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
       if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current);
       if (backgroundTimer.current) clearTimeout(backgroundTimer.current);
 
-      if (socketRef.current) {
-        socketRef.current.removeAllListeners();
-        socketRef.current.emit("client_cleanup");
-        socketRef.current.disconnect();
-        socketRef.current.close();
+      const s = socketRef.current;
+
+      if (s) {
+        s.removeAllListeners();
+        if (s.connected) {
+          s.emit("client_cleanup");
+          s.disconnect();
+        } else s.close();
       }
     };
   }, []);

@@ -53,10 +53,24 @@ export default function QRCodePage() {
   const users = useAppSelector((state) => state.room.room.users);
   const roomId = useAppSelector((state) => state.room.room.roomId);
   const existingMovies = useAppSelector((state) => state.room.room.movies);
+  const [quickStartSelection, setQuickStartSelection] = useState<string | null>(null);
 
   const { preferences } = useFilterPreferences();
   const movieCategoriesQuery = useGetMovieCategoriesWithThumbnailsQuery();
   const tvCategoriesQuery = useGetTVCategoriesWithThumbnailsQuery();
+
+  useEffect(() => {
+    if (params?.quickStart && !quickStartSelection && movieCategoriesQuery.data && tvCategoriesQuery.data) {
+      const movieCats = movieCategoriesQuery.data.slice(0, 3);
+      const tvCats = tvCategoriesQuery.data.slice(0, 3);
+
+      const randomMovie = movieCats[Math.floor(Math.random() * movieCats.length)];
+      const randomSeries = tvCats[Math.floor(Math.random() * tvCats.length)];
+      const chosen = Math.random() < 0.5 ? randomMovie : randomSeries;
+
+      setQuickStartSelection(chosen.path);
+    }
+  }, [movieCategoriesQuery.data, tvCategoriesQuery.data, params?.quickStart]);
 
   const { category, maxRounds, genre, providers, specialCategories } = useMemo(() => {
     const roomSetup = params.roomSetup ? (JSON.parse(params.roomSetup as string) as RoomSetupParams) : undefined;
@@ -94,16 +108,10 @@ export default function QRCodePage() {
       return config;
     }
 
-    const movieCategories = movieCategoriesQuery.data?.slice(0, 3) || [];
-    const seriesCategories = tvCategoriesQuery.data?.slice(0, 3) || [];
-
-    const randomMovie = movieCategories[Math.floor(Math.random() * movieCategories.length)];
-    const randomSeries = seriesCategories[Math.floor(Math.random() * seriesCategories.length)];
-
-    const randomCategory = Math.random() < 0.5 ? randomMovie : randomSeries;
+    if (!quickStartSelection) return null;
 
     const config = {
-      type: randomCategory.path,
+      type: quickStartSelection,
       pageRange: pageRange,
       genre: [],
       nickname,
@@ -120,10 +128,9 @@ export default function QRCodePage() {
     providers,
     specialCategories,
     nickname,
-    movieCategoriesQuery.data,
-    tvCategoriesQuery.data,
     preferences?.providers,
     pageRange,
+    quickStartSelection,
   ]);
 
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
@@ -446,6 +453,7 @@ const styles = StyleSheet.create({
   startButton: {
     borderRadius: 100,
     marginTop: 10,
+    marginBottom: 15,
   },
   startButtonContent: {
     padding: 7.5,

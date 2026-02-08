@@ -25,10 +25,7 @@ const initialState: MediaFiltersState = {
 
 const computeIsFilterActive = (state: MediaFiltersState): boolean => {
   return (
-    state.mediaType !== "both" ||
-    state.selectedProviders.length > 0 ||
-    state.selectedGenres.length > 0 ||
-    state.selectedDecade !== "all"
+    state.mediaType !== "both" || state.selectedProviders.length > 0 || state.selectedGenres.length > 0 || state.selectedDecade !== "all"
   );
 };
 
@@ -38,10 +35,7 @@ export const mediaFiltersSlice = createSlice({
   reducers: {
     setMediaType: (state, action: PayloadAction<"movie" | "tv" | "both">) => {
       state.mediaType = action.payload;
-      // Reset genres when changing type since genres are type-specific
-      if (action.payload !== "both") {
-        state.selectedGenres = [];
-      }
+      state.selectedGenres = [];
       state.isFilterActive = computeIsFilterActive(state);
     },
     setProviders: (state, action: PayloadAction<number[]>) => {
@@ -85,7 +79,6 @@ export const mediaFiltersSlice = createSlice({
   },
 });
 
-export const { setMediaType, setProviders, toggleProvider, toggleGenre, setGenres, setDecade, clearAllFilters } =
-  mediaFiltersSlice.actions;
+export const { setMediaType, setProviders, toggleProvider, toggleGenre, setGenres, setDecade, clearAllFilters } = mediaFiltersSlice.actions;
 
 export default mediaFiltersSlice.reducer;

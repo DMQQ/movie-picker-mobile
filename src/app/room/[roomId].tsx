@@ -210,7 +210,7 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    BackHandler.addEventListener("hardwareBackPress", () => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
       Alert.alert(
         t("dialogs.leave-room.title"),
         t("dialogs.leave-room.message"),
@@ -231,6 +231,8 @@ export default function Home() {
 
       return true;
     });
+
+    return () => sub.remove();
   }, []);
 
   return (

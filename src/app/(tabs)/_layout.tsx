@@ -79,7 +79,7 @@ export default function TabLayout() {
             ? { src: <VectorIcon family={FontAwesome} name="gear" />, selectedColor: "#000" }
             : { sf: "gear" })}
         />
-        <Label>{t("tabBar.join-game")}</Label>
+        <Label>{t("tabBar.settings")}</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

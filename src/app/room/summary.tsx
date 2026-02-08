@@ -390,8 +390,7 @@ export default function GameSummary() {
 
       <View
         style={{
-          paddingHorizontal: 15,
-          paddingTop: 15,
+          padding: 15,
         }}
       >
         <Button mode="contained" onPress={handleBackToHome} style={styles.backButton} contentStyle={styles.backButtonContent}>
@@ -510,7 +509,7 @@ const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { sum
           removeFromGroup({
             groupId: "1",
             movieId: item.id!,
-          })
+          }),
         )
       : dispatch(
           addToGroup({
@@ -520,7 +519,7 @@ const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { sum
               type: item.type as "movie" | "tv",
             },
             groupId: "1",
-          })
+          }),
         );
   };
 

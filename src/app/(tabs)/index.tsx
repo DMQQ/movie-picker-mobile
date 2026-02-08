@@ -69,9 +69,6 @@ const GameCard = ({ title, description, onPress, beta, players, duration, index 
 
 export default function GameList() {
   const t = useTranslation();
-  const [prefetchProviders] = useLazyGetAllProvidersQuery();
-  const [prefetchSections] = useLazyGetCategoriesQuery();
-  const [prefetchGengres] = useLazyGetGenresQuery();
 
   const games = useMemo(
     () => [
