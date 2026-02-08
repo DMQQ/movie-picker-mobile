@@ -1,5 +1,5 @@
 import { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Alert, BackHandler, StyleSheet, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
@@ -57,7 +57,6 @@ export default function Home() {
   const dispatch = useAppDispatch();
   const theme = useTheme();
   const [showError, setShowError] = useState(false);
-  const [showContinueDialog, setShowContinueDialog] = useState(false);
   const [showPlayAgainDialog, setShowPlayAgainDialog] = useState(false);
   const [playAgainLoading, setPlayAgainLoading] = useState(false);
   const [waitingForHost, setWaitingForHost] = useState(false);
@@ -210,6 +209,30 @@ export default function Home() {
     },
   ];
 
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", () => {
+      Alert.alert(
+        t("dialogs.leave-room.title"),
+        t("dialogs.leave-room.message"),
+        [
+          {
+            text: t("common.cancel"),
+            style: "cancel",
+          },
+          {
+            text: t("common.yes"),
+            onPress: () => {
+              router.replace("/(tabs)");
+            },
+          },
+        ],
+        { userInterfaceStyle: "dark", cancelable: true },
+      );
+
+      return true;
+    });
+  }, []);
+
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       <HomeAppbar roomId={params?.roomId as string} hasCards={cards.length > 0} />
@@ -302,7 +325,7 @@ const SwipeContent = memo(({ params }: SwipeContentProps) => {
         },
       });
     },
-    [params?.type]
+    [params?.type],
   );
 
   return cards.map((card, index) => (

@@ -39,9 +39,10 @@ export default function RandomMovie() {
   const insets = useSafeAreaInsets();
   const [getRandomSection] = useLazyGetRandomSectionQuery();
   const [getMovieDetails] = useLazyGetMovieQuery();
-  const { getFilterParams, hasActiveFilters } = useMediaFilters();
+  const { getFilterParams } = useMediaFilters();
 
   const [movie, setMovie] = useState<Movie | null>(null);
+  const [seenMovies, setSeenMovies] = useState<number[]>([]);
   const [details, setDetails] = useState<MovieDetails | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -94,7 +95,7 @@ export default function RandomMovie() {
 
       try {
         const filterParams = getFilterParams();
-        const response = await getRandomSection(filterParams);
+        const response = await getRandomSection({ ...filterParams, notMovies: seenMovies.join(",") });
         if (response.data?.results?.length > 0) {
           const randomIndex = Math.floor(Math.random() * response.data.results.length);
           const selectedMovie = response.data.results[randomIndex];
@@ -107,6 +108,7 @@ export default function RandomMovie() {
             if (detailsResponse.data) {
               setDetails(detailsResponse.data);
             }
+            setSeenMovies((prev) => [...prev, selectedMovie.id]);
             diceRotate.value = 0;
             setIsLoading(false);
             revealCard();
@@ -120,7 +122,18 @@ export default function RandomMovie() {
         diceRotate.value = 0;
       }
     }
-  }, [isLoading, isRevealed, getRandomSection, getMovieDetails, resetCard, revealCard, triggerHaptic, diceRotate, getFilterParams]);
+  }, [
+    isLoading,
+    isRevealed,
+    getRandomSection,
+    getMovieDetails,
+    resetCard,
+    revealCard,
+    triggerHaptic,
+    diceRotate,
+    getFilterParams,
+    seenMovies,
+  ]);
 
   const handleViewDetails = useCallback(() => {
     if (!movie) return;

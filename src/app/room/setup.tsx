@@ -84,6 +84,7 @@ export default function RoomSetup() {
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       <PageHeading
         onPress={handleBackPress}
+        showBackButton={currentStep === 1}
         gradientHeight={100}
         showGradientBackground={false}
         useSafeArea={false}

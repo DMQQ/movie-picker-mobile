@@ -37,6 +37,8 @@ interface RandomSectionParams {
   providers?: number[];
   genres?: number[];
   decade?: string;
+
+  notMovies?: string;
 }
 
 interface SearchResults {
@@ -149,6 +151,10 @@ export const movieApi = createApi({
         }
         if (params?.decade && params.decade !== "all") {
           searchParams.append("decade", params.decade);
+        }
+
+        if (params?.notMovies) {
+          searchParams.append("notMovies", params.notMovies);
         }
 
         const queryString = searchParams.toString();

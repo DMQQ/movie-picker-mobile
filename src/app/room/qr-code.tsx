@@ -12,11 +12,12 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
-import { getMovieCategories, getSeriesCategories } from "../../utils/roomsConfig";
 import { FancySpinner } from "../../components/FancySpinner";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { hash } from "../../utils/hash";
 import { useGetMovieCategoriesWithThumbnailsQuery, useGetTVCategoriesWithThumbnailsQuery } from "../../redux/movie/movieApi";
+import { useFilterPreferences } from "../../hooks/useFilterPreferences";
+import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 
 interface RoomSetupParams {
   category: string;
@@ -53,6 +54,7 @@ export default function QRCodePage() {
   const roomId = useAppSelector((state) => state.room.room.roomId);
   const existingMovies = useAppSelector((state) => state.room.room.movies);
 
+  const { preferences } = useFilterPreferences();
   const movieCategoriesQuery = useGetMovieCategoriesWithThumbnailsQuery();
   const tvCategoriesQuery = useGetTVCategoriesWithThumbnailsQuery();
 
@@ -73,11 +75,15 @@ export default function QRCodePage() {
     return roomSetup;
   }, [params.roomSetup]);
 
+  const pageRange = useMemo(() => {
+    return Math.trunc(Math.random() * 5 + 1);
+  }, []);
+
   const roomConfig = useMemo(() => {
     if (!params?.quickStart) {
       const config: any = {
         type: category,
-        pageRange: Math.trunc(Math.random() * 5),
+        pageRange: pageRange,
         genre: genre?.map((g) => g.id) || [],
         nickname,
         providers: providers || [],
@@ -98,10 +104,10 @@ export default function QRCodePage() {
 
     const config = {
       type: randomCategory.path,
-      pageRange: Math.trunc(Math.random() * 5),
+      pageRange: pageRange,
       genre: [],
       nickname,
-      providers: [],
+      providers: preferences?.providers || [],
       maxRounds: 3,
       specialCategories: [],
     };
@@ -116,6 +122,8 @@ export default function QRCodePage() {
     nickname,
     movieCategoriesQuery.data,
     tvCategoriesQuery.data,
+    preferences?.providers,
+    pageRange,
   ]);
 
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
@@ -219,13 +227,15 @@ export default function QRCodePage() {
         gameType = category.includes("/movie") || category.includes("movie") ? "movie" : "tv";
       }
 
-      router.push({
+      router.replace({
         pathname: "/room/[roomId]",
         params: {
           roomId: code,
           type: gameType,
         },
       });
+
+      dispatch(reset());
     });
   };
 

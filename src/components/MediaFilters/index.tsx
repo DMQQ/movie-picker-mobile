@@ -28,7 +28,6 @@ export const FilterButton = React.memo(function FilterButton({ size = 24, style,
   const genresCount = useAppSelector((state) => state.mediaFilters.selectedGenres.length);
   const selectedDecade = useAppSelector((state) => state.mediaFilters.selectedDecade);
 
-  // Load saved providers on mount
   useEffect(() => {
     if (!hasInitialized.current && savedProviders?.providers && savedProviders.providers.length > 0) {
       dispatch(setProviders(savedProviders.providers));
