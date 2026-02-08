@@ -1,7 +1,7 @@
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
-import { memo, useContext, useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { memo, useContext, useEffect, useRef, useState, useTransition } from "react";
 import { Dimensions, Platform, Share, View, StyleSheet } from "react-native";
 import { Avatar, Button, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
@@ -53,87 +53,50 @@ export default function QRCodePage() {
   const users = useAppSelector((state) => state.room.room.users);
   const roomId = useAppSelector((state) => state.room.room.roomId);
   const existingMovies = useAppSelector((state) => state.room.room.movies);
-  const [quickStartSelection, setQuickStartSelection] = useState<string | null>(null);
 
   const { preferences } = useFilterPreferences();
   const movieCategoriesQuery = useGetMovieCategoriesWithThumbnailsQuery();
   const tvCategoriesQuery = useGetTVCategoriesWithThumbnailsQuery();
 
-  useEffect(() => {
-    if (params?.quickStart && !quickStartSelection && movieCategoriesQuery.data && tvCategoriesQuery.data) {
-      const movieCats = movieCategoriesQuery.data.slice(0, 3);
-      const tvCats = tvCategoriesQuery.data.slice(0, 3);
-
-      const randomMovie = movieCats[Math.floor(Math.random() * movieCats.length)];
-      const randomSeries = tvCats[Math.floor(Math.random() * tvCats.length)];
-      const chosen = Math.random() < 0.5 ? randomMovie : randomSeries;
-
-      setQuickStartSelection(chosen.path);
-    }
-  }, [movieCategoriesQuery.data, tvCategoriesQuery.data, params?.quickStart]);
-
-  const { category, maxRounds, genre, providers, specialCategories } = useMemo(() => {
-    const roomSetup = params.roomSetup ? (JSON.parse(params.roomSetup as string) as RoomSetupParams) : undefined;
-
-    if (!roomSetup) {
-      return {
-        category: null,
-        maxRounds: null,
-        genre: null,
-        providers: null,
-        specialCategories: null,
-        cacheKey: null,
-      };
-    }
-
-    return roomSetup;
-  }, [params.roomSetup]);
-
-  const pageRange = useMemo(() => {
-    return Math.trunc(Math.random() * 5 + 1);
-  }, []);
-
-  const roomConfig = useMemo(() => {
-    if (!params?.quickStart) {
-      const config: any = {
-        type: category,
-        pageRange: pageRange,
-        genre: genre?.map((g) => g.id) || [],
-        nickname,
-        providers: providers || [],
-        maxRounds: maxRounds || 6,
-        specialCategories: specialCategories || [],
-      };
-
-      return config;
-    }
-
-    if (!quickStartSelection) return null;
-
-    const config = {
-      type: quickStartSelection,
-      pageRange: pageRange,
-      genre: [],
-      nickname,
-      providers: preferences?.providers || [],
-      maxRounds: 3,
-      specialCategories: [],
-    };
-    return config;
-  }, [
-    params?.quickStart,
-    category,
-    maxRounds,
-    genre,
-    providers,
-    specialCategories,
-    nickname,
-    preferences?.providers,
-    pageRange,
-    quickStartSelection,
-  ]);
-
+  const [roomConfig, setRoomConfig] = useState<any>(null);
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
+
+  useEffect(() => {
+    if (roomConfig) return;
+
+    if (params?.quickStart) {
+      if (movieCategoriesQuery.data && tvCategoriesQuery.data) {
+        const movieCats = movieCategoriesQuery.data.slice(0, 3);
+        const tvCats = tvCategoriesQuery.data.slice(0, 3);
+
+        const randomMovie = movieCats[Math.floor(Math.random() * movieCats.length)];
+        const randomSeries = tvCats[Math.floor(Math.random() * tvCats.length)];
+        const chosen = Math.random() < 0.5 ? randomMovie : randomSeries;
+
+        setRoomConfig({
+          type: chosen.path,
+          genre: [],
+          nickname,
+          providers: preferences?.providers || [],
+          maxRounds: 3,
+          specialCategories: [],
+        });
+      }
+    } else {
+      const roomSetup = params.roomSetup ? (JSON.parse(params.roomSetup as string) as RoomSetupParams) : undefined;
+
+      if (roomSetup) {
+        setRoomConfig({
+          type: roomSetup.category,
+          genre: roomSetup.genre?.map((g) => g.id) || [],
+          nickname,
+          providers: roomSetup.providers || [],
+          maxRounds: roomSetup.maxRounds || 6,
+          specialCategories: roomSetup.specialCategories || [],
+        });
+      }
+    }
+  }, [roomConfig, params, movieCategoriesQuery.data, tvCategoriesQuery.data, preferences, nickname]);
 
   useEffect(() => {
     if (existingMovies && existingMovies.length > 0) {
@@ -156,12 +119,11 @@ export default function QRCodePage() {
     (async () => {
       try {
         if (qrCode && roomId) {
-          console.log("🔄 Updating room settings for:", roomId);
-
           if (existingMovies.length === 0) {
             setIsLoadingMovies(true);
             setMoviesCount(null);
           }
+          console.log("Updating room with config:", roomConfig);
           socket.emit("room:update-config", { roomId, config: roomConfig });
           return;
         }
@@ -170,22 +132,22 @@ export default function QRCodePage() {
         setIsLoadingMovies(true);
 
         const response = (await socket.emitWithAck("create-room", roomConfig)) as ISocketResponse;
+        console.log("Room created with response:", response);
 
         if (response) {
-          console.log("💡 Room created:", response.roomId);
           dispatch(roomActions.setRoom(response.details));
           dispatch(roomActions.setQRCode(response.roomId));
-
           socket.emit("join-room", response.roomId, nickname);
         }
       } catch (error) {
+        console.error("Error creating room:", error);
         hashOptionsRef.current = "";
         setIsLoadingMovies(false);
       } finally {
         setCreateRoomLoading(false);
       }
     })();
-  }, [roomConfig, socket, nickname]);
+  }, [roomConfig, socket, nickname, qrCode, roomId]);
 
   useEffect(() => {
     if (!socket) return;
@@ -228,10 +190,8 @@ export default function QRCodePage() {
       dispatch(roomActions.setPlaying(true));
 
       let gameType = "movie";
-      if (params?.quickStart && roomConfig) {
+      if (roomConfig) {
         gameType = roomConfig.type?.includes("/tv") ? "tv" : "movie";
-      } else if (category) {
-        gameType = category.includes("/movie") || category.includes("movie") ? "movie" : "tv";
       }
 
       router.replace({
@@ -371,7 +331,7 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         style={styles.shareButton}
       >
         <View>
-          {!!code ? (
+          {!!code && code.length > 0 ? (
             <View style={styles.codeRow}>
               {code.split("").map((char, index) => (
                 <Text key={index} style={styles.codeChar}>

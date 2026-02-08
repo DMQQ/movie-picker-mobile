@@ -171,6 +171,7 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
       <Stack
+        initialRouteName="(tabs)"
         screenOptions={{
           headerShown: false,
           contentStyle: {

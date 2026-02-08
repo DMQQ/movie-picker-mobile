@@ -13,6 +13,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     return () => {
+      console.log("Resetting room state");
       dispatch(roomActions.reset());
       dispatch(reset());
     };
