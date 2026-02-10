@@ -19,7 +19,7 @@ const appendUnique = (currentItems: SectionData[], newItems: SectionData[]) => {
   return [...currentItems, ...uniqueNewItems];
 };
 
-export const useInfiniteLandingPageMovies = ({ categoryId, pageSize = 8 }: { categoryId: string; pageSize?: number }) => {
+export const useInfiniteLandingPageMovies = ({ categoryId, pageSize = 4 }: { categoryId: string; pageSize?: number }) => {
   const dispatch = useAppDispatch();
 
   const [data, setData] = useState<SectionData[]>([]);

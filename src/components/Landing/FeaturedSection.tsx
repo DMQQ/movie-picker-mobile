@@ -181,7 +181,7 @@ const FeaturedSection = memo((props: { selectedChip: string }) => {
         contentFit="cover"
         transition={300}
       >
-        <BlurViewWrapper intensity={30} style={StyleSheet.absoluteFill} tint="dark">
+        <View style={StyleSheet.absoluteFill}>
           <LinearGradient style={styles.gradientContainer} colors={gradient as any}>
             <Animated.View entering={FadeInDown.duration(600).delay(200)} style={styles.contentWrapper}>
               <Link
@@ -271,7 +271,7 @@ const FeaturedSection = memo((props: { selectedChip: string }) => {
               </View>
             </Animated.View>
           </LinearGradient>
-        </BlurViewWrapper>
+        </View>
       </ImageBackground>
     </View>
   );

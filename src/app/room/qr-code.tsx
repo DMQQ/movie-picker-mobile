@@ -330,23 +330,21 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         }}
         style={styles.shareButton}
       >
-        <View>
-          {!!code && code.length > 0 ? (
-            <View style={styles.codeRow}>
-              {code.split("").map((char, index) => (
-                <Text key={index} style={styles.codeChar}>
-                  {char}
-                </Text>
-              ))}
-            </View>
-          ) : (
-            <Text>Loading</Text>
-          )}
-          <Text style={styles.shareButtonText}>
-            {t("room.share.button")} <FontAwesome name="share" size={14} color={theme.colors.primary} />
-          </Text>
-        </View>
+        {!!code && code.length > 0 ? (
+          <>
+            {code.split("").map((char, index) => (
+              <Text key={index} style={styles.codeChar}>
+                {char}
+              </Text>
+            ))}
+          </>
+        ) : (
+          <Text style={{ color: "#fff" }}>Loading</Text>
+        )}
       </Button>
+      <Text style={styles.shareButtonText}>
+        {t("room.share.button")} <FontAwesome name="share" size={14} color={theme.colors.primary} />
+      </Text>
 
       <TutorialTips />
     </View>
@@ -470,7 +468,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   shareButtonText: {
-    marginTop: 5,
     opacity: 0.7,
     textAlign: "center",
   },
