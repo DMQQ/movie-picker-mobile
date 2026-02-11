@@ -33,12 +33,6 @@ const LandingHeader = ({ children }: PropsWithChildren) => {
         ]}
         entering={FadeInUp}
       >
-        <Animated.View style={[styles.mainHeader]}>
-          <Text style={styles.helloText}>
-            {t("global.hello")} {nickname}!
-          </Text>
-        </Animated.View>
-
         {children}
       </Animated.View>
     </>
@@ -48,7 +42,6 @@ const LandingHeader = ({ children }: PropsWithChildren) => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: Platform.OS === "ios" ? 0 : 15,
     left: 0,
     right: 0,
     zIndex: 1000,

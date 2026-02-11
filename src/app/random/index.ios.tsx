@@ -324,10 +324,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
   filterButtonWrapper: {
-    position: "absolute",
-    right: 15,
-    top: 15,
-    zIndex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 100,
   },

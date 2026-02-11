@@ -12,24 +12,18 @@ interface PageHeadingProps extends PropsWithChildren {
   title: string;
   onPress?: () => void;
   showBackButton?: boolean;
-
   showGradientBackground?: boolean;
   gradientHeight?: number;
   useSafeArea?: boolean;
-
   styles?: StyleProp<ViewStyle>;
 }
 
 interface RightIconButtonProps extends PageHeadingProps {
   showRightIconButton?: boolean;
-
   rightIconName?: keyof typeof AntDesign.glyphMap | keyof typeof Ionicons.glyphMap;
   onRightIconPress?: () => void;
-
   extraScreenPaddingTop?: number;
-
   rightIconTitle?: string;
-
   tintColor?: string;
 }
 
@@ -42,22 +36,16 @@ export default function PageHeading({
   gradientHeight = 150,
   styles: extraStyles,
   children,
-
   showRightIconButton = false,
-
   rightIconName,
-
   rightIconTitle,
-
-  tintColor = undefined,
-
+  tintColor,
   onRightIconPress,
-
   extraScreenPaddingTop = 0,
 }: RightIconButtonProps) {
   const navigation = useNavigation();
-
   const insets = useSafeAreaInsets();
+
   return (
     <>
       {showGradientBackground && (
@@ -67,16 +55,16 @@ export default function PageHeading({
           pointerEvents="none"
         />
       )}
+
       <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top + extraScreenPaddingTop : 0 }, extraStyles]}>
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", width: "100%" }}>
+        <View style={styles.sideContainer}>
           {showBackButton && (
-            <PlatformBlurView isInteractive style={[styles.buttonContainer]}>
+            <PlatformBlurView isInteractive style={styles.buttonContainer}>
               <IconButton
                 icon="chevron-left"
                 size={25}
                 onPress={() => {
-                  typeof onPress !== "undefined" ? onPress() : navigation.goBack();
-
+                  onPress ? onPress() : navigation.goBack();
                   if (Platform.OS === "ios") {
                     Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
                   }
@@ -85,60 +73,36 @@ export default function PageHeading({
               />
             </PlatformBlurView>
           )}
+        </View>
 
+        <View style={styles.centerContainer}>
           <Text style={styles.headerTitle}>{title}</Text>
         </View>
-        {children}
 
-        {showRightIconButton && (
-          <PlatformBlurView
-            isInteractive
-            tintColor={tintColor}
-            style={[
-              styles.buttonContainer,
-              {
-                right: 15,
-                left: undefined,
-              },
-              rightIconTitle && { flexDirection: "row", alignItems: "center", justifyContent: "center" },
-            ]}
-          >
-            <Pressable
-              onPress={() => {
-                if (onRightIconPress) {
-                  onRightIconPress();
-                }
-
-                if (Platform.OS === "ios") {
-                  Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
-                }
-              }}
-              style={{ flexDirection: "row", gap: 4, alignItems: "center", justifyContent: "center" }}
-            >
-              {rightIconName && (
-                <IconButton
-                  icon={rightIconName as any}
-                  size={20}
-                  onPress={() => {
-                    if (onRightIconPress) {
-                      onRightIconPress();
-                    }
-
-                    if (Platform.OS === "ios") {
-                      Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
-                    }
-                  }}
-                  iconColor="white"
-                />
+        <View style={styles.sideContainerRight}>
+          {children
+            ? children
+            : showRightIconButton && (
+                <PlatformBlurView isInteractive tintColor={tintColor} style={styles.buttonContainer}>
+                  <Pressable
+                    onPress={() => {
+                      if (onRightIconPress) onRightIconPress();
+                      if (Platform.OS === "ios") {
+                        Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+                      }
+                    }}
+                    style={{ flexDirection: "row", alignItems: "center" }}
+                  >
+                    {rightIconName && <IconButton icon={rightIconName as any} size={20} iconColor="white" />}
+                    {rightIconTitle && (
+                      <Text style={[styles.rightText, !rightIconName && { paddingHorizontal: 15, paddingVertical: 10 }]}>
+                        {rightIconTitle}
+                      </Text>
+                    )}
+                  </Pressable>
+                </PlatformBlurView>
               )}
-              {rightIconTitle && (
-                <Text style={[{ color: "#fff", fontSize: 16, fontWeight: "600", paddingRight: 10 }, !rightIconName && { padding: 15 }]}>
-                  {rightIconTitle}
-                </Text>
-              )}
-            </Pressable>
-          </PlatformBlurView>
-        )}
+        </View>
       </View>
     </>
   );
@@ -146,47 +110,47 @@ export default function PageHeading({
 
 const styles = StyleSheet.create({
   headerTop: {
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 10,
     height: 60,
+    paddingHorizontal: 15,
+    zIndex: 10,
+  },
+  sideContainer: {
+    width: 60,
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+  sideContainerRight: {
+    width: 60,
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
+  centerContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerTitle: {
     fontFamily: "Bebas",
     fontSize: 32,
     color: "#fff",
-    flex: 1,
     textAlign: "center",
-    paddingTop: 15,
   },
-  backButton: {
-    marginRight: 8,
-    position: "absolute",
-    left: 15,
-    zIndex: 1,
-    top: Platform.OS === "android" ? 10 : 5,
-    borderRadius: 1000,
-
-    ...Platform.select({
-      android: {
-        backgroundColor: MD2DarkTheme.colors.surface,
-        borderWidth: 2,
-        borderColor: "#343434ff",
-      },
-    }),
+  rightText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    paddingRight: 10,
   },
-
   buttonContainer: {
     borderRadius: 100,
     overflow: "hidden",
-    position: "absolute",
-    left: 15,
-    top: Platform.OS === "android" ? 10 : 5,
-    zIndex: 1,
-
     ...Platform.select({
       android: {
         backgroundColor: MD2DarkTheme.colors.surface,

@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, Image, Platform, StyleSheet, useWindowDimensions, View } from "react-native";
-import { Button, MD2DarkTheme, Text } from "react-native-paper";
+import { Dimensions, Image, StyleSheet, useWindowDimensions, View } from "react-native";
+import { Button, Text } from "react-native-paper";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
 import FortuneWheelComponent from "../../components/FortuneWheelComponent";
@@ -135,8 +134,6 @@ export default function FortuneWheel() {
 
   const t = useTranslation();
 
-  const insets = useSafeAreaInsets();
-
   return (
     <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
       <PageHeading showBackButton title="">
@@ -207,10 +204,6 @@ export default function FortuneWheel() {
 
 const fortuneStyles = StyleSheet.create({
   filterButtonWrapper: {
-    position: "absolute",
-    right: 15,
-    top: 25,
-    zIndex: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 100,
   },

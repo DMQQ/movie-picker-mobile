@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useState } from "react";
-import { StyleSheet, View, VirtualizedList } from "react-native";
+import { Platform, StyleSheet, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
 import { Movie } from "../../../types";
 import { useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
@@ -66,14 +66,14 @@ const renderItem = ({ item }: { item: Movie }) => (
   />
 );
 
+const movieKeyExtractor = (item: Movie) => `${item.id}-${item.type}`;
+
 export const Section = memo(
   ({ group }: SectionProps) => {
     const [page, setPage] = useState(1);
     const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
     const [hasMore, setHasMore] = useState(true);
     const [movies, setSectionMovies] = useState<Movie[]>(group.results);
-
-    const movieKeyExtractor = useCallback((item: any) => `section-${item.id}-${item.type}`, []);
 
     const onEndReached = useCallback(() => {
       if (state.isLoading || !!state.error || !hasMore) return;
@@ -100,12 +100,11 @@ export const Section = memo(
         <Text style={sectionStyles.title}>{group.name}</Text>
 
         <VirtualizedList
+          removeClippedSubviews={Platform.OS === "android"}
           getItem={getItem}
           getItemCount={getItemCount}
           getItemLayout={getItemLayout}
-          removeClippedSubviews={true}
-          initialNumToRender={4}
-          windowSize={3}
+          initialNumToRender={3}
           onEndReached={onEndReached}
           data={(movies || []) as any}
           horizontal

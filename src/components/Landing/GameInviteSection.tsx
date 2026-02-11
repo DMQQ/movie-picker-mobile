@@ -17,10 +17,12 @@ const gameInviteStyles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
     height: GAME_SECTION_HEIGHT,
+    paddingHorizontal: 15,
+    paddingBottom: 30,
   },
   backgroundMovies: {
     position: "absolute",
-    top: 0,
+    top: 15,
     left: 15,
     right: 15,
     bottom: 30,
@@ -40,6 +42,7 @@ const gameInviteStyles = StyleSheet.create({
     padding: 20,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 16,
   },
   title: {
     fontSize: 28,
