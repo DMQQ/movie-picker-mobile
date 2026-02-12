@@ -314,7 +314,7 @@ const SearchScreen = () => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: 15 }]}>
       <View style={styles.searchContainer}>
         <Searchbar
           placeholder={t("search.search-placeholder")}

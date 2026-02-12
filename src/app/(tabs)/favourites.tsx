@@ -37,7 +37,7 @@ export default function Favourites() {
   };
 
   return (
-    <SafeIOSContainer>
+    <SafeIOSContainer style={{ paddingBottom: 0 }}>
       <PageHeading
         title={t("favourites.title")}
         showBackButton={false}
@@ -47,7 +47,7 @@ export default function Favourites() {
         useSafeArea
         extraScreenPaddingTop={Platform.OS === "android" ? 0 : 0}
       />
-      <View style={{ paddingHorizontal: 15, flex: 1, marginTop: Platform.OS === "android" ? 30 : 0, paddingBottom: 45 }}>
+      <View style={{ paddingHorizontal: 15, flex: 1, marginTop: Platform.OS === "android" ? 30 : 0, paddingBottom: 15 }}>
         <FlatList
           ref={listRef}
           showsVerticalScrollIndicator={false}

@@ -11,7 +11,6 @@ import SwiperAnimation from "../../components/GameListAnimations/SwipeAnimation"
 import VoterAnimation from "../../components/GameListAnimations/VoterAnimation";
 import RandomMovieAnimation from "../../components/GameListAnimations/RandomMovieAnimation";
 import PageHeading from "../../components/PageHeading";
-import { useLazyGetAllProvidersQuery, useLazyGetCategoriesQuery, useLazyGetGenresQuery } from "../../redux/movie/movieApi";
 
 const CARD_HEIGHT = 280;
 
@@ -117,7 +116,7 @@ export default function GameList() {
   const filteredGames = games;
 
   return (
-    <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000" }}>
+    <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000", paddingBottom: 15 }}>
       <PageHeading
         rightIconName="camera"
         rightIconTitle={t("scanner.button")}
@@ -133,7 +132,7 @@ export default function GameList() {
       <ScrollView
         style={[styles.container, Platform.OS === "android" && { marginTop: 30 }]}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: 60, paddingBottom: 60 }}
+        contentContainerStyle={{ paddingTop: 60, paddingBottom: 50 }}
       >
         {filteredGames.map((game, index) => (
           <GameCard
@@ -155,7 +154,8 @@ export default function GameList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 15,
+    paddingHorizontal: 15,
+    paddingTop: 15,
   },
   header: {
     paddingBottom: 15,

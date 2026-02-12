@@ -11,7 +11,7 @@ import LoadingSkeleton from "../../components/Landing/LoadingSkeleton";
 
 export default function Landing() {
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
+    <View style={{ flex: 1, backgroundColor: "#000", paddingBottom: 15 }}>
       <AppLoadingOverlay />
       <NoConnectionError />
 
@@ -52,7 +52,7 @@ const PagerCategoryScreen = memo(() => {
         setSelectedChip(category.id);
       }
     },
-    [chipCategories, selectedChip]
+    [chipCategories, selectedChip],
   );
 
   const categories = useMemo(
@@ -62,9 +62,9 @@ const PagerCategoryScreen = memo(() => {
           <CategoryPage key={category.id} categoryId={category.id} />
         ) : (
           <View key={category.id} style={{ flex: 1 }} />
-        )
+        ),
       ),
-    [chipCategories?.length, currentPage]
+    [chipCategories?.length, currentPage],
   );
 
   return (
