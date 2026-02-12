@@ -12,7 +12,14 @@ import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
-import { View } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
+
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
 
 function getDeviceSettings() {
   const locales = Localization.getLocales();
@@ -106,6 +113,8 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
 
   useEffect(() => {
+    let timeout: number;
+
     const initializeApp = async () => {
       if (!isLoaded || isUpdating) return;
 
@@ -141,10 +150,20 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
         setNeedsOnboarding(false);
       } finally {
         setSettingsLoaded(true);
+
+        timeout = setTimeout(() => {
+          SplashScreen.hide();
+        }, 250);
+
+        return timeout;
       }
     };
 
     initializeApp();
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [isLoaded, isUpdating, dispatch]);
 
   useEffect(() => {
@@ -163,10 +182,6 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
       router.replace("/onboarding");
     }
   }, [settingsLoaded, needsOnboarding]);
-
-  if (!settingsLoaded || needsOnboarding === null) {
-    return <View style={{ flex: 1, backgroundColor: "#000" }} />;
-  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>

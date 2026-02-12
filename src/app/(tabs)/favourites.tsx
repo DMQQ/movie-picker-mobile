@@ -53,7 +53,7 @@ export default function Favourites() {
           showsVerticalScrollIndicator={false}
           data={groups}
           keyExtractor={(k, index) => k.id + "-" + index}
-          contentContainerStyle={{ paddingTop: 80 }}
+          contentContainerStyle={{ paddingTop: 80, paddingBottom: 60 }}
           renderItem={({ item, index }) => (
             <Link
               disabled={item?.movies?.length === 0}
