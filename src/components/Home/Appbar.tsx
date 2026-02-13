@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { memo, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { Appbar, Button, MD2DarkTheme, useTheme } from "react-native-paper";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
@@ -25,14 +25,18 @@ function HomeAppbar({ roomId, hasCards }: HomeAppbarProps) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
   const [showRatePill, setShowRatePill] = useState(false);
+  const wasPillShown = useRef(false);
 
   const matches = useAppSelector((state) => state.room.room.matches);
   const likes = useAppSelector((state) => state.room.room.likes);
 
   useEffect(() => {
+    if (wasPillShown.current) return;
+
     const checkAndShowRatePill = async () => {
       if ((matches.length >= 5 || likes.length >= 5) && (await ReviewManager.canRequestReviewFromRating())) {
         setShowRatePill(true);
+        wasPillShown.current = true;
       }
     };
     checkAndShowRatePill();
@@ -98,10 +102,11 @@ function HomeAppbar({ roomId, hasCards }: HomeAppbarProps) {
             transform: [{ translateX: "-50%" }],
             justifyContent: "center",
             alignItems: "center",
+            width: "75%",
           }}
         >
           {showRatePill ? (
-            <RateAppPill visible={showRatePill} onDismiss={() => setShowRatePill(false)} />
+            <RateAppPill onDismiss={() => setShowRatePill(false)} />
           ) : (
             <ActiveUsers data={users} onPress={onActiveUsersPress} />
           )}

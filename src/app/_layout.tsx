@@ -14,6 +14,10 @@ import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
 import { DatabaseProvider } from "../context/DatabaseContext";
 
+import { enableFreeze } from "react-native-screens";
+
+enableFreeze(true);
+
 function getDeviceSettings() {
   const locales = Localization.getLocales();
   const calendars = Localization.getCalendars();
@@ -34,11 +38,6 @@ function getDeviceSettings() {
     },
   };
 }
-
-import { Image } from "expo-image";
-
-Image.clearDiskCache();
-Image.clearMemoryCache();
 
 import * as QuickActions from "expo-quick-actions";
 import OnboardingScreen from "./onboarding";
@@ -77,7 +76,6 @@ async function migrateFromSecureStoreToKVStore() {
       const kvValue = kvStoreValues[index];
       const secureValue = secureStoreValues[index];
 
-      // Only migrate if SecureStore has value and KVStore doesn't
       if (secureValue && !kvValue) {
         console.log(`[Migration] Migrating key: ${key}`);
         migrateOperations.push(AsyncStorage.setItem(key, secureValue));

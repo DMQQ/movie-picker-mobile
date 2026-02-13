@@ -18,16 +18,16 @@ export default function useInit() {
     });
   }, []);
 
-  useEffect(() => {
-    if (isLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [isLoaded]);
-
-  const { isUpdateAvailable, isUpdatePending, checkError, downloadError } = Updates.useUpdates();
+  const { isUpdateAvailable, isUpdatePending, checkError, downloadError, isChecking } = Updates.useUpdates();
 
   console.log("[useInit] isUpdateAvailable:", isUpdateAvailable);
   console.log("[useInit] isUpdatePending:", isUpdatePending);
+
+  useEffect(() => {
+    if (isLoaded && !isUpdating && !isChecking) {
+      SplashScreen.hideAsync();
+    }
+  }, [isLoaded, isUpdating, isChecking]);
 
   useEffect(() => {
     if (checkError) {

@@ -84,6 +84,7 @@ export default function Thumbnail({
     <View style={[styles.container, container]}>
       {alt && <Text style={styles.altText}>{alt}</Text>}
       <Image
+        transition={200}
         {...rest}
         priority={priority}
         source={{
@@ -94,7 +95,6 @@ export default function Thumbnail({
         cachePolicy={"disk"}
         recyclingKey={path}
         contentFit="cover"
-        transition={200}
         {...(showsPlaceholder && { placeholder: `https://image.tmdb.org/t/p/w${ThumbnailSizes.poster.tiny}` + path })}
       />
     </View>

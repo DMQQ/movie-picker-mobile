@@ -189,7 +189,7 @@ const SwipeTile = ({
   return (
     <>
       <GestureDetector gesture={moveGesture}>
-        <Animated.View style={[animatedStyle, { zIndex: 1000 - index }]} entering={index > 1 ? FadeIn : undefined}>
+        <Animated.View style={[animatedStyle, { zIndex: 1000 - index }]}>
           <Pressable onPress={onPress} style={styles.container}>
             <LinearGradient colors={["transparent", "rgba(0,0,0,0.2)", "rgba(0,0,0,0.9)"]} style={[styles.gradientContainer, dims]}>
               <Text style={styles.title}>{card.title || card.name}</Text>

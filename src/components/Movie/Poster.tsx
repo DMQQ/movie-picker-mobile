@@ -76,7 +76,7 @@ const SwipeText = memo(
         </View>
       </Animated.View>
     );
-  }
+  },
 );
 
 function Poster(props: {
@@ -109,7 +109,7 @@ function Poster(props: {
       backgroundColor: interpolateColor(
         props.translate.value.x,
         [-width, 0, width],
-        ["rgba(255,0,0,0.6)", "rgba(0,0,0,0)", "rgba(0,255,0,0.6)"]
+        ["rgba(255,0,0,0.6)", "rgba(0,0,0,0)", "rgba(0,255,0,0.6)"],
       ),
     };
   });
@@ -154,6 +154,7 @@ function Poster(props: {
       />
 
       <Thumbnail
+        transition={0}
         path={props.card.poster_path}
         size={ThumbnailSizes.poster.xxlarge}
         container={{ borderRadius: 19, ...imageDimensions }}

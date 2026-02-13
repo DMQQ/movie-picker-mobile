@@ -17,7 +17,6 @@ import useRoomContext from "../../context/RoomContext";
 import { url, SocketContext } from "../../context/SocketContext";
 import envs from "../../constants/envs";
 import UserInputModal, { UserInputModalAction } from "../../components/UserInputModal";
-import ReviewManager from "../../utils/rate";
 
 const styles = StyleSheet.create({
   navigation: {

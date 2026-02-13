@@ -2,6 +2,7 @@ import { memo } from "react";
 import { Pressable, View } from "react-native";
 import { Avatar, MD2DarkTheme } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Animated, { FadeIn } from "react-native-reanimated";
 
 export const AVATAR_COLORS = ["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3"];
 
@@ -9,7 +10,7 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
   const isVisible = props.showAll ? true : props.data.length > 1;
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <Animated.View entering={FadeIn.delay(250)} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Pressable
         onPress={props.onPress}
         style={{
@@ -81,7 +82,7 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
           }}
         />
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }
 

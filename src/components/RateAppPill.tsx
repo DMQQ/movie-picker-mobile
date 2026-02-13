@@ -8,11 +8,10 @@ import ReviewManager from "../utils/rate";
 import useTranslation from "../service/useTranslation";
 
 interface RateAppPillProps {
-  visible: boolean;
   onDismiss: () => void;
 }
 
-export default function RateAppPill({ visible, onDismiss }: RateAppPillProps) {
+export default function RateAppPill({ onDismiss }: RateAppPillProps) {
   const t = useTranslation();
 
   const handlePress = async () => {
@@ -38,8 +37,6 @@ export default function RateAppPill({ visible, onDismiss }: RateAppPillProps) {
     }
     onDismiss();
   };
-
-  if (!visible) return null;
 
   return (
     <Animated.View style={styles.container} entering={FadeInUp} exiting={FadeOutUp}>
