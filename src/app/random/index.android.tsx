@@ -378,6 +378,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     opacity: 0.9,
     letterSpacing: 0.5,
+    textAlign: "center",
   },
   poster: {
     width: "100%",

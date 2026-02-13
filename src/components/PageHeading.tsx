@@ -59,7 +59,7 @@ export default function PageHeading({
       <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top + extraScreenPaddingTop : 0 }, extraStyles]}>
         <View style={styles.sideContainer}>
           {showBackButton && (
-            <PlatformBlurView isInteractive style={styles.buttonContainer}>
+            <PlatformBlurView interactive style={styles.buttonContainer}>
               <IconButton
                 icon="chevron-left"
                 size={25}
@@ -83,7 +83,7 @@ export default function PageHeading({
           {children
             ? children
             : showRightIconButton && (
-                <PlatformBlurView isInteractive tintColor={tintColor} style={styles.buttonContainer}>
+                <PlatformBlurView interactive tintColor={tintColor} style={styles.buttonContainer}>
                   <Pressable
                     onPress={() => {
                       if (onRightIconPress) onRightIconPress();

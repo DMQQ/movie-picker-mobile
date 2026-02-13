@@ -5,10 +5,14 @@ import { Platform } from "react-native";
 import { MD2DarkTheme } from "react-native-paper";
 
 import { Tabs } from "expo-router/tabs";
-import { isLiquidGlassAvailable } from "expo-glass-effect";
+import { isLiquidGlassSupported } from "@callstack/liquid-glass";
+
+export const unstable_settings = {
+  initialRouteName: "index",
+};
 
 export default function Layout() {
-  return (Platform.OS === "ios" && isLiquidGlassAvailable()) || Platform.OS === "android" ? <TabLayout /> : <Pre26IosLayout />;
+  return (Platform.OS === "ios" && isLiquidGlassSupported) || Platform.OS === "android" ? <TabLayout /> : <Pre26IosLayout />;
 }
 
 function Pre26IosLayout() {

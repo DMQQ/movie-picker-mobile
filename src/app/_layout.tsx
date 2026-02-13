@@ -181,11 +181,11 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
     ]);
   }, []);
 
-  if (!isLoaded) {
+  if (!isLoaded || !settingsLoaded) {
     return null;
   }
 
-  if (settingsLoaded && needsOnboarding) {
+  if (needsOnboarding) {
     return (
       <OnboardingScreen
         onClose={() => {

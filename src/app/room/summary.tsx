@@ -17,7 +17,7 @@ import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import ThumbsUp from "../../assets/ThumbsUp";
-import { GlassView } from "expo-glass-effect";
+import { LiquidGlassView } from "@callstack/liquid-glass";
 import { BlurView } from "expo-blur";
 import GameRatingPill from "../../components/GameRatingPill";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
@@ -58,8 +58,8 @@ const Badge = memo(() => {
         zIndex: 10,
       }}
     >
-      <GlassView
-        glassEffectStyle="regular"
+      <LiquidGlassView
+        effect="regular"
         tintColor={MD2DarkTheme.colors.primary + "aa"}
         style={[
           {
@@ -74,7 +74,7 @@ const Badge = memo(() => {
         ]}
       >
         <ThumbsUp width={18} height={18} />
-      </GlassView>
+      </LiquidGlassView>
     </View>
   );
 });
