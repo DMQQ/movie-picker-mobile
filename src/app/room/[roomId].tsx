@@ -312,7 +312,7 @@ interface SwipeContentProps {
 }
 
 const SwipeContent = memo(({ params }: SwipeContentProps) => {
-  const { cards, dislikeCard, likeCard } = useRoomContext();
+  const { cards, dislikeCard, likeCard, blockAndDislikeCard, superLikeAndLikeCard } = useRoomContext();
 
   const originalLength = useRef(cards.length);
 
@@ -330,17 +330,21 @@ const SwipeContent = memo(({ params }: SwipeContentProps) => {
     [params?.type],
   );
 
-  return cards.map((card, index) => (
-    <SwipeTile
-      onPress={() => handleNavigateDetails(card)}
-      length={originalLength.current}
-      key={card.id}
-      card={card}
-      index={index}
-      likeCard={throttle(() => likeCard(card, index), 500)}
-      removeCard={throttle(() => dislikeCard(card, index), 500)}
-    />
-  ));
+  return cards
+    .slice(0, 2)
+    .map((card, index) => (
+      <SwipeTile
+        onPress={() => handleNavigateDetails(card)}
+        length={originalLength.current}
+        key={card.id}
+        card={card}
+        index={index}
+        likeCard={throttle(() => likeCard(card, index), 500)}
+        removeCard={throttle(() => dislikeCard(card, index), 500)}
+        blockCard={throttle(() => blockAndDislikeCard(card, index), 500)}
+        superLikeCard={throttle(() => superLikeAndLikeCard(card, index), 500)}
+      />
+    ));
 });
 
 const Matches = memo(({ roomId }: { roomId: string }) => {

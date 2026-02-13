@@ -238,7 +238,7 @@
   },
   "global": {
     "justwatch": "Dostępność filmów wspierana przez JustWatch",
-    "attributions": "Filmy dostarczone przez The Movie Database API i JustWatch",
+    "attributions": "Ten produkt korzysta z API TMDB, ale nie jest wspierany ani certyfikowany przez TMDB.",
     "provider_legend": {
       "title": "Legenda Ikon",
       "subscription": "Abonament",
@@ -282,7 +282,8 @@
     "region-language-settings": "Ustawienia regionu i języka",
     "selected-region": "Wybrany region",
     "timezone": "Strefa czasowa",
-    "search-regions": "Szukaj regionów..."
+    "search-regions": "Szukaj regionów...",
+    "library": "Biblioteka"
   },
   "voter": {
     "games": "Gry",
@@ -451,7 +452,12 @@
   },
   "game-rating": {
     "title": "Jak oceniasz tę grę?",
-    "subtitle": "Bardzo doceniam wszystkie opinie, które pomagają mi ulepszyć tę aplikację! 🙏"
+    "subtitle": "Bardzo doceniam wszystkie opinie, które pomagają mi ulepszyć tę aplikację! 🙏",
+    "feedback-title": "Co poszło nie tak?",
+    "feedback-subtitle": "Podziel się opinią, by pomóc nam ulepszyć aplikację",
+    "feedback-placeholder": "Co się stało?",
+    "submit": "Wyślij",
+    "back": "Wstecz"
   },
   "game-invite": {
     "social-title": "🎯 Znajdź Idealny Wybór",
@@ -529,5 +535,32 @@
         "description": "Eksploruj popularne filmy, filtruj według gatunku lub serwisu streamingowego, zapisuj ulubione do własnych kolekcji."
       }
     }
+  },
+  "swipe": {
+    "block": "Blokuj",
+    "nope": "Nie",
+    "like": "Tak",
+    "super": "Super"
+  },
+  "blocked": {
+    "title": "Zablokowane",
+    "empty": "Nie zablokowałeś jeszcze żadnych filmów. Blokuj filmy podczas gry, aby nigdy ich więcej nie widzieć.",
+    "count": "{count} zablokowanych",
+    "clear-all": "Wyczyść wszystko",
+    "unblock": "Odblokuj",
+    "unblock-confirm": "Czy na pewno chcesz odblokować {title}? Może ponownie pojawić się w grach.",
+    "clear-all-confirm": "Czy na pewno chcesz odblokować wszystkie filmy? Mogą ponownie pojawić się w grach."
+  },
+  "super-liked": {
+    "title": "Super polubione",
+    "empty": "Nie masz jeszcze żadnych super polubionych filmów. Super polub filmy podczas gry, aby je tutaj zapisać.",
+    "count": "{count} super polubionych",
+    "clear-all": "Wyczyść wszystko",
+    "remove": "Usuń",
+    "remove-confirm": "Czy na pewno chcesz usunąć {title} z super polubionych?",
+    "clear-all-confirm": "Czy na pewno chcesz wyczyścić wszystkie super polubione filmy?"
+  },
+  "rate-app": {
+    "prompt": "Podoba Ci się aplikacja? Oceń nas!"
   }
 }

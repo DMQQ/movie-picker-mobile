@@ -1,12 +1,14 @@
 import * as Updates from "expo-updates";
 import { Platform } from "react-native";
 import envs from "../constants/envs";
-import * as SecureStore from "expo-secure-store";
+import { BaseQueryApi } from "@reduxjs/toolkit/query";
+import { RootState } from "../redux/store";
 
-const language = SecureStore.getItem("language") || "en";
-const regionalization = (JSON.parse(SecureStore.getItem("regionalization") ?? "{}") || {}) as Record<string, string>;
+export default function prepareHeaders(headers: Headers, { getState }: Pick<BaseQueryApi, "getState">) {
+  const state = getState() as RootState;
 
-export default function prepareHeaders(headers: Headers) {
+  const language = state.room.language || "en";
+  const regionalization = state.room.regionalization || {};
   headers.set("authorization", `Bearer ${envs.server_auth_token}`);
   headers.set("x-platform", Platform.OS);
 

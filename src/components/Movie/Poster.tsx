@@ -12,6 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
 import { memo } from "react";
+import { Movie } from "../../../types";
 
 const SwipeText = memo(
   (props: { text: string; rotate: string; color: string; right: boolean; icon?: React.ReactNode; isVisible?: SharedValue<boolean> }) => {
@@ -76,13 +77,11 @@ const SwipeText = memo(
         </View>
       </Animated.View>
     );
-  }
+  },
 );
 
 function Poster(props: {
-  card: {
-    poster_path: string;
-  };
+  card: Movie & { isSuperLiked?: boolean };
   translate?: SharedValue<{
     x: number;
     y: number;
@@ -109,7 +108,7 @@ function Poster(props: {
       backgroundColor: interpolateColor(
         props.translate.value.x,
         [-width, 0, width],
-        ["rgba(255,0,0,0.6)", "rgba(0,0,0,0)", "rgba(0,255,0,0.6)"]
+        ["rgba(255,0,0,0.6)", "rgba(0,0,0,0)", "rgba(0,255,0,0.6)"],
       ),
     };
   });
@@ -154,11 +153,19 @@ function Poster(props: {
       />
 
       <Thumbnail
+        transition={0}
         path={props.card.poster_path}
         size={ThumbnailSizes.poster.xxlarge}
         container={{ borderRadius: 19, ...imageDimensions }}
         style={{ borderRadius: 19, ...imageDimensions }}
       />
+
+      {props.card.isSuperLiked && (
+        <View style={styles.superLikeBadge}>
+          <Ionicons name="star" size={15} color="#000" />
+          <Text style={styles.superLikeText}>SUPER LIKE</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -216,6 +223,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden", // Important for BlurView
+  },
+
+  superLikeBadge: {
+    position: "absolute",
+    top: 15,
+    right: 15,
+    backgroundColor: "#FFD700",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    zIndex: 10,
+    justifyContent: "center",
+  },
+  superLikeText: {
+    fontFamily: "Bebas",
+    color: "#000",
+    fontSize: 16,
   },
 });
 

@@ -48,14 +48,14 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
             imageUrl: movie.poster_path,
             type: movie.type || (movie.title ? "movie" : "tv"),
           },
-        })
+        }),
       );
     } else {
       dispatch(
         removeFromGroup({
           groupId: "1",
           movieId: movie.id,
-        })
+        }),
       );
     }
   }, [dispatch, movie, isInFavourites]);
@@ -120,7 +120,7 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
       )}
 
       <View style={styles.headerContent}>
-        <PlatformBlurView isInteractive style={[styles.buttonContainer]}>
+        <PlatformBlurView interactive style={[styles.buttonContainer]}>
           <IconButton icon={backButtonIcon} size={25} onPress={onBack} iconColor="white" />
         </PlatformBlurView>
 
@@ -178,7 +178,7 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
 
         <Animated.View style={[contentOpacity, heartTransform]}>
           <PlatformBlurView
-            isInteractive
+            interactive
             style={[styles.buttonContainer, Platform.OS === "android" && styles.androidButtonBackground]}
             tintColor="#FF0000"
           >

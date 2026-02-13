@@ -1,15 +1,15 @@
 import { BlurView } from "expo-blur";
 import { Platform, View } from "react-native";
-import { GlassView, isLiquidGlassAvailable, GlassViewProps } from "expo-glass-effect";
+import { LiquidGlassView, isLiquidGlassSupported, LiquidGlassViewProps } from "@callstack/liquid-glass";
 import { PropsWithChildren } from "react";
 
-const isIOS26 = isLiquidGlassAvailable();
+const isIOS26 = isLiquidGlassSupported;
 
-const GlassViewWrapper = ({ children, ...rest }: PropsWithChildren<GlassViewProps>) => {
+const LiquidGlassViewWrapper = ({ children, ...rest }: PropsWithChildren<LiquidGlassViewProps>) => {
   return (
-    <GlassView style={[rest.style, { overflow: "hidden" }]} glassEffectStyle="clear" tintColor="rgba(0,0,0,0.5)" {...rest}>
+    <LiquidGlassView style={[rest.style, { overflow: "hidden" }]} effect="clear" tintColor="rgba(0,0,0,0.5)" {...rest}>
       {children}
-    </GlassView>
+    </LiquidGlassView>
   );
 };
 
@@ -29,6 +29,6 @@ export const BlurViewWrapper = ({ children, ...rest }: PropsWithChildren<React.C
   );
 };
 
-const PlatformBlurView = Platform.OS === "android" ? View : isIOS26 ? GlassViewWrapper : BlurViewWrapper;
+const PlatformBlurView = Platform.OS === "android" ? View : isIOS26 ? LiquidGlassViewWrapper : BlurViewWrapper;
 
 export default PlatformBlurView;

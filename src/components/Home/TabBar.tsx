@@ -4,22 +4,34 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-na
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
+type ButtonVariant = "default" | "like" | "dislike" | "block" | "superLike";
+
+const BUTTON_COLORS: Record<ButtonVariant, { bg: string; border: string; shadow: string }> = {
+  default: { bg: "rgba(255,255,255,0.15)", border: "rgba(255,255,255,0.3)", shadow: "transparent" },
+  like: { bg: "#42DCA3", border: "rgba(66, 220, 163, 0.8)", shadow: "#42DCA3" },
+  dislike: { bg: "#FF4458", border: "rgba(255, 68, 88, 0.8)", shadow: "#FF4458" },
+  block: { bg: "#8B0000", border: "rgba(139, 0, 0, 0.8)", shadow: "#8B0000" },
+  superLike: { bg: "#FFD700", border: "rgba(255, 215, 0, 0.8)", shadow: "#FFD700" },
+};
+
 const AnimatedButton = ({
   onPress,
   icon,
   color = "#fff",
   size = 25,
-  isLike = false,
-  isDislike = false,
+  variant = "default",
   text,
+  label,
+  small = false,
 }: {
   onPress: () => void;
   icon?: string;
   color?: string;
   size?: number;
-  isLike?: boolean;
-  isDislike?: boolean;
+  variant?: ButtonVariant;
   text?: string;
+  label?: string;
+  small?: boolean;
 }) => {
   const scale = useSharedValue(1);
 
@@ -37,73 +49,87 @@ const AnimatedButton = ({
     scale.value = withSpring(1, { damping: 15, stiffness: 300 });
   };
 
-  const getBackgroundColor = () => {
-    if (isLike) return "#42DCA3";
-    if (isDislike) return "#FF4458";
-    return "rgba(255,255,255,0.15)";
-  };
-
-  const getBorderColor = () => {
-    if (isLike) return "rgba(66, 220, 163, 0.8)";
-    if (isDislike) return "rgba(255, 68, 88, 0.8)";
-    return "rgba(255,255,255,0.3)";
-  };
-
-  const getShadowColor = () => {
-    if (isLike) return "#42DCA3";
-    if (isDislike) return "#FF4458";
-    return "transparent";
-  };
+  const colors = BUTTON_COLORS[variant];
+  const isAccent = variant !== "default";
 
   return (
-    <AnimatedPressable
-      onPress={onPress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      style={[
-        animatedStyle,
-        {
-          borderRadius: 100,
-          padding: 15,
-          paddingHorizontal: 25,
-          backgroundColor: getBackgroundColor(),
-          borderWidth: isLike || isDislike ? 2 : 1,
-          borderColor: getBorderColor(),
-          alignItems: "center",
-          justifyContent: "center",
+    <View style={{ alignItems: "center", gap: 4 }}>
+      <AnimatedPressable
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        style={[
+          animatedStyle,
+          {
+            borderRadius: 100,
+            padding: small ? 10 : 15,
+            paddingHorizontal: small ? 15 : 25,
+            backgroundColor: colors.bg,
+            borderWidth: isAccent ? 2 : 1,
+            borderColor: colors.border,
+            alignItems: "center",
+            justifyContent: "center",
 
-          ...(isLike || isDislike
-            ? {
-                shadowColor: getShadowColor(),
-                shadowOffset: {
-                  width: 0,
-                  height: 0,
-                },
-                shadowOpacity: 0.4,
-                shadowRadius: 12,
-              }
-            : {}),
-        },
-      ]}
-    >
-      {icon && <Icon source={icon} size={size} color={isLike || isDislike ? "#fff" : color} />}
-      {text && (
+            ...(isAccent
+              ? {
+                  shadowColor: colors.shadow,
+                  shadowOffset: {
+                    width: 0,
+                    height: 0,
+                  },
+                  shadowOpacity: 0.4,
+                  shadowRadius: 12,
+                }
+              : {}),
+          },
+        ]}
+      >
+        {icon && <Icon source={icon} size={small ? 18 : size} color={isAccent ? "#fff" : color} />}
+        {text && (
+          <Text
+            style={{
+              color: isAccent ? "#fff" : color,
+              fontSize: 15,
+              textAlign: "center",
+              fontWeight: "600",
+            }}
+          >
+            {text}
+          </Text>
+        )}
+      </AnimatedPressable>
+      {label && (
         <Text
           style={{
-            color: isLike || isDislike ? "#fff" : color,
-            fontSize: 15,
+            color: "rgba(255,255,255,0.6)",
+            fontSize: 10,
             textAlign: "center",
-            fontWeight: "600",
+            fontWeight: "500",
           }}
         >
-          {text}
+          {label}
         </Text>
       )}
-    </AnimatedPressable>
+    </View>
   );
 };
 
-export default function TabBar(props: { likeCard: () => void; removeCard: () => void; openInfo: () => void; zIndex: number }) {
+interface TabBarProps {
+  likeCard: () => void;
+  removeCard: () => void;
+  openInfo: () => void;
+  zIndex: number;
+  blockCard?: () => void;
+  superLikeCard?: () => void;
+  labels?: {
+    block?: string;
+    dislike?: string;
+    like?: string;
+    superLike?: string;
+  };
+}
+
+export default function TabBar(props: TabBarProps) {
   const { width } = useWindowDimensions();
 
   return (
@@ -116,16 +142,37 @@ export default function TabBar(props: { likeCard: () => void; removeCard: () => 
           width: width,
           flexDirection: "row",
           justifyContent: "center",
-          gap: 20,
+          alignItems: "center",
+          gap: 12,
           zIndex: props.zIndex,
         },
       ]}
     >
-      <AnimatedButton onPress={props.removeCard} icon="close" color="#fff" size={25} isDislike={true} />
+      {props.blockCard && (
+        <AnimatedButton onPress={props.blockCard} icon="cancel" size={18} variant="block" small label={props.labels?.block ?? "Block"} />
+      )}
 
-      <AnimatedButton onPress={props.openInfo} icon="information-outline" color="#fff" size={25} />
+      <AnimatedButton
+        onPress={props.removeCard}
+        icon="close"
+        color="#fff"
+        size={25}
+        variant="dislike"
+        label={props.labels?.dislike ?? "Nope"}
+      />
 
-      <AnimatedButton onPress={props.likeCard} icon="heart" color="#fff" size={25} isLike={true} />
+      <AnimatedButton onPress={props.likeCard} icon="heart" color="#fff" size={25} variant="like" label={props.labels?.like ?? "Like"} />
+
+      {props.superLikeCard && (
+        <AnimatedButton
+          onPress={props.superLikeCard}
+          icon="star"
+          size={18}
+          variant="superLike"
+          small
+          label={props.labels?.superLike ?? "Super"}
+        />
+      )}
     </View>
   );
 }

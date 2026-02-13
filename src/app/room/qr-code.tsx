@@ -2,7 +2,7 @@ import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { memo, useContext, useEffect, useRef, useState, useTransition } from "react";
-import { Dimensions, Platform, Share, View, StyleSheet } from "react-native";
+import { Dimensions, Platform, Share, View, StyleSheet, Pressable } from "react-native";
 import { Avatar, Button, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { Movie } from "../../../types";
@@ -18,6 +18,8 @@ import { hash } from "../../utils/hash";
 import { useGetMovieCategoriesWithThumbnailsQuery, useGetTVCategoriesWithThumbnailsQuery } from "../../redux/movie/movieApi";
 import { useFilterPreferences } from "../../hooks/useFilterPreferences";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
+import { useBlockedMovies } from "../../hooks/useBlockedMovies";
+import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 
 interface RoomSetupParams {
   category: string;
@@ -57,6 +59,8 @@ export default function QRCodePage() {
   const { preferences } = useFilterPreferences();
   const movieCategoriesQuery = useGetMovieCategoriesWithThumbnailsQuery();
   const tvCategoriesQuery = useGetTVCategoriesWithThumbnailsQuery();
+  const { getBlockedIds, isReady: blockedReady } = useBlockedMovies();
+  const { getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
 
   const [roomConfig, setRoomConfig] = useState<any>(null);
   const [createRoomLoading, setCreateRoomLoading] = useState(false);
@@ -67,7 +71,7 @@ export default function QRCodePage() {
     if (params?.quickStart) {
       if (movieCategoriesQuery.data && tvCategoriesQuery.data) {
         const movieCats = movieCategoriesQuery.data.slice(0, 3);
-        const tvCats = tvCategoriesQuery.data.slice(0, 3);
+        const tvCats = tvCategoriesQuery.data.slice(0, 2);
 
         const randomMovie = movieCats[Math.floor(Math.random() * movieCats.length)];
         const randomSeries = tvCats[Math.floor(Math.random() * tvCats.length)];
@@ -106,7 +110,7 @@ export default function QRCodePage() {
   }, []);
 
   useEffect(() => {
-    if (!roomConfig || !socket || !nickname) return;
+    if (!roomConfig || !socket || !nickname || !blockedReady || !superLikedReady) return;
 
     const configHash = hash(JSON.stringify(roomConfig)).toString();
 
@@ -118,26 +122,28 @@ export default function QRCodePage() {
 
     (async () => {
       try {
+        const [blockedMovies, superLikedMovies] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
+
         if (qrCode && roomId) {
           if (existingMovies.length === 0) {
             setIsLoadingMovies(true);
             setMoviesCount(null);
           }
           console.log("Updating room with config:", roomConfig);
-          socket.emit("room:update-config", { roomId, config: roomConfig });
+          socket.emit("room:update-config", { roomId, config: { ...roomConfig, blockedMovies, superLikedMovies } });
           return;
         }
 
         setCreateRoomLoading(true);
         setIsLoadingMovies(true);
 
-        const response = (await socket.emitWithAck("create-room", roomConfig)) as ISocketResponse;
+        const response = (await socket.emitWithAck("create-room", { ...roomConfig, blockedMovies, superLikedMovies })) as ISocketResponse;
         console.log("Room created with response:", response);
 
         if (response) {
           dispatch(roomActions.setRoom(response.details));
           dispatch(roomActions.setQRCode(response.roomId));
-          socket.emit("join-room", response.roomId, nickname);
+          socket.emit("join-room", response.roomId, nickname, blockedMovies, superLikedMovies);
         }
       } catch (error) {
         console.error("Error creating room:", error);
@@ -147,7 +153,7 @@ export default function QRCodePage() {
         setCreateRoomLoading(false);
       }
     })();
-  }, [roomConfig, socket, nickname, qrCode, roomId]);
+  }, [roomConfig, socket, nickname, qrCode, roomId, blockedReady, superLikedReady]);
 
   useEffect(() => {
     if (!socket) return;
@@ -298,9 +304,9 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
 
   const shareCode = async (code: string) => {
     Share.share({
-      message: t("room.share.message", { code }),
+      message: t("room.share.message", { code }) + "\nOr join via https://flickmate.app/swipe/" + code.toUpperCase(),
       title: t("room.share.title"),
-      url: "https://movie.dmqq.dev/swipe/" + code.toUpperCase(),
+      url: "https://flickmate.app/swipe/" + code.toUpperCase(),
     });
   };
 
@@ -324,27 +330,31 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         />
       </View>
 
-      <Button
+      <Pressable
         onPress={async () => {
           shareCode(code);
         }}
         style={styles.shareButton}
       >
-        {!!code && code.length > 0 ? (
-          <>
-            {code.split("").map((char, index) => (
-              <Text key={index} style={styles.codeChar}>
-                {char}
-              </Text>
-            ))}
-          </>
-        ) : (
-          <Text style={{ color: "#fff" }}>Loading</Text>
-        )}
-      </Button>
-      <Text style={styles.shareButtonText}>
-        {t("room.share.button")} <FontAwesome name="share" size={14} color={theme.colors.primary} />
-      </Text>
+        <View>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+            {!!code && code.length > 0 ? (
+              <>
+                {code.split("").map((char, index) => (
+                  <Text key={index} style={styles.codeChar}>
+                    {char}
+                  </Text>
+                ))}
+              </>
+            ) : (
+              <Text style={{ color: "#fff" }}>Loading</Text>
+            )}
+          </View>
+          <Text style={styles.shareButtonText}>
+            {t("room.share.button")} <FontAwesome name="share" size={14} color={theme.colors.primary} />
+          </Text>
+        </View>
+      </Pressable>
 
       <TutorialTips />
     </View>

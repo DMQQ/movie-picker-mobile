@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { memo, useCallback, useContext, useMemo, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { Appbar, Button, MD2DarkTheme, useTheme } from "react-native-paper";
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
@@ -10,13 +10,37 @@ import useTranslation from "../../service/useTranslation";
 import { ThumbnailSizes } from "../Thumbnail";
 import ActiveUsers from "./ActiveUsers";
 import DialogModals from "./DialogModals";
-import { GlassView } from "expo-glass-effect";
+import { LiquidGlassView } from "@callstack/liquid-glass";
 import { router } from "expo-router";
 import { Image } from "expo-image";
+import RateAppPill from "../RateAppPill";
+import ReviewManager from "../../utils/rate";
 
-function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean }) {
+interface HomeAppbarProps {
+  roomId: string;
+  hasCards: boolean;
+}
+
+function HomeAppbar({ roomId, hasCards }: HomeAppbarProps) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
+  const [showRatePill, setShowRatePill] = useState(false);
+  const wasPillShown = useRef(false);
+
+  const matches = useAppSelector((state) => state.room.room.matches);
+  const likes = useAppSelector((state) => state.room.room.likes);
+
+  useEffect(() => {
+    if (wasPillShown.current) return;
+
+    const checkAndShowRatePill = async () => {
+      if ((matches.length >= 5 || likes.length >= 5) && (await ReviewManager.canRequestReviewFromRating())) {
+        setShowRatePill(true);
+        wasPillShown.current = true;
+      }
+    };
+    checkAndShowRatePill();
+  }, [matches.length, likes.length]);
 
   const toggleLeaveModal = () => {
     setShowLeaveModal((p) => !p);
@@ -53,12 +77,12 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
           justifyContent: "space-between",
         }}
       >
-        <GlassView
+        <LiquidGlassView
           key={isHost ? "host" : "regular"}
-          glassEffectStyle="clear"
+          effect="clear"
           tintColor={"#ff4444"}
           style={{ borderRadius: 100, marginLeft: 10, overflow: "hidden" }}
-          isInteractive
+          interactive
         >
           {isHost ? (
             <Button onPress={handleEndGame} buttonColor="transparent" textColor="#fff">
@@ -69,16 +93,14 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
               {t("dialogs.scan-code.leave")}
             </Button>
           )}
-        </GlassView>
+        </LiquidGlassView>
 
-        <View
-          style={{
-            position: "absolute",
-            left: "50%",
-            transform: [{ translateX: "-50%" }],
-          }}
-        >
-          <ActiveUsers data={users} onPress={onActiveUsersPress} />
+        <View style={[styles.midSection, showRatePill && { width: "75%" }]}>
+          {showRatePill ? (
+            <RateAppPill onDismiss={() => setShowRatePill(false)} />
+          ) : (
+            <ActiveUsers data={users} onPress={onActiveUsersPress} />
+          )}
         </View>
 
         {!hasCards && !isFinished && isPlaying && (
@@ -203,5 +225,12 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     overflow: "hidden",
     borderRadius: 2,
+  },
+  midSection: {
+    position: "absolute",
+    left: "50%",
+    transform: [{ translateX: "-50%" }],
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

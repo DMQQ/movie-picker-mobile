@@ -1,4 +1,5 @@
 import { Platform, StyleSheet, View } from "react-native";
+import { Image } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { Movie } from "../../../types";
@@ -166,6 +167,11 @@ function MovieDetails({
         />
 
         <View style={styles.attributions}>
+          <Image
+            source="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_1-5bdc75aaebeb75dc7ae79426ddd9be3b2be1e342510f8202baf6bffa71d7f5c4.svg"
+            style={styles.tmdbLogo}
+            contentFit="contain"
+          />
           <Text style={[styles.text, { textAlign: "center" }]}>{t("global.attributions")}</Text>
         </View>
       </BlurViewWrapper>
@@ -222,5 +228,7 @@ const styles = StyleSheet.create({
 
   text: { fontSize: 15, color: "rgba(255,255,255,0.6)" },
 
-  attributions: { padding: 20, justifyContent: "center", height: 100 },
+  attributions: { padding: 20, justifyContent: "center", alignItems: "center", gap: 5 },
+
+  tmdbLogo: { width: 40, height: 40 },
 });

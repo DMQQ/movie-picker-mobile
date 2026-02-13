@@ -1,7 +1,7 @@
+import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as SecureStore from "expo-secure-store";
 import * as Localization from "expo-localization";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Stack, router } from "expo-router";
+import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
@@ -12,7 +12,11 @@ import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
-import * as SplashScreen from "expo-splash-screen";
+import { DatabaseProvider } from "../context/DatabaseContext";
+
+import { enableFreeze } from "react-native-screens";
+
+enableFreeze(true);
 
 function getDeviceSettings() {
   const locales = Localization.getLocales();
@@ -35,65 +39,82 @@ function getDeviceSettings() {
   };
 }
 
-import { Image } from "expo-image";
-
-Image.clearDiskCache();
-Image.clearMemoryCache();
-
 import * as QuickActions from "expo-quick-actions";
+import OnboardingScreen from "./onboarding";
 
 const theme = MD2DarkTheme;
 
-const migrationFlag = "migration_complete";
+const MIGRATION_FLAG = "securestore_to_kv_migration_complete";
 
-const isMigrated = SecureStore.getItem(migrationFlag) === "true";
+const KEYS_TO_MIGRATE = [
+  "language",
+  "regionalization",
+  "nickname",
+  "userId",
+  STORAGE_KEY,
+  "app_review_requested",
+  "games_played_count",
+  "voterSessionId",
+  "room_builder_preferences",
+];
 
-async function migrateToSecureStore() {
+async function migrateFromSecureStoreToKVStore() {
   try {
-    if (isMigrated) return;
+    const isMigrated = await AsyncStorage.getItem(MIGRATION_FLAG);
+    if (isMigrated === "true") return;
 
-    const keysToMigrate = ["language", "regionalization", "nickname", "userId", STORAGE_KEY];
+    console.log("[Migration] Starting SecureStore to KVStore migration...");
 
-    const [secureStoreValues, asyncStorageValues] = await Promise.all([
-      Promise.all(keysToMigrate.map((key) => SecureStore.getItemAsync(key))),
-      Promise.all(keysToMigrate.map((key) => AsyncStorage.getItem(key))),
+    const [kvStoreValues, secureStoreValues] = await Promise.all([
+      Promise.all(KEYS_TO_MIGRATE.map((key) => AsyncStorage.getItem(key))),
+      Promise.all(KEYS_TO_MIGRATE.map((key) => SecureStore.getItemAsync(key))),
     ]);
 
     const migrateOperations: Promise<void>[] = [];
-    const cleanupOperations: Promise<void>[] = [];
 
-    keysToMigrate.forEach((key, index) => {
+    KEYS_TO_MIGRATE.forEach((key, index) => {
+      const kvValue = kvStoreValues[index];
       const secureValue = secureStoreValues[index];
-      const asyncValue = asyncStorageValues[index];
 
-      if (asyncValue && !secureValue) {
-        migrateOperations.push(SecureStore.setItemAsync(key, asyncValue));
-        cleanupOperations.push(AsyncStorage.removeItem(key));
+      if (secureValue && !kvValue) {
+        console.log(`[Migration] Migrating key: ${key}`);
+        migrateOperations.push(AsyncStorage.setItem(key, secureValue));
       }
     });
 
     if (migrateOperations.length > 0) {
-      await Promise.all([...migrateOperations, ...cleanupOperations]);
+      await Promise.all(migrateOperations);
+      console.log(`[Migration] Migrated ${migrateOperations.length} keys`);
+    } else {
+      console.log("[Migration] No keys to migrate");
     }
 
-    await SecureStore.setItemAsync("migration_complete", "true");
-  } catch (error) {}
+    await AsyncStorage.setItem(MIGRATION_FLAG, "true");
+    console.log("[Migration] Migration complete");
+  } catch (error) {
+    console.error("[Migration] Error during migration:", error);
+  }
 }
 
 export default function RootLayout() {
   const { isLoaded, isUpdating } = useInit();
+  const [migrationComplete, setMigrationComplete] = useState(false);
 
   useEffect(() => {
-    migrateToSecureStore();
+    migrateFromSecureStoreToKVStore().finally(() => {
+      setMigrationComplete(true);
+    });
   }, []);
 
   return (
     <AppErrorBoundary>
       <SafeAreaProvider style={{ flex: 1, backgroundColor: "#000" }}>
         <Provider store={store}>
-          <PaperProvider theme={theme}>
-            <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
-          </PaperProvider>
+          <DatabaseProvider>
+            <PaperProvider theme={theme}>
+              <RootNavigator isLoaded={isLoaded && migrationComplete} isUpdating={isUpdating} />
+            </PaperProvider>
+          </DatabaseProvider>
         </Provider>
       </SafeAreaProvider>
     </AppErrorBoundary>
@@ -111,9 +132,9 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
 
       try {
         let [language, regionalization, nickname] = await Promise.all([
-          SecureStore.getItemAsync("language"),
-          SecureStore.getItemAsync("regionalization"),
-          SecureStore.getItemAsync("nickname"),
+          AsyncStorage.getItem("language"),
+          AsyncStorage.getItem("regionalization"),
+          AsyncStorage.getItem("nickname"),
         ]);
 
         const isFirstTimeUser = !language;
@@ -158,11 +179,19 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
     ]);
   }, []);
 
-  useEffect(() => {
-    if (settingsLoaded && needsOnboarding) {
-      router.replace("/onboarding");
-    }
-  }, [settingsLoaded, needsOnboarding]);
+  if (!isLoaded || !settingsLoaded) {
+    return null;
+  }
+
+  if (needsOnboarding) {
+    return (
+      <OnboardingScreen
+        onClose={() => {
+          setNeedsOnboarding(false);
+        }}
+      />
+    );
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>

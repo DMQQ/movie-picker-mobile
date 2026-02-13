@@ -17,7 +17,7 @@ import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import ThumbsUp from "../../assets/ThumbsUp";
-import { GlassView } from "expo-glass-effect";
+import { LiquidGlassView } from "@callstack/liquid-glass";
 import { BlurView } from "expo-blur";
 import GameRatingPill from "../../components/GameRatingPill";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
@@ -58,8 +58,8 @@ const Badge = memo(() => {
         zIndex: 10,
       }}
     >
-      <GlassView
-        glassEffectStyle="regular"
+      <LiquidGlassView
+        effect="regular"
         tintColor={MD2DarkTheme.colors.primary + "aa"}
         style={[
           {
@@ -74,7 +74,7 @@ const Badge = memo(() => {
         ]}
       >
         <ThumbsUp width={18} height={18} />
-      </GlassView>
+      </LiquidGlassView>
     </View>
   );
 });
@@ -83,7 +83,7 @@ export default function GameSummary() {
   const params = useLocalSearchParams();
   const roomId = params.roomId as string;
   const dispatch = useAppDispatch();
-  const { socket } = useContext(SocketContext);
+  const { socket, userId } = useContext(SocketContext);
   const t = useTranslation();
 
   const [summary, setSummary] = useState<GameSummary | null>(null);
@@ -249,7 +249,7 @@ export default function GameSummary() {
                     <Text style={styles.statTitle}>{t("game-summary.total-picks")}</Text>
                   </View>
                   <Text style={[styles.statValue, { color: "#81C784" }]}>
-                    {summary?.users?.reduce((total, user) => total + user.totalPicks, 0) || 0}
+                    {summary?.users.find((u) => u.userId === userId)?.swipedMovies?.totalSwiped || "-"}
                   </Text>
                 </View>
               </View>
@@ -284,7 +284,7 @@ export default function GameSummary() {
                     <Text style={styles.playerChipName}>{user.username}</Text>
                     <View style={styles.chipMetrics}>
                       <AntDesign name="heart" size={12} color="#FF6B6B" />
-                      <Text style={styles.chipPickCount}>{user.totalPicks}</Text>
+                      <Text style={styles.chipPickCount}>{user.swipedMovies?.liked?.length ?? 0}</Text>
                     </View>
                   </View>
                 ))}
@@ -391,6 +391,7 @@ export default function GameSummary() {
       <View
         style={{
           padding: 15,
+          paddingBottom: 0,
         }}
       >
         <Button mode="contained" onPress={handleBackToHome} style={styles.backButton} contentStyle={styles.backButtonContent}>

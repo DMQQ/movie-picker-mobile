@@ -1,9 +1,11 @@
 import { useState, useEffect, useContext } from "react";
-import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Platform, TextInput } from "react-native";
 import { Text } from "react-native-paper";
 import { withSpring, withSequence, useSharedValue } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
+import * as StoreReview from "expo-store-review";
 import { SocketContext } from "../context/SocketContext";
+import ReviewManager from "../utils/rate";
 import UserInputModal, { UserInputModalAction } from "./UserInputModal";
 import useTranslation from "../service/useTranslation";
 
@@ -37,6 +39,8 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
   const [selectedRating, setSelectedRating] = useState<RatingType | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showFeedbackInput, setShowFeedbackInput] = useState(false);
+  const [feedbackText, setFeedbackText] = useState("");
   const scale = useSharedValue(1);
 
   useEffect(() => {
@@ -56,17 +60,46 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
 
     scale.value = withSequence(withSpring(0.9, { damping: 10 }), withSpring(1.0, { damping: 10 }));
 
-    setIsSubmitting(true);
     setSelectedRating(rating);
+
+    if (rating === "bad") {
+      setShowFeedbackInput(true);
+      return;
+    }
+
+    if (rating === "good") {
+      try {
+        if (
+          Platform.OS !== "web" &&
+          (await StoreReview.hasAction()) &&
+          (await ReviewManager.canRequestReviewFromRating())
+        ) {
+          await StoreReview.requestReview();
+          await ReviewManager.recordReviewRequestFromRating();
+        }
+      } catch (error) {
+        console.error("Error requesting store review:", error);
+      }
+    }
+
+    await submitRating(rating);
+  };
+
+  const submitRating = async (rating: RatingType, feedback?: string) => {
+    if (!socket) return;
+
+    setIsSubmitting(true);
 
     try {
       const response = await socket.emitWithAck("submit-game-rating", {
         roomId,
         rating,
+        feedback,
       });
 
       if (response.success) {
         setShowModal(false);
+        setShowFeedbackInput(false);
 
         if (Platform.OS !== "web") {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -75,6 +108,7 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
         if (response.error === "Rating already submitted") {
           setSelectedRating(response.existingRating || rating);
           setShowModal(false);
+          setShowFeedbackInput(false);
         } else {
           setSelectedRating(null);
           console.error("Failed to submit rating:", response.error);
@@ -88,50 +122,96 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
     }
   };
 
+  const handleFeedbackSubmit = () => {
+    submitRating("bad", feedbackText.trim() || undefined);
+  };
+
   const handleSkip = () => {
     setShowModal(false);
+    setShowFeedbackInput(false);
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
   };
 
-  const actions: UserInputModalAction[] = [
-    {
-      label: "Skip",
-      mode: "text",
-      textColor: "rgba(255, 255, 255, 0.6)",
-      onPress: handleSkip,
-      disabled: isSubmitting,
-    },
-  ];
+  const handleBackToRatings = () => {
+    setShowFeedbackInput(false);
+    setSelectedRating(null);
+    setFeedbackText("");
+  };
+
+  const actions: UserInputModalAction[] = showFeedbackInput
+    ? [
+        {
+          label: t("game-rating.submit") || "Submit",
+          mode: "contained",
+          onPress: handleFeedbackSubmit,
+          disabled: isSubmitting,
+          loading: isSubmitting,
+        },
+        {
+          label: t("game-rating.back") || "Back",
+          mode: "text",
+          textColor: "rgba(255, 255, 255, 0.6)",
+          onPress: handleBackToRatings,
+          disabled: isSubmitting,
+        },
+      ]
+    : [
+        {
+          label: "Skip",
+          mode: "text",
+          textColor: "rgba(255, 255, 255, 0.6)",
+          onPress: handleSkip,
+          disabled: isSubmitting,
+        },
+      ];
 
   return (
     <UserInputModal
       visible={showModal}
-      title={t("game-rating.title")}
-      subtitle={t("game-rating.subtitle")}
+      title={showFeedbackInput ? t("game-rating.feedback-title") || "What went wrong?" : t("game-rating.title")}
+      subtitle={
+        showFeedbackInput ? t("game-rating.feedback-subtitle") || "Help us improve by sharing your feedback" : t("game-rating.subtitle")
+      }
       actions={actions}
       statusBarTranslucent
     >
-      <View style={styles.ratingsRow}>
-        {(Object.keys(RATING_CONFIG) as RatingType[]).map((ratingKey) => {
-          const config = RATING_CONFIG[ratingKey];
-          const isSelected = selectedRating === ratingKey;
+      {showFeedbackInput ? (
+        <View style={styles.feedbackContainer}>
+          <TextInput
+            style={styles.feedbackInput}
+            placeholder={t("game-rating.feedback-placeholder") || "Tell us what went wrong..."}
+            placeholderTextColor="rgba(255, 255, 255, 0.4)"
+            value={feedbackText}
+            onChangeText={setFeedbackText}
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
+            editable={!isSubmitting}
+          />
+        </View>
+      ) : (
+        <View style={styles.ratingsRow}>
+          {(Object.keys(RATING_CONFIG) as RatingType[]).map((ratingKey) => {
+            const config = RATING_CONFIG[ratingKey];
+            const isSelected = selectedRating === ratingKey;
 
-          return (
-            <TouchableOpacity
-              key={ratingKey}
-              style={[styles.ratingButton, isSelected && styles.ratingButtonSelected]}
-              onPress={() => handleRatingPress(ratingKey)}
-              disabled={isSubmitting}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.emoji}>{config.emoji}</Text>
-              <Text style={styles.label}>{config.label}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+            return (
+              <TouchableOpacity
+                key={ratingKey}
+                style={[styles.ratingButton, isSelected && styles.ratingButtonSelected]}
+                onPress={() => handleRatingPress(ratingKey)}
+                disabled={isSubmitting}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.emoji}>{config.emoji}</Text>
+                <Text style={styles.label}>{config.label}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      )}
     </UserInputModal>
   );
 }
@@ -163,5 +243,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "rgba(255, 255, 255, 0.9)",
     fontWeight: "600",
+  },
+  feedbackContainer: {
+    width: "100%",
+  },
+  feedbackInput: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderRadius: 12,
+    padding: 16,
+    color: "#fff",
+    fontSize: 14,
+    minHeight: 100,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.2)",
   },
 });

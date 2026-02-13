@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import * as SecureStore from "expo-secure-store";
+import { AsyncStorage } from "expo-sqlite/kv-store";
 
 const FILTER_PREFERENCES_KEY = "room_builder_preferences";
 
@@ -19,7 +19,7 @@ export const useFilterPreferences = () => {
   const loadPreferences = useCallback(async () => {
     try {
       setIsLoading(true);
-      const saved = await SecureStore.getItemAsync(FILTER_PREFERENCES_KEY);
+      const saved = await AsyncStorage.getItem(FILTER_PREFERENCES_KEY);
       if (saved) {
         const parsed = JSON.parse(saved) as FilterPreferences;
         setPreferences(parsed);
@@ -41,7 +41,7 @@ export const useFilterPreferences = () => {
         savedAt: Date.now(),
       };
 
-      await SecureStore.setItemAsync(FILTER_PREFERENCES_KEY, JSON.stringify(toSave));
+      await AsyncStorage.setItem(FILTER_PREFERENCES_KEY, JSON.stringify(toSave));
       setPreferences(toSave);
       return true;
     } catch (error) {
@@ -52,7 +52,7 @@ export const useFilterPreferences = () => {
 
   const clearPreferences = useCallback(async () => {
     try {
-      await SecureStore.deleteItemAsync(FILTER_PREFERENCES_KEY);
+      await AsyncStorage.removeItem(FILTER_PREFERENCES_KEY);
       setPreferences(null);
       return true;
     } catch (error) {

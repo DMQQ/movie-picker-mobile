@@ -3,10 +3,10 @@
     "platforms": ["ios", "android"],
     "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "2.1.1",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon-dark.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "scheme": "flickmate",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -60,7 +60,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
-      "buildNumber": "20260211",
+      "buildNumber": "20260213",
       "supportsTablet": true,
       "icon": "./assets/images/icon.icon",
       "infoPlist": {
@@ -74,21 +74,24 @@
       "appleTeamId": "55RA6Q9VSR"
     },
     "android": {
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=pl.dmq.moviepicker",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202511202,
+      "versionCode": 202602130,
       "intentFilters": [
         {
           "action": "VIEW",
           "data": [
             {
-              "scheme": "flickmate",
-              "host": "*"
+              "scheme": "https",
+              "host": "movie.dmqq.dev",
+              "pathPrefix": "/"
             },
+
             {
               "scheme": "https",
               "host": "flickmate.app",
@@ -107,7 +110,7 @@
         "projectId": "ab2d7ea0-e25f-4063-a2e2-1a449547340b"
       }
     },
-    "runtimeVersion": "3.0.1",
+    "runtimeVersion": "4.0.0",
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
@@ -116,7 +119,7 @@
       "url": "https://flickmate.app/api/manifest",
       "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 0,
-      "runtimeVersion": "3.0.1"
+      "runtimeVersion": "4.0.0"
     }
   }
 }

@@ -4,15 +4,19 @@ import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import { roomActions } from "../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { SocketContext } from "../context/SocketContext";
+import { useBlockedMovies } from "../hooks/useBlockedMovies";
+import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
 
 export default function useRoom() {
   const dispatch = useAppDispatch();
   const { socket, emitter } = useContext(SocketContext);
   const attemptTimeout = useRef<NodeJS.Timeout | null>(null);
   const roomId = useAppSelector((state) => state.room.room.roomId);
+  const { getBlockedIds, isReady: blockedReady } = useBlockedMovies();
+  const { getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
 
   useEffect(() => {
-    if (!roomId) {
+    if (!roomId || !blockedReady || !superLikedReady) {
       return;
     }
     async function onReconnected(args: unknown, attempt = 0) {
@@ -25,7 +29,8 @@ export default function useRoom() {
       }
 
       try {
-        const response = await joinGame(roomId);
+        const [blockedMovies, superLikedMovies] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
+        const response = await joinGame(roomId, blockedMovies, superLikedMovies);
         if (!response) {
           throw new Error("Failed to rejoin room after reconnection");
         }
@@ -41,7 +46,7 @@ export default function useRoom() {
     return () => {
       emitter.off("reconnected", onReconnected);
     };
-  }, [roomId]);
+  }, [roomId, blockedReady, superLikedReady]);
 
   const runOnce = useRef(false);
   const initialCardsLength = useRef(0);
@@ -68,7 +73,7 @@ export default function useRoom() {
       setCards(_cards.movies);
 
       Promise.allSettled(
-        _cards.movies.map((card: Movie) => prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge))
+        _cards.movies.map((card: Movie) => prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge)),
       ).catch(console.error);
     };
 
@@ -83,6 +88,10 @@ export default function useRoom() {
       dispatch(roomActions.setActiveUsers(users));
     };
 
+    const handleBlockedUpdate = (_cards: { movies: Movie[] }) => {
+      setCards(_cards.movies);
+    };
+
     const handleListeners = (event: string, ...args: any[]) => {
       if (event === "movies") {
         handleMovies(args[0]);
@@ -90,6 +99,8 @@ export default function useRoom() {
         handleRoomState(args[0]);
       } else if (event === "active") {
         handleActive(args[0]);
+      } else if (event === "movies:blocked-update") {
+        handleBlockedUpdate(args[0]);
       }
     };
 
@@ -138,8 +149,12 @@ export default function useRoom() {
     removeCardLocally(index);
   };
 
-  const joinGame = async (code: string) => {
-    const response = await socket?.emitWithAck("join-room", code, nickname);
+  const joinGame = async (
+    code: string,
+    blockedMovies: { id: number; type: "movie" | "tv" }[] = [],
+    superLikedMovies: { id: number; type: "movie" | "tv" }[] = [],
+  ) => {
+    const response = await socket?.emitWithAck("join-room", code, nickname, blockedMovies, superLikedMovies);
 
     return response;
   };
