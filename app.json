@@ -74,6 +74,7 @@
       "appleTeamId": "55RA6Q9VSR"
     },
     "android": {
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=pl.dmq.moviepicker",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#000000"

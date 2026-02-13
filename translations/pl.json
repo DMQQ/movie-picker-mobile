@@ -238,7 +238,7 @@
   },
   "global": {
     "justwatch": "Dostępność filmów wspierana przez JustWatch",
-    "attributions": "Filmy dostarczone przez The Movie Database API i JustWatch",
+    "attributions": "Ten produkt korzysta z API TMDB, ale nie jest wspierany ani certyfikowany przez TMDB.",
     "provider_legend": {
       "title": "Legenda Ikon",
       "subscription": "Abonament",
@@ -451,7 +451,12 @@
   },
   "game-rating": {
     "title": "Jak oceniasz tę grę?",
-    "subtitle": "Bardzo doceniam wszystkie opinie, które pomagają mi ulepszyć tę aplikację! 🙏"
+    "subtitle": "Bardzo doceniam wszystkie opinie, które pomagają mi ulepszyć tę aplikację! 🙏",
+    "feedback-title": "Co poszło nie tak?",
+    "feedback-subtitle": "Pomóż nam ulepszyć aplikację dzieląc się swoją opinią",
+    "feedback-placeholder": "Powiedz nam co poszło nie tak...",
+    "submit": "Wyślij",
+    "back": "Wstecz"
   },
   "game-invite": {
     "social-title": "🎯 Znajdź Idealny Wybór",
