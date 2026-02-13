@@ -39,7 +39,7 @@ export function useSuperLikedMovies() {
       });
       await refresh();
     },
-    [movieInteractions, refresh]
+    [movieInteractions, refresh],
   );
 
   const removeSuperLike = useCallback(
@@ -48,7 +48,7 @@ export function useSuperLikedMovies() {
       await movieInteractions.remove(movieId, movieType, "super_liked");
       await refresh();
     },
-    [movieInteractions, refresh]
+    [movieInteractions, refresh],
   );
 
   const isSuperLiked = useCallback(
@@ -56,7 +56,7 @@ export function useSuperLikedMovies() {
       if (!movieInteractions) return false;
       return movieInteractions.exists(movieId, movieType, "super_liked");
     },
-    [movieInteractions]
+    [movieInteractions],
   );
 
   const getSuperLikedIds = useCallback(async (): Promise<{ id: number; type: MovieType }[]> => {

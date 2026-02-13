@@ -184,8 +184,6 @@ const SwipeTile = ({
     };
   };
 
-  if (index >= 2) return null;
-
   return (
     <>
       <GestureDetector gesture={moveGesture}>

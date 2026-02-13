@@ -95,16 +95,7 @@ function HomeAppbar({ roomId, hasCards }: HomeAppbarProps) {
           )}
         </LiquidGlassView>
 
-        <View
-          style={{
-            position: "absolute",
-            left: "50%",
-            transform: [{ translateX: "-50%" }],
-            justifyContent: "center",
-            alignItems: "center",
-            width: "75%",
-          }}
-        >
+        <View style={[styles.midSection, showRatePill && { width: "75%" }]}>
           {showRatePill ? (
             <RateAppPill onDismiss={() => setShowRatePill(false)} />
           ) : (
@@ -234,5 +225,12 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     overflow: "hidden",
     borderRadius: 2,
+  },
+  midSection: {
+    position: "absolute",
+    left: "50%",
+    transform: [{ translateX: "-50%" }],
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

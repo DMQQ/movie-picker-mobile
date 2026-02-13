@@ -28,14 +28,17 @@ export default function useRoomContext() {
 
 export function RoomContextProvider({ children }: { children: React.ReactNode }) {
   const room = useRoom();
-  const { blockMovie } = useBlockedMovies();
-  const { superLikeMovie } = useSuperLikedMovies();
+  const { blockMovie, getBlockedIds, isReady: blockedReady } = useBlockedMovies();
+  const { superLikeMovie, getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
 
   useEffect(() => {
-    if (room.roomId && room.socket?.connected) {
-      room.joinGame(room.roomId);
+    if (room.roomId && room.socket?.connected && blockedReady && superLikedReady) {
+      (async () => {
+        const [blockedMovies, superLikedMovies] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
+        room.joinGame(room.roomId, blockedMovies, superLikedMovies);
+      })();
     }
-  }, [room.roomId, room.socket?.connected]);
+  }, [room.roomId, room.socket?.connected, blockedReady, superLikedReady]);
 
   const blockAndDislikeCard = useCallback(
     async (card: Movie, index: number) => {

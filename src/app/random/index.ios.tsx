@@ -1,9 +1,8 @@
 import { useCallback, useState } from "react";
-import { Dimensions, Platform, StyleSheet, View } from "react-native";
-import { Badge, Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
+import { Dimensions, StyleSheet, View } from "react-native";
+import { Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
 import Animated, {
   FadeIn,
-  FadeOut,
   SlideInDown,
   useAnimatedStyle,
   useSharedValue,
@@ -14,7 +13,6 @@ import Animated, {
   Easing,
   withRepeat,
 } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie, MovieDetails } from "../../../types";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useLazyGetMovieQuery, useLazyGetRandomSectionQuery } from "../../redux/movie/movieApi";
@@ -379,6 +377,8 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     opacity: 0.9,
     letterSpacing: 0.5,
+    textAlign: "center",
+    width: "80%",
   },
   poster: {
     width: "100%",
