@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import { AsyncStorage } from "expo-sqlite/kv-store";
 import React, { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { useSelector } from "react-redux";
@@ -75,8 +75,8 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
 
   const initializeSocket = async () => {
     try {
-      const userId = (await SecureStore.getItemAsync("userId")) || Math.random().toString(36).substring(7);
-      await SecureStore.setItemAsync("userId", userId);
+      const userId = (await AsyncStorage.getItem("userId")) || Math.random().toString(36).substring(7);
+      await AsyncStorage.setItem("userId", userId);
 
       const newSocket = socketIOClient(baseUrl + namespace, {
         ...connectionConfig,

@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
@@ -24,14 +24,14 @@ export default function SettingsScreen() {
 
   const handleSaveNickname = () => {
     if (nickname.trim().length !== 0) {
-      SecureStore.setItemAsync("nickname", nickname);
+      AsyncStorage.setItem("nickname", nickname);
 
       dispatch(roomActions.setSettings({ nickname, language }));
     }
   };
 
   const handleSaveLanguage = async () => {
-    await SecureStore.setItemAsync("language", language);
+    await AsyncStorage.setItem("language", language);
 
     dispatch(roomActions.setSettings({ nickname, language }));
   };
@@ -107,7 +107,7 @@ export default function SettingsScreen() {
               headers["x-user-timezone"] = region.timezone;
 
               dispatch(roomActions.setSettings({ nickname, language, regionalization: headers }));
-              SecureStore.setItemAsync("regionalization", JSON.stringify(headers));
+              AsyncStorage.setItem("regionalization", JSON.stringify(headers));
             }}
           />
 

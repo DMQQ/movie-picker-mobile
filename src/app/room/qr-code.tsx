@@ -2,7 +2,7 @@ import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { memo, useContext, useEffect, useRef, useState, useTransition } from "react";
-import { Dimensions, Platform, Share, View, StyleSheet } from "react-native";
+import { Dimensions, Platform, Share, View, StyleSheet, Pressable } from "react-native";
 import { Avatar, Button, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { Movie } from "../../../types";
@@ -304,9 +304,9 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
 
   const shareCode = async (code: string) => {
     Share.share({
-      message: t("room.share.message", { code }),
+      message: t("room.share.message", { code }) + "\nOr join via https://flickmate.app/swipe/" + code.toUpperCase(),
       title: t("room.share.title"),
-      url: "https://movie.dmqq.dev/swipe/" + code.toUpperCase(),
+      url: "https://flickmate.app/swipe/" + code.toUpperCase(),
     });
   };
 
@@ -330,27 +330,31 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         />
       </View>
 
-      <Button
+      <Pressable
         onPress={async () => {
           shareCode(code);
         }}
         style={styles.shareButton}
       >
-        {!!code && code.length > 0 ? (
-          <>
-            {code.split("").map((char, index) => (
-              <Text key={index} style={styles.codeChar}>
-                {char}
-              </Text>
-            ))}
-          </>
-        ) : (
-          <Text style={{ color: "#fff" }}>Loading</Text>
-        )}
-      </Button>
-      <Text style={styles.shareButtonText}>
-        {t("room.share.button")} <FontAwesome name="share" size={14} color={theme.colors.primary} />
-      </Text>
+        <View>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+            {!!code && code.length > 0 ? (
+              <>
+                {code.split("").map((char, index) => (
+                  <Text key={index} style={styles.codeChar}>
+                    {char}
+                  </Text>
+                ))}
+              </>
+            ) : (
+              <Text style={{ color: "#fff" }}>Loading</Text>
+            )}
+          </View>
+          <Text style={styles.shareButtonText}>
+            {t("room.share.button")} <FontAwesome name="share" size={14} color={theme.colors.primary} />
+          </Text>
+        </View>
+      </Pressable>
 
       <TutorialTips />
     </View>

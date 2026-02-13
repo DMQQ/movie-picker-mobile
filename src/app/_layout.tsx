@@ -1,6 +1,6 @@
+import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as SecureStore from "expo-secure-store";
 import * as Localization from "expo-localization";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -45,47 +45,67 @@ import * as QuickActions from "expo-quick-actions";
 
 const theme = MD2DarkTheme;
 
-const migrationFlag = "migration_complete";
+const MIGRATION_FLAG = "securestore_to_kv_migration_complete";
 
-const isMigrated = SecureStore.getItem(migrationFlag) === "true";
+const KEYS_TO_MIGRATE = [
+  "language",
+  "regionalization",
+  "nickname",
+  "userId",
+  STORAGE_KEY,
+  "app_review_requested",
+  "games_played_count",
+  "voterSessionId",
+  "room_builder_preferences",
+];
 
-async function migrateToSecureStore() {
+async function migrateFromSecureStoreToKVStore() {
   try {
-    if (isMigrated) return;
+    const isMigrated = await AsyncStorage.getItem(MIGRATION_FLAG);
+    if (isMigrated === "true") return;
 
-    const keysToMigrate = ["language", "regionalization", "nickname", "userId", STORAGE_KEY];
+    console.log("[Migration] Starting SecureStore to KVStore migration...");
 
-    const [secureStoreValues, asyncStorageValues] = await Promise.all([
-      Promise.all(keysToMigrate.map((key) => SecureStore.getItemAsync(key))),
-      Promise.all(keysToMigrate.map((key) => AsyncStorage.getItem(key))),
+    const [kvStoreValues, secureStoreValues] = await Promise.all([
+      Promise.all(KEYS_TO_MIGRATE.map((key) => AsyncStorage.getItem(key))),
+      Promise.all(KEYS_TO_MIGRATE.map((key) => SecureStore.getItemAsync(key))),
     ]);
 
     const migrateOperations: Promise<void>[] = [];
-    const cleanupOperations: Promise<void>[] = [];
 
-    keysToMigrate.forEach((key, index) => {
+    KEYS_TO_MIGRATE.forEach((key, index) => {
+      const kvValue = kvStoreValues[index];
       const secureValue = secureStoreValues[index];
-      const asyncValue = asyncStorageValues[index];
 
-      if (asyncValue && !secureValue) {
-        migrateOperations.push(SecureStore.setItemAsync(key, asyncValue));
-        cleanupOperations.push(AsyncStorage.removeItem(key));
+      // Only migrate if SecureStore has value and KVStore doesn't
+      if (secureValue && !kvValue) {
+        console.log(`[Migration] Migrating key: ${key}`);
+        migrateOperations.push(AsyncStorage.setItem(key, secureValue));
       }
     });
 
     if (migrateOperations.length > 0) {
-      await Promise.all([...migrateOperations, ...cleanupOperations]);
+      await Promise.all(migrateOperations);
+      console.log(`[Migration] Migrated ${migrateOperations.length} keys`);
+    } else {
+      console.log("[Migration] No keys to migrate");
     }
 
-    await SecureStore.setItemAsync("migration_complete", "true");
-  } catch (error) {}
+    await AsyncStorage.setItem(MIGRATION_FLAG, "true");
+    console.log("[Migration] Migration complete");
+  } catch (error) {
+    console.error("[Migration] Error during migration:", error);
+  }
 }
 
 export default function RootLayout() {
   const { isLoaded, isUpdating } = useInit();
+  const [migrationComplete, setMigrationComplete] = useState(false);
 
   useEffect(() => {
-    migrateToSecureStore();
+    migrateFromSecureStoreToKVStore().finally(() => {
+      setMigrationComplete(true);
+    });
   }, []);
 
   return (
@@ -94,7 +114,10 @@ export default function RootLayout() {
         <Provider store={store}>
           <DatabaseProvider>
             <PaperProvider theme={theme}>
-              <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
+              <RootNavigator
+                isLoaded={isLoaded && migrationComplete}
+                isUpdating={isUpdating}
+              />
             </PaperProvider>
           </DatabaseProvider>
         </Provider>
@@ -114,9 +137,9 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
 
       try {
         let [language, regionalization, nickname] = await Promise.all([
-          SecureStore.getItemAsync("language"),
-          SecureStore.getItemAsync("regionalization"),
-          SecureStore.getItemAsync("nickname"),
+          AsyncStorage.getItem("language"),
+          AsyncStorage.getItem("regionalization"),
+          AsyncStorage.getItem("nickname"),
         ]);
 
         const isFirstTimeUser = !language;

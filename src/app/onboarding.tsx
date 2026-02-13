@@ -1,4 +1,4 @@
-import * as SecureStore from "expo-secure-store";
+import { AsyncStorage } from "expo-sqlite/kv-store";
 import { useState } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { Button, IconButton, Text } from "react-native-paper";
@@ -114,9 +114,9 @@ export default function OnboardingScreen() {
     setIsLoading(true);
     try {
       await Promise.all([
-        SecureStore.setItemAsync("language", language),
-        SecureStore.setItemAsync("nickname", nickname || (language === "en" ? "Guest" : "Gość")),
-        SecureStore.setItemAsync("regionalization", JSON.stringify(regionalization || {})),
+        AsyncStorage.setItem("language", language),
+        AsyncStorage.setItem("nickname", nickname || (language === "en" ? "Guest" : "Gość")),
+        AsyncStorage.setItem("regionalization", JSON.stringify(regionalization || {})),
       ]);
       router.replace("/(tabs)");
     } catch (error) {
