@@ -284,7 +284,7 @@ export default function GameSummary() {
                     <Text style={styles.playerChipName}>{user.username}</Text>
                     <View style={styles.chipMetrics}>
                       <AntDesign name="heart" size={12} color="#FF6B6B" />
-                      <Text style={styles.chipPickCount}>{user.swipedMovies?.liked.length}</Text>
+                      <Text style={styles.chipPickCount}>{user.swipedMovies?.liked?.length ?? 0}</Text>
                     </View>
                   </View>
                 ))}
