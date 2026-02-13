@@ -2,7 +2,6 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { useGetChipCategoriesQuery } from "../../redux/movie/movieApi";
-import AppLoadingOverlay from "../../components/AppLoadingOverlay";
 import LandingHeader from "../../components/LandingHeader";
 import NoConnectionError from "../../components/NoConnectionError";
 import CategoryPage from "../../components/Landing/CategoryPage";
@@ -12,7 +11,7 @@ import LoadingSkeleton from "../../components/Landing/LoadingSkeleton";
 export default function Landing() {
   return (
     <View style={{ flex: 1, backgroundColor: "#000", paddingBottom: 15 }}>
-      <AppLoadingOverlay />
+      {/* <AppLoadingOverlay /> */}
       <NoConnectionError />
 
       <PagerCategoryScreen />

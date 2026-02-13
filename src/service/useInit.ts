@@ -20,13 +20,18 @@ export default function useInit() {
   console.log("[useInit] isUpdateAvailable:", isUpdateAvailable);
   console.log("[useInit] isUpdatePending:", isUpdatePending);
 
-  if (checkError) {
-    console.error("[useInit] Update check error:", checkError);
-  }
+  useEffect(() => {
+    if (checkError) {
+      console.error("[useInit] Update check error:", checkError);
+    }
+  }, [checkError]);
 
-  if (downloadError) {
-    console.error("[useInit] Update download error:", downloadError);
-  }
+  useEffect(() => {
+    if (downloadError) {
+      console.error("[useInit] Update download error:", downloadError);
+      setIsUpdating(false);
+    }
+  }, [downloadError]);
 
   useEffect(() => {
     if (isUpdateAvailable) {

@@ -14,13 +14,6 @@ import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
 import * as SplashScreen from "expo-splash-screen";
 
-SplashScreen.preventAutoHideAsync();
-
-SplashScreen.setOptions({
-  duration: 1000,
-  fade: true,
-});
-
 function getDeviceSettings() {
   const locales = Localization.getLocales();
   const calendars = Localization.getCalendars();
@@ -113,8 +106,6 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
 
   useEffect(() => {
-    let timeout: number;
-
     const initializeApp = async () => {
       if (!isLoaded || isUpdating) return;
 
@@ -150,20 +141,10 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
         setNeedsOnboarding(false);
       } finally {
         setSettingsLoaded(true);
-
-        timeout = setTimeout(() => {
-          SplashScreen.hide();
-        }, 250);
-
-        return timeout;
       }
     };
 
     initializeApp();
-
-    return () => {
-      clearTimeout(timeout);
-    };
   }, [isLoaded, isUpdating, dispatch]);
 
   useEffect(() => {
