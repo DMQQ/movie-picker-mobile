@@ -7,15 +7,29 @@
       "hidden" : false,
       "layers" : [
         {
-          "glass" : true,
+          "blend-mode-specializations" : [
+            {
+              "appearance" : "dark",
+              "value" : "darken"
+            }
+          ],
+          "glass-specializations" : [
+            {
+              "value" : false
+            },
+            {
+              "appearance" : "dark",
+              "value" : true
+            }
+          ],
           "hidden" : false,
-          "image-name" : "icon-light.png",
-          "name" : "icon-light",
+          "image-name" : "icon-dark.png",
+          "name" : "icon-dark",
           "position" : {
             "scale" : 1,
             "translation-in-points" : [
-              -20,
-              19.5
+              0,
+              0
             ]
           }
         }

@@ -3,10 +3,10 @@
     "platforms": ["ios", "android"],
     "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "2.1.1",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon-dark.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "scheme": "flickmate",
     "splash": {
       "image": "./assets/images/splash.png",

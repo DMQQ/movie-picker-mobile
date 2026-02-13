@@ -17,6 +17,7 @@ function Pre26IosLayout() {
 
   return (
     <Tabs
+      initialRouteName="index"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: primaryColor,
@@ -74,6 +75,7 @@ function TabLayout() {
       backgroundColor={"#000"}
       blurEffect="dark"
       backBehavior="none"
+      disableTransparentOnScrollEdge
       minimizeBehavior="onScrollDown"
       shadowColor={"rgba(0,0,0,0.25)"}
       iconColor={MD2DarkTheme.colors.primary}
