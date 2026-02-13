@@ -1,12 +1,12 @@
 import * as Updates from "expo-updates";
 import { Platform } from "react-native";
 import envs from "../constants/envs";
-import { store } from "../redux/store";
+import { AsyncStorage } from "expo-sqlite/kv-store";
+
+const language = AsyncStorage.getItemSync("language") || "en";
+const regionalization = (JSON.parse(AsyncStorage.getItemSync("regionalization") ?? "{}") || {}) as Record<string, string>;
 
 export default function prepareHeaders(headers: Headers) {
-  const state = store.getState();
-  const language = state.room.language || "en";
-  const regionalization = state.room.regionalization || {};
   headers.set("authorization", `Bearer ${envs.server_auth_token}`);
   headers.set("x-platform", Platform.OS);
 
