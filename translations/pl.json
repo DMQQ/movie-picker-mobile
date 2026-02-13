@@ -534,5 +534,29 @@
         "description": "Eksploruj popularne filmy, filtruj według gatunku lub serwisu streamingowego, zapisuj ulubione do własnych kolekcji."
       }
     }
+  },
+  "swipe": {
+    "block": "Blokuj",
+    "nope": "Nie",
+    "like": "Tak",
+    "super": "Super"
+  },
+  "blocked": {
+    "title": "Zablokowane",
+    "empty": "Nie zablokowałeś jeszcze żadnych filmów. Blokuj filmy podczas gry, aby nigdy ich więcej nie widzieć.",
+    "count": "{count} zablokowanych",
+    "clear-all": "Wyczyść wszystko",
+    "unblock": "Odblokuj",
+    "unblock-confirm": "Czy na pewno chcesz odblokować {title}? Może ponownie pojawić się w grach.",
+    "clear-all-confirm": "Czy na pewno chcesz odblokować wszystkie filmy? Mogą ponownie pojawić się w grach."
+  },
+  "super-liked": {
+    "title": "Super polubione",
+    "empty": "Nie masz jeszcze żadnych super polubionych filmów. Super polub filmy podczas gry, aby je tutaj zapisać.",
+    "count": "{count} super polubionych",
+    "clear-all": "Wyczyść wszystko",
+    "remove": "Usuń",
+    "remove-confirm": "Czy na pewno chcesz usunąć {title} z super polubionych?",
+    "clear-all-confirm": "Czy na pewno chcesz wyczyścić wszystkie super polubione filmy?"
   }
 }

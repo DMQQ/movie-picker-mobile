@@ -125,7 +125,7 @@
         "tv": "TV Shows"
       },
       "step2": {
-        "title": "Pick your favorite genres",
+        "title": "Choose your genres",
         "subtitle": "Select one or more genres (or skip to choose all)",
         "selected": "{count} genre{plural} selected"
       },
@@ -143,7 +143,7 @@
         "selected": "{count} filter{plural} applied"
       },
       "step5": {
-        "title": "How long do you want to play?",
+        "title": "Game duration",
         "subtitle": "Select the number of rounds",
         "validating": "Checking available content...",
         "summary": "Game Summary",
@@ -536,5 +536,29 @@
         "description": "Explore trending movies, filter by genre or streaming service, and save your favorites to custom collections."
       }
     }
+  },
+  "swipe": {
+    "block": "Block",
+    "nope": "Nope",
+    "like": "Like",
+    "super": "Super"
+  },
+  "blocked": {
+    "title": "Blocked Movies",
+    "empty": "You haven't blocked any movies yet. Block movies during the swipe game to never see them again.",
+    "count": "{count} blocked",
+    "clear-all": "Clear All",
+    "unblock": "Unblock",
+    "unblock-confirm": "Are you sure you want to unblock {title}? It may appear in your games again.",
+    "clear-all-confirm": "Are you sure you want to unblock all movies? They may appear in your games again."
+  },
+  "super-liked": {
+    "title": "Super Liked",
+    "empty": "You haven't super liked any movies yet. Super like movies during the swipe game to save them here.",
+    "count": "{count} super liked",
+    "clear-all": "Clear All",
+    "remove": "Remove",
+    "remove-confirm": "Are you sure you want to remove {title} from your super likes?",
+    "clear-all-confirm": "Are you sure you want to clear all super liked movies?"
   }
 }

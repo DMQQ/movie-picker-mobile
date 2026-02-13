@@ -13,6 +13,7 @@ import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
 import * as SplashScreen from "expo-splash-screen";
+import { DatabaseProvider } from "../context/DatabaseContext";
 
 function getDeviceSettings() {
   const locales = Localization.getLocales();
@@ -91,9 +92,11 @@ export default function RootLayout() {
     <AppErrorBoundary>
       <SafeAreaProvider style={{ flex: 1, backgroundColor: "#000" }}>
         <Provider store={store}>
-          <PaperProvider theme={theme}>
-            <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
-          </PaperProvider>
+          <DatabaseProvider>
+            <PaperProvider theme={theme}>
+              <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
+            </PaperProvider>
+          </DatabaseProvider>
         </Provider>
       </SafeAreaProvider>
     </AppErrorBoundary>

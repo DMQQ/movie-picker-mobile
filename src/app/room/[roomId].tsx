@@ -312,7 +312,7 @@ interface SwipeContentProps {
 }
 
 const SwipeContent = memo(({ params }: SwipeContentProps) => {
-  const { cards, dislikeCard, likeCard } = useRoomContext();
+  const { cards, dislikeCard, likeCard, blockAndDislikeCard, superLikeAndLikeCard } = useRoomContext();
 
   const originalLength = useRef(cards.length);
 
@@ -339,6 +339,8 @@ const SwipeContent = memo(({ params }: SwipeContentProps) => {
       index={index}
       likeCard={throttle(() => likeCard(card, index), 500)}
       removeCard={throttle(() => dislikeCard(card, index), 500)}
+      blockCard={throttle(() => blockAndDislikeCard(card, index), 500)}
+      superLikeCard={throttle(() => superLikeAndLikeCard(card, index), 500)}
     />
   ));
 });

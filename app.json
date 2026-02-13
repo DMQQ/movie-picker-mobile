@@ -42,7 +42,7 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#000000",
-          "image": "./assets/images/icon-light.png",
+          "image": "./assets/images/icon-dark.png",
           "imageWidth": 200
         }
       ],
@@ -55,7 +55,8 @@
       ],
       "expo-quick-actions",
       "expo-secure-store",
-      "expo-localization"
+      "expo-localization",
+      "expo-sqlite"
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -87,9 +88,11 @@
           "action": "VIEW",
           "data": [
             {
-              "scheme": "flickmate",
-              "host": "*"
+              "scheme": "https",
+              "host": "movie.dmqq.dev",
+              "pathPrefix": "/"
             },
+
             {
               "scheme": "https",
               "host": "flickmate.app",
@@ -108,7 +111,7 @@
         "projectId": "ab2d7ea0-e25f-4063-a2e2-1a449547340b"
       }
     },
-    "runtimeVersion": "3.0.1",
+    "runtimeVersion": "4.0.0",
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
@@ -117,7 +120,7 @@
       "url": "https://flickmate.app/api/manifest",
       "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 0,
-      "runtimeVersion": "3.0.1"
+      "runtimeVersion": "4.0.0"
     }
   }
 }

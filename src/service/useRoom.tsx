@@ -138,8 +138,12 @@ export default function useRoom() {
     removeCardLocally(index);
   };
 
-  const joinGame = async (code: string) => {
-    const response = await socket?.emitWithAck("join-room", code, nickname);
+  const joinGame = async (
+    code: string,
+    blockedMovies?: { id: number; type: "movie" | "tv" }[],
+    superLikedMovies?: { id: number; type: "movie" | "tv" }[]
+  ) => {
+    const response = await socket?.emitWithAck("join-room", code, nickname, blockedMovies, superLikedMovies);
 
     return response;
   };
