@@ -78,15 +78,7 @@ const SwipeTile = ({
 }) => {
   const { width, height } = useWindowDimensions();
   const t = useTranslation();
-  const position = useSharedValue({ x: 0, y: Math.max(index * -10, -20) });
-  const scale = useSharedValue(Math.max(1 - index * 0.05, 0.9));
-
-  useEffect(() => {
-    position.value = withTiming({ x: 0, y: Math.max(index * -10, -20) }, { duration: 200 });
-    scale.value = withTiming(Math.max(1 - index * 0.05, 0.9), {
-      duration: 200,
-    });
-  }, [index]);
+  const position = useSharedValue({ x: 0, y: 0 });
 
   const isLeftVisible = useSharedValue(false);
   const isRightVisible = useSharedValue(false);
@@ -140,15 +132,8 @@ const SwipeTile = ({
     const rotate = interpolate(position.value.x, [-width * 0.35, width * 0.35], [-10, 10], Extrapolation.CLAMP);
 
     return {
-      transform: [
-        { translateX: position.value.x },
-        { translateY: position.value.y },
-        { rotate: `${rotate}deg` },
-        {
-          scale: scale.value,
-        },
-      ],
-      top: withSpring(height * (Platform.OS === "ios" ? 0.075 : 0.09)),
+      transform: [{ translateX: position.value.x }, { translateY: position.value.y }, { rotate: `${rotate}deg` }],
+      top: height * (Platform.OS === "ios" ? 0.075 : 0.09),
     };
   });
 
@@ -199,7 +184,7 @@ const SwipeTile = ({
     };
   };
 
-  if (index >= 3) return null;
+  if (index >= 2) return null;
 
   return (
     <>

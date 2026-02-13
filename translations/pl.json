@@ -559,5 +559,8 @@
     "remove": "Usuń",
     "remove-confirm": "Czy na pewno chcesz usunąć {title} z super polubionych?",
     "clear-all-confirm": "Czy na pewno chcesz wyczyścić wszystkie super polubione filmy?"
+  },
+  "rate-app": {
+    "prompt": "Podoba Ci się aplikacja? Oceń nas!"
   }
 }

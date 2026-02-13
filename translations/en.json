@@ -561,5 +561,8 @@
     "remove": "Remove",
     "remove-confirm": "Are you sure you want to remove {title} from your super likes?",
     "clear-all-confirm": "Are you sure you want to clear all super liked movies?"
+  },
+  "rate-app": {
+    "prompt": "Enjoying the app? Rate us!"
   }
 }

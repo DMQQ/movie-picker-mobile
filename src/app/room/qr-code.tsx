@@ -71,7 +71,7 @@ export default function QRCodePage() {
     if (params?.quickStart) {
       if (movieCategoriesQuery.data && tvCategoriesQuery.data) {
         const movieCats = movieCategoriesQuery.data.slice(0, 3);
-        const tvCats = tvCategoriesQuery.data.slice(0, 3);
+        const tvCats = tvCategoriesQuery.data.slice(0, 2);
 
         const randomMovie = movieCats[Math.floor(Math.random() * movieCats.length)];
         const randomSeries = tvCats[Math.floor(Math.random() * tvCats.length)];

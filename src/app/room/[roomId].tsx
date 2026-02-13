@@ -17,6 +17,7 @@ import useRoomContext from "../../context/RoomContext";
 import { url, SocketContext } from "../../context/SocketContext";
 import envs from "../../constants/envs";
 import UserInputModal, { UserInputModalAction } from "../../components/UserInputModal";
+import ReviewManager from "../../utils/rate";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -60,6 +61,17 @@ export default function Home() {
   const [showPlayAgainDialog, setShowPlayAgainDialog] = useState(false);
   const [playAgainLoading, setPlayAgainLoading] = useState(false);
   const [waitingForHost, setWaitingForHost] = useState(false);
+  const [showRatePill, setShowRatePill] = useState(false);
+  const matches = useAppSelector((state) => state.room.room.matches);
+
+  useEffect(() => {
+    const checkAndShowRatePill = async () => {
+      if (matches.length >= 5 && (await ReviewManager.canRequestReviewFromRating())) {
+        setShowRatePill(true);
+      }
+    };
+    checkAndShowRatePill();
+  }, [matches.length]);
 
   useEffect(() => {
     const verifyAndJoinRoom = async () => {
@@ -237,7 +249,12 @@ export default function Home() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <HomeAppbar roomId={params?.roomId as string} hasCards={cards.length > 0} />
+      <HomeAppbar
+        roomId={params?.roomId as string}
+        hasCards={cards.length > 0}
+        showRatePill={showRatePill}
+        onDismissRatePill={() => setShowRatePill(false)}
+      />
 
       {isPlaying ? (
         <>

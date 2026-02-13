@@ -391,6 +391,7 @@ export default function GameSummary() {
       <View
         style={{
           padding: 15,
+          paddingBottom: 0,
         }}
       >
         <Button mode="contained" onPress={handleBackToHome} style={styles.backButton} contentStyle={styles.backButtonContent}>

@@ -13,8 +13,16 @@ import DialogModals from "./DialogModals";
 import { GlassView } from "expo-glass-effect";
 import { router } from "expo-router";
 import { Image } from "expo-image";
+import RateAppPill from "../RateAppPill";
 
-function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean }) {
+interface HomeAppbarProps {
+  roomId: string;
+  hasCards: boolean;
+  showRatePill?: boolean;
+  onDismissRatePill?: () => void;
+}
+
+function HomeAppbar({ roomId, hasCards, showRatePill, onDismissRatePill }: HomeAppbarProps) {
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
 
@@ -76,9 +84,15 @@ function HomeAppbar({ roomId, hasCards }: { roomId: string; hasCards: boolean })
             position: "absolute",
             left: "50%",
             transform: [{ translateX: "-50%" }],
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <ActiveUsers data={users} onPress={onActiveUsersPress} />
+          {showRatePill && onDismissRatePill ? (
+            <RateAppPill visible={showRatePill} onDismiss={onDismissRatePill} />
+          ) : (
+            <ActiveUsers data={users} onPress={onActiveUsersPress} />
+          )}
         </View>
 
         {!hasCards && !isFinished && isPlaying && (
