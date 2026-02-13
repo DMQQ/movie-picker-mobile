@@ -1,10 +1,10 @@
 import * as Updates from "expo-updates";
 import { Platform } from "react-native";
 import envs from "../constants/envs";
-import { store } from "../redux/store";
+import type { RootState } from "../redux/store";
 
-export default function prepareHeaders(headers: Headers) {
-  const state = store.getState();
+export default function prepareHeaders(headers: Headers, { getState }: { getState: () => unknown }) {
+  const state = getState() as RootState;
   const language = state.room.language || "en";
   const regionalization = state.room.regionalization || {};
   headers.set("authorization", `Bearer ${envs.server_auth_token}`);
