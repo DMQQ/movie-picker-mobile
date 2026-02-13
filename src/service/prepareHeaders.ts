@@ -1,11 +1,8 @@
 import * as Updates from "expo-updates";
 import { Platform } from "react-native";
+import type { BaseQueryApi } from "@reduxjs/toolkit/query";
 import envs from "../constants/envs";
 import type { RootState } from "../redux/store";
-
-interface BaseQueryApi {
-  getState: () => unknown;
-}
 
 export default function prepareHeaders(headers: Headers, api: BaseQueryApi) {
   const state = api.getState() as RootState;
