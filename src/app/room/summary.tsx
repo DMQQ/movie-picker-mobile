@@ -83,7 +83,7 @@ export default function GameSummary() {
   const params = useLocalSearchParams();
   const roomId = params.roomId as string;
   const dispatch = useAppDispatch();
-  const { socket } = useContext(SocketContext);
+  const { socket, userId } = useContext(SocketContext);
   const t = useTranslation();
 
   const [summary, setSummary] = useState<GameSummary | null>(null);
@@ -249,7 +249,7 @@ export default function GameSummary() {
                     <Text style={styles.statTitle}>{t("game-summary.total-picks")}</Text>
                   </View>
                   <Text style={[styles.statValue, { color: "#81C784" }]}>
-                    {summary?.users?.reduce((total, user) => total + user.totalPicks, 0) || 0}
+                    {summary?.users.find((u) => u.userId === userId)?.swipedMovies?.totalSwiped || "-"}
                   </Text>
                 </View>
               </View>
@@ -284,7 +284,7 @@ export default function GameSummary() {
                     <Text style={styles.playerChipName}>{user.username}</Text>
                     <View style={styles.chipMetrics}>
                       <AntDesign name="heart" size={12} color="#FF6B6B" />
-                      <Text style={styles.chipPickCount}>{user.totalPicks}</Text>
+                      <Text style={styles.chipPickCount}>{user.swipedMovies?.liked.length}</Text>
                     </View>
                   </View>
                 ))}

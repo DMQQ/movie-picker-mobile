@@ -14,6 +14,7 @@ import { throttle } from "../../utils/throttle";
 import PageHeading from "../../components/PageHeading";
 import { router, useLocalSearchParams } from "expo-router";
 import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
+import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -25,6 +26,7 @@ export default function FortuneWheel() {
   const params = useLocalSearchParams();
 
   const { getFilterParams } = useMediaFilters();
+  const { blockedMovies } = useBlockedMovies();
 
   const navigate = useCallback((item: Movie) => {
     setIsSpin(false);
@@ -82,11 +84,12 @@ export default function FortuneWheel() {
       }
 
       const filterParams = getFilterParams();
-      getLazyRandomSection({ not: selectedCards.name, ...filterParams })
+      const blockedIds = blockedMovies.map((m) => `${m.movie_type === "tv" ? "t" : "m"}${m.movie_id}`);
+      getLazyRandomSection({ not: selectedCards.name, notMovies: blockedIds.join(","), ...filterParams })
         .then(handleResponse)
         .catch(console.error);
     },
-    [selectedCards.name, getLazySection, getLazyRandomSection, getFilterParams],
+    [selectedCards.name, getLazySection, getLazyRandomSection, getFilterParams, blockedMovies],
   );
 
   const [isSpin, setIsSpin] = useState(false);

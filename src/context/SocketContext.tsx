@@ -16,10 +16,11 @@ export const SocketContext = React.createContext<{
   socket: Socket | null;
   reconnect: () => void;
   emitter: EventEmitter<{ reconnected: () => void }>;
+  userId: string | null;
 }>({
   socket: null,
   reconnect: () => {},
-
+  userId: "",
   emitter: new EventEmitter<{ reconnected: any }>(),
 });
 
@@ -70,6 +71,7 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
   const backgroundTimer = useRef<NodeJS.Timeout | null>(null);
   const wasConnected = useRef(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const emitter = useEventEmitter<{ reconnected: any }>();
 
@@ -77,6 +79,8 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
     try {
       const userId = (await AsyncStorage.getItem("userId")) || Math.random().toString(36).substring(7);
       await AsyncStorage.setItem("userId", userId);
+
+      setUserId(userId);
 
       const newSocket = socketIOClient(baseUrl + namespace, {
         ...connectionConfig,
@@ -142,11 +146,13 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
       const s = socketRef.current;
 
       if (s) {
-        s.removeAllListeners();
-        if (s.connected) {
-          s.emit("client_cleanup");
+        try {
+          if (s.connected) {
+            s.emit("client_cleanup");
+          }
           s.disconnect();
-        } else s.close();
+        } catch {}
+        s.removeAllListeners();
       }
     };
   }, []);
@@ -165,7 +171,7 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
     }
   };
 
-  const memoizedValue = React.useMemo(() => ({ socket, reconnect, emitter }), [socket]);
+  const memoizedValue = React.useMemo(() => ({ socket, reconnect, emitter, userId }), [socket, userId]);
 
   return <SocketContext.Provider value={memoizedValue}>{children}</SocketContext.Provider>;
 };

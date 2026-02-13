@@ -27,6 +27,7 @@ import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { Canvas, RadialGradient, Rect, vec } from "@shopify/react-native-skia";
 import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
+import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CARD_WIDTH = screenWidth * 0.9;
@@ -38,9 +39,10 @@ export default function RandomMovie() {
   const [getRandomSection] = useLazyGetRandomSectionQuery();
   const [getMovieDetails] = useLazyGetMovieQuery();
   const { getFilterParams } = useMediaFilters();
+  const { blockedMovies } = useBlockedMovies();
 
   const [movie, setMovie] = useState<Movie | null>(null);
-  const [seenMovies, setSeenMovies] = useState<number[]>([]);
+  const [seenMovies, setSeenMovies] = useState<string[]>([]);
   const [details, setDetails] = useState<MovieDetails | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -102,7 +104,9 @@ export default function RandomMovie() {
 
       try {
         const filterParams = getFilterParams();
-        const response = await getRandomSection({ ...filterParams, notMovies: seenMovies.join(",") });
+        const blockedIds = blockedMovies.map((m) => `${m.movie_type === "tv" ? "t" : "m"}${m.movie_id}`);
+        const excludeIds = [...seenMovies, ...blockedIds];
+        const response = await getRandomSection({ ...filterParams, notMovies: excludeIds.join(",") });
         if (response.data?.results?.length > 0) {
           const randomIndex = Math.floor(Math.random() * response.data.results.length);
           const selectedMovie = response.data.results[randomIndex];
@@ -115,7 +119,8 @@ export default function RandomMovie() {
             if (detailsResponse.data) {
               setDetails(detailsResponse.data);
             }
-            setSeenMovies((prev) => [...prev, selectedMovie.id]);
+            const seenId = `${type === "tv" ? "t" : "m"}${selectedMovie.id}`;
+            setSeenMovies((prev) => [...prev, seenId]);
             diceRotate.value = 0;
             setIsLoading(false);
             revealCard();
@@ -140,6 +145,7 @@ export default function RandomMovie() {
     diceRotate,
     getFilterParams,
     seenMovies,
+    blockedMovies,
   ]);
 
   const handleViewDetails = useCallback(() => {
