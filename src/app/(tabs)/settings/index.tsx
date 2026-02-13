@@ -1,7 +1,7 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
-import { Platform, Pressable, StyleSheet, View } from "react-native";
+import { Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Icon, SegmentedButtons, Text, TextInput } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChooseRegion from "../../../components/ChooseRegion";
@@ -14,6 +14,40 @@ import { reloadAppAsync } from "expo";
 import { useBlockedMovies } from "../../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../../hooks/useSuperLikedMovies";
 
+interface SectionProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+const Section = ({ title, children }: SectionProps) => (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>{title}</Text>
+    <View style={styles.sectionContent}>{children}</View>
+  </View>
+);
+
+interface MenuItemProps {
+  icon: string;
+  iconColor: string;
+  label: string;
+  badge?: number;
+  badgeColor?: string;
+  onPress: () => void;
+}
+
+const MenuItem = ({ icon, iconColor, label, badge, badgeColor = "#FF4458", onPress }: MenuItemProps) => (
+  <Pressable style={styles.menuItem} onPress={onPress}>
+    <View style={styles.menuItemLeft}>
+      <Icon source={icon} size={24} color={iconColor} />
+      <Text style={styles.menuItemText}>{label}</Text>
+    </View>
+    <View style={styles.menuItemRight}>
+      {badge !== undefined && badge > 0 && <Text style={[styles.menuItemBadge, { backgroundColor: badgeColor }]}>{badge}</Text>}
+      <Icon source="chevron-right" size={24} color="rgba(255,255,255,0.5)" />
+    </View>
+  </Pressable>
+);
+
 export default function SettingsScreen() {
   const lg = useAppSelector((state) => state.room.language);
   const nk = useAppSelector((state) => state.room.nickname);
@@ -21,170 +55,170 @@ export default function SettingsScreen() {
   const [language, setLanguage] = useState<string>(lg);
 
   const dispatch = useAppDispatch();
+  const t = useTranslation();
+  const insets = useSafeAreaInsets();
+  const { blockedMovies } = useBlockedMovies();
+  const { superLikedMovies } = useSuperLikedMovies();
 
   const handleSaveNickname = () => {
     if (nickname.trim().length !== 0) {
       AsyncStorage.setItem("nickname", nickname);
-
       dispatch(roomActions.setSettings({ nickname, language }));
     }
   };
 
   const handleSaveLanguage = async () => {
     await AsyncStorage.setItem("language", language);
-
     dispatch(roomActions.setSettings({ nickname, language }));
   };
 
-  useEffect(() => {
-    let nickTimeoutId = setTimeout(handleSaveNickname, 500);
+  const handleReload = async () => {
+    if (Platform.OS === "ios") {
+      await Updates.reloadAsync({
+        reloadScreenOptions: {
+          backgroundColor: "#000",
+          fade: true,
+          image: require("../../../../assets/images/icon-light.png"),
+        },
+      });
+    } else {
+      await reloadAppAsync("manual reload from settings");
+    }
+  };
 
-    return () => {
-      clearTimeout(nickTimeoutId);
-    };
+  useEffect(() => {
+    const timeoutId = setTimeout(handleSaveNickname, 500);
+    return () => clearTimeout(timeoutId);
   }, [nickname, language]);
 
   useEffect(() => {
-    let languageTimeoutId = setTimeout(handleSaveLanguage, 500);
-
-    return () => {
-      clearTimeout(languageTimeoutId);
-    };
+    const timeoutId = setTimeout(handleSaveLanguage, 500);
+    return () => clearTimeout(timeoutId);
   }, [language, lg, nickname]);
 
-  const t = useTranslation();
-  const insets = useSafeAreaInsets();
-  const { blockedMovies } = useBlockedMovies();
-  const { superLikedMovies } = useSuperLikedMovies();
-
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <PageHeading title={t("settings.heading")} extraScreenPaddingTop={Platform.OS === "android" ? 0 : 0} showBackButton={false} />
+    <View style={styles.container}>
+      <PageHeading title={t("settings.heading")} showBackButton={false} />
 
-      <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.1)", paddingTop: 100 }}>
-        <View style={{ paddingHorizontal: 15, flex: 1 }}>
-          <View style={{ marginTop: 20 }}>
-            <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>{t("settings.nickname")}</Text>
+      <ScrollView style={styles.scrollView} contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 150 }]}>
+        {/* Profile Section */}
+        <Section title={t("settings.nickname")}>
+          <TextInput
+            value={nickname}
+            onChangeText={setNickname}
+            mode="outlined"
+            label={t("settings.nickname-label")}
+            style={styles.textInput}
+          />
+          <Text style={styles.helperText}>{t("settings.nickname-info")}</Text>
+        </Section>
 
-            <TextInput
-              value={nickname}
-              onChangeText={setNickname}
-              mode="outlined"
-              label={t("settings.nickname-label")}
-              style={{ backgroundColor: "transparent", marginTop: 5 }}
-            />
-
-            <Text style={{ fontSize: 16, marginTop: 5, padding: 5, color: "#fff" }}>{t("settings.nickname-info")}</Text>
-          </View>
-
-          <View style={{ marginTop: 35 }}>
-            <Text style={{ fontSize: 25, fontFamily: "Bebas" }}>{t("settings.application-language")}</Text>
-
-            <SegmentedButtons
-              buttons={[
-                {
-                  label: "English",
-                  value: "en",
-                },
-                {
-                  label: "Polish",
-                  value: "pl",
-                },
-              ]}
-              onValueChange={(value) => setLanguage(value)}
-              value={language}
-              style={{ marginTop: 10 }}
-            />
-          </View>
+        {/* Localization Section */}
+        <Section title={t("settings.application-language")}>
+          <SegmentedButtons
+            buttons={[
+              { label: "English", value: "en" },
+              { label: "Polish", value: "pl" },
+            ]}
+            onValueChange={setLanguage}
+            value={language}
+          />
 
           <ChooseRegion
             onBack={() => router.push("/settings/region-selector")}
             onRegionSelect={(region) => {
-              const headers = {} as Record<string, string>;
-              headers["x-user-region"] = region.code;
-              headers["x-user-watch-provider"] = region.code;
-              headers["x-user-watch-region"] = region.code;
-              headers["x-user-timezone"] = region.timezone;
-
+              const headers: Record<string, string> = {
+                "x-user-region": region.code,
+                "x-user-watch-provider": region.code,
+                "x-user-watch-region": region.code,
+                "x-user-timezone": region.timezone,
+              };
               dispatch(roomActions.setSettings({ nickname, language, regionalization: headers }));
               AsyncStorage.setItem("regionalization", JSON.stringify(headers));
             }}
           />
+        </Section>
 
-          <View style={settingsStyles.menuSection}>
-            <Pressable
-              style={settingsStyles.menuItem}
-              onPress={() => router.push("/settings/blocked-movies")}
-            >
-              <View style={settingsStyles.menuItemLeft}>
-                <Icon source="cancel" size={24} color="#FF4458" />
-                <Text style={settingsStyles.menuItemText}>{t("blocked.title")}</Text>
-              </View>
-              <View style={settingsStyles.menuItemRight}>
-                {blockedMovies.length > 0 && (
-                  <Text style={settingsStyles.menuItemBadge}>{blockedMovies.length}</Text>
-                )}
-                <Icon source="chevron-right" size={24} color="rgba(255,255,255,0.5)" />
-              </View>
-            </Pressable>
+        <Button
+          mode="contained"
+          onPress={handleReload}
+          contentStyle={{
+            padding: 7.5,
+          }}
+          style={{ borderRadius: 100 }}
+        >
+          <Text style={styles.applyButtonText}>{t("settings.apply")}</Text>
+        </Button>
 
-            <Pressable
-              style={settingsStyles.menuItem}
-              onPress={() => router.push("/settings/super-liked")}
-            >
-              <View style={settingsStyles.menuItemLeft}>
-                <Icon source="star" size={24} color="#FFD700" />
-                <Text style={settingsStyles.menuItemText}>{t("super-liked.title")}</Text>
-              </View>
-              <View style={settingsStyles.menuItemRight}>
-                {superLikedMovies.length > 0 && (
-                  <Text style={[settingsStyles.menuItemBadge, { backgroundColor: "#FFD700" }]}>
-                    {superLikedMovies.length}
-                  </Text>
-                )}
-                <Icon source="chevron-right" size={24} color="rgba(255,255,255,0.5)" />
-              </View>
-            </Pressable>
-          </View>
+        {/* Library Section */}
+        <Section title={t("settings.library") || "Library"}>
+          <MenuItem
+            icon="cancel"
+            iconColor="#FF4458"
+            label={t("blocked.title")}
+            badge={blockedMovies.length}
+            badgeColor="#FF4458"
+            onPress={() => router.push("/settings/blocked-movies")}
+          />
+          <MenuItem
+            icon="star"
+            iconColor="#FFD700"
+            label={t("super-liked.title")}
+            badge={superLikedMovies.length}
+            badgeColor="#FFD700"
+            onPress={() => router.push("/settings/super-liked")}
+          />
+        </Section>
 
-          <Text style={{ color: "gray" }}>
-            {t("settings.update")} {Updates.manifest?.id} {"\n"}
+        <View style={styles.aboutContent}>
+          <Text style={styles.aboutText}>
+            {t("settings.update")} {Updates.manifest?.id}
+          </Text>
+          <Text style={styles.aboutText}>
             {t("settings.version")}: {(Updates.manifest as any)?.version}
-            {"\n"}
-            {t("settings.created-at")}: ({(Updates.manifest as any)?.createdAt?.toString().split("T")[0]})
+          </Text>
+          <Text style={styles.aboutText}>
+            {t("settings.created-at")}: {(Updates.manifest as any)?.createdAt?.toString().split("T")[0]}
           </Text>
         </View>
-        <View style={{ padding: 15, paddingBottom: insets.bottom + (Platform.OS === "ios" ? 75 : 0), backgroundColor: "rgba(0,0,0,0.1)" }}>
-          <Button
-            style={{
-              borderRadius: 100,
-            }}
-            contentStyle={{ padding: 7.5 }}
-            mode="contained"
-            onPress={async () =>
-              Platform.OS === "ios"
-                ? await Updates.reloadAsync({
-                    reloadScreenOptions: {
-                      backgroundColor: "#000",
-                      fade: true,
-                      image: require("../../../../assets/images/icon-light.png"),
-                    },
-                  })
-                : await reloadAppAsync("manual reload from settings")
-            }
-          >
-            {t("settings.apply")}
-          </Button>
-        </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
 
-const settingsStyles = StyleSheet.create({
-  menuSection: {
-    marginTop: 25,
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+    paddingBottom: 50,
+  },
+  scrollView: {
+    flex: 1,
+    paddingTop: 80,
+  },
+  scrollContent: {
+    paddingHorizontal: 15,
+    paddingTop: 20,
+    gap: 25,
+  },
+  section: {
     gap: 10,
+  },
+  sectionTitle: {
+    fontSize: 25,
+    fontFamily: "Bebas",
+    color: "#fff",
+  },
+  sectionContent: {
+    gap: 10,
+  },
+  textInput: {
+    backgroundColor: "transparent",
+  },
+  helperText: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.6)",
+    paddingHorizontal: 5,
   },
   menuItem: {
     flexDirection: "row",
@@ -209,7 +243,6 @@ const settingsStyles = StyleSheet.create({
     color: "#fff",
   },
   menuItemBadge: {
-    backgroundColor: "#FF4458",
     color: "#fff",
     fontSize: 12,
     fontWeight: "600",
@@ -217,5 +250,26 @@ const settingsStyles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 10,
     overflow: "hidden",
+  },
+  aboutContent: {
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderRadius: 12,
+    padding: 15,
+    gap: 4,
+  },
+  aboutText: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.5)",
+  },
+  applyButton: {
+    backgroundColor: "#6750a4",
+    borderRadius: 100,
+    paddingVertical: 15,
+    alignItems: "center",
+  },
+  applyButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });

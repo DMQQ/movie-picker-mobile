@@ -283,7 +283,8 @@
     "region-language-settings": "Region & Language Settings",
     "selected-region": "Selected Region",
     "timezone": "Timezone",
-    "search-regions": "Search regions..."
+    "search-regions": "Search regions...",
+    "library": "Library"
   },
   "voter": {
     "title": "Vote for the movies",

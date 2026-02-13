@@ -282,7 +282,8 @@
     "region-language-settings": "Ustawienia regionu i języka",
     "selected-region": "Wybrany region",
     "timezone": "Strefa czasowa",
-    "search-regions": "Szukaj regionów..."
+    "search-regions": "Szukaj regionów...",
+    "library": "Biblioteka"
   },
   "voter": {
     "games": "Gry",

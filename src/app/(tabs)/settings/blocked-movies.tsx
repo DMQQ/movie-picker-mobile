@@ -25,7 +25,7 @@ export default function BlockedMoviesScreen() {
           onPress: () => unblockMovie(movie.movie_id, movie.movie_type),
         },
       ],
-      { userInterfaceStyle: "dark" }
+      { userInterfaceStyle: "dark" },
     );
   };
 
@@ -43,7 +43,7 @@ export default function BlockedMoviesScreen() {
           onPress: clearAllBlocked,
         },
       ],
-      { userInterfaceStyle: "dark" }
+      { userInterfaceStyle: "dark" },
     );
   };
 
@@ -53,31 +53,23 @@ export default function BlockedMoviesScreen() {
       onPress={() =>
         router.push({
           pathname: "/movie/type/[type]/[id]",
-          params: { id: item.movie_id, type: item.movie_type },
+          params: { id: item.movie_id, type: item.movie_type, img: item.poster_path },
         })
       }
     >
-      <View style={styles.posterContainer}>
-        <Thumbnail
-          path={item.poster_path || ""}
-          size={ThumbnailSizes.poster.small}
-          style={styles.poster}
-        />
-      </View>
+      <Thumbnail
+        path={item.poster_path || ""}
+        size={ThumbnailSizes.poster.small}
+        container={styles.posterContainer}
+        style={styles.poster}
+      />
       <View style={styles.movieInfo}>
         <Text style={styles.movieTitle} numberOfLines={2}>
           {item.title || `Movie #${item.movie_id}`}
         </Text>
-        <Text style={styles.movieType}>
-          {item.movie_type === "tv" ? "TV Show" : "Movie"}
-        </Text>
+        <Text style={styles.movieType}>{item.movie_type === "tv" ? "TV Show" : "Movie"}</Text>
       </View>
-      <IconButton
-        icon="close-circle"
-        iconColor="#FF4458"
-        size={24}
-        onPress={() => handleUnblock(item)}
-      />
+      <IconButton icon="close-circle" iconColor="#FF4458" size={24} onPress={() => handleUnblock(item)} />
     </Pressable>
   );
 
@@ -97,15 +89,8 @@ export default function BlockedMoviesScreen() {
         ) : (
           <View style={styles.listContainer}>
             <View style={styles.headerRow}>
-              <Text style={styles.countText}>
-                {t("blocked.count", { count: blockedMovies.length })}
-              </Text>
-              <Button
-                mode="text"
-                textColor="#FF4458"
-                onPress={handleClearAll}
-                compact
-              >
+              <Text style={styles.countText}>{t("blocked.count", { count: blockedMovies.length })}</Text>
+              <Button mode="text" textColor="#FF4458" onPress={handleClearAll} compact>
                 {t("blocked.clear-all")}
               </Button>
             </View>
@@ -156,6 +141,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 15,
     paddingVertical: 10,
+    marginTop: 60,
   },
   countText: {
     fontSize: 14,
