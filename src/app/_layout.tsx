@@ -12,7 +12,7 @@ import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
-import { View } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
 
 function getDeviceSettings() {
   const locales = Localization.getLocales();
@@ -163,10 +163,6 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
       router.replace("/onboarding");
     }
   }, [settingsLoaded, needsOnboarding]);
-
-  if (!settingsLoaded || needsOnboarding === null) {
-    return <View style={{ flex: 1, backgroundColor: "#000" }} />;
-  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>

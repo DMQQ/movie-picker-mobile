@@ -102,15 +102,15 @@ export const movieApi = createApi({
   refetchOnMountOrArgChange: 300,
   endpoints: (builder) => ({
     getLandingPageMovies: builder.query<{ name: string; results: Movie[] }[], LandingPageParams>({
-      query: (params = { skip: 0, take: 5, category: "" }) =>
+      query: (params = { skip: 0, take: 4, category: "" }) =>
         `/landing?skip=${params.skip}&take=${params.take}${
           params.category !== "" && params.category !== "all" ? `&category=${params.category}` : ""
         }`,
     }),
 
     getLandingPageMoviesPage: builder.query<{ name: string; results: Movie[] }[], LandingPageParams & { page: number }>({
-      query: (params = { skip: 0, take: 8, category: "", page: 0 }) =>
-        `/landing?skip=${params.page * 8}&take=${params.take}${
+      query: (params = { skip: 0, take: 4, category: "", page: 0 }) =>
+        `/landing?skip=${params.page * 4}&take=${params.take}${
           params.category !== "" && params.category !== "all" ? `&category=${params.category}` : ""
         }`,
       providesTags: (result, error, arg) => [{ type: "LandingPageInfinite", id: `${arg.category}-${arg.page}` }],

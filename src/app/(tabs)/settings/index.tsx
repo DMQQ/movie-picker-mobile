@@ -114,7 +114,7 @@ export default function SettingsScreen() {
             {t("settings.created-at")}: ({(Updates.manifest as any)?.createdAt?.toString().split("T")[0]})
           </Text>
         </View>
-        <View style={{ padding: 15, paddingBottom: insets.bottom, backgroundColor: "rgba(0,0,0,0.1)" }}>
+        <View style={{ padding: 15, paddingBottom: insets.bottom + (Platform.OS === "ios" ? 75 : 0), backgroundColor: "rgba(0,0,0,0.1)" }}>
           <Button
             style={{
               borderRadius: 100,

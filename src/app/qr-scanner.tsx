@@ -144,7 +144,8 @@ export default function QRScanner() {
     <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000" }}>
       <PageHeading
         title={t("scanner.heading")}
-        useSafeArea
+        useSafeArea={Platform.OS === "android"}
+        styles={Platform.OS === "ios" ? { marginTop: 15 } : {}}
         showBackButton
         showRightIconButton
         onRightIconPress={() => setIsManual(true)}

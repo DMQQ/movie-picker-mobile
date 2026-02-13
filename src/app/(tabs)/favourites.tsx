@@ -37,7 +37,7 @@ export default function Favourites() {
   };
 
   return (
-    <SafeIOSContainer>
+    <SafeIOSContainer style={{ paddingBottom: 0 }}>
       <PageHeading
         title={t("favourites.title")}
         showBackButton={false}
@@ -47,13 +47,13 @@ export default function Favourites() {
         useSafeArea
         extraScreenPaddingTop={Platform.OS === "android" ? 0 : 0}
       />
-      <View style={{ paddingHorizontal: 15, flex: 1, marginTop: Platform.OS === "android" ? 30 : 0, paddingBottom: 45 }}>
+      <View style={{ paddingHorizontal: 15, flex: 1, marginTop: Platform.OS === "android" ? 30 : 0, paddingBottom: 15 }}>
         <FlatList
           ref={listRef}
           showsVerticalScrollIndicator={false}
           data={groups}
           keyExtractor={(k, index) => k.id + "-" + index}
-          contentContainerStyle={{ paddingTop: 80 }}
+          contentContainerStyle={{ paddingTop: 80, paddingBottom: 60 }}
           renderItem={({ item, index }) => (
             <Link
               disabled={item?.movies?.length === 0}
