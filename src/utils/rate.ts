@@ -1,9 +1,12 @@
 import * as StoreReview from "expo-store-review";
 import { AsyncStorage } from "expo-sqlite/kv-store";
 
+const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
+
 class ReviewManager {
   private static readonly REVIEW_KEY = "app_review_requested";
   private static readonly GAMES_PLAYED_KEY = "games_played_count";
+  private static readonly RATING_REVIEW_TIMESTAMP_KEY = "rating_review_last_requested";
 
   static async shouldRequestReview(): Promise<boolean> {
     try {
@@ -29,6 +32,25 @@ class ReviewManager {
         await StoreReview.requestReview();
         await AsyncStorage.setItem(this.REVIEW_KEY, "true");
       }
+    } catch {}
+  }
+
+  static async canRequestReviewFromRating(): Promise<boolean> {
+    try {
+      const lastRequested = await AsyncStorage.getItem(this.RATING_REVIEW_TIMESTAMP_KEY);
+      if (!lastRequested) return true;
+
+      const lastTimestamp = parseInt(lastRequested, 10);
+      const now = Date.now();
+      return now - lastTimestamp >= TWO_WEEKS_MS;
+    } catch {
+      return true;
+    }
+  }
+
+  static async recordReviewRequestFromRating(): Promise<void> {
+    try {
+      await AsyncStorage.setItem(this.RATING_REVIEW_TIMESTAMP_KEY, Date.now().toString());
     } catch {}
   }
 }

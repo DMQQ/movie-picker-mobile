@@ -1,7 +1,7 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as SecureStore from "expo-secure-store";
 import * as Localization from "expo-localization";
-import { Stack, router } from "expo-router";
+import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
@@ -12,7 +12,6 @@ import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
-import * as SplashScreen from "expo-splash-screen";
 import { DatabaseProvider } from "../context/DatabaseContext";
 
 function getDeviceSettings() {
@@ -42,6 +41,7 @@ Image.clearDiskCache();
 Image.clearMemoryCache();
 
 import * as QuickActions from "expo-quick-actions";
+import OnboardingScreen from "./onboarding";
 
 const theme = MD2DarkTheme;
 
@@ -114,10 +114,7 @@ export default function RootLayout() {
         <Provider store={store}>
           <DatabaseProvider>
             <PaperProvider theme={theme}>
-              <RootNavigator
-                isLoaded={isLoaded && migrationComplete}
-                isUpdating={isUpdating}
-              />
+              <RootNavigator isLoaded={isLoaded && migrationComplete} isUpdating={isUpdating} />
             </PaperProvider>
           </DatabaseProvider>
         </Provider>
@@ -184,11 +181,13 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
     ]);
   }, []);
 
-  useEffect(() => {
-    if (settingsLoaded && needsOnboarding) {
-      router.replace("/onboarding");
-    }
-  }, [settingsLoaded, needsOnboarding]);
+  if (!isLoaded) {
+    return null;
+  }
+
+  if (settingsLoaded && needsOnboarding) {
+    return <OnboardingScreen />;
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>

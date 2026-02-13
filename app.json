@@ -55,8 +55,7 @@
       ],
       "expo-quick-actions",
       "expo-secure-store",
-      "expo-localization",
-      "expo-sqlite"
+      "expo-localization"
     ],
     "assetBundlePatterns": ["**/*"],
     "ios": {

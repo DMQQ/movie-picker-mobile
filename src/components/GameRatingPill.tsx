@@ -1,10 +1,11 @@
 import { useState, useEffect, useContext } from "react";
-import { View, StyleSheet, TouchableOpacity, Platform, TextInput, Linking } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Platform, TextInput } from "react-native";
 import { Text } from "react-native-paper";
 import { withSpring, withSequence, useSharedValue } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import * as StoreReview from "expo-store-review";
 import { SocketContext } from "../context/SocketContext";
+import ReviewManager from "../utils/rate";
 import UserInputModal, { UserInputModalAction } from "./UserInputModal";
 import useTranslation from "../service/useTranslation";
 
@@ -68,8 +69,13 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
 
     if (rating === "good") {
       try {
-        if (Platform.OS !== "web" && (await StoreReview.hasAction())) {
+        if (
+          Platform.OS !== "web" &&
+          (await StoreReview.hasAction()) &&
+          (await ReviewManager.canRequestReviewFromRating())
+        ) {
           await StoreReview.requestReview();
+          await ReviewManager.recordReviewRequestFromRating();
         }
       } catch (error) {
         console.error("Error requesting store review:", error);

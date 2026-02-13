@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { Button, IconButton, Text } from "react-native-paper";
 import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, SlideInRight, SlideOutLeft } from "react-native-reanimated";
-import { router } from "expo-router";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import useTranslation from "../service/useTranslation";
 import { LinearGradient } from "expo-linear-gradient";
@@ -102,7 +101,11 @@ const PageIndicator = ({ currentPage, totalPages }: { currentPage: number; total
   );
 };
 
-export default function OnboardingScreen() {
+interface OnboardingScreenProps {
+  onClose?: () => void;
+}
+
+export default function OnboardingScreen({ onClose }: OnboardingScreenProps) {
   const t = useTranslation();
   const language = useAppSelector((state) => state.room.language) || "en";
   const regionalization = useAppSelector((state) => state.room.regionalization);
@@ -118,10 +121,10 @@ export default function OnboardingScreen() {
         AsyncStorage.setItem("nickname", nickname || (language === "en" ? "Guest" : "Gość")),
         AsyncStorage.setItem("regionalization", JSON.stringify(regionalization || {})),
       ]);
-      router.replace("/(tabs)");
+      onClose?.();
     } catch (error) {
       console.error("Failed to save onboarding state:", error);
-      router.replace("/(tabs)");
+      onClose?.();
     }
   };
 

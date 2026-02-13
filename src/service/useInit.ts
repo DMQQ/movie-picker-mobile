@@ -2,6 +2,9 @@ import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { loadAsync } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function useInit() {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -14,6 +17,12 @@ export default function useInit() {
       setIsLoaded(true);
     });
   }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [isLoaded]);
 
   const { isUpdateAvailable, isUpdatePending, checkError, downloadError } = Updates.useUpdates();
 
