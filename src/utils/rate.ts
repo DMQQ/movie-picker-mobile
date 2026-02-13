@@ -41,6 +41,8 @@ class ReviewManager {
       if (!lastRequested) return true;
 
       const lastTimestamp = parseInt(lastRequested, 10);
+      if (!Number.isFinite(lastTimestamp)) return true;
+
       const now = Date.now();
       return now - lastTimestamp >= TWO_WEEKS_MS;
     } catch {
