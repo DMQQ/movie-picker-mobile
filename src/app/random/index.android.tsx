@@ -75,6 +75,7 @@ export default function RandomMovie() {
 
   const fetchRandomMovie = useCallback(async () => {
     if (isLoading) return;
+    setIsLoading(true);
 
     if (isRevealed) {
       resetCard();
@@ -86,7 +87,6 @@ export default function RandomMovie() {
     }
 
     async function startSearch() {
-      setIsLoading(true);
       setMovie(null);
       setDetails(null);
       triggerHaptic("impact");
