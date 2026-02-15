@@ -69,7 +69,10 @@ const gameTypes: ("social" | "quick" | "voter" | "fortune" | "random" | "all-gam
 const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
   const t = useTranslation();
 
-  const { data, isLoading, isError, hasMore, fetchNextPage, refetch, isRefreshing } = useInfiniteLandingPageMovies({ categoryId });
+  const { data, isLoading, isError, hasMore, fetchNextPage, refetch, isRefreshing } = useInfiniteLandingPageMovies({
+    categoryId,
+    pageSize: 4,
+  });
 
   const onEndReached = useCallback(() => {
     if (!isError && hasMore) {
@@ -94,7 +97,9 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
     );
   }, []);
 
-  if (!useIsMounted()) {
+  const isMounted = useIsMounted();
+
+  if (!isMounted && categoryId !== "all") {
     return null;
   }
 

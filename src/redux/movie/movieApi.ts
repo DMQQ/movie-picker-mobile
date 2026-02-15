@@ -91,6 +91,23 @@ interface PrefetchResult {
   estimatedCount: number;
 }
 
+interface MarathonMovie {
+  id: number;
+  title?: string;
+  name?: string;
+  poster_path: string;
+  type?: "movie" | "tv";
+  vote_average?: number;
+  runtime?: number;
+  genres?: string[];
+}
+
+interface SummaryShareResponse {
+  movies: MarathonMovie[];
+  roomId: string;
+  type: "movie" | "tv";
+}
+
 export const movieApi = createApi({
   reducerPath: "movieApi",
   tagTypes: ["Search", "SearchResults", "LandingPageInfinite"],
@@ -298,6 +315,10 @@ export const movieApi = createApi({
         };
       },
     }),
+
+    getSummaryShare: builder.query<SummaryShareResponse, { roomId: string }>({
+      query: ({ roomId }) => `/room/summary/${roomId}/share`,
+    }),
   }),
 });
 
@@ -356,4 +377,6 @@ export const {
   useGetSpecialCategoriesWithThumbnailsQuery,
   useValidateRoomConfigMutation,
   usePrefetchRoomContentMutation,
+  useGetSummaryShareQuery,
+  useLazyGetSummaryShareQuery,
 } = movieApi;

@@ -185,7 +185,7 @@ const FeaturedSection = memo(({ featured, isLoading }: FeaturedSectionProps) => 
       >
         <View style={StyleSheet.absoluteFill}>
           <LinearGradient style={styles.gradientContainer} colors={gradient as any}>
-            <Animated.View entering={FadeInDown.duration(600).delay(200)} style={styles.contentWrapper}>
+            <View style={styles.contentWrapper}>
               <Link
                 href={{
                   pathname: "/movie/type/[type]/[id]",
@@ -271,7 +271,7 @@ const FeaturedSection = memo(({ featured, isLoading }: FeaturedSectionProps) => 
 
                 <FeaturedQuickActions movie={featured as Movie} />
               </View>
-            </Animated.View>
+            </View>
           </LinearGradient>
         </View>
       </ImageBackground>

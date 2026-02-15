@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   matchModal: {
     padding: 20,
     borderRadius: 20,
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(0,0,0,0.75)",
 
     ...StyleSheet.absoluteFillObject,
     height: Dimensions.get("screen").height,
@@ -82,6 +82,8 @@ const styles = StyleSheet.create({
     zIndex: 100,
     pointerEvents: "none",
   },
+
+  share: { position: "absolute", bottom: -75, right: 0, left: 0, zIndex: 20, justifyContent: "center", alignItems: "center" },
 });
 
 export const ModalEnteringTransition = () => {
@@ -185,11 +187,10 @@ export default function MatchModal({ match, hideMatchModal }: { match: Movie | u
               }}
               card={match}
             />
-
-            <View style={{ position: "absolute", bottom: 20, right: 20, zIndex: 20 }}>
-              <ShareTicketButton movie={match} holeColor={theme.colors.primary} />
-            </View>
           </Card>
+        </Animated.View>
+        <Animated.View exiting={FadeOut} style={styles.share}>
+          <ShareTicketButton movie={match} />
         </Animated.View>
       </Pressable>
     </Animated.View>

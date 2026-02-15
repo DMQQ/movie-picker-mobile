@@ -143,15 +143,6 @@ export default function MovieDetailsScreen() {
       </Animated.ScrollView>
 
       {!isPreview && <Actions movieId={Number(movieId)} type={typeOfContent as "movie" | "tv"} scrollOffset={scrollOffset} movie={movie} />}
-
-      <View style={styles.floatingShare}>
-        <ShareTicketButton
-          movie={movie}
-          providers={providers as any}
-          headerText="Tonight's Pick"
-          pickupLine="I invite you to watch with me!"
-        />
-      </View>
     </View>
   );
 }
