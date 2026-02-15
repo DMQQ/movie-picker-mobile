@@ -11,7 +11,7 @@ const MAIN_MOVIES = 3;
 const MAX_BONUS_MOVIES = 4;
 
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
-const APP_URL = "https://flickmate.app";
+const APP_URL = "https://flickmate.app/share";
 
 interface Genre {
   id: number;

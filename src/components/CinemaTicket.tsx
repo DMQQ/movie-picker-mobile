@@ -10,7 +10,7 @@ const TICKET_WIDTH = SCREEN_WIDTH - 48;
 const BACKDROP_HEIGHT = 200;
 
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
-const APP_URL = "https://flickmate.app";
+const APP_URL = "https://flickmate.app/share";
 
 interface Genre {
   id: number;
