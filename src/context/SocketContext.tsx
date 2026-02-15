@@ -1,6 +1,7 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
+import * as Updates from "expo-updates";
 import React, { useEffect, useRef, useState } from "react";
-import { AppState, AppStateStatus } from "react-native";
+import { AppState, AppStateStatus, Platform } from "react-native";
 import { useSelector } from "react-redux";
 import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 import envs from "../constants/envs";
@@ -41,30 +42,34 @@ const connectionConfig = {
   pingTimeout: 2500,
 } as Partial<ManagerOptions & SocketOptions>;
 
-const makeHeaders = (language: string) => {
+const makeHeaders = (appLanguage: string, regionalization: Record<string, string> = {}) => {
   const headers = new Map<string, string>();
-  headers.set("authorization", `Bearer ${envs.server_auth_token}`);
-  headers.set("X-User-Language", language || "en");
+  const userLanguage = appLanguage === "pl" ? "pl-PL" : "en-US";
 
-  if (language === "pl") {
-    headers.set("x-user-language", "pl-PL");
-    headers.set("x-user-region", "PL");
-    headers.set("x-user-timezone", "Europe/Warsaw");
-    headers.set("x-user-watch-provider", "PL");
-    headers.set("x-user-watch-region", "PL");
-  } else {
-    headers.set("x-user-language", "en-US");
-    headers.set("x-user-region", "US");
-    headers.set("x-user-timezone", "America/New_York");
-    headers.set("x-user-watch-provider", "US");
-    headers.set("x-user-watch-region", "US");
+  headers.set("authorization", `Bearer ${envs.server_auth_token}`);
+  headers.set("x-platform", Platform.OS);
+  headers.set("x-app-language", appLanguage);
+
+  const updateId = Updates.updateId;
+  if (updateId) {
+    headers.set("X-Update-Version", updateId);
+    headers.set("x-update-manifest-id", Updates?.manifest?.id || "unknown");
   }
+
+  // Set all regionalization headers from device settings
+  Object.entries(regionalization).forEach(([key, value]) => {
+    headers.set(key, value);
+  });
+
+  // x-user-language is always pl-PL or en-US based on app language
+  headers.set("x-user-language", userLanguage);
 
   return Object.fromEntries(headers);
 };
 
 export const SocketProvider = ({ children, namespace }: { children: React.ReactNode; namespace: "/swipe" | "/voter" }) => {
   const language = useSelector((st: RootState) => st.room.language);
+  const regionalization = useSelector((st: RootState) => st.room.regionalization) || {};
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const appState = useRef(AppState.currentState);
@@ -86,7 +91,7 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
         ...connectionConfig,
         extraHeaders: {
           "user-id": userId,
-          ...makeHeaders(language),
+          ...makeHeaders(language, regionalization),
         },
       });
 
@@ -155,7 +160,7 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
         s.removeAllListeners();
       }
     };
-  }, []);
+  }, [language, regionalization]);
 
   useEffect(() => {
     if (wasConnected.current && socket) {

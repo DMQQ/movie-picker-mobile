@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { Dimensions, Platform, StyleSheet, View } from "react-native";
-import { Badge, Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
+import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
+import { Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -28,6 +28,7 @@ import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { Canvas, RadialGradient, Rect, vec } from "@shopify/react-native-skia";
 import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
+import ShareTicketButton from "../../components/ShareTicketButton";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CARD_WIDTH = screenWidth * 0.9;
@@ -210,7 +211,7 @@ export default function RandomMovie() {
             {/* BACK FACE (Movie) */}
             <Animated.View style={[styles.cardFace, styles.backFace, backAnimatedStyle]}>
               {movie && (
-                <>
+                <Pressable onPress={handleViewDetails} style={styles.cardPressable}>
                   <Image source={{ uri: `https://image.tmdb.org/t/p/w780${movie.poster_path}` }} style={styles.poster} contentFit="cover" />
                   <LinearGradient
                     colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)", "#000"]}
@@ -248,7 +249,7 @@ export default function RandomMovie() {
                       </Text>
                     )}
                   </LinearGradient>
-                </>
+                </Pressable>
               )}
             </Animated.View>
           </View>
@@ -270,19 +271,9 @@ export default function RandomMovie() {
             {movie && isRevealed ? t("games.random.try-again") : t("games.random.reveal")}
           </Button>
 
-          {movie && isRevealed && (
-            <Animated.View entering={FadeIn} style={{ flex: 1 }}>
-              <Button
-                mode="outlined"
-                onPress={handleViewDetails}
-                style={styles.secondaryButton}
-                contentStyle={styles.buttonContent}
-                labelStyle={styles.buttonLabel}
-                icon="eye"
-                textColor="#fff"
-              >
-                {t("games.random.view-details")}
-              </Button>
+          {movie && isRevealed && details && (
+            <Animated.View entering={FadeIn} style={styles.shareButtonWrapper}>
+              <ShareTicketButton movie={{ ...movie, genres: details.genres, tagline: details.tagline }} providers={details.providers} />
             </Animated.View>
           )}
         </Animated.View>
@@ -364,6 +355,9 @@ const styles = StyleSheet.create({
   },
   backFace: {
     backgroundColor: "#1e1e1e",
+  },
+  cardPressable: {
+    flex: 1,
   },
   solidFrontBackground: {
     flex: 1,
@@ -468,5 +462,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     letterSpacing: 0.5,
+  },
+  shareButtonWrapper: {
+    justifyContent: "center",
   },
 });

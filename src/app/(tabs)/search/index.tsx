@@ -10,6 +10,7 @@ import { Movie } from "../../../../types";
 import FrostedGlass from "../../../components/FrostedGlass";
 import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../../../components/Thumbnail";
 import useTranslation from "../../../service/useTranslation";
+import useIsMounted from "../../../hooks/useIsMounted";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -312,6 +313,10 @@ const SearchScreen = () => {
   ] as { id: "movie" | "tv" | "both"; label: string }[];
 
   const insets = useSafeAreaInsets();
+
+  if (!useIsMounted()) {
+    return <View style={[styles.container, { paddingTop: insets.top, paddingBottom: 15 }]} />;
+  }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: 15 }]}>
