@@ -26,6 +26,7 @@ import { Image } from "expo-image";
 import { Canvas, RadialGradient, Rect, vec } from "@shopify/react-native-skia";
 import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
+import ShareTicketButton from "../../components/ShareTicketButton";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CARD_WIDTH = screenWidth * 0.9;
@@ -214,6 +215,9 @@ export default function RandomMovie() {
               {movie && (
                 <>
                   <Image source={{ uri: `https://image.tmdb.org/t/p/w780${movie.poster_path}` }} style={styles.poster} contentFit="cover" />
+                  <View style={{ position: "absolute", top: 15, right: 15 }}>
+                    <ShareTicketButton movie={movie} />
+                  </View>
                   <LinearGradient
                     colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)", "#000"]}
                     locations={[0, 0.4, 0.75, 1]}

@@ -10,6 +10,7 @@ import Card from "./Card";
 import Poster from "./Poster";
 import RatingIcons from "../RatingIcons";
 import { Movie } from "../../../types";
+import ShareTicketButton from "../ShareTicketButton";
 
 const styles = StyleSheet.create({
   matchModal: {
@@ -184,6 +185,10 @@ export default function MatchModal({ match, hideMatchModal }: { match: Movie | u
               }}
               card={match}
             />
+
+            <View style={{ position: "absolute", bottom: 20, right: 20, zIndex: 20 }}>
+              <ShareTicketButton movie={match} holeColor={theme.colors.primary} />
+            </View>
           </Card>
         </Animated.View>
       </Pressable>
