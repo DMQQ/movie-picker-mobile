@@ -1,16 +1,14 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
-import { Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Button, Icon, SegmentedButtons, Text, TextInput } from "react-native-paper";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Icon, Text, TextInput } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ChooseRegion from "../../../components/ChooseRegion";
 import PageHeading from "../../../components/PageHeading";
 import { roomActions } from "../../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import useTranslation from "../../../service/useTranslation";
 import { router } from "expo-router";
-import { reloadAppAsync } from "expo";
 import { useBlockedMovies } from "../../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../../hooks/useSuperLikedMovies";
 
@@ -49,10 +47,8 @@ const MenuItem = ({ icon, iconColor, label, badge, badgeColor = "#FF4458", onPre
 );
 
 export default function SettingsScreen() {
-  const lg = useAppSelector((state) => state.room.language);
   const nk = useAppSelector((state) => state.room.nickname);
   const [nickname, setNickname] = useState<string>(nk);
-  const [language, setLanguage] = useState<string>(lg);
 
   const dispatch = useAppDispatch();
   const t = useTranslation();
@@ -63,38 +59,14 @@ export default function SettingsScreen() {
   const handleSaveNickname = () => {
     if (nickname.trim().length !== 0) {
       AsyncStorage.setItem("nickname", nickname);
-      dispatch(roomActions.setSettings({ nickname, language }));
-    }
-  };
-
-  const handleSaveLanguage = async () => {
-    await AsyncStorage.setItem("language", language);
-    dispatch(roomActions.setSettings({ nickname, language }));
-  };
-
-  const handleReload = async () => {
-    if (Platform.OS === "ios") {
-      await Updates.reloadAsync({
-        reloadScreenOptions: {
-          backgroundColor: "#000",
-          fade: true,
-          image: require("../../../../assets/images/icon-light.png"),
-        },
-      });
-    } else {
-      await reloadAppAsync("manual reload from settings");
+      dispatch(roomActions.setSettings({ nickname }));
     }
   };
 
   useEffect(() => {
     const timeoutId = setTimeout(handleSaveNickname, 500);
     return () => clearTimeout(timeoutId);
-  }, [nickname, language]);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(handleSaveLanguage, 500);
-    return () => clearTimeout(timeoutId);
-  }, [language, lg, nickname]);
+  }, [nickname]);
 
   return (
     <View style={styles.container}>
@@ -112,43 +84,6 @@ export default function SettingsScreen() {
           />
           <Text style={styles.helperText}>{t("settings.nickname-info")}</Text>
         </Section>
-
-        {/* Localization Section */}
-        <Section title={t("settings.application-language")}>
-          <SegmentedButtons
-            buttons={[
-              { label: "English", value: "en" },
-              { label: "Polish", value: "pl" },
-            ]}
-            onValueChange={setLanguage}
-            value={language}
-          />
-
-          <ChooseRegion
-            onBack={() => router.push("/settings/region-selector")}
-            onRegionSelect={(region) => {
-              const headers: Record<string, string> = {
-                "x-user-region": region.code,
-                "x-user-watch-provider": region.code,
-                "x-user-watch-region": region.code,
-                "x-user-timezone": region.timezone,
-              };
-              dispatch(roomActions.setSettings({ nickname, language, regionalization: headers }));
-              AsyncStorage.setItem("regionalization", JSON.stringify(headers));
-            }}
-          />
-        </Section>
-
-        <Button
-          mode="contained"
-          onPress={handleReload}
-          contentStyle={{
-            padding: 7.5,
-          }}
-          style={{ borderRadius: 100 }}
-        >
-          <Text style={styles.applyButtonText}>{t("settings.apply")}</Text>
-        </Button>
 
         {/* Library Section */}
         <Section title={t("settings.library") || "Library"}>
@@ -260,16 +195,5 @@ const styles = StyleSheet.create({
   aboutText: {
     fontSize: 14,
     color: "rgba(255,255,255,0.5)",
-  },
-  applyButton: {
-    backgroundColor: "#6750a4",
-    borderRadius: 100,
-    paddingVertical: 15,
-    alignItems: "center",
-  },
-  applyButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
   },
 });

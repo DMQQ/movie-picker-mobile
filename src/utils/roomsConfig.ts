@@ -20,7 +20,7 @@ export const getMovieCategories = (t: (key: string) => string) => [
   {
     label: t("room.genres.now_playing"),
     path: `/discover/movie?primary_release_date.gte=${getFormattedDate(-60)}&primary_release_date.lte=${getFormattedDate(
-      60
+      60,
     )}&sort_by=release_date.desc`,
   },
 ];
@@ -46,7 +46,7 @@ type IconMap = { [key: string | number]: { component: any; name: string; color: 
 const CATEGORY_ICON_MAP: IconMap = {
   "/discover/movie?sort_by=popularity.desc&vote_count.gte=100": { component: MaterialIcons, name: "movie", color: "#FF6B35" },
   [`/discover/movie?primary_release_date.gte=${getFormattedDate(
-    -30
+    -30,
   )}&primary_release_date.lte=${getFormattedDate()}&sort_by=release_date.desc`]: {
     component: MaterialIcons,
     name: "play-arrow",

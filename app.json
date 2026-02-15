@@ -3,7 +3,7 @@
     "platforms": ["ios", "android"],
     "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon-dark.png",
     "userInterfaceStyle": "dark",
@@ -60,7 +60,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
-      "buildNumber": "20260213",
+      "buildNumber": "20260215",
       "supportsTablet": true,
       "icon": "./assets/images/icon.icon",
       "infoPlist": {
@@ -81,7 +81,7 @@
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202602130,
+      "versionCode": 202602150,
       "intentFilters": [
         {
           "action": "VIEW",
@@ -110,7 +110,7 @@
         "projectId": "ab2d7ea0-e25f-4063-a2e2-1a449547340b"
       }
     },
-    "runtimeVersion": "4.0.0",
+    "runtimeVersion": "5.0.0",
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
@@ -119,7 +119,7 @@
       "url": "https://flickmate.app/api/manifest",
       "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 0,
-      "runtimeVersion": "4.0.0"
+      "runtimeVersion": "5.0.0"
     }
   }
 }

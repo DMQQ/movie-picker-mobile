@@ -1,12 +1,10 @@
 import { Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useMemo } from "react";
-import { Dimensions, Platform, StyleSheet, TouchableOpacity, View, Pressable } from "react-native";
+import { Dimensions, StyleSheet, TouchableOpacity, View, Pressable } from "react-native";
 import { Button, Text } from "react-native-paper";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { useGetFeaturedQuery } from "../../redux/movie/movieApi";
 import RatingIcons from "../RatingIcons";
-import { BlurViewWrapper } from "../PlatformBlurView";
 import Skeleton from "../Skeleton/Skeleton";
 import { Image, ImageBackground } from "expo-image";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -141,15 +139,21 @@ const FeaturedSectionSkeleton = memo(() => {
 
 const gradient = ["transparent", "rgba(0,0,0,0.1)", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.8)", "#000000"];
 
-const FeaturedSection = memo((props: { selectedChip: string }) => {
+interface FeaturedSectionProps {
+  featured: Movie | null;
+
+  isLoading: boolean;
+}
+
+const FeaturedSection = memo(({ featured, isLoading }: FeaturedSectionProps) => {
   const t = useTranslation();
-  const {
-    data: featured,
-    error,
-    isLoading,
-  } = useGetFeaturedQuery({
-    selectedChip: props.selectedChip || "all",
-  });
+  // const {
+  //   data: featured,
+  //   error,
+  //   isLoading,
+  // } = useGetFeaturedQuery({
+  //   selectedChip: props.selectedChip || "all",
+  // });
 
   const genres = useMemo(() => {
     return (featured?.genres || []).slice(0, 3) as unknown as string[];
@@ -163,8 +167,6 @@ const FeaturedSection = memo((props: { selectedChip: string }) => {
   const thumbnailUrl = useMemo(() => {
     return featured?.poster_path ? "https://image.tmdb.org/t/p/w342" + featured.poster_path : null;
   }, [featured]);
-
-  if (error) return null;
 
   if (isLoading || !featured || !imageUrl) {
     return <FeaturedSectionSkeleton />;
@@ -183,7 +185,7 @@ const FeaturedSection = memo((props: { selectedChip: string }) => {
       >
         <View style={StyleSheet.absoluteFill}>
           <LinearGradient style={styles.gradientContainer} colors={gradient as any}>
-            <Animated.View entering={FadeInDown.duration(600).delay(200)} style={styles.contentWrapper}>
+            <View style={styles.contentWrapper}>
               <Link
                 href={{
                   pathname: "/movie/type/[type]/[id]",
@@ -269,7 +271,7 @@ const FeaturedSection = memo((props: { selectedChip: string }) => {
 
                 <FeaturedQuickActions movie={featured as Movie} />
               </View>
-            </Animated.View>
+            </View>
           </LinearGradient>
         </View>
       </ImageBackground>

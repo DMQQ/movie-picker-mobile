@@ -1,13 +1,15 @@
 import { router, useIsPreview, useLocalSearchParams } from "expo-router";
 import { memo, useCallback, useMemo, useState } from "react";
-import { Dimensions, Platform, View } from "react-native";
+import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { Movie } from "../../../../../types";
 import FloatingMovieHeader from "../../../../components/FloatingMovieHeader";
 import MovieDetails from "../../../../components/Movie/MovieDetails";
 import MovieDetailsSkeleton from "../../../../components/Movie/MovieDetailsSkeleton";
 import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
-import { useGetMovieQuery } from "../../../../redux/movie/movieApi";
+import { useGetMovieProvidersQuery, useGetMovieQuery } from "../../../../redux/movie/movieApi";
+import ShareTicketButton from "../../../../components/ShareTicketButton";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -58,6 +60,8 @@ export default function MovieDetailsScreen() {
     id: string;
   }>();
 
+  const insets = useSafeAreaInsets();
+
   const isPreview = useIsPreview();
 
   const IMG_HEIGHT = useMemo(() => height * (isPreview ? 0.5 : 0.75), [height, isPreview]);
@@ -87,6 +91,11 @@ export default function MovieDetailsScreen() {
     }),
     [movieId, typeOfContent],
   );
+
+  const { data: providers } = useGetMovieProvidersQuery({
+    id: Number(movieId),
+    type: typeOfContent,
+  });
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000", width, height }}>
@@ -128,7 +137,11 @@ export default function MovieDetailsScreen() {
           />
         </Animated.View>
         <View style={{ zIndex: 10, position: "relative" }}>
-          {loading ? <MovieDetailsSkeleton /> : <MovieDetails type={typeOfContent} movie={movie as any} params={params} />}
+          {loading ? (
+            <MovieDetailsSkeleton />
+          ) : (
+            <MovieDetails providers={providers} type={typeOfContent} movie={movie as any} params={params} />
+          )}
         </View>
       </Animated.ScrollView>
 
@@ -136,3 +149,15 @@ export default function MovieDetailsScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  floatingShare: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    padding: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 10,
+  },
+});

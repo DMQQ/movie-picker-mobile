@@ -448,7 +448,8 @@
     "play-again": "Kontynuuj grę",
     "leave-room": "Opuść pokój",
     "play-again-failed": "Nie udało się ponownie rozpocząć gry. Spróbuj ponownie.",
-    "view-summary": "Opuść grę"
+    "view-summary": "Opuść grę",
+    "share-marathon": "Udostępnij"
   },
   "game-rating": {
     "title": "Jak oceniasz tę grę?",

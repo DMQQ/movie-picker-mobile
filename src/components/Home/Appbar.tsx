@@ -81,7 +81,7 @@ function HomeAppbar({ roomId, hasCards }: HomeAppbarProps) {
           key={isHost ? "host" : "regular"}
           effect="clear"
           tintColor={"#ff4444"}
-          style={{ borderRadius: 100, marginLeft: 10, overflow: "hidden" }}
+          style={{ borderRadius: 100, marginLeft: 10, overflow: "hidden", zIndex: 50 }}
           interactive
         >
           {isHost ? (

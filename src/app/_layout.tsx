@@ -24,13 +24,16 @@ function getDeviceSettings() {
   const deviceLocale = locales[0];
   const deviceCalendar = calendars[0];
 
+  // App UI language - only pl or en supported
   const language = deviceLocale?.languageCode === "pl" ? "pl" : "en";
   const regionCode = deviceLocale?.regionCode || "US";
+  const languageTag = deviceLocale?.languageTag || "en-US";
 
   return {
     language,
     nickname: language === "pl" ? "Gość" : "Guest",
     regionalization: {
+      "x-device-language": languageTag,
       "x-user-region": regionCode || "US",
       "x-user-watch-provider": regionCode || "US",
       "x-user-watch-region": regionCode || "US",
@@ -47,8 +50,6 @@ const theme = MD2DarkTheme;
 const MIGRATION_FLAG = "securestore_to_kv_migration_complete";
 
 const KEYS_TO_MIGRATE = [
-  "language",
-  "regionalization",
   "nickname",
   "userId",
   STORAGE_KEY,
@@ -131,28 +132,15 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
       if (!isLoaded || isUpdating) return;
 
       try {
-        let [language, regionalization, nickname] = await Promise.all([
-          AsyncStorage.getItem("language"),
-          AsyncStorage.getItem("regionalization"),
-          AsyncStorage.getItem("nickname"),
-        ]);
-
-        const isFirstTimeUser = !language;
-
-        if (!language) {
-          const deviceSettings = getDeviceSettings();
-          language = deviceSettings.language;
-          nickname = deviceSettings.nickname;
-          regionalization = JSON.stringify(deviceSettings.regionalization);
-        }
-
-        const finalNickname = nickname || (language === "en" ? "Guest" : "Gość");
+        const nickname = await AsyncStorage.getItem("nickname");
+        const deviceSettings = getDeviceSettings();
+        const isFirstTimeUser = !nickname;
 
         dispatch(
           roomActions.setSettings({
-            nickname: finalNickname,
-            language,
-            regionalization: JSON.parse(regionalization || "{}") || ({} as any),
+            nickname: nickname || deviceSettings.nickname,
+            language: deviceSettings.language,
+            regionalization: deviceSettings.regionalization,
           }),
         );
 

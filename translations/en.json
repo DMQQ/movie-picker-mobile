@@ -450,7 +450,8 @@
     "play-again": "Continue Playing",
     "leave-room": "Leave Room",
     "play-again-failed": "Failed to restart game. Please try again.",
-    "view-summary": "Leave Game"
+    "view-summary": "Leave Game",
+    "share-marathon": "Share"
   },
   "game-rating": {
     "title": "How was this game?",

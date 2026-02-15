@@ -8,7 +8,7 @@ import CustomFavourite from "../Favourite";
 import QuickActions from "../QuickActions";
 import RatingIcons from "../RatingIcons";
 import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
-import { useGetMovieProvidersQuery, useGetSimilarQuery, useGetTrailersQuery } from "../../redux/movie/movieApi";
+import { useGetSimilarQuery, useGetTrailersQuery } from "../../redux/movie/movieApi";
 import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
 import { memo, useMemo } from "react";
 import MovieTabs from "./MovieTabs";
@@ -17,8 +17,12 @@ function MovieDetails({
   movie,
   type,
   params,
+
+  providers,
 }: {
   movie: Movie & Record<string, string>;
+
+  providers?: any;
 
   type: string;
 
@@ -28,18 +32,6 @@ function MovieDetails({
   };
 }) {
   const t = useTranslation();
-
-  const { data: providers = [] } = useGetMovieProvidersQuery(
-    {
-      id: Number(params.id),
-      type: params.type,
-    },
-    {
-      refetchOnReconnect: true,
-      refetchOnMountOrArgChange: true,
-      skip: !params.id || !params.type || Number.isNaN(Number(params.id)),
-    },
-  );
 
   const { data: similarData } = useGetSimilarQuery(
     {

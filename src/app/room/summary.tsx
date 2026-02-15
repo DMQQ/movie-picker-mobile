@@ -1,10 +1,13 @@
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import LottieView from "lottie-react-native";
-import { ReactNode, useContext, useEffect, useState, useRef, memo } from "react";
-import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View, ImageBackground, Animated } from "react-native";
-import { Avatar, Button, MD2DarkTheme, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { useContext, useEffect, useState, useRef, memo, useCallback } from "react";
+import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View, ImageBackground, Animated, Modal, Pressable } from "react-native";
+import { Avatar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ViewShot, { captureRef } from "react-native-view-shot";
+import * as Sharing from "expo-sharing";
+import * as Haptics from "expo-haptics";
 import { Movie } from "../../../types";
 import CreateCollectionFromLiked from "../../components/CreateCollectionFromLiked";
 import { FancySpinner } from "../../components/FancySpinner";
@@ -21,6 +24,8 @@ import { LiquidGlassView } from "@callstack/liquid-glass";
 import { BlurView } from "expo-blur";
 import GameRatingPill from "../../components/GameRatingPill";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
+import MarathonTicket from "../../components/MarathonTicket";
+import { useLazyGetSummaryShareQuery } from "../../redux/movie/movieApi";
 
 interface GameSummary {
   roomId: string;
@@ -89,6 +94,7 @@ export default function GameSummary() {
   const [summary, setSummary] = useState<GameSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [shareModalVisible, setShareModalVisible] = useState(false);
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
@@ -392,15 +398,186 @@ export default function GameSummary() {
         style={{
           padding: 15,
           paddingBottom: 0,
+          gap: 10,
+          flexDirection: "row",
         }}
       >
         <Button mode="contained" onPress={handleBackToHome} style={styles.backButton} contentStyle={styles.backButtonContent}>
           {t("game-summary.back-to-home")}
         </Button>
+
+        {(summary?.matchedMovies?.length || 0) > 0 && (
+          <Button
+            mode="outlined"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setShareModalVisible(true);
+            }}
+            style={styles.shareMarathonButton}
+            contentStyle={styles.backButtonContent}
+            icon="share-variant"
+          >
+            {t("game-summary.share-marathon")}
+          </Button>
+        )}
       </View>
+
+      <ShareTicketModal visible={shareModalVisible} onClose={() => setShareModalVisible(false)} roomId={roomId} />
     </View>
   );
 }
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+interface ShareTicketModalProps {
+  visible: boolean;
+  onClose: () => void;
+  roomId: string;
+}
+
+const ShareTicketModal = memo(({ visible, onClose, roomId }: ShareTicketModalProps) => {
+  const viewShotRef = useRef<ViewShot>(null);
+  const [fetchSummaryShare, { data, isLoading, error }] = useLazyGetSummaryShareQuery();
+
+  useEffect(() => {
+    if (visible && roomId) {
+      fetchSummaryShare({ roomId });
+    }
+  }, [visible, roomId, fetchSummaryShare]);
+
+  const captureAndShare = useCallback(async () => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+      const uri = await captureRef(viewShotRef, {
+        format: "png",
+        quality: 1,
+        result: "tmpfile",
+        fileName: `marathon-${roomId}.png`,
+      });
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, {
+          mimeType: "image/png",
+          dialogTitle: "Movie Marathon Ticket",
+        });
+      }
+    } catch (err) {
+      console.error("Failed to capture ticket:", err);
+    }
+  }, [roomId]);
+
+  useEffect(() => {
+    if (!data || !visible) return;
+
+    let timeout = setTimeout(() => {
+      captureAndShare();
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [data, visible, captureAndShare]);
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <View style={shareModalStyles.modalOverlay}>
+        <Pressable style={shareModalStyles.modalBackdrop} onPress={onClose} />
+
+        <View style={shareModalStyles.modalContent}>
+          <IconButton icon="close" size={24} onPress={onClose} style={shareModalStyles.closeButton} iconColor="#000" />
+
+          {isLoading ? (
+            <View style={shareModalStyles.loadingContainer}>
+              <FancySpinner size={60} />
+              <Text style={shareModalStyles.loadingText}>Loading your marathon...</Text>
+            </View>
+          ) : error ? (
+            <View style={shareModalStyles.errorContainer}>
+              <MaterialIcons name="error-outline" size={48} color="#ff6b6b" />
+              <Text style={shareModalStyles.errorText}>Failed to load marathon data</Text>
+            </View>
+          ) : data?.movies && data.movies.length > 0 ? (
+            <>
+              <ViewShot
+                ref={viewShotRef}
+                options={{ format: "png", quality: 1, fileName: `marathon-${roomId}.png` }}
+                style={shareModalStyles.viewShot}
+              >
+                <MarathonTicket movies={data.movies} />
+              </ViewShot>
+            </>
+          ) : (
+            <View style={shareModalStyles.errorContainer}>
+              <MaterialIcons name="movie" size={48} color="#666" />
+              <Text style={shareModalStyles.errorText}>No movies to share</Text>
+            </View>
+          )}
+        </View>
+      </View>
+    </Modal>
+  );
+});
+
+const shareModalStyles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.85)",
+  },
+  modalContent: {
+    alignItems: "center",
+    maxHeight: SCREEN_HEIGHT * 0.9,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 25,
+    right: 25,
+    zIndex: 10,
+    backgroundColor: "rgba(255,255,255,0.1)",
+  },
+  viewShot: {
+    backgroundColor: "#000",
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+
+  shareButtonPressed: {
+    opacity: 0.8,
+  },
+  shareButtonText: {
+    fontFamily: "Bebas",
+    fontSize: 18,
+    letterSpacing: 2,
+    color: "#1a1a1a",
+  },
+  loadingContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 40,
+  },
+  loadingText: {
+    marginTop: 16,
+    color: "#fff",
+    fontFamily: "Bebas",
+    fontSize: 16,
+    letterSpacing: 1,
+  },
+  errorContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 40,
+  },
+  errorText: {
+    marginTop: 12,
+    color: "#999",
+    fontFamily: "Bebas",
+    fontSize: 16,
+    letterSpacing: 1,
+  },
+});
 
 const AnimatedBackgroundImage = memo(({ matchedMovies }: { matchedMovies: Partial<Movie>[] }) => {
   const [bgImageIndexA, setBgImageIndexA] = useState(0);
@@ -875,8 +1052,13 @@ const styles = StyleSheet.create({
   },
   backButton: {
     borderRadius: 100,
+    flex: 1,
   },
   backButtonContent: {
     paddingVertical: 7.5,
+  },
+  shareMarathonButton: {
+    borderRadius: 100,
+    borderColor: "rgba(255,255,255,0.3)",
   },
 });

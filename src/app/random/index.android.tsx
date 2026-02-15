@@ -1,33 +1,28 @@
-import { useCallback, useState } from "react";
-import { Dimensions, Platform, StyleSheet, View } from "react-native";
-import { Badge, Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
+import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
+import { Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
 import Animated, {
   FadeIn,
-  FadeOut,
   SlideInDown,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withSpring,
   withTiming,
-  runOnJS,
   Easing,
   interpolate,
-  withRepeat,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Movie, MovieDetails } from "../../../types";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
-import { useLazyGetMovieQuery, useLazyGetRandomSectionQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
 import PageHeading from "../../components/PageHeading";
-import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { Canvas, RadialGradient, Rect, vec } from "@shopify/react-native-skia";
-import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
+import { FilterButton } from "../../components/MediaFilters";
+import ShareTicketButton from "../../components/ShareTicketButton";
+import { useRandomMovie } from "../../hooks/useRandomMovie";
+import { RandomQuestionMarks, ActionButtons } from "../../components/Random/shared";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CARD_WIDTH = screenWidth * 0.9;
@@ -37,116 +32,25 @@ const PRIMARY_COLOR = MD2DarkTheme.colors.primary;
 export default function RandomMovie() {
   const t = useTranslation();
   const insets = useSafeAreaInsets();
-  const [getRandomSection] = useLazyGetRandomSectionQuery();
-  const [getMovieDetails] = useLazyGetMovieQuery();
-  const { getFilterParams } = useMediaFilters();
-
-  const [movie, setMovie] = useState<Movie | null>(null);
-  const [seenMovies, setSeenMovies] = useState<number[]>([]);
-  const [details, setDetails] = useState<MovieDetails | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isRevealed, setIsRevealed] = useState(false);
 
   const rotateY = useSharedValue(0);
   const scale = useSharedValue(1);
   const diceRotate = useSharedValue(0);
 
-  const triggerHaptic = useCallback((type: "impact" | "notification") => {
-    if (Platform.OS === "ios") {
-      if (type === "impact") {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      } else {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
-    }
-  }, []);
-
-  const resetCard = useCallback(() => {
-    setIsRevealed(false);
-    rotateY.value = withTiming(0, { duration: 400, easing: Easing.out(Easing.cubic) });
-  }, [rotateY]);
-
-  const revealCard = useCallback(() => {
-    setIsRevealed(true);
-    rotateY.value = withSequence(withTiming(0, { duration: 0 }), withTiming(180, { duration: 600, easing: Easing.out(Easing.back(1.5)) }));
-    scale.value = withSequence(withTiming(0.9, { duration: 100 }), withSpring(1, { damping: 12, stiffness: 100 }));
-    runOnJS(triggerHaptic)("notification");
-  }, [rotateY, scale, triggerHaptic]);
-
-  const fetchRandomMovie = useCallback(async () => {
-    if (isLoading) return;
-    setIsLoading(true);
-
-    if (isRevealed) {
-      resetCard();
-      setTimeout(async () => {
-        startSearch();
-      }, 400);
-    } else {
-      startSearch();
-    }
-
-    async function startSearch() {
-      setMovie(null);
-      setDetails(null);
-      triggerHaptic("impact");
-
-      diceRotate.value = withRepeat(withTiming(360, { duration: 800, easing: Easing.linear }), -1, false);
-
-      try {
-        const filterParams = getFilterParams();
-        const response = await getRandomSection({ ...filterParams, notMovies: seenMovies.join(",") });
-        if (response.data?.results?.length > 0) {
-          const randomIndex = Math.floor(Math.random() * response.data.results.length);
-          const selectedMovie = response.data.results[randomIndex];
-          const type = selectedMovie.type === "tv" ? "tv" : "movie";
-
-          const detailsResponse = await getMovieDetails({ id: selectedMovie.id, type });
-
-          setTimeout(() => {
-            setMovie(selectedMovie);
-            if (detailsResponse.data) {
-              setDetails(detailsResponse.data);
-            }
-            setSeenMovies((prev) => [...prev, selectedMovie.id]);
-            diceRotate.value = 0;
-            setIsLoading(false);
-            revealCard();
-          }, 600);
-        } else {
-          setIsLoading(false);
-          diceRotate.value = 0;
-        }
-      } catch (error) {
-        setIsLoading(false);
-        diceRotate.value = 0;
-      }
-    }
-  }, [
-    isLoading,
-    isRevealed,
-    getRandomSection,
-    getMovieDetails,
-    resetCard,
-    revealCard,
-    triggerHaptic,
-    diceRotate,
-    getFilterParams,
-    seenMovies,
-  ]);
-
-  const handleViewDetails = useCallback(() => {
-    if (!movie) return;
-    const type = movie.type === "tv" ? "tv" : "movie";
-    router.push({
-      pathname: "/movie/type/[type]/[id]",
-      params: {
-        id: movie.id,
-        img: movie.poster_path,
-        type: type,
+  const { movie, details, isLoading, isRevealed, superLikeIconScale, fetchRandomMovie, handleViewDetails, handleSuperLike, handleBlock } =
+    useRandomMovie({
+      diceRotate,
+      onReveal: () => {
+        rotateY.value = withSequence(
+          withTiming(0, { duration: 0 }),
+          withTiming(180, { duration: 600, easing: Easing.out(Easing.back(1.5)) }),
+        );
+        scale.value = withSequence(withTiming(0.9, { duration: 100 }), withSpring(1, { damping: 12, stiffness: 100 }));
+      },
+      onReset: () => {
+        rotateY.value = withTiming(0, { duration: 400, easing: Easing.out(Easing.cubic) });
       },
     });
-  }, [movie]);
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
     const rotateValue = interpolate(rotateY.value, [0, 180], [0, 180]);
@@ -197,20 +101,19 @@ export default function RandomMovie() {
                   </Rect>
                 </Canvas>
 
-                {/* Content stays on top */}
                 <Animated.View style={diceIconStyle}>
                   <MaterialCommunityIcons name="dice-multiple" size={100} color="rgba(255,255,255,0.9)" />
                 </Animated.View>
                 <Text style={styles.frontText}>{isLoading ? t("games.random.revealing") : t("games.random.hint")}</Text>
 
-                <RandomQuestionMarks />
+                <RandomQuestionMarks cardWidth={CARD_WIDTH} cardHeight={CARD_HEIGHT} />
               </View>
             </Animated.View>
 
             {/* BACK FACE (Movie) */}
             <Animated.View style={[styles.cardFace, styles.backFace, backAnimatedStyle]}>
               {movie && (
-                <>
+                <Pressable onPress={handleViewDetails} style={styles.cardPressable}>
                   <Image source={{ uri: `https://image.tmdb.org/t/p/w780${movie.poster_path}` }} style={styles.poster} contentFit="cover" />
                   <LinearGradient
                     colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)", "#000"]}
@@ -247,8 +150,16 @@ export default function RandomMovie() {
                         {movie.overview}
                       </Text>
                     )}
+
+                    <ActionButtons
+                      onSuperLike={handleSuperLike}
+                      onBlock={handleBlock}
+                      superLikeLabel={t("swipe.super")}
+                      blockLabel={t("swipe.block")}
+                      superLikeIconScale={superLikeIconScale}
+                    />
                   </LinearGradient>
-                </>
+                </Pressable>
               )}
             </Animated.View>
           </View>
@@ -270,19 +181,9 @@ export default function RandomMovie() {
             {movie && isRevealed ? t("games.random.try-again") : t("games.random.reveal")}
           </Button>
 
-          {movie && isRevealed && (
-            <Animated.View entering={FadeIn} style={{ flex: 1 }}>
-              <Button
-                mode="outlined"
-                onPress={handleViewDetails}
-                style={styles.secondaryButton}
-                contentStyle={styles.buttonContent}
-                labelStyle={styles.buttonLabel}
-                icon="eye"
-                textColor="#fff"
-              >
-                {t("games.random.view-details")}
-              </Button>
+          {movie && isRevealed && details && (
+            <Animated.View entering={FadeIn} style={styles.shareButtonWrapper}>
+              <ShareTicketButton movie={{ ...movie, genres: details.genres, tagline: details.tagline }} providers={details.providers} />
             </Animated.View>
           )}
         </Animated.View>
@@ -290,35 +191,6 @@ export default function RandomMovie() {
     </View>
   );
 }
-
-const RandomQuestionMarks = () => {
-  return (
-    <>
-      {[...Array(7)].map((_, index) => {
-        const segmentHeight = CARD_HEIGHT / 7;
-        const randomTop = index * segmentHeight + Math.random() * (segmentHeight - 30);
-
-        const horizontalBias = index % 2 === 0 ? 0.1 : 0.5;
-        const randomLeft = Math.random() * (CARD_WIDTH * 0.4) + CARD_WIDTH * horizontalBias;
-
-        return (
-          <MaterialCommunityIcons
-            key={index}
-            name="help"
-            size={Math.trunc(Math.random() * 20 + 15)}
-            color="rgba(255,255,255,0.15)"
-            style={{
-              position: "absolute",
-              top: randomTop,
-              left: randomLeft,
-              transform: [{ rotate: `${Math.random() * 15}deg` }],
-            }}
-          />
-        );
-      })}
-    </>
-  );
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -365,9 +237,12 @@ const styles = StyleSheet.create({
   backFace: {
     backgroundColor: "#1e1e1e",
   },
+  cardPressable: {
+    flex: 1,
+  },
   solidFrontBackground: {
     flex: 1,
-    backgroundColor: PRIMARY_COLOR, // Solid Primary Color
+    backgroundColor: PRIMARY_COLOR,
     alignItems: "center",
     justifyContent: "center",
     gap: 24,
@@ -455,12 +330,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 30,
   },
-  secondaryButton: {
-    flex: 1,
-    borderRadius: 30,
-    borderColor: "rgba(255,255,255,0.4)",
-    borderWidth: 1,
-  },
   buttonContent: {
     paddingVertical: 8,
   },
@@ -468,5 +337,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     letterSpacing: 0.5,
+  },
+  shareButtonWrapper: {
+    justifyContent: "center",
   },
 });

@@ -1,4 +1,4 @@
-import { Fragment, memo, useCallback } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import { RefreshControl, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, { FadeIn } from "react-native-reanimated";
@@ -10,6 +10,9 @@ import GameInviteSection, { GAME_SECTION_HEIGHT } from "./GameInviteSection";
 import LoadingSkeleton from "./LoadingSkeleton";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { SectionData } from "../../types";
+import { useIsFocused } from "@react-navigation/native";
+import { useGetFeaturedQuery } from "../../redux/movie/movieApi";
+import useIsMounted from "../../hooks/useIsMounted";
 
 const getItemCount = (data: any) => data?.length || 0;
 const getItem = (data: any, index: number) => data[index];
@@ -54,18 +57,32 @@ const getItemLayout = (_: any, index: number) => {
 
 const categoryKeyExtractor = (item: any) => item.name.toString();
 
-const gameTypes: ("social" | "quick" | "voter" | "fortune" | "random" | "all-games")[] = ["social", "quick", "voter", "fortune", "random", "all-games"];
+const gameTypes: ("social" | "quick" | "voter" | "fortune" | "random" | "all-games")[] = [
+  "social",
+  "quick",
+  "voter",
+  "fortune",
+  "random",
+  "all-games",
+];
 
 const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
   const t = useTranslation();
 
-  const { data, isLoading, isError, hasMore, fetchNextPage, refetch, isRefreshing } = useInfiniteLandingPageMovies({ categoryId });
+  const { data, isLoading, isError, hasMore, fetchNextPage, refetch, isRefreshing } = useInfiniteLandingPageMovies({
+    categoryId,
+    pageSize: 4,
+  });
 
   const onEndReached = useCallback(() => {
     if (!isError && hasMore) {
       fetchNextPage();
     }
   }, [isError, hasMore, fetchNextPage]);
+
+  const { data: featured, isLoading: isFeaturedLoading } = useGetFeaturedQuery({
+    selectedChip: categoryId || "all",
+  });
 
   const renderItem = useCallback(({ item, index }: { item: SectionData; index: number }) => {
     if (!item || typeof item !== "object") return null;
@@ -79,6 +96,12 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
       </View>
     );
   }, []);
+
+  const isMounted = useIsMounted();
+
+  if (!isMounted && categoryId !== "all") {
+    return null;
+  }
 
   return (
     <VirtualizedList
@@ -95,7 +118,7 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
       getItemLayout={getItemLayout}
       onEndReached={onEndReached}
       onEndReachedThreshold={0.25}
-      ListHeaderComponent={<FeaturedSection selectedChip={categoryId} />}
+      ListHeaderComponent={<FeaturedSection isLoading={isFeaturedLoading} featured={featured || null} />}
       contentContainerStyle={{ paddingTop: 100, paddingBottom: 50 }}
       refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={refetch} />}
       style={{ flex: 1 }}
