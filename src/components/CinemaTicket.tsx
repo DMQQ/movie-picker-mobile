@@ -141,7 +141,7 @@ const CinemaTicket = forwardRef<View, CinemaTicketProps>(
     const displayHeader = headerText || getRandomHeader();
     const displayPickup = pickupLine || getRandomPickup();
     const movieTitle = movie.title || movie.name || "Unknown Movie";
-    const releaseYear = movie.release_date?.split("-")[0] || "TBA";
+    const releaseYear = movie.release_date?.split("-")[0] || "";
 
     // Handle both genre formats
     const genreNames = movie.genres ? movie.genres.slice(0, 3).map((g) => g.name) : movie.mapped_genres?.slice(0, 3) || [];

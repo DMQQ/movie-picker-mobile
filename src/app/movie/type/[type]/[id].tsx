@@ -9,6 +9,7 @@ import MovieDetailsSkeleton from "../../../../components/Movie/MovieDetailsSkele
 import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../../../../redux/movie/movieApi";
 import ShareTicketButton from "../../../../components/ShareTicketButton";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -58,6 +59,8 @@ export default function MovieDetailsScreen() {
     img?: string;
     id: string;
   }>();
+
+  const insets = useSafeAreaInsets();
 
   const isPreview = useIsPreview();
 
@@ -150,9 +153,8 @@ export default function MovieDetailsScreen() {
 const styles = StyleSheet.create({
   floatingShare: {
     position: "absolute",
-    left: 0,
     right: 0,
-    bottom: 0,
+    top: 0,
     padding: 15,
     alignItems: "center",
     justifyContent: "center",
