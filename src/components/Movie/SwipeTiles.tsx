@@ -232,10 +232,10 @@ const SwipeTile = ({
           blockCard={actions.blockCard ? moveOnPress(blockCard, "left") : undefined}
           superLikeCard={actions.superLikeCard ? moveOnPress(superLikeCard, "right") : undefined}
           labels={{
-            block: t("swipe.block"),
-            dislike: t("swipe.nope"),
-            like: t("swipe.like"),
-            superLike: t("swipe.super"),
+            block: t("swipe.block") as string,
+            dislike: t("swipe.nope") as string,
+            like: t("swipe.like") as string,
+            superLike: t("swipe.super") as string,
           }}
         />
       )}

@@ -68,6 +68,18 @@ export function createMovieInteractionsRepo(db: SQLiteDatabase) {
         ])
         .then((result) => !!result);
     },
+
+    async canReview() {
+      const result = await db.getFirstAsync("SELECT COUNT(*) as count FROM movie_interactions WHERE interaction_type = 'super_liked'");
+
+      const count = (result as any)?.count ?? 0;
+
+      if (count === 3) return true;
+
+      if (count > 3 && count % 10 === 0) return true;
+
+      return false;
+    },
   };
 }
 

@@ -3,6 +3,10 @@ import useRoom from "../service/useRoom";
 import { useBlockedMovies } from "../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
 import type { Movie } from "../../types";
+import { useDatabase } from "./DatabaseContext";
+import { Platform } from "react-native";
+import ReviewManager from "../utils/rate";
+import * as StoreReview from "expo-store-review";
 
 type RoomContextValue = ReturnType<typeof useRoom> & {
   blockAndDislikeCard: (card: Movie, index: number) => Promise<void>;
@@ -48,12 +52,24 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
     [blockMovie, room.dislikeCard],
   );
 
+  const { movieInteractions, isReady } = useDatabase();
+
   const superLikeAndLikeCard = useCallback(
     async (card: Movie, index: number) => {
       await superLikeMovie(card);
       await room.likeCard(card, index);
+
+      if (isReady && movieInteractions)
+        movieInteractions.canReview().then(async (canReview) => {
+          if (canReview) {
+            if (Platform.OS !== "web" && (await StoreReview.hasAction()) && (await ReviewManager.canRequestReviewFromRating())) {
+              await StoreReview.requestReview();
+              await ReviewManager.recordReviewRequestFromRating();
+            }
+          }
+        });
     },
-    [superLikeMovie, room.likeCard],
+    [superLikeMovie, room.likeCard, isReady],
   );
 
   const value = useMemo(

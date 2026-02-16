@@ -2,6 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useMovieInteractions } from "../context/DatabaseContext";
 import type { MovieInteraction, MovieType } from "../database/types";
 import type { Movie } from "../../types";
+import { Platform } from "react-native";
+import ReviewManager from "../utils/rate";
+import * as StoreReview from "expo-store-review";
 
 export function useSuperLikedMovies() {
   const { movieInteractions, isReady } = useMovieInteractions();
@@ -38,6 +41,15 @@ export function useSuperLikedMovies() {
         poster_path: movie.poster_path || null,
       });
       await refresh();
+
+      movieInteractions.canReview().then(async (canReview) => {
+        if (canReview) {
+          if (Platform.OS !== "web" && (await StoreReview.hasAction()) && (await ReviewManager.canRequestReviewFromRating())) {
+            await StoreReview.requestReview();
+            await ReviewManager.recordReviewRequestFromRating();
+          }
+        }
+      });
     },
     [movieInteractions, refresh],
   );

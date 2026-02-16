@@ -186,14 +186,14 @@ export default function Home() {
 
   const playAgainActions: UserInputModalAction[] = [
     {
-      label: t("dialogs.scan-code.endGame"),
+      label: t("dialogs.scan-code.endGame") as string,
       mode: "text" as const,
       textColor: "rgba(255, 100, 100, 0.9)",
       onPress: handleEndGame,
       disabled: playAgainLoading,
     },
     {
-      label: t("game-summary.play-again"),
+      label: t("game-summary.play-again") as string,
       mode: "contained",
       onPress: handlePlayAgain,
       disabled: playAgainLoading,
@@ -203,7 +203,7 @@ export default function Home() {
 
   const waitingActions: UserInputModalAction[] = [
     {
-      label: t("game-summary.view-summary"),
+      label: t("game-summary.view-summary") as string,
       mode: "outlined",
       onPress: handleViewSummary,
     },
@@ -212,15 +212,15 @@ export default function Home() {
   useEffect(() => {
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
       Alert.alert(
-        t("dialogs.leave-room.title"),
-        t("dialogs.leave-room.message"),
+        t("dialogs.leave-room.title") as string,
+        t("dialogs.leave-room.message") as string,
         [
           {
-            text: t("common.cancel"),
+            text: t("common.cancel") as string,
             style: "cancel",
           },
           {
-            text: t("common.yes"),
+            text: t("common.yes") as string,
             onPress: () => {
               router.replace("/(tabs)");
             },
@@ -274,7 +274,7 @@ export default function Home() {
                 router.replace("/(tabs)");
               }}
             >
-              {t("dialogs.qr.close")}
+              {t("dialogs.qr.close") as string}
             </Button>
           </Dialog.Actions>
         </Dialog>
@@ -282,8 +282,8 @@ export default function Home() {
 
       <UserInputModal
         visible={showPlayAgainDialog}
-        title={t("game-summary.game-completed")}
-        subtitle={t("room.play-again-prompt")}
+        title={t("game-summary.game-completed") as string}
+        subtitle={t("room.play-again-prompt") as string}
         actions={playAgainActions}
         statusBarTranslucent
         maxHeight="50%"
@@ -291,8 +291,8 @@ export default function Home() {
 
       <UserInputModal
         visible={waitingForHost}
-        title={t("game-summary.game-completed")}
-        subtitle={t("room.waiting-for-host-decision")}
+        title={t("game-summary.game-completed") as string}
+        subtitle={t("room.waiting-for-host-decision") as string}
         actions={waitingActions}
         statusBarTranslucent
         maxHeight="50%"

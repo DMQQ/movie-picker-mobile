@@ -141,13 +141,14 @@ export default function RandomMovie() {
                       ) : null}
 
                       {details?.genres && details.genres.length > 0 && (
-                        <View style={styles.genresRow}>
+                        <>
+                          <Text style={styles.dotSeparator}>•</Text>
                           {details.genres.slice(0, 3).map((genre) => (
                             <Chip key={genre.id} style={styles.genreChip} textStyle={styles.genreText} compact>
                               {genre.name}
                             </Chip>
                           ))}
-                        </View>
+                        </>
                       )}
                     </View>
 
@@ -290,6 +291,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
     marginBottom: 10,
+    flexWrap: "wrap",
   },
   ratingText: {
     color: "#e2e8f0",
