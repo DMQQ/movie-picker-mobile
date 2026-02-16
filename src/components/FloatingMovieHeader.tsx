@@ -11,6 +11,7 @@ import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import PlatformBlurView, { BlurViewWrapper } from "./PlatformBlurView";
 import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
+import ShareTicketButton, { IconShareButton } from "./ShareTicketButton";
 
 const { height } = Dimensions.get("screen");
 const IMG_HEIGHT = height * 0.75;
@@ -26,39 +27,6 @@ interface FloatingMovieHeaderProps {
 
 function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", onBack }: FloatingMovieHeaderProps) {
   const insets = useSafeAreaInsets();
-  const dispatch = useAppDispatch();
-  const groups = useAppSelector((state) => state.favourite.groups);
-
-  const isInFavourites = useMemo(() => {
-    const favouritesGroup = groups.find((g) => g?.id === "1");
-    if (!favouritesGroup) return false;
-    return favouritesGroup.movies.some((m) => m?.id === movie?.id);
-  }, [groups, movie?.id]);
-
-  const handleFavouritePress = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (!movie) return;
-
-    if (!isInFavourites) {
-      dispatch(
-        addToGroup({
-          groupId: "1",
-          item: {
-            id: movie.id,
-            imageUrl: movie.poster_path,
-            type: movie.type || (movie.title ? "movie" : "tv"),
-          },
-        }),
-      );
-    } else {
-      dispatch(
-        removeFromGroup({
-          groupId: "1",
-          movieId: movie.id,
-        }),
-      );
-    }
-  }, [dispatch, movie, isInFavourites]);
 
   const threshold = useMemo(() => IMG_HEIGHT * 0.9, []);
 
@@ -180,14 +148,9 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
           <PlatformBlurView
             interactive
             style={[styles.buttonContainer, Platform.OS === "android" && styles.androidButtonBackground]}
-            tintColor="#FF0000"
+            tintColor={MD2DarkTheme.colors.primary}
           >
-            <IconButton
-              icon={isInFavourites ? "heart" : "heart-outline"}
-              size={25}
-              onPress={handleFavouritePress}
-              iconColor={isInFavourites ? "#FF6B6B" : "white"}
-            />
+            <IconShareButton movie={movie} />
           </PlatformBlurView>
         </Animated.View>
       </View>

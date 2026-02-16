@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import LottieView from "lottie-react-native";
-import { useContext, useEffect, useState, useRef, memo, useCallback } from "react";
+import { useContext, useEffect, useState, useRef, memo, useCallback, useMemo } from "react";
 import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View, ImageBackground, Animated, Modal, Pressable } from "react-native";
 import { Avatar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -26,8 +26,16 @@ import GameRatingPill from "../../components/GameRatingPill";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import MarathonTicket from "../../components/MarathonTicket";
 import { useLazyGetSummaryShareQuery } from "../../redux/movie/movieApi";
+import ReviewManager from "../../utils/rate";
+import * as StoreReview from "expo-store-review";
 
-interface GameSummary {
+interface IMovieSummary {
+  id: number;
+  title: string;
+  poster_path: string;
+}
+
+interface IGameSummary {
   roomId: string;
   type: string;
   genres: number[];
@@ -41,12 +49,14 @@ interface GameSummary {
     finished: boolean;
     totalPicks: number;
     picks: Record<string, string>;
+
+    swipedMovies: {
+      totalSwiped: number;
+      liked: IMovieSummary[];
+      disliked: IMovieSummary[];
+    };
   }>;
-  matchedMovies: Array<{
-    id: number;
-    title: string;
-    poster_path: string;
-  }>;
+  matchedMovies: IMovieSummary[];
   totalMatches: number;
   gameEndReason: string;
 }
@@ -91,7 +101,7 @@ export default function GameSummary() {
   const { socket, userId } = useContext(SocketContext);
   const t = useTranslation();
 
-  const [summary, setSummary] = useState<GameSummary | null>(null);
+  const [summary, setSummary] = useState<IGameSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [shareModalVisible, setShareModalVisible] = useState(false);
@@ -114,7 +124,7 @@ export default function GameSummary() {
           setError(response.error);
         }
       } catch (err) {
-        setError(t("game-summary.failed-to-load"));
+        setError(t("game-summary.failed-to-load") as string);
       } finally {
         setLoading(false);
       }
@@ -155,6 +165,29 @@ export default function GameSummary() {
   };
 
   const likes = useAppSelector((st) => st.room.room.likes);
+  const [shouldShowRatingPill, setShouldShowRatingPill] = useState(false);
+
+  useEffect(() => {
+    const shouldShowRatingPill = () => {
+      if (!summary || !userId) return false;
+
+      return (summary?.matchedMovies.length || 0) < 5;
+    };
+
+    let timeout = setTimeout(async () => {
+      const canReview =
+        (await ReviewManager.canRequestReviewFromRating()) && Platform.OS !== "web" && (await StoreReview.isAvailableAsync());
+
+      if (shouldShowRatingPill() || !canReview) {
+        setShouldShowRatingPill(true);
+      } else if (Platform.OS !== "web" && (await StoreReview.hasAction())) {
+        await StoreReview.requestReview();
+        await ReviewManager.recordReviewRequestFromRating();
+      }
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [summary, userId]);
 
   if (loading) {
     return (
@@ -392,7 +425,7 @@ export default function GameSummary() {
         </View>
       </ScrollView>
 
-      <GameRatingPill roomId={roomId} />
+      <GameRatingPill shouldShow={shouldShowRatingPill} roomId={roomId} />
 
       <View
         style={{

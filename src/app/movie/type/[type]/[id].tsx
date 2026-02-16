@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   floatingShare: {
     position: "absolute",
     right: 0,
-    top: 0,
+    bottom: 0,
     padding: 15,
     alignItems: "center",
     justifyContent: "center",

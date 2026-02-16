@@ -23,6 +23,7 @@ import { FilterButton } from "../../components/MediaFilters";
 import ShareTicketButton from "../../components/ShareTicketButton";
 import { useRandomMovie } from "../../hooks/useRandomMovie";
 import { RandomQuestionMarks, ActionButtons } from "../../components/Random/shared";
+import { ThumbnailSizes } from "../../components/Thumbnail";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CARD_WIDTH = screenWidth * 0.9;
@@ -114,7 +115,12 @@ export default function RandomMovie() {
             <Animated.View style={[styles.cardFace, styles.backFace, backAnimatedStyle]}>
               {movie && (
                 <Pressable onPress={handleViewDetails} style={styles.cardPressable}>
-                  <Image source={{ uri: `https://image.tmdb.org/t/p/w780${movie.poster_path}` }} style={styles.poster} contentFit="cover" />
+                  <Image
+                    placeholder={`https://image.tmdb.org/t/p/${ThumbnailSizes.poster.tiny}${movie.poster_path}`}
+                    source={{ uri: `https://image.tmdb.org/t/p/w780${movie.poster_path}` }}
+                    style={styles.poster}
+                    contentFit="cover"
+                  />
                   <LinearGradient
                     colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)", "#000"]}
                     locations={[0, 0.4, 0.75, 1]}
@@ -133,17 +139,17 @@ export default function RandomMovie() {
                           <Text style={styles.ratingText}>{details.runtime} min</Text>
                         </>
                       ) : null}
-                    </View>
 
-                    {details?.genres && details.genres.length > 0 && (
-                      <View style={styles.genresRow}>
-                        {details.genres.slice(0, 3).map((genre) => (
-                          <Chip key={genre.id} style={styles.genreChip} textStyle={styles.genreText} compact>
-                            {genre.name}
-                          </Chip>
-                        ))}
-                      </View>
-                    )}
+                      {details?.genres && details.genres.length > 0 && (
+                        <View style={styles.genresRow}>
+                          {details.genres.slice(0, 3).map((genre) => (
+                            <Chip key={genre.id} style={styles.genreChip} textStyle={styles.genreText} compact>
+                              {genre.name}
+                            </Chip>
+                          ))}
+                        </View>
+                      )}
+                    </View>
 
                     {movie.overview && (
                       <Text style={styles.overview} numberOfLines={3}>
@@ -298,10 +304,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 6,
-    marginBottom: 10,
   },
   genreChip: {
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: "rgba(255,255,255,0.3)",
     height: 26,
   },
   genreText: {

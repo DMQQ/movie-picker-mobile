@@ -1,7 +1,7 @@
 import * as StoreReview from "expo-store-review";
 import { AsyncStorage } from "expo-sqlite/kv-store";
 
-const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
+const TWO_WEEKS_MS = 7 * 24 * 60 * 60 * 1000;
 
 class ReviewManager {
   private static readonly REVIEW_KEY = "app_review_requested";

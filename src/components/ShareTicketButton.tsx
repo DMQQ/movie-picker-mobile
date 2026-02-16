@@ -132,6 +132,70 @@ function ShareTicketButton({ movie, providers, headerText, pickupLine, holeColor
   );
 }
 
+export function IconShareButton({ movie }: { movie: Movie }) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const viewShotRef = useRef<ViewShot>(null);
+
+  const openModal = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setModalVisible(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setModalVisible(false);
+  }, []);
+
+  const captureAndShare = useCallback(async () => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+      const uri = await captureRef(viewShotRef, {
+        format: "png",
+        quality: 1,
+        result: "tmpfile",
+        fileName: `${movie.title || movie.name}.png`,
+      });
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, {
+          mimeType: "image/png",
+          dialogTitle: `${movie.title || movie.name} - Movie Ticket`,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to capture ticket:", error);
+    }
+  }, [movie?.title, movie?.name]);
+
+  return (
+    <>
+      <IconButton icon="share-variant" size={24} onPress={openModal} iconColor="#fff" />
+
+      <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={closeModal}>
+        <View style={styles.modalOverlay}>
+          <Pressable style={styles.modalBackdrop} onPress={closeModal} />
+
+          <View style={styles.modalContent}>
+            <IconButton icon="close" size={24} onPress={closeModal} style={styles.closeButton} iconColor="#fff" />
+
+            <ViewShot
+              ref={viewShotRef}
+              options={{ format: "png", quality: 1, fileName: `${movie.title || movie.name}.png` }}
+              style={styles.viewShot}
+            >
+              <CinemaTicket movie={movie} providers={{} as any} />
+            </ViewShot>
+
+            <Pressable onPress={captureAndShare} style={({ pressed }) => [styles.shareButton, pressed && styles.shareButtonPressed]}>
+              <Text style={styles.shareButtonText}>Share</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    </>
+  );
+}
+
 const styles = StyleSheet.create({
   // Ticket Button
   ticketWrapper: {

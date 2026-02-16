@@ -3,14 +3,14 @@ import { View, StyleSheet, TouchableOpacity, Platform, TextInput } from "react-n
 import { Text } from "react-native-paper";
 import { withSpring, withSequence, useSharedValue } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
-import * as StoreReview from "expo-store-review";
 import { SocketContext } from "../context/SocketContext";
-import ReviewManager from "../utils/rate";
 import UserInputModal, { UserInputModalAction } from "./UserInputModal";
 import useTranslation from "../service/useTranslation";
 
 interface GameRatingPillProps {
   roomId: string;
+
+  shouldShow: boolean;
 }
 
 type RatingType = "bad" | "mid" | "good";
@@ -33,7 +33,7 @@ const RATING_CONFIG = {
   },
 };
 
-export default function GameRatingPill({ roomId }: GameRatingPillProps) {
+export default function GameRatingPill({ roomId, shouldShow }: GameRatingPillProps) {
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
   const [selectedRating, setSelectedRating] = useState<RatingType | null>(null);
@@ -65,21 +65,6 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
     if (rating === "bad") {
       setShowFeedbackInput(true);
       return;
-    }
-
-    if (rating === "good") {
-      try {
-        if (
-          Platform.OS !== "web" &&
-          (await StoreReview.hasAction()) &&
-          (await ReviewManager.canRequestReviewFromRating())
-        ) {
-          await StoreReview.requestReview();
-          await ReviewManager.recordReviewRequestFromRating();
-        }
-      } catch (error) {
-        console.error("Error requesting store review:", error);
-      }
     }
 
     await submitRating(rating);
@@ -169,10 +154,12 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
 
   return (
     <UserInputModal
-      visible={showModal}
-      title={showFeedbackInput ? t("game-rating.feedback-title") || "What went wrong?" : t("game-rating.title")}
+      visible={showModal && shouldShow}
+      title={showFeedbackInput ? (t("game-rating.feedback-title") as string) || "What went wrong?" : (t("game-rating.title") as string)}
       subtitle={
-        showFeedbackInput ? t("game-rating.feedback-subtitle") || "Help us improve by sharing your feedback" : t("game-rating.subtitle")
+        (showFeedbackInput
+          ? t("game-rating.feedback-subtitle") || "Help us improve by sharing your feedback"
+          : t("game-rating.subtitle")) as string
       }
       actions={actions}
       statusBarTranslucent
@@ -181,7 +168,7 @@ export default function GameRatingPill({ roomId }: GameRatingPillProps) {
         <View style={styles.feedbackContainer}>
           <TextInput
             style={styles.feedbackInput}
-            placeholder={t("game-rating.feedback-placeholder") || "Tell us what went wrong..."}
+            placeholder={(t("game-rating.feedback-placeholder") as string) || "Tell us what went wrong..."}
             placeholderTextColor="rgba(255, 255, 255, 0.4)"
             value={feedbackText}
             onChangeText={setFeedbackText}

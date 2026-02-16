@@ -563,5 +563,65 @@
   },
   "rate-app": {
     "prompt": "Podoba Ci się aplikacja? Oceń nas!"
+  },
+  "ticket": {
+    "unknown-movie": "Nieznany Film",
+    "unknown": "Nieznane",
+    "watch-it-on": "Oglądaj na",
+    "scan-to-get-app": "ZESKANUJ, ABY POBRAĆ APLIKACJĘ",
+    "app-tagline": "Znajdź swój następny film razem",
+    "flickmate-presents": "FLICKMATE PREZENTUJE",
+    "films": "FILMÓW",
+    "cinema": {
+      "headers": [
+        "Dzisiejszy wybór",
+        "Los przemówił.",
+        "Wszechświat zdecydował.",
+        "Bez odwrotu.",
+        "Czas na film.",
+        "Przeznaczenie czeka.",
+        "Wybór został dokonany.",
+        "To jest ten.",
+        "Popcorn gotowy?",
+        "Zaczynamy."
+      ],
+      "pickups": [
+        "Zapraszam do wspólnego oglądania!",
+        "Ty, ja i ten film.",
+        "Zajmiesz mi miejsce?",
+        "Nie zapomnij o popcornie!",
+        "Wieczór filmowy wzywa...",
+        "Ten jest dla nas."
+      ]
+    },
+    "marathon": {
+      "headers": [
+        "Tryb Maraton",
+        "Potrójny Seans",
+        "Maraton Filmowy",
+        "Zatwierdzone do Binge",
+        "Wyczyść Kalendarz",
+        "Ostateczny Zestaw",
+        "Hit za Hitem",
+        "Kino Non-Stop"
+      ],
+      "pickups": [
+        "Przekąski na całą noc?",
+        "Odwołaj wszystkie plany!",
+        "To będzie długa noc...",
+        "Weź dodatkowy popcorn!",
+        "Gotowy na maraton filmowy?",
+        "Kanapa czeka."
+      ],
+      "bonus-headings": [
+        "Jeśli Jeszcze Nie Śpisz...",
+        "Runda Bonusowa",
+        "Wciąż Dajesz Radę?",
+        "Dla Odważnych",
+        "Dodatkowe Punkty",
+        "Specjały Dla Nocnych Marków",
+        "After Party"
+      ]
+    }
   }
 }

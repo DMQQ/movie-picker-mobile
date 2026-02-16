@@ -1,9 +1,10 @@
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useMemo } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { Text } from "react-native-paper";
 import { Image } from "expo-image";
 import QRCode from "react-native-qrcode-svg";
 import RatingIcons from "./RatingIcons";
+import useTranslation from "../service/useTranslation";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const TICKET_WIDTH = SCREEN_WIDTH - 48;
@@ -38,39 +39,7 @@ interface MarathonTicketProps {
   ticketColor?: string;
 }
 
-const headerTexts = [
-  "Marathon Mode",
-  "Triple Feature",
-  "Movie Marathon",
-  "Binge Approved",
-  "Clear Your Schedule",
-  "The Ultimate Lineup",
-  "Back-to-Back Hits",
-  "Non-Stop Cinema",
-];
-
-const pickupLines = [
-  "Snacks for the whole night?",
-  "Cancel all your plans!",
-  "It's gonna be a long night...",
-  "Bring extra popcorn!",
-  "Ready for a movie marathon?",
-  "The couch awaits.",
-];
-
-const bonusHeadings = [
-  "If You're Still Awake...",
-  "Bonus Round",
-  "Still Going Strong?",
-  "For The Brave Ones",
-  "Extra Credits",
-  "Night Owl Specials",
-  "The After Party",
-];
-
-const getRandomHeader = () => headerTexts[Math.floor(Math.random() * headerTexts.length)];
-const getRandomPickup = () => pickupLines[Math.floor(Math.random() * pickupLines.length)];
-const getRandomBonusHeading = () => bonusHeadings[Math.floor(Math.random() * bonusHeadings.length)];
+const getRandomItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
 const formatRuntime = (minutes?: number): string => {
   if (!minutes) return "";
@@ -117,8 +86,8 @@ const getGenreName = (genre: string | Genre): string => {
   return typeof genre === "string" ? genre : genre.name;
 };
 
-const MovieRow = memo(({ movie, isLast }: { movie: MarathonMovie; isLast: boolean }) => {
-  const title = movie.title || movie.name || "Unknown";
+const MovieRow = memo(({ movie, isLast, unknownText }: { movie: MarathonMovie; isLast: boolean; unknownText: string }) => {
+  const title = movie.title || movie.name || unknownText;
   const runtime = formatRuntime(movie.runtime);
   const genres = movie.genres?.slice(0, 3) || [];
 
@@ -157,8 +126,8 @@ const MovieRow = memo(({ movie, isLast }: { movie: MarathonMovie; isLast: boolea
   );
 });
 
-const BonusPoster = memo(({ movie }: { movie: MarathonMovie }) => {
-  const title = movie.title || movie.name || "Unknown";
+const BonusPoster = memo(({ movie, unknownText }: { movie: MarathonMovie; unknownText: string }) => {
+  const title = movie.title || movie.name || unknownText;
 
   return (
     <View style={styles.bonusItem}>
@@ -171,9 +140,16 @@ const BonusPoster = memo(({ movie }: { movie: MarathonMovie }) => {
 });
 
 const MarathonTicket = forwardRef<View, MarathonTicketProps>(({ movies, headerText, pickupLine, ticketColor = "#F5F0E1" }, ref) => {
-  const displayHeader = headerText || getRandomHeader();
-  const displayPickup = pickupLine || getRandomPickup();
-  const bonusHeading = getRandomBonusHeading();
+  const t = useTranslation();
+
+  const headerTexts = useMemo(() => t("ticket.marathon.headers") as string[], [t]);
+  const pickupLines = useMemo(() => t("ticket.marathon.pickups") as string[], [t]);
+  const bonusHeadings = useMemo(() => t("ticket.marathon.bonus-headings") as string[], [t]);
+
+  const displayHeader = headerText || getRandomItem(headerTexts);
+  const displayPickup = pickupLine || getRandomItem(pickupLines);
+  const bonusHeading = getRandomItem(bonusHeadings);
+  const unknownText = t("ticket.unknown") as string;
 
   const mainMovies = movies.slice(0, MAIN_MOVIES);
   const bonusMovies = movies.slice(MAIN_MOVIES, MAIN_MOVIES + MAX_BONUS_MOVIES);
@@ -187,10 +163,12 @@ const MarathonTicket = forwardRef<View, MarathonTicketProps>(({ movies, headerTe
       <View style={[styles.ticketBody, { backgroundColor: ticketColor }]}>
         {/* Header Section */}
         <View style={styles.headerSection}>
-          <Text style={styles.headerLabel}>FLICKMATE PRESENTS</Text>
+          <Text style={styles.headerLabel}>{t("ticket.flickmate-presents")}</Text>
           <Text style={styles.headerText}>{displayHeader.toUpperCase()}</Text>
           <View style={styles.countBadge}>
-            <Text style={styles.countText}>{movieCount} FILMS</Text>
+            <Text style={styles.countText}>
+              {movieCount} {t("ticket.films")}
+            </Text>
             {totalRuntime ? (
               <>
                 <View style={styles.countDot} />
@@ -203,7 +181,7 @@ const MarathonTicket = forwardRef<View, MarathonTicketProps>(({ movies, headerTe
         {/* Main Movies List (vertical) */}
         <View style={styles.moviesSection}>
           {mainMovies.map((movie, index) => (
-            <MovieRow key={movie.id} movie={movie} isLast={index === mainMovies.length - 1} />
+            <MovieRow key={movie.id} movie={movie} isLast={index === mainMovies.length - 1} unknownText={unknownText} />
           ))}
         </View>
 
@@ -213,7 +191,7 @@ const MarathonTicket = forwardRef<View, MarathonTicketProps>(({ movies, headerTe
             <Text style={styles.bonusHeading}>{bonusHeading}</Text>
             <View style={styles.bonusRow}>
               {bonusMovies.map((movie) => (
-                <BonusPoster key={movie.id} movie={movie} />
+                <BonusPoster key={movie.id} movie={movie} unknownText={unknownText} />
               ))}
             </View>
           </View>
@@ -238,12 +216,12 @@ const MarathonTicket = forwardRef<View, MarathonTicketProps>(({ movies, headerTe
         {/* Stub Section */}
         <View style={styles.stubSection}>
           <View style={styles.stubLeft}>
-            <Text style={styles.stubLabel}>SCAN TO GET THE APP</Text>
+            <Text style={styles.stubLabel}>{t("ticket.scan-to-get-app")}</Text>
             <View style={styles.logoRow}>
               <Image source={require("../../assets/images/icon-dark.png")} style={styles.appLogo} contentFit="contain" />
               <View style={styles.logoTextContainer}>
                 <Text style={styles.stubTitle}>FLICKMATE</Text>
-                <Text style={styles.stubSubtitle}>Find your next movie together</Text>
+                <Text style={styles.stubSubtitle}>{t("ticket.app-tagline")}</Text>
               </View>
             </View>
           </View>
@@ -268,7 +246,7 @@ MarathonTicket.displayName = "MarathonTicket";
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    padding: 24,
+    padding: 16,
     backgroundColor: "#000",
   },
   ticketBody: {

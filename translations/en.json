@@ -565,5 +565,65 @@
   },
   "rate-app": {
     "prompt": "Enjoying the app? Rate us!"
+  },
+  "ticket": {
+    "unknown-movie": "Unknown Movie",
+    "unknown": "Unknown",
+    "watch-it-on": "Watch it on",
+    "scan-to-get-app": "SCAN TO GET THE APP",
+    "app-tagline": "Find your next movie together",
+    "flickmate-presents": "FLICKMATE PRESENTS",
+    "films": "FILMS",
+    "cinema": {
+      "headers": [
+        "Tonight's Pick",
+        "Fate has spoken.",
+        "The universe has decided.",
+        "No take-backs allowed.",
+        "It's movie time.",
+        "Destiny awaits.",
+        "The choice has been made.",
+        "This is the one.",
+        "Popcorn ready?",
+        "Let's do this."
+      ],
+      "pickups": [
+        "I invite you to watch with me!",
+        "You, me, and this movie.",
+        "Save me a seat?",
+        "Don't forget the popcorn!",
+        "Movie night is calling...",
+        "This one's for us."
+      ]
+    },
+    "marathon": {
+      "headers": [
+        "Marathon Mode",
+        "Triple Feature",
+        "Movie Marathon",
+        "Binge Approved",
+        "Clear Your Schedule",
+        "The Ultimate Lineup",
+        "Back-to-Back Hits",
+        "Non-Stop Cinema"
+      ],
+      "pickups": [
+        "Snacks for the whole night?",
+        "Cancel all your plans!",
+        "It's gonna be a long night...",
+        "Bring extra popcorn!",
+        "Ready for a movie marathon?",
+        "The couch awaits."
+      ],
+      "bonus-headings": [
+        "If You're Still Awake...",
+        "Bonus Round",
+        "Still Going Strong?",
+        "For The Brave Ones",
+        "Extra Credits",
+        "Night Owl Specials",
+        "The After Party"
+      ]
+    }
   }
 }

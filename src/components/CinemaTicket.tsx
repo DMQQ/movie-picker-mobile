@@ -1,9 +1,10 @@
-import { forwardRef, memo } from "react";
+import { forwardRef, memo, useMemo } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import { Image } from "expo-image";
 import QRCode from "react-native-qrcode-svg";
 import RatingIcons from "./RatingIcons";
+import useTranslation from "../service/useTranslation";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const TICKET_WIDTH = SCREEN_WIDTH - 48;
@@ -63,30 +64,7 @@ interface CinemaTicketProps {
   accentColor?: string;
 }
 
-const headerTexts = [
-  "Tonight's Pick",
-  "Fate has spoken.",
-  "The universe has decided.",
-  "No take-backs allowed.",
-  "It's movie time.",
-  "Destiny awaits.",
-  "The choice has been made.",
-  "This is the one.",
-  "Popcorn ready?",
-  "Let's do this.",
-];
-
-const pickupLines = [
-  "I invite you to watch with me!",
-  "You, me, and this movie.",
-  "Save me a seat?",
-  "Don't forget the popcorn!",
-  "Movie night is calling...",
-  "This one's for us.",
-];
-
-const getRandomHeader = () => headerTexts[Math.floor(Math.random() * headerTexts.length)];
-const getRandomPickup = () => pickupLines[Math.floor(Math.random() * pickupLines.length)];
+const getRandomItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
 const TicketNotch = memo(({ side, color }: { side: "left" | "right"; color: string }) => (
   <View style={[styles.notch, side === "left" ? styles.notchLeft : styles.notchRight, { backgroundColor: "#000" }]}>
@@ -131,22 +109,25 @@ const getUniqueProviders = (providers?: WatchProviders): Provider[] => {
     if (result.length >= 4) break;
   }
 
+  if (Array.isArray(result)) return [...result].sort((a, b) => a.display_priority - b.display_priority);
+
   return result;
 };
 
 const CinemaTicket = forwardRef<View, CinemaTicketProps>(
   ({ movie, providers, headerText, pickupLine, ticketColor = "#F5F0E1", accentColor }, ref) => {
-    const theme = useTheme();
-    const accent = accentColor || theme.colors.primary;
-    const displayHeader = headerText || getRandomHeader();
-    const displayPickup = pickupLine || getRandomPickup();
-    const movieTitle = movie.title || movie.name || "Unknown Movie";
-    const releaseYear = movie.release_date?.split("-")[0] || "";
+    const t = useTranslation();
 
-    // Handle both genre formats
+    const headerTexts = useMemo(() => t("ticket.cinema.headers") as string[], [t]);
+    const pickupLines = useMemo(() => t("ticket.cinema.pickups") as string[], [t]);
+
+    const displayHeader = headerText || getRandomItem(headerTexts);
+    const displayPickup = pickupLine || getRandomItem(pickupLines);
+    const movieTitle = movie.title || movie.name || t("ticket.unknown-movie");
+    const releaseYear = (movie?.release_date || movie?.first_air_date)?.split("-")[0] || "";
+
     const genreNames = movie.genres ? movie.genres.slice(0, 3).map((g) => g.name) : movie.mapped_genres?.slice(0, 3) || [];
 
-    // Get unique providers (up to 4)
     const uniqueProviders = getUniqueProviders(providers);
 
     return (
@@ -168,7 +149,7 @@ const CinemaTicket = forwardRef<View, CinemaTicketProps>(
             <Text style={styles.headerText}>{displayHeader}</Text>
 
             <Text style={styles.movieTitle} numberOfLines={2}>
-              {movieTitle.toUpperCase()}
+              {(movieTitle as string).toUpperCase()}
             </Text>
 
             {/* Tagline */}
@@ -195,6 +176,12 @@ const CinemaTicket = forwardRef<View, CinemaTicketProps>(
               )}
             </View>
 
+            {movie?.overview ? (
+              <Text style={{ color: "#888", marginBottom: 16 }} numberOfLines={4}>
+                {movie.overview}
+              </Text>
+            ) : null}
+
             {/* Star Rating */}
             <View style={[styles.ratingRow]}>
               <View style={[styles.ratingRowInner, { backgroundColor: ticketColor }]}>
@@ -205,7 +192,7 @@ const CinemaTicket = forwardRef<View, CinemaTicketProps>(
             {/* Watch Providers */}
             {uniqueProviders.length > 0 && (
               <View style={styles.providersSection}>
-                <Text style={styles.providersTitle}>Watch it on</Text>
+                <Text style={styles.providersTitle}>{t("ticket.watch-it-on")}</Text>
 
                 <View style={styles.providersRow}>
                   {uniqueProviders.map((provider) => (
@@ -236,12 +223,12 @@ const CinemaTicket = forwardRef<View, CinemaTicketProps>(
           {/* Stub Section */}
           <View style={styles.stubSection}>
             <View style={styles.stubLeft}>
-              <Text style={styles.stubLabel}>SCAN TO GET THE APP</Text>
+              <Text style={styles.stubLabel}>{t("ticket.scan-to-get-app")}</Text>
               <View style={styles.logoRow}>
                 <Image source={require("../../assets/images/icon-dark.png")} style={styles.appLogo} contentFit="contain" />
                 <View style={styles.logoTextContainer}>
                   <Text style={styles.stubTitle}>FLICKMATE</Text>
-                  <Text style={styles.stubSubtitle}>Find your next movie together</Text>
+                  <Text style={styles.stubSubtitle}>{t("ticket.app-tagline")}</Text>
                 </View>
               </View>
             </View>
@@ -269,7 +256,7 @@ CinemaTicket.displayName = "CinemaTicket";
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    padding: 24,
+    padding: 16,
     backgroundColor: "#000",
   },
   ticketBody: {
@@ -343,7 +330,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     flexWrap: "wrap",
-    marginBottom: 16,
+    marginBottom: 12,
     gap: 6,
   },
   metaDot: {
