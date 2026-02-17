@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, Image, StyleSheet, useWindowDimensions, View } from "react-native";
+import { Dimensions, StyleSheet, useWindowDimensions, View } from "react-native";
 import { Button, Text } from "react-native-paper";
-import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { Movie, MovieDetails } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
 import FortuneWheelComponent from "../../components/FortuneWheelComponent";
@@ -33,6 +33,7 @@ export default function FortuneWheel() {
 
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [movieDetails, setMovieDetails] = useState<MovieDetails | null>(null);
+  const [isSuperLiked, setIsSuperLiked] = useState(false);
   const prefetchedDetails = useRef<MovieDetails | null>(null);
 
   const handleWinnerPredicted = useCallback(
@@ -52,6 +53,7 @@ export default function FortuneWheel() {
     if (!item) return;
 
     setSelectedMovie(item);
+    setIsSuperLiked(false);
 
     if (prefetchedDetails.current) {
       setMovieDetails(prefetchedDetails.current);
@@ -78,15 +80,8 @@ export default function FortuneWheel() {
     if (!selectedMovie) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     superLikeMovie(selectedMovie);
+    setIsSuperLiked(true);
   }, [selectedMovie, superLikeMovie]);
-
-  const handleBlock = useCallback(() => {
-    if (!selectedMovie) return;
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    blockMovie(selectedMovie);
-    setSelectedMovie(null);
-    setMovieDetails(null);
-  }, [selectedMovie, blockMovie]);
 
   const [selectedCards, setSelectedCards] = useState<{
     results: Movie[];
@@ -154,6 +149,16 @@ export default function FortuneWheel() {
     [selectedCards.name, getLazySection, getLazyRandomSection, getFilterParams, blockedMovies],
   );
 
+  const handleBlock = useCallback(() => {
+    if (!selectedMovie) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    blockMovie(selectedMovie);
+    setSelectedMovie(null);
+    setMovieDetails(null);
+    setIsSuperLiked(false);
+    handleThrowDice();
+  }, [selectedMovie, blockMovie, handleThrowDice]);
+
   const [isSpin, setIsSpin] = useState(false);
 
   const handleFiltersApplied = useCallback(() => {
@@ -198,9 +203,9 @@ export default function FortuneWheel() {
 
   return (
     <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
-      <PageHeading showBackButton title="" extraScreenPaddingTop={15}>
+      <PageHeading showBackButton title="">
         <View style={fortuneStyles.filterButtonWrapper}>
-          <FilterButton size={22} onApply={handleFiltersApplied} />
+          <FilterButton size={22} onApply={handleFiltersApplied} onCategorySelect={handleThrowDice} showCategories />
         </View>
       </PageHeading>
 
@@ -216,18 +221,12 @@ export default function FortuneWheel() {
             onPress={handleViewDetails}
             onSuperLike={handleSuperLike}
             onBlock={handleBlock}
-            superLikeLabel={t("swipe.super") as string}
-            blockLabel={t("swipe.block") as string}
+            isSuperLiked={isSuperLiked}
           />
 
-          <View style={fortuneStyles.buttonsRow}>
-            <Button mode="text" icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
-              {t("fortune-wheel.random-category")}
-            </Button>
-            <Button mode="text" icon="filter-variant" onPress={() => router.navigate("/fortune/filters")}>
-              {t("filters.categories")}
-            </Button>
-          </View>
+          <Button mode="text" icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
+            {t("fortune-wheel.spin-again")}
+          </Button>
         </Animated.View>
       )}
 
@@ -257,20 +256,9 @@ export default function FortuneWheel() {
               >
                 {params?.movies ? params?.title : t("fortune-wheel.pick-a-movie")}
               </Text>
-              <View style={{ flexDirection: "row" }}>
-                <Button rippleColor={"#fff"} onPress={throttle(() => handleThrowDice(), 200)}>
-                  {t("fortune-wheel.random-category")}
-                </Button>
-
-                <Button
-                  rippleColor={"#fff"}
-                  onPress={() => {
-                    router.navigate("/fortune/filters");
-                  }}
-                >
-                  {t("filters.categories")}
-                </Button>
-              </View>
+              <Button rippleColor={"#fff"} icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
+                {t("fortune-wheel.spin-again")}
+              </Button>
             </>
           )}
         </Animated.View>
@@ -308,9 +296,5 @@ const fortuneStyles = StyleSheet.create({
     right: 0,
     alignItems: "center",
     zIndex: -1,
-  },
-  buttonsRow: {
-    flexDirection: "row",
-    marginTop: 16,
   },
 });

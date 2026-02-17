@@ -158,13 +158,19 @@ export default function RandomMovie() {
                       </Text>
                     )}
 
-                    <ActionButtons
-                      onSuperLike={handleSuperLike}
-                      onBlock={handleBlock}
-                      superLikeLabel={t("swipe.super")}
-                      blockLabel={t("swipe.block")}
-                      superLikeIconScale={superLikeIconScale}
-                    />
+                    <View style={styles.actions}>
+                      <View style={styles.hintRow}>
+                        <Text style={styles.hintText}>{t("fortune-wheel.tap-for-details")}</Text>
+                        <MaterialCommunityIcons name="chevron-right" size={14} color="rgba(255,255,255,0.5)" />
+                      </View>
+                      <ActionButtons
+                        onSuperLike={handleSuperLike}
+                        onBlock={handleBlock}
+                        superLikeLabel={t("swipe.super")}
+                        blockLabel={t("swipe.block")}
+                        superLikeIconScale={superLikeIconScale}
+                      />
+                    </View>
                   </LinearGradient>
                 </Pressable>
               )}
@@ -347,5 +353,18 @@ const styles = StyleSheet.create({
   },
   shareButtonWrapper: {
     justifyContent: "center",
+  },
+
+  actions: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+
+  hintRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+  },
+  hintText: {
+    color: "rgba(255,255,255,0.5)",
+    fontSize: 12,
+    fontWeight: "500",
   },
 });

@@ -140,7 +140,7 @@ export default function GameList() {
             key={game.index}
             title={game.title}
             description={game.description}
-            onPress={() => router.push(game.route as any)}
+            onPress={() => router.navigate(game.route as any)}
             beta={game.beta}
             players={game.players}
             duration={game.duration}

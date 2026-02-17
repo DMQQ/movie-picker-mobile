@@ -14,9 +14,11 @@ interface FilterButtonProps {
   size?: number;
   style?: object;
   onApply?: () => void;
+  onCategorySelect?: (category: string) => void;
+  showCategories?: boolean;
 }
 
-export const FilterButton = React.memo(function FilterButton({ size = 24, style, onApply }: FilterButtonProps) {
+export const FilterButton = React.memo(function FilterButton({ size = 24, style, onApply, onCategorySelect, showCategories }: FilterButtonProps) {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const dispatch = useAppDispatch();
   const { preferences: savedProviders } = useFilterPreferences();
@@ -71,7 +73,7 @@ export const FilterButton = React.memo(function FilterButton({ size = 24, style,
           </Badge>
         )}
       </View>
-      <FilterSheet visible={isFilterVisible} onClose={closeFilters} />
+      <FilterSheet visible={isFilterVisible} onClose={closeFilters} onCategorySelect={onCategorySelect} showCategories={showCategories} />
     </>
   );
 });

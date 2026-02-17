@@ -11,7 +11,7 @@ import {
   toggleGenre,
   DecadeFilter,
 } from "../../redux/mediaFilters/mediaFiltersSlice";
-import { useGetAllProvidersQuery, useGetGenresWithThumbnailsQuery } from "../../redux/movie/movieApi";
+import { useGetAllProvidersQuery, useGetCategoriesQuery, useGetGenresWithThumbnailsQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
 import TypeSelector from "./TypeSelector";
 import DecadeSelector from "./DecadeSelector";
@@ -109,12 +109,47 @@ function GenresSection() {
   );
 }
 
+function CategoriesSection({ onSelect }: { onSelect: (category: string) => void }) {
+  const t = useTranslation();
+  const { data: categories = [], isLoading } = useGetCategoriesQuery({});
+
+  const validCategories = categories.filter((category) => category.results && category.results.length > 0);
+
+  return (
+    <View style={styles.section}>
+      <Text variant="titleMedium" style={styles.sectionTitle}>
+        {t("filters.categories")}
+      </Text>
+      {isLoading ? (
+        <View style={styles.genreLoading}>
+          <Text style={styles.loadingText}>{t("room.builder.loading")}</Text>
+        </View>
+      ) : (
+        <View style={styles.genresContainer}>
+          {validCategories.map((category) => (
+            <Chip
+              key={category.name}
+              onPress={() => onSelect(category.name)}
+              style={styles.genreChip}
+              textStyle={styles.genreChipText}
+            >
+              {category.name}
+            </Chip>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+}
+
 interface FilterSheetProps {
   visible: boolean;
   onClose: () => void;
+  onCategorySelect?: (category: string) => void;
+  showCategories?: boolean;
 }
 
-export default function FilterSheet({ visible, onClose }: FilterSheetProps) {
+export default function FilterSheet({ visible, onClose, onCategorySelect, showCategories }: FilterSheetProps) {
   const t = useTranslation();
   const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
@@ -146,6 +181,14 @@ export default function FilterSheet({ visible, onClose }: FilterSheetProps) {
   const handleApply = useCallback(() => {
     onClose();
   }, [onClose]);
+
+  const handleCategorySelect = useCallback(
+    (category: string) => {
+      onCategorySelect?.(category);
+      onClose();
+    },
+    [onCategorySelect, onClose],
+  );
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -193,6 +236,7 @@ export default function FilterSheet({ visible, onClose }: FilterSheetProps) {
 
             <ProvidersSection />
             <GenresSection />
+            {showCategories && onCategorySelect && <CategoriesSection onSelect={handleCategorySelect} />}
           </ScrollView>
 
           {/* Footer Actions */}

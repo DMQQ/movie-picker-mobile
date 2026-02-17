@@ -1,13 +1,12 @@
-import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
+import { Dimensions, Platform, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text, Chip } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Movie, MovieDetails } from "../../../types";
-import { ActionButtons } from "./shared";
 import { ThumbnailSizes } from "../Thumbnail";
-import Animated from "react-native-reanimated";
 import { IconShareButton } from "../ShareTicketButton";
+import useTranslation from "../../service/useTranslation";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -17,9 +16,7 @@ interface MovieResultCardProps {
   onPress?: () => void;
   onSuperLike?: () => void;
   onBlock?: () => void;
-  superLikeLabel: string;
-  blockLabel: string;
-  superLikeIconScale?: Animated.SharedValue<number>;
+  isSuperLiked?: boolean;
   width?: number;
   height?: number;
 }
@@ -33,12 +30,11 @@ export default function MovieResultCard({
   onPress,
   onSuperLike,
   onBlock,
-  superLikeLabel,
-  blockLabel,
-  superLikeIconScale,
+  isSuperLiked = false,
   width = CARD_WIDTH,
   height = CARD_HEIGHT,
 }: MovieResultCardProps) {
+  const t = useTranslation();
   return (
     <View style={[styles.card, { width, height }]}>
       <Pressable onPress={onPress} style={styles.cardPressable}>
@@ -85,23 +81,25 @@ export default function MovieResultCard({
             </Text>
           )}
 
-          <View style={styles.hintRow}>
-            <Text style={styles.hintText}>Tap for details</Text>
-            <MaterialCommunityIcons name="chevron-right" size={14} color="rgba(255,255,255,0.5)" />
-          </View>
+          <View style={styles.bottomRow}>
+            <View style={styles.hintRow}>
+              <Text style={styles.hintText}>{t("fortune-wheel.tap-for-details")}</Text>
+              <MaterialCommunityIcons name="chevron-right" size={14} color="rgba(255,255,255,0.5)" />
+            </View>
 
-          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            {onSuperLike && onBlock && (
-              <ActionButtons
-                onSuperLike={onSuperLike}
-                onBlock={onBlock}
-                superLikeLabel={superLikeLabel}
-                blockLabel={blockLabel}
-                superLikeIconScale={superLikeIconScale}
-              />
-            )}
-
-            <IconShareButton movie={movie} />
+            <View style={styles.actionIcons}>
+              {onSuperLike && (
+                <TouchableOpacity onPress={onSuperLike} style={styles.iconButton}>
+                  <MaterialCommunityIcons name={isSuperLiked ? "star" : "star-outline"} size={24} color="#fbbf24" />
+                </TouchableOpacity>
+              )}
+              {onBlock && (
+                <TouchableOpacity onPress={onBlock} style={styles.iconButton}>
+                  <MaterialCommunityIcons name="block-helper" size={22} color="#ef4444" />
+                </TouchableOpacity>
+              )}
+              <IconShareButton movie={movie} />
+            </View>
           </View>
         </LinearGradient>
       </Pressable>
@@ -179,15 +177,27 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     fontWeight: "400",
   },
+  bottomRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 12,
+  },
   hintRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 8,
-    marginBottom: 4,
   },
   hintText: {
     color: "rgba(255,255,255,0.5)",
     fontSize: 12,
     fontWeight: "500",
+  },
+  actionIcons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  iconButton: {
+    padding: 4,
   },
 });

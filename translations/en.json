@@ -181,7 +181,9 @@
     "roll": "Roll again",
     "random-category": "Random Category",
     "pick-category": "Pick Category",
-    "pick-a-movie": "Spin the wheel!"
+    "pick-a-movie": "Spin the wheel!",
+    "spin-again": "Spin Again",
+    "tap-for-details": "Tap for details"
   },
   "filters": {
     "title": "Filters",
