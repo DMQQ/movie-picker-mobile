@@ -3,6 +3,7 @@ import {
   BlurMask,
   Canvas,
   Circle,
+  CornerPathEffect,
   Group,
   LinearGradient,
   Path,
@@ -33,13 +34,11 @@ import Animated, {
 } from "react-native-reanimated";
 import useTranslation from "../service/useTranslation";
 
-import { LinearGradient as ExpoLinearGradient } from "expo-linear-gradient";
-
 const { width } = Dimensions.get("window");
 
 // --- CONFIGURATION ---
-const BORDER_WIDTH = 12;
-const COLORS = new Array(4).fill(["#1a1a1a", "#2a2a2a"]).flat();
+const BORDER_WIDTH = 14;
+const COLORS = new Array(4).fill(["#151515", "#2a2a2a"]).flat();
 
 interface SegmentProps {
   item: {
@@ -112,8 +111,8 @@ const WheelOverlay = ({ size }: { size: number }) => {
         <RadialGradient
           c={center}
           r={radius}
-          colors={["rgba(255,255,255,0.1)", "rgba(0,0,0,0.05)", "transparent"]}
-          positions={[0.5, 0.8, 1]}
+          colors={["rgba(255,255,255,0.1)", "rgba(0,0,0,0.1)", "transparent"]}
+          positions={[0.6, 0.8, 1]}
         />
       </Rect>
 
@@ -132,7 +131,7 @@ const WheelOverlay = ({ size }: { size: number }) => {
       </Circle>
 
       {/* 4. Thin Highlight on the Gold Rim */}
-      <Circle cx={center.x} cy={center.y} r={radius - BORDER_WIDTH / 2} style="stroke" strokeWidth={4} color="rgba(255,255,255,0.5)" />
+      <Circle cx={center.x} cy={center.y} r={radius - BORDER_WIDTH / 2} style="stroke" strokeWidth={5} color="rgba(255,255,255,0.65)" />
 
       {/* 5. THE PREMIUM GOLD-SILVER HUB */}
       <Group>
@@ -175,7 +174,7 @@ const WheelOverlay = ({ size }: { size: number }) => {
     </Canvas>
   );
 };
-
+// --- BACKGROUND SEGMENTS ---
 const WheelBackground = ({ size, items }: { size: number; items: any[] }) => {
   const segmentAngle = 360 / items.length;
   const center = size / 2;
@@ -193,11 +192,7 @@ const WheelBackground = ({ size, items }: { size: number; items: any[] }) => {
 
         p.close();
 
-        return (
-          <Path key={index} path={p}>
-            <RadialGradient c={vec(center, center)} r={size / 2} colors={[COLORS[index % COLORS.length], "#050505"]} positions={[0.3, 1]} />
-          </Path>
-        );
+        return <Path key={index} path={p} color={COLORS[index % COLORS.length]} />;
       })}
     </Canvas>
   );
@@ -239,22 +234,23 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
           lastHapticSegment.value = segmentCenter;
           runOnJS(triggerItemHaptic)();
 
-          // Calculate how much the wheel is slowing down
+          // NEW: Calculate velocity to scale the kick strength
           const rotationDelta = Math.abs(currentRotation - (previousRotation || currentRotation));
-          const velocityFactor = clamp(rotationDelta / 15, 0.1, 1.1);
+          const velocityFactor = clamp(rotationDelta / 15, 0.1, 1.1); // 0.1 (slow) to 1.1 (fast)
 
           // Both kick strength and return position scale with velocity
           const kickAngle = (12 + Math.random() * 8) * velocityFactor + 15;
           const returnTo = 4 * velocityFactor;
 
-          // Small bounce back (negative) when slow
+          // Small bounce back (negative) when slow to simulate settling
           const bounceBack = velocityFactor < 0.4 ? -3 * (1 - velocityFactor) : 0;
 
           cancelAnimation(pointerRotation);
           pointerRotation.value = withSequence(
-            withTiming(kickAngle, { duration: 35, easing: Easing.out(Easing.quad) }),
-            withTiming(returnTo, { duration: 80, easing: Easing.out(Easing.quad) }),
-            ...(bounceBack !== 0 ? [withTiming(bounceBack, { duration: 60, easing: Easing.out(Easing.quad) })] : []),
+            withTiming(kickAngle, { duration: 50, easing: Easing.out(Easing.quad) }),
+            withTiming(returnTo, { duration: 90, easing: Easing.out(Easing.quad) }),
+            ...(bounceBack !== 0 ? [withTiming(bounceBack, { duration: 70, easing: Easing.out(Easing.quad) })] : []),
+            // Final settle to 0 happens implicitly or via spring in spin function
           );
         }
       },
@@ -279,7 +275,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
       rotate.value = withTiming(initialTargetAngle, { duration: 4000, easing: Easing.out(Easing.cubic) }, (finished) => {
         if (!finished) {
           isSpinning.value = false;
-          pointerRotation.value = withSpring(0, { damping: 18, stiffness: 300 });
+          pointerRotation.value = withSpring(0, { damping: 18, stiffness: 300 }); // Reset pointer
           return;
         }
         const currentRot = rotate.value % 360;
@@ -301,7 +297,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
         rotate.value = withTiming(finalTargetAngle, { duration: 1000, easing: Easing.out(Easing.back(1.5)) }, () => {
           isSpinning.value = false;
           if (onSelectedItem) {
-            translateY.value = withTiming(200, { duration: 300 });
+            translateY.value = withTiming(200, { duration: 300 }); // Drop wheel down
             runOnJS(onSelectedItem)(items[selectedIndex]);
             runOnJS(Haptics.notificationAsync)(Haptics.NotificationFeedbackType.Success);
           }
@@ -338,7 +334,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
       transform: [
         { rotate: `${pointerRotation.value}deg` },
         {
-          translateY: translateY.value,
+          translateY: translateY.value, // Move pointer with drag
         },
       ],
     }));
@@ -346,37 +342,48 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
     return (
       <GestureDetector gesture={gesture}>
         <View style={[styles.container, { height: size, bottom: -(size * 0.6) }]}>
-          {/* POINTER */}
+          {/* IMPROVED POINTER */}
           <Animated.View style={[styles.pointer, animatedPointerStyle]}>
-            <Canvas style={{ width: 60, height: 80 }}>
-              {/* Drop shadow */}
-              <Path path="M 12 8 L 48 8 L 30 65 Z" color="#000" opacity={0.4}>
+            <Canvas style={{ width: 100, height: 100 }}>
+              {/* 1. Hinge Pin Base */}
+              <Circle cx={50} cy={10} r={6} color="#111" />
+
+              {/* 2. Drop Shadow */}
+              <Path path="M 25 10 L 75 10 L 50 70 Z" color="#000" opacity={0.5}>
                 <BlurMask blur={6} style="normal" />
+                <CornerPathEffect r={8} />
               </Path>
 
-              {/* Main pointer body */}
-              <Path path="M 10 5 L 50 5 L 30 62 Z">
-                <LinearGradient start={vec(10, 5)} end={vec(50, 5)} colors={["#FFD700", "#FFF8DC", "#DAA520"]} />
+              {/* 3. Main Body with Gradient */}
+              <Path path="M 25 10 L 75 10 L 50 70 Z">
+                <LinearGradient start={vec(25, 10)} end={vec(75, 10)} colors={["#FFD700", "#e3cd74", "#DAA520"]} />
+                <CornerPathEffect r={8} />
               </Path>
 
-              {/* Left highlight */}
-              <Path path="M 10 5 L 30 5 L 30 62 Z" color="#FFF" opacity={0.25} />
+              {/* 4. Left Highlight (Bevel) */}
+              {/* We draw the left half only. CornerPathEffect will round the outer edge. */}
+              <Path path="M 25 10 L 50 10 L 50 70 Z" color="#FFF" opacity={0.35}>
+                <CornerPathEffect r={8} />
+              </Path>
 
-              {/* Right shadow */}
-              <Path path="M 30 5 L 50 5 L 30 62 Z" color="#8B6914" opacity={0.3} />
+              {/* 5. Right Shadow (Bevel) */}
+              {/* We draw the right half only. CornerPathEffect will round the outer edge. */}
+              <Path path="M 50 10 L 75 10 L 50 70 Z" color="#8B6914" opacity={0.35}>
+                <CornerPathEffect r={8} />
+              </Path>
 
-              {/* Outline */}
-              <Path path="M 10 5 L 50 5 L 30 62 Z" style="stroke" strokeWidth={1.5} color="#B8860B" />
+              {/* 6. Stroke Outline */}
+              <Path path="M 25 10 L 75 10 L 50 70 Z" style="stroke" strokeWidth={3} color="#B8860B">
+                <CornerPathEffect r={8} />
+              </Path>
 
-              {/* Hinge circle outer */}
-              <Circle cx={30} cy={8} r={8}>
-                <LinearGradient start={vec(22, 0)} end={vec(38, 16)} colors={["#FFD700", "#B8860B"]} />
+              {/* 7. Hinge Pin Details */}
+              <Circle cx={50} cy={10} r={8}>
+                <LinearGradient start={vec(42, 0)} end={vec(58, 20)} colors={["#FFD700", "#B8860B"]} />
               </Circle>
-              <Circle cx={30} cy={8} r={8} style="stroke" strokeWidth={1} color="#8B6914" />
-
-              {/* Hinge circle inner */}
-              <Circle cx={30} cy={8} r={4} color="#222" />
-              <Circle cx={30} cy={8} r={2} color="#444" />
+              <Circle cx={50} cy={10} r={8} style="stroke" strokeWidth={1} color="#8B6914" />
+              <Circle cx={50} cy={10} r={5} color="#222" />
+              <Circle cx={50} cy={10} r={3} color="#444" />
             </Canvas>
           </Animated.View>
 
@@ -386,7 +393,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
                 opacity: isSpinning.value ? withTiming(0) : withTiming(1),
                 transform: [
                   {
-                    translateY: translateY.value,
+                    translateY: translateY.value, // Move text with drag
                   },
                 ],
               })),
@@ -428,6 +435,7 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: "flex-start",
     alignItems: "center",
+    // backgroundColor: "red",
   },
   wheelContainer: {
     alignItems: "center",
@@ -438,6 +446,7 @@ const styles = StyleSheet.create({
     top: -15,
     zIndex: 100,
     alignItems: "center",
+    // Important: pivot from top center so it swings like a pendulum
     transformOrigin: "center top",
   },
   center: {

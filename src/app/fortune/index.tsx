@@ -17,13 +17,11 @@ import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import * as Haptics from "expo-haptics";
-import MovieResultCard, { CARD_WIDTH, CARD_HEIGHT } from "../../components/Random/MovieResultCard";
+import MovieResultCard from "../../components/Random/MovieResultCard";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
 export default function FortuneWheel() {
-  const [signatures, setSignatures] = useState("");
-
   const wheelRef = useRef<{ spin: Function }>(null);
 
   const params = useLocalSearchParams();
@@ -91,11 +89,6 @@ export default function FortuneWheel() {
     setMovieDetails(null);
   }, [selectedMovie, blockMovie]);
 
-  const handleCloseCard = useCallback(() => {
-    setSelectedMovie(null);
-    setMovieDetails(null);
-  }, []);
-
   const [selectedCards, setSelectedCards] = useState<{
     results: Movie[];
     name: string;
@@ -124,7 +117,6 @@ export default function FortuneWheel() {
           };
 
           setSelectedCards(newSelectedCards);
-          setSignatures(shuffled.map(({ id }) => id).join("-"));
         } else {
           console.log("No data or results in response:", response);
         }
@@ -180,7 +172,6 @@ export default function FortuneWheel() {
           results: fillMissing(shuffled.slice(0, 12), 12),
           name: "",
         });
-        setSignatures(shuffled.map(({ id }) => id).join("-"));
       }
     };
 
@@ -217,20 +208,10 @@ export default function FortuneWheel() {
           />
 
           <View style={fortuneStyles.buttonsRow}>
-            <Button
-              mode="text"
-              textColor="#fff"
-              icon="refresh"
-              onPress={throttle(() => handleThrowDice(), 200)}
-            >
+            <Button mode="text" icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
               {t("fortune-wheel.random-category")}
             </Button>
-            <Button
-              mode="text"
-              textColor="#fff"
-              icon="filter-variant"
-              onPress={throttle(() => router.push("/fortune/filters"), 500)}
-            >
+            <Button mode="text" icon="filter-variant" onPress={throttle(() => router.push("/fortune/filters"), 500)}>
               {t("filters.categories")}
             </Button>
           </View>
