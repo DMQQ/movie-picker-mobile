@@ -18,6 +18,7 @@ import { Dimensions, Image, Platform, StyleProp, StyleSheet, View, ViewStyle } f
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { MD2DarkTheme } from "react-native-paper";
 import Animated, {
+  cancelAnimation,
   clamp,
   Easing,
   runOnJS,
@@ -26,9 +27,13 @@ import Animated, {
   useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
+  withSequence,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import useTranslation from "../service/useTranslation";
+
+import { LinearGradient as ExpoLinearGradient } from "expo-linear-gradient";
 
 const { width } = Dimensions.get("window");
 
@@ -94,11 +99,11 @@ const Segment = memo(({ item, segmentAngle, wheelSize, startAngle }: SegmentProp
   );
 });
 
-// --- THE FANCY OVERLAY (Gold-Silver Hub) ---
+// --- THE FANCY OVERLAY (Gold-Silver Hub + Dual Rim) ---
 const WheelOverlay = ({ size }: { size: number }) => {
   const center = vec(size / 2, size / 2);
   const radius = size / 2;
-  const hubRadius = size * 0.15;
+  const hubRadius = size * 0.175;
 
   return (
     <Canvas style={{ width: size, height: size, position: "absolute", top: 0, left: 0 }} pointerEvents="none">
@@ -112,23 +117,30 @@ const WheelOverlay = ({ size }: { size: number }) => {
         />
       </Rect>
 
-      {/* 2. OUTER GOLD RIM */}
+      {/* 2. OUTER GOLD RIM (Primary) */}
       <Circle cx={center.x} cy={center.y} r={radius - BORDER_WIDTH / 2} style="stroke" strokeWidth={BORDER_WIDTH}>
         <SweepGradient c={center} colors={["#FFD700", "#FFF8DC", "#B8860B", "#FFD700", "#FFF8DC", "#B8860B", "#FFD700"]} />
         <BlurMask blur={2} style="solid" />
       </Circle>
 
-      <Circle cx={center.x} cy={center.y} r={radius - BORDER_WIDTH} style="stroke" strokeWidth={1} color="rgba(255,255,255,0.4)" />
+      {/* 3. NEW: SECOND EDGE (Silver/Platinum Inner Lip) */}
+      <Circle cx={center.x} cy={center.y} r={radius - BORDER_WIDTH - 2} style="stroke" strokeWidth={10}>
+        <SweepGradient
+          c={center}
+          colors={["#c0c0c08e", "#e5e4e290", "#70707080", "#c0c0c08e"]} // Metallic Silver Gradient
+        />
+      </Circle>
 
-      {/* 3. THE PREMIUM GOLD-SILVER HUB */}
+      {/* 4. Thin Highlight on the Gold Rim */}
+      <Circle cx={center.x} cy={center.y} r={radius - BORDER_WIDTH / 2} style="stroke" strokeWidth={4} color="rgba(255,255,255,0.5)" />
+
+      {/* 5. THE PREMIUM GOLD-SILVER HUB */}
       <Group>
-        {/* Shadow Drop */}
-        <Circle cx={center.x} cy={center.y} r={hubRadius + 10} color="black" opacity={0.6}>
+        <Circle cx={center.x} cy={center.y} r={hubRadius + 25} color={MD2DarkTheme.colors.surface} opacity={0.7}>
           <BlurMask blur={12} style="normal" />
         </Circle>
 
-        {/* The Hub Frame (Ring) - Mixed Gold & Silver */}
-        <Circle cx={center.x} cy={center.y} r={hubRadius} style="stroke" strokeWidth={20}>
+        <Circle cx={center.x} cy={center.y} r={hubRadius} style="stroke" strokeWidth={25}>
           <SweepGradient
             c={center}
             colors={[
@@ -141,26 +153,17 @@ const WheelOverlay = ({ size }: { size: number }) => {
           />
         </Circle>
 
-        {/* The Hub Cap - Metallic Sphere Gradient */}
         <Circle cx={center.x} cy={center.y} r={hubRadius}>
           <RadialGradient
-            c={vec(center.x - hubRadius * 0.3, center.y - hubRadius * 0.3)} // Light from Top-Left
-            r={hubRadius * 1.5}
-            colors={[
-              "#FFFFFF", // Specular Highlight (Pure White)
-              "#E5E4E2", // Silver
-              "#D4AF37", // Metallic Gold
-              "#8B7E66", // Muted Bronze
-              "#1a1a1a", // Deep Shadow
-            ]}
+            c={vec(center.x - hubRadius * 0.3, center.y - hubRadius * 0.3)}
+            r={hubRadius * 1.75}
+            colors={["#FFFFFF", "#E5E4E2", "#D4AF37", "#8B7E66", "#1a1a1a"]}
             positions={[0, 0.2, 0.5, 0.8, 1]}
           />
         </Circle>
 
-        {/* Inner Border Ring (Definition) */}
-        <Circle cx={center.x} cy={center.y} r={hubRadius} style="stroke" strokeWidth={1} color="rgba(0,0,0,0.5)" />
+        <Circle cx={center.x} cy={center.y} r={hubRadius} style="stroke" strokeWidth={5} color="#b8870bb1" />
 
-        {/* The "Hard" Gloss Reflection (Top Half) */}
         <Circle cx={center.x} cy={center.y - hubRadius * 0.2} r={hubRadius * 0.8} opacity={0.5}>
           <LinearGradient
             start={vec(center.x, center.y - hubRadius)}
@@ -211,7 +214,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(({ size = width * 1.5
   const isSpinning = useSharedValue(false);
   const translateY = useSharedValue(0);
   const lastHapticSegment = useSharedValue(-1);
-  const lastHapticTime = useSharedValue(0);
+  const pointerRotation = useSharedValue(0);
 
   const t = useTranslation();
 
@@ -226,16 +229,25 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(({ size = width * 1.5
       const normalizedRotation = ((currentRotation % 360) + 360) % 360;
       const invertedAngle = (360 - normalizedRotation) % 360;
       const segmentCenter = Math.floor(invertedAngle / segmentAngle);
-      const centerAngle = segmentCenter * segmentAngle + segmentAngle / 2;
-      const distanceFromCenter = Math.abs(invertedAngle - centerAngle);
 
-      if (distanceFromCenter < 5 && segmentCenter !== lastHapticSegment.value) {
-        const currentTime = Date.now();
-        if (currentTime - lastHapticTime.value > 50) {
-          lastHapticTime.value = currentTime;
-          lastHapticSegment.value = segmentCenter;
-          runOnJS(triggerItemHaptic)();
-        }
+      if (segmentCenter !== lastHapticSegment.value) {
+        lastHapticSegment.value = segmentCenter;
+        runOnJS(triggerItemHaptic)();
+
+        // --- NEW NATURAL ANIMATION ---
+        cancelAnimation(pointerRotation);
+
+        // Randomize the kick angle slightly (between 25 and 40 degrees) so it looks organic
+        const kickAngle = 25 + Math.random() * 15;
+        // Randomize return duration slightly (250ms - 350ms)
+        const returnDuration = 250 + Math.random() * 100;
+
+        pointerRotation.value = withSequence(
+          // 1. Kick LEFT (Positive rotation) - Fast
+          withTiming(kickAngle, { duration: 40, easing: Easing.out(Easing.quad) }),
+          // 2. Return to 0 smoothly - Slower, no overshoot to negative
+          withTiming(0, { duration: returnDuration, easing: Easing.out(Easing.cubic) }),
+        );
       }
     },
   );
@@ -299,14 +311,30 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(({ size = width * 1.5
     transform: [{ translateY: translateY.value }],
   }));
 
+  const animatedPointerStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${pointerRotation.value}deg` }],
+  }));
+
   return (
     <View style={[styles.container, { height: size, bottom: -(size * 0.6) }]}>
-      <Animated.View style={[styles.center, { zIndex: 100 }]}>
-        <Canvas style={{ width: 60, height: 60 }}>
-          <Path path="M 10 0 L 50 0 L 30 40 Z" color={MD2DarkTheme.colors.primary}>
-            <BlurMask blur={4} style="solid" />
+      {/* THICKER POINTER */}
+      <Animated.View style={[styles.pointer, animatedPointerStyle]}>
+        <Canvas style={{ width: 100, height: 100 }}>
+          {/* Hinge Pin */}
+          <Circle cx={50} cy={10} r={6} color="#111" />
+
+          {/* The Golden Flapper (Much Wider Now: 25 to 75) */}
+          <Path path="M 25 10 L 75 10 L 50 70 Z" color="#FFD700">
+            <BlurMask blur={1} style="solid" />
           </Path>
-          <Path path="M 10 0 L 50 0 L 30 40 Z" color="#fff" style="stroke" strokeWidth={2} />
+
+          {/* Bevel Highlight (Left side) */}
+          <Path path="M 25 10 L 50 10 L 50 70 Z" color="#FFF" opacity={0.3} />
+          {/* Bevel Shadow (Right side) */}
+          <Path path="M 50 10 L 75 10 L 50 70 Z" color="#000" opacity={0.2} />
+
+          {/* Stroke Outline */}
+          <Path path="M 25 10 L 75 10 L 50 70 Z" style="stroke" strokeWidth={2} color="#B8860B" />
         </Canvas>
       </Animated.View>
 
@@ -351,6 +379,12 @@ const styles = StyleSheet.create({
   wheelContainer: {
     alignItems: "center",
     justifyContent: "center",
+  },
+  pointer: {
+    position: "absolute",
+    top: -20,
+    zIndex: 100,
+    alignItems: "center",
   },
   center: {
     position: "absolute",
