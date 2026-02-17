@@ -65,7 +65,7 @@ export default function FortuneWheel() {
           const shuffled = shuffleInPlace([...movies]);
 
           const newSelectedCards = {
-            results: fillMissing(shuffled.slice(0, 12), 12),
+            results: fillMissing(shuffled.slice(0, 10), 12),
             name: response.data.name || "",
           };
 
@@ -197,7 +197,7 @@ export default function FortuneWheel() {
             setIsSpin(true);
           }}
           onSelectedItem={navigate}
-          size={screenWidth * 1.75}
+          size={screenWidth * 2}
           items={selectedCards.results as any}
         />
       )}
