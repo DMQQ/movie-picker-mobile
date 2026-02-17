@@ -10,7 +10,6 @@ import GameInviteSection, { GAME_SECTION_HEIGHT } from "./GameInviteSection";
 import LoadingSkeleton from "./LoadingSkeleton";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { SectionData } from "../../types";
-import { useIsFocused } from "@react-navigation/native";
 import { useGetFeaturedQuery } from "../../redux/movie/movieApi";
 import useIsMounted from "../../hooks/useIsMounted";
 
@@ -96,12 +95,6 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
       </View>
     );
   }, []);
-
-  const isMounted = useIsMounted();
-
-  if (!isMounted && categoryId !== "all") {
-    return null;
-  }
 
   return (
     <VirtualizedList

@@ -7,6 +7,7 @@ import NoConnectionError from "../../components/NoConnectionError";
 import CategoryPage from "../../components/Landing/CategoryPage";
 import CategoryPagerIndicator from "../../components/Landing/CategoryPagerIndicator";
 import LoadingSkeleton from "../../components/Landing/LoadingSkeleton";
+import useIsMounted from "../../hooks/useIsMounted";
 
 export default function Landing() {
   return (
@@ -65,6 +66,16 @@ const PagerCategoryScreen = memo(() => {
       ),
     [chipCategories?.length, currentPage],
   );
+
+  const isMounted = useIsMounted();
+
+  if (!isMounted) {
+    return (
+      <View style={{ flex: 1 }}>
+        <LoadingSkeleton />
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>

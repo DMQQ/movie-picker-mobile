@@ -7,6 +7,7 @@ import { Movie, MovieDetails } from "../../../types";
 import { ActionButtons } from "./shared";
 import { ThumbnailSizes } from "../Thumbnail";
 import Animated from "react-native-reanimated";
+import { IconShareButton } from "../ShareTicketButton";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -84,15 +85,24 @@ export default function MovieResultCard({
             </Text>
           )}
 
-          {onSuperLike && onBlock && (
-            <ActionButtons
-              onSuperLike={onSuperLike}
-              onBlock={onBlock}
-              superLikeLabel={superLikeLabel}
-              blockLabel={blockLabel}
-              superLikeIconScale={superLikeIconScale}
-            />
-          )}
+          <View style={styles.hintRow}>
+            <Text style={styles.hintText}>Tap for details</Text>
+            <MaterialCommunityIcons name="chevron-right" size={14} color="rgba(255,255,255,0.5)" />
+          </View>
+
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            {onSuperLike && onBlock && (
+              <ActionButtons
+                onSuperLike={onSuperLike}
+                onBlock={onBlock}
+                superLikeLabel={superLikeLabel}
+                blockLabel={blockLabel}
+                superLikeIconScale={superLikeIconScale}
+              />
+            )}
+
+            <IconShareButton movie={movie} />
+          </View>
         </LinearGradient>
       </Pressable>
     </View>
@@ -168,5 +178,16 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     fontWeight: "400",
+  },
+  hintRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  hintText: {
+    color: "rgba(255,255,255,0.5)",
+    fontSize: 12,
+    fontWeight: "500",
   },
 });

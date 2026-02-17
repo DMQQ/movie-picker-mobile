@@ -284,20 +284,18 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
         const targetAngle = rotate.value - (normalizedRot - segmentIndex * segmentAngle);
         const finalTargetAngle = targetAngle + segmentAngle / 2;
 
-        // Calculate winner early for prefetching
         const finalRotation = ((finalTargetAngle % 360) + 360) % 360;
         const selectedIndex = (items.length - Math.floor(finalRotation / segmentAngle) - 1) % items.length;
         if (onWinnerPredicted) {
           runOnJS(onWinnerPredicted)(items[selectedIndex]);
         }
 
-        // Return pointer to 0 when settling starts
         pointerRotation.value = withSpring(0, { damping: 18, stiffness: 300 });
 
         rotate.value = withTiming(finalTargetAngle, { duration: 1000, easing: Easing.out(Easing.back(1.5)) }, () => {
           isSpinning.value = false;
           if (onSelectedItem) {
-            translateY.value = withTiming(200, { duration: 300 }); // Drop wheel down
+            translateY.value = withTiming(200, { duration: 300 });
             runOnJS(onSelectedItem)(items[selectedIndex]);
             runOnJS(Haptics.notificationAsync)(Haptics.NotificationFeedbackType.Success);
           }
@@ -426,7 +424,6 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "red",
   },
   wheelContainer: {
     alignItems: "center",
@@ -437,7 +434,7 @@ const styles = StyleSheet.create({
     top: -15,
     zIndex: 100,
     alignItems: "center",
-    // Important: pivot from top center so it swings like a pendulum
+
     transformOrigin: "center top",
   },
   center: {

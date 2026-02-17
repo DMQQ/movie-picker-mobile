@@ -53,7 +53,6 @@ export default function FortuneWheel() {
 
     setSelectedMovie(item);
 
-    // Use prefetched details if available
     if (prefetchedDetails.current) {
       setMovieDetails(prefetchedDetails.current);
       prefetchedDetails.current = null;
@@ -97,35 +96,52 @@ export default function FortuneWheel() {
     name: "",
   });
 
+  const [shouldSpin, setShouldSpin] = useState(false);
+
+  useEffect(() => {
+    if (shouldSpin && selectedCards.results.length > 0) {
+      const timer = setTimeout(() => {
+        wheelRef.current?.spin();
+        setShouldSpin(false);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldSpin, selectedCards.results]);
+
   const [getLazyRandomSection] = useLazyGetRandomSectionQuery();
 
   const [getLazySection] = useLazyGetSectionMoviesQuery();
 
   const handleThrowDice = useCallback(
     (value?: number | string) => {
-      const handleResponse = async (response: any) => {
-        if (response.data && Array.isArray(response.data.results)) {
-          const movies = response.data.results as Movie[];
+      prefetchedDetails.current = null;
 
-          await Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path)));
+      const handleResponse = async (response: any) => {
+        if (response.data && Array.isArray(response.data.results) && response.data.results.length > 0) {
+          const movies = response.data.results as Movie[];
 
           const shuffled = shuffleInPlace([...movies]);
 
           const newSelectedCards = {
-            results: fillMissing(shuffled.slice(0, 10), 12),
+            results: fillMissing(shuffled.slice(0, 12), 12),
             name: response.data.name || "",
           };
 
           setSelectedCards(newSelectedCards);
+          setShouldSpin(true);
         } else {
           console.log("No data or results in response:", response);
         }
       };
 
+      const handleError = (error: any) => {
+        console.error("Failed to fetch movies:", error);
+      };
+
       if (value) {
         getLazySection({ name: value as string })
           .then(handleResponse)
-          .catch(console.error);
+          .catch(handleError);
         return;
       }
 
@@ -133,7 +149,7 @@ export default function FortuneWheel() {
       const blockedIds = blockedMovies.map((m) => `${m.movie_type === "tv" ? "t" : "m"}${m.movie_id}`);
       getLazyRandomSection({ not: selectedCards.name, notMovies: blockedIds.join(","), ...filterParams })
         .then(handleResponse)
-        .catch(console.error);
+        .catch(handleError);
     },
     [selectedCards.name, getLazySection, getLazyRandomSection, getFilterParams, blockedMovies],
   );
@@ -164,8 +180,6 @@ export default function FortuneWheel() {
             ? (JSON.parse(params.movies) as Movie[])
             : (JSON.parse((params.movies as string[])[0]) as Movie[]);
 
-        Promise.allSettled(movies.map((movie) => Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path)));
-
         const shuffled = shuffleInPlace([...movies]);
 
         setSelectedCards({
@@ -184,13 +198,12 @@ export default function FortuneWheel() {
 
   return (
     <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
-      <PageHeading showBackButton title="">
+      <PageHeading showBackButton title="" extraScreenPaddingTop={15}>
         <View style={fortuneStyles.filterButtonWrapper}>
           <FilterButton size={22} onApply={handleFiltersApplied} />
         </View>
       </PageHeading>
 
-      {/* Movie Card - shown behind wheel when selected */}
       {selectedMovie && (
         <Animated.View
           entering={FadeIn.duration(400).withInitialValues({ transform: [{ translateY: 50 }] })}
@@ -203,15 +216,15 @@ export default function FortuneWheel() {
             onPress={handleViewDetails}
             onSuperLike={handleSuperLike}
             onBlock={handleBlock}
-            superLikeLabel={t("swipe.super")}
-            blockLabel={t("swipe.block")}
+            superLikeLabel={t("swipe.super") as string}
+            blockLabel={t("swipe.block") as string}
           />
 
           <View style={fortuneStyles.buttonsRow}>
             <Button mode="text" icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
               {t("fortune-wheel.random-category")}
             </Button>
-            <Button mode="text" icon="filter-variant" onPress={throttle(() => router.push("/fortune/filters"), 500)}>
+            <Button mode="text" icon="filter-variant" onPress={() => router.navigate("/fortune/filters")}>
               {t("filters.categories")}
             </Button>
           </View>
@@ -251,9 +264,9 @@ export default function FortuneWheel() {
 
                 <Button
                   rippleColor={"#fff"}
-                  onPress={throttle(() => {
-                    router.push("/fortune/filters");
-                  }, 500)}
+                  onPress={() => {
+                    router.navigate("/fortune/filters");
+                  }}
                 >
                   {t("filters.categories")}
                 </Button>
