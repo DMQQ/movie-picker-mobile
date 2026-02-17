@@ -27,7 +27,7 @@ function getDeviceSettings() {
   // App UI language - only pl or en supported
   const language = deviceLocale?.languageCode === "pl" ? "pl" : "en";
   const regionCode = deviceLocale?.regionCode || "US";
-  const languageTag = deviceLocale?.languageTag || "en-US";
+  const languageTag = `${deviceLocale?.languageCode || "en"}-${regionCode || "US"}`;
 
   return {
     language,

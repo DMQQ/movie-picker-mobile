@@ -58,7 +58,7 @@ const Segment = memo(({ item, segmentAngle, wheelSize, startAngle }: SegmentProp
   const angleInRadians = (middleAngle - 90) * (Math.PI / 180);
 
   const imageSize = wheelSize * 0.13;
-  const distanceFromCenter = radius - imageSize / 2 - BORDER_WIDTH - 45;
+  const distanceFromCenter = radius - imageSize / 2 - BORDER_WIDTH - 55;
 
   const translateX = Math.cos(angleInRadians) * distanceFromCenter;
   const translateY = Math.sin(angleInRadians) * distanceFromCenter;
@@ -79,8 +79,8 @@ const Segment = memo(({ item, segmentAngle, wheelSize, startAngle }: SegmentProp
         alignItems: "center",
         zIndex: 10,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
+        shadowOffset: { width: 3, height: 3 },
+        shadowOpacity: 0.75,
         shadowRadius: 4,
         elevation: 5,
       }}
@@ -112,7 +112,7 @@ const WheelOverlay = ({ size }: { size: number }) => {
         <RadialGradient
           c={center}
           r={radius}
-          colors={["rgba(255,255,255,0.025)", "rgba(255,255,255,0.1)", "transparent"]}
+          colors={["rgba(255,255,255,0.1)", "rgba(0,0,0,0.05)", "transparent"]}
           positions={[0.5, 0.8, 1]}
         />
       </Rect>
@@ -176,7 +176,6 @@ const WheelOverlay = ({ size }: { size: number }) => {
   );
 };
 
-// --- BACKGROUND SEGMENTS ---
 const WheelBackground = ({ size, items }: { size: number; items: any[] }) => {
   const segmentAngle = 360 / items.length;
   const center = size / 2;
@@ -194,7 +193,11 @@ const WheelBackground = ({ size, items }: { size: number; items: any[] }) => {
 
         p.close();
 
-        return <Path key={index} path={p} color={COLORS[index % COLORS.length]} />;
+        return (
+          <Path key={index} path={p}>
+            <RadialGradient c={vec(center, center)} r={size / 2} colors={[COLORS[index % COLORS.length], "#050505"]} positions={[0.3, 1]} />
+          </Path>
+        );
       })}
     </Canvas>
   );
@@ -205,168 +208,218 @@ interface WheelProps {
   items: Array<{ image: any; poster_path: string }>;
   onSelectedItem?: (item: any) => void;
   onSpinStart?: () => void;
+  onWinnerPredicted?: (item: any) => void;
   style?: StyleProp<ViewStyle>;
 }
 
-const Wheel = forwardRef<{ spin: () => void }, WheelProps>(({ size = width * 1.5, items, style, onSelectedItem, onSpinStart }, ref) => {
-  const segmentAngle = 360 / items.length;
-  const rotate = useSharedValue(0);
-  const isSpinning = useSharedValue(false);
-  const translateY = useSharedValue(0);
-  const lastHapticSegment = useSharedValue(-1);
-  const pointerRotation = useSharedValue(0);
+const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
+  ({ size = width * 1.5, items, style, onSelectedItem, onSpinStart, onWinnerPredicted }, ref) => {
+    const segmentAngle = 360 / items.length;
+    const rotate = useSharedValue(0);
+    const isSpinning = useSharedValue(false);
+    const translateY = useSharedValue(0);
+    const lastHapticSegment = useSharedValue(-1);
+    const pointerRotation = useSharedValue(0);
 
-  const t = useTranslation();
+    const t = useTranslation();
 
-  const triggerItemHaptic = () => {
-    if (Platform.OS === "ios") Haptics.selectionAsync();
-  };
+    const triggerItemHaptic = () => {
+      if (Platform.OS === "ios") Haptics.selectionAsync();
+    };
 
-  useAnimatedReaction(
-    () => rotate.value,
-    (currentRotation) => {
-      if (!isSpinning.value) return;
-      const normalizedRotation = ((currentRotation % 360) + 360) % 360;
-      const invertedAngle = (360 - normalizedRotation) % 360;
-      const segmentCenter = Math.floor(invertedAngle / segmentAngle);
+    useAnimatedReaction(
+      () => rotate.value,
+      (currentRotation, previousRotation) => {
+        if (!isSpinning.value) return;
+        const normalizedRotation = ((currentRotation % 360) + 360) % 360;
+        const invertedAngle = (360 - normalizedRotation) % 360;
+        const segmentCenter = Math.floor(invertedAngle / segmentAngle);
 
-      if (segmentCenter !== lastHapticSegment.value) {
-        lastHapticSegment.value = segmentCenter;
-        runOnJS(triggerItemHaptic)();
+        if (segmentCenter !== lastHapticSegment.value) {
+          lastHapticSegment.value = segmentCenter;
+          runOnJS(triggerItemHaptic)();
 
-        // --- NEW NATURAL ANIMATION ---
-        cancelAnimation(pointerRotation);
+          // Calculate how much the wheel is slowing down
+          const rotationDelta = Math.abs(currentRotation - (previousRotation || currentRotation));
+          const velocityFactor = clamp(rotationDelta / 15, 0.1, 1.1);
 
-        // Randomize the kick angle slightly (between 25 and 40 degrees) so it looks organic
-        const kickAngle = 25 + Math.random() * 15;
-        // Randomize return duration slightly (250ms - 350ms)
-        const returnDuration = 250 + Math.random() * 100;
+          // Both kick strength and return position scale with velocity
+          const kickAngle = (12 + Math.random() * 8) * velocityFactor + 15;
+          const returnTo = 4 * velocityFactor;
 
-        pointerRotation.value = withSequence(
-          // 1. Kick LEFT (Positive rotation) - Fast
-          withTiming(kickAngle, { duration: 40, easing: Easing.out(Easing.quad) }),
-          // 2. Return to 0 smoothly - Slower, no overshoot to negative
-          withTiming(0, { duration: returnDuration, easing: Easing.out(Easing.cubic) }),
-        );
-      }
-    },
-  );
+          // Small bounce back (negative) when slow
+          const bounceBack = velocityFactor < 0.4 ? -3 * (1 - velocityFactor) : 0;
 
-  const handleSpin = (velocity: number) => {
-    if (isSpinning.value) return;
-    if (onSpinStart) runOnJS(onSpinStart)();
-
-    isSpinning.value = true;
-    runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
-
-    const rotations = Math.min(Math.max(Math.abs(velocity / 500), 2), 8);
-    const randomOffset = (Math.random() - 0.5) * (segmentAngle * 0.8);
-    const initialTargetAngle = rotate.value + 360 * rotations + randomOffset;
-
-    rotate.value = withTiming(initialTargetAngle, { duration: 4000, easing: Easing.out(Easing.cubic) }, (finished) => {
-      if (!finished) {
-        isSpinning.value = false;
-        return;
-      }
-      const currentRot = rotate.value % 360;
-      const normalizedRot = (currentRot + 360) % 360;
-      const segmentIndex = Math.floor(normalizedRot / segmentAngle);
-      const targetAngle = rotate.value - (normalizedRot - segmentIndex * segmentAngle);
-      const finalTargetAngle = targetAngle + segmentAngle / 2;
-
-      rotate.value = withTiming(finalTargetAngle, { duration: 1000, easing: Easing.out(Easing.back(1.5)) }, () => {
-        isSpinning.value = false;
-        if (onSelectedItem) {
-          const finalRotation = ((finalTargetAngle % 360) + 360) % 360;
-          const selectedIndex = (items.length - Math.floor(finalRotation / segmentAngle) - 1) % items.length;
-          runOnJS(onSelectedItem)(items[selectedIndex]);
-          runOnJS(Haptics.notificationAsync)(Haptics.NotificationFeedbackType.Success);
+          cancelAnimation(pointerRotation);
+          pointerRotation.value = withSequence(
+            withTiming(kickAngle, { duration: 35, easing: Easing.out(Easing.quad) }),
+            withTiming(returnTo, { duration: 80, easing: Easing.out(Easing.quad) }),
+            ...(bounceBack !== 0 ? [withTiming(bounceBack, { duration: 60, easing: Easing.out(Easing.quad) })] : []),
+          );
         }
-      });
-    });
-  };
+      },
+    );
 
-  const gesture = Gesture.Pan()
-    .onUpdate((event) => {
-      if (!isSpinning.value) translateY.value = clamp(event.translationY, -50, 0);
-    })
-    .onEnd((event) => {
-      if (event.velocityY < -100) {
-        runOnJS(handleSpin)(event.velocityY);
-      }
+    const handleSpin = (velocity: number) => {
+      if (isSpinning.value) return;
+      if (onSpinStart) runOnJS(onSpinStart)();
+
       translateY.value = withTiming(0);
-    });
+      isSpinning.value = true;
+      lastHapticSegment.value = -1;
+      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
 
-  useImperativeHandle(ref, () => ({
-    spin: () => {
-      runOnJS(handleSpin)(-2000);
-    },
-  }));
+      // Initial kick when spin starts
+      pointerRotation.value = withTiming(25 + Math.random() * 10, { duration: 40, easing: Easing.out(Easing.quad) });
 
-  const animatedWheelStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotate.value}deg` }],
-  }));
+      const rotations = Math.min(Math.max(Math.abs(velocity / 500), 2), 8);
+      const randomOffset = (Math.random() - 0.5) * (segmentAngle * 0.8);
+      const initialTargetAngle = rotate.value + 360 * rotations + randomOffset;
 
-  const animatedBounceStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
-  }));
+      rotate.value = withTiming(initialTargetAngle, { duration: 4000, easing: Easing.out(Easing.cubic) }, (finished) => {
+        if (!finished) {
+          isSpinning.value = false;
+          pointerRotation.value = withSpring(0, { damping: 18, stiffness: 300 });
+          return;
+        }
+        const currentRot = rotate.value % 360;
+        const normalizedRot = (currentRot + 360) % 360;
+        const segmentIndex = Math.floor(normalizedRot / segmentAngle);
+        const targetAngle = rotate.value - (normalizedRot - segmentIndex * segmentAngle);
+        const finalTargetAngle = targetAngle + segmentAngle / 2;
 
-  const animatedPointerStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${pointerRotation.value}deg` }],
-  }));
+        // Calculate winner early for prefetching
+        const finalRotation = ((finalTargetAngle % 360) + 360) % 360;
+        const selectedIndex = (items.length - Math.floor(finalRotation / segmentAngle) - 1) % items.length;
+        if (onWinnerPredicted) {
+          runOnJS(onWinnerPredicted)(items[selectedIndex]);
+        }
 
-  return (
-    <View style={[styles.container, { height: size, bottom: -(size * 0.6) }]}>
-      {/* THICKER POINTER */}
-      <Animated.View style={[styles.pointer, animatedPointerStyle]}>
-        <Canvas style={{ width: 100, height: 100 }}>
-          {/* Hinge Pin */}
-          <Circle cx={50} cy={10} r={6} color="#111" />
+        // Return pointer to 0 when settling starts
+        pointerRotation.value = withSpring(0, { damping: 18, stiffness: 300 });
 
-          {/* The Golden Flapper (Much Wider Now: 25 to 75) */}
-          <Path path="M 25 10 L 75 10 L 50 70 Z" color="#FFD700">
-            <BlurMask blur={1} style="solid" />
-          </Path>
+        rotate.value = withTiming(finalTargetAngle, { duration: 1000, easing: Easing.out(Easing.back(1.5)) }, () => {
+          isSpinning.value = false;
+          if (onSelectedItem) {
+            translateY.value = withTiming(200, { duration: 300 });
+            runOnJS(onSelectedItem)(items[selectedIndex]);
+            runOnJS(Haptics.notificationAsync)(Haptics.NotificationFeedbackType.Success);
+          }
+        });
+      });
+    };
 
-          {/* Bevel Highlight (Left side) */}
-          <Path path="M 25 10 L 50 10 L 50 70 Z" color="#FFF" opacity={0.3} />
-          {/* Bevel Shadow (Right side) */}
-          <Path path="M 50 10 L 75 10 L 50 70 Z" color="#000" opacity={0.2} />
+    const gesture = Gesture.Pan()
+      .onUpdate((event) => {
+        if (!isSpinning.value) translateY.value = clamp(event.translationY, -50, 0);
+      })
+      .onEnd((event) => {
+        if (event.velocityY < -100) {
+          runOnJS(handleSpin)(event.velocityY);
+        }
+        translateY.value = withTiming(0);
+      });
 
-          {/* Stroke Outline */}
-          <Path path="M 25 10 L 75 10 L 50 70 Z" style="stroke" strokeWidth={2} color="#B8860B" />
-        </Canvas>
-      </Animated.View>
+    useImperativeHandle(ref, () => ({
+      spin: () => {
+        runOnJS(handleSpin)(-2000);
+      },
+    }));
 
-      <Animated.Text
-        style={[useAnimatedStyle(() => ({ opacity: isSpinning.value ? withTiming(0) : withTiming(1) })), styles.ctaText, styles.center]}
-      >
-        {t("fortune-wheel.drag")}
-      </Animated.Text>
+    const animatedWheelStyle = useAnimatedStyle(() => ({
+      transform: [{ rotate: `${rotate.value}deg` }],
+    }));
 
+    const animatedBounceStyle = useAnimatedStyle(() => ({
+      transform: [{ translateY: translateY.value }],
+    }));
+
+    const animatedPointerStyle = useAnimatedStyle(() => ({
+      transform: [
+        { rotate: `${pointerRotation.value}deg` },
+        {
+          translateY: translateY.value,
+        },
+      ],
+    }));
+
+    return (
       <GestureDetector gesture={gesture}>
-        <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={[styles.wheelContainer, animatedBounceStyle]}>
-          <Animated.View style={[{ width: size, height: size }, animatedWheelStyle]}>
-            <WheelBackground size={size} items={items} />
+        <View style={[styles.container, { height: size, bottom: -(size * 0.6) }]}>
+          {/* POINTER */}
+          <Animated.View style={[styles.pointer, animatedPointerStyle]}>
+            <Canvas style={{ width: 60, height: 80 }}>
+              {/* Drop shadow */}
+              <Path path="M 12 8 L 48 8 L 30 65 Z" color="#000" opacity={0.4}>
+                <BlurMask blur={6} style="normal" />
+              </Path>
 
-            {items.map((item, index) => (
-              <Segment
-                key={index}
-                item={item}
-                index={index}
-                segmentAngle={segmentAngle}
-                wheelSize={size}
-                startAngle={index * segmentAngle}
-              />
-            ))}
+              {/* Main pointer body */}
+              <Path path="M 10 5 L 50 5 L 30 62 Z">
+                <LinearGradient start={vec(10, 5)} end={vec(50, 5)} colors={["#FFD700", "#FFF8DC", "#DAA520"]} />
+              </Path>
+
+              {/* Left highlight */}
+              <Path path="M 10 5 L 30 5 L 30 62 Z" color="#FFF" opacity={0.25} />
+
+              {/* Right shadow */}
+              <Path path="M 30 5 L 50 5 L 30 62 Z" color="#8B6914" opacity={0.3} />
+
+              {/* Outline */}
+              <Path path="M 10 5 L 50 5 L 30 62 Z" style="stroke" strokeWidth={1.5} color="#B8860B" />
+
+              {/* Hinge circle outer */}
+              <Circle cx={30} cy={8} r={8}>
+                <LinearGradient start={vec(22, 0)} end={vec(38, 16)} colors={["#FFD700", "#B8860B"]} />
+              </Circle>
+              <Circle cx={30} cy={8} r={8} style="stroke" strokeWidth={1} color="#8B6914" />
+
+              {/* Hinge circle inner */}
+              <Circle cx={30} cy={8} r={4} color="#222" />
+              <Circle cx={30} cy={8} r={2} color="#444" />
+            </Canvas>
           </Animated.View>
 
-          <WheelOverlay size={size} />
-        </Animated.View>
+          <Animated.Text
+            style={[
+              useAnimatedStyle(() => ({
+                opacity: isSpinning.value ? withTiming(0) : withTiming(1),
+                transform: [
+                  {
+                    translateY: translateY.value,
+                  },
+                ],
+              })),
+              styles.ctaText,
+              styles.center,
+            ]}
+          >
+            {t("fortune-wheel.drag")}
+          </Animated.Text>
+
+          <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={[styles.wheelContainer, animatedBounceStyle]}>
+            <Animated.View style={[{ width: size, height: size }, animatedWheelStyle]}>
+              <WheelBackground size={size} items={items} />
+
+              {items.map((item, index) => (
+                <Segment
+                  key={index}
+                  item={item}
+                  index={index}
+                  segmentAngle={segmentAngle}
+                  wheelSize={size}
+                  startAngle={index * segmentAngle}
+                />
+              ))}
+            </Animated.View>
+
+            <WheelOverlay size={size} />
+          </Animated.View>
+        </View>
       </GestureDetector>
-    </View>
-  );
-});
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -382,9 +435,10 @@ const styles = StyleSheet.create({
   },
   pointer: {
     position: "absolute",
-    top: -20,
+    top: -15,
     zIndex: 100,
     alignItems: "center",
+    transformOrigin: "center top",
   },
   center: {
     position: "absolute",
@@ -399,6 +453,7 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0,0,0,0.8)",
     textShadowRadius: 4,
     top: -80,
+    textAlign: "center",
   },
 });
 
