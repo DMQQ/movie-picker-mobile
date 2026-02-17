@@ -331,17 +331,12 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
     }));
 
     const animatedPointerStyle = useAnimatedStyle(() => ({
-      transform: [
-        { rotate: `${pointerRotation.value}deg` },
-        {
-          translateY: translateY.value, // Move pointer with drag
-        },
-      ],
+      transform: [{ rotate: `${pointerRotation.value}deg` }],
     }));
 
     return (
       <GestureDetector gesture={gesture}>
-        <View style={[styles.container, { height: size, bottom: -(size * 0.6) }]}>
+        <Animated.View style={[styles.container, { height: size, bottom: -(size * 0.6) }, animatedBounceStyle]}>
           {/* IMPROVED POINTER */}
           <Animated.View style={[styles.pointer, animatedPointerStyle]}>
             <Canvas style={{ width: 100, height: 100 }}>
@@ -391,11 +386,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
             style={[
               useAnimatedStyle(() => ({
                 opacity: isSpinning.value ? withTiming(0) : withTiming(1),
-                transform: [
-                  {
-                    translateY: translateY.value, // Move text with drag
-                  },
-                ],
+                transform: [],
               })),
               styles.ctaText,
               styles.center,
@@ -404,7 +395,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
             {t("fortune-wheel.drag")}
           </Animated.Text>
 
-          <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={[styles.wheelContainer, animatedBounceStyle]}>
+          <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={[styles.wheelContainer]}>
             <Animated.View style={[{ width: size, height: size }, animatedWheelStyle]}>
               <WheelBackground size={size} items={items} />
 
@@ -422,7 +413,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
 
             <WheelOverlay size={size} />
           </Animated.View>
-        </View>
+        </Animated.View>
       </GestureDetector>
     );
   },
@@ -435,7 +426,7 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: "flex-start",
     alignItems: "center",
-    // backgroundColor: "red",
+    backgroundColor: "red",
   },
   wheelContainer: {
     alignItems: "center",
