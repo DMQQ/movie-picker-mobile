@@ -14,7 +14,7 @@ import {
   vec,
 } from "@shopify/react-native-skia";
 import * as Haptics from "expo-haptics";
-import { forwardRef, memo, useImperativeHandle, useMemo } from "react";
+import { forwardRef, memo, useImperativeHandle, useMemo, useRef } from "react";
 import { Dimensions, Image, Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { MD2DarkTheme } from "react-native-paper";
@@ -216,12 +216,15 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
     const startTranslateY = useSharedValue(0);
     const lastHapticSegment = useSharedValue(-1);
     const pointerRotation = useSharedValue(0);
+    const seenIndices = useRef<Set<number>>(new Set());
 
     const t = useTranslation();
 
     const triggerItemHaptic = () => {
       if (Platform.OS === "ios") Haptics.selectionAsync();
     };
+
+    const markSeen = (idx: number) => seenIndices.current.add(idx);
 
     useAnimatedReaction(
       () => rotate.value,
@@ -264,9 +267,22 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
 
       pointerRotation.value = withTiming(25 + Math.random() * 10, { duration: 40, easing: Easing.out(Easing.quad) });
 
-      const rotations = Math.min(Math.max(Math.abs(velocity / 500), 2), 8);
-      const randomOffset = (Math.random() - 0.5) * (segmentAngle * 0.8);
-      const initialTargetAngle = rotate.value - 360 * rotations + randomOffset;
+      const randomizedVelocity = velocity + (Math.random() - 0.5) * 2000; // Add ±1000 randomness
+      const rotations = Math.min(Math.max(Math.abs(randomizedVelocity / 500), 2), 8);
+
+      // Get unseen indices, reset if all seen
+      const allIndices = Array.from({ length: items.length }, (_, i) => i);
+      const unseenIndices = allIndices.filter((i) => !seenIndices.current.has(i));
+      if (unseenIndices.length === 0) {
+        seenIndices.current.clear();
+        unseenIndices.push(...allIndices);
+      }
+
+      // Pick random unseen segment
+      const targetIndex = unseenIndices[Math.floor(Math.random() * unseenIndices.length)];
+      const targetSegmentAngle = (items.length - targetIndex - 1) * segmentAngle + segmentAngle / 2;
+      const currentNormalized = ((rotate.value % 360) + 360) % 360;
+      const initialTargetAngle = rotate.value - currentNormalized - 360 * rotations + targetSegmentAngle;
 
       rotate.value = withTiming(initialTargetAngle, { duration: 4000, easing: Easing.out(Easing.cubic) }, (finished) => {
         if (!finished) {
@@ -290,6 +306,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
 
         rotate.value = withTiming(finalTargetAngle, { duration: 1000, easing: Easing.out(Easing.back(1.5)) }, () => {
           isSpinning.value = false;
+          runOnJS(markSeen)(selectedIndex);
           if (onSelectedItem) {
             translateY.value = withTiming(200, { duration: 300 });
             runOnJS(onSelectedItem)(items[selectedIndex]);
