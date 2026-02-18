@@ -120,47 +120,62 @@ export default function FortuneWheel() {
 
   const [getLazySection] = useLazyGetSectionMoviesQuery();
 
-  const handleThrowDice = useCallback(
-    (value?: number | string) => {
-      prefetchedDetails.current = null;
+  const handleThrowDice = (value?: number | string) => {
+    prefetchedDetails.current = null;
 
-      const handleResponse = async (response: any) => {
-        if (response.data && Array.isArray(response.data.results) && response.data.results.length > 0) {
-          const movies = response.data.results as Movie[];
+    if (params?.movies) {
+      try {
+        const movies =
+          typeof params.movies === "string"
+            ? (JSON.parse(params.movies) as Movie[])
+            : (JSON.parse((params.movies as string[])[0]) as Movie[]);
 
-          const shuffled = shuffleInPlace([...movies]);
+        const shuffled = shuffleInPlace([...movies]);
 
-          const newSelectedCards = {
-            results: fillMissing(shuffled.slice(0, 12), 12),
-            name: response.data.name || "",
-          };
+        setSelectedCards({
+          results: fillMissing(shuffled.slice(0, 12), 12),
+          name: (params.title as string) || "",
+        });
+        setShouldSpin(true);
+      } catch (error) {}
+      return;
+    }
 
-          setSelectedCards(newSelectedCards);
-          setShouldSpin(true);
-        } else {
-          console.log("No data or results in response:", response);
-        }
-      };
+    const handleResponse = async (response: any) => {
+      if (response.data && Array.isArray(response.data.results) && response.data.results.length > 0) {
+        const movies = response.data.results as Movie[];
 
-      const handleError = (error: any) => {
-        console.error("Failed to fetch movies:", error);
-      };
+        const shuffled = shuffleInPlace([...movies]);
 
-      if (value) {
-        getLazySection({ name: value as string })
-          .then(handleResponse)
-          .catch(handleError);
-        return;
+        const newSelectedCards = {
+          results: fillMissing(shuffled.slice(0, 12), 12),
+          name: response.data.name || "",
+        };
+
+        setSelectedCards(newSelectedCards);
+        setShouldSpin(true);
+      } else {
+        console.log("No data or results in response:", response);
       }
+    };
 
-      const filterParams = getFilterParams();
-      const blockedIds = blockedMovies.map((m) => `${m.movie_type === "tv" ? "t" : "m"}${m.movie_id}`);
-      getLazyRandomSection({ not: selectedCards.name, notMovies: blockedIds.join(","), ...filterParams })
+    const handleError = (error: any) => {
+      console.error("Failed to fetch movies:", error);
+    };
+
+    if (value) {
+      getLazySection({ name: value as string })
         .then(handleResponse)
         .catch(handleError);
-    },
-    [selectedCards.name, getLazySection, getLazyRandomSection, getFilterParams, blockedMovies],
-  );
+      return;
+    }
+
+    const filterParams = getFilterParams();
+    const blockedIds = blockedMovies.map((m) => `${m.movie_type === "tv" ? "t" : "m"}${m.movie_id}`);
+    getLazyRandomSection({ not: selectedCards.name, notMovies: blockedIds.join(","), ...filterParams })
+      .then(handleResponse)
+      .catch(handleError);
+  };
 
   const handleBlock = useCallback(() => {
     if (!selectedMovie) return;
@@ -170,46 +185,40 @@ export default function FortuneWheel() {
     setMovieDetails(null);
     setIsSuperLiked(false);
     handleThrowDice();
-  }, [selectedMovie, blockMovie, handleThrowDice]);
+  }, [selectedMovie, blockMovie]);
 
   const [isSpin, setIsSpin] = useState(false);
 
-  const handleFiltersApplied = useCallback(() => {
+  const handleFiltersApplied = () => {
     handleThrowDice();
-  }, [handleThrowDice]);
+  };
 
   useEffect(() => {
+    if (params?.movies) {
+      try {
+        const movies =
+          typeof params.movies === "string"
+            ? (JSON.parse(params.movies) as Movie[])
+            : (JSON.parse((params.movies as string[])[0]) as Movie[]);
+
+        const shuffled = shuffleInPlace([...movies]);
+
+        setSelectedCards({
+          results: fillMissing(shuffled.slice(0, 12), 12),
+          name: (params?.title as string) || "",
+        });
+        setShouldSpin(true);
+      } catch (error) {}
+      return;
+    }
+
     if (params?.category) {
       handleThrowDice(params.category as string);
+      return;
     }
-  }, [params?.category, handleThrowDice]);
 
-  useEffect(() => {
-    const bootstrap = async () => {
-      if (!params?.category && !params?.movies) {
-        handleThrowDice();
-      } else if (params?.category && params?.movies) {
-        handleThrowDice();
-      } else if (params?.movies) {
-        try {
-          const movies =
-            typeof params.movies === "string"
-              ? (JSON.parse(params.movies) as Movie[])
-              : (JSON.parse((params.movies as string[])[0]) as Movie[]);
-
-          const shuffled = shuffleInPlace([...movies]);
-
-          setSelectedCards({
-            results: fillMissing(shuffled.slice(0, 12), 12),
-            name: "",
-          });
-          setShouldSpin(true);
-        } catch (error) {}
-      }
-    };
-
-    bootstrap();
-  }, [params?.category, params?.movies]);
+    handleThrowDice();
+  }, [params?.category, params?.movies, params?.title]);
 
   const { width, height } = useWindowDimensions();
 
@@ -217,7 +226,7 @@ export default function FortuneWheel() {
 
   return (
     <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
-      <PageHeading showBackButton title="">
+      <PageHeading showGradientBackground showBackButton title={(params?.title as string) || ""}>
         <View style={fortuneStyles.filterButtonWrapper}>
           <FilterButton size={22} onApply={handleFiltersApplied} onCategorySelect={handleThrowDice} showCategories />
         </View>

@@ -39,7 +39,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
     if (room.roomId && room.socket?.connected && blockedReady && superLikedReady) {
       (async () => {
         const [blockedMovies, superLikedMovies] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
-        room.joinGame(room.roomId, blockedMovies, superLikedMovies);
+        const response = await room.joinGame(room.roomId, blockedMovies, superLikedMovies);
       })();
     }
   }, [room.roomId, room.socket?.connected, blockedReady, superLikedReady]);

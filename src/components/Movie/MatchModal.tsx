@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     pointerEvents: "none",
   },
 
-  meta: { flexDirection: "row", marginTop: 5, alignItems: "center", gap: 6, flexWrap: "wrap" },
+  meta: { flexDirection: "row", marginTop: 5, alignItems: "center", gap: 6, flexWrap: "wrap", paddingLeft: 10 },
 
   share: { position: "absolute", bottom: -75, right: 0, left: 0, zIndex: 20, justifyContent: "center", alignItems: "center" },
 });

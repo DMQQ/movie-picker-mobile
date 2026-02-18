@@ -79,7 +79,7 @@ export default function Home() {
           }
 
           let timeout = setTimeout(() => {
-            dispatch(roomActions.setRoomId(params.roomId as string));
+            dispatch(roomActions.setRoomId((params.roomId as string).toUpperCase()));
           }, 1);
 
           return () => clearTimeout(timeout);

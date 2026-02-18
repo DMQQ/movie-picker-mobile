@@ -141,7 +141,6 @@ const styles = StyleSheet.create({
   movieTitle: {
     fontSize: 32,
     color: "#fff",
-    marginBottom: 8,
     fontFamily: "Bebas",
     textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 0, height: 1 },

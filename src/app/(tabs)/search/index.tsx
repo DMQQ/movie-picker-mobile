@@ -311,10 +311,6 @@ const SearchScreen = () => {
     [t, searchQuery],
   );
 
-  if (!useIsMounted()) {
-    return <View style={[styles.container, StyleSheet.absoluteFill]} />;
-  }
-
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: 15 }]}>
       {memoStack}

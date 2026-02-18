@@ -124,26 +124,34 @@ export default function QRCodePage() {
       try {
         const [blockedMovies, superLikedMovies] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
 
+        const mappedBlocked = blockedMovies.map((movie) => `${movie.type === "movie" ? "m" : "t"}${movie.id}`);
+        const mappedSuperLiked = superLikedMovies.map((movie) => `${movie.type === "movie" ? "m" : "t"}${movie.id}`);
+
         if (qrCode && roomId) {
           if (existingMovies.length === 0) {
             setIsLoadingMovies(true);
             setMoviesCount(null);
           }
-          console.log("Updating room with config:", roomConfig);
-          socket.emit("room:update-config", { roomId, config: { ...roomConfig, blockedMovies, superLikedMovies } });
+          socket.emit("room:update-config", {
+            roomId: roomId.toUpperCase(),
+            config: { ...roomConfig, blockedMovies: mappedBlocked, superLikedMovies: mappedSuperLiked },
+          });
           return;
         }
 
         setCreateRoomLoading(true);
         setIsLoadingMovies(true);
 
-        const response = (await socket.emitWithAck("create-room", { ...roomConfig, blockedMovies, superLikedMovies })) as ISocketResponse;
-        console.log("Room created with response:", response);
+        const response = (await socket.emitWithAck("create-room", {
+          ...roomConfig,
+          blockedMovies: mappedBlocked,
+          superLikedMovies: mappedSuperLiked,
+        })) as ISocketResponse;
 
         if (response) {
           dispatch(roomActions.setRoom(response.details));
           dispatch(roomActions.setQRCode(response.roomId));
-          socket.emit("join-room", response.roomId, nickname, blockedMovies, superLikedMovies);
+          socket.emit("join-room", response.roomId.toUpperCase(), nickname, blockedMovies, superLikedMovies);
         }
       } catch (error) {
         console.error("Error creating room:", error);
@@ -203,7 +211,7 @@ export default function QRCodePage() {
       router.replace({
         pathname: "/room/[roomId]",
         params: {
-          roomId: code,
+          roomId: code.toUpperCase(),
           type: gameType,
         },
       });
@@ -214,7 +222,7 @@ export default function QRCodePage() {
 
   return (
     <View style={styles.container}>
-      <PageHeading showGradientBackground={false} useSafeArea={false} title={t("room.qr-title")} />
+      <PageHeading showGradientBackground={false} useSafeArea={false} title={t("room.qr-title") as string} />
       <View style={[styles.contentContainer, Platform.OS === "android" && styles.contentContainerAndroid]}>
         {createRoomLoading ? (
           <Animated.View entering={FadeInDown} style={styles.loadingContainer}>
@@ -241,14 +249,6 @@ export default function QRCodePage() {
           </View>
         </View>
 
-        {isLoadingMovies ? (
-          <Text style={styles.infoText}>Checking available movies...</Text>
-        ) : moviesCount === 0 ? (
-          <Text style={styles.warningText}>{t("room.too-restricted")}</Text>
-        ) : moviesCount != null && moviesCount < 15 ? (
-          <Text style={styles.warningText}>{t("room.lower-results-count", { count: moviesCount })}</Text>
-        ) : null}
-
         <Button
           disabled={!qrCode || isLoadingMovies || (moviesCount != null && moviesCount < 5) || createRoomLoading || isPending}
           mode="contained"
@@ -260,6 +260,15 @@ export default function QRCodePage() {
         >
           {isLoadingMovies ? "Loading..." : moviesCount === 0 ? t("room.too-restricted") : "Start"}
         </Button>
+      </View>
+      <View style={{ width: "100%", alignItems: "center", marginTop: 5, height: 15 }}>
+        {isLoadingMovies ? (
+          <Text style={styles.infoText}>Checking available movies...</Text>
+        ) : moviesCount === 0 ? (
+          <Text style={styles.warningText}>{t("room.too-restricted")}</Text>
+        ) : moviesCount != null && moviesCount < 5 ? (
+          <Text style={styles.warningText}>{t("room.lower-results-count", { count: moviesCount })}</Text>
+        ) : null}
       </View>
     </View>
   );
@@ -305,7 +314,7 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
   const shareCode = async (code: string) => {
     Share.share({
       message: t("room.share.message", { code }) + "\nOr join via https://flickmate.app/swipe/" + code.toUpperCase(),
-      title: t("room.share.title"),
+      title: t("room.share.title") as string,
       url: "https://flickmate.app/swipe/" + code.toUpperCase(),
     });
   };
@@ -325,14 +334,14 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         <QRCode
           backgroundColor={theme.colors.surface}
           color={theme.colors.primary}
-          value={`flickmate://room/${code}`}
+          value={`flickmate://room/${code.toUpperCase()}`}
           size={Dimensions.get("screen").width * 0.6}
         />
       </View>
 
       <Pressable
         onPress={async () => {
-          shareCode(code);
+          shareCode(code.toUpperCase());
         }}
         style={styles.shareButton}
       >
@@ -421,7 +430,6 @@ const styles = StyleSheet.create({
   startButton: {
     borderRadius: 100,
     marginTop: 10,
-    marginBottom: 15,
   },
   startButtonContent: {
     padding: 7.5,

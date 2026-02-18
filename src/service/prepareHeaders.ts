@@ -21,12 +21,10 @@ export default function prepareHeaders(headers: Headers, { getState }: Pick<Base
     headers.set("x-update-manifest-id", Updates?.manifest?.id || "unknown");
   }
 
-  // Set all regionalization headers from device settings
   Object.entries(regionalization).forEach(([key, value]) => {
     headers.set(key, value);
   });
 
-  // x-user-language is always pl-PL or en-US based on app language
   headers.set("x-user-language", userLanguage);
 
   return headers;

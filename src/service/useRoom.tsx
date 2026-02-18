@@ -112,10 +112,35 @@ export default function useRoom() {
   }, [socket?.on, socket?.id, roomId]);
 
   useEffect(() => {
-    if (isPlaying && runOnce.current === false && cards.length === 0 && socket) {
-      runOnce.current = true;
+    // Only attempt if playing, no cards, and socket exists
+    if (!isPlaying || cards.length > 0 || !socket) return;
+
+    let attempts = 0;
+    const maxAttempts = 3;
+    const retryDelay = 1500;
+    let timeoutId: NodeJS.Timeout | null = null;
+    let cancelled = false;
+
+    const attemptFetch = () => {
+      if (cancelled || attempts >= maxAttempts) {
+        if (attempts >= maxAttempts) {
+        }
+        return;
+      }
+
+      attempts++;
+
       socket?.emit("get-movies", roomId);
-    }
+
+      timeoutId = setTimeout(attemptFetch, retryDelay);
+    };
+
+    attemptFetch();
+
+    return () => {
+      cancelled = true;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [isPlaying, cards.length, roomId, socket]);
 
   const removeCardLocally = (index: number) => {
