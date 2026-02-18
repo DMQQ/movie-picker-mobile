@@ -12,7 +12,10 @@ import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
-import { DatabaseProvider } from "../context/DatabaseContext";
+import { DatabaseProvider, useMovieInteractions } from "../context/DatabaseContext";
+import { loadInteractions } from "../redux/movieInteractions/movieInteractionsSlice";
+import { loadFilterPreferences } from "../redux/filterPreferences/filterPreferencesSlice";
+import * as SplashScreen from "expo-splash-screen";
 
 import { enableFreeze } from "react-native-screens";
 
@@ -122,17 +125,25 @@ export default function RootLayout() {
   );
 }
 
+SplashScreen.preventAutoHideAsync();
+
 const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: boolean }) => {
   const dispatch = useAppDispatch();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
+  const { movieInteractions, isReady: dbReady } = useMovieInteractions();
 
   useEffect(() => {
     const initializeApp = async () => {
-      if (!isLoaded || isUpdating) return;
+      if (!isLoaded || isUpdating || !dbReady || !movieInteractions) return;
 
       try {
-        const nickname = await AsyncStorage.getItem("nickname");
+        const [nickname] = await Promise.all([
+          AsyncStorage.getItem("nickname"),
+          dispatch(loadInteractions(movieInteractions)),
+          dispatch(loadFilterPreferences()),
+        ]);
+
         const deviceSettings = getDeviceSettings();
         const isFirstTimeUser = !nickname;
 
@@ -150,11 +161,13 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
         setNeedsOnboarding(false);
       } finally {
         setSettingsLoaded(true);
+
+        await SplashScreen.hideAsync();
       }
     };
 
     initializeApp();
-  }, [isLoaded, isUpdating, dispatch]);
+  }, [isLoaded, isUpdating, dbReady, movieInteractions, dispatch]);
 
   useEffect(() => {
     QuickActions.setItems([

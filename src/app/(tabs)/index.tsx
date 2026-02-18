@@ -113,14 +113,12 @@ export default function GameList() {
     [t],
   );
 
-  const filteredGames = games;
-
   return (
     <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000", paddingBottom: 15 }}>
       <PageHeading
         rightIconName="camera"
-        rightIconTitle={t("scanner.button")}
-        title={t("voter.games")}
+        rightIconTitle={t("scanner.button") as string}
+        title={t("voter.games") as string}
         showBackButton={false}
         showRightIconButton
         extraScreenPaddingTop={Platform.OS === "android" ? 0 : 0}
@@ -134,12 +132,12 @@ export default function GameList() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 60, paddingBottom: 50 }}
       >
-        {filteredGames.map((game, index) => (
+        {games.map((game, index) => (
           <GameCard
             index={game.index}
             key={game.index}
-            title={game.title}
-            description={game.description}
+            title={game.title as string}
+            description={game.description as string}
             onPress={() => router.navigate(game.route as any)}
             beta={game.beta}
             players={game.players}

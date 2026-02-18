@@ -213,6 +213,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
     const rotate = useSharedValue(0);
     const isSpinning = useSharedValue(false);
     const translateY = useSharedValue(0);
+    const startTranslateY = useSharedValue(0);
     const lastHapticSegment = useSharedValue(-1);
     const pointerRotation = useSharedValue(0);
 
@@ -234,15 +235,12 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
           lastHapticSegment.value = segmentCenter;
           runOnJS(triggerItemHaptic)();
 
-          // NEW: Calculate velocity to scale the kick strength
           const rotationDelta = Math.abs(currentRotation - (previousRotation || currentRotation));
-          const velocityFactor = clamp(rotationDelta / 15, 0.1, 1.1); // 0.1 (slow) to 1.1 (fast)
+          const velocityFactor = clamp(rotationDelta / 15, 0.1, 1.1);
 
-          // Both kick strength and return position scale with velocity
           const kickAngle = (12 + Math.random() * 8) * velocityFactor + 15;
           const returnTo = 4 * velocityFactor;
 
-          // Small bounce back (negative) when slow to simulate settling
           const bounceBack = velocityFactor < 0.4 ? -3 * (1 - velocityFactor) : 0;
 
           cancelAnimation(pointerRotation);
@@ -250,7 +248,6 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
             withTiming(kickAngle, { duration: 50, easing: Easing.out(Easing.quad) }),
             withTiming(returnTo, { duration: 90, easing: Easing.out(Easing.quad) }),
             ...(bounceBack !== 0 ? [withTiming(bounceBack, { duration: 70, easing: Easing.out(Easing.quad) })] : []),
-            // Final settle to 0 happens implicitly or via spring in spin function
           );
         }
       },
@@ -265,12 +262,11 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
       lastHapticSegment.value = -1;
       runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
 
-      // Initial kick when spin starts
       pointerRotation.value = withTiming(25 + Math.random() * 10, { duration: 40, easing: Easing.out(Easing.quad) });
 
       const rotations = Math.min(Math.max(Math.abs(velocity / 500), 2), 8);
       const randomOffset = (Math.random() - 0.5) * (segmentAngle * 0.8);
-      const initialTargetAngle = rotate.value + 360 * rotations + randomOffset;
+      const initialTargetAngle = rotate.value - 360 * rotations + randomOffset;
 
       rotate.value = withTiming(initialTargetAngle, { duration: 4000, easing: Easing.out(Easing.cubic) }, (finished) => {
         if (!finished) {
@@ -304,8 +300,13 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
     };
 
     const gesture = Gesture.Pan()
+      .onStart(() => {
+        startTranslateY.value = translateY.value;
+      })
       .onUpdate((event) => {
-        if (!isSpinning.value) translateY.value = clamp(event.translationY, -50, 0);
+        if (!isSpinning.value) {
+          translateY.value = clamp(startTranslateY.value + event.translationY, -50, 200);
+        }
       })
       .onEnd((event) => {
         if (event.velocityY < -100) {
@@ -333,95 +334,97 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
     }));
 
     return (
-      <GestureDetector gesture={gesture}>
-        <Animated.View style={[styles.container, { height: size, bottom: -(size * 0.6) }, animatedBounceStyle]}>
-          {/* IMPROVED POINTER */}
-          <Animated.View style={[styles.pointer, animatedPointerStyle]}>
-            <Canvas style={{ width: 100, height: 100 }}>
-              {/* 1. Hinge Pin Base */}
-              <Circle cx={50} cy={10} r={6} color="#111" />
+      <View style={[{ bottom: -(size * 0.6), position: "absolute", left: 0, right: 0 }]} pointerEvents="box-only">
+        <GestureDetector gesture={gesture}>
+          <Animated.View style={[styles.container, { height: size }, animatedBounceStyle]}>
+            {/* IMPROVED POINTER */}
+            <Animated.View style={[styles.pointer, animatedPointerStyle]}>
+              <Canvas style={{ width: 100, height: 100 }}>
+                {/* 1. Hinge Pin Base */}
+                <Circle cx={50} cy={10} r={6} color="#111" />
 
-              {/* 2. Drop Shadow */}
-              <Path path="M 25 10 L 75 10 L 50 70 Z" color="#000" opacity={0.5}>
-                <BlurMask blur={6} style="normal" />
-                <CornerPathEffect r={8} />
-              </Path>
+                {/* 2. Drop Shadow */}
+                <Path path="M 25 10 L 75 10 L 50 70 Z" color="#000" opacity={0.5}>
+                  <BlurMask blur={6} style="normal" />
+                  <CornerPathEffect r={8} />
+                </Path>
 
-              {/* 3. Main Body with Gradient */}
-              <Path path="M 25 10 L 75 10 L 50 70 Z">
-                <LinearGradient start={vec(25, 10)} end={vec(75, 10)} colors={["#FFD700", "#e3cd74", "#DAA520"]} />
-                <CornerPathEffect r={8} />
-              </Path>
+                {/* 3. Main Body with Gradient */}
+                <Path path="M 25 10 L 75 10 L 50 70 Z">
+                  <LinearGradient start={vec(25, 10)} end={vec(75, 10)} colors={["#FFD700", "#e3cd74", "#DAA520"]} />
+                  <CornerPathEffect r={8} />
+                </Path>
 
-              {/* 4. Left Highlight (Bevel) */}
-              {/* We draw the left half only. CornerPathEffect will round the outer edge. */}
-              <Path path="M 25 10 L 50 10 L 50 70 Z" color="#FFF" opacity={0.35}>
-                <CornerPathEffect r={8} />
-              </Path>
+                {/* 4. Left Highlight (Bevel) */}
+                {/* We draw the left half only. CornerPathEffect will round the outer edge. */}
+                <Path path="M 25 10 L 50 10 L 50 70 Z" color="#FFF" opacity={0.35}>
+                  <CornerPathEffect r={8} />
+                </Path>
 
-              {/* 5. Right Shadow (Bevel) */}
-              {/* We draw the right half only. CornerPathEffect will round the outer edge. */}
-              <Path path="M 50 10 L 75 10 L 50 70 Z" color="#8B6914" opacity={0.35}>
-                <CornerPathEffect r={8} />
-              </Path>
+                {/* 5. Right Shadow (Bevel) */}
+                {/* We draw the right half only. CornerPathEffect will round the outer edge. */}
+                <Path path="M 50 10 L 75 10 L 50 70 Z" color="#8B6914" opacity={0.35}>
+                  <CornerPathEffect r={8} />
+                </Path>
 
-              {/* 6. Stroke Outline */}
-              <Path path="M 25 10 L 75 10 L 50 70 Z" style="stroke" strokeWidth={3} color="#B8860B">
-                <CornerPathEffect r={8} />
-              </Path>
+                {/* 6. Stroke Outline */}
+                <Path path="M 25 10 L 75 10 L 50 70 Z" style="stroke" strokeWidth={3} color="#B8860B">
+                  <CornerPathEffect r={8} />
+                </Path>
 
-              {/* 7. Hinge Pin Details */}
-              <Circle cx={50} cy={10} r={8}>
-                <LinearGradient start={vec(42, 0)} end={vec(58, 20)} colors={["#FFD700", "#B8860B"]} />
-              </Circle>
-              <Circle cx={50} cy={10} r={8} style="stroke" strokeWidth={1} color="#8B6914" />
-              <Circle cx={50} cy={10} r={5} color="#222" />
-              <Circle cx={50} cy={10} r={3} color="#444" />
-            </Canvas>
-          </Animated.View>
-
-          <Animated.Text
-            style={[
-              useAnimatedStyle(() => ({
-                opacity: isSpinning.value ? withTiming(0) : withTiming(1),
-                transform: [],
-              })),
-              styles.ctaText,
-              styles.center,
-            ]}
-          >
-            {t("fortune-wheel.drag")}
-          </Animated.Text>
-
-          <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={[styles.wheelContainer]}>
-            <Animated.View style={[{ width: size, height: size }, animatedWheelStyle]}>
-              <WheelBackground size={size} items={items} />
-
-              {items.map((item, index) => (
-                <Segment
-                  key={index}
-                  item={item}
-                  index={index}
-                  segmentAngle={segmentAngle}
-                  wheelSize={size}
-                  startAngle={index * segmentAngle}
-                />
-              ))}
+                {/* 7. Hinge Pin Details */}
+                <Circle cx={50} cy={10} r={8}>
+                  <LinearGradient start={vec(42, 0)} end={vec(58, 20)} colors={["#FFD700", "#B8860B"]} />
+                </Circle>
+                <Circle cx={50} cy={10} r={8} style="stroke" strokeWidth={1} color="#8B6914" />
+                <Circle cx={50} cy={10} r={5} color="#222" />
+                <Circle cx={50} cy={10} r={3} color="#444" />
+              </Canvas>
             </Animated.View>
 
-            <WheelOverlay size={size} />
+            <Animated.Text
+              style={[
+                useAnimatedStyle(() => ({
+                  opacity: isSpinning.value ? withTiming(0) : withTiming(1),
+                  transform: [],
+                })),
+                styles.ctaText,
+                styles.center,
+              ]}
+            >
+              {t("fortune-wheel.drag")}
+            </Animated.Text>
+
+            <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={[styles.wheelContainer]}>
+              <Animated.View style={[{ width: size, height: size }, animatedWheelStyle]}>
+                <WheelBackground size={size} items={items} />
+
+                {items.map((item, index) => (
+                  <Segment
+                    key={index}
+                    item={item}
+                    index={index}
+                    segmentAngle={segmentAngle}
+                    wheelSize={size}
+                    startAngle={index * segmentAngle}
+                  />
+                ))}
+              </Animated.View>
+
+              <WheelOverlay size={size} />
+            </Animated.View>
           </Animated.View>
-        </Animated.View>
-      </GestureDetector>
+        </GestureDetector>
+      </View>
     );
   },
 );
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    left: 0,
-    right: 0,
+    // position: "absolute",
+    // left: 0,
+    // right: 0,
     justifyContent: "flex-start",
     alignItems: "center",
   },

@@ -112,11 +112,7 @@ export default function ShareableTicket({
 
   return (
     <View style={styles.container}>
-      <ViewShot
-        ref={viewShotRef}
-        options={{ format: "png", quality: 1 }}
-        style={styles.viewShot}
-      >
+      <ViewShot ref={viewShotRef} options={{ format: "png", quality: 1 }} style={styles.viewShot}>
         <CinemaTicket
           movie={movie}
           providers={providers}
@@ -161,15 +157,18 @@ export function useTicketCapture() {
     }
   }, []);
 
-  const share = useCallback(async (movieTitle: string): Promise<void> => {
-    const uri = await capture();
-    if (uri && (await Sharing.isAvailableAsync())) {
-      await Sharing.shareAsync(uri, {
-        mimeType: "image/png",
-        dialogTitle: `${movieTitle} - Movie Ticket`,
-      });
-    }
-  }, [capture]);
+  const share = useCallback(
+    async (movieTitle: string): Promise<void> => {
+      const uri = await capture();
+      if (uri && (await Sharing.isAvailableAsync())) {
+        await Sharing.shareAsync(uri, {
+          mimeType: "image/png",
+          dialogTitle: `${movieTitle} - Movie Ticket`,
+        });
+      }
+    },
+    [capture],
+  );
 
   return { viewShotRef, capture, share };
 }

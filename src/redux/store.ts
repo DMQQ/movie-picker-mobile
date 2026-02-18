@@ -6,6 +6,8 @@ import { favoritesSlice } from "./favourites/favourites";
 import { personApi } from "./person/personApi";
 import { roomBuilderSlice } from "./roomBuilder/roomBuilderSlice";
 import { mediaFiltersSlice } from "./mediaFilters/mediaFiltersSlice";
+import { movieInteractionsSlice } from "./movieInteractions/movieInteractionsSlice";
+import { filterPreferencesSlice } from "./filterPreferences/filterPreferencesSlice";
 
 const store = configureStore({
   reducer: {
@@ -15,6 +17,8 @@ const store = configureStore({
     favourite: favoritesSlice.reducer,
     builder: roomBuilderSlice.reducer,
     mediaFilters: mediaFiltersSlice.reducer,
+    movieInteractions: movieInteractionsSlice.reducer,
+    filterPreferences: filterPreferencesSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([movieApi.middleware, personApi.middleware]),
 });

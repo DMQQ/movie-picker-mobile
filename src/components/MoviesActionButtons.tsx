@@ -13,6 +13,7 @@ interface MoviesActionButtonsProps {
   fortuneWheelMovies: {
     id: number;
     poster_path: string | null;
+    type?: "movie" | "tv";
   }[];
 
   fortuneWheelTitle?: string;

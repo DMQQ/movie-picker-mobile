@@ -48,20 +48,33 @@ export default function FortuneWheel() {
     [getMovieDetails],
   );
 
-  const navigate = useCallback((item: Movie) => {
-    setIsSpin(false);
-    if (!item) return;
+  const navigate = useCallback(
+    async (item: Movie) => {
+      setIsSpin(false);
+      if (!item?.id) return;
 
-    setSelectedMovie(item);
-    setIsSuperLiked(false);
+      setIsSuperLiked(false);
 
-    if (prefetchedDetails.current) {
-      setMovieDetails(prefetchedDetails.current);
+      let details = prefetchedDetails.current;
       prefetchedDetails.current = null;
-    }
 
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-  }, []);
+      if (!details) {
+        const type = item?.type === "tv" ? "tv" : "movie";
+        const detailsResponse = await getMovieDetails({ id: item.id, type });
+        details = detailsResponse.data || null;
+      }
+
+      if (details) {
+        setSelectedMovie({ ...item, ...details } as Movie);
+        setMovieDetails(details);
+      } else {
+        setSelectedMovie(item);
+      }
+
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    },
+    [getMovieDetails],
+  );
 
   const handleViewDetails = useCallback(() => {
     if (!selectedMovie) return;
@@ -162,10 +175,8 @@ export default function FortuneWheel() {
   const [isSpin, setIsSpin] = useState(false);
 
   const handleFiltersApplied = useCallback(() => {
-    if (!params?.category && !params?.movies) {
-      handleThrowDice();
-    }
-  }, [handleThrowDice, params?.category, params?.movies]);
+    handleThrowDice();
+  }, [handleThrowDice]);
 
   useEffect(() => {
     if (params?.category) {
@@ -180,17 +191,20 @@ export default function FortuneWheel() {
       } else if (params?.category && params?.movies) {
         handleThrowDice();
       } else if (params?.movies) {
-        const movies =
-          typeof params.movies === "string"
-            ? (JSON.parse(params.movies) as Movie[])
-            : (JSON.parse((params.movies as string[])[0]) as Movie[]);
+        try {
+          const movies =
+            typeof params.movies === "string"
+              ? (JSON.parse(params.movies) as Movie[])
+              : (JSON.parse((params.movies as string[])[0]) as Movie[]);
 
-        const shuffled = shuffleInPlace([...movies]);
+          const shuffled = shuffleInPlace([...movies]);
 
-        setSelectedCards({
-          results: fillMissing(shuffled.slice(0, 12), 12),
-          name: "",
-        });
+          setSelectedCards({
+            results: fillMissing(shuffled.slice(0, 12), 12),
+            name: "",
+          });
+          setShouldSpin(true);
+        } catch (error) {}
       }
     };
 
@@ -224,7 +238,7 @@ export default function FortuneWheel() {
             isSuperLiked={isSuperLiked}
           />
 
-          <Button mode="text" icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
+          <Button style={{ zIndex: 9999 }} mode="text" icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
             {t("fortune-wheel.spin-again")}
           </Button>
         </Animated.View>
@@ -291,7 +305,7 @@ const fortuneStyles = StyleSheet.create({
   },
   cardOverlay: {
     position: "absolute",
-    top: 80,
+    top: "10%",
     left: 0,
     right: 0,
     alignItems: "center",

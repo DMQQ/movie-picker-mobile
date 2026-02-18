@@ -283,6 +283,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: BACKDROP_HEIGHT,
     position: "relative",
+    backgroundColor: "#333",
   },
   backdrop: {
     width: "100%",

@@ -1,92 +1,99 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useMovieInteractions } from "../context/DatabaseContext";
-import type { MovieInteraction, MovieType } from "../database/types";
+import type { MovieType } from "../database/types";
 import type { Movie } from "../../types";
 import { Platform } from "react-native";
 import ReviewManager from "../utils/rate";
 import * as StoreReview from "expo-store-review";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import {
+  loadInteractions,
+  superLikeMovie as superLikeAction,
+  removeSuperLike as removeSuperLikeAction,
+  clearAllSuperLiked as clearAllSuperLikedAction,
+  selectSuperLikedMovies,
+  selectSuperLikedIds,
+  selectInteractionsLoading,
+  selectInteractionsHydrated,
+  selectIsSuperLiked,
+} from "../redux/movieInteractions/movieInteractionsSlice";
 
 export function useSuperLikedMovies() {
+  const dispatch = useAppDispatch();
   const { movieInteractions, isReady } = useMovieInteractions();
-  const [superLikedMovies, setSuperLikedMovies] = useState<MovieInteraction[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  const refresh = useCallback(async () => {
-    if (!movieInteractions) return;
-    try {
-      const superLiked = await movieInteractions.getByInteractionType("super_liked");
-      setSuperLikedMovies(superLiked);
-    } catch (error) {
-      console.error("Failed to fetch super liked movies:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [movieInteractions]);
+  const superLikedMovies = useAppSelector(selectSuperLikedMovies);
+  const loading = useAppSelector(selectInteractionsLoading);
+  const hydrated = useAppSelector(selectInteractionsHydrated);
 
+  // Hydrate Redux on first load
   useEffect(() => {
-    if (isReady) {
-      refresh();
+    if (isReady && movieInteractions && !hydrated) {
+      dispatch(loadInteractions(movieInteractions));
     }
-  }, [isReady, refresh]);
+  }, [isReady, movieInteractions, hydrated, dispatch]);
 
   const superLikeMovie = useCallback(
     async (movie: Movie) => {
       if (!movieInteractions) return;
       const movieType: MovieType = movie.type ?? (movie.first_air_date ? "tv" : "movie");
-      await movieInteractions.add({
-        movie_id: movie.id,
-        movie_type: movieType,
-        interaction_type: "super_liked",
-        title: movie.title || movie.name || null,
-        poster_path: movie.poster_path || null,
-      });
-      await refresh();
 
-      movieInteractions.canReview().then(async (canReview) => {
-        if (canReview) {
-          if (Platform.OS !== "web" && (await StoreReview.hasAction()) && (await ReviewManager.canRequestReviewFromRating())) {
-            await StoreReview.requestReview();
-            await ReviewManager.recordReviewRequestFromRating();
-          }
+      const result = await dispatch(
+        superLikeAction({
+          repo: movieInteractions,
+          interaction: {
+            movie_id: movie.id,
+            movie_type: movieType,
+            interaction_type: "super_liked",
+            title: movie.title || movie.name || null,
+            poster_path: movie.poster_path || null,
+          },
+        })
+      ).unwrap();
+
+      if (result.canReview) {
+        if (Platform.OS !== "web" && (await StoreReview.hasAction()) && (await ReviewManager.canRequestReviewFromRating())) {
+          await StoreReview.requestReview();
+          await ReviewManager.recordReviewRequestFromRating();
         }
-      });
+      }
     },
-    [movieInteractions, refresh],
+    [movieInteractions, dispatch]
   );
 
   const removeSuperLike = useCallback(
     async (movieId: number, movieType: MovieType) => {
       if (!movieInteractions) return;
-      await movieInteractions.remove(movieId, movieType, "super_liked");
-      await refresh();
+      await dispatch(removeSuperLikeAction({ repo: movieInteractions, movieId, movieType }));
     },
-    [movieInteractions, refresh],
+    [movieInteractions, dispatch]
   );
 
   const isSuperLiked = useCallback(
-    async (movieId: number, movieType: MovieType): Promise<boolean> => {
-      if (!movieInteractions) return false;
-      return movieInteractions.exists(movieId, movieType, "super_liked");
+    (movieId: number, movieType: MovieType): boolean => {
+      return superLikedMovies.some((m) => m.movie_id === movieId && m.movie_type === movieType);
     },
-    [movieInteractions],
+    [superLikedMovies]
   );
 
-  const getSuperLikedIds = useCallback(async (): Promise<{ id: number; type: MovieType }[]> => {
-    if (!movieInteractions) return [];
-    const superLiked = await movieInteractions.getByInteractionType("super_liked");
-    return superLiked.map((m) => ({ id: m.movie_id, type: m.movie_type }));
-  }, [movieInteractions]);
+  const getSuperLikedIds = useCallback((): { id: number; type: MovieType }[] => {
+    return superLikedMovies.map((m) => ({ id: m.movie_id, type: m.movie_type }));
+  }, [superLikedMovies]);
 
   const clearAllSuperLiked = useCallback(async () => {
     if (!movieInteractions) return;
-    await movieInteractions.clearByInteractionType("super_liked");
-    await refresh();
-  }, [movieInteractions, refresh]);
+    await dispatch(clearAllSuperLikedAction(movieInteractions));
+  }, [movieInteractions, dispatch]);
+
+  const refresh = useCallback(async () => {
+    if (!movieInteractions) return;
+    await dispatch(loadInteractions(movieInteractions));
+  }, [movieInteractions, dispatch]);
 
   return {
     superLikedMovies,
     loading,
-    isReady,
+    isReady: hydrated,
     superLikeMovie,
     removeSuperLike,
     isSuperLiked,

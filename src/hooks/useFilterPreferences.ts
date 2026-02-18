@@ -1,7 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
-import { AsyncStorage } from "expo-sqlite/kv-store";
-
-const FILTER_PREFERENCES_KEY = "room_builder_preferences";
+import { useEffect, useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import {
+  loadFilterPreferences,
+  saveFilterPreferences,
+  clearFilterPreferences,
+  selectFilterPreferences,
+  selectFilterPreferencesLoading,
+  selectFilterPreferencesHydrated,
+} from "../redux/filterPreferences/filterPreferencesSlice";
 
 interface FilterPreferences {
   providers: number[];
@@ -9,57 +15,44 @@ interface FilterPreferences {
 }
 
 export const useFilterPreferences = () => {
-  const [preferences, setPreferences] = useState<FilterPreferences | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useAppDispatch();
 
+  const preferences = useAppSelector(selectFilterPreferences);
+  const isLoading = useAppSelector(selectFilterPreferencesLoading);
+  const hydrated = useAppSelector(selectFilterPreferencesHydrated);
+
+  // Hydrate Redux on first load
   useEffect(() => {
-    loadPreferences();
-  }, []);
+    if (!hydrated) {
+      dispatch(loadFilterPreferences());
+    }
+  }, [hydrated, dispatch]);
 
   const loadPreferences = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const saved = await AsyncStorage.getItem(FILTER_PREFERENCES_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved) as FilterPreferences;
-        setPreferences(parsed);
-        return parsed;
+    const result = await dispatch(loadFilterPreferences()).unwrap();
+    return result;
+  }, [dispatch]);
+
+  const savePreferences = useCallback(
+    async (newPreferences: Partial<FilterPreferences>) => {
+      try {
+        await dispatch(saveFilterPreferences(newPreferences)).unwrap();
+        return true;
+      } catch {
+        return false;
       }
-      return null;
-    } catch (error) {
-      console.error("Failed to load filter preferences:", error);
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const savePreferences = useCallback(async (newPreferences: Partial<FilterPreferences>) => {
-    try {
-      const toSave: FilterPreferences = {
-        providers: newPreferences.providers || [],
-        savedAt: Date.now(),
-      };
-
-      await AsyncStorage.setItem(FILTER_PREFERENCES_KEY, JSON.stringify(toSave));
-      setPreferences(toSave);
-      return true;
-    } catch (error) {
-      console.error("Failed to save filter preferences:", error);
-      return false;
-    }
-  }, []);
+    },
+    [dispatch]
+  );
 
   const clearPreferences = useCallback(async () => {
     try {
-      await AsyncStorage.removeItem(FILTER_PREFERENCES_KEY);
-      setPreferences(null);
+      await dispatch(clearFilterPreferences()).unwrap();
       return true;
-    } catch (error) {
-      console.error("Failed to clear filter preferences:", error);
+    } catch {
       return false;
     }
-  }, []);
+  }, [dispatch]);
 
   return {
     preferences,

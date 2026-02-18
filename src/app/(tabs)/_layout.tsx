@@ -128,7 +128,7 @@ function TabLayout() {
         <Label>{t("tabBar.games")}</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="search">
+      <NativeTabs.Trigger name="search" {...(Platform.OS === "ios" && { role: "search" })}>
         <Icon
           {...(Platform.OS === "android"
             ? { src: <VectorIcon family={MaterialCommunityIcons} name="magnify" />, selectedColor: "#000" }

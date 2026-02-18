@@ -2,9 +2,6 @@ import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { loadAsync } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-
-SplashScreen.preventAutoHideAsync();
 
 export default function useInit() {
   const [isUpdating, setIsUpdating] = useState(false);
@@ -22,12 +19,6 @@ export default function useInit() {
 
   console.log("[useInit] isUpdateAvailable:", isUpdateAvailable);
   console.log("[useInit] isUpdatePending:", isUpdatePending);
-
-  useEffect(() => {
-    if (isLoaded && !isUpdating && !isChecking) {
-      SplashScreen.hideAsync();
-    }
-  }, [isLoaded, isUpdating, isChecking]);
 
   useEffect(() => {
     if (checkError) {
@@ -51,7 +42,13 @@ export default function useInit() {
 
   useEffect(() => {
     if (isUpdatePending) {
-      Updates.reloadAsync();
+      Updates.reloadAsync({
+        reloadScreenOptions: {
+          backgroundColor: "#000",
+          fade: true,
+          image: require("../../assets/images/icon-dark.png"),
+        },
+      });
     }
   }, [isUpdatePending]);
 

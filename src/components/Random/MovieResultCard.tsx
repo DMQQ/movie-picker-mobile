@@ -54,8 +54,12 @@ export default function MovieResultCard({
           </Text>
 
           <View style={styles.ratingRow}>
-            <MaterialCommunityIcons name="star" size={16} color="#fbbf24" />
-            <Text style={styles.ratingText}>{movie.vote_average.toFixed(1)}</Text>
+            {movie.vote_average > 0 && (
+              <>
+                <MaterialCommunityIcons name="star" size={16} color="#fbbf24" />
+                <Text style={styles.ratingText}>{movie.vote_average.toFixed(1)}</Text>
+              </>
+            )}
             {details?.runtime ? (
               <>
                 <Text style={styles.dotSeparator}>•</Text>
@@ -75,7 +79,7 @@ export default function MovieResultCard({
             )}
           </View>
 
-          {movie.overview && (
+          {movie?.overview && (
             <Text style={styles.overview} numberOfLines={3}>
               {movie.overview}
             </Text>

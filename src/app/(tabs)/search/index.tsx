@@ -1,6 +1,6 @@
-import { router, useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, ImageBackground, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { router, Stack, useLocalSearchParams } from "expo-router";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Dimensions, ImageBackground, Platform, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, MD2DarkTheme, Searchbar, Text } from "react-native-paper";
 import { useLazySearchQuery, useLazyGetSimilarQuery } from "../../../redux/movie/movieApi";
 import { FlashList } from "@shopify/flash-list";
@@ -209,50 +209,18 @@ const SearchScreen = () => {
 
       const response = await search(params).unwrap();
 
-      const sortSearchResults = (searchTerm: string, results: Movie[]) => {
-        const term = searchTerm.toLowerCase();
-
-        return [...results]
-          .filter((m) => m.overview.length > 0 && m.vote_average > 0)
-          .sort((a, b) => {
-            const titleA = (a?.title || a?.name || "").toLowerCase();
-            const titleB = (b?.title || b?.name || "").toLowerCase();
-
-            const exactMatchA = titleA === term;
-            const exactMatchB = titleB === term;
-            if (exactMatchA && !exactMatchB) return -1;
-            if (!exactMatchA && exactMatchB) return 1;
-
-            // 2. Title starts with search term
-            const startsWithA = titleA.startsWith(term);
-            const startsWithB = titleB.startsWith(term);
-            if (startsWithA && !startsWithB) return -1;
-            if (!startsWithA && startsWithB) return 1;
-
-            // 3. Consider franchise films (title contains search term as whole word)
-            const wordBoundaryRegex = new RegExp(`\\b${term}\\b`, "i");
-            const containsWordA = wordBoundaryRegex.test(titleA);
-            const containsWordB = wordBoundaryRegex.test(titleB);
-            if (containsWordA && !containsWordB) return -1;
-            if (!containsWordA && containsWordB) return 1;
-
-            // 4. For similar relevance, use popularity as tiebreaker
-            return (b?.popularity || 0) - (a?.popularity || 0);
-          });
-      };
-
       if (response.page === page) {
         lastReceivedApiPage.current = page;
 
         Promise.any(response.results.map((item) => prefetchThumbnail(item, ThumbnailSizes.poster.xxlarge)));
 
         if (page === 1) {
-          setAllResults(sortSearchResults(searchQuery, response.results));
+          setAllResults(response.results);
         } else {
           setAllResults((prevResults) => {
             const existingIds = new Set(prevResults.map((item) => item.id));
             const newResults = response.results.filter((item) => !existingIds.has(item.id));
-            return [...prevResults, ...sortSearchResults(searchQuery, newResults)];
+            return [...prevResults, ...newResults];
           });
         }
 
@@ -314,23 +282,55 @@ const SearchScreen = () => {
 
   const insets = useSafeAreaInsets();
 
+  const memoStack = useMemo(
+    () => (
+      <Stack.Screen
+        options={Platform.select({
+          ios: {
+            headertitle: t("search.title", { query: searchQuery }) as string,
+            headerStyle: {
+              backgroundColor: "#000",
+            },
+            headerTitleStyle: {
+              color: "#fff",
+            },
+            headerSearchBarOptions: {
+              placeholder: t("search.search-placeholder") as string,
+              onChangeText: (event) => {
+                setSearchQuery(event.nativeEvent.text);
+              },
+            },
+          },
+          default: {
+            headerShown: false,
+          },
+        })}
+      />
+    ),
+    [t, searchQuery],
+  );
+
   if (!useIsMounted()) {
-    return <View style={[styles.container, { paddingTop: insets.top, paddingBottom: 15 }]} />;
+    return <View style={[styles.container, StyleSheet.absoluteFill]} />;
   }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: 15 }]}>
-      <View style={styles.searchContainer}>
-        <Searchbar
-          placeholder={t("search.search-placeholder")}
-          onChangeText={setSearchQuery}
-          value={searchQuery}
-          style={styles.searchbar}
-          inputStyle={styles.searchInput}
-        />
-      </View>
+      {memoStack}
 
-      <View style={[styles.chipContainer]}>
+      {Platform.OS !== "ios" && (
+        <View style={styles.searchContainer}>
+          <Searchbar
+            placeholder={t("search.search-placeholder") as string}
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+            style={styles.searchbar}
+            inputStyle={styles.searchInput}
+          />
+        </View>
+      )}
+
+      <View style={[styles.chipContainer, { marginTop: Platform.OS === "ios" ? insets.top : 0 }]}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
           {categories.map((category, index) => (
             <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>
