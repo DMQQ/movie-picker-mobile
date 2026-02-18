@@ -1,24 +1,16 @@
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { memo, useEffect, useRef } from "react";
+import { memo, useRef } from "react";
 import { Dimensions, Platform, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
-import Animated, {
-  Extrapolation,
-  FadeIn,
-  interpolate,
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { Extrapolation, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import TabBar from "../Home/TabBar";
 import RatingIcons from "../RatingIcons";
 import Poster from "./Poster";
 import useTranslation from "../../service/useTranslation";
+import GenresView from "../GenresView";
 
 const { width } = Dimensions.get("screen");
 
@@ -37,14 +29,13 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     position: "absolute",
     zIndex: 10,
-    padding: 10,
     paddingBottom: 20,
   },
   title: {
     color: "white",
-    fontSize: 24,
+    fontSize: 32,
     paddingHorizontal: 10,
-    fontWeight: "bold",
+    fontFamily: "Bebas",
   },
   overview: {
     color: "rgba(255,255,255,0.8)",
@@ -55,8 +46,8 @@ const styles = StyleSheet.create({
   release_date: {
     color: "rgba(255,255,255,0.6)",
     paddingHorizontal: 10,
-    marginTop: 5,
   },
+  meta: { flexDirection: "row", marginTop: 12, alignItems: "center", gap: 6, flexWrap: "wrap", paddingLeft: 10 },
 });
 
 const SwipeTile = ({
@@ -195,7 +186,6 @@ const SwipeTile = ({
                 style={{
                   flexDirection: "row",
                   paddingHorizontal: 10,
-                  marginTop: 5,
                 }}
               >
                 <RatingIcons size={15} vote={card?.vote_average} />
@@ -206,9 +196,10 @@ const SwipeTile = ({
                 </Text>
               )}
 
-              <Text style={styles.release_date}>
-                {card.genres ? `${card?.genres?.map((m) => m.name).join(", ")}` : ""} {"•"} {card.release_date || card.first_air_date}
-              </Text>
+              <View style={styles.meta}>
+                {card.genres ? <GenresView genres={card.genres.slice(0, 3)} /> : null}
+                <Text style={styles.release_date}>{card.release_date || card.first_air_date}</Text>
+              </View>
             </LinearGradient>
 
             <Poster

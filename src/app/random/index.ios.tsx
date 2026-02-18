@@ -21,6 +21,7 @@ import { FilterButton } from "../../components/MediaFilters";
 import ShareTicketButton from "../../components/ShareTicketButton";
 import { useRandomMovie } from "../../hooks/useRandomMovie";
 import { RandomQuestionMarks, ActionButtons } from "../../components/Random/shared";
+import GenresView from "../../components/GenresView";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CARD_WIDTH = screenWidth * 0.9;
@@ -128,11 +129,7 @@ export default function RandomMovie() {
 
                     {details?.genres && details.genres.length > 0 && (
                       <View style={styles.genresRow}>
-                        {details.genres.slice(0, 3).map((genre) => (
-                          <Chip key={genre.id} style={styles.genreChip} textStyle={styles.genreText} compact>
-                            {genre.name}
-                          </Chip>
-                        ))}
+                        <GenresView genres={details.genres.slice(0, 3)} />
                       </View>
                     )}
 
@@ -292,17 +289,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 6,
     marginBottom: 10,
-  },
-  genreChip: {
-    backgroundColor: "rgba(255,255,255,0.2)",
-    height: 26,
-  },
-  genreText: {
-    color: "#fff",
-    fontSize: 11,
-    fontWeight: "600",
-    marginVertical: 0,
-    marginHorizontal: 2,
   },
   overview: {
     color: "rgba(255,255,255,0.85)",

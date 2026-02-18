@@ -11,6 +11,7 @@ import Poster from "./Poster";
 import RatingIcons from "../RatingIcons";
 import { Movie } from "../../../types";
 import ShareTicketButton from "../ShareTicketButton";
+import GenresView from "../GenresView";
 
 const styles = StyleSheet.create({
   matchModal: {
@@ -47,9 +48,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     position: "absolute",
     zIndex: 10,
-    padding: 10,
     paddingBottom: 20,
-
     borderBottomRightRadius: 19,
     borderBottomLeftRadius: 19,
   },
@@ -82,6 +81,8 @@ const styles = StyleSheet.create({
     zIndex: 100,
     pointerEvents: "none",
   },
+
+  meta: { flexDirection: "row", marginTop: 5, alignItems: "center", gap: 6, flexWrap: "wrap" },
 
   share: { position: "absolute", bottom: -75, right: 0, left: 0, zIndex: 20, justifyContent: "center", alignItems: "center" },
 });
@@ -175,9 +176,10 @@ export default function MatchModal({ match, hideMatchModal }: { match: Movie | u
                 <RatingIcons size={15} vote={match?.vote_average} />
               </View>
 
-              <Text style={styles.release_date}>
-                {match.genres ? `${match?.genres?.map((m) => m.name).join(", ")}` : ""} {"•"} {match.release_date || match.first_air_date}
-              </Text>
+              <View style={styles.meta}>
+                {match.genres ? <GenresView genres={match.genres.slice(0, 3)} /> : null}
+                <Text style={styles.release_date}>{match.release_date || match.first_air_date}</Text>
+              </View>
             </LinearGradient>
 
             <Poster
