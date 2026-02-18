@@ -283,11 +283,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   movieTitle: {
-    fontSize: 28,
-    fontWeight: "800",
+    fontSize: 32,
     color: "#fff",
     marginBottom: 8,
-    fontFamily: Platform.OS === "ios" ? "System" : "sans-serif-condensed",
+    fontFamily: "Bebas",
     textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,

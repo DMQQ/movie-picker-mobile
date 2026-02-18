@@ -11,6 +11,7 @@ import FrostedGlass from "../../../components/FrostedGlass";
 import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../../../components/Thumbnail";
 import useTranslation from "../../../service/useTranslation";
 import useIsMounted from "../../../hooks/useIsMounted";
+import { isLiquidGlassSupported } from "@callstack/liquid-glass";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -330,7 +331,7 @@ const SearchScreen = () => {
         </View>
       )}
 
-      <View style={[styles.chipContainer, { marginTop: Platform.OS === "ios" ? insets.top : 0 }]}>
+      <View style={[styles.chipContainer, { marginTop: Platform.OS === "ios" ? insets.top + (isLiquidGlassSupported ? 0 : 30) : 0 }]}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
           {categories.map((category, index) => (
             <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>

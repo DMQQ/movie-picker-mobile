@@ -17,7 +17,7 @@ import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import * as Haptics from "expo-haptics";
-import MovieResultCard from "../../components/Random/MovieResultCard";
+import MovieResultCard, { CARD_HEIGHT } from "../../components/Random/MovieResultCard";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -237,10 +237,6 @@ export default function FortuneWheel() {
             onBlock={handleBlock}
             isSuperLiked={isSuperLiked}
           />
-
-          <Button style={{ zIndex: 9999 }} mode="text" icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
-            {t("fortune-wheel.spin-again")}
-          </Button>
         </Animated.View>
       )}
 
@@ -293,6 +289,24 @@ export default function FortuneWheel() {
           size={screenWidth * 2}
           items={selectedCards.results as any}
         />
+      )}
+
+      {selectedMovie && (
+        <Animated.View
+          style={{
+            position: "absolute",
+            top: height * 0.1 + CARD_HEIGHT - 15,
+            left: 0,
+            right: 0,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          entering={FadeIn.delay(300)}
+        >
+          <Button mode="text" icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
+            {t("fortune-wheel.spin-again")}
+          </Button>
+        </Animated.View>
       )}
     </SafeIOSContainer>
   );
