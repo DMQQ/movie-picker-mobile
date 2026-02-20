@@ -46,7 +46,7 @@ export default function useInit() {
         reloadScreenOptions: {
           backgroundColor: "#000",
           fade: true,
-          image: require("../../assets/images/icon-dark.png"),
+          image: require("../../assets/images/adaptive-icon.png"),
         },
       });
     }

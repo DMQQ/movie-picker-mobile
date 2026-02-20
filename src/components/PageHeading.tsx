@@ -148,6 +148,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    position: "absolute",
+    left: 0,
+    right: 0,
   },
   headerTitle: {
     fontFamily: "Bebas",

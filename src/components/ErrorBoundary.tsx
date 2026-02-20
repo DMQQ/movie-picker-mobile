@@ -52,7 +52,7 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
         reloadScreenOptions: {
           backgroundColor: "#000",
           fade: true,
-          image: require("../../assets/images/icon-light.png"),
+          image: require("../../assets/images/adaptive-icon.png"),
         },
       });
     } catch (error) {
