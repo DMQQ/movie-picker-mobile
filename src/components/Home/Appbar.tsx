@@ -148,7 +148,7 @@ const LikedMoviesPreview = memo(() => {
               style={[
                 styles.stackedCard,
                 {
-                  transform: [{ translateX: (index + 1) * 15 }, { rotate: `${(index - 1) * Math.floor(Math.random() * 10)}deg` }],
+                  transform: [{ translateX: (index + 1) * 15 }, { rotate: `${(index - 1) * 5}deg` }],
                   zIndex: itemsToDisplay.length - index,
                 },
               ]}

@@ -319,6 +319,14 @@ export const movieApi = createApi({
     getSummaryShare: builder.query<SummaryShareResponse, { roomId: string }>({
       query: ({ roomId }) => `/room/summary/${roomId}/share`,
     }),
+
+    shareMovies: builder.mutation<SummaryShareResponse, { movies: { id: number; type: string }[] }>({
+      query: ({ movies }) => ({
+        url: "/share",
+        method: "POST",
+        body: { movies },
+      }),
+    }),
   }),
 });
 
@@ -379,4 +387,5 @@ export const {
   usePrefetchRoomContentMutation,
   useGetSummaryShareQuery,
   useLazyGetSummaryShareQuery,
+  useShareMoviesMutation,
 } = movieApi;

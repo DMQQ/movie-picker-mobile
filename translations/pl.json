@@ -225,7 +225,15 @@
       "cancel": "Anuluj"
     },
     "wheel": "Zakręć kołem",
-    "scratch-card": "Zdrapka"
+    "scratch-card": "Zdrapka",
+    "share": {
+      "title": "Wybierz filmy do udostępnienia",
+      "selected": "{count}/{max} wybranych",
+      "button": "Udostępnij ({count})",
+      "loading": "Tworzenie biletu...",
+      "error": "Nie udało się utworzyć biletu",
+      "dialog-title": "Udostępnij kolekcję"
+    }
   },
   "create-collection": {
     "title": "Stwórz Kolekcję",
@@ -453,7 +461,13 @@
     "leave-room": "Opuść pokój",
     "play-again-failed": "Nie udało się ponownie rozpocząć gry. Spróbuj ponownie.",
     "view-summary": "Opuść grę",
-    "share-marathon": "Udostępnij"
+    "share-marathon": "Udostępnij",
+    "share": {
+      "loading": "Ładowanie maratonu...",
+      "error": "Nie udało się załadować danych maratonu",
+      "no-movies": "Brak filmów do udostępnienia",
+      "dialog-title": "Bilet na maraton filmowy"
+    }
   },
   "game-rating": {
     "title": "Jak oceniasz tę grę?",

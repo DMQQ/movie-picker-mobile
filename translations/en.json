@@ -225,7 +225,15 @@
       "cancel": "Cancel"
     },
     "wheel": "Spin the wheel",
-    "scratch-card": "Scratch card"
+    "scratch-card": "Scratch card",
+    "share": {
+      "title": "Select Movies to Share",
+      "selected": "{count}/{max} selected",
+      "button": "Share ({count})",
+      "loading": "Creating your ticket...",
+      "error": "Failed to create ticket",
+      "dialog-title": "Share Collection"
+    }
   },
   "create-collection": {
     "title": "Create Collection",
@@ -455,7 +463,13 @@
     "leave-room": "Leave Room",
     "play-again-failed": "Failed to restart game. Please try again.",
     "view-summary": "Leave Game",
-    "share-marathon": "Share"
+    "share-marathon": "Share",
+    "share": {
+      "loading": "Loading your marathon...",
+      "error": "Failed to load marathon data",
+      "no-movies": "No movies to share",
+      "dialog-title": "Movie Marathon Ticket"
+    }
   },
   "game-rating": {
     "title": "How was this game?",

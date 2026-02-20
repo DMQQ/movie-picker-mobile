@@ -471,6 +471,7 @@ interface ShareTicketModalProps {
 const ShareTicketModal = memo(({ visible, onClose, roomId }: ShareTicketModalProps) => {
   const viewShotRef = useRef<ViewShot>(null);
   const [fetchSummaryShare, { data, isLoading, error }] = useLazyGetSummaryShareQuery();
+  const t = useTranslation();
 
   useEffect(() => {
     if (visible && roomId) {
@@ -492,7 +493,7 @@ const ShareTicketModal = memo(({ visible, onClose, roomId }: ShareTicketModalPro
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(uri, {
           mimeType: "image/png",
-          dialogTitle: "Movie Marathon Ticket",
+          dialogTitle: t("game-summary.share.dialog-title") as string,
         });
       }
     } catch (err) {
@@ -521,12 +522,12 @@ const ShareTicketModal = memo(({ visible, onClose, roomId }: ShareTicketModalPro
           {isLoading ? (
             <View style={shareModalStyles.loadingContainer}>
               <FancySpinner size={60} />
-              <Text style={shareModalStyles.loadingText}>Loading your marathon...</Text>
+              <Text style={shareModalStyles.loadingText}>{t("game-summary.share.loading")}</Text>
             </View>
           ) : error ? (
             <View style={shareModalStyles.errorContainer}>
               <MaterialIcons name="error-outline" size={48} color="#ff6b6b" />
-              <Text style={shareModalStyles.errorText}>Failed to load marathon data</Text>
+              <Text style={shareModalStyles.errorText}>{t("game-summary.share.error")}</Text>
             </View>
           ) : data?.movies && data.movies.length > 0 ? (
             <>
@@ -541,7 +542,7 @@ const ShareTicketModal = memo(({ visible, onClose, roomId }: ShareTicketModalPro
           ) : (
             <View style={shareModalStyles.errorContainer}>
               <MaterialIcons name="movie" size={48} color="#666" />
-              <Text style={shareModalStyles.errorText}>No movies to share</Text>
+              <Text style={shareModalStyles.errorText}>{t("game-summary.share.no-movies")}</Text>
             </View>
           )}
         </View>

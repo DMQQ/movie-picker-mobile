@@ -79,10 +79,11 @@ export default function PageHeading({
           <Text style={styles.headerTitle}>{title}</Text>
         </View>
 
-        <View style={styles.sideContainerRight}>
+        <View style={[styles.sideContainerRight, rightIconTitle && { width: "auto" }]}>
           {children
             ? children
-            : showRightIconButton && (
+            : showRightIconButton &&
+              (rightIconTitle ? (
                 <PlatformBlurView interactive tintColor={tintColor} style={styles.buttonContainer}>
                   <Pressable
                     onPress={() => {
@@ -91,17 +92,29 @@ export default function PageHeading({
                         Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
                       }
                     }}
-                    style={{ flexDirection: "row", alignItems: "center" }}
+                    style={styles.rightButtonWithText}
                   >
                     {rightIconName && <IconButton icon={rightIconName as any} size={20} iconColor="white" />}
-                    {rightIconTitle && (
-                      <Text style={[styles.rightText, !rightIconName && { paddingHorizontal: 15, paddingVertical: 10 }]}>
-                        {rightIconTitle}
-                      </Text>
-                    )}
+                    <Text style={[styles.rightText, !rightIconName && { paddingHorizontal: 15, paddingVertical: 10 }]}>
+                      {rightIconTitle}
+                    </Text>
                   </Pressable>
                 </PlatformBlurView>
-              )}
+              ) : (
+                <PlatformBlurView interactive tintColor={tintColor} style={styles.buttonContainer}>
+                  <IconButton
+                    icon={rightIconName as any}
+                    size={25}
+                    onPress={() => {
+                      if (onRightIconPress) onRightIconPress();
+                      if (Platform.OS === "ios") {
+                        Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+                      }
+                    }}
+                    iconColor="white"
+                  />
+                </PlatformBlurView>
+              ))}
         </View>
       </View>
     </>
@@ -141,6 +154,10 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: "#fff",
     textAlign: "center",
+  },
+  rightButtonWithText: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   rightText: {
     color: "#fff",
