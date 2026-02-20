@@ -25,10 +25,11 @@ export default function useTranslation() {
   const lang = useAppSelector((state) => state.room.language) || "en";
 
   return useCallback(
-    (key: string, args?: Record<string, number | string | boolean>): string | string[] => {
+    (key: string, args?: Record<string, number | string | boolean>): string => {
       const val = getNestedValue(translations[lang], key);
 
       if (Array.isArray(val)) {
+        // @ts-ignore
         return val;
       }
 

@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
@@ -43,6 +43,14 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
   const selectedCategoryId = useAppSelector((state) => state.builder.categoryId);
   const movieScrollX = useSharedValue(0);
   const { data: movieCategories, isLoading: moviesLoading } = useGetMovieCategoriesWithThumbnailsQuery();
+
+  // Pre-select first movie category as default
+  useEffect(() => {
+    if (movieCategories && movieCategories.length > 0 && !selectedCategoryId) {
+      const firstCategory = movieCategories[0];
+      onSelectCategory(firstCategory.id, firstCategory.path, "movie");
+    }
+  }, [movieCategories, selectedCategoryId, onSelectCategory]);
 
   const movieScrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {

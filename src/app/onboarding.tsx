@@ -2,7 +2,7 @@ import { AsyncStorage } from "expo-sqlite/kv-store";
 import { useState } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { Button, IconButton, Text } from "react-native-paper";
-import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut, SlideInRight, SlideOutLeft } from "react-native-reanimated";
+import Animated, { FadeInDown, FadeInUp, SlideInRight, SlideOutLeft } from "react-native-reanimated";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import useTranslation from "../service/useTranslation";
 import { LinearGradient } from "expo-linear-gradient";
@@ -11,6 +11,8 @@ import SwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
 import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
 import BrowseAnimation from "../components/GameListAnimations/BrowseAnimation";
+import ProviderList from "../components/Room/ProviderList";
+import { useGetAllProvidersQuery } from "../redux/movie/movieApi";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -18,9 +20,10 @@ interface FeatureSlide {
   id: string;
   titleKey: string;
   descriptionKey: string;
-  Animation: React.ComponentType;
+  Animation?: React.ComponentType;
   players?: string;
   duration?: string;
+  isProviderSlide?: boolean;
 }
 
 const features: FeatureSlide[] = [
@@ -54,10 +57,16 @@ const features: FeatureSlide[] = [
     descriptionKey: "onboarding.features.browse.description",
     Animation: BrowseAnimation,
   },
+  {
+    id: "providers",
+    titleKey: "onboarding.features.providers.title",
+    descriptionKey: "onboarding.features.providers.description",
+    isProviderSlide: true,
+  },
 ];
 
 const GamePreviewCard = ({ slide, t }: { slide: FeatureSlide; t: (key: string) => string }) => {
-  const Animation = slide.Animation;
+  const Animation = slide.Animation!;
 
   return (
     <Animated.View entering={SlideInRight.duration(300)} exiting={SlideOutLeft.duration(300)} style={styles.gameCard}>
@@ -91,6 +100,41 @@ const GamePreviewCard = ({ slide, t }: { slide: FeatureSlide; t: (key: string) =
   );
 };
 
+interface ProviderSelectionCardProps {
+  slide: FeatureSlide;
+  t: (key: string) => string;
+  selectedProviders: number[];
+  onToggleProviders: (providers: number[]) => void;
+}
+
+const ProviderSelectionCard = ({ slide, t, selectedProviders, onToggleProviders }: ProviderSelectionCardProps) => {
+  const { data: providers = [], isLoading } = useGetAllProvidersQuery({});
+
+  return (
+    <Animated.View entering={SlideInRight.duration(300)} exiting={SlideOutLeft.duration(300)} style={styles.providerCard}>
+      <View style={styles.providerCardHeader}>
+        <Text style={styles.cardTitle}>{t(slide.titleKey)}</Text>
+        <Text style={styles.providerCardDescription}>{t(slide.descriptionKey)}</Text>
+      </View>
+      <View style={styles.providerListContainer}>
+        <ProviderList
+          providers={providers}
+          selectedProviders={selectedProviders}
+          onToggleProvider={onToggleProviders}
+          isCategorySelected={true}
+          vertical
+          isLoading={isLoading}
+        />
+      </View>
+      {selectedProviders.length > 0 && (
+        <Text style={styles.selectedCount}>
+          {selectedProviders.length} {t("onboarding.features.providers.selected")}
+        </Text>
+      )}
+    </Animated.View>
+  );
+};
+
 const PageIndicator = ({ currentPage, totalPages }: { currentPage: number; totalPages: number }) => {
   return (
     <View style={styles.pageIndicator}>
@@ -112,15 +156,28 @@ export default function OnboardingScreen({ onClose }: OnboardingScreenProps) {
   const nickname = useAppSelector((state) => state.room.nickname);
   const [currentPage, setCurrentPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedProviders, setSelectedProviders] = useState<number[]>([]);
 
   const handleComplete = async () => {
     setIsLoading(true);
     try {
-      await Promise.all([
+      const savePromises = [
         AsyncStorage.setItem("language", language),
         AsyncStorage.setItem("nickname", nickname || (language === "en" ? "Guest" : "Gość")),
         AsyncStorage.setItem("regionalization", JSON.stringify(regionalization || {})),
-      ]);
+      ];
+
+      // Save providers if any were selected
+      if (selectedProviders.length > 0) {
+        savePromises.push(
+          AsyncStorage.setItem(
+            "room_builder_preferences",
+            JSON.stringify({ providers: selectedProviders, savedAt: Date.now() })
+          )
+        );
+      }
+
+      await Promise.all(savePromises);
       onClose?.();
     } catch (error) {
       console.error("Failed to save onboarding state:", error);
@@ -152,7 +209,17 @@ export default function OnboardingScreen({ onClose }: OnboardingScreenProps) {
       </Animated.View>
 
       <View style={styles.content}>
-        <GamePreviewCard key={currentSlide.id} slide={currentSlide} t={t} />
+        {currentSlide.isProviderSlide ? (
+          <ProviderSelectionCard
+            key={currentSlide.id}
+            slide={currentSlide}
+            t={t}
+            selectedProviders={selectedProviders}
+            onToggleProviders={setSelectedProviders}
+          />
+        ) : (
+          <GamePreviewCard key={currentSlide.id} slide={currentSlide} t={t} />
+        )}
       </View>
 
       <Animated.View entering={FadeInDown.delay(400)} style={styles.footer}>
@@ -265,6 +332,30 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "rgba(255,255,255,0.8)",
     lineHeight: 22,
+  },
+  providerCard: {
+    height: height * 0.55,
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: "#1a1a1a",
+    padding: 20,
+  },
+  providerCardHeader: {
+    marginBottom: 16,
+  },
+  providerCardDescription: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.6)",
+    marginTop: 8,
+  },
+  providerListContainer: {
+    flex: 1,
+  },
+  selectedCount: {
+    fontSize: 13,
+    color: "rgba(255,255,255,0.5)",
+    textAlign: "center",
+    marginTop: 8,
   },
   footer: {
     paddingHorizontal: 20,

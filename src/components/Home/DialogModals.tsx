@@ -28,7 +28,6 @@ export default function DialogModals({
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
-  // navigation removed - using expo-router"
 
   const handleLeaveRoom = () => {
     router.replace("/");
@@ -77,20 +76,34 @@ export default function DialogModals({
           },
         ]}
       >
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <QRCode
-            backgroundColor={theme.colors.surface}
-            color={theme.colors.primary}
-            value={`flickmate://room/${qrCode}`}
-            size={Dimensions.get("screen").width / 2}
-          />
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              borderWidth: 2,
+              borderColor: theme.colors.primary,
+              borderRadius: 10,
+              width: Dimensions.get("screen").width / 2 + 25,
+              height: Dimensions.get("screen").width / 2 + 25,
+            }}
+          >
+            <QRCode
+              backgroundColor={theme.colors.surface}
+              color={theme.colors.primary}
+              value={`flickmate://room/${qrCode}`}
+              size={Dimensions.get("screen").width / 2}
+            />
+          </View>
         </View>
         <Text
           style={{
             color: theme.colors.primary,
             textAlign: "center",
-            marginTop: 5,
+            marginTop: 15,
             fontSize: 18,
+            fontWeight: "bold",
+            letterSpacing: 3,
           }}
         >
           {qrCode}

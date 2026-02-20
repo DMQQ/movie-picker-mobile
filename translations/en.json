@@ -267,7 +267,8 @@
     "request-permission": "Request permission",
     "heading": "Scan QR code",
     "join": "Join the game",
-    "button": "Join"
+    "button": "Join",
+    "hint": "Place the QR code in the scan area or tap Join above to enter code manually"
   },
   "settings": {
     "hello": "Hello",
@@ -539,6 +540,11 @@
       "browse": {
         "title": "Browse & Discover",
         "description": "Explore trending movies, filter by genre or streaming service, and save your favorites to custom collections."
+      },
+      "providers": {
+        "title": "Your Streaming Services",
+        "description": "Select the platforms you use to get personalized recommendations",
+        "selected": "selected"
       }
     }
   },

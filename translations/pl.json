@@ -266,7 +266,8 @@
     "request-permission": "Poproś o pozwolenie",
     "heading": "Zeskanuj kod QR",
     "join": "Dołącz do gry",
-    "button": "Dołącz"
+    "button": "Dołącz",
+    "hint": "Umieść kod QR w polu skanowania lub naciśnij Dołącz powyżej, aby wpisać kod ręcznie"
   },
   "settings": {
     "hello": "Cześć",
@@ -537,6 +538,11 @@
       "browse": {
         "title": "Przeglądaj i Odkrywaj",
         "description": "Eksploruj popularne filmy, filtruj według gatunku lub serwisu streamingowego, zapisuj ulubione do własnych kolekcji."
+      },
+      "providers": {
+        "title": "Twoje Serwisy Streamingowe",
+        "description": "Wybierz platformy, z których korzystasz, aby otrzymać spersonalizowane rekomendacje",
+        "selected": "wybrano"
       }
     }
   },

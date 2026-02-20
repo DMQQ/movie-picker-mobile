@@ -2,7 +2,7 @@ import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { memo, useContext, useEffect, useRef, useState, useTransition } from "react";
-import { Dimensions, Platform, Share, View, StyleSheet, Pressable } from "react-native";
+import { Dimensions, Platform, View, StyleSheet, Pressable, Share } from "react-native";
 import { Avatar, Button, Text, useTheme } from "react-native-paper";
 import QRCode from "react-native-qrcode-svg";
 import { Movie } from "../../../types";

@@ -17,6 +17,7 @@ import TypeSelector from "./TypeSelector";
 import DecadeSelector from "./DecadeSelector";
 import ProviderList from "../Room/ProviderList";
 import { useFilterPreferences } from "../../hooks/useFilterPreferences";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 function ProvidersSection() {
   const t = useTranslation();
@@ -127,12 +128,7 @@ function CategoriesSection({ onSelect }: { onSelect: (category: string) => void 
       ) : (
         <View style={styles.genresContainer}>
           {validCategories.map((category) => (
-            <Chip
-              key={category.name}
-              onPress={() => onSelect(category.name)}
-              style={styles.genreChip}
-              textStyle={styles.genreChipText}
-            >
+            <Chip key={category.name} onPress={() => onSelect(category.name)} style={styles.genreChip} textStyle={styles.genreChipText}>
               {category.name}
             </Chip>
           ))}
@@ -204,7 +200,9 @@ export default function FilterSheet({ visible, onClose, onCategorySelect, showCa
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
       <View style={styles.overlay}>
-        <Pressable style={styles.backdrop} onPress={onClose} />
+        <Animated.View style={styles.backdrop} entering={FadeIn.delay(200)} exiting={FadeOut}>
+          <Pressable style={styles.backdrop} onPress={onClose} />
+        </Animated.View>
 
         <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 24) }]}>
           {/* Header */}
@@ -241,7 +239,7 @@ export default function FilterSheet({ visible, onClose, onCategorySelect, showCa
 
           {/* Footer Actions */}
           <View style={styles.footer}>
-            {isFilterActive && (
+            {/* {isFilterActive && (
               <Button
                 mode="outlined"
                 onPress={handleClearAll}
@@ -252,7 +250,7 @@ export default function FilterSheet({ visible, onClose, onCategorySelect, showCa
               >
                 {t("filters.clear")}
               </Button>
-            )}
+            )} */}
             <Button
               mode="contained"
               onPress={handleApply}
@@ -284,7 +282,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#121212",
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    maxHeight: "65%",
+    maxHeight: "75%",
   },
   header: {
     alignItems: "center",
@@ -359,7 +357,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 8,
     gap: 12,
     borderTopWidth: 1,
     borderTopColor: "#333",
