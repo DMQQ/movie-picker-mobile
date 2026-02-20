@@ -595,6 +595,8 @@
     "app-tagline": "Znajdźmy razem film na wieczór!",
     "flickmate-presents": "FLICKMATE PRZEDSTAWIA",
     "films": "FILMÓW",
+    "and": "I",
+    "series": "SERIALI",
     "cinema": {
       "headers": [
         "Dzisiejszy wybór",
@@ -619,7 +621,7 @@
     },
     "marathon": {
       "headers": [
-        "Maraton Filmowy",
+        "Wieczorny Maraton",
         "Potrójny Seans",
         "Zatwierdzone do Binge",
         "Wyczyść Kalendarz",

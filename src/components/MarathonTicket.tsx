@@ -157,6 +157,36 @@ const MarathonTicket = forwardRef<View, MarathonTicketProps>(({ movies, headerTe
   const movieCount = allDisplayedMovies.length;
   const totalRuntime = formatTotalRuntime(allDisplayedMovies);
 
+  const runtimesAvailable = mainMovies.every((movie) => movie.runtime);
+
+  const countLabel = useMemo(() => {
+    const count = allDisplayedMovies.reduce(
+      (acc, curr) => {
+        if (curr.type === "movie")
+          return {
+            ...acc,
+            movies: acc.movies + 1,
+          };
+        if (curr.type === "tv")
+          return {
+            ...acc,
+            series: acc.series + 1,
+          };
+        return acc;
+      },
+      {
+        series: 0,
+        movies: 0,
+      },
+    );
+
+    if (count.movies > 0 && count.series === 0) return `${count.movies} ${t("ticket.films")}`;
+    if (count.series > 0 && count.movies === 0) return `${count.series} ${t("ticket.series")}`;
+    if (count.movies > 0 && count.series > 0)
+      return `${count.movies + count.series} ${t("ticket.films")} ${t("ticket.and")}  ${t("ticket.series")}`;
+    return "";
+  }, [allDisplayedMovies]);
+
   return (
     <View ref={ref} style={styles.container} collapsable={false}>
       {/* Main Ticket Body */}
@@ -166,10 +196,8 @@ const MarathonTicket = forwardRef<View, MarathonTicketProps>(({ movies, headerTe
           <Text style={styles.headerLabel}>{t("ticket.flickmate-presents")}</Text>
           <Text style={styles.headerText}>{displayHeader.toUpperCase()}</Text>
           <View style={styles.countBadge}>
-            <Text style={styles.countText}>
-              {movieCount} {t("ticket.films")}
-            </Text>
-            {totalRuntime ? (
+            <Text style={styles.countText}>{countLabel}</Text>
+            {totalRuntime && runtimesAvailable ? (
               <>
                 <View style={styles.countDot} />
                 <Text style={styles.countText}>{totalRuntime}</Text>
