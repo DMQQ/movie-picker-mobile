@@ -2,7 +2,7 @@
   "dialogs": {
     "scan-code": {
       "title": "Zeskanuj kod QR",
-      "message": "Zeskanuj kod QR, aby uzyskać szczegóły filmu",
+      "message": "Zeskanuj kod QR, i zobacz szczegóły",
       "close": "Zamknij",
       "cancel": "Anuluj",
       "leave": "Opuść",
@@ -592,15 +592,15 @@
     "unknown": "Nieznane",
     "watch-it-on": "Oglądaj na",
     "scan-to-get-app": "ZESKANUJ, ABY POBRAĆ APLIKACJĘ",
-    "app-tagline": "Znajdź swój następny film razem",
-    "flickmate-presents": "FLICKMATE PREZENTUJE",
+    "app-tagline": "Znajdźmy razem film na wieczór!",
+    "flickmate-presents": "FLICKMATE PRZEDSTAWIA",
     "films": "FILMÓW",
     "cinema": {
       "headers": [
         "Dzisiejszy wybór",
         "Los przemówił.",
         "Wszechświat zdecydował.",
-        "Bez odwrotu.",
+        "Nie przyjmuję zwrotów.",
         "Czas na film.",
         "Przeznaczenie czeka.",
         "Wybór został dokonany.",
@@ -619,9 +619,8 @@
     },
     "marathon": {
       "headers": [
-        "Tryb Maraton",
-        "Potrójny Seans",
         "Maraton Filmowy",
+        "Potrójny Seans",
         "Zatwierdzone do Binge",
         "Wyczyść Kalendarz",
         "Ostateczny Zestaw",
