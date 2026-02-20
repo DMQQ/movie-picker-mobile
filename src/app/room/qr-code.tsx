@@ -84,6 +84,7 @@ export default function QRCodePage() {
           providers: preferences?.providers || [],
           maxRounds: 3,
           specialCategories: [],
+          quickStart: true,
         });
       }
     } else {
@@ -97,6 +98,7 @@ export default function QRCodePage() {
           providers: roomSetup.providers || [],
           maxRounds: roomSetup.maxRounds || 6,
           specialCategories: roomSetup.specialCategories || [],
+          quickStart: false,
         });
       }
     }
@@ -249,6 +251,16 @@ export default function QRCodePage() {
           </View>
         </View>
 
+        <View style={{ width: "100%", alignItems: "center", marginTop: 5, height: 15 }}>
+          {isLoadingMovies ? (
+            <Text style={styles.infoText}>Checking available movies...</Text>
+          ) : moviesCount === 0 ? (
+            <Text style={styles.warningText}>{t("room.too-restricted")}</Text>
+          ) : moviesCount != null && moviesCount < 5 ? (
+            <Text style={styles.warningText}>{t("room.lower-results-count", { count: moviesCount })}</Text>
+          ) : null}
+        </View>
+
         <Button
           disabled={!qrCode || isLoadingMovies || (moviesCount != null && moviesCount < 5) || createRoomLoading || isPending}
           mode="contained"
@@ -260,15 +272,6 @@ export default function QRCodePage() {
         >
           {isLoadingMovies ? "Loading..." : moviesCount === 0 ? t("room.too-restricted") : "Start"}
         </Button>
-      </View>
-      <View style={{ width: "100%", alignItems: "center", marginTop: 5, height: 15 }}>
-        {isLoadingMovies ? (
-          <Text style={styles.infoText}>Checking available movies...</Text>
-        ) : moviesCount === 0 ? (
-          <Text style={styles.warningText}>{t("room.too-restricted")}</Text>
-        ) : moviesCount != null && moviesCount < 5 ? (
-          <Text style={styles.warningText}>{t("room.lower-results-count", { count: moviesCount })}</Text>
-        ) : null}
       </View>
     </View>
   );
@@ -432,7 +435,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   startButtonContent: {
-    padding: 7.5,
+    paddingVertical: 8,
   },
   tutorialContainer: {
     marginTop: 15,

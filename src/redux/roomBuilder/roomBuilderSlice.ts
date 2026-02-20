@@ -15,6 +15,7 @@ interface RoomBuilderState {
   specialCategories: string[];
   maxRounds: number;
   cacheKey: string | null;
+  quickStartMode: boolean;
 }
 
 const initialState: RoomBuilderState = {
@@ -27,6 +28,7 @@ const initialState: RoomBuilderState = {
   specialCategories: [],
   maxRounds: 3,
   cacheKey: null,
+  quickStartMode: false,
 };
 
 export const roomBuilderSlice = createSlice({
@@ -76,13 +78,16 @@ export const roomBuilderSlice = createSlice({
     setCacheKey: (state, action: PayloadAction<string>) => {
       state.cacheKey = action.payload;
     },
+    setQuickStartMode: (state, action: PayloadAction<boolean>) => {
+      state.quickStartMode = action.payload;
+    },
     reset: (state) => {
       Object.assign(state, initialState);
     },
   },
 });
 
-export const { goToStep, goBack, goNext, setCategory, toggleGenre, setProviders, toggleSpecialCategory, setMaxRounds, setCacheKey, reset } =
+export const { goToStep, goBack, goNext, setCategory, toggleGenre, setProviders, toggleSpecialCategory, setMaxRounds, setCacheKey, setQuickStartMode, reset } =
   roomBuilderSlice.actions;
 
 export default roomBuilderSlice.reducer;

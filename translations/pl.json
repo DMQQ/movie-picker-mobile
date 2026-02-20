@@ -117,6 +117,7 @@
     "builder": {
       "next": "Dalej",
       "createRoom": "Utwórz pokój",
+      "quickStart": "Szybki Start",
       "leaveStepConfirmation": "Czy na pewno chcesz wrócić? Twój postęp zostanie utracony.",
       "step1": {
         "title": "Co chcesz obejrzeć?",

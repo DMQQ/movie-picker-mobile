@@ -117,6 +117,7 @@
     "builder": {
       "next": "Next",
       "createRoom": "Create Room",
+      "quickStart": "Quick Start",
       "leaveStepConfirmation": "Are you sure you want to go back? Your progress will be lost.",
       "step1": {
         "title": "What's your pick?",

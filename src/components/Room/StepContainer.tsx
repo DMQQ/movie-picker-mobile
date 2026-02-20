@@ -1,87 +1,29 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, IconButton, MD2DarkTheme, Text, useTheme } from "react-native-paper";
+import { Button, IconButton, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
-import Animated, { FadeIn, FadeOut, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from "react-native-reanimated";
-import BuilderProgress from "./BuilderSteps/BuilderProgress";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { router } from "expo-router";
-import { goBack, goNext } from "../../redux/roomBuilder/roomBuilderSlice";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-interface DetailsTabProps {
-  currentStep: number;
-  totalSteps: number;
-}
-
-const DetailsTab = ({ currentStep, totalSteps }: DetailsTabProps) => {
-  const isRoomCreated = useAppSelector((state) => state.room.isCreated);
-  const qrCode = useAppSelector((state) => state.room.qrCode);
-
-  return (
-    <View
-      style={[
-        styles.progressRow,
-        {
-          justifyContent: isRoomCreated && qrCode ? "space-between" : "center",
-        },
-      ]}
-    >
-      {isRoomCreated && qrCode && <RoomActiveIndicator />}
-      <BuilderProgress currentStep={currentStep} totalSteps={totalSteps} />
-    </View>
-  );
-};
+import { goNext, goToStep, setQuickStartMode } from "../../redux/roomBuilder/roomBuilderSlice";
+import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
 
 interface StepContainerProps {
   currentStep: number;
-  totalSteps: number;
   isLastStep?: boolean;
   nextButtonText?: string;
   footerSubtitle?: string;
   children: React.ReactNode;
 }
 
-const RoomActiveIndicator: React.FC = () => {
-  const theme = useTheme();
-  const t = useTranslation();
-  const opacity = useSharedValue(1);
-
-  React.useEffect(() => {
-    opacity.value = withRepeat(withSequence(withTiming(0.5, { duration: 800 }), withTiming(1, { duration: 800 })), -1, false);
-  }, []);
-
-  const pulseStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-  }));
-
-  return (
-    <Animated.View entering={FadeIn} style={styles.roomActiveContainer}>
-      <Animated.View style={[pulseStyle, styles.pulseIconContainer]}>
-        <View style={[styles.iconCircle, { backgroundColor: theme.colors.primary + "25" }]}>
-          <MaterialCommunityIcons name="account-multiple" size={10} color={theme.colors.primary} />
-        </View>
-      </Animated.View>
-      <Text style={styles.roomActiveText}>{t("room.builder.roomActive")}</Text>
-    </Animated.View>
-  );
-};
-
-const StepContainer: React.FC<StepContainerProps> = ({
-  currentStep,
-  totalSteps,
-  isLastStep = false,
-  nextButtonText,
-  children,
-
-  footerSubtitle,
-}) => {
+const StepContainer: React.FC<StepContainerProps> = ({ currentStep, isLastStep = false, nextButtonText, children, footerSubtitle }) => {
   const dispatch = useAppDispatch();
   const t = useTranslation();
   const category = useAppSelector((state) => state.builder.category);
   const state = useAppSelector((state) => state.builder);
-  const showBackButton = currentStep > 1;
+  const { preferences: savedProviders, isLoading: providersLoading } = useBuilderPreferences();
+  const hasProviders = savedProviders?.providers && savedProviders.providers.length > 0;
 
   const canGoNext = () => {
     switch (currentStep) {
@@ -98,7 +40,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
   };
 
   const handleNext = () => {
-    if (currentStep === 5) {
+    if (currentStep === 5 || (currentStep === 3 && state.quickStartMode)) {
       handleCreateRoom();
     } else {
       dispatch(goNext());
@@ -123,11 +65,28 @@ const StepContainer: React.FC<StepContainerProps> = ({
   const memoChildren = React.useMemo(() => children, [children]);
 
   const handleQuickStart = useCallback(() => {
-    router.push({
-      pathname: "/room/qr-code",
-      params: { quickStart: "true" },
-    });
-  }, []);
+    if (hasProviders) {
+      router.push({
+        pathname: "/room/qr-code",
+        params: {
+          roomSetup: JSON.stringify({
+            category: state.category,
+            maxRounds: 3,
+            genre: [],
+            providers: savedProviders?.providers || [],
+            specialCategories: [],
+          }),
+        },
+      });
+    } else {
+      dispatch(setQuickStartMode(true));
+      dispatch(goToStep(3));
+    }
+  }, [hasProviders, state.category, savedProviders, dispatch]);
+
+  const handleFilters = useCallback(() => {
+    dispatch(goNext());
+  }, [dispatch]);
 
   return (
     <View style={styles.container}>
@@ -145,23 +104,38 @@ const StepContainer: React.FC<StepContainerProps> = ({
       <LinearGradient style={styles.buttonContainer} colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}>
         {footerSubtitle && <Text style={styles.footerSubtitle}>{footerSubtitle}</Text>}
 
-        <View style={styles.navigationRow}>
-          {showBackButton && (
-            <IconButton icon="arrow-left" size={24} onPress={() => dispatch(goBack())} mode="contained" style={styles.backButton} />
-          )}
-
+        {currentStep === 1 ? (
+          <View style={styles.step1NavigationRow}>
+            <Button
+              mode="contained"
+              style={styles.quickStartButton}
+              contentStyle={styles.quickStartButtonContent}
+              disabled={!canGoNext() || providersLoading}
+              onPress={handleQuickStart}
+            >
+              {t("room.builder.quickStart")}
+            </Button>
+            <IconButton
+              icon="tune-variant"
+              size={24}
+              onPress={handleFilters}
+              mode="contained"
+              style={styles.filtersIconButton}
+              disabled={!canGoNext()}
+            />
+          </View>
+        ) : (
           <Button
             mode="contained"
-            style={[styles.nextButton, !showBackButton && styles.nextButtonFullWidth]}
+            style={styles.nextButton}
             contentStyle={styles.nextButtonContent}
             disabled={!canGoNext()}
             onPress={handleNext}
           >
-            {nextButtonText || (isLastStep ? t("room.builder.createRoom") : t("room.builder.next"))}
+            {nextButtonText ||
+              (isLastStep || (currentStep === 3 && state.quickStartMode) ? t("room.builder.createRoom") : t("room.builder.next"))}
           </Button>
-          {currentStep === 1 && <IconButton onPress={handleQuickStart} icon={"dice-5"} />}
-        </View>
-        <DetailsTab currentStep={currentStep} totalSteps={totalSteps} />
+        )}
       </LinearGradient>
     </View>
   );
@@ -177,8 +151,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 16,
-    paddingBottom: 120,
-    paddingTop: 48,
+    paddingBottom: 90,
+    paddingTop: 60,
   },
   stepContent: {
     flex: 1,
@@ -189,61 +163,32 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: 16,
-    backgroundColor: "#000",
-    paddingTop: 12,
+    paddingTop: 8,
   },
   footerSubtitle: {
     fontSize: 14,
     color: "#999",
     textAlign: "center",
-    marginBottom: 16,
-    paddingHorizontal: 8,
-  },
-  navigationRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    marginBottom: 12,
-  },
-  backButton: {
-    margin: 0,
+    marginBottom: 8,
   },
   nextButton: {
-    flex: 1,
     borderRadius: 100,
-  },
-  nextButtonFullWidth: {
-    flex: 1,
   },
   nextButtonContent: {
     paddingVertical: 8,
   },
-  progressRow: {
+  step1NavigationRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
+    gap: 12,
   },
-  roomActiveContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
+  filtersIconButton: {},
+  quickStartButton: {
+    flex: 1,
+    borderRadius: 100,
   },
-  pulseIconContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  iconCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  roomActiveText: {
-    fontSize: 11,
-    color: MD2DarkTheme.colors.primary,
-    opacity: 0.8,
+  quickStartButtonContent: {
+    paddingVertical: 8,
   },
 });
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { View, Alert } from "react-native";
+import { View } from "react-native";
 import { router } from "expo-router";
 import PageHeading from "../../components/PageHeading";
 import StepContainer from "../../components/Room/StepContainer";
@@ -8,9 +8,10 @@ import Step2Genres from "../../components/Room/BuilderSteps/Step2Genres";
 import Step3Providers from "../../components/Room/BuilderSteps/Step3Providers";
 import Step4SpecialCategories from "../../components/Room/BuilderSteps/Step4SpecialCategories";
 import Step5Duration from "../../components/Room/BuilderSteps/Step5Duration";
+import CircularStepProgress from "../../components/Room/BuilderSteps/CircularStepProgress";
 import useTranslation from "../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
+import { goBack, reset } from "../../redux/roomBuilder/roomBuilderSlice";
 
 export default function RoomSetup() {
   const t = useTranslation();
@@ -26,9 +27,9 @@ export default function RoomSetup() {
 
   const getStepTitle = useCallback(() => {
     if (currentStep >= 1 && currentStep <= 5) {
-      return t(`room.builder.step${currentStep}.title`);
+      return t(`room.builder.step${currentStep}.title`) as string;
     }
-    return t("room.movie");
+    return t("room.movie") as string;
   }, [currentStep, t]);
 
   const getStepSubtitle = useCallback(() => {
@@ -57,41 +58,26 @@ export default function RoomSetup() {
 
   const handleBackPress = useCallback(() => {
     if (currentStep > 1) {
-      Alert.alert(
-        t("common.confirmation"),
-        t("room.builder.leaveStepConfirmation"),
-        [
-          {
-            text: t("common.cancel"),
-            style: "cancel",
-          },
-          {
-            text: t("common.yes"),
-            style: "destructive",
-            onPress: () => {
-              router.back();
-            },
-          },
-        ],
-        { cancelable: true },
-      );
+      dispatch(goBack());
     } else {
       router.back();
     }
-  }, [currentStep]);
+  }, [currentStep, dispatch]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       <PageHeading
         onPress={handleBackPress}
-        showBackButton={currentStep === 1}
+        showBackButton
         gradientHeight={100}
         showGradientBackground={false}
         useSafeArea={false}
         title={getStepTitle()}
-      />
+      >
+        <CircularStepProgress currentStep={currentStep} totalSteps={5} />
+      </PageHeading>
 
-      <StepContainer currentStep={currentStep} totalSteps={5} isLastStep={currentStep === 5} footerSubtitle={getStepSubtitle()}>
+      <StepContainer currentStep={currentStep} isLastStep={currentStep === 5} footerSubtitle={getStepSubtitle()}>
         {renderStep}
       </StepContainer>
     </View>
