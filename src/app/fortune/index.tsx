@@ -18,6 +18,7 @@ import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import * as Haptics from "expo-haptics";
 import MovieResultCard, { CARD_HEIGHT } from "../../components/Random/MovieResultCard";
+import PlatformBlurView from "../../components/PlatformBlurView";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -227,9 +228,9 @@ export default function FortuneWheel() {
   return (
     <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
       <PageHeading showGradientBackground showBackButton title={(params?.title as string) || ""}>
-        <View style={fortuneStyles.filterButtonWrapper}>
-          <FilterButton size={22} onApply={handleFiltersApplied} onCategorySelect={handleThrowDice} showCategories />
-        </View>
+        <PlatformBlurView style={fortuneStyles.filterButtonWrapper}>
+          <FilterButton size={25} onApply={handleFiltersApplied} onCategorySelect={handleThrowDice} showCategories />
+        </PlatformBlurView>
       </PageHeading>
 
       {selectedMovie && (

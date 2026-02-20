@@ -152,7 +152,6 @@ export default function FilterSheet({ visible, onClose, onCategorySelect, showCa
 
   const mediaType = useAppSelector((state) => state.mediaFilters.mediaType);
   const selectedDecade = useAppSelector((state) => state.mediaFilters.selectedDecade);
-  const isFilterActive = useAppSelector((state) => state.mediaFilters.isFilterActive);
   const providersCount = useAppSelector((state) => state.mediaFilters.selectedProviders.length);
   const genresCount = useAppSelector((state) => state.mediaFilters.selectedGenres.length);
 
@@ -169,10 +168,6 @@ export default function FilterSheet({ visible, onClose, onCategorySelect, showCa
     },
     [dispatch],
   );
-
-  const handleClearAll = useCallback(() => {
-    dispatch(clearAllFilters());
-  }, [dispatch]);
 
   const handleApply = useCallback(() => {
     onClose();

@@ -25,6 +25,7 @@ import { useRandomMovie } from "../../hooks/useRandomMovie";
 import { RandomQuestionMarks, ActionButtons } from "../../components/Random/shared";
 import { ThumbnailSizes } from "../../components/Thumbnail";
 import GenresView from "../../components/GenresView";
+import PlatformBlurView from "../../components/PlatformBlurView";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CARD_WIDTH = screenWidth * 0.9;
@@ -87,9 +88,9 @@ export default function RandomMovie() {
 
       <SafeIOSContainer style={styles.safeArea}>
         <PageHeading showBackButton title={t("games.random.title")}>
-          <View style={styles.filterButtonWrapper}>
-            <FilterButton size={22} />
-          </View>
+          <PlatformBlurView style={styles.filterButtonWrapper}>
+            <FilterButton size={25} />
+          </PlatformBlurView>
         </PageHeading>
 
         <View style={styles.content}>

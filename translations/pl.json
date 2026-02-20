@@ -6,11 +6,11 @@
       "close": "Zamknij",
       "cancel": "Anuluj",
       "leave": "Opuść",
-      "endGame": "Zakończ grę"
+      "endGame": "Zakończ"
     },
     "leave-room": {
-      "message": "Czy na pewno chcesz opuścić pokój?",
-      "title": "Opuść Pokój",
+      "message": "Czy na pewno chcesz wyjść?",
+      "title": "Opuść grę",
       "cancel": "Anuluj",
       "leave": "Opuść"
     },
@@ -178,13 +178,13 @@
     }
   },
   "fortune-wheel": {
-    "drag": "Pociągnij w górę, aby zakręcić",
+    "drag": "Przeciągnij, aby zakręcić",
     "roll": "Zakręć ponownie",
     "random-category": "Losowa Kategoria",
     "pick-category": "Wybierz Kategorię",
     "pick-a-movie": "Zakręć kołem!",
-    "spin-again": "Losowe zakręcenie",
-    "tap-for-details": "Dotknij, aby zobaczyć szczegóły"
+    "spin-again": "Wylosuj ponownie",
+    "tap-for-details": "Zobacz szczegóły"
   },
   "filters": {
     "title": "Filtry",

@@ -1,4 +1,3 @@
-import { Entypo } from "@expo/vector-icons";
 import {
   BlurMask,
   Canvas,
@@ -258,19 +257,25 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
 
     const handleSpin = (velocity: number) => {
       if (isSpinning.value) return;
+
+      pointerRotation.value = withSequence(
+        withTiming(45, { duration: 25, easing: Easing.out(Easing.quad) }),
+        withTiming(12, { duration: 60, easing: Easing.inOut(Easing.quad) }),
+      );
+
       if (onSpinStart) runOnJS(onSpinStart)();
 
       translateY.value = withTiming(0);
       isSpinning.value = true;
-      lastHapticSegment.value = -1;
-      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
 
-      pointerRotation.value = withTiming(25 + Math.random() * 10, { duration: 40, easing: Easing.out(Easing.quad) });
+      const currentRotation = ((rotate.value % 360) + 360) % 360;
+      const invertedAngle = (360 - currentRotation) % 360;
+      lastHapticSegment.value = Math.floor(invertedAngle / segmentAngle);
+      runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Heavy);
 
       const randomizedVelocity = velocity + (Math.random() - 0.5) * 2000; // Add ±1000 randomness
       const rotations = Math.min(Math.max(Math.abs(randomizedVelocity / 500), 2), 8);
 
-      // Get unseen indices, reset if all seen
       const allIndices = Array.from({ length: items.length }, (_, i) => i);
       const unseenIndices = allIndices.filter((i) => !seenIndices.current.has(i));
       if (unseenIndices.length === 0) {
@@ -278,7 +283,6 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
         unseenIndices.push(...allIndices);
       }
 
-      // Pick random unseen segment
       const targetIndex = unseenIndices[Math.floor(Math.random() * unseenIndices.length)];
       const targetSegmentAngle = (items.length - targetIndex - 1) * segmentAngle + segmentAngle / 2;
       const currentNormalized = ((rotate.value % 360) + 360) % 360;
@@ -301,8 +305,6 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
         if (onWinnerPredicted) {
           runOnJS(onWinnerPredicted)(items[selectedIndex]);
         }
-
-        pointerRotation.value = withSpring(0, { damping: 18, stiffness: 300 });
 
         rotate.value = withTiming(finalTargetAngle, { duration: 1000, easing: Easing.out(Easing.back(1.5)) }, () => {
           isSpinning.value = false;

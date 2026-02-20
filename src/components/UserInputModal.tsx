@@ -69,7 +69,7 @@ export default function UserInputModal({
     >
       <View style={styles.modalOverlay} onTouchEnd={handleBackdropPress}>
         <PlatformBlurView style={[styles.modalContent, { width, maxHeight }]} onTouchEnd={(e) => e.stopPropagation()}>
-          <Animated.View style={styles.modalInner}>
+          <Animated.View style={[styles.modalInner]}>
             <Text style={styles.modalTitle}>{title}</Text>
             {subtitle && <Text style={styles.modalSubtitle}>{subtitle}</Text>}
 

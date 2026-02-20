@@ -18,7 +18,13 @@ interface FilterButtonProps {
   showCategories?: boolean;
 }
 
-export const FilterButton = React.memo(function FilterButton({ size = 24, style, onApply, onCategorySelect, showCategories }: FilterButtonProps) {
+export const FilterButton = React.memo(function FilterButton({
+  size = 24,
+  style,
+  onApply,
+  onCategorySelect,
+  showCategories,
+}: FilterButtonProps) {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const dispatch = useAppDispatch();
   const { preferences: savedProviders } = useFilterPreferences();
@@ -65,7 +71,6 @@ export const FilterButton = React.memo(function FilterButton({ size = 24, style,
           iconColor={isFilterActive ? MD2DarkTheme.colors.primary : "#fff"}
           size={size}
           onPress={openFilters}
-          style={styles.filterButton}
         />
         {activeFilterCount > 0 && (
           <Badge size={16} style={styles.badge} pointerEvents="none">

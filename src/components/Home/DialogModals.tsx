@@ -76,7 +76,7 @@ export default function DialogModals({
           },
         ]}
       >
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
           <View
             style={{
               alignItems: "center",
@@ -95,19 +95,19 @@ export default function DialogModals({
               size={Dimensions.get("screen").width / 2}
             />
           </View>
+          <Text
+            style={{
+              color: theme.colors.primary,
+              textAlign: "center",
+              marginTop: 15,
+              fontSize: 18,
+              fontWeight: "bold",
+              letterSpacing: 3,
+            }}
+          >
+            {qrCode}
+          </Text>
         </View>
-        <Text
-          style={{
-            color: theme.colors.primary,
-            textAlign: "center",
-            marginTop: 15,
-            fontSize: 18,
-            fontWeight: "bold",
-            letterSpacing: 3,
-          }}
-        >
-          {qrCode}
-        </Text>
       </UserInputModal>
     </>
   );

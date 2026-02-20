@@ -118,8 +118,8 @@ const CinemaTicket = forwardRef<View, CinemaTicketProps>(
   ({ movie, providers, headerText, pickupLine, ticketColor = "#F5F0E1", accentColor }, ref) => {
     const t = useTranslation();
 
-    const headerTexts = useMemo(() => t("ticket.cinema.headers") as string[], [t]);
-    const pickupLines = useMemo(() => t("ticket.cinema.pickups") as string[], [t]);
+    const headerTexts = useMemo(() => t("ticket.cinema.headers") as unknown as string[], [t]);
+    const pickupLines = useMemo(() => t("ticket.cinema.pickups") as unknown as string[], [t]);
 
     const displayHeader = headerText || getRandomItem(headerTexts);
     const displayPickup = pickupLine || getRandomItem(pickupLines);
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
   },
   genresContainer: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    overflow: "hidden",
     gap: 6,
   },
   genrePill: {

@@ -60,8 +60,6 @@ export default function MovieDetailsScreen() {
     id: string;
   }>();
 
-  const insets = useSafeAreaInsets();
-
   const isPreview = useIsPreview();
 
   const IMG_HEIGHT = useMemo(() => height * (isPreview ? 0.5 : 0.75), [height, isPreview]);
@@ -149,15 +147,3 @@ export default function MovieDetailsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  floatingShare: {
-    position: "absolute",
-    right: 0,
-    bottom: 0,
-    padding: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10,
-  },
-});
