@@ -6,6 +6,7 @@ import type { RootState } from "../store";
 interface MovieInteractionsState {
   superLiked: MovieInteraction[];
   blocked: MovieInteraction[];
+  sessionDisliked: Record<string, true>;
   loading: boolean;
   hydrated: boolean;
   error: string | null;
@@ -14,6 +15,7 @@ interface MovieInteractionsState {
 const initialState: MovieInteractionsState = {
   superLiked: [],
   blocked: [],
+  sessionDisliked: {},
   loading: false,
   hydrated: false,
   error: null,
@@ -89,7 +91,14 @@ export const clearAllBlocked = createAsyncThunk(
 export const movieInteractionsSlice = createSlice({
   name: "movieInteractions",
   initialState,
-  reducers: {},
+  reducers: {
+    addSessionDisliked: (state, action: { payload: string }) => {
+      state.sessionDisliked[action.payload] = true;
+    },
+    clearSessionDisliked: (state) => {
+      state.sessionDisliked = {};
+    },
+  },
   extraReducers: (builder) => {
     builder
       // Load
@@ -135,6 +144,8 @@ export const movieInteractionsSlice = createSlice({
   },
 });
 
+export const { addSessionDisliked, clearSessionDisliked } = movieInteractionsSlice.actions;
+
 // Selectors
 const selectMovieInteractions = (state: RootState) => state.movieInteractions;
 
@@ -163,14 +174,31 @@ export const selectSuperLikedIds = createSelector(
   (superLiked) => superLiked.map((m) => ({ id: m.movie_id, type: m.movie_type }))
 );
 
+export const selectSessionDisliked = createSelector(
+  selectMovieInteractions,
+  (interactions) => interactions.sessionDisliked
+);
+
+const parseKey = (key: string): { id: number; type: MovieType } => ({
+  id: parseInt(key.slice(1), 10),
+  type: key[0] === "m" ? "movie" : "tv",
+});
+
 export const selectBlockedIds = createSelector(
-  selectBlockedMovies,
-  (blocked) => blocked.map((m) => ({ id: m.movie_id, type: m.movie_type }))
+  [selectBlockedMovies, selectSessionDisliked],
+  (blocked, sessionDisliked) => [
+    ...blocked.map((m) => ({ id: m.movie_id, type: m.movie_type })),
+    ...Object.keys(sessionDisliked).map(parseKey),
+  ]
 );
 
 export const selectBlockedIdSet = createSelector(
-  selectBlockedMovies,
-  (blocked) => new Set(blocked.map((m) => m.movie_id))
+  [selectBlockedMovies, selectSessionDisliked],
+  (blocked, sessionDisliked) => {
+    const blockedKeys = blocked.map((m) => `${m.movie_type === "movie" ? "m" : "t"}${m.movie_id}`);
+    const sessionKeys = Object.keys(sessionDisliked);
+    return new Set([...blockedKeys, ...sessionKeys]);
+  }
 );
 
 export const selectIsSuperLiked = createSelector(

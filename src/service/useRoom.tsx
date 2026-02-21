@@ -12,7 +12,7 @@ export default function useRoom() {
   const { socket, emitter } = useContext(SocketContext);
   const attemptTimeout = useRef<NodeJS.Timeout | null>(null);
   const roomId = useAppSelector((state) => state.room.room.roomId);
-  const { getBlockedIds, isReady: blockedReady } = useBlockedMovies();
+  const { getBlockedIds, addDislikedMovie, isReady: blockedReady } = useBlockedMovies();
   const { getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
 
   useEffect(() => {
@@ -171,6 +171,7 @@ export default function useRoom() {
       swipe: { type: "dislike", movie: card.id },
     });
     dispatch(roomActions.dislikeMovie(card));
+    addDislikedMovie(card);
     removeCardLocally(index);
   };
 

@@ -8,7 +8,9 @@ import {
   blockMovie as blockAction,
   unblockMovie as unblockAction,
   clearAllBlocked as clearAllBlockedAction,
+  addSessionDisliked,
   selectBlockedMovies,
+  selectBlockedIds,
   selectBlockedIdSet,
   selectInteractionsLoading,
   selectInteractionsHydrated,
@@ -19,11 +21,11 @@ export function useBlockedMovies() {
   const { movieInteractions, isReady } = useMovieInteractions();
 
   const blockedMovies = useAppSelector(selectBlockedMovies);
+  const blockedIds = useAppSelector(selectBlockedIds);
   const blockedIdSet = useAppSelector(selectBlockedIdSet);
   const loading = useAppSelector(selectInteractionsLoading);
   const hydrated = useAppSelector(selectInteractionsHydrated);
 
-  // Hydrate Redux on first load
   useEffect(() => {
     if (isReady && movieInteractions && !hydrated) {
       dispatch(loadInteractions(movieInteractions));
@@ -45,10 +47,10 @@ export function useBlockedMovies() {
             title: movie.title || movie.name || null,
             poster_path: movie.poster_path || null,
           },
-        })
+        }),
       );
     },
-    [movieInteractions, dispatch]
+    [movieInteractions, dispatch],
   );
 
   const unblockMovie = useCallback(
@@ -56,19 +58,29 @@ export function useBlockedMovies() {
       if (!movieInteractions) return;
       await dispatch(unblockAction({ repo: movieInteractions, movieId, movieType }));
     },
-    [movieInteractions, dispatch]
+    [movieInteractions, dispatch],
+  );
+
+  const addDislikedMovie = useCallback(
+    (movie: Movie) => {
+      const movieType = movie.type ?? (movie.first_air_date ? "tv" : "movie");
+      const key = `${movieType === "movie" ? "m" : "t"}${movie.id}`;
+      dispatch(addSessionDisliked(key));
+    },
+    [dispatch],
   );
 
   const isBlocked = useCallback(
     (movieId: number, movieType: MovieType): boolean => {
-      return blockedMovies.some((m) => m.movie_id === movieId && m.movie_type === movieType);
+      const key = `${movieType === "movie" ? "m" : "t"}${movieId}`;
+      return blockedIdSet.has(key);
     },
-    [blockedMovies]
+    [blockedIdSet],
   );
 
   const getBlockedIds = useCallback((): { id: number; type: MovieType }[] => {
-    return blockedMovies.map((m) => ({ id: m.movie_id, type: m.movie_type }));
-  }, [blockedMovies]);
+    return blockedIds;
+  }, [blockedIds]);
 
   const clearAllBlocked = useCallback(async () => {
     if (!movieInteractions) return;
@@ -76,10 +88,14 @@ export function useBlockedMovies() {
   }, [movieInteractions, dispatch]);
 
   const filterBlocked = useCallback(
-    <T extends { id: number }>(movies: T[]): T[] => {
-      return movies.filter((movie) => !blockedIdSet.has(movie.id));
+    <T extends { id: number; type?: "movie" | "tv"; first_air_date?: string }>(movies: T[]): T[] => {
+      return movies.filter((movie) => {
+        const movieType = movie.type ?? (movie.first_air_date ? "tv" : "movie");
+        const key = `${movieType === "movie" ? "m" : "t"}${movie.id}`;
+        return !blockedIdSet.has(key);
+      });
     },
-    [blockedIdSet]
+    [blockedIdSet],
   );
 
   const refresh = useCallback(async () => {
@@ -93,6 +109,7 @@ export function useBlockedMovies() {
     isReady: hydrated,
     blockMovie,
     unblockMovie,
+    addDislikedMovie,
     isBlocked,
     getBlockedIds,
     clearAllBlocked,
