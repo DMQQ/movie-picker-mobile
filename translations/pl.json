@@ -279,7 +279,11 @@
     "heading": "Zeskanuj kod QR",
     "join": "Dołącz do gry",
     "button": "Dołącz",
-    "hint": "Umieść kod QR w polu skanowania lub naciśnij Dołącz powyżej, aby wpisać kod ręcznie"
+    "hint": "Umieść kod QR w polu skanowania lub naciśnij Dołącz powyżej, aby wpisać kod ręcznie",
+    "code": "Kod",
+    "error-empty": "Wprowadź kod",
+    "error-invalid-prefix": "Kod musi zaczynać się od S lub V",
+    "error-room-not-found": "Nie znaleziono pokoju"
   },
   "settings": {
     "hello": "Cześć",
