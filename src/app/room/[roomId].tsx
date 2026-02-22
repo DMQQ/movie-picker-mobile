@@ -253,13 +253,7 @@ export default function Home() {
         <View style={styles.emptyListContainer}>
           <FancySpinner />
           <Text style={styles.gameFinishStatus}>
-            {gameEnded
-              ? t("room.finished")
-              : isJoining
-                ? t("room.joining")
-                : cardsLoading
-                  ? t("room.loading")
-                  : t("room.awaiting-start")}
+            {gameEnded ? t("room.finished") : isJoining ? t("room.joining") : cardsLoading ? t("room.loading") : t("room.awaiting-start")}
           </Text>
         </View>
       )}
@@ -331,7 +325,7 @@ const SwipeContent = memo(({ params }: SwipeContentProps) => {
   );
 
   return cards
-    .slice(0, 2)
+    .slice(0, 3)
     .map((card, index) => (
       <SwipeTile
         onPress={() => handleNavigateDetails(card)}

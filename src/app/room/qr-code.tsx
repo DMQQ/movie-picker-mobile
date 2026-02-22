@@ -272,7 +272,13 @@ export default function QRCodePage() {
             onJoinOwnRoom(qrCode);
           }}
         >
-          {isLoadingMovies ? "Loading..." : moviesCount === 0 ? t("room.too-restricted") : "Start"}
+          {isLoadingMovies
+            ? "Loading..."
+            : moviesCount === 0
+              ? t("room.too-restricted")
+              : users.length === 1
+                ? t("room.play-alone")
+                : t("room.start")}
         </Button>
       </View>
     </View>

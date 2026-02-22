@@ -1,7 +1,6 @@
 import { Platform, StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import Animated, { FadeIn } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import useTranslation from "../../service/useTranslation";
 import CustomFavourite from "../Favourite";
@@ -119,55 +118,53 @@ function MovieDetails({
   }, [isTVShow, t, hasSimilar, hasTrailers]);
 
   return (
-    <Animated.View entering={FadeIn}>
-      <BlurViewWrapper style={styles.blurWrapper}>
-        <View style={{ padding: 15 }}>
-          <Text numberOfLines={3} style={styles.heading}>
-            {movie?.title || movie?.name || "-"}
-          </Text>
+    <BlurViewWrapper style={styles.blurWrapper}>
+      <View style={{ padding: 15 }}>
+        <Text numberOfLines={3} style={styles.heading}>
+          {movie?.title || movie?.name || "-"}
+        </Text>
 
-          {!!movie?.tagline && <Text style={styles.tagline}>{movie?.tagline ? `"${movie?.tagline}"` : ""}</Text>}
+        {!!movie?.tagline && <Text style={styles.tagline}>{movie?.tagline ? `"${movie?.tagline}"` : ""}</Text>}
 
-          <View style={styles.rating}>
-            <RatingIcons size={20} vote={movie?.vote_average} />
-          </View>
-
-          <Text style={styles.categories}>{data.join(" | ")}</Text>
-
-          <View style={{ paddingVertical: 15 }}>
-            <PlatformBlurView style={styles.quickActions}>
-              <QuickActions movie={movie}>
-                <View style={{ flex: 1 }}>
-                  <CustomFavourite movie={movie} />
-                </View>
-              </QuickActions>
-            </PlatformBlurView>
-          </View>
+        <View style={styles.rating}>
+          <RatingIcons size={20} vote={movie?.vote_average} />
         </View>
 
-        <MovieTabs
-          movie={movie}
-          type={type}
-          providers={providers}
-          tabs={tabs}
-          isTVShow={isTVShow}
-          hasSimilar={hasSimilar}
-          hasTrailers={hasTrailers}
-          similarData={similarData}
-          trailersData={trailersData}
-          castData={castData}
+        <Text style={styles.categories}>{data.join(" | ")}</Text>
+
+        <View style={{ paddingVertical: 15 }}>
+          <PlatformBlurView style={styles.quickActions}>
+            <QuickActions movie={movie}>
+              <View style={{ flex: 1 }}>
+                <CustomFavourite movie={movie} />
+              </View>
+            </QuickActions>
+          </PlatformBlurView>
+        </View>
+      </View>
+
+      <MovieTabs
+        movie={movie}
+        type={type}
+        providers={providers}
+        tabs={tabs}
+        isTVShow={isTVShow}
+        hasSimilar={hasSimilar}
+        hasTrailers={hasTrailers}
+        similarData={similarData}
+        trailersData={trailersData}
+        castData={castData}
+      />
+
+      <View style={styles.attributions}>
+        <Image
+          source="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_1-5bdc75aaebeb75dc7ae79426ddd9be3b2be1e342510f8202baf6bffa71d7f5c4.svg"
+          style={styles.tmdbLogo}
+          contentFit="contain"
         />
-
-        <View style={styles.attributions}>
-          <Image
-            source="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_square_1-5bdc75aaebeb75dc7ae79426ddd9be3b2be1e342510f8202baf6bffa71d7f5c4.svg"
-            style={styles.tmdbLogo}
-            contentFit="contain"
-          />
-          <Text style={[styles.text, { textAlign: "center" }]}>{t("global.attributions")}</Text>
-        </View>
-      </BlurViewWrapper>
-    </Animated.View>
+        <Text style={[styles.text, { textAlign: "center" }]}>{t("global.attributions")}</Text>
+      </View>
+    </BlurViewWrapper>
   );
 }
 

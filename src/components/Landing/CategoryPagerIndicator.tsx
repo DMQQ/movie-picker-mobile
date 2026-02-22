@@ -36,39 +36,37 @@ function CategoryPagerIndicator({ chipCategories, selectedChip, onChipPress }: C
 
   const renderCategory = useCallback(
     ({ item: category, index }: { item: any; index: number }) => (
-      <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>
-        <PlatformBlurView
-          interactive
-          style={[{ borderRadius: 12 }, Platform.OS === "android" && { backgroundColor: MD2DarkTheme.colors.surface }]}
+      <PlatformBlurView
+        interactive
+        style={[{ borderRadius: 12 }, Platform.OS === "android" && { backgroundColor: MD2DarkTheme.colors.surface }]}
+      >
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            onChipPress?.(category.id);
+          }}
+          style={[styles.chipButton, selectedChip === category.id && styles.selectedChip]}
         >
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              onChipPress?.(category.id);
-            }}
-            style={[styles.chipButton, selectedChip === category.id && styles.selectedChip]}
-          >
-            {(category.logo_path && category.logo_path !== "") || category.image ? (
-              <Image
-                resizeMode="contain"
-                source={{
-                  uri: `https://image.tmdb.org/t/p/w92${category.logo_path || category.image}`,
-                }}
-                style={styles.chipImage}
-              />
-            ) : category.icon && category.icon !== "" ? (
-              <Ionicons
-                name={category.icon as any}
-                size={32}
-                color={selectedChip === category.id ? MD2DarkTheme.colors.primary : MD2DarkTheme.colors.onSurface}
-              />
-            ) : (
-              <Text style={{ fontSize: 10 }}>{category.label}</Text>
-            )}
-          </TouchableOpacity>
-        </PlatformBlurView>
-      </Animated.View>
+          {(category.logo_path && category.logo_path !== "") || category.image ? (
+            <Image
+              resizeMode="contain"
+              source={{
+                uri: `https://image.tmdb.org/t/p/w92${category.logo_path || category.image}`,
+              }}
+              style={styles.chipImage}
+            />
+          ) : category.icon && category.icon !== "" ? (
+            <Ionicons
+              name={category.icon as any}
+              size={32}
+              color={selectedChip === category.id ? MD2DarkTheme.colors.primary : MD2DarkTheme.colors.onSurface}
+            />
+          ) : (
+            <Text style={{ fontSize: 10 }}>{category.label}</Text>
+          )}
+        </TouchableOpacity>
+      </PlatformBlurView>
     ),
     [onChipPress, selectedChip],
   );
