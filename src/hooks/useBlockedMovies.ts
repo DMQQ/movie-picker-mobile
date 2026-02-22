@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useMovieInteractions } from "../context/DatabaseContext";
 import type { MovieType } from "../database/types";
 import type { Movie } from "../../types";
@@ -103,17 +103,32 @@ export function useBlockedMovies() {
     await dispatch(loadInteractions(movieInteractions));
   }, [movieInteractions, dispatch]);
 
-  return {
-    blockedMovies,
-    loading,
-    isReady: hydrated,
-    blockMovie,
-    unblockMovie,
-    addDislikedMovie,
-    isBlocked,
-    getBlockedIds,
-    clearAllBlocked,
-    filterBlocked,
-    refresh,
-  };
+  return useMemo(
+    () => ({
+      blockedMovies,
+      loading,
+      isReady: hydrated,
+      blockMovie,
+      unblockMovie,
+      addDislikedMovie,
+      isBlocked,
+      getBlockedIds,
+      clearAllBlocked,
+      filterBlocked,
+      refresh,
+    }),
+    [
+      blockedMovies,
+      loading,
+      hydrated,
+      blockMovie,
+      unblockMovie,
+      addDislikedMovie,
+      isBlocked,
+      getBlockedIds,
+      clearAllBlocked,
+      filterBlocked,
+      refresh,
+    ],
+  );
 }

@@ -54,6 +54,8 @@
   "room": {
     "specialCategories": "Special Categories",
     "loading": "Loading room...",
+    "joining": "Joining room...",
+    "waiting-for-players": "Waiting for players to join...",
     "no-more-results": "No more results in this category",
     "awaiting-start": "Waiting for host to start the game",
     "too-restricted": "Filters too restricted, try again",

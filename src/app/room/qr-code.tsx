@@ -258,6 +258,8 @@ export default function QRCodePage() {
             <Text style={styles.warningText}>{t("room.too-restricted")}</Text>
           ) : moviesCount != null && moviesCount < 5 ? (
             <Text style={styles.warningText}>{t("room.lower-results-count", { count: moviesCount })}</Text>
+          ) : users.length <= 1 ? (
+            <Text style={styles.infoText}>{t("room.waiting-for-players")}</Text>
           ) : null}
         </View>
 

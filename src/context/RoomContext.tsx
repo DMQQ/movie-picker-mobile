@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import useRoom from "../service/useRoom";
 import { useBlockedMovies } from "../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
@@ -11,6 +11,8 @@ import * as StoreReview from "expo-store-review";
 type RoomContextValue = ReturnType<typeof useRoom> & {
   blockAndDislikeCard: (card: Movie, index: number) => Promise<void>;
   superLikeAndLikeCard: (card: Movie, index: number) => Promise<void>;
+  joinError: boolean;
+  isJoining: boolean;
 };
 
 const RoomContext = createContext<RoomContextValue>({
@@ -24,6 +26,8 @@ const RoomContext = createContext<RoomContextValue>({
   socket: null,
   blockAndDislikeCard: async () => {},
   superLikeAndLikeCard: async () => {},
+  joinError: false,
+  isJoining: false,
 });
 
 export default function useRoomContext() {
@@ -34,12 +38,28 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
   const room = useRoom();
   const { blockMovie, getBlockedIds, isReady: blockedReady } = useBlockedMovies();
   const { superLikeMovie, getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
+  const [joinError, setJoinError] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
 
   useEffect(() => {
     if (room.roomId && room.socket?.connected && blockedReady && superLikedReady) {
       (async () => {
-        const [blockedMovies, superLikedMovies] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
-        const response = await room.joinGame(room.roomId, blockedMovies, superLikedMovies);
+        setIsJoining(true);
+        setJoinError(false);
+        try {
+          const [blockedMovies, superLikedMovies] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
+          const response = await room.joinGame(room.roomId, blockedMovies, superLikedMovies);
+
+          if (!response?.joined) {
+            console.error("Failed to join room - room may not exist");
+            setJoinError(true);
+          }
+        } catch (error) {
+          console.error("Error joining room:", error);
+          setJoinError(true);
+        } finally {
+          setIsJoining(false);
+        }
       })();
     }
   }, [room.roomId, room.socket?.connected, blockedReady, superLikedReady]);
@@ -77,8 +97,10 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
       ...room,
       blockAndDislikeCard,
       superLikeAndLikeCard,
+      joinError,
+      isJoining,
     }),
-    [room, blockAndDislikeCard, superLikeAndLikeCard],
+    [room, blockAndDislikeCard, superLikeAndLikeCard, joinError, isJoining],
   );
 
   return <RoomContext.Provider value={value}>{children}</RoomContext.Provider>;

@@ -1,6 +1,6 @@
 import { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Alert, BackHandler, StyleSheet, View } from "react-native";
-import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { Movie } from "../../../types";
 import { FancySpinner } from "../../components/FancySpinner";
 import HomeAppbar from "../../components/Home/Appbar";
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 
 export default function Home() {
   const params = useLocalSearchParams();
-  const { cards, isPlaying, cardsLoading, roomId } = useRoomContext();
+  const { cards, isPlaying, cardsLoading, roomId, joinError, isJoining } = useRoomContext();
   const hasUserPlayed = useAppSelector((state) => state.room.room.hasUserPlayed);
   const gameEnded = useAppSelector((state) => state.room.room.gameEnded);
   const canContinue = useAppSelector((state) => state.room.room.canContinue);
@@ -55,7 +55,6 @@ export default function Home() {
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
   const dispatch = useAppDispatch();
-  const theme = useTheme();
   const [showError, setShowError] = useState(false);
   const [showPlayAgainDialog, setShowPlayAgainDialog] = useState(false);
   const [playAgainLoading, setPlayAgainLoading] = useState(false);
@@ -254,31 +253,32 @@ export default function Home() {
         <View style={styles.emptyListContainer}>
           <FancySpinner />
           <Text style={styles.gameFinishStatus}>
-            {gameEnded ? t("room.finished") : cardsLoading ? t("room.loading") : t("room.awaiting-start")}
+            {gameEnded
+              ? t("room.finished")
+              : isJoining
+                ? t("room.joining")
+                : cardsLoading
+                  ? t("room.loading")
+                  : t("room.awaiting-start")}
           </Text>
         </View>
       )}
 
-      <Portal>
-        <Dialog dismissable={false} visible={showError} style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}>
-          <Dialog.Title>{t("dialogs.qr.error")}</Dialog.Title>
-
-          <Dialog.Content>
-            <Text>{t("dialogs.qr.error-desc")}</Text>
-          </Dialog.Content>
-
-          <Dialog.Actions>
-            <Button
-              onPress={() => {
-                setShowError(false);
-                router.replace("/(tabs)");
-              }}
-            >
-              {t("dialogs.qr.close") as string}
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      <UserInputModal
+        visible={showError || joinError}
+        title={t("dialogs.qr.error") as string}
+        subtitle={t("dialogs.qr.error-desc") as string}
+        actions={[
+          {
+            label: t("dialogs.qr.close") as string,
+            mode: "contained",
+            onPress: () => {
+              setShowError(false);
+              router.replace("/(tabs)");
+            },
+          },
+        ]}
+      />
 
       <UserInputModal
         visible={showPlayAgainDialog}
