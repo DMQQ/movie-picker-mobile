@@ -180,7 +180,9 @@ export default function useRoom() {
     blockedMovies: { id: number; type: "movie" | "tv" }[] = [],
     superLikedMovies: { id: number; type: "movie" | "tv" }[] = [],
   ) => {
-    const response = await socket?.emitWithAck("join-room", code, nickname, blockedMovies, superLikedMovies);
+    const mappedBlocked = blockedMovies.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
+    const mappedSuperLiked = superLikedMovies.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
+    const response = await socket?.emitWithAck("join-room", code, nickname, mappedBlocked, mappedSuperLiked);
 
     return response;
   };

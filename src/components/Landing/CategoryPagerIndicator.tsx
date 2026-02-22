@@ -5,6 +5,7 @@ import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import PlatformBlurView from "../PlatformBlurView";
 
 interface CategoryPagerIndicatorProps {
   chipCategories: Array<{
@@ -36,32 +37,37 @@ function CategoryPagerIndicator({ chipCategories, selectedChip, onChipPress }: C
   const renderCategory = useCallback(
     ({ item: category, index }: { item: any; index: number }) => (
       <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            onChipPress?.(category.id);
-          }}
-          style={[styles.chipButton, selectedChip === category.id && styles.selectedChip]}
+        <PlatformBlurView
+          interactive
+          style={[{ borderRadius: 12 }, Platform.OS === "android" && { backgroundColor: MD2DarkTheme.colors.surface }]}
         >
-          {(category.logo_path && category.logo_path !== "") || category.image ? (
-            <Image
-              resizeMode="contain"
-              source={{
-                uri: `https://image.tmdb.org/t/p/w92${category.logo_path || category.image}`,
-              }}
-              style={styles.chipImage}
-            />
-          ) : category.icon && category.icon !== "" ? (
-            <Ionicons
-              name={category.icon as any}
-              size={32}
-              color={selectedChip === category.id ? MD2DarkTheme.colors.primary : MD2DarkTheme.colors.onSurface}
-            />
-          ) : (
-            <Text style={{ fontSize: 10 }}>{category.label}</Text>
-          )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              onChipPress?.(category.id);
+            }}
+            style={[styles.chipButton, selectedChip === category.id && styles.selectedChip]}
+          >
+            {(category.logo_path && category.logo_path !== "") || category.image ? (
+              <Image
+                resizeMode="contain"
+                source={{
+                  uri: `https://image.tmdb.org/t/p/w92${category.logo_path || category.image}`,
+                }}
+                style={styles.chipImage}
+              />
+            ) : category.icon && category.icon !== "" ? (
+              <Ionicons
+                name={category.icon as any}
+                size={32}
+                color={selectedChip === category.id ? MD2DarkTheme.colors.primary : MD2DarkTheme.colors.onSurface}
+              />
+            ) : (
+              <Text style={{ fontSize: 10 }}>{category.label}</Text>
+            )}
+          </TouchableOpacity>
+        </PlatformBlurView>
       </Animated.View>
     ),
     [onChipPress, selectedChip],
@@ -99,10 +105,9 @@ const styles = StyleSheet.create({
   chipButton: {
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 12,
-    backgroundColor: MD2DarkTheme.colors.surface,
     width: 50,
     height: 50,
+    borderRadius: 12,
   },
   selectedChip: {
     borderWidth: 2,

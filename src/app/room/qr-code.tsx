@@ -153,7 +153,7 @@ export default function QRCodePage() {
         if (response) {
           dispatch(roomActions.setRoom(response.details));
           dispatch(roomActions.setQRCode(response.roomId));
-          socket.emit("join-room", response.roomId.toUpperCase(), nickname, blockedMovies, superLikedMovies);
+          socket.emit("join-room", response.roomId.toUpperCase(), nickname, mappedBlocked, mappedSuperLiked);
         }
       } catch (error) {
         console.error("Error creating room:", error);

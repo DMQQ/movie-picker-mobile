@@ -28,7 +28,7 @@ export default function FortuneWheel() {
   const params = useLocalSearchParams();
 
   const { getFilterParams } = useMediaFilters();
-  const { blockedMovies, blockMovie } = useBlockedMovies();
+  const { getBlockedIds, blockMovie } = useBlockedMovies();
   const { superLikeMovie } = useSuperLikedMovies();
   const [getMovieDetails] = useLazyGetMovieQuery();
 
@@ -172,7 +172,7 @@ export default function FortuneWheel() {
     }
 
     const filterParams = getFilterParams();
-    const blockedIds = blockedMovies.map((m) => `${m.movie_type === "tv" ? "t" : "m"}${m.movie_id}`);
+    const blockedIds = getBlockedIds().map((m) => `${m.type === "tv" ? "t" : "m"}${m.id}`);
     getLazyRandomSection({ not: selectedCards.name, notMovies: blockedIds.join(","), ...filterParams })
       .then(handleResponse)
       .catch(handleError);
