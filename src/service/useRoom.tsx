@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { Movie } from "../../types";
 import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import { roomActions } from "../redux/room/roomSlice";
@@ -10,13 +10,33 @@ import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
 export default function useRoom() {
   const dispatch = useAppDispatch();
   const { socket, emitter } = useContext(SocketContext);
-  const attemptTimeout = useRef<NodeJS.Timeout | null>(null);
-  const roomId = useAppSelector((state) => state.room.room.roomId);
+  const attemptTimeout = useRef<number | null>(null);
   const { getBlockedIds, addDislikedMovie, isReady: blockedReady } = useBlockedMovies();
   const { getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
 
+  const roomId = useAppSelector((state) => state.room.room.roomId);
+  const nickname = useAppSelector((state) => state.room.nickname);
+  const cards = useAppSelector((state) => state.room.room.movies);
+  const isFinished = useAppSelector((state) => state.room.room.isFinished);
+  const isPlaying = useAppSelector((state) => state.room.isPlaying);
+
+  const joinGame = useCallback(
+    async (
+      code: string,
+      blockedMovies: { id: number; type: "movie" | "tv" }[] = [],
+      superLikedMovies: { id: number; type: "movie" | "tv" }[] = [],
+    ) => {
+      if (!socket) return null;
+      const mappedBlocked = blockedMovies.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
+      const mappedSuperLiked = superLikedMovies.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
+      const response = await socket.emitWithAck("join-room", code, nickname, mappedBlocked, mappedSuperLiked);
+      return response;
+    },
+    [socket, nickname],
+  );
+
   useEffect(() => {
-    if (!roomId || !blockedReady || !superLikedReady) {
+    if (!roomId || !blockedReady || !superLikedReady || !socket) {
       return;
     }
     async function onReconnected(args: unknown, attempt = 0) {
@@ -46,27 +66,17 @@ export default function useRoom() {
     return () => {
       emitter.off("reconnected", onReconnected);
     };
-  }, [roomId, blockedReady, superLikedReady]);
-
-  const runOnce = useRef(false);
+  }, [roomId, blockedReady, superLikedReady, joinGame, emitter, getBlockedIds, getSuperLikedIds]);
   const initialCardsLength = useRef(0);
 
-  const {
-    nickname,
-    room: { movies: cards, isFinished },
-    isPlaying,
-  } = useAppSelector((state) => state.room);
-
   const setCards = (_movies: Movie[]) => {
-    // setCardsLoading(true);
     initialCardsLength.current = _movies.length;
     dispatch(roomActions.addMovies(_movies));
-    // setCardsLoading(false);
   };
 
-  const removeCard = (index: number) => {
+  const removeCard = useCallback((index: number) => {
     dispatch(roomActions.removeMovie(index));
-  };
+  }, []);
 
   useEffect(() => {
     const handleMovies = async (_cards: { movies: Movie[] }) => {
@@ -143,9 +153,9 @@ export default function useRoom() {
     };
   }, [isPlaying, cards.length, roomId, socket]);
 
-  const removeCardLocally = (index: number) => {
+  const removeCardLocally = useCallback((index: number) => {
     removeCard(index);
-  };
+  }, []);
 
   useEffect(() => {
     if (isFinished && socket && roomId) {
@@ -154,38 +164,32 @@ export default function useRoom() {
     }
   }, [isFinished, roomId, socket]);
 
-  const likeCard = async (card: Movie, index: number) => {
-    socket?.emit("pick-movie", {
-      roomId: roomId,
-      index,
-      swipe: { type: "like", movie: card.id },
-    });
-    removeCardLocally(index);
-    dispatch(roomActions.likeMovie(card));
-  };
+  const likeCard = useCallback(
+    async (card: Movie, index: number) => {
+      socket?.emit("pick-movie", {
+        roomId: roomId,
+        index,
+        swipe: { type: "like", movie: card.id },
+      });
+      removeCardLocally(index);
+      dispatch(roomActions.likeMovie(card));
+    },
+    [socket, roomId, removeCardLocally, dispatch],
+  );
 
-  const dislikeCard = (card: Movie, index: number) => {
-    socket?.emit("pick-movie", {
-      roomId: roomId,
-      index,
-      swipe: { type: "dislike", movie: card.id },
-    });
-    dispatch(roomActions.dislikeMovie(card));
-    addDislikedMovie(card);
-    removeCardLocally(index);
-  };
-
-  const joinGame = async (
-    code: string,
-    blockedMovies: { id: number; type: "movie" | "tv" }[] = [],
-    superLikedMovies: { id: number; type: "movie" | "tv" }[] = [],
-  ) => {
-    const mappedBlocked = blockedMovies.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
-    const mappedSuperLiked = superLikedMovies.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
-    const response = await socket?.emitWithAck("join-room", code, nickname, mappedBlocked, mappedSuperLiked);
-
-    return response;
-  };
+  const dislikeCard = useCallback(
+    (card: Movie, index: number) => {
+      socket?.emit("pick-movie", {
+        roomId: roomId,
+        index,
+        swipe: { type: "dislike", movie: card.id },
+      });
+      dispatch(roomActions.dislikeMovie(card));
+      addDislikedMovie(card);
+      removeCardLocally(index);
+    },
+    [addDislikedMovie, removeCardLocally, socket, roomId, dispatch],
+  );
 
   useEffect(() => {
     if (cards.length === Math.trunc(initialCardsLength.current / 4) && initialCardsLength.current > 0) {
@@ -195,19 +199,22 @@ export default function useRoom() {
         }
       });
     }
-  }, [cards.length]);
+  }, [cards.length, socket, roomId, dispatch]);
 
-  return {
-    cards,
-    likeCard,
-    dislikeCard,
+  return useMemo(
+    () => ({
+      cards,
+      likeCard,
+      dislikeCard,
 
-    isPlaying,
-    joinGame,
-    cardsLoading: false,
+      isPlaying,
+      joinGame,
+      cardsLoading: false,
 
-    roomId,
+      roomId,
 
-    socket,
-  };
+      socket,
+    }),
+    [cards, likeCard, dislikeCard, isPlaying, joinGame, roomId, socket],
+  );
 }

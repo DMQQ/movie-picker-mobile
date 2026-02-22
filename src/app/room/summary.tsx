@@ -847,11 +847,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   confetti: {
-    position: "absolute",
-    width: 300,
-    height: 300,
+    ...StyleSheet.absoluteFill,
     zIndex: 10,
-    top: -150,
   },
   loadingText: {
     fontSize: 18,
