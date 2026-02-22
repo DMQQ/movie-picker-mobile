@@ -1,9 +1,9 @@
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { memo, useEffect, useRef } from "react";
+import { memo, useCallback, useEffect, useRef } from "react";
 import { Dimensions, Platform, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -20,7 +20,7 @@ import Poster from "./Poster";
 import useTranslation from "../../service/useTranslation";
 import GenresView from "../GenresView";
 
-const { width } = Dimensions.get("screen");
+const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
@@ -63,6 +63,11 @@ const styles = StyleSheet.create({
   },
 });
 
+const dims = {
+  width: width * 0.9 - 20,
+  height: height * 0.65,
+};
+
 const SwipeTile = ({
   card,
   index,
@@ -80,7 +85,6 @@ const SwipeTile = ({
   length: number;
   onPress: () => void;
 }) => {
-  const { width, height } = useWindowDimensions();
   const t = useTranslation();
   const position = useSharedValue({ x: 0, y: index * -7.5, scale: 1 - index * 0.05 });
 
@@ -92,10 +96,10 @@ const SwipeTile = ({
   const isRightVisible = useSharedValue(false);
 
   const moveGesture = Gesture.Pan()
-    .onChange(({ translationX, translationY }) => {
+    .onChange(({ translationX }) => {
       position.value = {
         x: translationX,
-        y: translationY,
+        y: 0,
         scale: 1,
       };
 
@@ -111,13 +115,13 @@ const SwipeTile = ({
       }
     })
     .onEnd(() => {
-      if (position.value.x > width * 0.2) {
+      if (position.value.x > width * 0.15) {
         position.value = withSpring({ x: width + 100, y: 100, scale: 1 });
         setTimeout(() => {
           "worklet";
           runOnJS(actions.likeCard)();
         }, 100);
-      } else if (position.value.x < -width * 0.2) {
+      } else if (position.value.x < -width * 0.15) {
         position.value = withSpring({ x: -width - 100, y: 100, scale: 1 });
         setTimeout(() => {
           "worklet";
@@ -177,26 +181,21 @@ const SwipeTile = ({
     }, 200);
   };
 
-  const dims = {
-    width: width * 0.9 - 20,
-    height: height * 0.65,
-  };
-
-  const moveOnPress = (fn: () => any, dir: "left" | "right") => {
+  const moveOnPress = useCallback((fn: () => any, dir: "left" | "right") => {
     return () => {
       if (isPressed.current) return;
       isPressed.current = true;
 
       if (dir === "left") {
-        position.value = withSpring({ x: -width - 100, y: 100, scale: 0.8 });
+        position.value = withSpring({ x: -width - 100, y: 100, scale: 1 });
       } else {
-        position.value = withSpring({ x: width + 100, y: 100, scale: 0.8 });
+        position.value = withSpring({ x: width + 100, y: 100, scale: 1 });
       }
       fn();
 
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     };
-  };
+  }, []);
 
   return (
     <>

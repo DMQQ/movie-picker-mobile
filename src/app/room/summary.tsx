@@ -219,6 +219,7 @@ export default function GameSummary() {
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       {(summary?.matchedMovies?.length || 0) > 0 && <AnimatedBackgroundImage matchedMovies={summary?.matchedMovies! || []} />}
+
       <ScrollView
         style={[
           styles.container,
@@ -234,7 +235,7 @@ export default function GameSummary() {
       >
         <View style={styles.content}>
           <View style={styles.headerSection}>
-            {summary?.gameEndReason === "all_users_finished" && (
+            {summary?.matchedMovies && summary.matchedMovies.length > 0 && (
               <LottieView source={require("../../assets/confetti.json")} autoPlay loop={false} style={styles.confetti} />
             )}
 
