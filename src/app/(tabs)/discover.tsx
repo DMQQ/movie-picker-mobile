@@ -41,7 +41,7 @@ const PagerCategoryScreen = memo(() => {
       setCurrentPage(categoryIndex);
       pagerRef.current?.setPageWithoutAnimation(categoryIndex);
     }
-  }, [selectedChip, chipCategories]);
+  }, [selectedChip, chipCategories, currentPage]);
 
   const handlePageSelected = useCallback(
     (e: any) => {

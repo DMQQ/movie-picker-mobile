@@ -69,10 +69,10 @@ export default function useRoom() {
   }, [roomId, blockedReady, superLikedReady, joinGame, emitter, getBlockedIds, getSuperLikedIds]);
   const initialCardsLength = useRef(0);
 
-  const setCards = (_movies: Movie[]) => {
+  const setCards = useCallback((_movies: Movie[]) => {
     initialCardsLength.current = _movies.length;
     dispatch(roomActions.addMovies(_movies));
-  };
+  }, []);
 
   const removeCard = useCallback((index: number) => {
     dispatch(roomActions.removeMovie(index));
@@ -153,9 +153,12 @@ export default function useRoom() {
     };
   }, [isPlaying, cards.length, roomId, socket]);
 
-  const removeCardLocally = useCallback((index: number) => {
-    removeCard(index);
-  }, []);
+  const removeCardLocally = useCallback(
+    (index: number) => {
+      removeCard(index);
+    },
+    [removeCard],
+  );
 
   useEffect(() => {
     if (isFinished && socket && roomId) {
