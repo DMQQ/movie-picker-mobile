@@ -4,7 +4,7 @@ import LottieView from "lottie-react-native";
 import { useEffect, useRef } from "react";
 import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
-import Animated, { FadeIn, FadeOut, SlideInUp, SlideOutUp, withSpring, withTiming } from "react-native-reanimated";
+import Animated, { Easing, FadeIn, FadeOut, SlideInUp, SlideOutUp, withSpring, withTiming } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
 import Card from "./Card";
 import Poster from "./Poster";
@@ -87,21 +87,42 @@ const styles = StyleSheet.create({
   share: { position: "absolute", bottom: -75, right: 0, left: 0, zIndex: 20, justifyContent: "center", alignItems: "center" },
 });
 
+const { width } = Dimensions.get("window");
+
 export const ModalEnteringTransition = () => {
   "worklet";
   return {
     initialValues: {
       opacity: 0,
-      transform: [{ scale: 0.8 }, { translateY: 100 }],
+      transform: [{ translateX: width + 150 }, { translateY: 250 }, { rotate: "20deg" }, { scale: 0.8 }],
     },
+
     animations: {
-      opacity: withSpring(1),
+      opacity: withTiming(1, { duration: 250 }),
       transform: [
-        { scale: withSpring(1) },
         {
-          translateY: withSpring(0, {
-            damping: 40,
-            stiffness: 200,
+          translateX: withTiming(0, {
+            duration: 400,
+            easing: Easing.out(Easing.cubic),
+          }),
+        },
+        {
+          translateY: withTiming(0, {
+            duration: 400,
+            easing: Easing.out(Easing.cubic),
+          }),
+        },
+        {
+          rotate: withSpring("0deg", {
+            damping: 50,
+            stiffness: 400,
+            overshootClamping: false,
+          }),
+        },
+        {
+          scale: withSpring(1, {
+            damping: 15,
+            stiffness: 150,
           }),
         },
       ],
@@ -114,11 +135,34 @@ export const ModalExitingTransition = () => {
   return {
     initialValues: {
       opacity: 1,
-      transform: [{ scale: 1 }, { translateY: 0 }],
+      transform: [{ translateX: 0 }, { translateY: 0 }, { rotate: "0deg" }, { scale: 1 }],
     },
+
     animations: {
-      opacity: withTiming(0, { duration: 200 }),
-      transform: [{ scale: withTiming(0.9) }, { translateY: withTiming(-50) }],
+      opacity: withTiming(0, { duration: 150 }),
+      transform: [
+        {
+          translateX: withTiming(0, { duration: 200 }),
+        },
+        {
+          translateY: withTiming(80, {
+            duration: 200,
+            easing: Easing.in(Easing.quad),
+          }),
+        },
+        {
+          rotate: withTiming("8deg", {
+            duration: 200,
+            easing: Easing.in(Easing.quad),
+          }),
+        },
+        {
+          scale: withTiming(0.5, {
+            duration: 200,
+            easing: Easing.in(Easing.back(1.2)),
+          }),
+        },
+      ],
     },
   };
 };

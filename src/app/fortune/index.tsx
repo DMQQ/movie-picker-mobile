@@ -229,7 +229,13 @@ export default function FortuneWheel() {
     <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
       <PageHeading showGradientBackground showBackButton title={(params?.title as string) || ""}>
         <PlatformBlurView style={fortuneStyles.filterButtonWrapper}>
-          <FilterButton size={25} onApply={handleFiltersApplied} onCategorySelect={handleThrowDice} showCategories />
+          <FilterButton
+            shouldAutoOpen={(!!params?.movies && Array.isArray(params?.movies) && params?.movies.length === 0) || !!!params?.movies}
+            size={25}
+            onApply={handleFiltersApplied}
+            onCategorySelect={handleThrowDice}
+            showCategories
+          />
         </PlatformBlurView>
       </PageHeading>
 

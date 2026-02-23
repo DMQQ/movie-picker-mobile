@@ -207,13 +207,15 @@ export default function GameSummary() {
     return (
       <View style={{ flex: 1, backgroundColor: "#000" }}>
         <View style={[styles.container, styles.centered]}>
-          <Text style={styles.errorText}>
-            {t("game-summary.error")}
-            {error}
-          </Text>
-          <Button mode="contained" onPress={handleBackToHome} style={styles.backButton}>
-            {t("game-summary.back-to-home")}
-          </Button>
+          <View>
+            <Text style={styles.errorText}>
+              {t("game-summary.error")}
+              {error}
+            </Text>
+            <Button mode="contained" onPress={handleBackToHome} style={styles.backButton}>
+              {t("game-summary.back-to-home")}
+            </Button>
+          </View>
         </View>
       </View>
     );
@@ -437,6 +439,7 @@ export default function GameSummary() {
           paddingBottom: 0,
           gap: 10,
           flexDirection: "row",
+          backgroundColor: "#000",
         }}
       >
         <Button mode="contained" onPress={handleBackToHome} style={styles.backButton} contentStyle={styles.backButtonContent}>
