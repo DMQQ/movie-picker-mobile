@@ -7,6 +7,7 @@ import { useAppDispatch } from "../../redux/store";
 import { roomActions } from "../../redux/room/roomSlice";
 import { View } from "react-native";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
+import { Image } from "expo-image";
 
 export default function RootLayout() {
   const dispatch = useAppDispatch();
@@ -16,6 +17,8 @@ export default function RootLayout() {
       console.log("Resetting room state");
       dispatch(roomActions.reset());
       dispatch(reset());
+
+      Image.clearMemoryCache();
     };
   }, []);
 

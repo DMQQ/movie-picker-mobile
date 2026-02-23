@@ -63,6 +63,12 @@ export const FilterButton = React.memo(function FilterButton({
     onApply?.();
   }, [onApply]);
 
+  useEffect(() => {
+    if (activeFilterCount === 0) {
+      setIsFilterVisible(true);
+    }
+  }, [activeFilterCount]);
+
   return (
     <>
       <View style={[styles.filterButtonContainer, style]}>

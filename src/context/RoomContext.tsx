@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import useRoom from "../service/useRoom";
 import { useBlockedMovies } from "../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
@@ -40,9 +40,19 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
   const { superLikeMovie, getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
   const [joinError, setJoinError] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
+  const hasJoined = useRef(false);
+  const lastJoinedRoomId = useRef<string | null>(null);
 
   useEffect(() => {
-    if (room.roomId && room.socket?.connected && blockedReady && superLikedReady) {
+    // Reset join flag when room changes
+    if (room.roomId !== lastJoinedRoomId.current) {
+      hasJoined.current = false;
+    }
+
+    if (room.roomId && room.socket?.connected && blockedReady && superLikedReady && !hasJoined.current) {
+      hasJoined.current = true;
+      lastJoinedRoomId.current = room.roomId;
+
       (async () => {
         setIsJoining(true);
         setJoinError(false);
@@ -53,10 +63,12 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
           if (!response?.joined) {
             console.error("Failed to join room - room may not exist");
             setJoinError(true);
+            hasJoined.current = false; // Allow retry on failure
           }
         } catch (error) {
           console.error("Error joining room:", error);
           setJoinError(true);
+          hasJoined.current = false; // Allow retry on failure
         } finally {
           setIsJoining(false);
         }

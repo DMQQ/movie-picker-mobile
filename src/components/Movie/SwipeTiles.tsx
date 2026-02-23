@@ -156,29 +156,41 @@ const SwipeTile = ({
   });
 
   const isPressed = useRef(false);
+  const timeoutIds = useRef<NodeJS.Timeout[]>([]);
+
+  // Cleanup timeouts on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      timeoutIds.current.forEach(clearTimeout);
+    };
+  }, []);
 
   const likeCard = () => {
-    setTimeout(() => {
+    const id = setTimeout(() => {
       actions.likeCard();
     }, 200);
+    timeoutIds.current.push(id);
   };
 
   const removeCard = () => {
-    setTimeout(() => {
+    const id = setTimeout(() => {
       actions.removeCard();
     }, 200);
+    timeoutIds.current.push(id);
   };
 
   const blockCard = () => {
-    setTimeout(() => {
+    const id = setTimeout(() => {
       actions.blockCard?.();
     }, 200);
+    timeoutIds.current.push(id);
   };
 
   const superLikeCard = () => {
-    setTimeout(() => {
+    const id = setTimeout(() => {
       actions.superLikeCard?.();
     }, 200);
+    timeoutIds.current.push(id);
   };
 
   const moveOnPress = useCallback((fn: () => any, dir: "left" | "right") => {

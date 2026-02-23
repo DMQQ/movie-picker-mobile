@@ -122,7 +122,7 @@ const roomSlice = createSlice({
           language: string;
           regionalization: Record<string, string>;
         }>;
-      }
+      },
     ) {
       state.nickname = payload.nickname || state.nickname;
       state.language = payload.language || state.language;
@@ -156,7 +156,7 @@ const roomSlice = createSlice({
         payload,
       }: {
         payload: MovieMatch;
-      }
+      },
     ) {
       if (!state.room.matches.find((m) => m.id === payload.id)) state.room.matches.push(payload);
     },
@@ -183,7 +183,7 @@ const roomSlice = createSlice({
         payload,
       }: {
         payload: Movie[];
-      }
+      },
     ) {
       if (payload.length > 0) {
         state.room.movies = payload;
@@ -204,7 +204,7 @@ const roomSlice = createSlice({
         payload,
       }: {
         payload: number;
-      }
+      },
     ) {
       state.room.movies.splice(payload, 1);
 
