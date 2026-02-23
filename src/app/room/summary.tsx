@@ -3,6 +3,7 @@ import { useLocalSearchParams } from "expo-router";
 import LottieView from "lottie-react-native";
 import { useContext, useEffect, useState, useRef, memo, useCallback, useMemo } from "react";
 import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View, ImageBackground, Animated, Modal, Pressable } from "react-native";
+import { Image } from "expo-image";
 import { Avatar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ViewShot, { captureRef } from "react-native-view-shot";
@@ -137,6 +138,8 @@ export default function GameSummary() {
     return () => {
       dispatch(roomActions.reset());
       dispatch(reset());
+      // Clear image memory cache to prevent memory buildup across games
+      Image.clearMemoryCache();
     };
   }, []);
 
@@ -204,13 +207,15 @@ export default function GameSummary() {
     return (
       <View style={{ flex: 1, backgroundColor: "#000" }}>
         <View style={[styles.container, styles.centered]}>
-          <Text style={styles.errorText}>
-            {t("game-summary.error")}
-            {error}
-          </Text>
-          <Button mode="contained" onPress={handleBackToHome} style={styles.backButton}>
-            {t("game-summary.back-to-home")}
-          </Button>
+          <View>
+            <Text style={styles.errorText}>
+              {t("game-summary.error")}
+              {error}
+            </Text>
+            <Button mode="contained" onPress={handleBackToHome} style={styles.backButton}>
+              {t("game-summary.back-to-home")}
+            </Button>
+          </View>
         </View>
       </View>
     );
@@ -219,6 +224,7 @@ export default function GameSummary() {
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       {(summary?.matchedMovies?.length || 0) > 0 && <AnimatedBackgroundImage matchedMovies={summary?.matchedMovies! || []} />}
+
       <ScrollView
         style={[
           styles.container,
@@ -234,7 +240,7 @@ export default function GameSummary() {
       >
         <View style={styles.content}>
           <View style={styles.headerSection}>
-            {summary?.gameEndReason === "all_users_finished" && (
+            {summary?.matchedMovies && summary.matchedMovies.length > 0 && (
               <LottieView source={require("../../assets/confetti.json")} autoPlay loop={false} style={styles.confetti} />
             )}
 
@@ -433,6 +439,7 @@ export default function GameSummary() {
           paddingBottom: 0,
           gap: 10,
           flexDirection: "row",
+          backgroundColor: "#000",
         }}
       >
         <Button mode="contained" onPress={handleBackToHome} style={styles.backButton} contentStyle={styles.backButtonContent}>
@@ -846,11 +853,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   confetti: {
-    position: "absolute",
-    width: 300,
-    height: 300,
+    ...StyleSheet.absoluteFill,
     zIndex: 10,
-    top: -150,
   },
   loadingText: {
     fontSize: 18,

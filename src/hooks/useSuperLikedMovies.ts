@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useMovieInteractions } from "../context/DatabaseContext";
 import type { MovieType } from "../database/types";
 import type { Movie } from "../../types";
@@ -12,10 +12,8 @@ import {
   removeSuperLike as removeSuperLikeAction,
   clearAllSuperLiked as clearAllSuperLikedAction,
   selectSuperLikedMovies,
-  selectSuperLikedIds,
   selectInteractionsLoading,
   selectInteractionsHydrated,
-  selectIsSuperLiked,
 } from "../redux/movieInteractions/movieInteractionsSlice";
 
 export function useSuperLikedMovies() {
@@ -26,7 +24,6 @@ export function useSuperLikedMovies() {
   const loading = useAppSelector(selectInteractionsLoading);
   const hydrated = useAppSelector(selectInteractionsHydrated);
 
-  // Hydrate Redux on first load
   useEffect(() => {
     if (isReady && movieInteractions && !hydrated) {
       dispatch(loadInteractions(movieInteractions));
@@ -48,7 +45,7 @@ export function useSuperLikedMovies() {
             title: movie.title || movie.name || null,
             poster_path: movie.poster_path || null,
           },
-        })
+        }),
       ).unwrap();
 
       if (result.canReview) {
@@ -58,7 +55,7 @@ export function useSuperLikedMovies() {
         }
       }
     },
-    [movieInteractions, dispatch]
+    [movieInteractions, dispatch],
   );
 
   const removeSuperLike = useCallback(
@@ -66,14 +63,14 @@ export function useSuperLikedMovies() {
       if (!movieInteractions) return;
       await dispatch(removeSuperLikeAction({ repo: movieInteractions, movieId, movieType }));
     },
-    [movieInteractions, dispatch]
+    [movieInteractions, dispatch],
   );
 
   const isSuperLiked = useCallback(
     (movieId: number, movieType: MovieType): boolean => {
       return superLikedMovies.some((m) => m.movie_id === movieId && m.movie_type === movieType);
     },
-    [superLikedMovies]
+    [superLikedMovies],
   );
 
   const getSuperLikedIds = useCallback((): { id: number; type: MovieType }[] => {
@@ -90,15 +87,18 @@ export function useSuperLikedMovies() {
     await dispatch(loadInteractions(movieInteractions));
   }, [movieInteractions, dispatch]);
 
-  return {
-    superLikedMovies,
-    loading,
-    isReady: hydrated,
-    superLikeMovie,
-    removeSuperLike,
-    isSuperLiked,
-    getSuperLikedIds,
-    clearAllSuperLiked,
-    refresh,
-  };
+  return useMemo(
+    () => ({
+      superLikedMovies,
+      loading,
+      isReady: hydrated,
+      superLikeMovie,
+      removeSuperLike,
+      isSuperLiked,
+      getSuperLikedIds,
+      clearAllSuperLiked,
+      refresh,
+    }),
+    [superLikedMovies, loading, hydrated, superLikeMovie, removeSuperLike, isSuperLiked, getSuperLikedIds, clearAllSuperLiked, refresh],
+  );
 }

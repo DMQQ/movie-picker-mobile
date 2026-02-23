@@ -18,7 +18,7 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
   const [getRandomSection] = useLazyGetRandomSectionQuery();
   const [getMovieDetails] = useLazyGetMovieQuery();
   const { getFilterParams } = useMediaFilters();
-  const { blockedMovies, blockMovie } = useBlockedMovies();
+  const { getBlockedIds, blockMovie } = useBlockedMovies();
   const { superLikeMovie } = useSuperLikedMovies();
 
   const [movie, setMovie] = useState<Movie | null>(null);
@@ -70,7 +70,7 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
 
       try {
         const filterParams = getFilterParams();
-        const blockedIds = blockedMovies.map((m) => `${m.movie_type === "tv" ? "t" : "m"}${m.movie_id}`);
+        const blockedIds = getBlockedIds().map((m) => `${m.type === "tv" ? "t" : "m"}${m.id}`);
         const excludeIds = [...seenMovies, ...blockedIds];
         const response = await getRandomSection({ ...filterParams, notMovies: excludeIds.join(",") });
 
@@ -112,7 +112,7 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
     diceRotate,
     getFilterParams,
     seenMovies,
-    blockedMovies,
+    getBlockedIds,
     superLikeIconScale,
   ]);
 

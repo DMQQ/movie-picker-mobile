@@ -137,7 +137,7 @@ const LikedMoviesPreview = memo(() => {
 
   return (
     <Pressable onPress={() => router.navigate("/room/overview")}>
-      <Animated.View layout={LinearTransition} style={styles.likedContainer}>
+      <Animated.View style={styles.likedContainer}>
         {itemsToDisplay.length === 0 ? (
           <PlaceholderStack />
         ) : (
@@ -148,7 +148,7 @@ const LikedMoviesPreview = memo(() => {
               style={[
                 styles.stackedCard,
                 {
-                  transform: [{ translateX: (index + 1) * 15 }, { rotate: `${(index - 1) * 5}deg` }],
+                  transform: [{ translateX: (index + 1) * 10 }, { rotate: `${(index - 1) * 5}deg` }],
                   zIndex: itemsToDisplay.length - index,
                 },
               ]}
@@ -188,7 +188,7 @@ const PlaceholderStack = memo(() => (
           styles.stackedCard,
           styles.placeholderCard,
           {
-            transform: [{ translateX: (index + 1) * 15 }, { rotate: `${(index - 1) * 3}deg` }],
+            transform: [{ translateX: (index + 1) * 10 }, { rotate: `${(index - 1) * 3}deg` }],
             zIndex: 3 - index,
           },
         ]}
@@ -228,7 +228,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 52,
     width: 80,
-    marginRight: 10,
   },
   stackedCard: {
     position: "absolute",
@@ -239,6 +238,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: 4,
+    right: 40,
   },
   imageWrapper: {
     width: 32,

@@ -11,7 +11,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { Movie } from "../../../types";
 
 const SwipeText = memo(
@@ -104,7 +104,7 @@ function Poster(props: {
     if (!props.translate) return {};
 
     return {
-      opacity: interpolate(props.translate.value.x, [-width / 1.5, 0, width / 1.5], [1, 0, 1]),
+      opacity: interpolate(props.translate.value.x, [-width * 0.15, 0, width * 0.15], [1, 0, 1]),
       backgroundColor: interpolateColor(
         props.translate.value.x,
         [-width, 0, width],
@@ -113,10 +113,14 @@ function Poster(props: {
     };
   });
 
-  const imageDimensions = props?.imageDimensions || {
-    height: height * 0.675,
-    width: width * 0.95 - 20,
-  };
+  const imageDimensions = useMemo(
+    () =>
+      props?.imageDimensions || {
+        height: height * 0.675,
+        width: width * 0.95 - 20,
+      },
+    [height, width, props?.imageDimensions],
+  );
 
   return (
     <View style={{ position: "relative" }}>

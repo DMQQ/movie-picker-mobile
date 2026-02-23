@@ -54,6 +54,10 @@
   "room": {
     "specialCategories": "Kategorie Specjalne",
     "loading": "Ładowanie pokoju...",
+    "joining": "Dołączanie do pokoju...",
+    "waiting-for-players": "Oczekiwanie na graczy...",
+    "play-alone": "Zagraj samemu",
+    "start": "Start",
     "no-more-results": "To juz koniec wyników w tej kategorii",
     "awaiting-start": "Oczekiwanie na rozpoczęcie gry przez gospodarza",
     "too-restricted": "Filtry są zbyt restrykcyjne",
@@ -213,7 +217,7 @@
     "random": "Losuj"
   },
   "matched": {
-    "title": "Dopasowani z twoimi znajomymi"
+    "title": "Dopasowania"
   },
   "favourites": {
     "title": "Ulubione",
@@ -275,7 +279,11 @@
     "heading": "Zeskanuj kod QR",
     "join": "Dołącz do gry",
     "button": "Dołącz",
-    "hint": "Umieść kod QR w polu skanowania lub naciśnij Dołącz powyżej, aby wpisać kod ręcznie"
+    "hint": "Umieść kod QR w polu skanowania lub naciśnij Dołącz powyżej, aby wpisać kod ręcznie",
+    "code": "Kod",
+    "error-empty": "Wprowadź kod",
+    "error-invalid-prefix": "Kod musi zaczynać się od S lub V",
+    "error-room-not-found": "Nie znaleziono pokoju"
   },
   "settings": {
     "hello": "Cześć",

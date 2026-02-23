@@ -8,6 +8,7 @@ import CategoryPage from "../../components/Landing/CategoryPage";
 import CategoryPagerIndicator from "../../components/Landing/CategoryPagerIndicator";
 import LoadingSkeleton from "../../components/Landing/LoadingSkeleton";
 import useIsMounted from "../../hooks/useIsMounted";
+import { FeaturedSectionSkeleton } from "../../components/Landing/FeaturedSection";
 
 export default function Landing() {
   return (
@@ -38,9 +39,9 @@ const PagerCategoryScreen = memo(() => {
     const categoryIndex = chipCategories.findIndex((cat) => cat.id === selectedChip);
     if (categoryIndex !== -1 && categoryIndex !== currentPage) {
       setCurrentPage(categoryIndex);
-      pagerRef.current?.setPage(categoryIndex);
+      pagerRef.current?.setPageWithoutAnimation(categoryIndex);
     }
-  }, [selectedChip, chipCategories]);
+  }, [selectedChip, chipCategories, currentPage]);
 
   const handlePageSelected = useCallback(
     (e: any) => {
@@ -72,6 +73,7 @@ const PagerCategoryScreen = memo(() => {
   if (!isMounted) {
     return (
       <View style={{ flex: 1 }}>
+        <FeaturedSectionSkeleton />
         <LoadingSkeleton />
       </View>
     );
@@ -82,11 +84,12 @@ const PagerCategoryScreen = memo(() => {
       {chipCategories.length > 0 ? (
         <PagerView
           offscreenPageLimit={2}
-          pageMargin={25}
+          pageMargin={0}
           ref={pagerRef}
           style={{ flex: 1 }}
           initialPage={0}
           onPageSelected={handlePageSelected}
+          orientation={"horizontal"}
         >
           {categories}
         </PagerView>

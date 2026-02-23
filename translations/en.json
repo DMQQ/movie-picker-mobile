@@ -6,7 +6,7 @@
       "close": "Close",
       "cancel": "Cancel",
       "leave": "Leave",
-      "endGame": "Finish"
+      "endGame": "End Game"
     },
     "leave-room": {
       "message": "Are you sure you want to leave the room?",
@@ -54,6 +54,10 @@
   "room": {
     "specialCategories": "Special Categories",
     "loading": "Loading room...",
+    "joining": "Joining room...",
+    "waiting-for-players": "Waiting for players to join...",
+    "play-alone": "Play Alone",
+    "start": "Start",
     "no-more-results": "No more results in this category",
     "awaiting-start": "Waiting for host to start the game",
     "too-restricted": "Filters too restricted, try again",
@@ -213,7 +217,7 @@
     "random": "Randomize"
   },
   "matched": {
-    "title": "Matched with your friends"
+    "title": "Matches"
   },
   "favourites": {
     "title": "Favorites",
@@ -276,7 +280,11 @@
     "heading": "Scan QR code",
     "join": "Join the game",
     "button": "Join",
-    "hint": "Place the QR code in the scan area or tap Join above to enter code manually"
+    "hint": "Place the QR code in the scan area or tap Join above to enter code manually",
+    "code": "Code",
+    "error-empty": "Please enter a code",
+    "error-invalid-prefix": "Code must start with S or V",
+    "error-room-not-found": "Room not found"
   },
   "settings": {
     "hello": "Hello",

@@ -60,7 +60,7 @@ const FeaturedQuickActions = ({ movie }: { movie: Movie }) => {
   );
 };
 
-const FeaturedSectionSkeleton = memo(() => {
+export const FeaturedSectionSkeleton = memo(() => {
   return (
     <View style={[styles.featuredContainer]}>
       <View style={styles.gradientContainer}>

@@ -153,7 +153,7 @@ export default function QRCodePage() {
         if (response) {
           dispatch(roomActions.setRoom(response.details));
           dispatch(roomActions.setQRCode(response.roomId));
-          socket.emit("join-room", response.roomId.toUpperCase(), nickname, blockedMovies, superLikedMovies);
+          socket.emit("join-room", response.roomId.toUpperCase(), nickname, mappedBlocked, mappedSuperLiked);
         }
       } catch (error) {
         console.error("Error creating room:", error);
@@ -258,6 +258,8 @@ export default function QRCodePage() {
             <Text style={styles.warningText}>{t("room.too-restricted")}</Text>
           ) : moviesCount != null && moviesCount < 5 ? (
             <Text style={styles.warningText}>{t("room.lower-results-count", { count: moviesCount })}</Text>
+          ) : users.length <= 1 ? (
+            <Text style={styles.infoText}>{t("room.waiting-for-players")}</Text>
           ) : null}
         </View>
 
@@ -270,7 +272,13 @@ export default function QRCodePage() {
             onJoinOwnRoom(qrCode);
           }}
         >
-          {isLoadingMovies ? "Loading..." : moviesCount === 0 ? t("room.too-restricted") : "Start"}
+          {isLoadingMovies
+            ? "Loading..."
+            : moviesCount === 0
+              ? t("room.too-restricted")
+              : users.length === 1
+                ? t("room.play-alone")
+                : t("room.start")}
         </Button>
       </View>
     </View>

@@ -8,8 +8,6 @@ import MovieDetails from "../../../../components/Movie/MovieDetails";
 import MovieDetailsSkeleton from "../../../../components/Movie/MovieDetailsSkeleton";
 import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
 import { useGetMovieProvidersQuery, useGetMovieQuery } from "../../../../redux/movie/movieApi";
-import ShareTicketButton from "../../../../components/ShareTicketButton";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("screen");
 

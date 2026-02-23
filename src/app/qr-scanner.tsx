@@ -24,8 +24,9 @@ export default function QRScanner() {
   const [isManual, setIsManual] = useState(false);
   const theme = useTheme();
   const [isScanned, setIsScanned] = useState(false);
-  const [isScannError, setIsScanError] = useState(false);
+  const [scanError, setScanError] = useState(false);
   const [manualCode, setManualCode] = useState("");
+  const [manualError, setManualError] = useState("");
 
   const joinRoom = async (c: JoinRoomParams) => {
     return new Promise(async (resolve, reject) => {
@@ -75,7 +76,7 @@ export default function QRScanner() {
       if (type === "room" || type === "swipe" || type === "voter") {
         return joinRoom(id).catch((err) => {
           console.error("Error joining room from QR code:", err);
-          setIsScanError(true);
+          setScanError(true);
           setIsScanned(false);
         });
       }
@@ -92,7 +93,7 @@ export default function QRScanner() {
 
       await joinRoom(parsed);
     } catch (error) {
-      setIsScanError(true);
+      setScanError(true);
       if (Platform.OS === "android") ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
     } finally {
       setIsScanned(false);
@@ -111,21 +112,44 @@ export default function QRScanner() {
   const t = useTranslation();
 
   const onManualJoin = async () => {
-    if (manualCode) {
-      joinRoom(manualCode.toUpperCase())
-        .then(() => {
-          setManualCode("");
-          setIsManual(false);
-        })
-        .catch(() => {
-          setIsManual(false);
-          setIsScanError(true);
-        });
-    } else {
-      if (Platform.OS === "android") {
-        ToastAndroid.show("Invalid code", ToastAndroid.SHORT);
-      }
+    const code = manualCode.toUpperCase();
+
+    if (!code) {
+      setManualError(t("scanner.error-empty") as string);
+      return;
     }
+
+    const firstChar = code[0];
+    if (firstChar !== "S" && firstChar !== "V") {
+      setManualError(t("scanner.error-invalid-prefix") as string);
+      return;
+    }
+
+    joinRoom(code)
+      .then(() => {
+        setManualCode("");
+        setManualError("");
+        setIsManual(false);
+      })
+      .catch(() => {
+        setManualError(t("scanner.error-room-not-found") as string);
+      });
+  };
+
+  const onScanErrorDismiss = () => {
+    setScanError(false);
+    setIsScanned(false);
+  };
+
+  const onManualDismiss = () => {
+    setIsManual(false);
+    setManualCode("");
+    setManualError("");
+  };
+
+  const onManualCodeChange = (text: string) => {
+    setManualCode(text);
+    if (manualError) setManualError("");
   };
 
   if (hasPermission === null) {
@@ -149,7 +173,8 @@ export default function QRScanner() {
         showBackButton
         showRightIconButton
         onRightIconPress={() => setIsManual(true)}
-        rightIconTitle="Join"
+        rightIconTitle={t("scanner.code")}
+        rightIconName="keyboard-outline"
         tintColor={MD2DarkTheme.colors.primary}
       ></PageHeading>
 
@@ -182,15 +207,15 @@ export default function QRScanner() {
       </View>
 
       <UserInputModal
-        visible={isScannError}
-        onDismiss={() => setIsScanError(false)}
+        visible={scanError}
+        onDismiss={onScanErrorDismiss}
         title={t("dialogs.qr.error")}
         subtitle={t("dialogs.qr.error-desc")}
         dismissable
         actions={[
           {
             label: t("dialogs.qr.close"),
-            onPress: () => setIsScanError(false),
+            onPress: onScanErrorDismiss,
             mode: "contained",
           },
         ]}
@@ -198,10 +223,7 @@ export default function QRScanner() {
 
       <UserInputModal
         visible={isManual}
-        onDismiss={() => {
-          setIsManual(false);
-          setManualCode("");
-        }}
+        onDismiss={onManualDismiss}
         title={t("dialogs.qr.manual")}
         dismissable
         actions={[
@@ -209,6 +231,7 @@ export default function QRScanner() {
             label: t("scanner.join"),
             onPress: onManualJoin,
             mode: "contained",
+            disabled: manualCode.length < 7,
           },
         ]}
       >
@@ -219,12 +242,16 @@ export default function QRScanner() {
           maxLength={7}
           autoFocus
           onSubmitEditing={onManualJoin}
-          onChangeText={setManualCode}
+          onChangeText={onManualCodeChange}
           autoCapitalize="characters"
           autoComplete="off"
           autoCorrect={false}
           style={styles.textInput}
+          textAlign="center"
+          contentStyle={{ letterSpacing: 8, textAlign: "center" }}
+          error={!!manualError}
         />
+        {manualError && <Text style={styles.errorText}>{manualError}</Text>}
       </UserInputModal>
     </SafeIOSContainer>
   );
@@ -283,5 +310,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     fontSize: 20,
     letterSpacing: 1,
+  },
+  errorText: {
+    color: "#ff6b6b",
+    fontSize: 13,
+    textAlign: "center",
+    marginTop: 8,
   },
 });

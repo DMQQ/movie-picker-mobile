@@ -16,6 +16,8 @@ interface FilterButtonProps {
   onApply?: () => void;
   onCategorySelect?: (category: string) => void;
   showCategories?: boolean;
+
+  shouldAutoOpen?: boolean;
 }
 
 export const FilterButton = React.memo(function FilterButton({
@@ -24,6 +26,8 @@ export const FilterButton = React.memo(function FilterButton({
   onApply,
   onCategorySelect,
   showCategories,
+
+  shouldAutoOpen = true,
 }: FilterButtonProps) {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const dispatch = useAppDispatch();
@@ -62,6 +66,12 @@ export const FilterButton = React.memo(function FilterButton({
     setIsFilterVisible(false);
     onApply?.();
   }, [onApply]);
+
+  useEffect(() => {
+    if (activeFilterCount === 0 && hasInitialized.current && shouldAutoOpen) {
+      setIsFilterVisible(true);
+    }
+  }, [activeFilterCount, shouldAutoOpen]);
 
   return (
     <>

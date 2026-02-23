@@ -5,6 +5,7 @@ import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import PlatformBlurView from "../PlatformBlurView";
 
 interface CategoryPagerIndicatorProps {
   chipCategories: Array<{
@@ -35,7 +36,10 @@ function CategoryPagerIndicator({ chipCategories, selectedChip, onChipPress }: C
 
   const renderCategory = useCallback(
     ({ item: category, index }: { item: any; index: number }) => (
-      <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>
+      <PlatformBlurView
+        interactive
+        style={[{ borderRadius: 12 }, Platform.OS === "android" && { backgroundColor: MD2DarkTheme.colors.surface }]}
+      >
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => {
@@ -62,7 +66,7 @@ function CategoryPagerIndicator({ chipCategories, selectedChip, onChipPress }: C
             <Text style={{ fontSize: 10 }}>{category.label}</Text>
           )}
         </TouchableOpacity>
-      </Animated.View>
+      </PlatformBlurView>
     ),
     [onChipPress, selectedChip],
   );
@@ -99,10 +103,9 @@ const styles = StyleSheet.create({
   chipButton: {
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 12,
-    backgroundColor: MD2DarkTheme.colors.surface,
     width: 50,
     height: 50,
+    borderRadius: 12,
   },
   selectedChip: {
     borderWidth: 2,
