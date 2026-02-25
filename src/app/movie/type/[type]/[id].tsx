@@ -7,7 +7,8 @@ import FloatingMovieHeader from "../../../../components/FloatingMovieHeader";
 import MovieDetails from "../../../../components/Movie/MovieDetails";
 import MovieDetailsSkeleton from "../../../../components/Movie/MovieDetailsSkeleton";
 import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
-import { useGetMovieProvidersQuery, useGetMovieQuery } from "../../../../redux/movie/movieApi";
+import { useGetMovieProvidersQuery, useGetMovieQuery, useGetSimilarQuery, useGetTrailersQuery } from "../../../../redux/movie/movieApi";
+import { useGetMovieKeyPeopleQuery } from "../../../../redux/person/personApi";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -68,6 +69,14 @@ export default function MovieDetailsScreen() {
     },
   });
 
+  const params = useMemo(
+    () => ({
+      id: movieId,
+      type: typeOfContent,
+    }),
+    [movieId, typeOfContent],
+  );
+
   const { data: movie = {} as Movie, isLoading: loading } = useGetMovieQuery(
     {
       id: Number(movieId),
@@ -80,12 +89,37 @@ export default function MovieDetailsScreen() {
     },
   );
 
-  const params = useMemo(
-    () => ({
-      id: movieId,
-      type: typeOfContent,
-    }),
-    [movieId, typeOfContent],
+  const { data: similarData } = useGetSimilarQuery(
+    {
+      id: Number(params.id),
+      type: params.type as "movie" | "tv",
+      page: 1,
+    },
+    {
+      skip: !params.id || !params.type,
+    },
+  );
+
+  const { data: trailersData } = useGetTrailersQuery(
+    {
+      id: Number(params.id),
+      type: params.type,
+    },
+    {
+      skip: !params.id || !params.type,
+    },
+  );
+
+  const { data: castData } = useGetMovieKeyPeopleQuery(
+    {
+      id: Number(params.id),
+      type: params.type as "movie" | "tv",
+      actorLimit: 20,
+      includeDirector: true,
+    },
+    {
+      skip: !params.id || !params.type,
+    },
   );
 
   const { data: providers } = useGetMovieProvidersQuery({
@@ -136,7 +170,15 @@ export default function MovieDetailsScreen() {
           {loading ? (
             <MovieDetailsSkeleton />
           ) : (
-            <MovieDetails providers={providers} type={typeOfContent} movie={movie as any} params={params} />
+            <MovieDetails
+              castData={castData}
+              similarData={similarData}
+              trailersData={trailersData}
+              providers={providers}
+              type={typeOfContent}
+              movie={movie as any}
+              params={params}
+            />
           )}
         </View>
       </Animated.ScrollView>
