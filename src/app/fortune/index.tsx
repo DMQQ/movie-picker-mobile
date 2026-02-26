@@ -19,6 +19,7 @@ import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import * as Haptics from "expo-haptics";
 import MovieResultCard, { CARD_HEIGHT } from "../../components/Random/MovieResultCard";
 import PlatformBlurView from "../../components/PlatformBlurView";
+import { Image } from "expo-image";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -44,6 +45,7 @@ export default function FortuneWheel() {
       const detailsResponse = await getMovieDetails({ id: item.id, type });
       if (detailsResponse.data) {
         prefetchedDetails.current = detailsResponse.data;
+        await Image.prefetch(`https://image.tmdb.org/t/p/w780${detailsResponse.data.poster_path}`);
       }
     },
     [getMovieDetails],
@@ -227,7 +229,7 @@ export default function FortuneWheel() {
 
   return (
     <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
-      <PageHeading showGradientBackground showBackButton title={(params?.title as string) || ""}>
+      <PageHeading showGradientBackground showBackButton title={isSpin ? "" : (params?.title as string) || ""}>
         <PlatformBlurView style={fortuneStyles.filterButtonWrapper}>
           <FilterButton shouldAutoOpen size={25} onApply={handleFiltersApplied} onCategorySelect={handleThrowDice} showCategories />
         </PlatformBlurView>
@@ -266,7 +268,7 @@ export default function FortuneWheel() {
           {isSpin && <FateText />}
 
           {!isSpin && (
-            <>
+            <Animated.View entering={FadeIn.delay(500)}>
               <Text
                 style={{
                   fontSize: params?.movies ? (params?.title.length > 10 ? 55 : 70) : 70,
@@ -279,7 +281,7 @@ export default function FortuneWheel() {
               <Button rippleColor={"#fff"} icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
                 {t("fortune-wheel.spin-again")}
               </Button>
-            </>
+            </Animated.View>
           )}
         </Animated.View>
       )}

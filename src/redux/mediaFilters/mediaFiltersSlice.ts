@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { loadFilterPreferences } from "../filterPreferences/filterPreferencesSlice";
 
 interface Genre {
   id: number;
@@ -76,6 +77,15 @@ export const mediaFiltersSlice = createSlice({
       state.selectedDecade = "all";
       state.isFilterActive = false;
     },
+  },
+  extraReducers: (builder) => {
+    // Automatically sync providers when filterPreferences loads
+    builder.addCase(loadFilterPreferences.fulfilled, (state, action) => {
+      if (action.payload?.providers && action.payload.providers.length > 0) {
+        state.selectedProviders = action.payload.providers;
+        state.isFilterActive = computeIsFilterActive(state);
+      }
+    });
   },
 });
 

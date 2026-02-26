@@ -163,25 +163,13 @@ export default function OnboardingScreen({ onClose }: OnboardingScreenProps) {
   const handleComplete = async () => {
     setIsLoading(true);
     try {
-      const savePromises = [
+      await Promise.all([
         AsyncStorage.setItem("language", language),
         AsyncStorage.setItem("nickname", nickname || (language === "en" ? "Guest" : "Gość")),
         AsyncStorage.setItem("regionalization", JSON.stringify(regionalization || {})),
-      ];
+      ]);
 
-      // Save providers if any were selected
-      if (selectedProviders.length > 0) {
-        savePromises.push(
-          AsyncStorage.setItem(
-            "room_builder_preferences",
-            JSON.stringify({ providers: selectedProviders, savedAt: Date.now() })
-          )
-        );
-      }
-
-      await Promise.all(savePromises);
-
-      // Also dispatch to Redux store so filters are immediately available
+      // Dispatch to Redux - listener middleware will auto-save to storage
       if (selectedProviders.length > 0) {
         dispatch(setProviders(selectedProviders));
       }

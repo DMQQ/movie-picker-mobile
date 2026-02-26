@@ -15,7 +15,6 @@ import { STORAGE_KEY } from "../redux/favourites/favourites";
 import { DatabaseProvider, useMovieInteractions } from "../context/DatabaseContext";
 import { loadInteractions } from "../redux/movieInteractions/movieInteractionsSlice";
 import { loadFilterPreferences } from "../redux/filterPreferences/filterPreferencesSlice";
-import { setProviders } from "../redux/mediaFilters/mediaFiltersSlice";
 import * as SplashScreen from "expo-splash-screen";
 
 import { enableFreeze } from "react-native-screens";
@@ -139,16 +138,11 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
       if (!isLoaded || isUpdating || !dbReady || !movieInteractions) return;
 
       try {
-        const [nickname, , filterPrefsResult] = await Promise.all([
+        const [nickname] = await Promise.all([
           AsyncStorage.getItem("nickname"),
           dispatch(loadInteractions(movieInteractions)),
-          dispatch(loadFilterPreferences()).unwrap(),
+          dispatch(loadFilterPreferences()),
         ]);
-
-        // Load saved providers into mediaFilters immediately
-        if (filterPrefsResult?.providers && filterPrefsResult.providers.length > 0) {
-          dispatch(setProviders(filterPrefsResult.providers));
-        }
 
         const deviceSettings = getDeviceSettings();
         const isFirstTimeUser = !nickname;
