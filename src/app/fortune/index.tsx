@@ -45,7 +45,7 @@ export default function FortuneWheel() {
       const detailsResponse = await getMovieDetails({ id: item.id, type });
       if (detailsResponse.data) {
         prefetchedDetails.current = detailsResponse.data;
-        await Image.prefetch(`https://image.tmdb.org/t/p/w780${detailsResponse.data.poster_path}`);
+        Image.prefetch(`https://image.tmdb.org/t/p/w780${detailsResponse.data.poster_path}`).catch(() => {});
       }
     },
     [getMovieDetails],

@@ -81,10 +81,9 @@ export const mediaFiltersSlice = createSlice({
   extraReducers: (builder) => {
     // Automatically sync providers when filterPreferences loads
     builder.addCase(loadFilterPreferences.fulfilled, (state, action) => {
-      if (action.payload?.providers && action.payload.providers.length > 0) {
-        state.selectedProviders = action.payload.providers;
-        state.isFilterActive = computeIsFilterActive(state);
-      }
+      const providers = action.payload?.providers ?? [];
+      state.selectedProviders = providers;
+      state.isFilterActive = computeIsFilterActive(state);
     });
   },
 });

@@ -28,7 +28,6 @@ export const FilterButton = React.memo(function FilterButton({
   shouldAutoOpen = true,
 }: FilterButtonProps) {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-
   const isFilterActive = useAppSelector((state) => state.mediaFilters.isFilterActive);
   const mediaType = useAppSelector((state) => state.mediaFilters.mediaType);
   const providersCount = useAppSelector((state) => state.mediaFilters.selectedProviders.length);
@@ -57,8 +56,7 @@ export const FilterButton = React.memo(function FilterButton({
     if (activeFilterCount === 0 && shouldAutoOpen) {
       setIsFilterVisible(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [activeFilterCount, shouldAutoOpen]);
 
   return (
     <>

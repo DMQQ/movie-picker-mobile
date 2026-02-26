@@ -138,7 +138,8 @@ export default function TabBar(props: TabBarProps) {
         {
           position: "absolute",
           bottom: Platform.OS === "ios" ? 0 : 30,
-          left: 10,
+          left: 0,
+          right: 0,
           width: width,
           flexDirection: "row",
           justifyContent: "center",

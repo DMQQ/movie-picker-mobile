@@ -223,6 +223,10 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
     // Reset state when items change
     useEffect(() => {
       if (prevItemsRef.current !== items) {
+        cancelAnimation(rotate);
+        cancelAnimation(translateY);
+        cancelAnimation(pointerRotation);
+
         prevItemsRef.current = items;
         seenIndices.current.clear();
         rotate.value = 0;
@@ -339,6 +343,8 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
       .onUpdate((event) => {
         if (!isSpinning.value) {
           translateY.value = clamp(startTranslateY.value + event.translationY, -50, 200);
+          rotate.value = withTiming(rotate.value - 5, { duration: 50, easing: Easing.linear });
+          pointerRotation.value = withTiming(25, { duration: 50, easing: Easing.out(Easing.quad) });
         }
       })
       .onEnd((event) => {
