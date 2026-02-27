@@ -1,7 +1,7 @@
 import { Platform, StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import { Movie } from "../../../types";
+import { Movie, MovieDetails as MovieDetailsType } from "../../../types";
 import useTranslation from "../../service/useTranslation";
 import CustomFavourite from "../Favourite";
 import QuickActions from "../QuickActions";
@@ -12,13 +12,7 @@ import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
 import { memo, useMemo } from "react";
 import MovieTabs from "./MovieTabs";
 
-function MovieDetails({
-  movie,
-  type,
-  params,
-
-  providers,
-}: {
+interface MovieDetailsProps {
   movie: Movie & Record<string, string>;
 
   providers?: any;
@@ -29,41 +23,16 @@ function MovieDetails({
     id: string;
     type: string;
   };
-}) {
+
+  similarData?: ReturnType<typeof useGetSimilarQuery>["data"];
+
+  trailersData?: ReturnType<typeof useGetTrailersQuery>["data"];
+
+  castData?: ReturnType<typeof useGetMovieKeyPeopleQuery>["data"];
+}
+
+function MovieDetails({ movie, type, providers, similarData, trailersData, castData }: MovieDetailsProps) {
   const t = useTranslation();
-
-  const { data: similarData } = useGetSimilarQuery(
-    {
-      id: Number(params.id),
-      type: params.type as "movie" | "tv",
-      page: 1,
-    },
-    {
-      skip: !params.id || !params.type,
-    },
-  );
-
-  const { data: trailersData } = useGetTrailersQuery(
-    {
-      id: Number(params.id),
-      type: params.type,
-    },
-    {
-      skip: !params.id || !params.type,
-    },
-  );
-
-  const { data: castData } = useGetMovieKeyPeopleQuery(
-    {
-      id: Number(params.id),
-      type: params.type as "movie" | "tv",
-      actorLimit: 20,
-      includeDirector: true,
-    },
-    {
-      skip: !params.id || !params.type,
-    },
-  );
 
   const hasSimilar = useMemo(() => {
     return (similarData?.results && similarData.results.length > 0) ?? false;

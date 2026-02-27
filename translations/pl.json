@@ -188,7 +188,17 @@
     "pick-category": "Wybierz Kategorię",
     "pick-a-movie": "Zakręć kołem!",
     "spin-again": "Wylosuj ponownie",
-    "tap-for-details": "Zobacz szczegóły"
+    "tap-for-details": "Zobacz szczegóły",
+    "fate-messages": [
+      "Niech los zdecyduje...",
+      "Gwiazdy się układają...",
+      "Przeznaczenie czeka...",
+      "Zaufaj wszechświatowi...",
+      "Dzieje się magia...",
+      "Szukam Twojego filmu...",
+      "Koło wie najlepiej...",
+      "Coś wyjątkowego nadchodzi..."
+    ]
   },
   "filters": {
     "title": "Filtry",

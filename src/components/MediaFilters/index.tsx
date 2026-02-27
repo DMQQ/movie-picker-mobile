@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Badge, IconButton, MD2DarkTheme } from "react-native-paper";
-import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { setProviders } from "../../redux/mediaFilters/mediaFiltersSlice";
-import { useFilterPreferences } from "../../hooks/useFilterPreferences";
+import { useAppSelector } from "../../redux/store";
 import FilterSheet from "./FilterSheet";
 
 export { default as FilterSheet } from "./FilterSheet";
@@ -30,24 +28,11 @@ export const FilterButton = React.memo(function FilterButton({
   shouldAutoOpen = true,
 }: FilterButtonProps) {
   const [isFilterVisible, setIsFilterVisible] = useState(false);
-  const dispatch = useAppDispatch();
-  const { preferences: savedProviders } = useFilterPreferences();
-  const hasInitialized = useRef(false);
-
   const isFilterActive = useAppSelector((state) => state.mediaFilters.isFilterActive);
   const mediaType = useAppSelector((state) => state.mediaFilters.mediaType);
   const providersCount = useAppSelector((state) => state.mediaFilters.selectedProviders.length);
   const genresCount = useAppSelector((state) => state.mediaFilters.selectedGenres.length);
   const selectedDecade = useAppSelector((state) => state.mediaFilters.selectedDecade);
-
-  useEffect(() => {
-    if (!hasInitialized.current && savedProviders?.providers && savedProviders.providers.length > 0) {
-      dispatch(setProviders(savedProviders.providers));
-      hasInitialized.current = true;
-    } else if (!hasInitialized.current && savedProviders !== null) {
-      hasInitialized.current = true;
-    }
-  }, [dispatch, savedProviders]);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -68,7 +53,7 @@ export const FilterButton = React.memo(function FilterButton({
   }, [onApply]);
 
   useEffect(() => {
-    if (activeFilterCount === 0 && hasInitialized.current && shouldAutoOpen) {
+    if (activeFilterCount === 0 && shouldAutoOpen) {
       setIsFilterVisible(true);
     }
   }, [activeFilterCount, shouldAutoOpen]);

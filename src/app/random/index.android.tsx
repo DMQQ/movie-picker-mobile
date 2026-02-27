@@ -211,6 +211,13 @@ const styles = StyleSheet.create({
   filterButtonWrapper: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 100,
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface,
+        borderWidth: 1,
+        borderColor: "#343434ff",
+      },
+    }),
   },
   safeArea: {
     flex: 1,

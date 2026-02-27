@@ -52,5 +52,5 @@ export default function useInit() {
     }
   }, [isUpdatePending]);
 
-  return { isLoaded: isLoaded, isUpdating };
+  return { isLoaded: isLoaded, isUpdating: isUpdating || isChecking };
 }

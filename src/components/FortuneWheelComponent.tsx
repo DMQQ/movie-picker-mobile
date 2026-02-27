@@ -13,7 +13,7 @@ import {
   vec,
 } from "@shopify/react-native-skia";
 import * as Haptics from "expo-haptics";
-import { forwardRef, memo, useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from "react";
 import { Dimensions, Image, Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { MD2DarkTheme } from "react-native-paper";
@@ -216,8 +216,26 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
     const lastHapticSegment = useSharedValue(-1);
     const pointerRotation = useSharedValue(0);
     const seenIndices = useRef<Set<number>>(new Set());
+    const prevItemsRef = useRef(items);
 
     const t = useTranslation();
+
+    // Reset state when items change
+    useEffect(() => {
+      if (prevItemsRef.current !== items) {
+        cancelAnimation(rotate);
+        cancelAnimation(translateY);
+        cancelAnimation(pointerRotation);
+
+        prevItemsRef.current = items;
+        seenIndices.current.clear();
+        rotate.value = 0;
+        translateY.value = 0;
+        isSpinning.value = false;
+        lastHapticSegment.value = -1;
+        pointerRotation.value = 0;
+      }
+    }, [items, rotate, translateY, isSpinning, lastHapticSegment, pointerRotation]);
 
     const triggerItemHaptic = () => {
       if (Platform.OS === "ios") Haptics.selectionAsync();
@@ -325,6 +343,8 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
       .onUpdate((event) => {
         if (!isSpinning.value) {
           translateY.value = clamp(startTranslateY.value + event.translationY, -50, 200);
+          rotate.value = withTiming(rotate.value - 5, { duration: 50, easing: Easing.linear });
+          pointerRotation.value = withTiming(25, { duration: 50, easing: Easing.out(Easing.quad) });
         }
       })
       .onEnd((event) => {

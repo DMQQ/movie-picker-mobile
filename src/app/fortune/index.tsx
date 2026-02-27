@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, StyleSheet, useWindowDimensions, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Dimensions, Platform, StyleSheet, useWindowDimensions, View } from "react-native";
+import { Button, MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { Movie, MovieDetails } from "../../../types";
-import { FancySpinner } from "../../components/FancySpinner";
+import FateText from "../../components/FateText";
 import FortuneWheelComponent from "../../components/FortuneWheelComponent";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useLazyGetMovieQuery, useLazyGetRandomSectionQuery, useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
@@ -19,6 +19,7 @@ import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import * as Haptics from "expo-haptics";
 import MovieResultCard, { CARD_HEIGHT } from "../../components/Random/MovieResultCard";
 import PlatformBlurView from "../../components/PlatformBlurView";
+import { Image } from "expo-image";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -44,6 +45,7 @@ export default function FortuneWheel() {
       const detailsResponse = await getMovieDetails({ id: item.id, type });
       if (detailsResponse.data) {
         prefetchedDetails.current = detailsResponse.data;
+        Image.prefetch(`https://image.tmdb.org/t/p/w780${detailsResponse.data.poster_path}`).catch(() => {});
       }
     },
     [getMovieDetails],
@@ -227,9 +229,9 @@ export default function FortuneWheel() {
 
   return (
     <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
-      <PageHeading showGradientBackground showBackButton title={(params?.title as string) || ""}>
+      <PageHeading showGradientBackground showBackButton title={isSpin ? "" : (params?.title as string) || ""}>
         <PlatformBlurView style={fortuneStyles.filterButtonWrapper}>
-          <FilterButton shouldAutoOpen={false} size={25} onApply={handleFiltersApplied} onCategorySelect={handleThrowDice} showCategories />
+          <FilterButton shouldAutoOpen size={25} onApply={handleFiltersApplied} onCategorySelect={handleThrowDice} showCategories />
         </PlatformBlurView>
       </PageHeading>
 
@@ -263,10 +265,10 @@ export default function FortuneWheel() {
             width,
           }}
         >
-          {isSpin && <FancySpinner size={150} />}
+          {isSpin && <FateText />}
 
           {!isSpin && (
-            <>
+            <Animated.View entering={FadeIn.delay(500)}>
               <Text
                 style={{
                   fontSize: params?.movies ? (params?.title.length > 10 ? 55 : 70) : 70,
@@ -279,7 +281,7 @@ export default function FortuneWheel() {
               <Button rippleColor={"#fff"} icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
                 {t("fortune-wheel.spin-again")}
               </Button>
-            </>
+            </Animated.View>
           )}
         </Animated.View>
       )}
@@ -324,8 +326,14 @@ export default function FortuneWheel() {
 
 const fortuneStyles = StyleSheet.create({
   filterButtonWrapper: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 100,
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface,
+        borderWidth: 1,
+        borderColor: "#343434ff",
+      },
+    }),
   },
   cardOverlay: {
     position: "absolute",

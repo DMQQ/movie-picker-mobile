@@ -6,13 +6,14 @@ import Animated, { FadeInDown, FadeInUp, SlideInRight, SlideOutLeft } from "reac
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import useTranslation from "../service/useTranslation";
 import { LinearGradient } from "expo-linear-gradient";
-import { useAppSelector } from "../redux/store";
+import { useAppDispatch, useAppSelector } from "../redux/store";
 import SwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
 import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
 import BrowseAnimation from "../components/GameListAnimations/BrowseAnimation";
 import ProviderList from "../components/Room/ProviderList";
 import { useGetAllProvidersQuery } from "../redux/movie/movieApi";
+import { setProviders } from "../redux/mediaFilters/mediaFiltersSlice";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -151,6 +152,7 @@ interface OnboardingScreenProps {
 
 export default function OnboardingScreen({ onClose }: OnboardingScreenProps) {
   const t = useTranslation();
+  const dispatch = useAppDispatch();
   const language = useAppSelector((state) => state.room.language) || "en";
   const regionalization = useAppSelector((state) => state.room.regionalization);
   const nickname = useAppSelector((state) => state.room.nickname);
@@ -161,23 +163,17 @@ export default function OnboardingScreen({ onClose }: OnboardingScreenProps) {
   const handleComplete = async () => {
     setIsLoading(true);
     try {
-      const savePromises = [
+      await Promise.all([
         AsyncStorage.setItem("language", language),
         AsyncStorage.setItem("nickname", nickname || (language === "en" ? "Guest" : "Gość")),
         AsyncStorage.setItem("regionalization", JSON.stringify(regionalization || {})),
-      ];
+      ]);
 
-      // Save providers if any were selected
+      // Dispatch to Redux - listener middleware will auto-save to storage
       if (selectedProviders.length > 0) {
-        savePromises.push(
-          AsyncStorage.setItem(
-            "room_builder_preferences",
-            JSON.stringify({ providers: selectedProviders, savedAt: Date.now() })
-          )
-        );
+        dispatch(setProviders(selectedProviders));
       }
 
-      await Promise.all(savePromises);
       onClose?.();
     } catch (error) {
       console.error("Failed to save onboarding state:", error);

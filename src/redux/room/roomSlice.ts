@@ -206,7 +206,7 @@ const roomSlice = createSlice({
         payload: number;
       },
     ) {
-      state.room.movies.splice(payload, 1);
+      state.room.movies = state.room.movies.filter((movie) => movie.id !== payload);
 
       if (state.room.movies.length === 0) {
         state.room.isFinished = true;

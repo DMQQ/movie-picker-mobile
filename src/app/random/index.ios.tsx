@@ -1,4 +1,4 @@
-import { Dimensions, Pressable, StyleSheet, View } from "react-native";
+import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
 import Animated, {
   FadeIn,
@@ -195,6 +195,13 @@ const styles = StyleSheet.create({
   filterButtonWrapper: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 100,
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface,
+        borderWidth: 1,
+        borderColor: "#343434ff",
+      },
+    }),
   },
   safeArea: {
     flex: 1,

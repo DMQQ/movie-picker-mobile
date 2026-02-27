@@ -17,6 +17,7 @@ import useRoomContext from "../../context/RoomContext";
 import { url, SocketContext } from "../../context/SocketContext";
 import envs from "../../constants/envs";
 import UserInputModal, { UserInputModalAction } from "../../components/UserInputModal";
+import { useIsFocused } from "@react-navigation/native";
 
 const styles = StyleSheet.create({
   navigation: {
@@ -208,7 +209,11 @@ export default function Home() {
     },
   ];
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
+    if (!isFocused) return;
+
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
       Alert.alert(
         t("dialogs.leave-room.title") as string,
@@ -232,7 +237,7 @@ export default function Home() {
     });
 
     return () => sub.remove();
-  }, []);
+  }, [isFocused]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>

@@ -188,7 +188,17 @@
     "pick-category": "Pick Category",
     "pick-a-movie": "Spin the wheel!",
     "spin-again": "Random spin",
-    "tap-for-details": "Tap for details"
+    "tap-for-details": "Tap for details",
+    "fate-messages": [
+      "Let fate decide...",
+      "The stars are aligning...",
+      "Destiny awaits...",
+      "Trust the universe...",
+      "Magic is happening...",
+      "Finding your movie...",
+      "The wheel knows best...",
+      "Something special is coming..."
+    ]
   },
   "filters": {
     "title": "Filters",

@@ -74,8 +74,8 @@ export default function useRoom() {
     dispatch(roomActions.addMovies(_movies));
   }, []);
 
-  const removeCard = useCallback((index: number) => {
-    dispatch(roomActions.removeMovie(index));
+  const removeCard = useCallback((id: number) => {
+    dispatch(roomActions.removeMovie(id));
   }, []);
 
   useEffect(() => {
@@ -154,18 +154,18 @@ export default function useRoom() {
   }, [isPlaying, cards.length, roomId, socket]);
 
   const removeCardLocally = useCallback(
-    (index: number) => {
-      removeCard(index);
+    (id: number) => {
+      removeCard(id);
     },
     [removeCard],
   );
 
   useEffect(() => {
-    if (isFinished && socket && roomId) {
+    if (isFinished && socket && roomId && isPlaying) {
       socket?.emit("finish", roomId);
       socket?.emit("get-buddy-status", roomId);
     }
-  }, [isFinished, roomId, socket]);
+  }, [isFinished, roomId, socket, isPlaying]);
 
   const likeCard = useCallback(
     async (card: Movie, index: number) => {
@@ -174,7 +174,7 @@ export default function useRoom() {
         index,
         swipe: { type: "like", movie: card.id },
       });
-      removeCardLocally(index);
+      removeCardLocally(card.id);
       dispatch(roomActions.likeMovie(card));
     },
     [socket, roomId, removeCardLocally, dispatch],
@@ -189,20 +189,20 @@ export default function useRoom() {
       });
       dispatch(roomActions.dislikeMovie(card));
       addDislikedMovie(card);
-      removeCardLocally(index);
+      removeCardLocally(card.id);
     },
     [addDislikedMovie, removeCardLocally, socket, roomId, dispatch],
   );
 
   useEffect(() => {
-    if (cards.length === Math.trunc(initialCardsLength.current / 4) && initialCardsLength.current > 0) {
+    if (cards.length === 5 && isPlaying) {
       socket?.emitWithAck("get-next-page", roomId).then((response) => {
         if (response?.movies && response.movies.length > 0) {
           dispatch(roomActions.appendMovies(response.movies));
         }
       });
     }
-  }, [cards.length, socket, roomId, dispatch]);
+  }, [cards.length, socket, roomId, dispatch, isPlaying]);
 
   return useMemo(
     () => ({
