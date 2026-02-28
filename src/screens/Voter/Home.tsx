@@ -15,7 +15,6 @@ import { Button, Chip, IconButton, MD2DarkTheme, Text, TouchableRipple, Dialog, 
 import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from "react-native-reanimated";
 import { FancySpinner } from "../../components/FancySpinner";
 import QuickActions from "../../components/QuickActions";
-import RangeSlider from "../../components/RangeSlidePicker";
 import QRCodeComponent from "../../components/Voter/QRCode";
 import useTranslation from "../../service/useTranslation";
 import { useMovieVoter } from "../../service/useVoter";
@@ -33,6 +32,8 @@ import envs from "../../constants/envs";
 const scaleTitle = (title: string, size = 30) => {
   if (title.length > 30) return size * 0.75;
 
+  if (title.length > 20) return size * 0.85;
+
   return size;
 };
 
@@ -43,10 +44,14 @@ export default function Home() {
   const { sessionId, status, users, currentMovies, currentUserId, actions, isHost, sessionSettings, loadingInitialContent } =
     useMovieVoter();
   const [localReady, setLocalReady] = useState(false);
-  const [localRatings, setLocalRatings] = useState({
-    interest: 2,
-    mood: 1,
-    uniqueness: 2,
+  const [localRatings, setLocalRatings] = useState<{
+    interest: number | null;
+    mood: number | null;
+    uniqueness: number | null;
+  }>({
+    interest: null,
+    mood: null,
+    uniqueness: null,
   });
   const theme = useTheme();
   const [showError, setShowError] = useState(false);
@@ -94,17 +99,21 @@ export default function Home() {
     throttle(() => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-      if (currentMovies?.[0]?.id) {
-        actions.submitRating(currentMovies[0].id as any, localRatings);
+      if (currentMovies?.[0]?.id && localRatings.interest !== null && localRatings.mood !== null && localRatings.uniqueness !== null) {
+        actions.submitRating(currentMovies[0].id as any, {
+          interest: localRatings.interest,
+          mood: localRatings.mood,
+          uniqueness: localRatings.uniqueness,
+        });
 
         setLocalRatings({
-          interest: 2,
-          mood: 1,
-          uniqueness: 2,
+          interest: null,
+          mood: null,
+          uniqueness: null,
         });
       }
     }, 1000),
-    [currentMovies, localRatings, actions]
+    [currentMovies, localRatings, actions],
   );
 
   const handleReady = () => {
@@ -124,7 +133,7 @@ export default function Home() {
           Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path),
           Image.prefetch("https://image.tmdb.org/t/p/w500" + movie?.backdrop_path),
         ])
-        .flat()
+        .flat(),
     ).finally(() => {
       imagesPrefetched.current = true;
     });
@@ -151,7 +160,7 @@ export default function Home() {
           <PickCategory
             category={sessionSettings.category}
             setCategory={(category: string) => {
-              actions.setSessionSettings((p) => ({ ...p, category } as any));
+              actions.setSessionSettings((p) => ({ ...p, category }) as any);
             }}
           />
           <PickGenres
@@ -262,7 +271,7 @@ export default function Home() {
           }}
           style={{ flex: 1, ...StyleSheet.absoluteFillObject }}
         >
-          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)", paddingHorizontal: 15, paddingBottom: 15 }}>
+          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)" }}>
             <View style={{ padding: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>{t("voter.home.rate")} 🎬</Text>
 
@@ -270,7 +279,7 @@ export default function Home() {
                 {currentMovies.length} {t("voter.home.left")}
               </Text>
             </View>
-            <View style={{ flex: 1, marginTop: 10 }}>
+            <View style={{ flex: 1, marginTop: 10, paddingHorizontal: 15 }}>
               <View style={{ flexDirection: "row", gap: 10 }}>
                 <TouchableOpacity
                   disabled={typeof card?.id === "undefined"}
@@ -333,111 +342,115 @@ export default function Home() {
             </View>
 
             <View style={{ flex: 1, marginTop: 30, justifyContent: "space-between" }}>
-              <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>{t("voter.rate")}</Text>
+              <Text style={{ fontSize: 30, fontFamily: "Bebas", paddingHorizontal: 15 }}>{t("voter.rate")}</Text>
 
-              <View style={{ gap: 10, marginTop: 15, height: 60 }}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontFamily: "Bebas",
-                  }}
-                >
-                  {t("voter.ratings.interest.label")}: (
-                  {
-                    [
-                      t("voter.ratings.interest.options.1"),
-                      t("voter.ratings.interest.options.2"),
-                      t("voter.ratings.interest.options.3"),
-                      t("voter.ratings.interest.options.4"),
-                      t("voter.ratings.interest.options.5"),
-                    ][localRatings.interest]
-                  }
-                  )
-                </Text>
-                <RangeSlider
-                  value={localRatings.interest}
-                  width={Dimensions.get("window").width - 30}
-                  steps={5}
-                  barHeight={30}
-                  barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
-                  handleSize={30}
-                  handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
-                  onChange={(value) => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-                    setLocalRatings((p) => ({ ...p, interest: value }));
-                  }}
-                />
+              <View style={{ gap: 8, marginTop: 15, paddingHorizontal: 15 }}>
+                <Text style={{ fontSize: 18, fontFamily: "Bebas" }}>{t("voter.ratings.interest.label")}</Text>
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  {[
+                    { value: 0, label: t("voter.ratings.interest.options.0") },
+                    { value: 1, label: t("voter.ratings.interest.options.1") },
+                    { value: 2, label: t("voter.ratings.interest.options.2") },
+                  ].map((option) => {
+                    const isSelected = localRatings.interest === option.value;
+                    return (
+                      <Button
+                        key={option.value}
+                        mode={isSelected ? "contained" : "outlined"}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          setLocalRatings((p) => ({ ...p, interest: option.value }));
+                        }}
+                        style={{
+                          flex: 1,
+                          borderRadius: 10,
+                          backgroundColor: isSelected ? MD2DarkTheme.colors.primary : "rgba(0,0,0,0.5)",
+                        }}
+                        labelStyle={{ fontSize: 12, color: "#fff" }}
+                        compact
+                      >
+                        {option.label}
+                      </Button>
+                    );
+                  })}
+                </View>
               </View>
 
-              <View style={{ gap: 10, marginTop: 15, height: 60 }}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontFamily: "Bebas",
-                  }}
-                >
-                  {t("voter.ratings.mood.label")}: (
-                  {
-                    [t("voter.ratings.mood.options.1"), t("voter.ratings.mood.options.2"), t("voter.ratings.mood.options.3")][
-                      localRatings.mood
-                    ]
-                  }
-                  )
-                </Text>
-                <RangeSlider
-                  value={localRatings.mood}
-                  width={Dimensions.get("window").width - 30}
-                  steps={3}
-                  barHeight={30}
-                  barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
-                  handleSize={30}
-                  handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
-                  onChange={(value) => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    setLocalRatings((p) => ({ ...p, mood: value }));
-                  }}
-                />
+              <View style={{ gap: 8, marginTop: 15, paddingHorizontal: 15 }}>
+                <Text style={{ fontSize: 18, fontFamily: "Bebas" }}>{t("voter.ratings.mood.label")}</Text>
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  {[
+                    { value: 0, label: t("voter.ratings.mood.options.0") },
+                    { value: 1, label: t("voter.ratings.mood.options.1") },
+                    { value: 2, label: t("voter.ratings.mood.options.2") },
+                  ].map((option) => {
+                    const isSelected = localRatings.mood === option.value;
+                    return (
+                      <Button
+                        key={option.value}
+                        mode={isSelected ? "contained" : "outlined"}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          setLocalRatings((p) => ({ ...p, mood: option.value }));
+                        }}
+                        style={{
+                          flex: 1,
+                          borderRadius: 10,
+                          backgroundColor: isSelected ? MD2DarkTheme.colors.primary : "rgba(0,0,0,0.5)",
+                        }}
+                        labelStyle={{ fontSize: 12, color: "#fff" }}
+                        compact
+                      >
+                        {option.label}
+                      </Button>
+                    );
+                  })}
+                </View>
               </View>
 
-              <View style={{ gap: 10, marginTop: 15, height: 60 }}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontFamily: "Bebas",
-                  }}
-                >
-                  {t("voter.ratings.uniqueness.label")}: (
-                  {
-                    [
-                      t("voter.ratings.uniqueness.options.1"),
-                      t("voter.ratings.uniqueness.options.2"),
-                      t("voter.ratings.uniqueness.options.3"),
-                      t("voter.ratings.uniqueness.options.4"),
-                      t("voter.ratings.uniqueness.options.5"),
-                    ][localRatings.uniqueness]
-                  }
-                  )
-                </Text>
-                <RangeSlider
-                  value={localRatings.uniqueness}
-                  width={Dimensions.get("window").width - 30}
-                  steps={5}
-                  barHeight={30}
-                  barStyle={{ backgroundColor: "rgba(0,0,0,0.2)" }}
-                  handleSize={30}
-                  handleStyle={{ backgroundColor: MD2DarkTheme.colors.primary }}
-                  onChange={(value) => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-                    setLocalRatings((p) => ({ ...p, uniqueness: value }));
-                  }}
-                />
+              <View style={{ gap: 8, marginTop: 15, paddingHorizontal: 15 }}>
+                <Text style={{ fontSize: 18, fontFamily: "Bebas" }}>{t("voter.ratings.novelty.label")}</Text>
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  {[
+                    { value: 0, label: t("voter.ratings.novelty.options.0") },
+                    { value: 1, label: t("voter.ratings.novelty.options.1") },
+                    { value: 2, label: t("voter.ratings.novelty.options.2") },
+                  ].map((option) => {
+                    const isSelected = localRatings.uniqueness === option.value;
+                    return (
+                      <Button
+                        key={option.value}
+                        mode={isSelected ? "contained" : "outlined"}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          setLocalRatings((p) => ({ ...p, uniqueness: option.value }));
+                        }}
+                        style={{
+                          flex: 1,
+                          borderRadius: 10,
+                          backgroundColor: isSelected ? MD2DarkTheme.colors.primary : "rgba(0,0,0,0.5)",
+                        }}
+                        labelStyle={{ fontSize: 12, color: "#fff" }}
+                        compact
+                      >
+                        {option.label}
+                      </Button>
+                    );
+                  })}
+                </View>
               </View>
 
-              <Button onPress={handleSubmitRating} mode="contained" style={styles.button} contentStyle={{ padding: 10 }}>
-                {t("voter.ratings.submit")}
-              </Button>
+              <View style={{ width: "100%", backgroundColor: "#000", paddingHorizontal: 15 }}>
+                <Button
+                  onPress={handleSubmitRating}
+                  mode="contained"
+                  disabled={localRatings.interest === null || localRatings.mood === null || localRatings.uniqueness === null}
+                  style={styles.button}
+                  contentStyle={{ padding: 10 }}
+                >
+                  {t("voter.ratings.submit")}
+                </Button>
+              </View>
             </View>
           </View>
         </ImageBackground>
@@ -464,11 +477,7 @@ export default function Home() {
       {status === "completed" && renderCompletedState()}
 
       <Portal>
-        <Dialog
-          dismissable={false}
-          visible={showError}
-          style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
-        >
+        <Dialog dismissable={false} visible={showError} style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}>
           <Dialog.Title>{t("dialogs.qr.error")}</Dialog.Title>
 
           <Dialog.Content>
@@ -781,7 +790,7 @@ const PickProviders = ({ providers, setProviders }: { setProviders: any; provide
         <TouchableRipple
           onPress={() =>
             setProviders((p: number[]) =>
-              p.includes(item.provider_id) ? p.filter((i) => i !== item.provider_id) : [...p, item.provider_id]
+              p.includes(item.provider_id) ? p.filter((i) => i !== item.provider_id) : [...p, item.provider_id],
             )
           }
           style={{
