@@ -2,7 +2,7 @@ import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as SecureStore from "expo-secure-store";
 import * as Localization from "expo-localization";
 import { Stack } from "expo-router";
-import { useEffect, useState } from "react";
+import { StrictMode, useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";

@@ -10,7 +10,10 @@ import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 
 const isDev = envs.mode !== "production";
 
-export const baseUrl = isDev ? "http://192.168.1.20:3000" : "https://flickmate.app";
+export const baseUrl = isDev
+  ? "http://127.0.0.1:3000"
+  : //  "http://192.168.1.20:3000"
+    "https://flickmate.app";
 export const url = baseUrl + "/api";
 
 export const SocketContext = React.createContext<{

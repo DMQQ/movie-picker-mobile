@@ -172,10 +172,10 @@ export default function QRCodePage() {
       dispatch(roomActions.setActiveUsers(users));
     };
 
-    const handleMovies = ({ movies }: { movies: Movie[] }) => {
+    const handleMovies = ({ movies, index }: { movies: Movie[]; index?: number }) => {
       setMoviesCount(movies.length);
       setIsLoadingMovies(false);
-      if (!!movies) dispatch(roomActions.addMovies(movies));
+      if (!!movies) dispatch(roomActions.addMovies({ movies, index }));
     };
 
     socket.on("active", handleActive);
