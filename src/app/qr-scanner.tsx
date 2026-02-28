@@ -111,6 +111,8 @@ export default function QRScanner() {
 
   const t = useTranslation();
 
+  const [isJoining, setIsJoining] = useState(false);
+
   const onManualJoin = async () => {
     const code = manualCode.toUpperCase();
 
@@ -125,6 +127,8 @@ export default function QRScanner() {
       return;
     }
 
+    setIsJoining(true);
+
     joinRoom(code)
       .then(() => {
         setManualCode("");
@@ -133,6 +137,9 @@ export default function QRScanner() {
       })
       .catch(() => {
         setManualError(t("scanner.error-room-not-found") as string);
+      })
+      .finally(() => {
+        setIsJoining(false);
       });
   };
 
@@ -222,7 +229,7 @@ export default function QRScanner() {
       />
 
       <UserInputModal
-        visible={isManual}
+        visible={isManual || isJoining}
         onDismiss={onManualDismiss}
         title={t("dialogs.qr.manual")}
         dismissable
@@ -232,6 +239,7 @@ export default function QRScanner() {
             onPress: onManualJoin,
             mode: "contained",
             disabled: manualCode.length < 7,
+            loading: isJoining,
           },
         ]}
       >

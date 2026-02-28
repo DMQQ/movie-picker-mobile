@@ -31,6 +31,8 @@ const initialState = {
 
     isFinished: false,
 
+    index: 0,
+
     match: undefined as Movie | undefined,
 
     pendingMatches: [] as Movie[],
@@ -67,26 +69,22 @@ const roomSlice = createSlice({
     setRoom(state, action: SetRoomAction) {
       const payload = action.payload;
 
-      // Handle room ID from either field
       const roomId = payload?.roomId || payload?.id;
       if (roomId) {
         state.room.roomId = roomId;
         state.qrCode = roomId;
       }
 
-      // Update existing fields
       if (payload.type) state.room.type = payload.type;
       if (payload.page !== undefined) state.room.page = payload.page;
       if (payload.users) state.room.users = payload.users;
 
-      // Update new game state fields
       if (payload.gameEnded !== undefined) {
-        // If transitioning from ended to not ended (play again), reset play state but keep user data
         if (payload.gameEnded === false && state.room.gameEnded === true) {
           state.room.hasUserPlayed = false;
           state.room.isFinished = false;
           state.room.movies = [];
-          // matches, likes, and dislikes ALL persist across rounds
+          // state.room.index = 0; nie ustawaic
         }
         state.room.gameEnded = payload.gameEnded;
       }
@@ -182,19 +180,25 @@ const roomSlice = createSlice({
       {
         payload,
       }: {
-        payload: Movie[];
+        payload: { movies: Movie[]; index?: number };
       },
     ) {
-      if (payload.length > 0) {
-        state.room.movies = payload;
+      if (payload.movies.length > 0) {
+        state.room.movies = payload.movies;
         state.room.isFinished = false;
         state.beenFired = true;
+        if (typeof payload.index === "number") {
+          state.room.index = payload.index;
+        }
       }
     },
 
-    appendMovies(state, { payload }: { payload: Movie[] }) {
-      if (payload.length !== 0) {
-        state.room.movies = removeDuplicateResults([...state.room.movies, ...payload], "id");
+    appendMovies(state, { payload }: { payload: { movies: Movie[]; index?: number } }) {
+      if (payload.movies.length !== 0) {
+        state.room.movies = removeDuplicateResults([...state.room.movies, ...payload.movies], "id");
+        if (typeof payload.index === "number") {
+          state.room.index = payload.index;
+        }
       }
     },
 

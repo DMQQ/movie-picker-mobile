@@ -349,31 +349,27 @@
 
     "ratings": {
       "interest": {
-        "label": "Interest",
+        "label": "Want to watch?",
         "options": {
-          "1": "Don't want to watch",
-          "2": "Not sure",
-          "3": "Maybe",
-          "4": "Would like to watch",
-          "5": "Will definitely watch"
+          "0": "👎 Pass",
+          "1": "🤔 Maybe",
+          "2": "👍 Yes"
         }
       },
       "mood": {
-        "label": "Mood",
+        "label": "Fits tonight's vibe?",
         "options": {
-          "1": "Don't want to watch",
-          "2": "Maybe",
-          "3": "Would like to watch"
+          "0": "😐 Not now",
+          "1": "🙂 Could work",
+          "2": "😍 Perfect"
         }
       },
-      "uniqueness": {
-        "label": "New?",
+      "novelty": {
+        "label": "Seen it before?",
         "options": {
-          "1": "Don't want to watch",
-          "2": "Not sure",
-          "3": "Maybe",
-          "4": "Would like to watch",
-          "5": "Will definitely watch"
+          "0": "✅ Seen it",
+          "1": "🔄 Heard of it",
+          "2": "👀 New to me"
         }
       },
       "submit": "Submit rating"

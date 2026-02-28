@@ -19,6 +19,9 @@ export default function useRoom() {
   const cards = useAppSelector((state) => state.room.room.movies);
   const isFinished = useAppSelector((state) => state.room.room.isFinished);
   const isPlaying = useAppSelector((state) => state.room.isPlaying);
+  const movieIndex = useAppSelector((state) => state.room.room.index);
+  const movieIndexRef = useRef(movieIndex);
+  movieIndexRef.current = movieIndex;
 
   const joinGame = useCallback(
     async (
@@ -69,9 +72,9 @@ export default function useRoom() {
   }, [roomId, blockedReady, superLikedReady, joinGame, emitter, getBlockedIds, getSuperLikedIds]);
   const initialCardsLength = useRef(0);
 
-  const setCards = useCallback((_movies: Movie[]) => {
+  const setCards = useCallback((_movies: Movie[], index?: number) => {
     initialCardsLength.current = _movies.length;
-    dispatch(roomActions.addMovies(_movies));
+    dispatch(roomActions.addMovies({ movies: _movies, index }));
   }, []);
 
   const removeCard = useCallback((id: number) => {
@@ -79,8 +82,8 @@ export default function useRoom() {
   }, []);
 
   useEffect(() => {
-    const handleMovies = async (_cards: { movies: Movie[] }) => {
-      setCards(_cards.movies);
+    const handleMovies = async (_cards: { movies: Movie[]; index?: number }) => {
+      setCards(_cards.movies, _cards.index);
 
       Promise.allSettled(
         _cards.movies.map((card: Movie) => prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge)),
@@ -98,8 +101,8 @@ export default function useRoom() {
       dispatch(roomActions.setActiveUsers(users));
     };
 
-    const handleBlockedUpdate = (_cards: { movies: Movie[] }) => {
-      setCards(_cards.movies);
+    const handleBlockedUpdate = (_cards: { movies: Movie[]; index?: number }) => {
+      setCards(_cards.movies, _cards.index);
     };
 
     const handleListeners = (event: string, ...args: any[]) => {
@@ -162,7 +165,7 @@ export default function useRoom() {
 
   useEffect(() => {
     if (isFinished && socket && roomId && isPlaying) {
-      socket?.emit("finish", roomId);
+      socket?.emit("finish", roomId, movieIndexRef.current);
       socket?.emit("get-buddy-status", roomId);
     }
   }, [isFinished, roomId, socket, isPlaying]);
@@ -196,9 +199,9 @@ export default function useRoom() {
 
   useEffect(() => {
     if (cards.length === 5 && isPlaying) {
-      socket?.emitWithAck("get-next-page", roomId).then((response) => {
+      socket?.emitWithAck("get-next-page", roomId, movieIndexRef.current).then((response) => {
         if (response?.movies && response.movies.length > 0) {
-          dispatch(roomActions.appendMovies(response.movies));
+          dispatch(roomActions.appendMovies({ movies: response.movies, index: response.index }));
         }
       });
     }

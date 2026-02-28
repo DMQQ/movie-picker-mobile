@@ -317,7 +317,7 @@ const SwipeContent = memo(({ params }: SwipeContentProps) => {
 
   const handleNavigateDetails = useCallback(
     (card: Movie) => {
-      router.push({
+      router.navigate({
         pathname: "/movie/type/[type]/[id]",
         params: {
           id: card.id,
