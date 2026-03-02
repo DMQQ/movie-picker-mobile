@@ -601,6 +601,27 @@
   "rate-app": {
     "prompt": "Podoba Ci się aplikacja? Oceń nas!"
   },
+  "status-modal": {
+    "no-internet": {
+      "title": "Brak internetu",
+      "message": "Sprawdź połączenie internetowe i spróbuj ponownie."
+    },
+    "maintenance": {
+      "title": "Przerwa techniczna",
+      "message": "Przeprowadzamy prace konserwacyjne. Spróbuj ponownie później."
+    },
+    "update": {
+      "title": "Dostępna aktualizacja",
+      "message": "Nowa wersja jest dostępna. Zaktualizuj aplikację, aby kontynuować."
+    },
+    "server": {
+      "title": "Problem z serwerem",
+      "message": "Mamy problemy techniczne. Spróbuj ponownie później."
+    },
+    "retry": "Ponów",
+    "update-button": "Aktualizuj",
+    "dismiss": "Zamknij"
+  },
   "ticket": {
     "unknown-movie": "Nieznany Film",
     "unknown": "Nieznane",

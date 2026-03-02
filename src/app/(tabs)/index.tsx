@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { IconButton, Text, TouchableRipple } from "react-native-paper";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
@@ -11,6 +11,7 @@ import SwiperAnimation from "../../components/GameListAnimations/SwipeAnimation"
 import VoterAnimation from "../../components/GameListAnimations/VoterAnimation";
 import RandomMovieAnimation from "../../components/GameListAnimations/RandomMovieAnimation";
 import PageHeading from "../../components/PageHeading";
+import useMaintenance from "../../service/useMaintanance";
 
 const CARD_HEIGHT = 280;
 

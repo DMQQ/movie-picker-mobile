@@ -1,8 +1,8 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as SecureStore from "expo-secure-store";
 import * as Localization from "expo-localization";
-import { Stack } from "expo-router";
-import { StrictMode, useEffect, useState } from "react";
+import { router, Stack } from "expo-router";
+import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -47,6 +47,7 @@ function getDeviceSettings() {
 
 import * as QuickActions from "expo-quick-actions";
 import OnboardingScreen from "./onboarding";
+import useMaintenance from "../service/useMaintanance";
 
 const theme = MD2DarkTheme;
 
@@ -133,6 +134,8 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
   const { movieInteractions, isReady: dbReady } = useMovieInteractions();
 
+  useMaintenance();
+
   useEffect(() => {
     const initializeApp = async () => {
       if (!isLoaded || isUpdating || !dbReady || !movieInteractions) return;
@@ -218,6 +221,15 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
 
         <Stack.Screen name="search-filters" options={{ headerShown: false }} />
+
+        <Stack.Screen
+          name="modal"
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            presentation: "modal",
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );
