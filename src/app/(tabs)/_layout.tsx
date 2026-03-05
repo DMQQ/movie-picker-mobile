@@ -86,12 +86,7 @@ function TabLayout() {
       indicatorColor={MD2DarkTheme.colors.primary}
       tintColor={MD2DarkTheme.colors.primary}
     >
-      <NativeTabs.Trigger
-        name="favourites"
-        options={{
-          title: "Favourites",
-        }}
-      >
+      <NativeTabs.Trigger name="favourites">
         <Icon
           {...(Platform.OS === "android"
             ? { src: <VectorIcon family={MaterialCommunityIcons} name="bookmark" />, selectedColor: "#000" }
@@ -100,12 +95,7 @@ function TabLayout() {
         <Label>{t("tabBar.favourites")}</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger
-        name="discover"
-        options={{
-          title: "Home",
-        }}
-      >
+      <NativeTabs.Trigger name="discover">
         <Icon
           {...(Platform.OS === "android"
             ? { src: <VectorIcon family={MaterialCommunityIcons} name="movie-check" />, selectedColor: "#000" }
@@ -114,12 +104,7 @@ function TabLayout() {
         <Label>{t("tabBar.explore")}</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger
-        name="index"
-        options={{
-          title: "Games",
-        }}
-      >
+      <NativeTabs.Trigger name="index">
         <Icon
           {...(Platform.OS === "android"
             ? { src: <VectorIcon family={MaterialCommunityIcons} name="gamepad-variant" />, selectedColor: "#000" }
@@ -137,12 +122,7 @@ function TabLayout() {
         <Label>{t("tabBar.search")}</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger
-        name="settings"
-        options={{
-          title: "Settings",
-        }}
-      >
+      <NativeTabs.Trigger name="settings">
         <Icon
           {...(Platform.OS === "android"
             ? { src: <VectorIcon family={FontAwesome} name="gear" />, selectedColor: "#000" }
