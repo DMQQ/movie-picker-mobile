@@ -13,7 +13,7 @@ export default function useRoom() {
   const attemptTimeout = useRef<number | null>(null);
   const { getBlockedIds, addDislikedMovie, isReady: blockedReady } = useBlockedMovies();
   const { getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
-
+  const joined = useAppSelector((state) => state.room.joined);
   const roomId = useAppSelector((state) => state.room.room.roomId);
   const nickname = useAppSelector((state) => state.room.nickname);
   const cards = useAppSelector((state) => state.room.room.movies);
@@ -39,7 +39,7 @@ export default function useRoom() {
   );
 
   useEffect(() => {
-    if (!roomId || !blockedReady || !superLikedReady || !socket) {
+    if (!roomId || !blockedReady || !superLikedReady || !socket || !joined) {
       return;
     }
     async function onReconnected(args: unknown, attempt = 0) {
@@ -69,7 +69,7 @@ export default function useRoom() {
     return () => {
       emitter.off("reconnected", onReconnected);
     };
-  }, [roomId, blockedReady, superLikedReady, joinGame, emitter, getBlockedIds, getSuperLikedIds]);
+  }, [roomId, blockedReady, superLikedReady, joinGame, emitter, getBlockedIds, getSuperLikedIds, joined]);
   const initialCardsLength = useRef(0);
 
   const setCards = useCallback((_movies: Movie[], index?: number) => {

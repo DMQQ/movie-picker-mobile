@@ -162,8 +162,14 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
     };
   }, [language, regionalization]);
 
+  const isInitialConnection = useRef(true);
+
   useEffect(() => {
-    if (wasConnected.current && socket) {
+    if (socket && wasConnected.current) {
+      if (isInitialConnection.current) {
+        isInitialConnection.current = false;
+        return;
+      }
       emitter.emit("reconnected", true);
     }
   }, [socket]);

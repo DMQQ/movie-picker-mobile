@@ -78,11 +78,7 @@ export default function Home() {
             return;
           }
 
-          let timeout = setTimeout(() => {
-            dispatch(roomActions.setRoomId((params.roomId as string).toUpperCase()));
-          }, 1);
-
-          return () => clearTimeout(timeout);
+          dispatch(roomActions.setRoomId((params.roomId as string).toUpperCase()));
         } catch (error) {
           console.error("Failed to verify room:", error);
           setShowError(true);
