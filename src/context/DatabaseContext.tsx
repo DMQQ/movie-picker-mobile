@@ -2,22 +2,26 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import type { SQLiteDatabase } from "expo-sqlite";
 import { getDatabase } from "../database";
 import { createMovieInteractionsRepo, type MovieInteractionsRepo } from "../database/repositories/movieInteractionsRepo";
+import { createMatchesRepo, type MatchesRepo } from "../database/repositories/matchesRepo";
 
 interface DatabaseContextValue {
   db: SQLiteDatabase | null;
   movieInteractions: MovieInteractionsRepo | null;
+  matches: MatchesRepo | null;
   isReady: boolean;
 }
 
 const DatabaseContext = createContext<DatabaseContextValue>({
   db: null,
   movieInteractions: null,
+  matches: null,
   isReady: false,
 });
 
 export function DatabaseProvider({ children }: { children: ReactNode }) {
   const [db, setDb] = useState<SQLiteDatabase | null>(null);
   const [movieInteractions, setMovieInteractions] = useState<MovieInteractionsRepo | null>(null);
+  const [matches, setMatches] = useState<MatchesRepo | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -29,6 +33,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
         if (mounted) {
           setDb(database);
           setMovieInteractions(createMovieInteractionsRepo(database));
+          setMatches(createMatchesRepo(database));
           setIsReady(true);
         }
       } catch (error) {
@@ -44,7 +49,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <DatabaseContext.Provider value={{ db, movieInteractions, isReady }}>
+    <DatabaseContext.Provider value={{ db, movieInteractions, matches, isReady }}>
       {children}
     </DatabaseContext.Provider>
   );
@@ -61,4 +66,9 @@ export function useDatabase() {
 export function useMovieInteractions() {
   const { movieInteractions, isReady } = useDatabase();
   return { movieInteractions, isReady };
+}
+
+export function useMatches() {
+  const { matches, isReady } = useDatabase();
+  return { matches, isReady };
 }

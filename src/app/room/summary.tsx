@@ -29,6 +29,7 @@ import MarathonTicket from "../../components/MarathonTicket";
 import { useLazyGetSummaryShareQuery } from "../../redux/movie/movieApi";
 import ReviewManager from "../../utils/rate";
 import * as StoreReview from "expo-store-review";
+import { useMatches } from "../../context/DatabaseContext";
 
 interface IMovieSummary {
   id: number;
@@ -101,12 +102,19 @@ export default function GameSummary() {
   const dispatch = useAppDispatch();
   const { socket, userId } = useContext(SocketContext);
   const t = useTranslation();
+  const { matches: matchesRepo } = useMatches();
 
   const [summary, setSummary] = useState<IGameSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [shareModalVisible, setShareModalVisible] = useState(false);
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    if (matchesRepo && roomId) {
+      matchesRepo.markSessionViewed(roomId);
+    }
+  }, [matchesRepo, roomId]);
 
   useEffect(() => {
     const fetchGameSummary = async () => {
@@ -147,6 +155,7 @@ export default function GameSummary() {
     dispatch(roomActions.reset());
     dispatch(reset());
 
+    router.dismissAll();
     router.replace("/");
   };
 
@@ -154,6 +163,7 @@ export default function GameSummary() {
     dispatch(roomActions.reset());
     dispatch(reset());
 
+    router.dismissAll();
     router.replace("/room/qr-code");
   };
 

@@ -42,6 +42,8 @@ const initialState = {
     dislikes: [] as Movie[],
 
     isRunning: false,
+
+    maxRounds: 0,
   },
 };
 
@@ -58,6 +60,7 @@ type SetRoomAction = {
     isStarted?: boolean;
     isGameFinished?: boolean;
     isRunning?: boolean;
+    maxRounds?: number;
     [key: string]: any; // Allow additional fields from backend
   };
 };
@@ -74,6 +77,8 @@ const roomSlice = createSlice({
         state.room.roomId = roomId;
         state.qrCode = roomId;
       }
+
+      if (payload.maxRounds) state.room.maxRounds = payload.maxRounds;
 
       if (payload.type) state.room.type = payload.type;
       if (payload.page !== undefined) state.room.page = payload.page;
@@ -195,7 +200,12 @@ const roomSlice = createSlice({
 
     appendMovies(state, { payload }: { payload: { movies: Movie[]; index?: number } }) {
       if (payload.movies.length !== 0) {
-        state.room.movies = removeDuplicateResults([...state.room.movies, ...payload.movies], "id");
+        const likedIds = new Set(state.room.likes.map((m) => m.id));
+        const dislikedIds = new Set(state.room.dislikes.map((m) => m.id));
+
+        const filteredMovies = payload.movies.filter((m) => !likedIds.has(m.id) && !dislikedIds.has(m.id));
+
+        state.room.movies = removeDuplicateResults([...state.room.movies, ...filteredMovies], "id");
         if (typeof payload.index === "number") {
           state.room.index = payload.index;
         }

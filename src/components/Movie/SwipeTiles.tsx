@@ -151,7 +151,7 @@ const SwipeTile = ({
         { rotate: `${rotate}deg` },
         { scale: position.value.scale },
       ],
-      top: height * (Platform.OS === "ios" ? 0.075 : 0.09),
+      top: height * (Platform.OS === "ios" ? 0.055 : 0.075),
     };
   });
 

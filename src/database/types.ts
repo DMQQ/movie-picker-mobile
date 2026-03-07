@@ -18,3 +18,22 @@ export interface MovieInteractionInsert {
   title?: string | null;
   poster_path?: string | null;
 }
+
+export interface StoredMatch {
+  id: number;
+  movie_id: number;
+  movie_type: MovieType;
+  title: string | null;
+  poster_path: string | null;
+  session_id: string;
+  viewed: number;
+  created_at: number;
+}
+
+export interface StoredMatchInsert {
+  movie_id: number;
+  movie_type: MovieType;
+  title?: string | null;
+  poster_path?: string | null;
+  session_id: string;
+}

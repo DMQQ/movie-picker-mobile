@@ -51,6 +51,11 @@
     "title": "Mamy pare!",
     "view-matches": "Wyświetl Dopasowania"
   },
+  "matches": {
+    "unviewed-title": "Masz dopasowania!",
+    "unviewed-subtitle": "Masz {count} dopasowań z ostatniej sesji",
+    "start-new-game": "Rozpocznij nową grę"
+  },
   "room": {
     "specialCategories": "Kategorie Specjalne",
     "loading": "Ładowanie pokoju...",

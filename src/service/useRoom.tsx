@@ -68,6 +68,9 @@ export default function useRoom() {
 
     return () => {
       emitter.off("reconnected", onReconnected);
+      if (attemptTimeout.current) {
+        clearTimeout(attemptTimeout.current);
+      }
     };
   }, [roomId, blockedReady, superLikedReady, joinGame, emitter, getBlockedIds, getSuperLikedIds, joined]);
   const initialCardsLength = useRef(0);
@@ -124,37 +127,39 @@ export default function useRoom() {
     };
   }, [socket?.on, socket?.id, roomId]);
 
-  useEffect(() => {
-    // Only attempt if playing, no cards, and socket exists
-    if (!isPlaying || cards.length > 0 || !socket) return;
+  // useEffect(() => {
+  //   // Only attempt if playing, no cards, and socket exists
+  //   if (!isPlaying || cards.length > 0 || !socket) return;
 
-    let attempts = 0;
-    const maxAttempts = 3;
-    const retryDelay = 1500;
-    let timeoutId: NodeJS.Timeout | null = null;
-    let cancelled = false;
+  //   console.log("Attempting to fetch movies for room:", roomId);
 
-    const attemptFetch = () => {
-      if (cancelled || attempts >= maxAttempts) {
-        if (attempts >= maxAttempts) {
-        }
-        return;
-      }
+  //   let attempts = 0;
+  //   const maxAttempts = 3;
+  //   const retryDelay = 1500;
+  //   let timeoutId: NodeJS.Timeout | null = null;
+  //   let cancelled = false;
 
-      attempts++;
+  //   const attemptFetch = () => {
+  //     if (cancelled || attempts >= maxAttempts) {
+  //       if (attempts >= maxAttempts) {
+  //       }
+  //       return;
+  //     }
 
-      socket?.emit("get-movies", roomId);
+  //     attempts++;
 
-      timeoutId = setTimeout(attemptFetch, retryDelay);
-    };
+  //     socket?.emit("get-movies", roomId);
 
-    attemptFetch();
+  //     timeoutId = setTimeout(attemptFetch, retryDelay);
+  //   };
 
-    return () => {
-      cancelled = true;
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [isPlaying, cards.length, roomId, socket]);
+  //   attemptFetch();
+
+  //   return () => {
+  //     cancelled = true;
+  //     if (timeoutId) clearTimeout(timeoutId);
+  //   };
+  // }, [isPlaying, cards.length, roomId, socket]);
 
   const removeCardLocally = useCallback(
     (id: number) => {

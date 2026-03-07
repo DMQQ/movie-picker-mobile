@@ -230,6 +230,20 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
             presentation: "modal",
           }}
         />
+
+        <Stack.Screen
+          name="unviewed-matches"
+          options={{
+            headerShown: false,
+            presentation: "formSheet",
+            gestureEnabled: false,
+            sheetGrabberVisible: false,
+            contentStyle: { backgroundColor: "transparent" },
+            sheetAllowedDetents: [0, 1], // 85% and 100%
+            sheetInitialDetentIndex: 0,
+            sheetLargestUndimmedDetentIndex: 0,
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );
