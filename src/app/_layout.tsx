@@ -19,7 +19,7 @@ import * as SplashScreen from "expo-splash-screen";
 
 import { enableFreeze } from "react-native-screens";
 
-enableFreeze(true);
+// enableFreeze(true);
 
 function getDeviceSettings() {
   const locales = Localization.getLocales();
@@ -27,7 +27,6 @@ function getDeviceSettings() {
   const deviceLocale = locales[0];
   const deviceCalendar = calendars[0];
 
-  // App UI language - only pl or en supported
   const language = deviceLocale?.languageCode === "pl" ? "pl" : "en";
   const regionCode = deviceLocale?.regionCode || "US";
   const languageTag = `${deviceLocale?.languageCode || "en"}-${regionCode || "US"}`;
@@ -236,10 +235,10 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
           options={{
             headerShown: false,
             presentation: "formSheet",
-            gestureEnabled: false,
+            gestureEnabled: true,
             sheetGrabberVisible: false,
             contentStyle: { backgroundColor: "transparent" },
-            sheetAllowedDetents: [0, 1], // 85% and 100%
+            sheetAllowedDetents: [0.7], // 70%
             sheetInitialDetentIndex: 0,
             sheetLargestUndimmedDetentIndex: 0,
           }}

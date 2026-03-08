@@ -155,8 +155,8 @@ export default function GameSummary() {
     dispatch(roomActions.reset());
     dispatch(reset());
 
-    router.dismissAll();
-    router.replace("/");
+    // TO CHECK
+    router.dismissTo("/");
   };
 
   const handleTryAgain = () => {

@@ -79,20 +79,18 @@ function TabLayout() {
       backgroundColor={"#000"}
       blurEffect="dark"
       backBehavior="none"
-      disableTransparentOnScrollEdge
-      minimizeBehavior="onScrollDown"
       shadowColor={"rgba(0,0,0,0.25)"}
       iconColor={MD2DarkTheme.colors.primary}
       indicatorColor={MD2DarkTheme.colors.primary}
       tintColor={MD2DarkTheme.colors.primary}
     >
-      <NativeTabs.Trigger name="favourites">
+      <NativeTabs.Trigger name="index">
         <Icon
           {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="bookmark" />, selectedColor: "#000" }
-            : { sf: "bookmark" })}
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="gamepad-variant" />, selectedColor: "#000" }
+            : { sf: "gamecontroller" })}
         />
-        <Label>{t("tabBar.favourites")}</Label>
+        <Label>{t("tabBar.games")}</Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="discover">
@@ -104,13 +102,13 @@ function TabLayout() {
         <Label>{t("tabBar.explore")}</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="index">
+      <NativeTabs.Trigger name="favourites">
         <Icon
           {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="gamepad-variant" />, selectedColor: "#000" }
-            : { sf: "gamecontroller" })}
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="bookmark" />, selectedColor: "#000" }
+            : { sf: "bookmark" })}
         />
-        <Label>{t("tabBar.games")}</Label>
+        <Label>{t("tabBar.favourites")}</Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="search" {...(Platform.OS === "ios" && { role: "search" })}>
