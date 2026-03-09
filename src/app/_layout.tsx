@@ -237,7 +237,7 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
             presentation: "formSheet",
             gestureEnabled: true,
             sheetGrabberVisible: false,
-            contentStyle: { backgroundColor: "transparent" },
+            contentStyle: { backgroundColor: MD2DarkTheme.colors.surface },
             sheetAllowedDetents: [0.7], // 70%
             sheetInitialDetentIndex: 0,
             sheetLargestUndimmedDetentIndex: 0,

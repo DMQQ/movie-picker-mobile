@@ -58,7 +58,7 @@ function UnviewedMatchesScreen() {
   const handlePlay = useCallback(() => {
     router.back();
     router.navigate({
-      pathname: "/room/setup",
+      pathname: "/room/qr-code",
       params: { quickStart: true },
     });
   }, []);
@@ -113,7 +113,9 @@ function UnviewedMatchesScreen() {
         />
       </View>
 
-      <View style={[styles.actions, { bottom: insets.bottom + 20 }]}>
+      <View style={{ flex: 1 }} />
+
+      <View style={[styles.actions, { paddingBottom: Platform.OS === "android" ? insets.bottom + 20 : 0 }]}>
         <Button mode="contained" onPress={handlePlay} style={styles.button} contentStyle={styles.buttonContent}>
           {t("matches.start-new-game")}
         </Button>
@@ -138,6 +140,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: MD2DarkTheme.colors.surface,
     padding: GRID_PADDING,
+    paddingBottom: 0,
   },
   closeButton: {
     position: "absolute",
@@ -168,13 +171,11 @@ const styles = StyleSheet.create({
     width: GRID_WIDTH,
   },
   actions: {
-    position: "absolute",
-    left: GRID_PADDING,
-    right: GRID_PADDING,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     gap: 8,
+    paddingTop: GRID_PADDING,
   },
   button: {
     borderRadius: 25,
