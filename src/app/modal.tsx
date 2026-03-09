@@ -6,6 +6,7 @@ import { SettingsResponse } from "../../types";
 import useTranslation from "../service/useTranslation";
 import { useAppSelector } from "../redux/store";
 import { useEffect } from "react";
+import useMaintenance from "../service/useMaintanance";
 
 type ModalType = "no-internet" | "server-error" | "maintenance" | "update";
 type IconName = "wifi-off" | "server-off" | "wrench" | "cellphone-arrow-down";
@@ -23,7 +24,7 @@ function ModalIcon({ name }: { name: IconName }) {
   );
 }
 
-function NoInternetContent({ onDismiss }: { onDismiss?: () => void }) {
+function NoInternetContent({ loading, onDismiss }: { loading?: boolean; onDismiss?: () => void }) {
   const t = useTranslation();
   return (
     <>
@@ -31,7 +32,7 @@ function NoInternetContent({ onDismiss }: { onDismiss?: () => void }) {
       <Text style={styles.title}>{t("status-modal.no-internet.title")}</Text>
       <Text style={styles.message}>{t("status-modal.no-internet.message")}</Text>
       {onDismiss && (
-        <Button mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
+        <Button loading={loading} mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
           {t("status-modal.retry")}
         </Button>
       )}
@@ -39,7 +40,7 @@ function NoInternetContent({ onDismiss }: { onDismiss?: () => void }) {
   );
 }
 
-function ServerErrorContent({ onDismiss }: { onDismiss?: () => void }) {
+function ServerErrorContent({ loading, onDismiss }: { loading?: boolean; onDismiss?: () => void }) {
   const t = useTranslation();
   return (
     <>
@@ -47,7 +48,7 @@ function ServerErrorContent({ onDismiss }: { onDismiss?: () => void }) {
       <Text style={styles.title}>{t("status-modal.server.title")}</Text>
       <Text style={styles.message}>{t("status-modal.server.message")}</Text>
       {onDismiss && (
-        <Button mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
+        <Button loading={loading} mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
           {t("status-modal.retry")}
         </Button>
       )}
@@ -55,7 +56,7 @@ function ServerErrorContent({ onDismiss }: { onDismiss?: () => void }) {
   );
 }
 
-function MaintenanceContent({ data, onDismiss }: { data: SettingsResponse; onDismiss?: () => void }) {
+function MaintenanceContent({ loading, data, onDismiss }: { loading?: boolean; data: SettingsResponse; onDismiss?: () => void }) {
   const t = useTranslation();
   const lang = useAppSelector((state) => state.room.language) || "en";
   const maintenance = data.maintenance!;
@@ -67,7 +68,7 @@ function MaintenanceContent({ data, onDismiss }: { data: SettingsResponse; onDis
       <Text style={styles.title}>{t("status-modal.maintenance.title")}</Text>
       <Text style={styles.message}>{serverMessage || t("status-modal.maintenance.message")}</Text>
       {onDismiss && (
-        <Button mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
+        <Button loading={loading} mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
           {t("status-modal.dismiss")}
         </Button>
       )}
@@ -75,7 +76,7 @@ function MaintenanceContent({ data, onDismiss }: { data: SettingsResponse; onDis
   );
 }
 
-function UpdateContent({ data, onDismiss }: { data: SettingsResponse; onDismiss?: () => void }) {
+function UpdateContent({ loading, data, onDismiss }: { loading?: boolean; data: SettingsResponse; onDismiss?: () => void }) {
   const t = useTranslation();
   const lang = useAppSelector((state) => state.room.language) || "en";
   const update = data.update!;
@@ -89,12 +90,25 @@ function UpdateContent({ data, onDismiss }: { data: SettingsResponse; onDismiss?
       <Text style={styles.message}>{serverMessage || t("status-modal.update.message")}</Text>
       <View style={styles.buttonContainer}>
         {link && (
-          <Button mode="contained" onPress={() => Linking.openURL(link)} style={styles.button} contentStyle={styles.buttonContent}>
+          <Button
+            loading={loading}
+            mode="contained"
+            onPress={() => Linking.openURL(link)}
+            style={styles.button}
+            contentStyle={styles.buttonContent}
+          >
             {t("status-modal.update-button")}
           </Button>
         )}
         {onDismiss && (
-          <Button mode="text" onPress={onDismiss} textColor="#888" style={styles.button} contentStyle={styles.buttonContent}>
+          <Button
+            loading={loading}
+            mode="text"
+            onPress={onDismiss}
+            textColor="#888"
+            style={styles.button}
+            contentStyle={styles.buttonContent}
+          >
             {t("status-modal.dismiss")}
           </Button>
         )}
@@ -108,8 +122,9 @@ export default function Modal() {
   const type = (params.type as ModalType) || "server-error";
   const dismissible = params.dismissible === "true";
   const data: SettingsResponse | null = params.data ? JSON.parse(params.data) : null;
+  const { retry, isRetrying } = useMaintenance(false);
 
-  const handleDismiss = dismissible ? () => router.back() : undefined;
+  const handleDismiss = dismissible ? () => router.back() : retry;
 
   useEffect(() => {
     const sub = BackHandler.addEventListener("hardwareBackPress", () => !dismissible);
@@ -119,11 +134,11 @@ export default function Modal() {
 
   return (
     <View style={styles.container}>
-      {type === "no-internet" && <NoInternetContent onDismiss={handleDismiss} />}
-      {type === "server-error" && <ServerErrorContent onDismiss={handleDismiss} />}
-      {type === "maintenance" && data && <MaintenanceContent data={data} onDismiss={handleDismiss} />}
-      {type === "update" && data && <UpdateContent data={data} onDismiss={handleDismiss} />}
-      {(type === "maintenance" || type === "update") && !data && <ServerErrorContent onDismiss={handleDismiss} />}
+      {type === "no-internet" && <NoInternetContent loading={isRetrying} onDismiss={handleDismiss} />}
+      {type === "server-error" && <ServerErrorContent loading={isRetrying} onDismiss={handleDismiss} />}
+      {type === "maintenance" && data && <MaintenanceContent loading={isRetrying} data={data} onDismiss={handleDismiss} />}
+      {type === "update" && data && <UpdateContent loading={isRetrying} data={data} onDismiss={handleDismiss} />}
+      {(type === "maintenance" || type === "update") && !data && <ServerErrorContent loading={isRetrying} onDismiss={handleDismiss} />}
     </View>
   );
 }
