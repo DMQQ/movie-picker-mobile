@@ -141,7 +141,7 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const LikedMoviesPreview = memo(() => {
   const { likes, dislikes, maxRounds } = useAppSelector((state) => state.room.room);
   const isPlaying = useAppSelector((state) => state.room.isPlaying);
-  const itemsToDisplay = useMemo(() => likes.toReversed().slice(0, 4), [likes]);
+  const itemsToDisplay = useMemo(() => likes.slice().reverse().slice(0, 4), [likes]);
   const hasMore = likes.length > 5;
 
   const swiped = likes.length + dislikes.length;

@@ -46,7 +46,7 @@ export default function useMaintenance(initialCheck = true) {
       };
 
       if (!hasInternet) {
-        return handleFailure("no-internet", "true");
+        return handleFailure("no-internet", "false");
       }
 
       try {
