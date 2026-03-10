@@ -137,7 +137,12 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
 
   useEffect(() => {
     const initializeApp = async () => {
-      if (!isLoaded || isUpdating || !dbReady || !movieInteractions) return;
+      if (!isLoaded || isUpdating) return;
+
+      if (!dbReady || !movieInteractions) {
+        await SplashScreen.hideAsync();
+        return;
+      }
 
       try {
         const [nickname] = await Promise.all([
