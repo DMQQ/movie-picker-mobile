@@ -3,7 +3,7 @@
     "platforms": ["ios", "android"],
     "name": "FlickMate",
     "slug": "qr-mobile",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon-dark.png",
     "userInterfaceStyle": "dark",
@@ -81,20 +81,28 @@
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202602150,
+      "versionCode": 202603013,
       "intentFilters": [
         {
           "action": "VIEW",
           "data": [
             {
-              "scheme": "https",
-              "host": "movie.dmqq.dev",
-              "pathPrefix": "/"
-            },
-
+              "scheme": "flickmate"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "data": [
             {
               "scheme": "https",
               "host": "flickmate.app",
+              "pathPrefix": "/"
+            },
+            {
+              "scheme": "https",
+              "host": "movie.dmqq.dev",
               "pathPrefix": "/"
             }
           ],
@@ -118,7 +126,7 @@
     "updates": {
       "url": "https://flickmate.app/api/manifest",
       "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 0,
+      "fallbackToCacheTimeout": 3000,
       "runtimeVersion": "5.0.0"
     }
   }
