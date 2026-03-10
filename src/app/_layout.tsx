@@ -1,8 +1,8 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as SecureStore from "expo-secure-store";
 import * as Localization from "expo-localization";
-import { Stack } from "expo-router";
-import { StrictMode, useEffect, useState } from "react";
+import { router, Stack } from "expo-router";
+import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -19,7 +19,7 @@ import * as SplashScreen from "expo-splash-screen";
 
 import { enableFreeze } from "react-native-screens";
 
-enableFreeze(true);
+// enableFreeze(true);
 
 function getDeviceSettings() {
   const locales = Localization.getLocales();
@@ -27,7 +27,6 @@ function getDeviceSettings() {
   const deviceLocale = locales[0];
   const deviceCalendar = calendars[0];
 
-  // App UI language - only pl or en supported
   const language = deviceLocale?.languageCode === "pl" ? "pl" : "en";
   const regionCode = deviceLocale?.regionCode || "US";
   const languageTag = `${deviceLocale?.languageCode || "en"}-${regionCode || "US"}`;
@@ -47,6 +46,7 @@ function getDeviceSettings() {
 
 import * as QuickActions from "expo-quick-actions";
 import OnboardingScreen from "./onboarding";
+import useMaintenance from "../service/useMaintanance";
 
 const theme = MD2DarkTheme;
 
@@ -133,6 +133,8 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
   const { movieInteractions, isReady: dbReady } = useMovieInteractions();
 
+  useMaintenance();
+
   useEffect(() => {
     const initializeApp = async () => {
       if (!isLoaded || isUpdating || !dbReady || !movieInteractions) return;
@@ -218,6 +220,29 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
 
         <Stack.Screen name="search-filters" options={{ headerShown: false }} />
+
+        <Stack.Screen
+          name="modal"
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            presentation: "modal",
+          }}
+        />
+
+        <Stack.Screen
+          name="unviewed-matches"
+          options={{
+            headerShown: false,
+            presentation: "formSheet",
+            gestureEnabled: true,
+            sheetGrabberVisible: false,
+            contentStyle: { backgroundColor: MD2DarkTheme.colors.surface },
+            sheetAllowedDetents: [0.7], // 70%
+            sheetInitialDetentIndex: 0,
+            sheetLargestUndimmedDetentIndex: 0,
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );

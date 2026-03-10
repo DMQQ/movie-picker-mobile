@@ -11,6 +11,7 @@ import useTranslation from "../../service/useTranslation";
 import { throttle } from "../../utils/throttle";
 import useRoomMatches from "../../service/useRoomMatches";
 import { roomActions } from "../../redux/room/roomSlice";
+import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import useRoomContext from "../../context/RoomContext";
@@ -78,11 +79,7 @@ export default function Home() {
             return;
           }
 
-          let timeout = setTimeout(() => {
-            dispatch(roomActions.setRoomId((params.roomId as string).toUpperCase()));
-          }, 1);
-
-          return () => clearTimeout(timeout);
+          dispatch(roomActions.setRoomId((params.roomId as string).toUpperCase()));
         } catch (error) {
           console.error("Failed to verify room:", error);
           setShowError(true);
@@ -211,6 +208,19 @@ export default function Home() {
 
   const isFocused = useIsFocused();
 
+  const handleLeaveRoom = useCallback(() => {
+    if (isHost) {
+      socket?.emit("end-game", roomId);
+      router.replace({
+        pathname: "/room/summary",
+        params: { roomId },
+      });
+    } else {
+      socket?.emit("leave-room", roomId);
+      router.replace("/");
+    }
+  }, [isHost, socket, roomId, dispatch]);
+
   useEffect(() => {
     if (!isFocused) return;
 
@@ -225,9 +235,7 @@ export default function Home() {
           },
           {
             text: t("common.yes") as string,
-            onPress: () => {
-              router.replace("/(tabs)");
-            },
+            onPress: handleLeaveRoom,
           },
         ],
         { userInterfaceStyle: "dark", cancelable: true },
@@ -237,7 +245,7 @@ export default function Home() {
     });
 
     return () => sub.remove();
-  }, [isFocused]);
+  }, [isFocused, handleLeaveRoom]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>

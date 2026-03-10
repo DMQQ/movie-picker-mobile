@@ -6,15 +6,24 @@ import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { createGroup, loadFavorites } from "../../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
-import { Link } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import Thumbnail from "../../components/Thumbnail";
 import UserInputModal from "../../components/UserInputModal";
 
 export default function Favourites() {
+  const params = useLocalSearchParams();
   const groups = useAppSelector((state) => state.favourite.groups);
   const dispatch = useAppDispatch();
   const t = useTranslation();
+
+  useEffect(() => {
+    if (params.scrollsToBottom) {
+      setTimeout(() => {
+        listRef.current?.scrollToEnd({ animated: true });
+      }, 200);
+    }
+  }, [params.scrollsToBottom]);
 
   useEffect(() => {
     dispatch(loadFavorites());

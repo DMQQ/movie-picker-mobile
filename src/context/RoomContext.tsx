@@ -3,7 +3,8 @@ import useRoom from "../service/useRoom";
 import { useBlockedMovies } from "../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
 import type { Movie } from "../../types";
-import { useDatabase } from "./DatabaseContext";
+import { useDatabase, useMatches } from "./DatabaseContext";
+import { useAppSelector } from "../redux/store";
 import { Platform } from "react-native";
 import ReviewManager from "../utils/rate";
 import * as StoreReview from "expo-store-review";
@@ -38,6 +39,8 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
   const room = useRoom();
   const { blockMovie, getBlockedIds, isReady: blockedReady } = useBlockedMovies();
   const { superLikeMovie, getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
+  const { matches: matchesRepo } = useMatches();
+  const usersCount = useAppSelector((state) => state.room.room.usersCount);
   const [joinError, setJoinError] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
   const hasJoined = useRef(false);
@@ -86,10 +89,29 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
 
   const { movieInteractions, isReady } = useDatabase();
 
+  // Wrap likeCard to save likes as matches when playing solo
+  const likeCard = useCallback(
+    async (card: Movie, index: number) => {
+      await room.likeCard(card, index);
+
+      // In solo play, likes are effectively matches
+      if (usersCount <= 1 && matchesRepo && room.roomId) {
+        matchesRepo.add({
+          movie_id: card.id,
+          movie_type: card.type || "movie",
+          title: card.title || card.name || null,
+          poster_path: card.poster_path || null,
+          session_id: room.roomId,
+        });
+      }
+    },
+    [room.likeCard, usersCount, matchesRepo, room.roomId],
+  );
+
   const superLikeAndLikeCard = useCallback(
     async (card: Movie, index: number) => {
       await superLikeMovie(card);
-      await room.likeCard(card, index);
+      await likeCard(card, index);
 
       if (isReady && movieInteractions)
         movieInteractions.canReview().then(async (canReview) => {
@@ -101,18 +123,19 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
           }
         });
     },
-    [superLikeMovie, room.likeCard, isReady],
+    [superLikeMovie, likeCard, isReady],
   );
 
   const value = useMemo(
     () => ({
       ...room,
+      likeCard,
       blockAndDislikeCard,
       superLikeAndLikeCard,
       joinError,
       isJoining,
     }),
-    [room, blockAndDislikeCard, superLikeAndLikeCard, joinError, isJoining],
+    [room, likeCard, blockAndDislikeCard, superLikeAndLikeCard, joinError, isJoining],
   );
 
   return <RoomContext.Provider value={value}>{children}</RoomContext.Provider>;

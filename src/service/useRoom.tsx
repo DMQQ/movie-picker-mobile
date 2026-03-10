@@ -13,7 +13,7 @@ export default function useRoom() {
   const attemptTimeout = useRef<number | null>(null);
   const { getBlockedIds, addDislikedMovie, isReady: blockedReady } = useBlockedMovies();
   const { getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
-
+  const joined = useAppSelector((state) => state.room.joined);
   const roomId = useAppSelector((state) => state.room.room.roomId);
   const nickname = useAppSelector((state) => state.room.nickname);
   const cards = useAppSelector((state) => state.room.room.movies);
@@ -39,7 +39,7 @@ export default function useRoom() {
   );
 
   useEffect(() => {
-    if (!roomId || !blockedReady || !superLikedReady || !socket) {
+    if (!roomId || !blockedReady || !superLikedReady || !socket || !joined) {
       return;
     }
     async function onReconnected(args: unknown, attempt = 0) {
@@ -68,8 +68,11 @@ export default function useRoom() {
 
     return () => {
       emitter.off("reconnected", onReconnected);
+      if (attemptTimeout.current) {
+        clearTimeout(attemptTimeout.current);
+      }
     };
-  }, [roomId, blockedReady, superLikedReady, joinGame, emitter, getBlockedIds, getSuperLikedIds]);
+  }, [roomId, blockedReady, superLikedReady, joinGame, emitter, getBlockedIds, getSuperLikedIds, joined]);
   const initialCardsLength = useRef(0);
 
   const setCards = useCallback((_movies: Movie[], index?: number) => {
@@ -124,37 +127,39 @@ export default function useRoom() {
     };
   }, [socket?.on, socket?.id, roomId]);
 
-  useEffect(() => {
-    // Only attempt if playing, no cards, and socket exists
-    if (!isPlaying || cards.length > 0 || !socket) return;
+  // useEffect(() => {
+  //   // Only attempt if playing, no cards, and socket exists
+  //   if (!isPlaying || cards.length > 0 || !socket) return;
 
-    let attempts = 0;
-    const maxAttempts = 3;
-    const retryDelay = 1500;
-    let timeoutId: NodeJS.Timeout | null = null;
-    let cancelled = false;
+  //   console.log("Attempting to fetch movies for room:", roomId);
 
-    const attemptFetch = () => {
-      if (cancelled || attempts >= maxAttempts) {
-        if (attempts >= maxAttempts) {
-        }
-        return;
-      }
+  //   let attempts = 0;
+  //   const maxAttempts = 3;
+  //   const retryDelay = 1500;
+  //   let timeoutId: NodeJS.Timeout | null = null;
+  //   let cancelled = false;
 
-      attempts++;
+  //   const attemptFetch = () => {
+  //     if (cancelled || attempts >= maxAttempts) {
+  //       if (attempts >= maxAttempts) {
+  //       }
+  //       return;
+  //     }
 
-      socket?.emit("get-movies", roomId);
+  //     attempts++;
 
-      timeoutId = setTimeout(attemptFetch, retryDelay);
-    };
+  //     socket?.emit("get-movies", roomId);
 
-    attemptFetch();
+  //     timeoutId = setTimeout(attemptFetch, retryDelay);
+  //   };
 
-    return () => {
-      cancelled = true;
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [isPlaying, cards.length, roomId, socket]);
+  //   attemptFetch();
+
+  //   return () => {
+  //     cancelled = true;
+  //     if (timeoutId) clearTimeout(timeoutId);
+  //   };
+  // }, [isPlaying, cards.length, roomId, socket]);
 
   const removeCardLocally = useCallback(
     (id: number) => {

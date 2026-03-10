@@ -10,10 +10,7 @@ import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 
 const isDev = envs.mode !== "production";
 
-export const baseUrl = isDev
-  ? "http://127.0.0.1:3000"
-  : //  "http://192.168.1.20:3000"
-    "https://flickmate.app";
+export const baseUrl = isDev ? (Platform.OS === "ios" ? "http://192.168.1.20:3000" : "http://10.0.2.2:3000") : "https://flickmate.app";
 export const url = baseUrl + "/api";
 
 export const SocketContext = React.createContext<{
@@ -165,8 +162,14 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
     };
   }, [language, regionalization]);
 
+  const isInitialConnection = useRef(true);
+
   useEffect(() => {
-    if (wasConnected.current && socket) {
+    if (socket && wasConnected.current) {
+      if (isInitialConnection.current) {
+        isInitialConnection.current = false;
+        return;
+      }
       emitter.emit("reconnected", true);
     }
   }, [socket]);

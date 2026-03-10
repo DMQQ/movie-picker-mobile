@@ -79,33 +79,21 @@ function TabLayout() {
       backgroundColor={"#000"}
       blurEffect="dark"
       backBehavior="none"
-      disableTransparentOnScrollEdge
-      minimizeBehavior="onScrollDown"
       shadowColor={"rgba(0,0,0,0.25)"}
       iconColor={MD2DarkTheme.colors.primary}
       indicatorColor={MD2DarkTheme.colors.primary}
       tintColor={MD2DarkTheme.colors.primary}
     >
-      <NativeTabs.Trigger
-        name="favourites"
-        options={{
-          title: "Favourites",
-        }}
-      >
+      <NativeTabs.Trigger name="index">
         <Icon
           {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="bookmark" />, selectedColor: "#000" }
-            : { sf: "bookmark" })}
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="gamepad-variant" />, selectedColor: "#000" }
+            : { sf: "gamecontroller" })}
         />
-        <Label>{t("tabBar.favourites")}</Label>
+        <Label>{t("tabBar.games")}</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger
-        name="discover"
-        options={{
-          title: "Home",
-        }}
-      >
+      <NativeTabs.Trigger name="discover">
         <Icon
           {...(Platform.OS === "android"
             ? { src: <VectorIcon family={MaterialCommunityIcons} name="movie-check" />, selectedColor: "#000" }
@@ -114,18 +102,13 @@ function TabLayout() {
         <Label>{t("tabBar.explore")}</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger
-        name="index"
-        options={{
-          title: "Games",
-        }}
-      >
+      <NativeTabs.Trigger name="favourites">
         <Icon
           {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="gamepad-variant" />, selectedColor: "#000" }
-            : { sf: "gamecontroller" })}
+            ? { src: <VectorIcon family={MaterialCommunityIcons} name="bookmark" />, selectedColor: "#000" }
+            : { sf: "bookmark" })}
         />
-        <Label>{t("tabBar.games")}</Label>
+        <Label>{t("tabBar.favourites")}</Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="search" {...(Platform.OS === "ios" && { role: "search" })}>
@@ -137,12 +120,7 @@ function TabLayout() {
         <Label>{t("tabBar.search")}</Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger
-        name="settings"
-        options={{
-          title: "Settings",
-        }}
-      >
+      <NativeTabs.Trigger name="settings">
         <Icon
           {...(Platform.OS === "android"
             ? { src: <VectorIcon family={FontAwesome} name="gear" />, selectedColor: "#000" }

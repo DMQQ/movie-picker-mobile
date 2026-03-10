@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { Appbar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
-import Animated, { FadeIn, LinearTransition, SlideInRight } from "react-native-reanimated";
+import Animated, { FadeIn, LinearTransition, SlideInRight, useAnimatedProps, useSharedValue, withSpring } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import { useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../context/SocketContext";
@@ -15,6 +15,9 @@ import { router } from "expo-router";
 import { Image } from "expo-image";
 import RateAppPill from "../RateAppPill";
 import ReviewManager from "../../utils/rate";
+import Svg, { Circle } from "react-native-svg";
+
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 interface HomeAppbarProps {
   roomId: string;
@@ -130,39 +133,97 @@ function HomeAppbar({ roomId, hasCards }: HomeAppbarProps) {
 
 export default memo(HomeAppbar);
 
+const CIRCLE_SIZE = 58;
+const STROKE_WIDTH = 2;
+const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
 const LikedMoviesPreview = memo(() => {
-  const likes = useAppSelector((state) => state.room.room.likes);
-  const itemsToDisplay = useMemo(() => likes.toReversed().slice(0, 4), [likes]);
+  const { likes, dislikes, maxRounds } = useAppSelector((state) => state.room.room);
+  const isPlaying = useAppSelector((state) => state.room.isPlaying);
+  const itemsToDisplay = useMemo(() => likes.slice().reverse().slice(0, 4), [likes]);
   const hasMore = likes.length > 5;
+
+  const swiped = likes.length + dislikes.length;
+  const total = maxRounds * 20;
+  const progress = useSharedValue(0);
+  const theme = useTheme();
+
+  useEffect(() => {
+    if (total > 0) {
+      progress.value = withSpring(Math.min(swiped / total, 1), {
+        damping: 15,
+        stiffness: 100,
+      });
+    }
+  }, [swiped, total]);
+
+  const animatedProps = useAnimatedProps(() => ({
+    strokeDashoffset: CIRCUMFERENCE * (1 - progress.value),
+  }));
+
+  const showProgress = isPlaying && maxRounds > 0;
 
   return (
     <Pressable onPress={() => router.navigate("/room/overview")}>
-      <Animated.View style={styles.likedContainer}>
-        {itemsToDisplay.length === 0 ? (
-          <PlaceholderStack />
-        ) : (
-          itemsToDisplay.map((movie, index) => (
-            <Animated.View
-              entering={SlideInRight.delay(index * 50)}
-              key={`display-${movie.id}`}
-              style={[
-                styles.stackedCard,
-                {
-                  transform: [{ translateX: (index + 1) * 10 }, { rotate: `${(index - 1) * 5}deg` }],
-                  zIndex: itemsToDisplay.length - index,
-                },
-              ]}
-            >
-              <LikedMovieImage movie={movie} />
-            </Animated.View>
-          ))
+      <View style={styles.likedWrapper}>
+        {showProgress && (
+          <>
+            <Svg width={CIRCLE_SIZE} height={CIRCLE_SIZE} style={styles.circularProgress}>
+              <Circle
+                cx={CIRCLE_SIZE / 2}
+                cy={CIRCLE_SIZE / 2}
+                r={RADIUS}
+                stroke="rgba(255,255,255,0.08)"
+                strokeWidth={STROKE_WIDTH}
+                fill="transparent"
+              />
+              <AnimatedCircle
+                cx={CIRCLE_SIZE / 2}
+                cy={CIRCLE_SIZE / 2}
+                r={RADIUS}
+                stroke={theme.colors.primary}
+                strokeWidth={STROKE_WIDTH}
+                fill="transparent"
+                strokeDasharray={CIRCUMFERENCE}
+                strokeLinecap="round"
+                animatedProps={animatedProps}
+                transform={`rotate(-90 ${CIRCLE_SIZE / 2} ${CIRCLE_SIZE / 2})`}
+                opacity={0.6}
+              />
+            </Svg>
+            <Text style={styles.progressLabel}>
+              {swiped}/{total}
+            </Text>
+          </>
         )}
-        {hasMore && (
-          <View style={styles.moreIndicator}>
-            <Text style={styles.moreText}>+{likes.length - 5}</Text>
-          </View>
-        )}
-      </Animated.View>
+        <Animated.View style={styles.likedContainer}>
+          {itemsToDisplay.length === 0 ? (
+            <PlaceholderStack />
+          ) : (
+            itemsToDisplay.map((movie, index) => (
+              <Animated.View
+                entering={SlideInRight.delay(index * 50)}
+                key={`display-${movie.id}`}
+                style={[
+                  styles.stackedCard,
+                  {
+                    transform: [{ translateX: (index - 1) * 4 }, { rotate: `${(index - 1) * 4}deg` }],
+                    zIndex: itemsToDisplay.length - index,
+                  },
+                ]}
+              >
+                <LikedMovieImage movie={movie} />
+              </Animated.View>
+            ))
+          )}
+          {hasMore && (
+            <View style={styles.moreIndicator}>
+              <Text style={styles.moreText}>+{likes.length - 5}</Text>
+            </View>
+          )}
+        </Animated.View>
+      </View>
     </Pressable>
   );
 });
@@ -172,8 +233,8 @@ const LikedMovieImage = memo(({ movie }: { movie: Movie }) => {
 
   return (
     <View style={styles.imageWrapper}>
-      <MaterialCommunityIcons name="movie-outline" size={16} color="rgba(255,255,255,0.2)" style={styles.imagePlaceholderIcon} />
-      <Image style={styles.likedImage} cachePolicy="memory" source={{ uri, width: 32, height: 48 }} transition={150} />
+      <MaterialCommunityIcons name="movie-outline" size={12} color="rgba(255,255,255,0.2)" style={styles.imagePlaceholderIcon} />
+      <Image style={styles.likedImage} cachePolicy="memory" source={{ uri, width: 24, height: 36 }} transition={150} />
     </View>
   );
 });
@@ -188,12 +249,12 @@ const PlaceholderStack = memo(() => (
           styles.stackedCard,
           styles.placeholderCard,
           {
-            transform: [{ translateX: (index + 1) * 10 }, { rotate: `${(index - 1) * 3}deg` }],
+            transform: [{ translateX: (index - 1) * 4 }, { rotate: `${(index - 1) * 4}deg` }],
             zIndex: 3 - index,
           },
         ]}
       >
-        <MaterialCommunityIcons name="movie-outline" size={18} color="rgba(255,255,255,0.2)" />
+        <MaterialCommunityIcons name="movie-outline" size={12} color="rgba(255,255,255,0.2)" />
       </Animated.View>
     ))}
   </>
@@ -226,25 +287,26 @@ const styles = StyleSheet.create({
   likedContainer: {
     flexDirection: "row",
     alignItems: "center",
-    height: 52,
-    width: 80,
+    justifyContent: "center",
+    height: CIRCLE_SIZE,
+    width: CIRCLE_SIZE,
+    marginTop: -5,
   },
   stackedCard: {
     position: "absolute",
-    borderRadius: 6,
+    borderRadius: 4,
     overflow: "hidden",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 4,
-    right: 40,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    elevation: 3,
   },
   imageWrapper: {
-    width: 32,
-    height: 48,
+    width: 24,
+    height: 36,
     backgroundColor: MD2DarkTheme.colors.surface,
-    borderRadius: 6,
+    borderRadius: 4,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -252,15 +314,15 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   likedImage: {
-    width: 32,
-    height: 48,
-    borderRadius: 6,
+    width: 24,
+    height: 36,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
   placeholderCard: {
-    width: 32,
-    height: 48,
+    width: 24,
+    height: 36,
     backgroundColor: MD2DarkTheme.colors.surface,
     justifyContent: "center",
     alignItems: "center",
@@ -269,16 +331,16 @@ const styles = StyleSheet.create({
   },
   moreIndicator: {
     position: "absolute",
-    right: 0,
-    bottom: 15,
+    right: 8,
+    bottom: 8,
     backgroundColor: MD2DarkTheme.colors.surface,
-    borderRadius: 10,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    borderRadius: 8,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
     zIndex: 100,
   },
   moreText: {
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: "bold",
     color: "#fff",
   },
@@ -288,5 +350,22 @@ const styles = StyleSheet.create({
     transform: [{ translateX: "-50%" }],
     justifyContent: "center",
     alignItems: "center",
+  },
+  likedWrapper: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: CIRCLE_SIZE + 10,
+    height: CIRCLE_SIZE,
+  },
+  circularProgress: {
+    position: "absolute",
+    top: 0,
+  },
+  progressLabel: {
+    position: "absolute",
+    bottom: -10,
+    fontSize: 8,
+    color: "rgba(255,255,255,0.4)",
+    fontWeight: "600",
   },
 });

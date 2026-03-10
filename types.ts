@@ -91,3 +91,53 @@ export interface Episode {
 
   vote_count: number;
 }
+
+interface InternalizedLabel {
+  language: "pl" | "en";
+
+  value: string;
+}
+
+export interface SettingsResponse {
+  update: {
+    available: {
+      version: string;
+
+      ios: boolean;
+
+      android: boolean;
+
+      dismissible: boolean;
+    };
+
+    links?: {
+      ios: string;
+      android: string;
+    };
+
+    message?: InternalizedLabel[];
+  };
+
+  maintenance?: {
+    available: {
+      android: boolean;
+
+      ios: boolean;
+    };
+    message?: InternalizedLabel[];
+
+    links?: InternalizedLabel[];
+
+    dismissible?: boolean;
+  };
+
+  server?: {
+    status: "ok" | "degraded" | "maintenance";
+
+    message?: InternalizedLabel[];
+
+    links?: InternalizedLabel[];
+
+    dismissible?: boolean;
+  };
+}

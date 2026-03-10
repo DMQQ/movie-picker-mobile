@@ -4,14 +4,14 @@ import { roomActions } from "../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { SocketContext } from "../context/SocketContext";
 import { useIsFocused } from "@react-navigation/native";
-import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
-import { useMovieInteractions } from "../context/DatabaseContext";
+import { useMovieInteractions, useMatches } from "../context/DatabaseContext";
 
 export default function useRoomMatches(room: string) {
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
   const isFocused = useIsFocused();
   const { movieInteractions, isReady } = useMovieInteractions();
+  const { matches: matchesRepo } = useMatches();
 
   const match = useAppSelector((st) => st.room.room.match);
 
@@ -27,8 +27,18 @@ export default function useRoomMatches(room: string) {
 
       setMatch(matchWithSuperLike);
       dispatch(roomActions.addMatch(matchWithSuperLike));
+
+      if (matchesRepo && room) {
+        matchesRepo.add({
+          movie_id: data.id,
+          movie_type: data.type || "movie",
+          title: data.title || data.name || null,
+          poster_path: data.poster_path || null,
+          session_id: room,
+        });
+      }
     },
-    [isReady],
+    [isReady, matchesRepo, room],
   );
 
   const hideMatchModal = useCallback(() => {

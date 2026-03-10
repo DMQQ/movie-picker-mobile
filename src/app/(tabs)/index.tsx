@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { IconButton, Text, TouchableRipple } from "react-native-paper";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
@@ -11,6 +11,7 @@ import SwiperAnimation from "../../components/GameListAnimations/SwipeAnimation"
 import VoterAnimation from "../../components/GameListAnimations/VoterAnimation";
 import RandomMovieAnimation from "../../components/GameListAnimations/RandomMovieAnimation";
 import PageHeading from "../../components/PageHeading";
+import { useUnviewedMatches } from "../../hooks/useUnviewedMatches";
 
 const CARD_HEIGHT = 280;
 
@@ -68,6 +69,7 @@ const GameCard = ({ title, description, onPress, beta, players, duration, index 
 
 export default function GameList() {
   const t = useTranslation();
+  useUnviewedMatches();
 
   const games = useMemo(
     () => [
@@ -113,6 +115,10 @@ export default function GameList() {
     [t],
   );
 
+  const handleGamePress = useCallback((route: string) => {
+    router.push(route as any);
+  }, []);
+
   return (
     <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000", paddingBottom: 15 }}>
       <PageHeading
@@ -132,13 +138,13 @@ export default function GameList() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 60, paddingBottom: 50 }}
       >
-        {games.map((game, index) => (
+        {games.map((game) => (
           <GameCard
             index={game.index}
             key={game.index}
             title={game.title as string}
             description={game.description as string}
-            onPress={() => router.navigate(game.route as any)}
+            onPress={() => handleGamePress(game.route)}
             beta={game.beta}
             players={game.players}
             duration={game.duration}

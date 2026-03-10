@@ -51,6 +51,11 @@
     "title": "It's a match!",
     "view-matches": "View Matches"
   },
+  "matches": {
+    "unviewed-title": "You have matches!",
+    "unviewed-subtitle": "You have {count} matches from your last session",
+    "start-new-game": "Start New Game"
+  },
   "room": {
     "specialCategories": "Special Categories",
     "loading": "Loading room...",
@@ -602,6 +607,27 @@
   },
   "rate-app": {
     "prompt": "Enjoying the app? Rate us!"
+  },
+  "status-modal": {
+    "no-internet": {
+      "title": "No Internet",
+      "message": "Please check your internet connection and try again."
+    },
+    "maintenance": {
+      "title": "Maintenance",
+      "message": "We're performing maintenance. Please try again later."
+    },
+    "update": {
+      "title": "Update Available",
+      "message": "A new version is available. Please update the app to continue."
+    },
+    "server": {
+      "title": "Server Issue",
+      "message": "We're experiencing issues. Please try again later."
+    },
+    "retry": "Retry",
+    "update-button": "Update",
+    "dismiss": "Dismiss"
   },
   "ticket": {
     "unknown-movie": "Unknown Movie",

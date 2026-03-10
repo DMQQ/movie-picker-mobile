@@ -1,22 +1,44 @@
 import { FontAwesome } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Keyboard, Pressable, View } from "react-native";
-import { Button, Dialog, MD2DarkTheme, Portal, Text, TextInput } from "react-native-paper";
+import { MD2DarkTheme, Text, TextInput } from "react-native-paper";
 import { createGroupFromArray } from "../redux/favourites/favourites";
 import { useAppDispatch } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 import { router } from "expo-router";
+import UserInputModal from "./UserInputModal";
 
 interface CreateCollectionFromLikedProps {
   data: any[];
+
+  beforeCreate?: () => void;
 }
 
-export default function CreateCollectionFromLiked({ data }: CreateCollectionFromLikedProps) {
+export default function CreateCollectionFromLiked({ data, beforeCreate }: CreateCollectionFromLikedProps) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [text, setText] = useState("");
   const dispatch = useAppDispatch();
   const t = useTranslation();
+
+  const handleCreate = () => {
+    if (text && data.length > 0) {
+      beforeCreate?.();
+      dispatch(
+        createGroupFromArray({
+          movies: data,
+          name: text.trim(),
+        }),
+      );
+      setModalVisible(false);
+      setText("");
+      router.navigate({
+        pathname: "/(tabs)/favourites",
+        params: {
+          scrollsToBottom: true,
+        },
+      });
+    }
+  };
 
   return (
     <>
@@ -38,7 +60,6 @@ export default function CreateCollectionFromLiked({ data }: CreateCollectionFrom
             style={{
               color: MD2DarkTheme.colors.primary,
               fontWeight: "bold",
-
               fontSize: 14,
             }}
           >
@@ -47,45 +68,34 @@ export default function CreateCollectionFromLiked({ data }: CreateCollectionFrom
         </View>
       </Pressable>
 
-      <Portal>
-        <Dialog
-          dismissableBackButton
-          visible={isModalVisible}
-          onDismiss={() => setModalVisible(false)}
-          style={{ backgroundColor: MD2DarkTheme.colors.surface }}
-        >
-          <Dialog.Title>{t("create-collection.title")}</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              onSubmitEditing={() => Keyboard.dismiss()}
-              value={text}
-              onChangeText={setText}
-              label={t("create-collection.input-label")}
-              mode="outlined"
-            />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setModalVisible(false)}>{t("create-collection.cancel")}</Button>
-            <Button
-              onPress={() => {
-                if (text && data.length > 0) {
-                  dispatch(
-                    createGroupFromArray({
-                      movies: data,
-                      name: text.trim(),
-                    })
-                  );
-                  setModalVisible(false);
-                  setText("");
-                  router.navigate("/favourites");
-                }
-              }}
-            >
-              {t("create-collection.create")}
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      <UserInputModal
+        visible={isModalVisible}
+        onDismiss={() => setModalVisible(false)}
+        dismissable
+        title={t("create-collection.title") as string}
+        actions={[
+          {
+            label: t("create-collection.create") as string,
+            onPress: handleCreate,
+            mode: "contained",
+            disabled: !text.trim(),
+          },
+          {
+            label: t("create-collection.cancel") as string,
+            onPress: () => setModalVisible(false),
+            mode: "text",
+          },
+        ]}
+      >
+        <TextInput
+          onSubmitEditing={() => Keyboard.dismiss()}
+          value={text}
+          onChangeText={setText}
+          label={t("create-collection.input-label")}
+          mode="outlined"
+          style={{ backgroundColor: "transparent" }}
+        />
+      </UserInputModal>
     </>
   );
 }
