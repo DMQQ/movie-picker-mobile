@@ -16,6 +16,12 @@ function ensureSQLiteDirectory(): void {
     console.log("[DB] Removing conflicting file at SQLite path");
     asFile.delete();
   }
+
+  // Ensure the SQLite directory exists
+  if (!asDir.exists) {
+    console.log("[DB] Creating SQLite directory");
+    asDir.create();
+  }
 }
 
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {

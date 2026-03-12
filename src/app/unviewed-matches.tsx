@@ -138,7 +138,7 @@ export default memo(UnviewedMatchesScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: Platform.OS === "android" ? MD2DarkTheme.colors.surface : "transparent",
     padding: GRID_PADDING,
     paddingBottom: 0,
   },

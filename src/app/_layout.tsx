@@ -3,6 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import * as Localization from "expo-localization";
 import { router, Stack } from "expo-router";
 import { useEffect, useState } from "react";
+import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -140,7 +141,6 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
       if (!isLoaded || isUpdating) return;
 
       if (!dbReady || !movieInteractions) {
-        await SplashScreen.hideAsync();
         return;
       }
 
@@ -242,7 +242,7 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
             presentation: "formSheet",
             gestureEnabled: true,
             sheetGrabberVisible: false,
-            contentStyle: { backgroundColor: MD2DarkTheme.colors.surface },
+            contentStyle: { backgroundColor: Platform.OS === "android" ? MD2DarkTheme.colors.surface : "transparent" },
             sheetAllowedDetents: [0.7], // 70%
             sheetInitialDetentIndex: 0,
             sheetLargestUndimmedDetentIndex: 0,
