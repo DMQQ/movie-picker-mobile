@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { View } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import PageHeading from "../../components/PageHeading";
 import StepContainer from "../../components/Room/StepContainer";
 import Step1GameType from "../../components/Room/BuilderSteps/Step1GameType";
@@ -11,13 +11,22 @@ import Step5Duration from "../../components/Room/BuilderSteps/Step5Duration";
 import CircularStepProgress from "../../components/Room/BuilderSteps/CircularStepProgress";
 import useTranslation from "../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { goBack, reset } from "../../redux/roomBuilder/roomBuilderSlice";
+import {
+  goBack,
+  goToStep,
+  reset,
+} from "../../redux/roomBuilder/roomBuilderSlice";
 
 export default function RoomSetup() {
   const t = useTranslation();
   const dispatch = useAppDispatch();
+  const { step } = useLocalSearchParams<{ step?: string }>();
 
   useEffect(() => {
+    if (step) {
+      const parsed = parseInt(step, 10);
+      if (!isNaN(parsed)) dispatch(goToStep(parsed));
+    }
     return () => {
       dispatch(reset());
     };
@@ -60,7 +69,7 @@ export default function RoomSetup() {
     if (currentStep > 1) {
       dispatch(goBack());
     } else {
-      router.back();
+      router.replace("/(tabs)");
     }
   }, [currentStep, dispatch]);
 
@@ -77,7 +86,11 @@ export default function RoomSetup() {
         <CircularStepProgress currentStep={currentStep} totalSteps={5} />
       </PageHeading>
 
-      <StepContainer currentStep={currentStep} isLastStep={currentStep === 5} footerSubtitle={getStepSubtitle()}>
+      <StepContainer
+        currentStep={currentStep}
+        isLastStep={currentStep === 5}
+        footerSubtitle={getStepSubtitle()}
+      >
         {renderStep}
       </StepContainer>
     </View>

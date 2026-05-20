@@ -29,6 +29,14 @@ export default function Unmatched() {
       return;
     }
 
+    if (url.startsWith("create-room")) {
+      router.replace({
+        pathname: "/room/qr-code",
+        params: { quickStart: "true" },
+      });
+      return;
+    }
+
     // Default fallback - redirect to home
     router.replace("/");
   }, [params]);

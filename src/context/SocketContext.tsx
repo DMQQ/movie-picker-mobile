@@ -3,14 +3,22 @@ import * as Updates from "expo-updates";
 import React, { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
 import { useSelector } from "react-redux";
-import socketIOClient, { ManagerOptions, Socket, SocketOptions } from "socket.io-client";
+import socketIOClient, {
+  ManagerOptions,
+  Socket,
+  SocketOptions,
+} from "socket.io-client";
 import envs from "../constants/envs";
 import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 
-const isDev = envs.mode !== "production";
+const isDev = false; //envs.mode !== "production";
 
-export const baseUrl = isDev ? (Platform.OS === "ios" ? "http://192.168.1.20:3000" : "http://10.0.2.2:3000") : "https://flickmate.app";
+export const baseUrl = isDev
+  ? Platform.OS === "ios"
+    ? "http://192.168.1.20:3000"
+    : "http://10.0.2.2:3000"
+  : "https://flickmate.app";
 export const url = baseUrl + "/api";
 
 export const SocketContext = React.createContext<{
@@ -42,7 +50,10 @@ const connectionConfig = {
   pingTimeout: 2500,
 } as Partial<ManagerOptions & SocketOptions>;
 
-const makeHeaders = (appLanguage: string, regionalization: Record<string, string> = {}) => {
+const makeHeaders = (
+  appLanguage: string,
+  regionalization: Record<string, string> = {},
+) => {
   const headers = new Map<string, string>();
   const userLanguage = appLanguage === "pl" ? "pl-PL" : "en-US";
 
@@ -67,9 +78,16 @@ const makeHeaders = (appLanguage: string, regionalization: Record<string, string
   return Object.fromEntries(headers);
 };
 
-export const SocketProvider = ({ children, namespace }: { children: React.ReactNode; namespace: "/swipe" | "/voter" }) => {
+export const SocketProvider = ({
+  children,
+  namespace,
+}: {
+  children: React.ReactNode;
+  namespace: "/swipe" | "/voter";
+}) => {
   const language = useSelector((st: RootState) => st.room.language);
-  const regionalization = useSelector((st: RootState) => st.room.regionalization) || {};
+  const regionalization =
+    useSelector((st: RootState) => st.room.regionalization) || {};
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const appState = useRef(AppState.currentState);
@@ -82,7 +100,9 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
 
   const initializeSocket = async () => {
     try {
-      const userId = (await AsyncStorage.getItem("userId")) || Math.random().toString(36).substring(7);
+      const userId =
+        (await AsyncStorage.getItem("userId")) ||
+        Math.random().toString(36).substring(7);
       await AsyncStorage.setItem("userId", userId);
 
       setUserId(userId);
@@ -132,7 +152,10 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   };
 
   const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-    if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
       reconnect();
     }
     appState.current = nextAppState;
@@ -141,7 +164,10 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
   useEffect(() => {
     initializeSocket();
 
-    const subscription = AppState.addEventListener("change", handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange,
+    );
 
     return () => {
       subscription.remove();
@@ -182,7 +208,14 @@ export const SocketProvider = ({ children, namespace }: { children: React.ReactN
     }
   };
 
-  const memoizedValue = React.useMemo(() => ({ socket, reconnect, emitter, userId }), [socket, userId]);
+  const memoizedValue = React.useMemo(
+    () => ({ socket, reconnect, emitter, userId }),
+    [socket, userId],
+  );
 
-  return <SocketContext.Provider value={memoizedValue}>{children}</SocketContext.Provider>;
+  return (
+    <SocketContext.Provider value={memoizedValue}>
+      {children}
+    </SocketContext.Provider>
+  );
 };

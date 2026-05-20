@@ -18,6 +18,13 @@ export async function handleNativeIntent(url: string): Promise<string | undefine
       });
       return "/voter/[sessionId]";
 
+    case "create-room":
+      router.push({
+        pathname: "/room/qr-code",
+        params: { quickStart: "true" },
+      });
+      return "/room/qr-code";
+
     default:
       return undefined;
   }

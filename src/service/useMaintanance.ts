@@ -20,8 +20,7 @@ export default function useMaintenance(initialCheck = true) {
 
   const checkSettings = useCallback(
     async (manual = false): Promise<MaintenanceCheckResult> => {
-      const isManualRetry = manual || !initialCheck;
-      if (isManualRetry) {
+      if (manual) {
         setIsRetrying(true);
       }
 
@@ -32,7 +31,7 @@ export default function useMaintenance(initialCheck = true) {
         dismissible: string,
         data?: SettingsResponse,
       ) => {
-        if (!isManualRetry) {
+        if (initialCheck && !manual) {
           if (!hasNavigated.current) {
             hasNavigated.current = true;
             router.push({
@@ -41,7 +40,7 @@ export default function useMaintenance(initialCheck = true) {
             });
           }
         }
-        if (isManualRetry) setIsRetrying(false);
+        if (manual) setIsRetrying(false);
         return { success: false, type, data };
       };
 
@@ -75,7 +74,7 @@ export default function useMaintenance(initialCheck = true) {
         }
 
         hasNavigated.current = false;
-        if (isManualRetry) setIsRetrying(false);
+        if (manual) setIsRetrying(false);
         return { success: true };
       } catch {
         return handleFailure("server-error", "false");
@@ -87,7 +86,8 @@ export default function useMaintenance(initialCheck = true) {
   useEffect(() => {
     if (isConnected === null) return;
     checkSettings(false);
-  }, [isConnected, checkSettings]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected]);
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {

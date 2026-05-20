@@ -17,7 +17,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "FlickMate uses your camera to scan QR codes for joining movie games. You can also join manually without camera access."
+          "cameraPermission": "FlickMate uses your camera to scan QR codes for joining movie games. You can also join manually without camera access.",
+          "microphonePermission": false
         }
       ],
       [
@@ -60,7 +61,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
-      "buildNumber": "20260311",
+      "buildNumber": "20260520",
       "supportsTablet": true,
       "icon": "./assets/images/icon.icon",
       "infoPlist": {
@@ -81,7 +82,7 @@
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202603015,
+      "versionCode": 202605201,
       "intentFilters": [
         {
           "action": "VIEW",
@@ -98,11 +99,6 @@
             {
               "scheme": "https",
               "host": "flickmate.app",
-              "pathPrefix": "/"
-            },
-            {
-              "scheme": "https",
-              "host": "movie.dmqq.dev",
               "pathPrefix": "/"
             }
           ],
@@ -126,7 +122,7 @@
     "updates": {
       "url": "https://flickmate.app/api/manifest",
       "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 3000,
+      "fallbackToCacheTimeout": 1000,
       "runtimeVersion": "5.0.0"
     }
   }

@@ -19,10 +19,10 @@ const Step1GameType: React.FC = () => {
           id: categoryId,
           path: categoryPath,
           type: gameType,
-        })
+        }),
       );
     },
-    [dispatch]
+    [dispatch],
   );
 
   return (
@@ -42,7 +42,7 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
   const t = useTranslation();
   const selectedCategoryId = useAppSelector((state) => state.builder.categoryId);
   const movieScrollX = useSharedValue(0);
-  const { data: movieCategories, isLoading: moviesLoading } = useGetMovieCategoriesWithThumbnailsQuery();
+  const { data: movieCategories, isLoading: moviesLoading, error } = useGetMovieCategoriesWithThumbnailsQuery();
 
   // Pre-select first movie category as default
   useEffect(() => {
