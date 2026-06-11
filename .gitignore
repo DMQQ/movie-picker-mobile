@@ -39,7 +39,7 @@ eas.json
 .env
 android
 
-ios 
+ios
 android
 
 build-*
@@ -48,3 +48,8 @@ build-*
 
 expo-env.d.ts
 # @end expo-cliios/.xcode.env.local
+
+
+graphify-out
+
+*.rdb

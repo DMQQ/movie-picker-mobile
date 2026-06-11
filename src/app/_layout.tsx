@@ -1,7 +1,6 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as SecureStore from "expo-secure-store";
-import * as Localization from "expo-localization";
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -13,41 +12,18 @@ import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
-import { DatabaseProvider, useMovieInteractions } from "../context/DatabaseContext";
+import {
+  DatabaseProvider,
+  useMovieInteractions,
+} from "../context/DatabaseContext";
 import { loadInteractions } from "../redux/movieInteractions/movieInteractionsSlice";
 import { loadFilterPreferences } from "../redux/filterPreferences/filterPreferencesSlice";
 import * as SplashScreen from "expo-splash-screen";
 
-import { enableFreeze } from "react-native-screens";
-
-// enableFreeze(true);
-
-function getDeviceSettings() {
-  const locales = Localization.getLocales();
-  const calendars = Localization.getCalendars();
-  const deviceLocale = locales[0];
-  const deviceCalendar = calendars[0];
-
-  const language = deviceLocale?.languageCode === "pl" ? "pl" : "en";
-  const regionCode = deviceLocale?.regionCode || "US";
-  const languageTag = `${deviceLocale?.languageCode || "en"}-${regionCode || "US"}`;
-
-  return {
-    language,
-    nickname: language === "pl" ? "Gość" : "Guest",
-    regionalization: {
-      "x-device-language": languageTag,
-      "x-user-region": regionCode || "US",
-      "x-user-watch-provider": regionCode || "US",
-      "x-user-watch-region": regionCode || "US",
-      "x-user-timezone": deviceCalendar?.timeZone || "America/New_York",
-    },
-  };
-}
-
 import * as QuickActions from "expo-quick-actions";
 import OnboardingScreen from "./onboarding";
 import useMaintenance from "../service/useMaintanance";
+import { getDeviceSettings } from "../service/useTranslation";
 
 const theme = MD2DarkTheme;
 
@@ -117,7 +93,10 @@ export default function RootLayout() {
         <Provider store={store}>
           <DatabaseProvider>
             <PaperProvider theme={theme}>
-              <RootNavigator isLoaded={isLoaded && migrationComplete} isUpdating={isUpdating} />
+              <RootNavigator
+                isLoaded={isLoaded && migrationComplete}
+                isUpdating={isUpdating}
+              />
             </PaperProvider>
           </DatabaseProvider>
         </Provider>
@@ -128,7 +107,13 @@ export default function RootLayout() {
 
 SplashScreen.preventAutoHideAsync();
 
-const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: boolean }) => {
+const RootNavigator = ({
+  isLoaded,
+  isUpdating,
+}: {
+  isLoaded: boolean;
+  isUpdating: boolean;
+}) => {
   const dispatch = useAppDispatch();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
@@ -218,7 +203,10 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
 
         <Stack.Screen name="fortune" options={{ headerShown: false }} />
 
-        <Stack.Screen name="qr-scanner" options={{ headerShown: false, presentation: "modal" }} />
+        <Stack.Screen
+          name="qr-scanner"
+          options={{ headerShown: false, presentation: "modal" }}
+        />
 
         <Stack.Screen name="group" options={{ headerShown: false }} />
 
@@ -242,7 +230,12 @@ const RootNavigator = ({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating
             presentation: "formSheet",
             gestureEnabled: true,
             sheetGrabberVisible: false,
-            contentStyle: { backgroundColor: Platform.OS === "android" ? MD2DarkTheme.colors.surface : "transparent" },
+            contentStyle: {
+              backgroundColor:
+                Platform.OS === "android"
+                  ? MD2DarkTheme.colors.surface
+                  : "transparent",
+            },
             sheetAllowedDetents: [0.7], // 70%
             sheetInitialDetentIndex: 0,
             sheetLargestUndimmedDetentIndex: 0,

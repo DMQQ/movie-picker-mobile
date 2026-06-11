@@ -1,11 +1,46 @@
 import { useCallback } from "react";
 import en from "../../translations/en.json";
 import pl from "../../translations/pl.json";
+import de from "../../translations/de.json";
+import es from "../../translations/es.json";
+import pt from "../../translations/pt.json";
 import { useAppSelector } from "../redux/store";
 
-const translations: Record<string, any> = { en, pl };
+import * as Localization from "expo-localization";
 
-const getNestedValue = <T extends string | string[]>(obj: any, path: string): T => {
+const translations: Record<string, any> = { en, pl, de, es, pt };
+
+export const isAvailable = (language: string) =>
+  translations[language] !== undefined;
+
+export function getDeviceSettings() {
+  const locales = Localization.getLocales();
+  const calendars = Localization.getCalendars();
+  const deviceLocale = locales[0];
+  const deviceCalendar = calendars[0];
+
+  const detectedLanguage = deviceLocale?.languageCode || "en";
+  const language = isAvailable(detectedLanguage) ? detectedLanguage : "en";
+  const regionCode = deviceLocale?.regionCode || "US";
+  const languageTag = `${deviceLocale?.languageCode || "en"}-${regionCode || "US"}`;
+
+  return {
+    language,
+    nickname: language === "pl" ? "Gość" : "Guest",
+    regionalization: {
+      "x-device-language": languageTag,
+      "x-user-region": regionCode || "US",
+      "x-user-watch-provider": regionCode || "US",
+      "x-user-watch-region": regionCode || "US",
+      "x-user-timezone": deviceCalendar?.timeZone || "America/New_York",
+    },
+  };
+}
+
+const getNestedValue = <T extends string | string[]>(
+  obj: any,
+  path: string,
+): T => {
   const val = path.split(".").reduce((acc, key) => acc?.[key], obj);
 
   if (typeof val === "string") {
@@ -35,7 +70,9 @@ export default function useTranslation() {
 
       if (!args) return val;
 
-      return val.replace(/\{(\w+)\}/g, (_, k) => (k in args ? String(args[k]) : `{${k}}`));
+      return val.replace(/\{(\w+)\}/g, (_, k) =>
+        k in args ? String(args[k]) : `{${k}}`,
+      );
     },
     [lang],
   );

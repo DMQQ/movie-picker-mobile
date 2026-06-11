@@ -1,26 +1,26 @@
-import * as Haptics from "expo-haptics";
-import { Platform, StyleSheet } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+import { StyleSheet } from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAppSelector } from "../redux/store";
-import useTranslation from "../service/useTranslation";
-import PlatformBlurView from "./PlatformBlurView";
+
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
+
 import { PropsWithChildren } from "react";
 
 const LandingHeader = ({ children }: PropsWithChildren) => {
   const insets = useSafeAreaInsets();
 
-  const nickname = useAppSelector((state) => state.room.nickname);
-  const t = useTranslation();
-
   return (
     <>
       <LinearGradient
         colors={["#000", "rgba(0,0,0,0.6)", "transparent"]}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 220, zIndex: 90 }}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 220,
+          zIndex: 90,
+        }}
         pointerEvents="none"
       />
       <Animated.View
