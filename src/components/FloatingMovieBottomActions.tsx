@@ -7,7 +7,7 @@ import { Entypo, Ionicons } from "@expo/vector-icons";
 import { Movie } from "../../types";
 import PlatformBlurView, { BlurViewWrapper } from "./PlatformBlurView";
 import { useGetTrailersQuery } from "../redux/movie/movieApi";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
 import { router } from "expo-router";
 
 const { height } = Dimensions.get("screen");

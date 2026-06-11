@@ -4,7 +4,12 @@ import QRCode from "react-native-qrcode-svg";
 import * as Clipboard from "expo-clipboard";
 import { FontAwesome } from "@expo/vector-icons";
 
-export default function QRCodeComponent(props: { sessionId: string; type: string; safetyCode: string; size: number }) {
+export default function QRCodeComponent(props: {
+  sessionId: string;
+  type: string;
+  safetyCode: string;
+  size: number;
+}) {
   const theme = useTheme();
   return (
     <View>
@@ -27,16 +32,30 @@ export default function QRCodeComponent(props: { sessionId: string; type: string
       <Button
         style={{ marginTop: 15 }}
         contentStyle={{ flexDirection: "row-reverse" }}
-        icon={() => <FontAwesome name="share" size={24} color={MD2DarkTheme.colors.primary} />}
+        icon={() => (
+          <FontAwesome
+            name="share"
+            size={24}
+            color={MD2DarkTheme.colors.primary}
+          />
+        )}
         onPress={async () => {
           Share.share({
             message: "Hey! Join my room on Movie Picker: " + props.sessionId,
             title: "Join my room on Movie Picker",
-            url: "https://movie.dmqq.dev/voter/" + props.sessionId.toUpperCase,
+            url: "https://flickmate.app/voter/" + props.sessionId.toUpperCase,
           });
         }}
       >
-        <Text style={{ fontSize: 25, letterSpacing: 1, color: theme.colors.primary }}>{props.sessionId}</Text>
+        <Text
+          style={{
+            fontSize: 25,
+            letterSpacing: 1,
+            color: theme.colors.primary,
+          }}
+        >
+          {props.sessionId}
+        </Text>
       </Button>
     </View>
   );

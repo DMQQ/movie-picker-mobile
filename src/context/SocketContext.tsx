@@ -17,7 +17,7 @@ const isDev = envs.mode !== "production";
 export const baseUrl = isDev
   ? Platform.OS === "ios"
     ? "http://192.168.1.20:3000"
-    : "http://10.0.2.2:3000"
+    : "http://192.168.1.20:3000"
   : "https://flickmate.app";
 export const url = baseUrl + "/api";
 

@@ -7,7 +7,7 @@ import { MD2DarkTheme, Portal } from "react-native-paper";
 import Animated, { FadeIn, FadeOut, withSpring, withTiming } from "react-native-reanimated";
 import { FancySpinner } from "../../components/FancySpinner";
 import ScratchCard from "../../components/ScratchCard";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "expo-router";
 
 const ModalEnteringTransition = () => {
   "worklet";

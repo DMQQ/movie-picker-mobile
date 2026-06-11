@@ -4,7 +4,7 @@ import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { useAnimatedStyle, withTiming, SharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
 import { Movie } from "../../types";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";

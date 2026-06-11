@@ -6,7 +6,7 @@ import PageHeading from "../components/PageHeading";
 import useTranslation from "../service/useTranslation";
 import { throttle } from "../utils/throttle";
 import { router } from "expo-router";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "expo-router";
 import { url } from "../context/SocketContext";
 import envs from "../constants/envs";
 import SafeIOSContainer from "../components/SafeIOSContainer";
@@ -67,7 +67,7 @@ export default function QRScanner() {
     if (!barCodeScannerResult) return;
 
     if (barCodeScannerResult.data?.startsWith("https") || barCodeScannerResult.data?.startsWith("flickmate://")) {
-      const urlParts = barCodeScannerResult.data.replace("flickmate://", "").replace("https://movie.dmqq.dev/", "").split("/");
+      const urlParts = barCodeScannerResult.data.replace("flickmate://", "").replace("https://flickmate.app/", "").split("/");
 
       const type = urlParts[urlParts.length - 2];
 

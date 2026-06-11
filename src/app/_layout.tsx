@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { roomActions } from "../redux/room/roomSlice";
 import { store, useAppDispatch } from "../redux/store";
@@ -89,7 +89,7 @@ export default function RootLayout() {
 
   return (
     <AppErrorBoundary>
-      <SafeAreaProvider style={{ flex: 1, backgroundColor: "#000" }}>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics} style={{ flex: 1, backgroundColor: "#000" }}>
         <Provider store={store}>
           <DatabaseProvider>
             <PaperProvider theme={theme}>

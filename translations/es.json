@@ -435,7 +435,7 @@
   },
   "landing": {
     "error": "Algo salió mal. Por favor inténtalo de nuevo.",
-    "title": "Bienvenido a Movie Picker",
+    "title": "Bienvenido a FlickMate",
     "chips": {
       "all": "Todo",
       "trending": "Tendencias",
@@ -604,7 +604,7 @@
     "clear-all-confirm": "¿Estás seguro de que quieres eliminar todas las películas con super me gusta?"
   },
   "rate-app": {
-    "prompt": "¿Disfrutas la app? ¡Calíficanos!"
+    "prompt": "¿Disfrutas la app? ¡Califícanos!"
   },
   "status-modal": {
     "no-internet": {
@@ -647,7 +647,7 @@
         "El destino aguarda.",
         "La elección está hecha.",
         "Esta es la indicada.",
-        "¿Listo el pochoclo?",
+        "¿Palomitas listas?",
         "Vamos a ello."
       ],
       "pickups": [

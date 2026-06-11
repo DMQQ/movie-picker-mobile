@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
 import { Platform, StyleProp, View, ViewStyle } from "react-native";
 import { Button, MD2DarkTheme } from "react-native-paper";
 import useTranslation from "../service/useTranslation";

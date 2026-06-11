@@ -18,7 +18,7 @@ import useRoomContext from "../../context/RoomContext";
 import { url, SocketContext } from "../../context/SocketContext";
 import envs from "../../constants/envs";
 import UserInputModal, { UserInputModalAction } from "../../components/UserInputModal";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "expo-router";
 
 const styles = StyleSheet.create({
   navigation: {

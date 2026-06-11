@@ -1,4 +1,4 @@
-import { Icon, Label, NativeTabs, VectorIcon } from "expo-router/unstable-native-tabs";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 import useTranslation from "../../service/useTranslation";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Platform } from "react-native";
@@ -12,7 +12,12 @@ export const unstable_settings = {
 };
 
 export default function Layout() {
-  return (Platform.OS === "ios" && isLiquidGlassSupported) || Platform.OS === "android" ? <TabLayout /> : <Pre26IosLayout />;
+  return (Platform.OS === "ios" && isLiquidGlassSupported) ||
+    Platform.OS === "android" ? (
+    <TabLayout />
+  ) : (
+    <Pre26IosLayout />
+  );
 }
 
 function Pre26IosLayout() {
@@ -37,35 +42,53 @@ function Pre26IosLayout() {
         name="favourites"
         options={{
           title: t("tabBar.favourites"),
-          tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="bookmark" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="bookmark" color={color} size={size} />
+          ),
         }}
       />
       <Tabs.Screen
         name="discover"
         options={{
           title: t("tabBar.explore"),
-          tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="movie-check" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="movie-check"
+              color={color}
+              size={size}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="index"
         options={{
           title: t("tabBar.games"),
-          tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="gamepad-variant" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="gamepad-variant"
+              color={color}
+              size={size}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
           title: t("tabBar.search"),
-          tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="magnify" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="magnify" color={color} size={size} />
+          ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: t("tabBar.settings"),
-          tabBarIcon: ({ color, size }) => <FontAwesome name="gear" color={color} size={size} />,
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="gear" color={color} size={size} />
+          ),
         }}
       />
     </Tabs>
@@ -85,48 +108,58 @@ function TabLayout() {
       tintColor={MD2DarkTheme.colors.primary}
     >
       <NativeTabs.Trigger name="index">
-        <Icon
-          {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="gamepad-variant" />, selectedColor: "#000" }
-            : { sf: "gamecontroller" })}
+        <NativeTabs.Trigger.Icon
+          selectedColor={"#000"}
+          sf="gamecontroller"
+          md="sports_esports"
         />
-        <Label>{t("tabBar.games")}</Label>
+        <NativeTabs.Trigger.Label hidden={Platform.OS === "ios"}>
+          {t("tabBar.games")}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="discover">
-        <Icon
-          {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="movie-check" />, selectedColor: "#000" }
-            : { sf: "movieclapper" })}
+        <NativeTabs.Trigger.Icon
+          selectedColor={"#000"}
+          sf="movieclapper"
+          md="movie"
         />
-        <Label>{t("tabBar.explore")}</Label>
+        <NativeTabs.Trigger.Label hidden={Platform.OS === "ios"}>
+          {t("tabBar.explore")}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="favourites">
-        <Icon
-          {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="bookmark" />, selectedColor: "#000" }
-            : { sf: "bookmark" })}
+        <NativeTabs.Trigger.Icon
+          selectedColor={"#000"}
+          sf="bookmark"
+          md="bookmarks"
         />
-        <Label>{t("tabBar.favourites")}</Label>
+        <NativeTabs.Trigger.Label hidden={Platform.OS === "ios"}>
+          {t("tabBar.favourites")}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="search" {...(Platform.OS === "ios" && { role: "search" })}>
-        <Icon
-          {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={MaterialCommunityIcons} name="magnify" />, selectedColor: "#000" }
-            : { sf: "magnifyingglass" })}
+      <NativeTabs.Trigger name="search" role="search">
+        <NativeTabs.Trigger.Icon
+          selectedColor={"#000"}
+          sf="magnifyingglass"
+          md="search"
         />
-        <Label>{t("tabBar.search")}</Label>
+        <NativeTabs.Trigger.Label hidden={Platform.OS === "ios"}>
+          {t("tabBar.search")}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="settings">
-        <Icon
-          {...(Platform.OS === "android"
-            ? { src: <VectorIcon family={FontAwesome} name="gear" />, selectedColor: "#000" }
-            : { sf: "gear" })}
+        <NativeTabs.Trigger.Icon
+          selectedColor={"#000"}
+          sf="gear"
+          md="settings"
         />
-        <Label>{t("tabBar.settings")}</Label>
+        <NativeTabs.Trigger.Label hidden={Platform.OS === "ios"}>
+          {t("tabBar.settings")}
+        </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

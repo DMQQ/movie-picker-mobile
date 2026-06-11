@@ -1,8 +1,15 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
 import * as Haptic from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { PropsWithChildren } from "react";
-import { Platform, Pressable, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import {
+  Platform,
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PlatformBlurView from "./PlatformBlurView";
@@ -20,7 +27,9 @@ interface PageHeadingProps extends PropsWithChildren {
 
 interface RightIconButtonProps extends PageHeadingProps {
   showRightIconButton?: boolean;
-  rightIconName?: keyof typeof AntDesign.glyphMap | keyof typeof Ionicons.glyphMap;
+  rightIconName?:
+    | keyof typeof AntDesign.glyphMap
+    | keyof typeof Ionicons.glyphMap;
   onRightIconPress?: () => void;
   extraScreenPaddingTop?: number;
   rightIconTitle?: string;
@@ -51,12 +60,25 @@ export default function PageHeading({
       {showGradientBackground && (
         <LinearGradient
           colors={["#000", "rgba(0,0,0,0.6)", "transparent"]}
-          style={{ position: "absolute", top: 0, left: 0, right: 0, height: gradientHeight, zIndex: 10 }}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: gradientHeight,
+            zIndex: 10,
+          }}
           pointerEvents="none"
         />
       )}
 
-      <View style={[styles.headerTop, { marginTop: useSafeArea ? insets.top + extraScreenPaddingTop : 0 }, extraStyles]}>
+      <View
+        style={[
+          styles.headerTop,
+          { marginTop: useSafeArea ? insets.top + extraScreenPaddingTop : 0 },
+          extraStyles,
+        ]}
+      >
         <View style={styles.sideContainer}>
           {showBackButton && (
             <PlatformBlurView interactive style={styles.buttonContainer}>
@@ -79,12 +101,21 @@ export default function PageHeading({
           <Text style={styles.headerTitle}>{title}</Text>
         </View>
 
-        <View style={[styles.sideContainerRight, rightIconTitle && { width: "auto" }]}>
+        <View
+          style={[
+            styles.sideContainerRight,
+            rightIconTitle && { width: "auto" },
+          ]}
+        >
           {children
             ? children
             : showRightIconButton &&
               (rightIconTitle ? (
-                <PlatformBlurView interactive tintColor={tintColor} style={styles.buttonContainer}>
+                <PlatformBlurView
+                  interactive
+                  tintColor={tintColor}
+                  style={styles.buttonContainer}
+                >
                   <Pressable
                     onPress={() => {
                       if (onRightIconPress) onRightIconPress();
@@ -94,14 +125,32 @@ export default function PageHeading({
                     }}
                     style={styles.rightButtonWithText}
                   >
-                    {rightIconName && <IconButton icon={rightIconName as any} size={20} iconColor="white" />}
-                    <Text style={[styles.rightText, !rightIconName && { paddingHorizontal: 15, paddingVertical: 10 }]}>
+                    {rightIconName && (
+                      <IconButton
+                        icon={rightIconName as any}
+                        size={20}
+                        iconColor="white"
+                      />
+                    )}
+                    <Text
+                      style={[
+                        styles.rightText,
+                        !rightIconName && {
+                          paddingHorizontal: 15,
+                          paddingVertical: 10,
+                        },
+                      ]}
+                    >
                       {rightIconTitle}
                     </Text>
                   </Pressable>
                 </PlatformBlurView>
               ) : (
-                <PlatformBlurView interactive tintColor={tintColor} style={styles.buttonContainer}>
+                <PlatformBlurView
+                  interactive
+                  tintColor={tintColor}
+                  style={styles.buttonContainer}
+                >
                   <IconButton
                     icon={rightIconName as any}
                     size={25}

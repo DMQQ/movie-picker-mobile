@@ -225,7 +225,7 @@
     "categories": "Categorias"
   },
   "likes": {
-    "title": "Seus curtidas",
+    "title": "Suas curtidas",
     "empty": "Você ainda não curtiu nenhum filme",
     "close": "Fechar coincidência",
     "no-matches": "Nenhuma coincidência encontrada",
@@ -435,7 +435,7 @@
   },
   "landing": {
     "error": "Algo deu errado. Por favor tente novamente.",
-    "title": "Bem-vindo ao Movie Picker",
+    "title": "Bem-vindo ao FlickMate",
     "chips": {
       "all": "Todos",
       "trending": "Em alta",

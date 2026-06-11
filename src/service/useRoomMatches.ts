@@ -3,7 +3,7 @@ import { Movie } from "../../types";
 import { roomActions } from "../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { SocketContext } from "../context/SocketContext";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "expo-router";
 import { useMovieInteractions, useMatches } from "../context/DatabaseContext";
 
 export default function useRoomMatches(room: string) {
