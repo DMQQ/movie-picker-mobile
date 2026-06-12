@@ -1,7 +1,7 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react"; // useCallback kept for handleGamePress/handleSecondaryPress
 import { Dimensions, Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
@@ -123,84 +123,76 @@ const backgroundImages = [
 const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" | "fortune" | "random" | "all-games" }) => {
   const t = useTranslation();
 
-  const getGameConfig = useCallback(
-    (gameType: typeof type) => {
-      switch (gameType) {
-        case "quick":
-          return {
-            title: t("game-invite.quick-title"),
-            subtitle: t("game-invite.quick-subtitle"),
-            buttonText: t("game-invite.quick-button"),
-            colors: ["#6366f1", "#8b5cf6"] as const,
-            icon: "gamepad",
-            navigation: () =>
-              router.push({
-                pathname: "/room/qr-code",
-                params: { quickStart: "true" },
-              }),
-            secondaryButtonText: t("game-invite.quick-custom-button"),
-            secondaryNavigation: () => router.push("/room/setup"),
-          };
-        case "social":
-          return {
-            title: t("game-invite.social-title"),
-            subtitle: t("game-invite.social-subtitle"),
-            buttonText: t("game-invite.social-button"),
-            colors: ["#f59e0b", "#ef4444"] as const,
-            icon: "users",
-            navigation: () => router.push("/room/setup"),
-          };
-        case "voter":
-          return {
-            title: t("game-invite.voter-title"),
-            subtitle: t("game-invite.voter-subtitle"),
-            buttonText: t("game-invite.voter-button"),
-            colors: ["#10b981", "#059669"] as const,
-            icon: "thumbs-up",
-            navigation: () => router.push("/voter"),
-          };
-        case "fortune":
-          return {
-            title: t("game-invite.fortune-title"),
-            subtitle: t("game-invite.fortune-subtitle"),
-            buttonText: t("game-invite.fortune-button"),
-            colors: ["#8b5cf6", "#7c3aed"] as const,
-            icon: "refresh",
-            navigation: () => router.push("/fortune"),
-          };
-        case "random":
-          return {
-            title: t("game-invite.random-title"),
-            subtitle: t("game-invite.random-subtitle"),
-            buttonText: t("game-invite.random-button"),
-            colors: ["#ec4899", "#db2777"] as const,
-            icon: "random",
-            navigation: () => router.push("/random"),
-          };
-        case "all-games":
-          return {
-            title: t("game-invite.all-games-title"),
-            subtitle: t("game-invite.all-games-subtitle"),
-            buttonText: t("game-invite.all-games-button"),
-            colors: ["#374151", "#6b7280"] as const,
-            icon: "list",
-            navigation: () => router.push("/games"),
-          };
-        default:
-          return {
-            title: "",
-            subtitle: "",
-            buttonText: "",
-            colors: ["#6366f1", "#8b5cf6"] as const,
-            icon: "gamepad",
-            navigation: () => router.push("/games"),
-          };
-      }
-    },
-    [t],
-  );
-
-  const config = useMemo(() => getGameConfig(type), [getGameConfig, type]);
+  const config = useMemo(() => {
+    switch (type) {
+      case "quick":
+        return {
+          title: t("game-invite.quick-title"),
+          subtitle: t("game-invite.quick-subtitle"),
+          buttonText: t("game-invite.quick-button"),
+          colors: ["#6366f1", "#8b5cf6"] as const,
+          icon: "gamepad",
+          navigation: () => router.push({ pathname: "/room/qr-code", params: { quickStart: "true" } }),
+          secondaryButtonText: t("game-invite.quick-custom-button"),
+          secondaryNavigation: () => router.push("/room/setup"),
+        };
+      case "social":
+        return {
+          title: t("game-invite.social-title"),
+          subtitle: t("game-invite.social-subtitle"),
+          buttonText: t("game-invite.social-button"),
+          colors: ["#f59e0b", "#ef4444"] as const,
+          icon: "users",
+          navigation: () => router.push("/room/setup"),
+        };
+      case "voter":
+        return {
+          title: t("game-invite.voter-title"),
+          subtitle: t("game-invite.voter-subtitle"),
+          buttonText: t("game-invite.voter-button"),
+          colors: ["#10b981", "#059669"] as const,
+          icon: "thumbs-up",
+          navigation: () => router.push("/voter"),
+        };
+      case "fortune":
+        return {
+          title: t("game-invite.fortune-title"),
+          subtitle: t("game-invite.fortune-subtitle"),
+          buttonText: t("game-invite.fortune-button"),
+          colors: ["#8b5cf6", "#7c3aed"] as const,
+          icon: "refresh",
+          navigation: () => router.push("/fortune"),
+        };
+      case "random":
+        return {
+          title: t("game-invite.random-title"),
+          subtitle: t("game-invite.random-subtitle"),
+          buttonText: t("game-invite.random-button"),
+          colors: ["#ec4899", "#db2777"] as const,
+          icon: "random",
+          navigation: () => router.push("/random"),
+        };
+      case "all-games":
+        return {
+          title: t("game-invite.all-games-title"),
+          subtitle: t("game-invite.all-games-subtitle"),
+          buttonText: t("game-invite.all-games-button"),
+          colors: ["#374151", "#6b7280"] as const,
+          icon: "list",
+          navigation: () => router.push("/games"),
+        };
+      default:
+        return {
+          title: "",
+          subtitle: "",
+          buttonText: "",
+          colors: ["#6366f1", "#8b5cf6"] as const,
+          icon: "gamepad",
+          navigation: () => router.push("/games"),
+        };
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
 
   const handleGamePress = useCallback(() => {
     if (Platform.OS === "ios") {

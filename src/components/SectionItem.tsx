@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import { Movie } from "../../types";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
@@ -21,7 +21,9 @@ interface SectionListItemProps extends Movie {
   mapped_genres?: string[];
 }
 
-function getGenres(genres: { id: number; name: string }[] | string[] | undefined) {
+function getGenres(
+  genres: { id: number; name: string }[] | string[] | undefined,
+) {
   if (!genres) return [];
 
   if (typeof genres[0] === "string") {
@@ -42,47 +44,87 @@ export const SectionListItem = ({
   mapped_genres,
 }: SectionListItemProps) => {
   const genreNames = getGenres(genres || mapped_genres);
-  const sizes = imageWidth !== undefined ? getSectionItemSize(imageWidth) : null;
+  const sizes =
+    imageWidth !== undefined ? getSectionItemSize(imageWidth) : null;
 
   return (
-    <Link href={href as any} push style={[sectionStyles.item, sizes?.item, !imageWidth && { marginRight: 15 }]}>
-      <Link.Trigger>
-        <View>
-          <Thumbnail
-            path={poster_path}
-            size={ThumbnailSizes.poster.small}
-            container={[sectionStyles.image, sizes?.image]}
-            alt={name || title}
-            showsPlaceholder={false}
-            priority="low"
-          />
-          {vote_average > 0 && (
-            <View style={[sectionStyles.badgeContainer, { backgroundColor: getColor(vote_average || 0) }]}>
-              <Text
+    <Link
+      href={href as any}
+      push
+      style={[
+        sectionStyles.item,
+        sizes?.item,
+        !imageWidth && { marginRight: 15 },
+      ]}
+      asChild
+    >
+      <Pressable>
+        <Link.Trigger>
+          <View>
+            <Link.AppleZoom>
+              <Thumbnail
+                path={poster_path}
+                size={ThumbnailSizes.poster.small}
+                container={[sectionStyles.image, sizes?.image]}
+                alt={name || title}
+                showsPlaceholder={false}
+                priority="low"
+              />
+            </Link.AppleZoom>
+            {vote_average > 0 && (
+              <View
                 style={[
-                  sectionStyles.badgeItem,
-                  {
-                    color: vote_average < 4 ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.9)",
-                  },
+                  sectionStyles.badgeContainer,
+                  { backgroundColor: getColor(vote_average || 0) },
                 ]}
               >
-                <AntDesign name="star" size={9} color="#000" /> {vote_average.toFixed(1)}
+                <Text
+                  style={[
+                    sectionStyles.badgeItem,
+                    {
+                      color:
+                        vote_average < 4
+                          ? "rgba(255,255,255,0.7)"
+                          : "rgba(0,0,0,0.9)",
+                    },
+                  ]}
+                >
+                  <AntDesign name="star" size={9} color="#000" />{" "}
+                  {vote_average.toFixed(1)}
+                </Text>
+              </View>
+            )}
+            <View
+              style={{
+                marginTop: 10,
+                paddingHorizontal: 10,
+                maxWidth: sizes?.image.width || sectionStyles.image.width,
+              }}
+            >
+              <Text
+                variant="bodyMedium"
+                numberOfLines={1}
+                style={{
+                  maxWidth: sectionStyles.image.width,
+                  fontSize: 16,
+                  fontFamily: "Bebas",
+                }}
+              >
+                {name || title}
+              </Text>
+
+              <Text
+                numberOfLines={2}
+                style={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}
+              >
+                {genreNames.join(", ")}
               </Text>
             </View>
-          )}
-          <View style={{ marginTop: 10, paddingHorizontal: 10, maxWidth: sizes?.image.width || sectionStyles.image.width }}>
-            <Text variant="bodyMedium" numberOfLines={1} style={{ maxWidth: sectionStyles.image.width, fontSize: 16, fontFamily: "Bebas" }}>
-              {name || title}
-            </Text>
-
-            <Text numberOfLines={2} style={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}>
-              {genreNames.join(", ")}
-            </Text>
           </View>
-        </View>
-      </Link.Trigger>
+        </Link.Trigger>
 
-      <Link.Preview />
+        <Link.Preview />
+      </Pressable>
     </Link>
   );
 };

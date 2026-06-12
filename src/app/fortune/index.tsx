@@ -192,10 +192,6 @@ export default function FortuneWheel() {
 
   const [isSpin, setIsSpin] = useState(false);
 
-  const handleFiltersApplied = () => {
-    handleThrowDice();
-  };
-
   useEffect(() => {
     if (params?.movies) {
       try {
@@ -220,8 +216,13 @@ export default function FortuneWheel() {
       return;
     }
 
+    if (params?.selectedCategory) {
+      handleThrowDice(params.selectedCategory as string);
+      return;
+    }
+
     handleThrowDice();
-  }, [params?.category, params?.movies, params?.title]);
+  }, [params?.category, params?.movies, params?.title, params?.selectedCategory]);
 
   const { width, height } = useWindowDimensions();
 
@@ -231,7 +232,7 @@ export default function FortuneWheel() {
     <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
       <PageHeading showGradientBackground showBackButton title={isSpin ? "" : (params?.title as string) || ""}>
         <PlatformBlurView style={fortuneStyles.filterButtonWrapper}>
-          <FilterButton shouldAutoOpen size={25} onApply={handleFiltersApplied} onCategorySelect={handleThrowDice} showCategories />
+          <FilterButton shouldAutoOpen size={25} onApply={handleThrowDice} showCategories />
         </PlatformBlurView>
       </PageHeading>
 

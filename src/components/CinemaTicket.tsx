@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   },
 
   backdropOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "rgba(0,0,0,0.15)",
   },
   infoSection: {
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
     height: 32,
   },
   providerOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     opacity: 0.35,
   },
   providersTitle: {

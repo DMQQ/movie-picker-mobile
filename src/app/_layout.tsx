@@ -162,6 +162,7 @@ const RootNavigator = ({
   }, [isLoaded, isUpdating, dbReady, movieInteractions, dispatch]);
 
   useEffect(() => {
+    if (Platform.OS !== "ios") return;
     QuickActions.setItems([
       {
         id: "uninstall",
@@ -213,6 +214,22 @@ const RootNavigator = ({
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
 
         <Stack.Screen name="search-filters" options={{ headerShown: false }} />
+
+        <Stack.Screen
+          name="filters"
+          options={{
+            headerShown: false,
+            gestureEnabled: true,
+            presentation: "formSheet",
+            sheetGrabberVisible: true,
+            contentStyle: {
+              backgroundColor:
+                Platform.OS === "android" ? "#121212" : "transparent",
+            },
+            sheetAllowedDetents: [0.85, 1.0],
+            sheetInitialDetentIndex: 0,
+          }}
+        />
 
         <Stack.Screen
           name="modal"

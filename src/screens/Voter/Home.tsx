@@ -269,7 +269,7 @@ export default function Home() {
           source={{
             uri: "https://image.tmdb.org/t/p/w500" + card?.backdrop_path,
           }}
-          style={{ flex: 1, ...StyleSheet.absoluteFillObject }}
+          style={{ flex: 1, ...StyleSheet.absoluteFill }}
         >
           <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)" }}>
             <View style={{ padding: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -535,7 +535,7 @@ function Results() {
       source={{
         uri: "https://image.tmdb.org/t/p/w500" + card?.backdrop_path,
       }}
-      style={{ flex: 1, ...StyleSheet.absoluteFillObject }}
+      style={{ flex: 1, ...StyleSheet.absoluteFill }}
     >
       <View
         style={{

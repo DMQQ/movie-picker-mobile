@@ -97,6 +97,8 @@ function Pre26IosLayout() {
 
 function TabLayout() {
   const t = useTranslation();
+  const selectedColor =
+    Platform.OS === "ios" ? MD2DarkTheme.colors.primary : "#000";
   return (
     <NativeTabs
       backgroundColor={"#000"}
@@ -109,7 +111,7 @@ function TabLayout() {
     >
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Icon
-          selectedColor={"#000"}
+          selectedColor={selectedColor}
           sf="gamecontroller"
           md="sports_esports"
         />
@@ -120,7 +122,7 @@ function TabLayout() {
 
       <NativeTabs.Trigger name="discover">
         <NativeTabs.Trigger.Icon
-          selectedColor={"#000"}
+          selectedColor={selectedColor}
           sf="movieclapper"
           md="movie"
         />
@@ -131,7 +133,7 @@ function TabLayout() {
 
       <NativeTabs.Trigger name="favourites">
         <NativeTabs.Trigger.Icon
-          selectedColor={"#000"}
+          selectedColor={selectedColor}
           sf="bookmark"
           md="bookmarks"
         />
@@ -142,7 +144,7 @@ function TabLayout() {
 
       <NativeTabs.Trigger name="search" role="search">
         <NativeTabs.Trigger.Icon
-          selectedColor={"#000"}
+          selectedColor={selectedColor}
           sf="magnifyingglass"
           md="search"
         />
@@ -153,7 +155,7 @@ function TabLayout() {
 
       <NativeTabs.Trigger name="settings">
         <NativeTabs.Trigger.Icon
-          selectedColor={"#000"}
+          selectedColor={selectedColor}
           sf="gear"
           md="settings"
         />

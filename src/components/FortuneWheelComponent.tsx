@@ -183,13 +183,12 @@ const WheelBackground = ({ size, items }: { size: number; items: any[] }) => {
       {items.map((_, index) => {
         const startAngle = index * segmentAngle;
 
-        const p = Skia.Path.Make();
-        p.moveTo(center, center);
-
         const rect = { x: 0, y: 0, width: size, height: size };
-        p.arcToOval(rect, startAngle - 90, segmentAngle, false);
-
-        p.close();
+        const p = Skia.PathBuilder.Make()
+          .moveTo(center, center)
+          .arcToOval(rect, startAngle - 90, segmentAngle, false)
+          .close()
+          .detach();
 
         return <Path key={index} path={p} color={COLORS[index % COLORS.length]} />;
       })}
@@ -373,7 +372,7 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
     }));
 
     return (
-      <View style={[{ bottom: -(size * 0.6), position: "absolute", left: 0, right: 0 }]} pointerEvents="box-only">
+      <View style={[{ bottom: -(size * 0.6), position: "absolute", left: 0, right: 0 }]} pointerEvents="box-none">
         <GestureDetector gesture={gesture}>
           <Animated.View style={[styles.container, { height: size }, animatedBounceStyle]}>
             {/* IMPROVED POINTER */}

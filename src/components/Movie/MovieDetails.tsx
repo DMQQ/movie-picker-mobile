@@ -7,7 +7,10 @@ import CustomFavourite from "../Favourite";
 import QuickActions from "../QuickActions";
 import RatingIcons from "../RatingIcons";
 import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
-import { useGetSimilarQuery, useGetTrailersQuery } from "../../redux/movie/movieApi";
+import {
+  useGetSimilarQuery,
+  useGetTrailersQuery,
+} from "../../redux/movie/movieApi";
 import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
 import { memo, useMemo } from "react";
 import MovieTabs from "./MovieTabs";
@@ -31,7 +34,14 @@ interface MovieDetailsProps {
   castData?: ReturnType<typeof useGetMovieKeyPeopleQuery>["data"];
 }
 
-function MovieDetails({ movie, type, providers, similarData, trailersData, castData }: MovieDetailsProps) {
+function MovieDetails({
+  movie,
+  type,
+  providers,
+  similarData,
+  trailersData,
+  castData,
+}: MovieDetailsProps) {
   const t = useTranslation();
 
   const hasSimilar = useMemo(() => {
@@ -46,11 +56,15 @@ function MovieDetails({ movie, type, providers, similarData, trailersData, castD
     () =>
       [
         movie?.release_date || movie?.first_air_date,
-        (movie?.title || movie?.name) === (movie?.original_title || movie?.original_name)
+        (movie?.title || movie?.name) ===
+        (movie?.original_title || movie?.original_name)
           ? null
           : movie?.original_title || movie?.original_name,
         ...(movie?.genres || [])?.map((g: any) => g.name),
-      ].filter((v) => v !== undefined && v !== "" && v !== null && typeof v === "string") as string[],
+      ].filter(
+        (v) =>
+          v !== undefined && v !== "" && v !== null && typeof v === "string",
+      ) as string[],
     [movie],
   );
 
@@ -88,12 +102,26 @@ function MovieDetails({ movie, type, providers, similarData, trailersData, castD
 
   return (
     <BlurViewWrapper style={styles.blurWrapper}>
+      <View style={{ width: "100%", alignItems: "center", padding: 10 }}>
+        <View
+          style={{
+            width: 60,
+            height: 4,
+            backgroundColor: "#fff",
+            borderRadius: 10,
+          }}
+        />
+      </View>
       <View style={{ padding: 15 }}>
         <Text numberOfLines={3} style={styles.heading}>
           {movie?.title || movie?.name || "-"}
         </Text>
 
-        {!!movie?.tagline && <Text style={styles.tagline}>{movie?.tagline ? `"${movie?.tagline}"` : ""}</Text>}
+        {!!movie?.tagline && (
+          <Text style={styles.tagline}>
+            {movie?.tagline ? `"${movie?.tagline}"` : ""}
+          </Text>
+        )}
 
         <View style={styles.rating}>
           <RatingIcons size={20} vote={movie?.vote_average} />
@@ -131,7 +159,9 @@ function MovieDetails({ movie, type, providers, similarData, trailersData, castD
           style={styles.tmdbLogo}
           contentFit="contain"
         />
-        <Text style={[styles.text, { textAlign: "center" }]}>{t("global.attributions")}</Text>
+        <Text style={[styles.text, { textAlign: "center" }]}>
+          {t("global.attributions")}
+        </Text>
       </View>
     </BlurViewWrapper>
   );
@@ -145,10 +175,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     ...Platform.select({
       android: {
-        backgroundColor: MD2DarkTheme.colors.surface + "cc",
-
-        borderWidth: 2,
-        borderColor: "#343434ff",
+        backgroundColor: "#000",
+        borderTopRightRadius: 0,
+        borderTopLeftRadius: 0,
+        borderWidth: 0,
       },
     }),
   },
@@ -186,7 +216,12 @@ const styles = StyleSheet.create({
 
   text: { fontSize: 15, color: "rgba(255,255,255,0.6)" },
 
-  attributions: { padding: 20, justifyContent: "center", alignItems: "center", gap: 5 },
+  attributions: {
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 5,
+  },
 
   tmdbLogo: { width: 40, height: 40 },
 });

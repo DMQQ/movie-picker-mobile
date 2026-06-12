@@ -1,4 +1,11 @@
-import { TouchableOpacity, View, Image, StyleSheet, FlatList, Platform } from "react-native";
+import {
+  TouchableOpacity,
+  View,
+  Image,
+  StyleSheet,
+  FlatList,
+  Platform,
+} from "react-native";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import * as Haptics from "expo-haptics";
@@ -19,12 +26,18 @@ interface CategoryPagerIndicatorProps {
   onChipPress: (chipId: string) => void;
 }
 
-function CategoryPagerIndicator({ chipCategories, selectedChip, onChipPress }: CategoryPagerIndicatorProps) {
+function CategoryPagerIndicator({
+  chipCategories,
+  selectedChip,
+  onChipPress,
+}: CategoryPagerIndicatorProps) {
   const flatListRef = useRef<FlatList>(null);
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    const selectedIndex = chipCategories.findIndex((category) => category.id === selectedChip);
+    const selectedIndex = chipCategories.findIndex(
+      (category) => category.id === selectedChip,
+    );
     if (selectedIndex !== -1 && flatListRef.current) {
       flatListRef.current?.scrollToIndex({
         index: selectedIndex,
@@ -35,10 +48,15 @@ function CategoryPagerIndicator({ chipCategories, selectedChip, onChipPress }: C
   }, [selectedChip, chipCategories]);
 
   const renderCategory = useCallback(
-    ({ item: category, index }: { item: any; index: number }) => (
+    ({ item: category }: { item: any; index: number }) => (
       <PlatformBlurView
         interactive
-        style={[{ borderRadius: 12 }, Platform.OS === "android" && { backgroundColor: MD2DarkTheme.colors.surface }]}
+        style={[
+          { borderRadius: 12 },
+          Platform.OS === "android" && {
+            backgroundColor: MD2DarkTheme.colors.surface,
+          },
+        ]}
       >
         <TouchableOpacity
           activeOpacity={0.9}
@@ -46,9 +64,13 @@ function CategoryPagerIndicator({ chipCategories, selectedChip, onChipPress }: C
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             onChipPress?.(category.id);
           }}
-          style={[styles.chipButton, selectedChip === category.id && styles.selectedChip]}
+          style={[
+            styles.chipButton,
+            selectedChip === category.id && styles.selectedChip,
+          ]}
         >
-          {(category.logo_path && category.logo_path !== "") || category.image ? (
+          {(category.logo_path && category.logo_path !== "") ||
+          category.image ? (
             <Image
               resizeMode="contain"
               source={{
@@ -60,7 +82,11 @@ function CategoryPagerIndicator({ chipCategories, selectedChip, onChipPress }: C
             <Ionicons
               name={category.icon as any}
               size={32}
-              color={selectedChip === category.id ? MD2DarkTheme.colors.primary : MD2DarkTheme.colors.onSurface}
+              color={
+                selectedChip === category.id
+                  ? MD2DarkTheme.colors.primary
+                  : MD2DarkTheme.colors.onSurface
+              }
             />
           ) : (
             <Text style={{ fontSize: 10 }}>{category.label}</Text>

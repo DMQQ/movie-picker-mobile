@@ -2,9 +2,23 @@ import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import LottieView from "lottie-react-native";
 import { useEffect, useRef } from "react";
-import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Text, useTheme } from "react-native-paper";
-import Animated, { Easing, FadeIn, FadeOut, SlideInUp, SlideOutUp, withSpring, withTiming } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  FadeIn,
+  FadeOut,
+  SlideInUp,
+  SlideOutUp,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
 import Card from "./Card";
 import Poster from "./Poster";
@@ -19,7 +33,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: "rgba(0,0,0,0.75)",
 
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     height: Dimensions.get("screen").height,
     zIndex: 1000,
   },
@@ -82,9 +96,24 @@ const styles = StyleSheet.create({
     pointerEvents: "none",
   },
 
-  meta: { flexDirection: "row", marginTop: 5, alignItems: "center", gap: 6, flexWrap: "wrap", paddingLeft: 10 },
+  meta: {
+    flexDirection: "row",
+    marginTop: 5,
+    alignItems: "center",
+    gap: 6,
+    flexWrap: "wrap",
+    paddingLeft: 10,
+  },
 
-  share: { position: "absolute", bottom: -75, right: 0, left: 0, zIndex: 20, justifyContent: "center", alignItems: "center" },
+  share: {
+    position: "absolute",
+    bottom: -75,
+    right: 0,
+    left: 0,
+    zIndex: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 const { width } = Dimensions.get("window");
@@ -94,7 +123,12 @@ export const ModalEnteringTransition = () => {
   return {
     initialValues: {
       opacity: 0,
-      transform: [{ translateX: width + 150 }, { translateY: 250 }, { rotate: "20deg" }, { scale: 0.8 }],
+      transform: [
+        { translateX: width + 150 },
+        { translateY: 250 },
+        { rotate: "20deg" },
+        { scale: 0.8 },
+      ],
     },
 
     animations: {
@@ -135,7 +169,12 @@ export const ModalExitingTransition = () => {
   return {
     initialValues: {
       opacity: 1,
-      transform: [{ translateX: 0 }, { translateY: 0 }, { rotate: "0deg" }, { scale: 1 }],
+      transform: [
+        { translateX: 0 },
+        { translateY: 0 },
+        { rotate: "0deg" },
+        { scale: 1 },
+      ],
     },
 
     animations: {
@@ -167,7 +206,13 @@ export const ModalExitingTransition = () => {
   };
 };
 
-export default function MatchModal({ match, hideMatchModal }: { match: Movie | undefined; hideMatchModal: VoidFunction }) {
+export default function MatchModal({
+  match,
+  hideMatchModal,
+}: {
+  match: Movie | undefined;
+  hideMatchModal: VoidFunction;
+}) {
   const theme = useTheme();
   const t = useTranslation();
   const animation = useRef<LottieView>(null);
@@ -188,9 +233,17 @@ export default function MatchModal({ match, hideMatchModal }: { match: Movie | u
   if (!match) return null;
 
   return (
-    <Animated.View entering={FadeIn} exiting={FadeOut.delay(200)} style={styles.matchModal}>
+    <Animated.View
+      entering={FadeIn}
+      exiting={FadeOut.delay(200)}
+      style={styles.matchModal}
+    >
       <Pressable onPress={hideMatchModal}>
-        <Animated.Text style={[styles.matchText]} entering={SlideInUp.delay(100)} exiting={SlideOutUp}>
+        <Animated.Text
+          style={[styles.matchText]}
+          entering={SlideInUp.delay(100)}
+          exiting={SlideOutUp}
+        >
           {t("match.title")} 🎉
         </Animated.Text>
 
@@ -213,16 +266,29 @@ export default function MatchModal({ match, hideMatchModal }: { match: Movie | u
           }}
         >
           <Card>
-            <LinearGradient colors={["transparent", "transparent", theme.colors.surface]} style={styles.gradient}>
+            <LinearGradient
+              colors={["transparent", "transparent", theme.colors.surface]}
+              style={styles.gradient}
+            >
               <Text style={styles.title}>{match.title || match.name}</Text>
 
-              <View style={{ flexDirection: "row", paddingHorizontal: 10, marginBottom: 5 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  paddingHorizontal: 10,
+                  marginBottom: 5,
+                }}
+              >
                 <RatingIcons size={15} vote={match?.vote_average} />
               </View>
 
               <View style={styles.meta}>
-                {match.genres ? <GenresView genres={match.genres.slice(0, 3)} /> : null}
-                <Text style={styles.release_date}>{match.release_date || match.first_air_date}</Text>
+                {match.genres ? (
+                  <GenresView genres={match.genres.slice(0, 3)} />
+                ) : null}
+                <Text style={styles.release_date}>
+                  {match.release_date || match.first_air_date}
+                </Text>
               </View>
             </LinearGradient>
 

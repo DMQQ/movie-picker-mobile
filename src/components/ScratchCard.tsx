@@ -58,8 +58,7 @@ export const ScratchCard = ({
   const pan = Gesture.Pan()
     .runOnJS(true)
     .onStart((g) => {
-      const path = Skia.Path.Make();
-      path?.moveTo?.(g.x, g.y);
+      const path = Skia.PathBuilder.Make().moveTo(g.x, g.y).detach();
       setPaths((prev) => [...prev, path]);
     })
     .onUpdate((g) => {

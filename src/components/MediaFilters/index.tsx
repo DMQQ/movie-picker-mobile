@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 import { Badge, IconButton, MD2DarkTheme } from "react-native-paper";
+import { router, useFocusEffect } from "expo-router";
 import { useAppSelector } from "../../redux/store";
-import FilterSheet from "./FilterSheet";
 
 export { default as FilterSheet } from "./FilterSheet";
 export { default as TypeSelector } from "./TypeSelector";
@@ -12,9 +12,7 @@ interface FilterButtonProps {
   size?: number;
   style?: object;
   onApply?: () => void;
-  onCategorySelect?: (category: string) => void;
   showCategories?: boolean;
-
   shouldAutoOpen?: boolean;
 }
 
@@ -22,17 +20,15 @@ export const FilterButton = React.memo(function FilterButton({
   size = 24,
   style,
   onApply,
-  onCategorySelect,
   showCategories,
-
   shouldAutoOpen = true,
 }: FilterButtonProps) {
-  const [isFilterVisible, setIsFilterVisible] = useState(false);
   const isFilterActive = useAppSelector((state) => state.mediaFilters.isFilterActive);
   const mediaType = useAppSelector((state) => state.mediaFilters.mediaType);
   const providersCount = useAppSelector((state) => state.mediaFilters.selectedProviders.length);
   const genresCount = useAppSelector((state) => state.mediaFilters.selectedGenres.length);
   const selectedDecade = useAppSelector((state) => state.mediaFilters.selectedDecade);
+  const pendingApplyRef = useRef(false);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -44,37 +40,47 @@ export const FilterButton = React.memo(function FilterButton({
   }, [mediaType, providersCount, genresCount, selectedDecade]);
 
   const openFilters = useCallback(() => {
-    setIsFilterVisible(true);
-  }, []);
+    pendingApplyRef.current = true;
+    router.push({
+      pathname: "/filters",
+      params: { showCategories: showCategories ? "true" : "false" },
+    });
+  }, [showCategories]);
 
-  const closeFilters = useCallback(() => {
-    setIsFilterVisible(false);
-    onApply?.();
-  }, [onApply]);
+  useFocusEffect(
+    useCallback(() => {
+      if (pendingApplyRef.current) {
+        pendingApplyRef.current = false;
+        onApply?.();
+      }
+    }, [onApply]),
+  );
 
   useEffect(() => {
     if (activeFilterCount === 0 && shouldAutoOpen) {
-      setIsFilterVisible(true);
+      pendingApplyRef.current = true;
+      router.push({
+        pathname: "/filters",
+        params: { showCategories: showCategories ? "true" : "false" },
+      });
     }
-  }, [activeFilterCount, shouldAutoOpen]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
-    <>
-      <View style={[styles.filterButtonContainer, style]}>
-        <IconButton
-          icon="tune-variant"
-          iconColor={isFilterActive ? MD2DarkTheme.colors.primary : "#fff"}
-          size={size}
-          onPress={openFilters}
-        />
-        {activeFilterCount > 0 && (
-          <Badge size={16} style={styles.badge} pointerEvents="none">
-            {activeFilterCount}
-          </Badge>
-        )}
-      </View>
-      <FilterSheet visible={isFilterVisible} onClose={closeFilters} onCategorySelect={onCategorySelect} showCategories={showCategories} />
-    </>
+    <View style={[styles.filterButtonContainer, style]}>
+      <IconButton
+        icon="tune-variant"
+        iconColor={isFilterActive ? MD2DarkTheme.colors.primary : "#fff"}
+        size={size}
+        onPress={openFilters}
+      />
+      {activeFilterCount > 0 && (
+        <Badge size={16} style={styles.badge} pointerEvents="none">
+          {activeFilterCount}
+        </Badge>
+      )}
+    </View>
   );
 });
 
