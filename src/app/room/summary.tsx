@@ -4,16 +4,16 @@ import LottieView from "lottie-react-native";
 import { useContext, useEffect, useState, useRef, memo, useCallback, useMemo } from "react";
 import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View, ImageBackground, Animated, Modal, Pressable } from "react-native";
 import { Image } from "expo-image";
-import { Avatar, Button, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import { Avatar, Button, IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
 import { Movie } from "../../../types";
 import CreateCollectionFromLiked from "../../components/CreateCollectionFromLiked";
+import MatchTile from "../../components/Overview/MatchTile";
 import { FancySpinner } from "../../components/FancySpinner";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
-import Thumbnail from "../../components/Thumbnail";
 import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -717,29 +717,15 @@ const AnimatedBackgroundImage = memo(({ matchedMovies }: { matchedMovies: Partia
 });
 
 const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { summary: { type: string }; badge?: boolean }) => {
-  const screenWidth = Dimensions.get("window").width;
-  const itemWidth = (screenWidth - 60) / 3;
   const dispatch = useAppDispatch();
-
   const groups = useAppSelector((state) => state.favourite.groups);
   const t = useTranslation();
 
-  const isInGroup = (groupId: "1" | "2" | "999") => {
-    const group = groups.find((g) => g?.id === groupId);
-    if (!group) return false;
-    return group.movies.some((m) => m?.id === item?.id);
-  };
+  const isInGroup1 = groups.find((g) => g?.id === "1")?.movies.some((m) => m?.id === item?.id) ?? false;
 
-  const isInGroup1 = isInGroup("1");
-
-  const onPress = () => {
+  const onFavouritePress = () => {
     isInGroup1
-      ? dispatch(
-          removeFromGroup({
-            groupId: "1",
-            movieId: item.id!,
-          }),
-        )
+      ? dispatch(removeFromGroup({ groupId: "1", movieId: item.id! }))
       : dispatch(
           addToGroup({
             item: {
@@ -753,50 +739,31 @@ const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { sum
   };
 
   return (
-    <View
-      style={[
-        styles.movieThumbnailContainer,
-        {
-          width: itemWidth,
-          gap: 5,
-          justifyContent: "space-between",
-          position: "relative",
-        },
-      ]}
-    >
-      {badge && <Badge />}
-      <TouchableRipple
-        onPress={() =>
-          router.push({
-            pathname: "/movie/type/[type]/[id]",
-            params: {
-              id: item.id!,
-              type: summary?.type || "movie",
-              img: item.poster_path,
-            },
-          })
-        }
-      >
-        <Thumbnail size={200} path={item.poster_path!} style={styles.movieThumbnail} />
-      </TouchableRipple>
-      <View style={{ flex: 1, justifyContent: "space-between" }}>
-        <Text style={styles.movieTitleSmall} numberOfLines={2}>
-          {item.title}
-        </Text>
-
-        <Button
-          style={{
-            marginTop: 10,
-            borderColor: isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary,
-          }}
-          mode="outlined"
-          onPress={onPress}
-          textColor={isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary}
-        >
-          {!isInGroup1 ? t("game-summary.add-to-favourites") : "" + t("game-summary.remove-from-favourites")}
-        </Button>
-      </View>
-    </View>
+    <MatchTile
+      match={item as Movie}
+      type={summary.type}
+      index={0}
+      disabled={!item.id}
+      badge={badge ? <Badge /> : undefined}
+      renderFooter={(movie) => (
+        <View style={styles.tileFooter}>
+          <Text style={styles.movieTitleSmall} numberOfLines={2}>
+            {movie.title}
+          </Text>
+          <Button
+            style={{
+              marginTop: 8,
+              borderColor: isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary,
+            }}
+            mode="outlined"
+            onPress={onFavouritePress}
+            textColor={isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary}
+          >
+            {isInGroup1 ? t("game-summary.remove-from-favourites") : t("game-summary.add-to-favourites")}
+          </Button>
+        </View>
+      )}
+    />
   );
 };
 
@@ -1077,16 +1044,13 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
   },
   movieRow: {
+    gap: 10,
+    marginBottom: 15,
+  },
+  tileFooter: {
+    flex: 1,
     justifyContent: "space-between",
-    marginBottom: 15,
-  },
-  movieThumbnailContainer: {
-    marginBottom: 15,
-  },
-  movieThumbnail: {
-    width: "100%",
-    aspectRatio: 2 / 3,
-    borderRadius: 10,
+    marginTop: 5,
   },
   movieTitleSmall: {
     fontSize: 12,

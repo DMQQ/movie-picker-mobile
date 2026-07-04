@@ -142,6 +142,7 @@
       "step3": {
         "title": "Onde você assiste?",
         "subtitle": "Selecione seus serviços de streaming (ou pule para escolher todos)",
+        "search": "Buscar provedores...",
         "remember": "Lembrar minhas escolhas",
         "saved": "Preferências salvas carregadas",
         "clear": "Limpar preferências salvas",

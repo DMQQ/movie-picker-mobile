@@ -68,6 +68,8 @@ export default function RoomSetup() {
   const handleBackPress = useCallback(() => {
     if (currentStep > 1) {
       dispatch(goBack());
+    } else if (router.canGoBack()) {
+      router.back();
     } else {
       router.replace("/(tabs)");
     }

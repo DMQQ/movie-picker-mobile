@@ -142,6 +142,7 @@
       "step3": {
         "title": "¿Dónde ves películas?",
         "subtitle": "Selecciona tus servicios de streaming (o salta para elegir todos)",
+        "search": "Buscar proveedores...",
         "remember": "Recordar mis elecciones",
         "saved": "Preferencias guardadas cargadas",
         "clear": "Borrar preferencias guardadas",

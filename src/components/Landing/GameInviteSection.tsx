@@ -2,7 +2,13 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback, useMemo } from "react"; // useCallback kept for handleGamePress/handleSecondaryPress
-import { Dimensions, Platform, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
@@ -120,145 +126,177 @@ const backgroundImages = [
   "/cpf7vsRZ0MYRQcnLWteD5jK9ymT.jpg",
 ];
 
-const GameInviteSection = memo(({ type }: { type: "quick" | "social" | "voter" | "fortune" | "random" | "all-games" }) => {
-  const t = useTranslation();
+const GameInviteSection = memo(
+  ({
+    type,
+  }: {
+    type: "quick" | "social" | "voter" | "fortune" | "random" | "all-games";
+  }) => {
+    const t = useTranslation();
 
-  const config = useMemo(() => {
-    switch (type) {
-      case "quick":
-        return {
-          title: t("game-invite.quick-title"),
-          subtitle: t("game-invite.quick-subtitle"),
-          buttonText: t("game-invite.quick-button"),
-          colors: ["#6366f1", "#8b5cf6"] as const,
-          icon: "gamepad",
-          navigation: () => router.push({ pathname: "/room/qr-code", params: { quickStart: "true" } }),
-          secondaryButtonText: t("game-invite.quick-custom-button"),
-          secondaryNavigation: () => router.push("/room/setup"),
-        };
-      case "social":
-        return {
-          title: t("game-invite.social-title"),
-          subtitle: t("game-invite.social-subtitle"),
-          buttonText: t("game-invite.social-button"),
-          colors: ["#f59e0b", "#ef4444"] as const,
-          icon: "users",
-          navigation: () => router.push("/room/setup"),
-        };
-      case "voter":
-        return {
-          title: t("game-invite.voter-title"),
-          subtitle: t("game-invite.voter-subtitle"),
-          buttonText: t("game-invite.voter-button"),
-          colors: ["#10b981", "#059669"] as const,
-          icon: "thumbs-up",
-          navigation: () => router.push("/voter"),
-        };
-      case "fortune":
-        return {
-          title: t("game-invite.fortune-title"),
-          subtitle: t("game-invite.fortune-subtitle"),
-          buttonText: t("game-invite.fortune-button"),
-          colors: ["#8b5cf6", "#7c3aed"] as const,
-          icon: "refresh",
-          navigation: () => router.push("/fortune"),
-        };
-      case "random":
-        return {
-          title: t("game-invite.random-title"),
-          subtitle: t("game-invite.random-subtitle"),
-          buttonText: t("game-invite.random-button"),
-          colors: ["#ec4899", "#db2777"] as const,
-          icon: "random",
-          navigation: () => router.push("/random"),
-        };
-      case "all-games":
-        return {
-          title: t("game-invite.all-games-title"),
-          subtitle: t("game-invite.all-games-subtitle"),
-          buttonText: t("game-invite.all-games-button"),
-          colors: ["#374151", "#6b7280"] as const,
-          icon: "list",
-          navigation: () => router.push("/games"),
-        };
-      default:
-        return {
-          title: "",
-          subtitle: "",
-          buttonText: "",
-          colors: ["#6366f1", "#8b5cf6"] as const,
-          icon: "gamepad",
-          navigation: () => router.push("/games"),
-        };
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type]);
+    const config = useMemo(() => {
+      switch (type) {
+        case "quick":
+          return {
+            title: t("game-invite.quick-title"),
+            subtitle: t("game-invite.quick-subtitle"),
+            buttonText: t("game-invite.quick-button"),
+            colors: ["#6366f1", "#8b5cf6"] as const,
+            icon: "gamepad",
+            navigation: () =>
+              router.push({
+                pathname: "/room/qr-code",
+                params: { quickStart: "true" },
+              }),
+            secondaryButtonText: t("game-invite.quick-custom-button"),
+            secondaryNavigation: () => router.push("/room/setup"),
+          };
+        case "social":
+          return {
+            title: t("game-invite.social-title"),
+            subtitle: t("game-invite.social-subtitle"),
+            buttonText: t("game-invite.social-button"),
+            colors: ["#f59e0b", "#ef4444"] as const,
+            icon: "users",
+            navigation: () => router.push("/room/setup"),
+          };
+        case "voter":
+          return {
+            title: t("game-invite.voter-title"),
+            subtitle: t("game-invite.voter-subtitle"),
+            buttonText: t("game-invite.voter-button"),
+            colors: ["#10b981", "#059669"] as const,
+            icon: "thumbs-up",
+            navigation: () => router.push("/voter"),
+          };
+        case "fortune":
+          return {
+            title: t("game-invite.fortune-title"),
+            subtitle: t("game-invite.fortune-subtitle"),
+            buttonText: t("game-invite.fortune-button"),
+            colors: ["#8b5cf6", "#7c3aed"] as const,
+            icon: "refresh",
+            navigation: () => router.push("/fortune"),
+          };
+        case "random":
+          return {
+            title: t("game-invite.random-title"),
+            subtitle: t("game-invite.random-subtitle"),
+            buttonText: t("game-invite.random-button"),
+            colors: ["#ec4899", "#db2777"] as const,
+            icon: "random",
+            navigation: () => router.push("/random"),
+          };
+        case "all-games":
+          return {
+            title: t("game-invite.all-games-title"),
+            subtitle: t("game-invite.all-games-subtitle"),
+            buttonText: t("game-invite.all-games-button"),
+            colors: ["#374151", "#6b7280"] as const,
+            icon: "list",
+            navigation: () => router.push("/games"),
+          };
+        default:
+          return {
+            title: "",
+            subtitle: "",
+            buttonText: "",
+            colors: ["#6366f1", "#8b5cf6"] as const,
+            icon: "gamepad",
+            navigation: () => router.push("/games"),
+          };
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [type]);
 
-  const handleGamePress = useCallback(() => {
-    if (Platform.OS === "ios") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    }
-    config.navigation();
-  }, [config]);
+    const handleGamePress = useCallback(() => {
+      if (Platform.OS === "ios") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      }
+      config.navigation();
+    }, [config]);
 
-  const handleSecondaryPress = useCallback(() => {
-    if (Platform.OS === "ios") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    }
-    if (config.secondaryNavigation) {
-      config.secondaryNavigation();
-    }
-  }, [config]);
+    const handleSecondaryPress = useCallback(() => {
+      if (Platform.OS === "ios") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      }
+      if (config.secondaryNavigation) {
+        config.secondaryNavigation();
+      }
+    }, [config]);
 
-  const gradientColors = config.colors;
-  const hasSecondaryButton = !!config.secondaryButtonText;
+    const gradientColors = config.colors;
+    const hasSecondaryButton = !!config.secondaryButtonText;
 
-  return (
-    <View style={gameInviteStyles.container}>
-      <View style={gameInviteStyles.backgroundMovies}>
-        {backgroundImages.slice(0, 6).map((image, index) => (
-          <Thumbnail
-            key={`${image}`}
-            path={image}
-            size={ThumbnailSizes.poster.tiny}
-            container={gameInviteStyles.movieThumbnail}
-            priority="low"
-          />
-        ))}
-      </View>
+    return (
+      <View style={gameInviteStyles.container}>
+        <View style={gameInviteStyles.backgroundMovies}>
+          {backgroundImages.slice(0, 6).map((image, index) => (
+            <Thumbnail
+              key={`${image}`}
+              path={image}
+              size={ThumbnailSizes.poster.tiny}
+              container={gameInviteStyles.movieThumbnail}
+              priority="low"
+            />
+          ))}
+        </View>
 
-      <PlatformBlurView intensity={10} tint="dark" style={gameInviteStyles.blurContainer}>
-        <Text style={gameInviteStyles.title}>{config.title}</Text>
-        <Text style={gameInviteStyles.subtitle}>{config.subtitle}</Text>
+        <PlatformBlurView
+          intensity={10}
+          tint="dark"
+          style={gameInviteStyles.blurContainer}
+        >
+          <Text style={gameInviteStyles.title}>{config.title}</Text>
+          <Text style={gameInviteStyles.subtitle}>{config.subtitle}</Text>
 
-        <View style={hasSecondaryButton ? gameInviteStyles.buttonRow : undefined}>
-          <TouchableOpacity
-            style={[gameInviteStyles.button, hasSecondaryButton && gameInviteStyles.buttonHalf]}
-            onPress={handleGamePress}
-            activeOpacity={0.8}
+          <View
+            style={hasSecondaryButton ? gameInviteStyles.buttonRow : undefined}
           >
-            <LinearGradient colors={gradientColors} style={gameInviteStyles.buttonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-              <FontAwesome name={config.icon as any} size={18} color="#fff" />
-              <Text style={gameInviteStyles.buttonText}>{config.buttonText}</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-
-          {hasSecondaryButton && (
             <TouchableOpacity
-              style={[gameInviteStyles.button, gameInviteStyles.buttonHalf, gameInviteStyles.secondaryButton]}
-              onPress={handleSecondaryPress}
+              style={[
+                gameInviteStyles.button,
+                hasSecondaryButton && gameInviteStyles.buttonHalf,
+              ]}
+              onPress={handleGamePress}
               activeOpacity={0.8}
             >
-              <View style={gameInviteStyles.secondaryButtonInner}>
-                <FontAwesome name="sliders" size={18} color="#fff" />
-                <Text style={gameInviteStyles.buttonText}>{config.secondaryButtonText}</Text>
-              </View>
+              <LinearGradient
+                colors={gradientColors}
+                style={gameInviteStyles.buttonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <FontAwesome name={config.icon as any} size={18} color="#fff" />
+                <Text numberOfLines={1} style={gameInviteStyles.buttonText}>
+                  {config.buttonText}
+                </Text>
+              </LinearGradient>
             </TouchableOpacity>
-          )}
-        </View>
-      </PlatformBlurView>
-    </View>
-  );
-});
+
+            {hasSecondaryButton && (
+              <TouchableOpacity
+                style={[
+                  gameInviteStyles.button,
+                  gameInviteStyles.buttonHalf,
+                  gameInviteStyles.secondaryButton,
+                ]}
+                onPress={handleSecondaryPress}
+                activeOpacity={0.8}
+              >
+                <View style={gameInviteStyles.secondaryButtonInner}>
+                  <FontAwesome name="sliders" size={18} color="#fff" />
+                  <Text numberOfLines={1} style={gameInviteStyles.buttonText}>
+                    {config.secondaryButtonText}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
+        </PlatformBlurView>
+      </View>
+    );
+  },
+);
 
 export default memo(GameInviteSection);

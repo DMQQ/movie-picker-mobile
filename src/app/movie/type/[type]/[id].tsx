@@ -1,12 +1,6 @@
-import {
-  Link,
-  router,
-  Stack,
-  useIsPreview,
-  useLocalSearchParams,
-} from "expo-router";
+import { Link, router, useIsPreview, useLocalSearchParams } from "expo-router";
 import { memo, useCallback, useMemo, useState } from "react";
-import { Dimensions, Platform, StyleSheet, View } from "react-native";
+import { Dimensions, View } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -96,55 +90,64 @@ export default function MovieDetailsScreen() {
     [movieId, typeOfContent],
   );
 
+  const numericId = Number(movieId);
+  const isValidId = !!movieId && movieId !== "undefined" && !isNaN(numericId) && numericId > 0;
+  const isValidType = !!typeOfContent && typeOfContent !== "undefined";
+
   const { data: movie = {} as Movie, isLoading: loading } = useGetMovieQuery(
     {
-      id: Number(movieId),
+      id: numericId,
       type: typeOfContent,
     },
     {
       refetchOnReconnect: true,
       refetchOnMountOrArgChange: true,
-      skip: !movieId || !typeOfContent,
+      skip: !isValidId || !isValidType,
     },
   );
 
   const { data: similarData } = useGetSimilarQuery(
     {
-      id: Number(params.id),
+      id: numericId,
       type: params.type as "movie" | "tv",
       page: 1,
     },
     {
-      skip: !params.id || !params.type,
+      skip: !isValidId || !isValidType,
     },
   );
 
   const { data: trailersData } = useGetTrailersQuery(
     {
-      id: Number(params.id),
+      id: numericId,
       type: params.type,
     },
     {
-      skip: !params.id || !params.type,
+      skip: !isValidId || !isValidType,
     },
   );
 
   const { data: castData } = useGetMovieKeyPeopleQuery(
     {
-      id: Number(params.id),
+      id: numericId,
       type: params.type as "movie" | "tv",
       actorLimit: 20,
       includeDirector: true,
     },
     {
-      skip: !params.id || !params.type,
+      skip: !isValidId || !isValidType,
     },
   );
 
-  const { data: providers } = useGetMovieProvidersQuery({
-    id: Number(movieId),
-    type: typeOfContent,
-  });
+  const { data: providers } = useGetMovieProvidersQuery(
+    {
+      id: numericId,
+      type: typeOfContent,
+    },
+    {
+      skip: !isValidId || !isValidType,
+    },
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000", width, height }}>

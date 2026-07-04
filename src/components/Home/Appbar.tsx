@@ -1,8 +1,29 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
-import { Appbar, Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
-import Animated, { FadeIn, LinearTransition, SlideInRight, useAnimatedProps, useSharedValue, withSpring } from "react-native-reanimated";
+import {
+  Appbar,
+  Button,
+  MD2DarkTheme,
+  Text,
+  useTheme,
+} from "react-native-paper";
+import Animated, {
+  FadeIn,
+  LinearTransition,
+  SlideInRight,
+  useAnimatedProps,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { Movie } from "../../../types";
 import { useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../context/SocketContext";
@@ -37,7 +58,10 @@ function HomeAppbar({ roomId, hasCards }: HomeAppbarProps) {
     if (wasPillShown.current) return;
 
     const checkAndShowRatePill = async () => {
-      if ((matches.length >= 5 || likes.length >= 5) && (await ReviewManager.canRequestReviewFromRating())) {
+      if (
+        (matches.length >= 5 || likes.length >= 5) &&
+        (await ReviewManager.canRequestReviewFromRating())
+      ) {
         setShowRatePill(true);
         wasPillShown.current = true;
       }
@@ -84,26 +108,36 @@ function HomeAppbar({ roomId, hasCards }: HomeAppbarProps) {
           key={isHost ? "host" : "regular"}
           effect="clear"
           tintColor={"#ff4444"}
-          style={[{ borderRadius: 100, marginLeft: 10, overflow: "hidden", zIndex: 50 }]}
+          style={[
+            {
+              borderRadius: 100,
+              marginLeft: 10,
+              overflow: "hidden",
+              zIndex: 50,
+            },
+          ]}
           interactive
         >
           {isHost ? (
-            <Button onPress={handleEndGame} buttonColor={Platform.OS === "ios" ? "transparent" : "#ff4444"} textColor="#fff">
+            <Button
+              onPress={handleEndGame}
+              buttonColor={Platform.OS === "ios" ? "transparent" : "#ff4444"}
+              textColor="#fff"
+            >
               {t("dialogs.scan-code.endGame")}
             </Button>
           ) : (
-            <Button onPress={toggleLeaveModal} textColor={Platform.OS === "ios" ? "#fff" : theme.colors.error}>
+            <Button
+              onPress={toggleLeaveModal}
+              textColor={Platform.OS === "ios" ? "#fff" : theme.colors.error}
+            >
               {t("dialogs.scan-code.leave")}
             </Button>
           )}
         </LiquidGlassView>
 
         <View style={[styles.midSection, showRatePill && { width: "75%" }]}>
-          {showRatePill ? (
-            <RateAppPill onDismiss={() => setShowRatePill(false)} />
-          ) : (
-            <ActiveUsers data={users} onPress={onActiveUsersPress} />
-          )}
+          <ActiveUsers data={users} onPress={onActiveUsersPress} />
         </View>
 
         {!hasCards && !isFinished && isPlaying && (
@@ -139,9 +173,14 @@ const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 const LikedMoviesPreview = memo(() => {
-  const { likes, dislikes, maxRounds } = useAppSelector((state) => state.room.room);
+  const { likes, dislikes, maxRounds } = useAppSelector(
+    (state) => state.room.room,
+  );
   const isPlaying = useAppSelector((state) => state.room.isPlaying);
-  const itemsToDisplay = useMemo(() => likes.slice().reverse().slice(0, 4), [likes]);
+  const itemsToDisplay = useMemo(
+    () => likes.slice().reverse().slice(0, 4),
+    [likes],
+  );
   const hasMore = likes.length > 5;
 
   const swiped = likes.length + dislikes.length;
@@ -169,7 +208,11 @@ const LikedMoviesPreview = memo(() => {
       <View style={styles.likedWrapper}>
         {showProgress && (
           <>
-            <Svg width={CIRCLE_SIZE} height={CIRCLE_SIZE} style={styles.circularProgress}>
+            <Svg
+              width={CIRCLE_SIZE}
+              height={CIRCLE_SIZE}
+              style={styles.circularProgress}
+            >
               <Circle
                 cx={CIRCLE_SIZE / 2}
                 cy={CIRCLE_SIZE / 2}
@@ -208,7 +251,10 @@ const LikedMoviesPreview = memo(() => {
                 style={[
                   styles.stackedCard,
                   {
-                    transform: [{ translateX: (index - 1) * 4 }, { rotate: `${(index - 1) * 4}deg` }],
+                    transform: [
+                      { translateX: (index - 1) * 4 },
+                      { rotate: `${(index - 1) * 4}deg` },
+                    ],
                     zIndex: itemsToDisplay.length - index,
                   },
                 ]}
@@ -233,8 +279,18 @@ const LikedMovieImage = memo(({ movie }: { movie: Movie }) => {
 
   return (
     <View style={styles.imageWrapper}>
-      <MaterialCommunityIcons name="movie-outline" size={12} color="rgba(255,255,255,0.2)" style={styles.imagePlaceholderIcon} />
-      <Image style={styles.likedImage} cachePolicy="memory" source={{ uri, width: 24, height: 36 }} transition={150} />
+      <MaterialCommunityIcons
+        name="movie-outline"
+        size={12}
+        color="rgba(255,255,255,0.2)"
+        style={styles.imagePlaceholderIcon}
+      />
+      <Image
+        style={styles.likedImage}
+        cachePolicy="memory"
+        source={{ uri, width: 24, height: 36 }}
+        transition={150}
+      />
     </View>
   );
 });
@@ -249,12 +305,19 @@ const PlaceholderStack = memo(() => (
           styles.stackedCard,
           styles.placeholderCard,
           {
-            transform: [{ translateX: (index - 1) * 4 }, { rotate: `${(index - 1) * 4}deg` }],
+            transform: [
+              { translateX: (index - 1) * 4 },
+              { rotate: `${(index - 1) * 4}deg` },
+            ],
             zIndex: 3 - index,
           },
         ]}
       >
-        <MaterialCommunityIcons name="movie-outline" size={12} color="rgba(255,255,255,0.2)" />
+        <MaterialCommunityIcons
+          name="movie-outline"
+          size={12}
+          color="rgba(255,255,255,0.2)"
+        />
       </Animated.View>
     ))}
   </>

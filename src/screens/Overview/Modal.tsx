@@ -161,12 +161,13 @@ export default function Modal({ match, onClose, styles }: any) {
               height: Dimensions.get("window").height / 1.5 - 50,
             }}
             onButtonPress={() => {
+              if (!match?.id) return;
               router.push({
                 pathname: "/movie/type/[type]/[id]",
                 params: {
-                  id: match?.id,
-                  type: match?.type,
-                  img: match?.poster_path,
+                  id: match.id,
+                  type: match.type,
+                  img: match.poster_path,
                 },
               });
             }}

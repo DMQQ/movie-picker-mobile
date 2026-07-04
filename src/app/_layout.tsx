@@ -5,7 +5,10 @@ import { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
-import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+} from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { roomActions } from "../redux/room/roomSlice";
 import { store, useAppDispatch } from "../redux/store";
@@ -89,7 +92,10 @@ export default function RootLayout() {
 
   return (
     <AppErrorBoundary>
-      <SafeAreaProvider initialMetrics={initialWindowMetrics} style={{ flex: 1, backgroundColor: "#000" }}>
+      <SafeAreaProvider
+        initialMetrics={initialWindowMetrics}
+        style={{ flex: 1, backgroundColor: "#000" }}
+      >
         <Provider store={store}>
           <DatabaseProvider>
             <PaperProvider theme={theme}>
@@ -177,20 +183,10 @@ const RootNavigator = ({
     return null;
   }
 
-  if (needsOnboarding) {
-    return (
-      <OnboardingScreen
-        onClose={() => {
-          setNeedsOnboarding(false);
-        }}
-      />
-    );
-  }
-
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
       <Stack
-        initialRouteName="(tabs)"
+        initialRouteName={needsOnboarding ? "onboarding" : "(tabs)"}
         screenOptions={{
           headerShown: false,
           contentStyle: {
@@ -198,66 +194,72 @@ const RootNavigator = ({
           },
         }}
       >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Protected guard={needsOnboarding === true}>
+          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+        </Stack.Protected>
+        <Stack.Protected guard={!needsOnboarding}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-        <Stack.Screen name="room" options={{ headerShown: false }} />
+          <Stack.Screen name="room" options={{ headerShown: false }} />
 
-        <Stack.Screen name="fortune" options={{ headerShown: false }} />
+          <Stack.Screen name="fortune" options={{ headerShown: false }} />
 
-        <Stack.Screen
-          name="qr-scanner"
-          options={{ headerShown: false, presentation: "modal" }}
-        />
+          <Stack.Screen
+            name="qr-scanner"
+            options={{ headerShown: false, presentation: "modal" }}
+          />
 
-        <Stack.Screen name="group" options={{ headerShown: false }} />
+          <Stack.Screen name="group" options={{ headerShown: false }} />
 
-        <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="search-filters"
+            options={{ headerShown: false }}
+          />
 
-        <Stack.Screen name="search-filters" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="filters"
+            options={{
+              headerShown: false,
+              gestureEnabled: true,
+              presentation: "formSheet",
+              sheetGrabberVisible: true,
+              contentStyle: {
+                backgroundColor:
+                  Platform.OS === "android" ? "#121212" : "transparent",
+              },
+              sheetAllowedDetents: [0.85, 1.0],
+              sheetInitialDetentIndex: 0,
+            }}
+          />
 
-        <Stack.Screen
-          name="filters"
-          options={{
-            headerShown: false,
-            gestureEnabled: true,
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
-            contentStyle: {
-              backgroundColor:
-                Platform.OS === "android" ? "#121212" : "transparent",
-            },
-            sheetAllowedDetents: [0.85, 1.0],
-            sheetInitialDetentIndex: 0,
-          }}
-        />
+          <Stack.Screen
+            name="modal"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+              presentation: "modal",
+            }}
+          />
 
-        <Stack.Screen
-          name="modal"
-          options={{
-            headerShown: false,
-            gestureEnabled: false,
-            presentation: "modal",
-          }}
-        />
-
-        <Stack.Screen
-          name="unviewed-matches"
-          options={{
-            headerShown: false,
-            presentation: "formSheet",
-            gestureEnabled: true,
-            sheetGrabberVisible: false,
-            contentStyle: {
-              backgroundColor:
-                Platform.OS === "android"
-                  ? MD2DarkTheme.colors.surface
-                  : "transparent",
-            },
-            sheetAllowedDetents: [0.7], // 70%
-            sheetInitialDetentIndex: 0,
-            sheetLargestUndimmedDetentIndex: 0,
-          }}
-        />
+          <Stack.Screen
+            name="unviewed-matches"
+            options={{
+              headerShown: false,
+              presentation: "formSheet",
+              gestureEnabled: true,
+              sheetGrabberVisible: false,
+              contentStyle: {
+                backgroundColor:
+                  Platform.OS === "android"
+                    ? MD2DarkTheme.colors.surface
+                    : "transparent",
+              },
+              sheetAllowedDetents: [0.7], // 70%
+              sheetInitialDetentIndex: 0,
+              sheetLargestUndimmedDetentIndex: 0,
+            }}
+          />
+        </Stack.Protected>
       </Stack>
     </GestureHandlerRootView>
   );

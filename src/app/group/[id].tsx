@@ -17,7 +17,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useIsPreview, useLocalSearchParams } from "expo-router";
 import OverviewModal from "../../screens/Overview/Modal";
-import { Button, Checkbox, IconButton, Text } from "react-native-paper";
+import { Button, Checkbox, IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
@@ -49,7 +49,6 @@ const ShareSelectionModal = memo(
     const t = useTranslation();
 
     useEffect(() => {
-      // Only reset when modal opens (visible changes from false to true)
       if (visible && !prevVisibleRef.current && movies.length > 0) {
         const initialSelection = new Set(
           movies
@@ -456,9 +455,18 @@ export default function Group() {
             })) || []
           }
           label=""
-          onLongItemPress={(item) => {
-            dispatch(removeFromGroup({ groupId: data?.id!, movieId: item.id }));
-          }}
+          renderItemFooter={(item) => (
+            <Pressable
+              onPress={() => dispatch(removeFromGroup({ groupId: data?.id!, movieId: item.id }))}
+              style={({ pressed }) => ({
+                alignItems: "center",
+                paddingVertical: 8,
+                opacity: pressed ? 0.5 : 1,
+              })}
+            >
+              <MaterialIcons name="delete-outline" size={20} color="rgba(255,255,255,0.45)" />
+            </Pressable>
+          )}
         />
       </View>
       {match && (

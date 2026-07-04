@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { FlatList, FlatListProps, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { Movie } from "../../../types";
@@ -19,9 +20,11 @@ interface TileListProps
   useMovieType?: boolean;
 
   onLongItemPress?: (item: Movie) => void;
+
+  renderItemFooter?: (movie: Movie) => ReactNode;
 }
 
-export default function TilesList<T>({ data, label, onLongItemPress, useMovieType, ...rest }: TileListProps) {
+export default function TilesList<T>({ data, label, onLongItemPress, useMovieType, renderItemFooter, ...rest }: TileListProps) {
   const type = useAppSelector((state) => state.room.room.type);
   const t = useTranslation();
 
@@ -61,6 +64,7 @@ export default function TilesList<T>({ data, label, onLongItemPress, useMovieTyp
             type={useMovieType ? match.type || (match?.name ? "tv" : "movie") : type}
             index={index}
             onLongPress={onLongItemPress}
+            renderFooter={renderItemFooter}
           />
         )}
       />

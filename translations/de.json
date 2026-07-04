@@ -142,6 +142,7 @@
       "step3": {
         "title": "Wo schaust du?",
         "subtitle": "Wähle deine Streaming-Dienste (oder überspringen für alle)",
+        "search": "Anbieter suchen...",
         "remember": "Meine Auswahl merken",
         "saved": "Gespeicherte Einstellungen geladen",
         "clear": "Gespeicherte Einstellungen löschen",

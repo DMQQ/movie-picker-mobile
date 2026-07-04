@@ -562,6 +562,7 @@ function Results() {
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: "row", gap: 15 }}>
             <Pressable
+              disabled={!card?.id}
               onPress={() => {
                 router.push({
                   pathname: "/movie/type/[type]/[id]",
