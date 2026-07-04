@@ -22,9 +22,11 @@ interface TileListProps
   onLongItemPress?: (item: Movie) => void;
 
   renderItemFooter?: (movie: Movie) => ReactNode;
+
+  subheader?: ReactNode;
 }
 
-export default function TilesList<T>({ data, label, onLongItemPress, useMovieType, renderItemFooter, ...rest }: TileListProps) {
+export default function TilesList<T>({ data, label, onLongItemPress, useMovieType, renderItemFooter, subheader, ...rest }: TileListProps) {
   const type = useAppSelector((state) => state.room.room.type);
   const t = useTranslation();
 
@@ -37,12 +39,16 @@ export default function TilesList<T>({ data, label, onLongItemPress, useMovieTyp
         contentContainerStyle={[rest.contentContainerStyle, { gap: 15, paddingBottom: 60 }]}
         columnWrapperStyle={{ gap: 15 }}
         ListHeaderComponent={
-          label ? (
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-              <Text style={{ fontSize: 35, marginBottom: 15, fontFamily: "Bebas", maxWidth: "70%" }}>{label}</Text>
-
-              <CreateCollectionFromLiked data={data} />
-            </View>
+          subheader || label ? (
+            <>
+              {subheader}
+              {label ? (
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  <Text style={{ fontSize: 35, marginBottom: 15, fontFamily: "Bebas", maxWidth: "70%" }}>{label}</Text>
+                  <CreateCollectionFromLiked data={data} />
+                </View>
+              ) : null}
+            </>
           ) : null
         }
         ListEmptyComponent={

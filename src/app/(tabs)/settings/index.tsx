@@ -9,8 +9,6 @@ import { roomActions } from "../../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import useTranslation from "../../../service/useTranslation";
 import { router } from "expo-router";
-import { useBlockedMovies } from "../../../hooks/useBlockedMovies";
-import { useSuperLikedMovies } from "../../../hooks/useSuperLikedMovies";
 
 interface SectionProps {
   title: string;
@@ -53,9 +51,6 @@ export default function SettingsScreen() {
   const dispatch = useAppDispatch();
   const t = useTranslation();
   const insets = useSafeAreaInsets();
-  const { blockedMovies } = useBlockedMovies();
-  const { superLikedMovies } = useSuperLikedMovies();
-
   const handleSaveNickname = () => {
     if (nickname.trim().length !== 0) {
       AsyncStorage.setItem("nickname", nickname);
@@ -85,27 +80,7 @@ export default function SettingsScreen() {
           <Text style={styles.helperText}>{t("settings.nickname-info")}</Text>
         </Section>
 
-        {/* Library Section */}
-        <Section title={t("settings.library") || "Library"}>
-          <MenuItem
-            icon="cancel"
-            iconColor="#FF4458"
-            label={t("blocked.title")}
-            badge={blockedMovies.length}
-            badgeColor="#FF4458"
-            onPress={() => router.push("/settings/blocked-movies")}
-          />
-          <MenuItem
-            icon="star"
-            iconColor="#FFD700"
-            label={t("super-liked.title")}
-            badge={superLikedMovies.length}
-            badgeColor="#FFD700"
-            onPress={() => router.push("/settings/super-liked")}
-          />
-        </Section>
-
-        <View style={styles.aboutContent}>
+<View style={styles.aboutContent}>
           <Text style={styles.aboutText}>
             {t("settings.update")} {Updates.manifest?.id}
           </Text>

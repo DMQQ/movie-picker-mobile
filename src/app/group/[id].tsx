@@ -17,7 +17,13 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useIsPreview, useLocalSearchParams } from "expo-router";
 import OverviewModal from "../../screens/Overview/Modal";
-import { Button, Checkbox, IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import {
+  Button,
+  Checkbox,
+  IconButton,
+  MD2DarkTheme,
+  Text,
+} from "react-native-paper";
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
@@ -276,6 +282,22 @@ const ShareSelectionModal = memo(
   },
 );
 
+const tileStyles = StyleSheet.create({
+  footer: {
+    flex: 1,
+    justifyContent: "space-between",
+    marginTop: 5,
+  },
+  title: {
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  removeButton: {
+    marginTop: 8,
+    borderColor: MD2DarkTheme.colors.error,
+  },
+});
+
 const shareStyles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
@@ -456,16 +478,21 @@ export default function Group() {
           }
           label=""
           renderItemFooter={(item) => (
-            <Pressable
-              onPress={() => dispatch(removeFromGroup({ groupId: data?.id!, movieId: item.id }))}
-              style={({ pressed }) => ({
-                alignItems: "center",
-                paddingVertical: 8,
-                opacity: pressed ? 0.5 : 1,
-              })}
-            >
-              <MaterialIcons name="delete-outline" size={20} color="rgba(255,255,255,0.45)" />
-            </Pressable>
+            <View style={tileStyles.footer}>
+              <Button
+                mode="outlined"
+                onPress={() =>
+                  dispatch(
+                    removeFromGroup({ groupId: data?.id!, movieId: item.id }),
+                  )
+                }
+                style={tileStyles.removeButton}
+                textColor={MD2DarkTheme.colors.error}
+                compact
+              >
+                Remove
+              </Button>
+            </View>
           )}
         />
       </View>
