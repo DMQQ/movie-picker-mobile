@@ -1,7 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useMemo } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import { IconButton, Text, TouchableRipple } from "react-native-paper";
+import { Button, IconButton, Text, TouchableRipple } from "react-native-paper";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import { router } from "expo-router";
@@ -26,21 +26,47 @@ interface GameCardProps {
   index: number;
 }
 
-const Animations = [<SwiperAnimation />, <VoterAnimation />, <FortuneWheelAnimation />, <RandomMovieAnimation />];
+const Animations = [
+  <SwiperAnimation />,
+  <VoterAnimation />,
+  <FortuneWheelAnimation />,
+  <RandomMovieAnimation />,
+];
 
 const AnimatedRipple = Animated.createAnimatedComponent(TouchableRipple);
 
-const GameCard = ({ title, description, onPress, beta, players, duration, index }: GameCardProps) => {
+const GameCard = ({
+  title,
+  description,
+  onPress,
+  beta,
+  players,
+  duration,
+  index,
+}: GameCardProps) => {
   return (
-    <AnimatedRipple onPress={onPress} style={styles.cardContainer} exiting={FadeInDown.delay((index + 1) * 75)}>
+    <AnimatedRipple
+      onPress={onPress}
+      style={styles.cardContainer}
+      exiting={FadeInDown.delay((index + 1) * 75)}
+    >
       <Animated.View style={[styles.card]}>
         {Animations[index]}
 
-        <LinearGradient colors={["transparent", "rgba(0,0,0,0.8)"]} style={styles.cardGradient}>
+        <LinearGradient
+          colors={["transparent", "rgba(0,0,0,0.8)"]}
+          style={styles.cardGradient}
+        >
           <View style={styles.cardContent}>
             <View style={styles.cardHeader}>
               <View style={{ width: "100%" }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
                   <Text style={styles.cardTitle}>{title}</Text>
                   <View style={styles.cardFooter}>
                     {players && (
@@ -120,7 +146,9 @@ export default function GameList() {
   }, []);
 
   return (
-    <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000", paddingBottom: 15 }}>
+    <SafeIOSContainer
+      style={{ flex: 1, backgroundColor: "#000", paddingBottom: 15 }}
+    >
       <PageHeading
         rightIconName="camera"
         rightIconTitle={t("scanner.button") as string}
@@ -134,7 +162,10 @@ export default function GameList() {
       />
 
       <ScrollView
-        style={[styles.container, Platform.OS === "android" && { marginTop: 30 }]}
+        style={[
+          styles.container,
+          Platform.OS === "android" && { marginTop: 30 },
+        ]}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 60, paddingBottom: 50 }}
       >

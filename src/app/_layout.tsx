@@ -22,11 +22,30 @@ import {
 import { loadInteractions } from "../redux/movieInteractions/movieInteractionsSlice";
 import { loadFilterPreferences } from "../redux/filterPreferences/filterPreferencesSlice";
 import * as SplashScreen from "expo-splash-screen";
-
 import * as QuickActions from "expo-quick-actions";
-import OnboardingScreen from "./onboarding";
 import useMaintenance from "../service/useMaintanance";
 import { getDeviceSettings } from "../service/useTranslation";
+
+import * as Sentry from "@sentry/react-native";
+
+Sentry.init({
+  dsn: "https://2ab39326e2ee096051c4b72e34eb98d1@o4507922596036608.ingest.de.sentry.io/4511676327395408",
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 const theme = MD2DarkTheme;
 
@@ -80,7 +99,7 @@ async function migrateFromSecureStoreToKVStore() {
   }
 }
 
-export default function RootLayout() {
+function RootLayout() {
   const { isLoaded, isUpdating } = useInit();
   const [migrationComplete, setMigrationComplete] = useState(false);
 
@@ -264,3 +283,5 @@ const RootNavigator = ({
     </GestureHandlerRootView>
   );
 };
+
+export default Sentry.wrap(RootLayout);
