@@ -4,6 +4,7 @@ import { Movie } from "../../types";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import { Link } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
+import Touch from "./Touch";
 
 const getColor = (score: number) => {
   if (score >= 7) return "#21d07a"; // Green
@@ -12,7 +13,7 @@ const getColor = (score: number) => {
 };
 
 interface SectionListItemProps extends Movie {
-  href: { pathname: string; params: Record<string, any> };
+  // href: { pathname: string; params: Record<string, any> };
 
   imageWidth?: number;
 
@@ -38,10 +39,11 @@ export const SectionListItem = ({
   vote_average,
   name,
   title,
-  href,
+  // href,
   imageWidth,
   genres,
   mapped_genres,
+  ...rest
 }: SectionListItemProps) => {
   const genreNames = getGenres(genres || mapped_genres);
   const sizes =
@@ -49,8 +51,14 @@ export const SectionListItem = ({
 
   return (
     <Link
-      href={href as any}
-      push
+      href={{
+        pathname: "/movie/type/[type]/[id]",
+        params: {
+          id: rest.id,
+          type: rest.type === "tv" ? "tv" : "movie",
+          img: poster_path,
+        },
+      }}
       style={[
         sectionStyles.item,
         sizes?.item,
@@ -58,7 +66,7 @@ export const SectionListItem = ({
       ]}
       asChild
     >
-      <Pressable>
+      <Touch>
         <Link.Trigger>
           <View>
             <Link.AppleZoom>
@@ -124,7 +132,7 @@ export const SectionListItem = ({
         </Link.Trigger>
 
         <Link.Preview />
-      </Pressable>
+      </Touch>
     </Link>
   );
 };

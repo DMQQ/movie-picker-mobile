@@ -191,7 +191,7 @@ export default function MovieDetailsScreen() {
           </Link.AppleZoomTarget>
         </Animated.View>
         <View style={{ zIndex: 10, position: "relative" }}>
-          {loading ? (
+          {loading || !movie?.id ? (
             <MovieDetailsSkeleton />
           ) : (
             <MovieDetails
@@ -207,7 +207,7 @@ export default function MovieDetailsScreen() {
         </View>
       </Animated.ScrollView>
 
-      {!isPreview && (
+      {!isPreview && !!movie?.id && (
         <Actions
           movieId={Number(movieId)}
           type={typeOfContent as "movie" | "tv"}

@@ -205,7 +205,7 @@ interface WheelProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
+const Wheel = forwardRef<{ spin: () => void; stop: () => void }, WheelProps>(
   ({ size = width * 1.5, items, style, onSelectedItem, onSpinStart, onWinnerPredicted }, ref) => {
     const segmentAngle = 360 / items.length;
     const rotate = useSharedValue(0);
@@ -356,6 +356,13 @@ const Wheel = forwardRef<{ spin: () => void }, WheelProps>(
     useImperativeHandle(ref, () => ({
       spin: () => {
         runOnJS(handleSpin)(-2000);
+      },
+      stop: () => {
+        cancelAnimation(rotate);
+        cancelAnimation(translateY);
+        cancelAnimation(pointerRotation);
+        isSpinning.value = false;
+        pointerRotation.value = withSpring(0, { damping: 18, stiffness: 300 });
       },
     }));
 

@@ -108,7 +108,7 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
               {(movie?.vote_average || 0) > 0 && (
                 <View style={styles.ratingContainer}>
                   <AntDesign name="star" size={12} color="#FFD700" />
-                  <Text style={styles.ratingText}>{movie.vote_average.toFixed(1)}</Text>
+                  <Text style={styles.ratingText}>{movie?.vote_average.toFixed(1)}</Text>
                 </View>
               )}
 
@@ -150,7 +150,7 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
             style={[styles.buttonContainer, Platform.OS === "android" && styles.androidButtonBackground]}
             tintColor={MD2DarkTheme.colors.primary}
           >
-            <IconShareButton movie={movie} />
+            {movie && <IconShareButton movie={movie} />}
           </PlatformBlurView>
         </Animated.View>
       </View>

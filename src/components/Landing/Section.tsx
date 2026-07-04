@@ -3,7 +3,10 @@ import { Platform, StyleSheet, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
 import { Movie } from "../../../types";
 import { useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
-import SectionListItem, { SECTION_ITEM_WIDTH, SECTION_ITEM_HEIGHT } from "../SectionItem";
+import SectionListItem, {
+  SECTION_ITEM_WIDTH,
+  SECTION_ITEM_HEIGHT,
+} from "../SectionItem";
 import Skeleton from "../Skeleton/Skeleton";
 import uniqueBy from "../../utils/unique";
 
@@ -49,22 +52,14 @@ const getItem = (data: Movie[], index: number) => data[index];
 const getItemCount = (data: Movie[]) => data.length;
 
 const getItemLayout = (_: Movie[] | null | undefined, index: number) => {
-  return { length: SECTION_ITEM_WIDTH + 15, offset: (SECTION_ITEM_WIDTH + 15) * index, index };
+  return {
+    length: SECTION_ITEM_WIDTH + 15,
+    offset: (SECTION_ITEM_WIDTH + 15) * index,
+    index,
+  };
 };
 
-const renderItem = ({ item }: { item: Movie }) => (
-  <SectionListItem
-    href={{
-      pathname: "/movie/type/[type]/[id]",
-      params: {
-        id: item.id,
-        type: item.type === "tv" ? "tv" : "movie",
-        img: item.poster_path,
-      },
-    }}
-    {...item}
-  />
-);
+const renderItem = ({ item }: { item: Movie }) => <SectionListItem {...item} />;
 
 const movieKeyExtractor = (item: Movie) => `${item.id}-${item.type}`;
 
@@ -86,7 +81,9 @@ export const Section = memo(
       getSectionMovies({ name: group.name, page }, true).then((response) => {
         if (response.data && Array.isArray(response.data.results)) {
           setHasMore(page < response.data.totalPagesCount);
-          setSectionMovies((prev) => uniqueBy(prev.concat(response?.data?.results || []), "id"));
+          setSectionMovies((prev) =>
+            uniqueBy(prev.concat(response?.data?.results || []), "id"),
+          );
         }
       });
     }, [page, group.name]);
@@ -117,7 +114,14 @@ export const Section = memo(
                 {[...Array(2)].map((_, index) => (
                   <View style={skeletonStyles.movieCard} key={index}>
                     <Skeleton>
-                      <View style={{ width: SECTION_ITEM_WIDTH, height: SECTION_ITEM_HEIGHT, backgroundColor: "#333", borderRadius: 8 }} />
+                      <View
+                        style={{
+                          width: SECTION_ITEM_WIDTH,
+                          height: SECTION_ITEM_HEIGHT,
+                          backgroundColor: "#333",
+                          borderRadius: 8,
+                        }}
+                      />
                     </Skeleton>
                   </View>
                 ))}
@@ -129,7 +133,10 @@ export const Section = memo(
     );
   },
   (prevProps, nextProps) => {
-    return prevProps.group.name === nextProps.group.name && prevProps.group.results.length === nextProps.group.results.length;
+    return (
+      prevProps.group.name === nextProps.group.name &&
+      prevProps.group.results.length === nextProps.group.results.length
+    );
   },
 );
 

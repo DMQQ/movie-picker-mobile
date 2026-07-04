@@ -1,5 +1,11 @@
 import { memo, useEffect, useState } from "react";
-import { Dimensions, StyleSheet, View, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { Movie } from "../../../../types";
 import { useLazyGetSimilarQuery } from "../../../redux/movie/movieApi";
 import SectionListItem from "../../SectionItem";
@@ -20,8 +26,12 @@ interface SimilarTabProps {
 function SimilarTab({ id, type, initialData }: SimilarTabProps) {
   const [page, setPage] = useState(initialData?.page || 1);
   const [getSectionMovies, state] = useLazyGetSimilarQuery();
-  const [movies, setSectionMovies] = useState<Movie[]>(initialData?.results || []);
-  const [hasMore, setHasMore] = useState(initialData ? initialData.page < initialData.total_pages : true);
+  const [movies, setSectionMovies] = useState<Movie[]>(
+    initialData?.results || [],
+  );
+  const [hasMore, setHasMore] = useState(
+    initialData ? initialData.page < initialData.total_pages : true,
+  );
 
   const t = useTranslation();
 
@@ -32,9 +42,15 @@ function SimilarTab({ id, type, initialData }: SimilarTabProps) {
 
     getSectionMovies({ id: id, type: type, page }).then((response) => {
       if (response.data && Array.isArray(response.data.results)) {
-        setHasMore(response?.data ? response.data.page < response.data.total_pages : false);
+        setHasMore(
+          response?.data
+            ? response.data.page < response.data.total_pages
+            : false,
+        );
 
-        setSectionMovies((prev) => uniqueBy(prev.concat(response?.data?.results || []), "id"));
+        setSectionMovies((prev) =>
+          uniqueBy(prev.concat(response?.data?.results || []), "id"),
+        );
       }
     });
   }, [page, id, type, initialData]);
@@ -58,18 +74,7 @@ function SimilarTab({ id, type, initialData }: SimilarTabProps) {
       <View style={styles.gridContainer}>
         {movies.map((item, index) => (
           <View key={`${item.id}-${type}-${index}`} style={styles.itemWrapper}>
-            <SectionListItem
-              href={{
-                pathname: `/movie/type/[type]/[id]`,
-                params: {
-                  id: item.id,
-                  type: type,
-                  img: item.poster_path,
-                },
-              }}
-              {...item}
-              imageWidth={imageWidth}
-            />
+            <SectionListItem {...item} type={type} imageWidth={imageWidth} />
           </View>
         ))}
       </View>
@@ -79,8 +84,14 @@ function SimilarTab({ id, type, initialData }: SimilarTabProps) {
           {state.isLoading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <TouchableOpacity style={styles.loadMoreButton} onPress={handleLoadMore} activeOpacity={0.7}>
-              <Text style={styles.loadMoreText}>{t("movie.similar.load_more")}</Text>
+            <TouchableOpacity
+              style={styles.loadMoreButton}
+              onPress={handleLoadMore}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.loadMoreText}>
+                {t("movie.similar.load_more")}
+              </Text>
             </TouchableOpacity>
           )}
         </View>

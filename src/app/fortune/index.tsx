@@ -12,7 +12,7 @@ import fillMissing from "../../utils/fillMissing";
 import { shuffleInPlace } from "../../utils/shuffle";
 import { throttle } from "../../utils/throttle";
 import PageHeading from "../../components/PageHeading";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
@@ -24,11 +24,11 @@ import { Image } from "expo-image";
 const { width: screenWidth } = Dimensions.get("screen");
 
 export default function FortuneWheel() {
-  const wheelRef = useRef<{ spin: Function }>(null);
+  const wheelRef = useRef<{ spin: () => void; stop: () => void }>(null);
 
   const params = useLocalSearchParams();
 
-  const { getFilterParams } = useMediaFilters();
+  const { getFilterParams, isFilterActive } = useMediaFilters();
   const { getBlockedIds, blockMovie } = useBlockedMovies();
   const { superLikeMovie } = useSuperLikedMovies();
   const [getMovieDetails] = useLazyGetMovieQuery();
@@ -192,6 +192,16 @@ export default function FortuneWheel() {
 
   const [isSpin, setIsSpin] = useState(false);
 
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        wheelRef.current?.stop();
+        setIsSpin(false);
+        setShouldSpin(false);
+      };
+    }, []),
+  );
+
   useEffect(() => {
     if (params?.movies) {
       try {
@@ -220,6 +230,10 @@ export default function FortuneWheel() {
       handleThrowDice(params.selectedCategory as string);
       return;
     }
+
+    // Skip auto-spin when no filters are set — FilterButton's shouldAutoOpen
+    // will open the sheet and its onApply will trigger the spin after close.
+    if (!isFilterActive) return;
 
     handleThrowDice();
   }, [params?.category, params?.movies, params?.title, params?.selectedCategory]);

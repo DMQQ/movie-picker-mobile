@@ -11,8 +11,23 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Button, Chip, IconButton, MD2DarkTheme, Text, TouchableRipple, Dialog, Portal, useTheme } from "react-native-paper";
-import Animated, { FadeIn, FadeInDown, FadeOut, FadeOutDown } from "react-native-reanimated";
+import {
+  Button,
+  Chip,
+  IconButton,
+  MD2DarkTheme,
+  Text,
+  TouchableRipple,
+  Dialog,
+  Portal,
+  useTheme,
+} from "react-native-paper";
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  FadeOut,
+  FadeOutDown,
+} from "react-native-reanimated";
 import { FancySpinner } from "../../components/FancySpinner";
 import QuickActions from "../../components/QuickActions";
 import QRCodeComponent from "../../components/Voter/QRCode";
@@ -23,7 +38,10 @@ import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { Pressable } from "react-native-gesture-handler";
 import PageHeading from "../../components/PageHeading";
-import { useGetAllProvidersQuery, useGetGenresQuery } from "../../redux/movie/movieApi";
+import {
+  useGetAllProvidersQuery,
+  useGetGenresQuery,
+} from "../../redux/movie/movieApi";
 import ReviewManager from "../../utils/rate";
 import { throttle } from "../../utils/throttle";
 import { url as apiUrl } from "../../context/SocketContext";
@@ -41,8 +59,17 @@ import { useLocalSearchParams } from "expo-router";
 
 export default function Home() {
   const params = useLocalSearchParams();
-  const { sessionId, status, users, currentMovies, currentUserId, actions, isHost, sessionSettings, loadingInitialContent } =
-    useMovieVoter();
+  const {
+    sessionId,
+    status,
+    users,
+    currentMovies,
+    currentUserId,
+    actions,
+    isHost,
+    sessionSettings,
+    loadingInitialContent,
+  } = useMovieVoter();
   const [localReady, setLocalReady] = useState(false);
   const [localRatings, setLocalRatings] = useState<{
     interest: number | null;
@@ -66,11 +93,14 @@ export default function Home() {
     const verifyAndJoinSession = async () => {
       if (params?.sessionId) {
         try {
-          const response = await fetch(`${apiUrl}/room/verify/${params.sessionId}`, {
-            headers: {
-              authorization: `Bearer ${envs.server_auth_token}`,
+          const response = await fetch(
+            `${apiUrl}/room/verify/${params.sessionId}`,
+            {
+              headers: {
+                authorization: `Bearer ${envs.server_auth_token}`,
+              },
             },
-          });
+          );
 
           const data = await response.json();
 
@@ -99,7 +129,12 @@ export default function Home() {
     throttle(() => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-      if (currentMovies?.[0]?.id && localRatings.interest !== null && localRatings.mood !== null && localRatings.uniqueness !== null) {
+      if (
+        currentMovies?.[0]?.id &&
+        localRatings.interest !== null &&
+        localRatings.mood !== null &&
+        localRatings.uniqueness !== null
+      ) {
         actions.submitRating(currentMovies[0].id as any, {
           interest: localRatings.interest,
           mood: localRatings.mood,
@@ -131,7 +166,9 @@ export default function Home() {
       currentMovies
         .map((movie) => [
           Image.prefetch("https://image.tmdb.org/t/p/w200" + movie.poster_path),
-          Image.prefetch("https://image.tmdb.org/t/p/w500" + movie?.backdrop_path),
+          Image.prefetch(
+            "https://image.tmdb.org/t/p/w500" + movie?.backdrop_path,
+          ),
         ])
         .flat(),
     ).finally(() => {
@@ -150,9 +187,25 @@ export default function Home() {
   }
 
   const renderInitialState = () => (
-    <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
-      <PageHeading gradientHeight={50} useSafeArea={false} title={t("voter.home.howtotitle")} onPress={onGoBack} />
-      <View style={{ flex: 1, paddingHorizontal: 15, paddingBottom: 15, paddingTop: 60 }}>
+    <Animated.View
+      style={{ flex: 1 }}
+      entering={FadeIn.duration(300)}
+      exiting={FadeOut.duration(300)}
+    >
+      <PageHeading
+        gradientHeight={50}
+        useSafeArea={false}
+        title={t("voter.home.howtotitle")}
+        onPress={onGoBack}
+      />
+      <View
+        style={{
+          flex: 1,
+          paddingHorizontal: 15,
+          paddingBottom: 15,
+          paddingTop: 60,
+        }}
+      >
         <View style={{ flex: 1 }}>
           <View style={{ marginTop: 15 }}>
             <Text style={{ fontSize: 18 }}>{t("voter.home.howto")}</Text>
@@ -166,7 +219,10 @@ export default function Home() {
           <PickGenres
             genres={sessionSettings.genres}
             setGenres={(genres: any) => {
-              actions.setSessionSettings((p) => ({ ...p, genres: genres(p.genres) }));
+              actions.setSessionSettings((p) => ({
+                ...p,
+                genres: genres(p.genres),
+              }));
             }}
           />
           <PickProviders
@@ -181,7 +237,12 @@ export default function Home() {
         </View>
       </View>
       <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
-        <Button mode="contained" onPress={actions.createSession} style={[styles.button, { marginTop: 0 }]} contentStyle={{ padding: 7.5 }}>
+        <Button
+          mode="contained"
+          onPress={actions.createSession}
+          style={[styles.button, { marginTop: 0 }]}
+          contentStyle={{ padding: 7.5 }}
+        >
           {t("voter.home.create")}
         </Button>
       </View>
@@ -190,13 +251,22 @@ export default function Home() {
 
   const renderWaitingState = () => {
     const allReady = users.length > 1 && users.every((u) => u.ready);
-    const currentUserReady = users.find((u) => u.userId === currentUserId)?.ready;
+    const currentUserReady = users.find(
+      (u) => u.userId === currentUserId,
+    )?.ready;
 
     return (
-      <Animated.View style={{ flex: 1, backgroundColor: "#000" }} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
+      <Animated.View
+        style={{ flex: 1, backgroundColor: "#000" }}
+        entering={FadeIn.duration(300)}
+        exiting={FadeOut.duration(300)}
+      >
         <PageHeading
           useSafeArea={false}
-          title={users.length > 1 ? t("voter.home.ready") : t("voter.home.waiting-initial")}
+          title={(users.length > 1
+            ? t("voter.home.ready")
+            : t("voter.home.waiting-initial")
+          ).slice(0, 30)}
           onPress={onGoBack}
           showGradientBackground={false}
           gradientHeight={50}
@@ -211,23 +281,51 @@ export default function Home() {
               <Chip
                 key={user.userId}
                 icon={user.ready ? "check" : "clock"}
-                style={[styles.userChip, user.userId === currentUserId && styles.currentUserChip]}
+                style={[
+                  styles.userChip,
+                  user.userId === currentUserId && styles.currentUserChip,
+                ]}
               >
-                {user.userId === currentUserId ? t("voter.home.you") : t("voter.home.user")}
+                {user.userId === currentUserId
+                  ? t("voter.home.you")
+                  : t("voter.home.user")}
                 {user.ready ? " (Ready)" : ""}
               </Chip>
             ))}
           </View>
 
           {sessionId && (
-            <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
-              <QRCodeComponent sessionId={sessionId} type="voter" safetyCode="1234" size={Dimensions.get("screen").width / 2} />
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+              }}
+            >
+              <QRCodeComponent
+                sessionId={sessionId}
+                type="voter"
+                safetyCode="1234"
+                size={Dimensions.get("screen").width / 2}
+              />
             </View>
           )}
         </View>
-        <View style={{ height: 100, justifyContent: "flex-end", paddingHorizontal: 15, paddingTop: 15 }}>
+        <View
+          style={{
+            height: 100,
+            justifyContent: "flex-end",
+            paddingHorizontal: 15,
+            paddingTop: 15,
+          }}
+        >
           {!currentUserReady && (
-            <Button mode="contained" onPress={handleReady} style={styles.button} contentStyle={{ padding: 7.5 }}>
+            <Button
+              mode="contained"
+              onPress={handleReady}
+              style={styles.button}
+              contentStyle={{ padding: 7.5 }}
+            >
               {t("voter.home.ready-status")}
             </Button>
           )}
@@ -250,7 +348,13 @@ export default function Home() {
                 padding: 7.5,
               }}
             >
-              {loadingInitialContent && <ActivityIndicator style={{ marginHorizontal: 10 }} size={15} color="#fff" />}
+              {loadingInitialContent && (
+                <ActivityIndicator
+                  style={{ marginHorizontal: 10 }}
+                  size={15}
+                  color="#fff"
+                />
+              )}
               {t("voter.home.start")}
             </Button>
           )}
@@ -263,7 +367,12 @@ export default function Home() {
 
   const renderRatingState = () =>
     card ? (
-      <Animated.View style={[{ flex: 1 }]} key={card.id} entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
+      <Animated.View
+        style={[{ flex: 1 }]}
+        key={card.id}
+        entering={FadeIn.duration(300)}
+        exiting={FadeOut.duration(300)}
+      >
         <ImageBackground
           blurRadius={5}
           source={{
@@ -272,8 +381,17 @@ export default function Home() {
           style={{ flex: 1, ...StyleSheet.absoluteFill }}
         >
           <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)" }}>
-            <View style={{ padding: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>{t("voter.home.rate")} 🎬</Text>
+            <View
+              style={{
+                padding: 5,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>
+                {t("voter.home.rate")} 🎬
+              </Text>
 
               <Text style={{ fontFamily: "Bebas", fontSize: 20 }}>
                 {currentMovies.length} {t("voter.home.left")}
@@ -299,7 +417,10 @@ export default function Home() {
                   <Animated.Image
                     entering={FadeInDown.duration(300)}
                     exiting={FadeOutDown.duration(300)}
-                    source={{ uri: "https://image.tmdb.org/t/p/w200" + card?.poster_path }}
+                    source={{
+                      uri:
+                        "https://image.tmdb.org/t/p/w200" + card?.poster_path,
+                    }}
                     style={{
                       width: (Dimensions.get("window").width - 30) / 2 - 50,
                       height: 210,
@@ -307,11 +428,16 @@ export default function Home() {
                     }}
                   />
                 </TouchableOpacity>
-                <View style={{ flex: 1, gap: 10, justifyContent: "space-between" }}>
+                <View
+                  style={{ flex: 1, gap: 10, justifyContent: "space-between" }}
+                >
                   <View>
                     <Text
                       style={{
-                        fontSize: scaleTitle((card?.title || card?.name)! as string, 40),
+                        fontSize: scaleTitle(
+                          (card?.title || card?.name)! as string,
+                          40,
+                        ),
                         fontFamily: "Bebas",
                       }}
                     >
@@ -320,7 +446,12 @@ export default function Home() {
 
                     <Text style={{ width: "100%" }}>
                       ★{card?.vote_average.toFixed(2)} / 10{" "}
-                      {[card?.release_date, `(${card?.original_language.toUpperCase()})`].filter((v) => v !== undefined).join(" | ")}
+                      {[
+                        card?.release_date,
+                        `(${card?.original_language.toUpperCase()})`,
+                      ]
+                        .filter((v) => v !== undefined)
+                        .join(" | ")}
                     </Text>
                   </View>
 
@@ -335,17 +466,38 @@ export default function Home() {
                 entering={FadeInDown}
                 exiting={FadeOutDown}
                 numberOfLines={9}
-                style={{ marginTop: 10, color: "rgba(255,255,255,0.9)", fontSize: 15, fontWeight: "500" }}
+                style={{
+                  marginTop: 10,
+                  color: "rgba(255,255,255,0.9)",
+                  fontSize: 15,
+                  fontWeight: "500",
+                }}
               >
                 {card?.overview}
               </Animated.Text>
             </View>
 
-            <View style={{ flex: 1, marginTop: 30, justifyContent: "space-between" }}>
-              <Text style={{ fontSize: 30, fontFamily: "Bebas", paddingHorizontal: 15 }}>{t("voter.rate")}</Text>
+            <View
+              style={{
+                flex: 1,
+                marginTop: 30,
+                justifyContent: "space-between",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 30,
+                  fontFamily: "Bebas",
+                  paddingHorizontal: 15,
+                }}
+              >
+                {t("voter.rate")}
+              </Text>
 
               <View style={{ gap: 8, marginTop: 15, paddingHorizontal: 15 }}>
-                <Text style={{ fontSize: 18, fontFamily: "Bebas" }}>{t("voter.ratings.interest.label")}</Text>
+                <Text style={{ fontSize: 18, fontFamily: "Bebas" }}>
+                  {t("voter.ratings.interest.label")}
+                </Text>
                 <View style={{ flexDirection: "row", gap: 8 }}>
                   {[
                     { value: 0, label: t("voter.ratings.interest.options.0") },
@@ -358,13 +510,20 @@ export default function Home() {
                         key={option.value}
                         mode={isSelected ? "contained" : "outlined"}
                         onPress={() => {
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                          setLocalRatings((p) => ({ ...p, interest: option.value }));
+                          Haptics.impactAsync(
+                            Haptics.ImpactFeedbackStyle.Light,
+                          );
+                          setLocalRatings((p) => ({
+                            ...p,
+                            interest: option.value,
+                          }));
                         }}
                         style={{
                           flex: 1,
                           borderRadius: 10,
-                          backgroundColor: isSelected ? MD2DarkTheme.colors.primary : "rgba(0,0,0,0.5)",
+                          backgroundColor: isSelected
+                            ? MD2DarkTheme.colors.primary
+                            : "rgba(0,0,0,0.5)",
                         }}
                         labelStyle={{ fontSize: 12, color: "#fff" }}
                         compact
@@ -377,7 +536,9 @@ export default function Home() {
               </View>
 
               <View style={{ gap: 8, marginTop: 15, paddingHorizontal: 15 }}>
-                <Text style={{ fontSize: 18, fontFamily: "Bebas" }}>{t("voter.ratings.mood.label")}</Text>
+                <Text style={{ fontSize: 18, fontFamily: "Bebas" }}>
+                  {t("voter.ratings.mood.label")}
+                </Text>
                 <View style={{ flexDirection: "row", gap: 8 }}>
                   {[
                     { value: 0, label: t("voter.ratings.mood.options.0") },
@@ -390,13 +551,20 @@ export default function Home() {
                         key={option.value}
                         mode={isSelected ? "contained" : "outlined"}
                         onPress={() => {
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                          setLocalRatings((p) => ({ ...p, mood: option.value }));
+                          Haptics.impactAsync(
+                            Haptics.ImpactFeedbackStyle.Light,
+                          );
+                          setLocalRatings((p) => ({
+                            ...p,
+                            mood: option.value,
+                          }));
                         }}
                         style={{
                           flex: 1,
                           borderRadius: 10,
-                          backgroundColor: isSelected ? MD2DarkTheme.colors.primary : "rgba(0,0,0,0.5)",
+                          backgroundColor: isSelected
+                            ? MD2DarkTheme.colors.primary
+                            : "rgba(0,0,0,0.5)",
                         }}
                         labelStyle={{ fontSize: 12, color: "#fff" }}
                         compact
@@ -409,7 +577,9 @@ export default function Home() {
               </View>
 
               <View style={{ gap: 8, marginTop: 15, paddingHorizontal: 15 }}>
-                <Text style={{ fontSize: 18, fontFamily: "Bebas" }}>{t("voter.ratings.novelty.label")}</Text>
+                <Text style={{ fontSize: 18, fontFamily: "Bebas" }}>
+                  {t("voter.ratings.novelty.label")}
+                </Text>
                 <View style={{ flexDirection: "row", gap: 8 }}>
                   {[
                     { value: 0, label: t("voter.ratings.novelty.options.0") },
@@ -422,13 +592,20 @@ export default function Home() {
                         key={option.value}
                         mode={isSelected ? "contained" : "outlined"}
                         onPress={() => {
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                          setLocalRatings((p) => ({ ...p, uniqueness: option.value }));
+                          Haptics.impactAsync(
+                            Haptics.ImpactFeedbackStyle.Light,
+                          );
+                          setLocalRatings((p) => ({
+                            ...p,
+                            uniqueness: option.value,
+                          }));
                         }}
                         style={{
                           flex: 1,
                           borderRadius: 10,
-                          backgroundColor: isSelected ? MD2DarkTheme.colors.primary : "rgba(0,0,0,0.5)",
+                          backgroundColor: isSelected
+                            ? MD2DarkTheme.colors.primary
+                            : "rgba(0,0,0,0.5)",
                         }}
                         labelStyle={{ fontSize: 12, color: "#fff" }}
                         compact
@@ -440,11 +617,21 @@ export default function Home() {
                 </View>
               </View>
 
-              <View style={{ width: "100%", backgroundColor: "#000", paddingHorizontal: 15 }}>
+              <View
+                style={{
+                  width: "100%",
+                  backgroundColor: "#000",
+                  paddingHorizontal: 15,
+                }}
+              >
                 <Button
                   onPress={handleSubmitRating}
                   mode="contained"
-                  disabled={localRatings.interest === null || localRatings.mood === null || localRatings.uniqueness === null}
+                  disabled={
+                    localRatings.interest === null ||
+                    localRatings.mood === null ||
+                    localRatings.uniqueness === null
+                  }
                   style={styles.button}
                   contentStyle={{ padding: 10 }}
                 >
@@ -456,7 +643,14 @@ export default function Home() {
         </ImageBackground>
       </Animated.View>
     ) : (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 15 }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 15,
+        }}
+      >
         <FancySpinner />
 
         <Text>{t("voter.home.waiting")}</Text>
@@ -473,11 +667,17 @@ export default function Home() {
     <View style={{ flex: 1, paddingTop: Platform.OS === "android" ? 30 : 0 }}>
       {status === "idle" && renderInitialState()}
       {status === "waiting" && renderWaitingState()}
-      {status === "rating" && currentMovies !== undefined && renderRatingState()}
+      {status === "rating" &&
+        currentMovies !== undefined &&
+        renderRatingState()}
       {status === "completed" && renderCompletedState()}
 
       <Portal>
-        <Dialog dismissable={false} visible={showError} style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}>
+        <Dialog
+          dismissable={false}
+          visible={showError}
+          style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
+        >
           <Dialog.Title>{t("dialogs.qr.error")}</Dialog.Title>
 
           <Dialog.Content>
@@ -519,7 +719,11 @@ function Results() {
       <View style={{ flex: 1 }}>
         <View style={styles.center}>
           <Text>No movies matched your preferences</Text>
-          <Button mode="contained" onPress={() => router.replace("/")} style={styles.button}>
+          <Button
+            mode="contained"
+            onPress={() => router.replace("/")}
+            style={styles.button}
+          >
             {t("voter.home.quit")}
           </Button>
         </View>
@@ -553,11 +757,25 @@ function Results() {
           onPress={() => router.replace("/games")}
           size={28}
         />
-        <Text style={{ fontSize: 30, fontFamily: "Bebas", width: "100%", textAlign: "center" }}>{t("voter.overview.title")} 🎬</Text>
+        <Text
+          style={{
+            fontSize: 30,
+            fontFamily: "Bebas",
+            width: "100%",
+            textAlign: "center",
+          }}
+        >
+          {t("voter.overview.title")} 🎬
+        </Text>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.2)", paddingHorizontal: 15, paddingBottom: 15 }}
+        style={{
+          flex: 1,
+          backgroundColor: "rgba(0,0,0,0.2)",
+          paddingHorizontal: 15,
+          paddingBottom: 15,
+        }}
       >
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: "row", gap: 15 }}>
@@ -575,7 +793,9 @@ function Results() {
               }}
             >
               <Image
-                source={{ uri: "https://image.tmdb.org/t/p/w500" + card?.poster_path }}
+                source={{
+                  uri: "https://image.tmdb.org/t/p/w500" + card?.poster_path,
+                }}
                 style={{
                   width: (Dimensions.get("window").width - 30) / 2 - 60,
                   height: 215,
@@ -583,32 +803,60 @@ function Results() {
                 }}
               />
             </Pressable>
-            <View style={{ flex: 1, gap: 10, justifyContent: "space-between", paddingVertical: 15 }}>
+            <View
+              style={{
+                flex: 1,
+                gap: 10,
+                justifyContent: "space-between",
+                paddingVertical: 15,
+              }}
+            >
               <Text
                 style={{
-                  fontSize: scaleTitle((card?.title || card?.name)! as string, 30),
+                  fontSize: scaleTitle(
+                    (card?.title || card?.name)! as string,
+                    30,
+                  ),
                   fontFamily: "Bebas",
                 }}
               >
                 {card?.title || card?.name}
               </Text>
               <Text style={{ width: "100%", marginBottom: 10 }}>
-                ★{card?.vote_average.toFixed(2)}/10 {card?.release_date} | {card?.original_language}
+                ★{card?.vote_average.toFixed(2)}/10 {card?.release_date} |{" "}
+                {card?.original_language}
               </Text>
 
               {card && <QuickActions movie={card} />}
             </View>
           </View>
-          <Text style={{ marginTop: 10, color: "rgba(255,255,255,0.9)", fontSize: 15, fontWeight: "500" }}>{card?.overview}</Text>
+          <Text
+            style={{
+              marginTop: 10,
+              color: "rgba(255,255,255,0.9)",
+              fontSize: 15,
+              fontWeight: "500",
+            }}
+          >
+            {card?.overview}
+          </Text>
 
           <View style={{ marginTop: 30 }}>
-            <Text style={{ fontSize: 30, fontFamily: "Bebas", marginBottom: 15 }}>{t("voter.overview.h2")}</Text>
+            <Text
+              style={{ fontSize: 30, fontFamily: "Bebas", marginBottom: 15 }}
+            >
+              {t("voter.overview.h2")}
+            </Text>
             {sessionResults?.topPicks?.slice(1).map((item) => (
               <TouchableOpacity
                 activeOpacity={0.9}
                 disabled={!item.movie.id}
                 key={item.movie.id}
-                style={{ marginBottom: 15, width: Dimensions.get("screen").width - 30, overflow: "hidden" }}
+                style={{
+                  marginBottom: 15,
+                  width: Dimensions.get("screen").width - 30,
+                  overflow: "hidden",
+                }}
                 onPress={() => {
                   router.push({
                     pathname: "/movie/type/[type]/[id]",
@@ -622,7 +870,11 @@ function Results() {
               >
                 <View style={{ flexDirection: "row", gap: 15 }}>
                   <Image
-                    source={{ uri: "https://image.tmdb.org/t/p/w200" + item.movie.poster_path }}
+                    source={{
+                      uri:
+                        "https://image.tmdb.org/t/p/w200" +
+                        item.movie.poster_path,
+                    }}
                     style={{
                       width: 80,
                       height: 120,
@@ -631,7 +883,13 @@ function Results() {
                   />
                   <View>
                     <View
-                      style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", height: 45 }}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        flexWrap: "wrap",
+                        height: 45,
+                      }}
                     >
                       <Text
                         style={{
@@ -646,7 +904,8 @@ function Results() {
                       <Text>★ {item.movie.vote_average.toFixed(2)}/10 </Text>
 
                       <Text numberOfLines={3} textBreakStrategy="simple">
-                        {item.movie.release_date} | {item.movie.original_language} | {item?.movie?.overview}
+                        {item.movie.release_date} |{" "}
+                        {item.movie.original_language} | {item?.movie?.overview}
                       </Text>
                     </View>
                   </View>
@@ -672,7 +931,13 @@ function Results() {
   );
 }
 
-const PickGenres = ({ genres, setGenres }: { genres: number[]; setGenres: any }) => {
+const PickGenres = ({
+  genres,
+  setGenres,
+}: {
+  genres: number[];
+  setGenres: any;
+}) => {
   const { data: movies } = useGetGenresQuery({ type: "movie" });
   const { data: tv } = useGetGenresQuery({ type: "tv" });
 
@@ -697,7 +962,9 @@ const PickGenres = ({ genres, setGenres }: { genres: number[]; setGenres: any })
       }
     });
 
-    return Array.from(genresMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+    return Array.from(genresMap.values()).sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
   }, [movies?.length, tv?.length]);
 
   if (!combined.length) return null;
@@ -712,7 +979,11 @@ const PickGenres = ({ genres, setGenres }: { genres: number[]; setGenres: any })
         renderItem={({ item }) => (
           <Button
             onPress={() => {
-              setGenres((p: number[]) => (p.includes(item.id) ? p.filter((i) => i !== item.id) : [...p, item.id]));
+              setGenres((p: number[]) =>
+                p.includes(item.id)
+                  ? p.filter((i) => i !== item.id)
+                  : [...p, item.id],
+              );
             }}
             mode={genres.includes(item.id) ? "contained" : "outlined"}
             style={{ borderRadius: 10, marginRight: 15, height: 35 }}
@@ -725,7 +996,13 @@ const PickGenres = ({ genres, setGenres }: { genres: number[]; setGenres: any })
   );
 };
 
-const PickCategory = ({ setCategory, category }: { setCategory: any; category: string }) => {
+const PickCategory = ({
+  setCategory,
+  category,
+}: {
+  setCategory: any;
+  category: string;
+}) => {
   const t = useTranslation();
 
   const categories = useMemo(() => {
@@ -746,7 +1023,14 @@ const PickCategory = ({ setCategory, category }: { setCategory: any; category: s
   }, []);
 
   return (
-    <View style={{ flexDirection: "row", paddingVertical: 10, gap: 15, marginTop: 15 }}>
+    <View
+      style={{
+        flexDirection: "row",
+        paddingVertical: 10,
+        gap: 15,
+        marginTop: 15,
+      }}
+    >
       {categories.map((item, index) => (
         <Button
           key={index}
@@ -763,7 +1047,13 @@ const PickCategory = ({ setCategory, category }: { setCategory: any; category: s
   );
 };
 
-const PickProviders = ({ providers, setProviders }: { setProviders: any; providers: number[] }) => {
+const PickProviders = ({
+  providers,
+  setProviders,
+}: {
+  setProviders: any;
+  providers: number[];
+}) => {
   const { data } = useGetAllProvidersQuery({});
   // Calculate margins and container padding
   const MARGIN = 8;
@@ -773,7 +1063,10 @@ const PickProviders = ({ providers, setProviders }: { setProviders: any; provide
   // Calculate size accounting for all spacing
   const totalHorizontalPadding = CONTAINER_PADDING * 2;
   const totalMargins = MARGIN * (NUM_COLUMNS - 1);
-  const size = Math.floor((Dimensions.get("screen").width - totalHorizontalPadding - totalMargins) / NUM_COLUMNS);
+  const size = Math.floor(
+    (Dimensions.get("screen").width - totalHorizontalPadding - totalMargins) /
+      NUM_COLUMNS,
+  );
 
   return (
     <FlatList
@@ -791,12 +1084,16 @@ const PickProviders = ({ providers, setProviders }: { setProviders: any; provide
         <TouchableRipple
           onPress={() =>
             setProviders((p: number[]) =>
-              p.includes(item.provider_id) ? p.filter((i) => i !== item.provider_id) : [...p, item.provider_id],
+              p.includes(item.provider_id)
+                ? p.filter((i) => i !== item.provider_id)
+                : [...p, item.provider_id],
             )
           }
           style={{
             borderWidth: 2,
-            borderColor: providers.includes(item.provider_id) ? MD2DarkTheme.colors.primary : "transparent",
+            borderColor: providers.includes(item.provider_id)
+              ? MD2DarkTheme.colors.primary
+              : "transparent",
             borderRadius: 10,
             margin: MARGIN / 2,
             width: size,
@@ -806,7 +1103,9 @@ const PickProviders = ({ providers, setProviders }: { setProviders: any; provide
           }}
         >
           <Image
-            source={{ uri: `https://image.tmdb.org/t/p/w200${item?.logo_path}` }}
+            source={{
+              uri: `https://image.tmdb.org/t/p/w200${item?.logo_path}`,
+            }}
             style={{
               width: size - 4, // Account for border width
               height: size - 4,

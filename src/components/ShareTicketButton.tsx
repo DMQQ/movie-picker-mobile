@@ -132,7 +132,8 @@ function ShareTicketButton({ movie, providers, headerText, pickupLine, holeColor
   );
 }
 
-export function IconShareButton({ movie }: { movie: Movie }) {
+export function IconShareButton({ movie }: { movie: Movie | null | undefined }) {
+  if (!movie) return null;
   const [modalVisible, setModalVisible] = useState(false);
   const viewShotRef = useRef<ViewShot>(null);
 

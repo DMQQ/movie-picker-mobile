@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -13,12 +14,15 @@ export default function BlockedMoviesGroup() {
   const insets = useSafeAreaInsets();
   const t = useTranslation();
 
-  const data = blockedMovies.map((m) => ({
-    id: m.movie_id,
-    poster_path: m.poster_path || "",
-    title: m.title || "",
-    type: m.movie_type,
-  }));
+  const data = useMemo(
+    () => blockedMovies.map((m) => ({
+      id: m.movie_id,
+      poster_path: m.poster_path || "",
+      title: m.title || "",
+      type: m.movie_type,
+    })),
+    [blockedMovies],
+  );
 
   return (
     <SafeIOSContainer style={{ flex: 1, overflow: "hidden" }}>
