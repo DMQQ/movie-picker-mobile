@@ -82,10 +82,7 @@ const SwipeText = memo(
 
 function Poster(props: {
   card: Movie & { isSuperLiked?: boolean };
-  translate?: SharedValue<{
-    x: number;
-    y: number;
-  }>;
+  translateX?: SharedValue<number>;
 
   isLeftVisible?: SharedValue<boolean>;
 
@@ -101,12 +98,12 @@ function Poster(props: {
   const { height, width } = useWindowDimensions();
 
   const overlayAnimatedStyle = useAnimatedStyle(() => {
-    if (!props.translate) return {};
+    if (!props.translateX) return {};
 
     return {
-      opacity: interpolate(props.translate.value.x, [-width * 0.15, 0, width * 0.15], [1, 0, 1]),
+      opacity: interpolate(props.translateX.value, [-width * 0.15, 0, width * 0.15], [1, 0, 1]),
       backgroundColor: interpolateColor(
-        props.translate.value.x,
+        props.translateX.value,
         [-width, 0, width],
         ["rgba(255,0,0,0.6)", "rgba(0,0,0,0)", "rgba(0,255,0,0.6)"],
       ),

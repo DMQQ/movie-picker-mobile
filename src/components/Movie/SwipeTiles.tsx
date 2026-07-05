@@ -68,6 +68,8 @@ const dims = {
   height: height * 0.65,
 };
 
+const CARD_TOP = height * (Platform.OS === "ios" ? 0.055 : 0.075);
+
 const SwipeTile = ({
   card,
   index,
@@ -86,55 +88,49 @@ const SwipeTile = ({
   onPress: () => void;
 }) => {
   const t = useTranslation();
-  const position = useSharedValue({ x: 0, y: index * -7.5, scale: 1 - index * 0.05 });
+  const posX = useSharedValue(0);
+  const posY = useSharedValue(index * -7.5);
+  const posScale = useSharedValue(1 - index * 0.05);
 
   useEffect(() => {
-    position.value = withTiming({ x: 0, y: index * -7.5, scale: 1 - index * 0.05 }, { duration: 250 });
+    posX.value = withTiming(0, { duration: 250 });
+    posY.value = withTiming(index * -7.5, { duration: 250 });
+    posScale.value = withTiming(1 - index * 0.05, { duration: 250 });
   }, [index]);
 
   const isLeftVisible = useSharedValue(false);
   const isRightVisible = useSharedValue(false);
 
   const moveGesture = Gesture.Pan()
+    .onBegin(() => {
+      posY.value = 0;
+      posScale.value = 1;
+    })
     .onChange(({ translationX }) => {
-      position.value = {
-        x: translationX,
-        y: 0,
-        scale: 1,
-      };
+      posX.value = translationX;
 
-      if (position.value.x > 50) {
-        isLeftVisible.value = true;
-        isRightVisible.value = false;
-      } else if (position.value.x < -50) {
-        isLeftVisible.value = false;
-        isRightVisible.value = true;
-      } else {
-        isLeftVisible.value = false;
-        isRightVisible.value = false;
-      }
+      const nextLeft = translationX > 50;
+      const nextRight = translationX < -50;
+      if (isLeftVisible.value !== nextLeft) isLeftVisible.value = nextLeft;
+      if (isRightVisible.value !== nextRight) isRightVisible.value = nextRight;
     })
     .onEnd(() => {
-      if (position.value.x > width * 0.15) {
-        position.value = withSpring({ x: width + 100, y: 100, scale: 1 });
+      if (posX.value > width * 0.15) {
+        posX.value = withSpring(width + 100);
+        posY.value = withSpring(100);
         setTimeout(() => {
-          "worklet";
           runOnJS(actions.likeCard)();
         }, 100);
-      } else if (position.value.x < -width * 0.15) {
-        position.value = withSpring({ x: -width - 100, y: 100, scale: 1 });
+      } else if (posX.value < -width * 0.15) {
+        posX.value = withSpring(-width - 100);
+        posY.value = withSpring(100);
         setTimeout(() => {
-          "worklet";
           runOnJS(actions.removeCard)();
         }, 100);
       } else {
-        position.value = withSpring(
-          { x: 0, y: 0, scale: 1 },
-          {
-            damping: 50,
-            stiffness: 500,
-          },
-        );
+        posX.value = withSpring(0, { damping: 50, stiffness: 500 });
+        posY.value = withSpring(0, { damping: 50, stiffness: 500 });
+        posScale.value = withSpring(1, { damping: 50, stiffness: 500 });
         isLeftVisible.value = false;
         isRightVisible.value = false;
       }
@@ -142,16 +138,16 @@ const SwipeTile = ({
     .enabled(index === 0);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const rotate = interpolate(position.value.x, [-width * 0.35, width * 0.35], [-10, 10], Extrapolation.CLAMP);
+    const rotate = interpolate(posX.value, [-width * 0.35, width * 0.35], [-10, 10], Extrapolation.CLAMP);
 
     return {
       transform: [
-        { translateX: position.value.x },
-        { translateY: position.value.y },
+        { translateX: posX.value },
+        { translateY: posY.value },
         { rotate: `${rotate}deg` },
-        { scale: position.value.scale },
+        { scale: posScale.value },
       ],
-      top: height * (Platform.OS === "ios" ? 0.055 : 0.075),
+      top: CARD_TOP,
     };
   });
 
@@ -199,9 +195,11 @@ const SwipeTile = ({
       isPressed.current = true;
 
       if (dir === "left") {
-        position.value = withSpring({ x: -width - 100, y: 100, scale: 1 });
+        posX.value = withSpring(-width - 100);
+        posY.value = withSpring(100);
       } else {
-        position.value = withSpring({ x: width + 100, y: 100, scale: 1 });
+        posX.value = withSpring(width + 100);
+        posY.value = withSpring(100);
       }
       fn();
 
@@ -244,7 +242,7 @@ const SwipeTile = ({
               isLeftVisible={isLeftVisible}
               isRightVisible={isRightVisible}
               imageDimensions={dims}
-              translate={position}
+              translateX={posX}
               card={card}
             />
           </Pressable>
