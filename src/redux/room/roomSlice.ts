@@ -12,6 +12,7 @@ const initialState = {
   regionalization: {} as Record<string, string>,
   isPlaying: false,
   beenFired: false,
+  onboardingCompleted: false,
 
   room: {
     roomId: "",
@@ -115,6 +116,9 @@ const roomSlice = createSlice({
       state.language = action.payload;
     },
 
+    setOnboardingCompleted(state) {
+      state.onboardingCompleted = true;
+    },
     setSettings(
       state,
       {

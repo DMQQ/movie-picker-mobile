@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { SectionData } from "../../types";
 import { Episode, Movie, MovieDetails } from "../../../types";
 import { url as API_BASE_ENDPOINT } from "../../context/SocketContext";
 import prepareHeaders from "../../service/prepareHeaders";
@@ -118,31 +119,21 @@ export const movieApi = createApi({
   keepUnusedDataFor: 60,
   refetchOnMountOrArgChange: 300,
   endpoints: (builder) => ({
-    getLandingPageMovies: builder.query<{ name: string; results: Movie[] }[], LandingPageParams>({
-      query: (params = { skip: 0, take: 4, category: "" }) =>
-        `/landing?skip=${params.skip}&take=${params.take}${
-          params.category !== "" && params.category !== "all" ? `&category=${params.category}` : ""
-        }`,
-    }),
-
-    getLandingPageMoviesPage: builder.query<{ name: string; results: Movie[] }[], LandingPageParams & { page: number }>({
-      query: (params = { skip: 0, take: 4, category: "", page: 0 }) =>
-        `/landing?skip=${params.page * 4}&take=${params.take}${
-          params.category !== "" && params.category !== "all" ? `&category=${params.category}` : ""
-        }`,
-      providesTags: (result, error, arg) => [{ type: "LandingPageInfinite", id: `${arg.category}-${arg.page}` }],
-    }),
-
-    getLandingPageMoviesInfinite: builder.query<
-      { name: string; results: Movie[] }[],
-      { categoryId: string; pageSize: number; page?: number }
+    getLandingPageSections: builder.infiniteQuery<
+      SectionData[],
+      { categoryId: string; pageSize?: number },
+      number
     >({
-      query: ({ categoryId, pageSize, page = 0 }) => ({
-        url: `/landing?skip=${page * pageSize}&take=${pageSize}${
-          categoryId !== "" && categoryId !== "all" ? `&category=${categoryId}` : ""
+      query: ({ queryArg: { categoryId, pageSize = 4 }, pageParam }) => ({
+        url: `/landing?skip=${pageParam * (pageSize ?? 4)}&take=${pageSize ?? 4}${
+          categoryId && categoryId !== "all" ? `&category=${categoryId}` : ""
         }`,
       }),
-      providesTags: (result, error, arg) => [{ type: "LandingPageInfinite", id: `${arg.categoryId}-${arg.page || 0}` }],
+      infiniteQueryOptions: {
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+          Array.isArray(lastPage) && lastPage.length > 0 ? lastPageParam + 1 : undefined,
+      },
     }),
 
     getRandomSection: builder.query({
@@ -331,11 +322,7 @@ export const movieApi = createApi({
 });
 
 export const {
-  useGetLandingPageMoviesQuery,
-  useGetLandingPageMoviesPageQuery,
-  useLazyGetLandingPageMoviesPageQuery,
-  useGetLandingPageMoviesInfiniteQuery,
-  useLazyGetLandingPageMoviesInfiniteQuery,
+  useGetLandingPageSectionsInfiniteQuery,
   useGetMovieQuery,
 
   useGetRandomSectionQuery,
@@ -345,7 +332,6 @@ export const {
   useGetMovieProvidersQuery,
   useGetGenresQuery,
   useGetMaxPageRangeQuery,
-  useLazyGetLandingPageMoviesQuery,
 
   useLazyGetSectionMoviesQuery,
 

@@ -7,6 +7,7 @@ import SafeIOSContainer from "../components/SafeIOSContainer";
 import useTranslation from "../service/useTranslation";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAppDispatch, useAppSelector } from "../redux/store";
+import { roomActions } from "../redux/room/roomSlice";
 import SwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
 import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
@@ -162,22 +163,23 @@ export default function OnboardingScreen({ onClose }: OnboardingScreenProps) {
 
   const handleComplete = async () => {
     setIsLoading(true);
+    const resolvedNickname = nickname || (language === "en" ? "Guest" : "Gość");
     try {
       await Promise.all([
         AsyncStorage.setItem("language", language),
-        AsyncStorage.setItem("nickname", nickname || (language === "en" ? "Guest" : "Gość")),
+        AsyncStorage.setItem("nickname", resolvedNickname),
         AsyncStorage.setItem("regionalization", JSON.stringify(regionalization || {})),
       ]);
 
-      // Dispatch to Redux - listener middleware will auto-save to storage
       if (selectedProviders.length > 0) {
         dispatch(setProviders(selectedProviders));
       }
 
-      onClose?.();
+      dispatch(roomActions.setSettings({ nickname: resolvedNickname }));
+      dispatch(roomActions.setOnboardingCompleted());
     } catch (error) {
       console.error("Failed to save onboarding state:", error);
-      onClose?.();
+      dispatch(roomActions.setOnboardingCompleted());
     }
   };
 

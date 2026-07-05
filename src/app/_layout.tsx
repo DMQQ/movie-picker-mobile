@@ -11,7 +11,9 @@ import {
 } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { roomActions } from "../redux/room/roomSlice";
-import { store, useAppDispatch } from "../redux/store";
+import { authActions } from "../redux/auth/authSlice";
+import { store, useAppDispatch, useAppSelector } from "../redux/store";
+import { baseUrl } from "../context/SocketContext";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { STORAGE_KEY } from "../redux/favourites/favourites";
@@ -27,25 +29,31 @@ import useMaintenance from "../service/useMaintanance";
 import { getDeviceSettings } from "../service/useTranslation";
 
 import * as Sentry from "@sentry/react-native";
+import { GoogleOneTapSignIn } from "react-native-nitro-google-signin";
 
-Sentry.init({
-  dsn: "https://2ab39326e2ee096051c4b72e34eb98d1@o4507922596036608.ingest.de.sentry.io/4511676327395408",
-
-  // Adds more context data to events (IP address, cookies, user, etc.)
-  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
-  sendDefaultPii: true,
-
-  // Enable Logs
-  enableLogs: true,
-
-  // Configure Session Replay
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
-  integrations: [Sentry.mobileReplayIntegration()],
-
-  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  // spotlight: __DEV__,
+GoogleOneTapSignIn.configure({
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID!,
 });
+
+if (!__DEV__)
+  Sentry.init({
+    dsn: "https://2ab39326e2ee096051c4b72e34eb98d1@o4507922596036608.ingest.de.sentry.io/4511676327395408",
+
+    // Adds more context data to events (IP address, cookies, user, etc.)
+    // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+    sendDefaultPii: true,
+
+    // Enable Logs
+    enableLogs: true,
+
+    // Configure Session Replay
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1,
+    integrations: [Sentry.mobileReplayIntegration()],
+
+    // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+    // spotlight: __DEV__,
+  });
 
 const theme = MD2DarkTheme;
 
@@ -141,7 +149,8 @@ const RootNavigator = ({
 }) => {
   const dispatch = useAppDispatch();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
-  const [needsOnboarding, setNeedsOnboarding] = useState<boolean | null>(null);
+  const onboardingCompleted = useAppSelector((s) => s.room.onboardingCompleted);
+  const needsOnboarding = settingsLoaded ? !onboardingCompleted : null;
   const { movieInteractions, isReady: dbReady } = useMovieInteractions();
 
   useMaintenance();
@@ -155,14 +164,33 @@ const RootNavigator = ({
       }
 
       try {
-        const [nickname] = await Promise.all([
+        const [nickname, storedToken] = await Promise.all([
           AsyncStorage.getItem("nickname"),
+          SecureStore.getItemAsync("user_auth_token"),
           dispatch(loadInteractions(movieInteractions)),
           dispatch(loadFilterPreferences()),
         ]);
 
+        if (storedToken) {
+          try {
+            const res = await fetch(`${baseUrl}/api/auth/me`, {
+              headers: { authorization: `Bearer ${storedToken}` },
+            });
+            if (res.ok) {
+              const { user } = await res.json();
+              dispatch(
+                authActions.setCredentials({ token: storedToken, user }),
+              );
+            } else {
+              await SecureStore.deleteItemAsync("user_auth_token");
+              dispatch(authActions.setSessionExpired());
+            }
+          } catch (authErr) {
+            console.log("[Auth] session restore failed:", authErr);
+          }
+        }
+
         const deviceSettings = getDeviceSettings();
-        const isFirstTimeUser = !nickname;
 
         dispatch(
           roomActions.setSettings({
@@ -172,10 +200,12 @@ const RootNavigator = ({
           }),
         );
 
-        setNeedsOnboarding(isFirstTimeUser);
+        if (nickname) {
+          dispatch(roomActions.setOnboardingCompleted());
+        }
       } catch (error) {
         console.error("[RootNavigator] Error:", error);
-        setNeedsOnboarding(false);
+        dispatch(roomActions.setOnboardingCompleted());
       } finally {
         setSettingsLoaded(true);
 
@@ -276,6 +306,19 @@ const RootNavigator = ({
               sheetAllowedDetents: [0.7], // 70%
               sheetInitialDetentIndex: 0,
               sheetLargestUndimmedDetentIndex: 0,
+            }}
+          />
+
+          <Stack.Screen
+            name="auth"
+            options={{
+              headerShown: false,
+              gestureEnabled: true,
+              presentation: "formSheet",
+              sheetGrabberVisible: true,
+              contentStyle: { backgroundColor: "transparent" },
+              sheetAllowedDetents: [0.6, 0.95],
+              sheetInitialDetentIndex: 0,
             }}
           />
         </Stack.Protected>

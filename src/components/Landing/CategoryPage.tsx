@@ -10,7 +10,6 @@ import { useInfiniteLandingPageMovies } from "../../hooks/useInfiniteLandingPage
 import useTranslation from "../../service/useTranslation";
 import FeaturedSection from "./FeaturedSection";
 import Section, { SECTION_HEIGHT } from "./Section";
-import GameInviteSection, { GAME_SECTION_HEIGHT } from "./GameInviteSection";
 import LoadingSkeleton from "./LoadingSkeleton";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { SectionData } from "../../types";
@@ -56,44 +55,17 @@ interface CategoryPageProps {
   categoryId: string;
 }
 
-const GAME_SECTION_EXTRA_HEIGHT = GAME_SECTION_HEIGHT;
-
-const getItemLayout = (_: any, index: number) => {
-  const gameItemsBefore = Math.ceil(index / 5);
-  const offset =
-    index * SECTION_HEIGHT + gameItemsBefore * GAME_SECTION_EXTRA_HEIGHT;
-  const isGameItem = index % 5 === 0;
-  const length = isGameItem
-    ? SECTION_HEIGHT + GAME_SECTION_EXTRA_HEIGHT
-    : SECTION_HEIGHT;
-
-  return { length, offset, index };
-};
+const getItemLayout = (_: any, index: number) => ({
+  length: SECTION_HEIGHT,
+  offset: SECTION_HEIGHT * index,
+  index,
+});
 
 const categoryKeyExtractor = (item: any) => item.name.toString();
 
-const gameTypes: (
-  | "social"
-  | "quick"
-  | "voter"
-  | "fortune"
-  | "random"
-  | "all-games"
-)[] = ["social", "quick", "voter", "fortune", "random", "all-games"];
-
-const renderItem = ({ item, index }: { item: SectionData; index: number }) => {
+const renderItem = ({ item }: { item: SectionData }) => {
   if (!item || typeof item !== "object") return null;
-  const showGameSection = index % 5 === 0;
-  const gameTypeIndex = index === 0 ? 0 : Math.floor(index / 5);
-  return (
-    <>
-      {showGameSection ? (
-        <GameInviteSection type={gameTypes[gameTypeIndex % gameTypes.length]} />
-      ) : null}
-
-      <Section group={item} />
-    </>
-  );
+  return <Section group={item} />;
 };
 
 const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
@@ -118,28 +90,14 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
     }
   }, [isError, hasMore, fetchNextPage]);
 
-  const { data: featured, isLoading: isFeaturedLoading } = useGetFeaturedQuery(
-    useMemo(
-      () => ({
-        selectedChip: categoryId || "all",
-      }),
-      [categoryId],
-    ),
-  );
-
   const refreshControl = useMemo(
     () => <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />,
     [isRefreshing, refetch],
   );
 
   const featuredSection = useMemo(
-    () => (
-      <FeaturedSection
-        isLoading={isFeaturedLoading}
-        featured={featured || null}
-      />
-    ),
-    [isFeaturedLoading, featured],
+    () => <FeaturedSection categoryId={categoryId} />,
+    [],
   );
 
   const listFooterComponent = useMemo(

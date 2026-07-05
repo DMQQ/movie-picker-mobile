@@ -1,7 +1,13 @@
 import { Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useMemo } from "react";
-import { Dimensions, StyleSheet, TouchableOpacity, View, Pressable } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Pressable,
+} from "react-native";
 import { Button, Text } from "react-native-paper";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import RatingIcons from "../RatingIcons";
@@ -13,6 +19,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
 import { Movie } from "../../../types";
 import useTranslation from "../../service/useTranslation";
+import { useGetFeaturedQuery } from "../../redux/movie/movieApi";
 
 const { width, height } = Dimensions.get("screen");
 const HERO_HEIGHT = height * 0.72;
@@ -49,12 +56,26 @@ const FeaturedQuickActions = ({ movie }: { movie: Movie }) => {
 
   return (
     <View style={styles.quickActionsRow}>
-      <TouchableOpacity style={styles.iconButton} onPress={() => handlePress("2")}>
-        <MaterialCommunityIcons name={isInGroup("2") ? "clock" : "clock-check-outline"} size={22} color="#fff" />
+      <TouchableOpacity
+        style={styles.iconButton}
+        onPress={() => handlePress("2")}
+      >
+        <MaterialCommunityIcons
+          name={isInGroup("2") ? "clock" : "clock-check-outline"}
+          size={22}
+          color="#fff"
+        />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.iconButton} onPress={() => handlePress("1")}>
-        <FontAwesome name={isInGroup("1") ? "heart" : "heart-o"} size={20} color="#fff" />
+      <TouchableOpacity
+        style={styles.iconButton}
+        onPress={() => handlePress("1")}
+      >
+        <FontAwesome
+          name={isInGroup("1") ? "heart" : "heart-o"}
+          size={20}
+          color="#fff"
+        />
       </TouchableOpacity>
     </View>
   );
@@ -65,7 +86,9 @@ export const FeaturedSectionSkeleton = memo(() => {
     <View style={[styles.featuredContainer]}>
       <View style={styles.gradientContainer}>
         <View style={styles.contentWrapper}>
-          <View style={[styles.topContentContainer, { alignItems: "flex-end" }]}>
+          <View
+            style={[styles.topContentContainer, { alignItems: "flex-end" }]}
+          >
             <Skeleton>
               <View
                 style={{
@@ -79,16 +102,39 @@ export const FeaturedSectionSkeleton = memo(() => {
 
             <View style={[styles.detailsContainer, { gap: 10 }]}>
               <Skeleton>
-                <View style={{ width: "85%", height: 32, backgroundColor: "#222", borderRadius: 4, marginBottom: 12 }} />
+                <View
+                  style={{
+                    width: "85%",
+                    height: 32,
+                    backgroundColor: "#222",
+                    borderRadius: 4,
+                    marginBottom: 12,
+                  }}
+                />
               </Skeleton>
 
               <Skeleton>
-                <View style={{ width: "60%", height: 14, backgroundColor: "#222", borderRadius: 4, marginBottom: 12 }} />
+                <View
+                  style={{
+                    width: "60%",
+                    height: 14,
+                    backgroundColor: "#222",
+                    borderRadius: 4,
+                    marginBottom: 12,
+                  }}
+                />
               </Skeleton>
 
               <View style={styles.ratingContainer}>
                 <Skeleton>
-                  <View style={{ width: 100, height: 16, backgroundColor: "#222", borderRadius: 4 }} />
+                  <View
+                    style={{
+                      width: 100,
+                      height: 16,
+                      backgroundColor: "#222",
+                      borderRadius: 4,
+                    }}
+                  />
                 </Skeleton>
               </View>
 
@@ -96,7 +142,14 @@ export const FeaturedSectionSkeleton = memo(() => {
               <View style={[styles.genreContainer, { marginTop: 8 }]}>
                 {[1, 2].map((i) => (
                   <Skeleton key={i}>
-                    <View style={{ width: 55, height: 22, backgroundColor: "#222", borderRadius: 6 }} />
+                    <View
+                      style={{
+                        width: 55,
+                        height: 22,
+                        backgroundColor: "#222",
+                        borderRadius: 6,
+                      }}
+                    />
                   </Skeleton>
                 ))}
               </View>
@@ -106,28 +159,72 @@ export const FeaturedSectionSkeleton = memo(() => {
           {/* Overview Block - This fills the gap between thumbnail and buttons */}
           <View style={{ marginTop: 20, marginBottom: 20, gap: 10 }}>
             <Skeleton>
-              <View style={{ width: "100%", height: 14, backgroundColor: "#222", borderRadius: 4, marginBottom: 8 }} />
+              <View
+                style={{
+                  width: "100%",
+                  height: 14,
+                  backgroundColor: "#222",
+                  borderRadius: 4,
+                  marginBottom: 8,
+                }}
+              />
             </Skeleton>
             <Skeleton>
-              <View style={{ width: "90%", height: 14, backgroundColor: "#222", borderRadius: 4, marginBottom: 8 }} />
+              <View
+                style={{
+                  width: "90%",
+                  height: 14,
+                  backgroundColor: "#222",
+                  borderRadius: 4,
+                  marginBottom: 8,
+                }}
+              />
             </Skeleton>
             <Skeleton>
-              <View style={{ width: "40%", height: 14, backgroundColor: "#222", borderRadius: 4 }} />
+              <View
+                style={{
+                  width: "40%",
+                  height: 14,
+                  backgroundColor: "#222",
+                  borderRadius: 4,
+                }}
+              />
             </Skeleton>
           </View>
 
           {/* Action Row */}
           <View style={styles.actionRow}>
             <Skeleton>
-              <View style={{ width: width * 0.5, height: 42, backgroundColor: "#222", borderRadius: 100 }} />
+              <View
+                style={{
+                  width: width * 0.5,
+                  height: 42,
+                  backgroundColor: "#222",
+                  borderRadius: 100,
+                }}
+              />
             </Skeleton>
 
             <View style={styles.quickActionsRow}>
               <Skeleton>
-                <View style={{ width: 44, height: 44, backgroundColor: "#222", borderRadius: 22 }} />
+                <View
+                  style={{
+                    width: 44,
+                    height: 44,
+                    backgroundColor: "#222",
+                    borderRadius: 22,
+                  }}
+                />
               </Skeleton>
               <Skeleton>
-                <View style={{ width: 44, height: 44, backgroundColor: "#222", borderRadius: 22 }} />
+                <View
+                  style={{
+                    width: 44,
+                    height: 44,
+                    backgroundColor: "#222",
+                    borderRadius: 22,
+                  }}
+                />
               </Skeleton>
             </View>
           </View>
@@ -137,23 +234,28 @@ export const FeaturedSectionSkeleton = memo(() => {
   );
 });
 
-const gradient = ["transparent", "rgba(0,0,0,0.1)", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.8)", "#000000"];
+const gradient = [
+  "transparent",
+  "rgba(0,0,0,0.1)",
+  "rgba(0,0,0,0.5)",
+  "rgba(0,0,0,0.8)",
+  "#000000",
+];
 
 interface FeaturedSectionProps {
-  featured: Movie | null;
-
-  isLoading: boolean;
+  categoryId: string;
 }
 
-const FeaturedSection = memo(({ featured, isLoading }: FeaturedSectionProps) => {
+const FeaturedSection = memo(({ categoryId }: FeaturedSectionProps) => {
   const t = useTranslation();
-  // const {
-  //   data: featured,
-  //   error,
-  //   isLoading,
-  // } = useGetFeaturedQuery({
-  //   selectedChip: props.selectedChip || "all",
-  // });
+  const { data: featured, isLoading } = useGetFeaturedQuery(
+    useMemo(
+      () => ({
+        selectedChip: categoryId || "all",
+      }),
+      [categoryId],
+    ),
+  );
 
   const genres = useMemo(() => {
     return (featured?.genres || []).slice(0, 3) as unknown as string[];
@@ -165,7 +267,9 @@ const FeaturedSection = memo(({ featured, isLoading }: FeaturedSectionProps) => 
   }, [featured]);
 
   const thumbnailUrl = useMemo(() => {
-    return featured?.poster_path ? "https://image.tmdb.org/t/p/w342" + featured.poster_path : null;
+    return featured?.poster_path
+      ? "https://image.tmdb.org/t/p/w342" + featured.poster_path
+      : null;
   }, [featured]);
 
   if (isLoading || !featured || !imageUrl) {
@@ -184,7 +288,10 @@ const FeaturedSection = memo(({ featured, isLoading }: FeaturedSectionProps) => 
         transition={300}
       >
         <View style={StyleSheet.absoluteFill}>
-          <LinearGradient style={styles.gradientContainer} colors={gradient as any}>
+          <LinearGradient
+            style={styles.gradientContainer}
+            colors={gradient as any}
+          >
             <View style={styles.contentWrapper}>
               <Link
                 href={{
@@ -223,7 +330,12 @@ const FeaturedSection = memo(({ featured, isLoading }: FeaturedSectionProps) => 
                       <View style={styles.ratingContainer}>
                         <RatingIcons vote={featured?.vote_average} size={16} />
                         <Text style={styles.yearText}>
-                          • {new Date(featured?.release_date || featured?.first_air_date || Date.now()).getFullYear()}
+                          •{" "}
+                          {new Date(
+                            featured?.release_date ||
+                              featured?.first_air_date ||
+                              Date.now(),
+                          ).getFullYear()}
                         </Text>
                       </View>
 
@@ -251,7 +363,8 @@ const FeaturedSection = memo(({ featured, isLoading }: FeaturedSectionProps) => 
                     pathname: "/movie/type/[type]/[id]",
                     params: {
                       id: featured?.id,
-                      type: featured?.type || (featured?.title ? "movie" : "tv"),
+                      type:
+                        featured?.type || (featured?.title ? "movie" : "tv"),
                       img: featured?.poster_path,
                     },
                   }}

@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useState } from "react";
-import { Platform, StyleSheet, View, VirtualizedList } from "react-native";
+import { StyleSheet, View, VirtualizedList } from "react-native";
 import { Text } from "react-native-paper";
 import { Movie } from "../../../types";
 import { useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
@@ -71,9 +71,9 @@ export const Section = memo(
     const [movies, setSectionMovies] = useState<Movie[]>(group.results);
 
     const onEndReached = useCallback(() => {
-      if (state.isLoading || !!state.error || !hasMore) return;
+      if (state.isLoading || !!state.error || !hasMore || movies.length >= 30) return;
       setPage((prev) => prev + 1);
-    }, [state.isLoading, state.error, hasMore]);
+    }, [state.isLoading, state.error, hasMore, movies.length]);
 
     useEffect(() => {
       if (page === 1) return;
@@ -97,11 +97,13 @@ export const Section = memo(
         <Text style={sectionStyles.title}>{group.name}</Text>
 
         <VirtualizedList
-          removeClippedSubviews={Platform.OS === "android"}
+          removeClippedSubviews={true}
           getItem={getItem}
           getItemCount={getItemCount}
           getItemLayout={getItemLayout}
-          initialNumToRender={3}
+          initialNumToRender={4}
+          maxToRenderPerBatch={4}
+          windowSize={3}
           onEndReached={onEndReached}
           data={(movies || []) as any}
           horizontal
