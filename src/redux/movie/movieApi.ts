@@ -196,6 +196,23 @@ export const movieApi = createApi({
       query: ({ name, page = 1 }) => `/landing/${name}/${page}`,
     }),
 
+    getSectionMoviesPages: builder.infiniteQuery<
+      { name: string; results: Movie[]; totalPagesCount: number },
+      { name: string },
+      number
+    >({
+      query: ({ queryArg: { name }, pageParam }) => `/landing/${name}/${pageParam}`,
+      infiniteQueryOptions: {
+        // Page 1 is already provided by the landing endpoint via group.results,
+        // so this query activates lazily and starts from page 2.
+        initialPageParam: 2,
+        getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+          lastPage.results.length > 0 && lastPageParam < lastPage.totalPagesCount
+            ? lastPageParam + 1
+            : undefined,
+      },
+    }),
+
     getFeatured: builder.query<Movie & { tagline: string; genres: string[] }, { selectedChip: string }>({
       query: ({ selectedChip }) => "/landing/featured?category=" + selectedChip || "all",
       providesTags: (result, error, arg) => [{ type: "LandingPageInfinite", id: `featured-${arg.selectedChip}` }],
@@ -334,6 +351,7 @@ export const {
   useGetMaxPageRangeQuery,
 
   useLazyGetSectionMoviesQuery,
+  useGetSectionMoviesPagesInfiniteQuery,
 
   useGetFeaturedQuery,
 

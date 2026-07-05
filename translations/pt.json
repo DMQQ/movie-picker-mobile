@@ -303,7 +303,7 @@
   },
   "settings": {
     "hello": "Olá",
-    "heading": "Configurações",
+    "heading": "Conta",
     "nickname": "Apelido",
     "nickname-label": "Apelido",
     "nickname-info": "Aqui você pode alterar seu apelido. Ele será exibido para outros usuários na sala.",
@@ -447,7 +447,7 @@
     "reached_end": "Você chegou ao fim"
   },
   "tabBar": {
-    "settings": "Configurações",
+    "account": "Conta",
     "favourites": "Favoritos",
     "join-game": "Entrar no jogo",
     "games": "Decidir",

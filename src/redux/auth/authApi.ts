@@ -72,12 +72,30 @@ export const authApi = createApi({
       },
     }),
     updateMe: build.mutation<MeResponse, FormData>({
-      query: (body) => ({
-        url: "/me",
-        method: "PATCH",
-        body,
-        formData: true,
-      }),
+      queryFn: (body, { getState }) => {
+        const token = (getState() as RootState).auth.token;
+        return new Promise((resolve) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PATCH", `${baseUrl}/api/auth/me`);
+          xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+          xhr.onload = () => {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              console.log("[Avatar] XHR response:", xhr.status, data);
+              if (xhr.status >= 200 && xhr.status < 300) resolve({ data });
+              else resolve({ error: { status: xhr.status, data } });
+            } catch {
+              console.log("[Avatar] XHR parse error:", xhr.responseText);
+              resolve({ error: { status: "PARSING_ERROR", error: xhr.responseText } });
+            }
+          };
+          xhr.onerror = () => {
+            console.log("[Avatar] XHR network error");
+            resolve({ error: { status: "FETCH_ERROR", error: "Network error" } });
+          };
+          xhr.send(body);
+        });
+      },
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;

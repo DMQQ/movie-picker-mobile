@@ -54,7 +54,7 @@ export default function RegisterScreen() {
     try {
       const result = await register({ name: name.trim(), email: email.trim(), password }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.replace("/(tabs)");
+      router.dismiss();
     } catch (err: any) {
       const message = err?.data?.message ?? "Registration failed. Please try again.";
       setErrors({ form: message });
@@ -78,7 +78,7 @@ export default function RegisterScreen() {
       }).unwrap();
       console.log("[Apple] auth result:", JSON.stringify(result));
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.replace("/(tabs)");
+      router.dismiss();
     } catch (err: any) {
       if (err.code === "ERR_REQUEST_CANCELED") return;
       console.log("[Apple] error:", JSON.stringify(err));
@@ -113,7 +113,7 @@ export default function RegisterScreen() {
       const result = await googleAuth({ idToken }).unwrap();
       console.log("[Google] auth result:", JSON.stringify(result));
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.replace("/(tabs)");
+      router.dismiss();
     } catch (err: any) {
       if (isCancelledResponse(err)) return;
       console.log("[Google] error:", JSON.stringify(err));

@@ -1,6 +1,6 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import useTranslation from "../../service/useTranslation";
-import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Platform } from "react-native";
 import { MD2DarkTheme } from "react-native-paper";
 
@@ -83,11 +83,11 @@ function Pre26IosLayout() {
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="account"
         options={{
-          title: t("tabBar.settings"),
+          title: t("tabBar.account"),
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome name="gear" color={color} size={size} />
+            <MaterialCommunityIcons name="account-circle" color={color} size={size} />
           ),
         }}
       />
@@ -153,14 +153,14 @@ function TabLayout() {
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="settings">
+      <NativeTabs.Trigger name="account">
         <NativeTabs.Trigger.Icon
           selectedColor={selectedColor}
-          sf="gear"
-          md="settings"
+          sf="person.circle"
+          md="account_circle"
         />
         <NativeTabs.Trigger.Label hidden={Platform.OS === "ios"}>
-          {t("tabBar.settings")}
+          {t("tabBar.account")}
         </NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>

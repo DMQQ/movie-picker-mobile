@@ -303,7 +303,7 @@
   },
   "settings": {
     "hello": "Hola",
-    "heading": "Configuración",
+    "heading": "Cuenta",
     "nickname": "Apodo",
     "nickname-label": "Apodo",
     "nickname-info": "Aquí puedes cambiar tu apodo. Se mostrará a otros usuarios en la sala.",
@@ -447,7 +447,7 @@
     "reached_end": "Has llegado al final"
   },
   "tabBar": {
-    "settings": "Configuración",
+    "account": "Cuenta",
     "favourites": "Favoritos",
     "join-game": "Unirse al juego",
     "games": "Decidir",

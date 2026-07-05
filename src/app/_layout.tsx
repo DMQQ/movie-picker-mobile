@@ -12,6 +12,7 @@ import {
 import { Provider } from "react-redux";
 import { roomActions } from "../redux/room/roomSlice";
 import { authActions } from "../redux/auth/authSlice";
+import { appActions } from "../redux/app/appSlice";
 import { store, useAppDispatch, useAppSelector } from "../redux/store";
 import { baseUrl } from "../context/SocketContext";
 import useInit from "../service/useInit";
@@ -149,7 +150,7 @@ const RootNavigator = ({
 }) => {
   const dispatch = useAppDispatch();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
-  const onboardingCompleted = useAppSelector((s) => s.room.onboardingCompleted);
+  const onboardingCompleted = useAppSelector((s) => s.app.onboardingCompleted);
   const needsOnboarding = settingsLoaded ? !onboardingCompleted : null;
   const { movieInteractions, isReady: dbReady } = useMovieInteractions();
 
@@ -201,11 +202,11 @@ const RootNavigator = ({
         );
 
         if (nickname) {
-          dispatch(roomActions.setOnboardingCompleted());
+          dispatch(appActions.setOnboardingCompleted());
         }
       } catch (error) {
         console.error("[RootNavigator] Error:", error);
-        dispatch(roomActions.setOnboardingCompleted());
+        dispatch(appActions.setOnboardingCompleted());
       } finally {
         setSettingsLoaded(true);
 

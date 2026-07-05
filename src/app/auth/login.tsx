@@ -49,7 +49,7 @@ export default function LoginScreen() {
     try {
       const result = await login({ email: email.trim(), password }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.replace("/(tabs)");
+      router.dismiss();
     } catch (err: any) {
       const message = err?.data?.message ?? "Login failed. Please try again.";
       setErrors({ form: message });
@@ -73,7 +73,7 @@ export default function LoginScreen() {
       }).unwrap();
       console.log("[Apple] auth result:", JSON.stringify(result));
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.replace("/(tabs)");
+      router.dismiss();
     } catch (err: any) {
       if (err.code === "ERR_REQUEST_CANCELED") return;
       console.log("[Apple] error:", JSON.stringify(err));
@@ -108,7 +108,7 @@ export default function LoginScreen() {
       const result = await googleAuth({ idToken }).unwrap();
       console.log("[Google] auth result:", JSON.stringify(result));
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.replace("/(tabs)");
+      router.dismiss();
     } catch (err: any) {
       if (isCancelledResponse(err)) return;
       console.log("[Google] error:", JSON.stringify(err));

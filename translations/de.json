@@ -303,7 +303,7 @@
   },
   "settings": {
     "hello": "Hallo",
-    "heading": "Einstellungen",
+    "heading": "Konto",
     "nickname": "Spitzname",
     "nickname-label": "Spitzname",
     "nickname-info": "Hier kannst du deinen Spitznamen ändern. Dieser wird anderen Nutzern im Raum angezeigt.",
@@ -447,7 +447,7 @@
     "reached_end": "Du hast das Ende erreicht"
   },
   "tabBar": {
-    "settings": "Einstellungen",
+    "account": "Konto",
     "favourites": "Favoriten",
     "join-game": "Spiel beitreten",
     "games": "Entscheiden",

@@ -303,7 +303,7 @@
   },
   "settings": {
     "hello": "Cześć",
-    "heading": "Ustawienia",
+    "heading": "Konto",
     "nickname": "Pseudonim",
     "nickname-label": "Pseudonim",
     "nickname-info": "Tutaj możesz zmienić swój pseudonim. Będzie on wyświetlany innym użytkownikom w pokoju.",
@@ -447,7 +447,7 @@
     "reached_end": "Dotarłeś do końca"
   },
   "tabBar": {
-    "settings": "Ustawienia",
+    "account": "Konto",
     "favourites": "Ulubione",
     "join-game": "Dołącz do gry",
     "games": "Decyduj",

@@ -4,8 +4,8 @@ import { Button, Icon, Text, TextInput } from "react-native-paper";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { MD2DarkTheme } from "react-native-paper";
-import type { AuthUser } from "../../../../redux/auth/authSlice";
-import { useUpdateMeMutation } from "../../../../redux/auth/authApi";
+import type { AuthUser } from "../redux/auth/authSlice";
+import { useUpdateMeMutation } from "../redux/auth/authApi";
 
 function ComingSoonRow({ icon, label }: { icon: string; label: string }) {
   return (
@@ -23,40 +23,51 @@ function ComingSoonRow({ icon, label }: { icon: string; label: string }) {
 
 interface Props {
   user: AuthUser;
-  nickname: string;
-  setNickname: (v: string) => void;
   onSignOut: () => void;
 }
 
-export default function AuthAccount({ user, nickname, setNickname, onSignOut }: Props) {
+export default function AuthAccount({ user, onSignOut }: Props) {
   const [name, setName] = useState(user.name);
   const [nameEditing, setNameEditing] = useState(false);
   const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation();
 
   async function handlePickAvatar() {
+    console.log("[Avatar] Requesting media library permission...");
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    console.log("[Avatar] Permission result:", perm);
     if (!perm.granted) {
+      console.log("[Avatar] Permission denied");
       Alert.alert("Permission required", "Allow photo library access to change your avatar.");
       return;
     }
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.9,
     });
-    if (result.canceled) return;
+    console.log("[Avatar] Picker result:", result);
+    if (result.canceled) {
+      console.log("[Avatar] User canceled picker");
+      return;
+    }
 
     const asset = result.assets[0];
+    console.log("[Avatar] Selected asset:", { uri: asset.uri, mimeType: asset.mimeType, fileSize: asset.fileSize });
+
     const form = new FormData();
     form.append("avatar", {
       uri: asset.uri,
       name: "avatar.jpg",
       type: asset.mimeType ?? "image/jpeg",
     } as any);
+    console.log("[Avatar] Uploading...");
     try {
-      await updateMe(form).unwrap();
-    } catch {
+      const res = await updateMe(form).unwrap();
+      console.log("[Avatar] Upload success:", res);
+    } catch (err) {
+      console.log("[Avatar] Upload error:", err);
       Alert.alert("Upload failed", "Could not update avatar. Please try again.");
     }
   }
@@ -146,19 +157,6 @@ export default function AuthAccount({ user, nickname, setNickname, onSignOut }: 
 
       <Text style={styles.profileEmail}>{user.email}</Text>
 
-      {/* Nickname */}
-      <View style={styles.nicknameSection}>
-        <Text style={styles.nicknameSectionLabel}>Display name in games</Text>
-        <TextInput
-          value={nickname}
-          onChangeText={setNickname}
-          mode="outlined"
-          label="Nickname"
-          style={styles.nicknameInput}
-          outlineStyle={{ borderRadius: 12 }}
-        />
-      </View>
-
       {/* Coming soon rows */}
       <View style={styles.featureRows}>
         <ComingSoonRow icon="history" label="Recent Games" />
@@ -228,10 +226,6 @@ const styles = StyleSheet.create({
   nameInput: { backgroundColor: "transparent" },
 
   profileEmail: { fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 20 },
-
-  nicknameSection: { width: "100%", gap: 6, marginBottom: 16 },
-  nicknameSectionLabel: { fontSize: 12, color: "rgba(255,255,255,0.4)", paddingHorizontal: 4 },
-  nicknameInput: { backgroundColor: "transparent" },
 
   featureRows: {
     width: "100%",

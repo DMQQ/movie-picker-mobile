@@ -11,9 +11,11 @@ import { filterPreferencesSlice } from "./filterPreferences/filterPreferencesSli
 import { listenerMiddleware } from "./listenerMiddleware";
 import { authSlice } from "./auth/authSlice";
 import { authApi } from "./auth/authApi";
+import { appSlice } from "./app/appSlice";
 
 const store = configureStore({
   reducer: {
+    app: appSlice.reducer,
     room: roomSlice.reducer,
     auth: authSlice.reducer,
     [movieApi?.reducerPath]: movieApi.reducer,

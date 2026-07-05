@@ -1,14 +1,14 @@
-import { memo, useCallback, useEffect, useState } from "react";
-import { StyleSheet, View, VirtualizedList } from "react-native";
+import { memo } from "react";
+import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
+import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
 import { Movie } from "../../../types";
-import { useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
 import SectionListItem, {
   SECTION_ITEM_WIDTH,
   SECTION_ITEM_HEIGHT,
 } from "../SectionItem";
 import Skeleton from "../Skeleton/Skeleton";
-import uniqueBy from "../../utils/unique";
+import { useInfiniteSectionMovies } from "../../hooks/useInfiniteSectionMovies";
 
 interface SectionProps {
   group: { name: string; results: Movie[] };
@@ -27,13 +27,6 @@ const sectionStyles = StyleSheet.create({
     fontFamily: "Bebas",
     marginBottom: 10,
   },
-  list: {
-    flex: 1,
-  },
-  listContainer: {
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
 });
 
 const skeletonStyles = StyleSheet.create({
@@ -47,71 +40,33 @@ const skeletonStyles = StyleSheet.create({
   },
 });
 
-const getItem = (data: Movie[], index: number) => data[index];
-
-const getItemCount = (data: Movie[]) => data.length;
-
-const getItemLayout = (_: Movie[] | null | undefined, index: number) => {
-  return {
-    length: SECTION_ITEM_WIDTH + 15,
-    offset: (SECTION_ITEM_WIDTH + 15) * index,
-    index,
-  };
-};
-
-const renderItem = ({ item }: { item: Movie }) => <SectionListItem {...item} />;
+const renderItem = ({ item }: ListRenderItemInfo<Movie>) => (
+  <SectionListItem {...item} />
+);
 
 const movieKeyExtractor = (item: Movie) => `${item.id}-${item.type}`;
 
 export const Section = memo(
   ({ group }: SectionProps) => {
-    const [page, setPage] = useState(1);
-    const [getSectionMovies, state] = useLazyGetSectionMoviesQuery();
-    const [hasMore, setHasMore] = useState(true);
-    const [movies, setSectionMovies] = useState<Movie[]>(group.results);
+    const { movies, isFetching, fetchNextPage } = useInfiniteSectionMovies(group.name, group.results);
 
-    const onEndReached = useCallback(() => {
-      if (state.isLoading || !!state.error || !hasMore || movies.length >= 30) return;
-      setPage((prev) => prev + 1);
-    }, [state.isLoading, state.error, hasMore, movies.length]);
-
-    useEffect(() => {
-      if (page === 1) return;
-
-      getSectionMovies({ name: group.name, page }, true).then((response) => {
-        if (response.data && Array.isArray(response.data.results)) {
-          setHasMore(page < response.data.totalPagesCount);
-          setSectionMovies((prev) =>
-            uniqueBy(prev.concat(response?.data?.results || []), "id"),
-          );
-        }
-      });
-    }, [page, group.name]);
-
-    if (movies.length === 0) {
-      return null;
-    }
+    if (movies.length === 0) return null;
 
     return (
       <View style={sectionStyles.container}>
         <Text style={sectionStyles.title}>{group.name}</Text>
 
-        <VirtualizedList
-          removeClippedSubviews={true}
-          getItem={getItem}
-          getItemCount={getItemCount}
-          getItemLayout={getItemLayout}
-          initialNumToRender={4}
-          maxToRenderPerBatch={4}
-          windowSize={3}
-          onEndReached={onEndReached}
-          data={(movies || []) as any}
+        <FlashList
+          data={movies}
+          extraData={movies.length}
+          renderItem={renderItem}
+          keyExtractor={movieKeyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          keyExtractor={movieKeyExtractor}
-          renderItem={renderItem}
+          onEndReached={fetchNextPage}
+          onEndReachedThreshold={0.5}
           ListFooterComponent={
-            state.isLoading ? (
+            isFetching ? (
               <View style={skeletonStyles.moviesList}>
                 {[...Array(2)].map((_, index) => (
                   <View style={skeletonStyles.movieCard} key={index}>
@@ -134,12 +89,9 @@ export const Section = memo(
       </View>
     );
   },
-  (prevProps, nextProps) => {
-    return (
-      prevProps.group.name === nextProps.group.name &&
-      prevProps.group.results.length === nextProps.group.results.length
-    );
-  },
+  (prevProps, nextProps) =>
+    prevProps.group.name === nextProps.group.name &&
+    prevProps.group.results.length === nextProps.group.results.length,
 );
 
 export default Section;

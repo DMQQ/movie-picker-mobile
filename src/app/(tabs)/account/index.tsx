@@ -10,8 +10,8 @@ import { roomActions } from "../../../redux/room/roomSlice";
 import { authActions } from "../../../redux/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import useTranslation from "../../../service/useTranslation";
-import AuthAccount from "./_components/AuthAccount";
-import UnauthAccount from "./_components/UnauthAccount";
+import AuthAccount from "../../../components/AuthAccount";
+import UnauthAccount from "../../../components/UnauthAccount";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
@@ -52,13 +52,23 @@ export default function SettingsScreen() {
     return () => clearTimeout(id);
   }, [nickname]);
 
+  useEffect(() => {
+    if (!user) return;
+    setNickname(user.name);
+    AsyncStorage.setItem("nickname", user.name);
+    dispatch(roomActions.setSettings({ nickname: user.name }));
+  }, [user?.name]);
+
   return (
     <View style={styles.container}>
       <PageHeading title={t("settings.heading")} showBackButton={false} />
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 150 }]}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 150 },
+        ]}
       >
         {!user && (
           <Section title={t("settings.nickname")}>
@@ -73,12 +83,10 @@ export default function SettingsScreen() {
           </Section>
         )}
 
-        <Section title="Account">
+        <Section title="">
           {user ? (
             <AuthAccount
               user={user}
-              nickname={nickname}
-              setNickname={setNickname}
               onSignOut={handleSignOut}
             />
           ) : (
@@ -111,7 +119,11 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 25, fontFamily: "Bebas", color: "#fff" },
   sectionContent: { gap: 10 },
   textInput: { backgroundColor: "transparent" },
-  helperText: { fontSize: 14, color: "rgba(255,255,255,0.6)", paddingHorizontal: 5 },
+  helperText: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.6)",
+    paddingHorizontal: 5,
+  },
   aboutContent: {
     backgroundColor: "rgba(255,255,255,0.05)",
     borderRadius: 12,

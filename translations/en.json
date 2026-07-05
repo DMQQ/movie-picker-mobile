@@ -304,7 +304,7 @@
   },
   "settings": {
     "hello": "Hello",
-    "heading": "Settings",
+    "heading": "Account",
     "nickname": "Nickname",
     "nickname-label": "Nickname",
     "nickname-info": "Here you can change your nickname. This will be displayed to other users in the room.",
@@ -449,7 +449,7 @@
     "reached_end": "You've reached the end"
   },
   "tabBar": {
-    "settings": "Settings",
+    "account": "Account",
     "favourites": "Favourites",
     "join-game": "Join game",
     "games": "Decide",

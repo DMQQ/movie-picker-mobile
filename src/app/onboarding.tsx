@@ -8,6 +8,7 @@ import useTranslation from "../service/useTranslation";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
+import { appActions } from "../redux/app/appSlice";
 import SwiperAnimation from "../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../components/GameListAnimations/VoterAnimation";
 import FortuneWheelAnimation from "../components/GameListAnimations/FortuneWheelAnimation";
@@ -176,10 +177,10 @@ export default function OnboardingScreen({ onClose }: OnboardingScreenProps) {
       }
 
       dispatch(roomActions.setSettings({ nickname: resolvedNickname }));
-      dispatch(roomActions.setOnboardingCompleted());
+      dispatch(appActions.setOnboardingCompleted());
     } catch (error) {
       console.error("Failed to save onboarding state:", error);
-      dispatch(roomActions.setOnboardingCompleted());
+      dispatch(appActions.setOnboardingCompleted());
     }
   };
 
