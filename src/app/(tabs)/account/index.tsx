@@ -61,7 +61,14 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <PageHeading title={t("settings.heading")} showBackButton={false} />
+      <PageHeading
+        title={t("settings.heading")}
+        showBackButton={false}
+        showRightIconButton={!!user}
+        rightIconName="logout"
+        rightIconColor="#CF6679"
+        onRightIconPress={handleSignOut}
+      />
 
       <ScrollView
         style={styles.scrollView}
@@ -85,10 +92,7 @@ export default function SettingsScreen() {
 
         <Section title="">
           {user ? (
-            <AuthAccount
-              user={user}
-              onSignOut={handleSignOut}
-            />
+            <AuthAccount user={user} />
           ) : (
             <UnauthAccount expired={sessionExpired} />
           )}

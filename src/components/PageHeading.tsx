@@ -34,6 +34,7 @@ interface RightIconButtonProps extends PageHeadingProps {
   extraScreenPaddingTop?: number;
   rightIconTitle?: string;
   tintColor?: string;
+  rightIconColor?: string;
 }
 
 export default function PageHeading({
@@ -49,6 +50,7 @@ export default function PageHeading({
   rightIconName,
   rightIconTitle,
   tintColor,
+  rightIconColor,
   onRightIconPress,
   extraScreenPaddingTop = 0,
 }: RightIconButtonProps) {
@@ -160,7 +162,7 @@ export default function PageHeading({
                         Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
                       }
                     }}
-                    iconColor="white"
+                    iconColor={rightIconColor ?? "white"}
                   />
                 </PlatformBlurView>
               ))}

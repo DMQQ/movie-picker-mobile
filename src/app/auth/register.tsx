@@ -16,7 +16,11 @@ import {
   isNoSavedCredentialFoundResponse,
   isSuccessResponse,
 } from "react-native-nitro-google-signin";
-import { useRegisterMutation, useGoogleAuthMutation, useAppleAuthMutation } from "../../redux/auth/authApi";
+import {
+  useRegisterMutation,
+  useGoogleAuthMutation,
+  useAppleAuthMutation,
+} from "../../redux/auth/authApi";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
@@ -39,11 +43,13 @@ export default function RegisterScreen() {
   function validate(): boolean {
     const next: Errors = {};
     if (!name.trim()) next.name = "Name is required";
-    else if (name.trim().length < 2) next.name = "Name must be at least 2 characters";
+    else if (name.trim().length < 2)
+      next.name = "Name must be at least 2 characters";
     if (!email.trim()) next.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(email)) next.email = "Enter a valid email";
     if (!password.trim()) next.password = "Password is required";
-    else if (password.length < 8) next.password = "Password must be at least 8 characters";
+    else if (password.length < 8)
+      next.password = "Password must be at least 8 characters";
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -52,11 +58,16 @@ export default function RegisterScreen() {
     if (!validate()) return;
     setErrors({});
     try {
-      const result = await register({ name: name.trim(), email: email.trim(), password }).unwrap();
+      const result = await register({
+        name: name.trim(),
+        email: email.trim(),
+        password,
+      }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
       router.dismiss();
     } catch (err: any) {
-      const message = err?.data?.message ?? "Registration failed. Please try again.";
+      const message =
+        err?.data?.message ?? "Registration failed. Please try again.";
       setErrors({ form: message });
     }
   }
@@ -74,7 +85,9 @@ export default function RegisterScreen() {
       if (!identityToken) throw new Error("No identity token");
       const result = await appleAuth({
         identityToken,
-        fullName: fullName ? { givenName: fullName.givenName, familyName: fullName.familyName } : null,
+        fullName: fullName
+          ? { givenName: fullName.givenName, familyName: fullName.familyName }
+          : null,
       }).unwrap();
       console.log("[Apple] auth result:", JSON.stringify(result));
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
@@ -82,7 +95,8 @@ export default function RegisterScreen() {
     } catch (err: any) {
       if (err.code === "ERR_REQUEST_CANCELED") return;
       console.log("[Apple] error:", JSON.stringify(err));
-      const message = err?.data?.message ?? "Apple Sign In failed. Please try again.";
+      const message =
+        err?.data?.message ?? "Apple Sign In failed. Please try again.";
       setErrors({ form: message });
     }
   }
@@ -95,16 +109,24 @@ export default function RegisterScreen() {
       console.log("[Google] signIn response:", JSON.stringify(response));
       if (isNoSavedCredentialFoundResponse(response)) {
         response = await GoogleOneTapSignIn.createAccount();
-        console.log("[Google] createAccount response:", JSON.stringify(response));
+        console.log(
+          "[Google] createAccount response:",
+          JSON.stringify(response),
+        );
       }
       if (isNoSavedCredentialFoundResponse(response)) {
         response = await GoogleOneTapSignIn.presentExplicitSignIn();
-        console.log("[Google] presentExplicitSignIn response:", JSON.stringify(response));
+        console.log(
+          "[Google] presentExplicitSignIn response:",
+          JSON.stringify(response),
+        );
       }
       if (!isSuccessResponse(response)) {
         const responseType = (response as any)?.type;
         console.log("[Google] not a success response, type:", responseType);
-        setErrors({ form: `Google Sign In failed (${responseType ?? "unknown"}). Please try again.` });
+        setErrors({
+          form: `Google Sign In failed (${responseType ?? "unknown"}). Please try again.`,
+        });
         return;
       }
       const { idToken } = response.data;
@@ -117,15 +139,22 @@ export default function RegisterScreen() {
     } catch (err: any) {
       if (isCancelledResponse(err)) return;
       console.log("[Google] error:", JSON.stringify(err));
-      const message = err?.data?.message ?? "Google Sign In failed. Please try again.";
+      const message =
+        err?.data?.message ?? "Google Sign In failed. Please try again.";
       setErrors({ form: message });
     }
   }
 
   return (
     <View style={{ flex: 1 }}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+        >
           {Platform.OS === "android" && <View style={styles.grabber} />}
 
           <Text style={styles.title}>Create account</Text>
@@ -142,19 +171,27 @@ export default function RegisterScreen() {
               mode="outlined"
               label="Name"
               value={name}
-              onChangeText={(v) => { setName(v); setErrors((e) => ({ ...e, name: undefined, form: undefined })); }}
+              onChangeText={(v) => {
+                setName(v);
+                setErrors((e) => ({ ...e, name: undefined, form: undefined }));
+              }}
               autoCapitalize="words"
               returnKeyType="next"
               outlineStyle={styles.inputOutline}
               error={!!errors.name}
             />
-            {errors.name && <Text style={styles.fieldError}>{errors.name}</Text>}
+            {errors.name && (
+              <Text style={styles.fieldError}>{errors.name}</Text>
+            )}
 
             <TextInput
               mode="outlined"
               label="Email"
               value={email}
-              onChangeText={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: undefined, form: undefined })); }}
+              onChangeText={(v) => {
+                setEmail(v);
+                setErrors((e) => ({ ...e, email: undefined, form: undefined }));
+              }}
               autoCapitalize="none"
               keyboardType="email-address"
               autoCorrect={false}
@@ -162,20 +199,31 @@ export default function RegisterScreen() {
               outlineStyle={styles.inputOutline}
               error={!!errors.email}
             />
-            {errors.email && <Text style={styles.fieldError}>{errors.email}</Text>}
+            {errors.email && (
+              <Text style={styles.fieldError}>{errors.email}</Text>
+            )}
 
             <TextInput
               mode="outlined"
               label="Password"
               value={password}
-              onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, form: undefined })); }}
+              onChangeText={(v) => {
+                setPassword(v);
+                setErrors((e) => ({
+                  ...e,
+                  password: undefined,
+                  form: undefined,
+                }));
+              }}
               secureTextEntry
               returnKeyType="done"
               onSubmitEditing={handleRegister}
               outlineStyle={styles.inputOutline}
               error={!!errors.password}
             />
-            {errors.password && <Text style={styles.fieldError}>{errors.password}</Text>}
+            {errors.password && (
+              <Text style={styles.fieldError}>{errors.password}</Text>
+            )}
           </View>
 
           <Button
@@ -197,8 +245,12 @@ export default function RegisterScreen() {
 
           {Platform.OS === "ios" && (
             <AppleAuthentication.AppleAuthenticationButton
-              buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP}
-              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE}
+              buttonType={
+                AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP
+              }
+              buttonStyle={
+                AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+              }
               cornerRadius={25}
               style={styles.appleBtn}
               onPress={handleAppleSignIn}
@@ -230,9 +282,16 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
+  flex: { flex: 1, ...Platform.select({ ios: { paddingTop: 20 } }) },
   scroll: { padding: 24, paddingTop: 16 },
-  grabber: { width: 36, height: 4, borderRadius: 2, backgroundColor: "#555", alignSelf: "center", marginBottom: 28 },
+  grabber: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "#555",
+    alignSelf: "center",
+    marginBottom: 28,
+  },
   title: { fontSize: 38, fontFamily: "Bebas", color: "#fff", letterSpacing: 1 },
   subtitle: { fontSize: 14, color: "#666", marginTop: 2, marginBottom: 20 },
   formError: {
@@ -245,7 +304,12 @@ const styles = StyleSheet.create({
   formErrorText: { color: "#CF6679", fontSize: 13 },
   fields: { gap: 4, marginBottom: 16 },
   inputOutline: { borderRadius: 12 },
-  fieldError: { color: "#CF6679", fontSize: 12, paddingHorizontal: 4, marginBottom: 8 },
+  fieldError: {
+    color: "#CF6679",
+    fontSize: 12,
+    paddingHorizontal: 4,
+    marginBottom: 8,
+  },
   primaryBtn: { borderRadius: 25, marginBottom: 28 },
   primaryBtnContent: { paddingVertical: 6 },
   dividerRow: { flexDirection: "row", alignItems: "center", marginBottom: 16 },

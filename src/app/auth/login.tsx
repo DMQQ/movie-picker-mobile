@@ -16,7 +16,11 @@ import {
   isNoSavedCredentialFoundResponse,
   isSuccessResponse,
 } from "react-native-nitro-google-signin";
-import { useLoginMutation, useGoogleAuthMutation, useAppleAuthMutation } from "../../redux/auth/authApi";
+import {
+  useLoginMutation,
+  useGoogleAuthMutation,
+  useAppleAuthMutation,
+} from "../../redux/auth/authApi";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
@@ -69,7 +73,9 @@ export default function LoginScreen() {
       if (!identityToken) throw new Error("No identity token");
       const result = await appleAuth({
         identityToken,
-        fullName: fullName ? { givenName: fullName.givenName, familyName: fullName.familyName } : null,
+        fullName: fullName
+          ? { givenName: fullName.givenName, familyName: fullName.familyName }
+          : null,
       }).unwrap();
       console.log("[Apple] auth result:", JSON.stringify(result));
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
@@ -77,7 +83,8 @@ export default function LoginScreen() {
     } catch (err: any) {
       if (err.code === "ERR_REQUEST_CANCELED") return;
       console.log("[Apple] error:", JSON.stringify(err));
-      const message = err?.data?.message ?? "Apple Sign In failed. Please try again.";
+      const message =
+        err?.data?.message ?? "Apple Sign In failed. Please try again.";
       setErrors({ form: message });
     }
   }
@@ -90,16 +97,24 @@ export default function LoginScreen() {
       console.log("[Google] signIn response:", JSON.stringify(response));
       if (isNoSavedCredentialFoundResponse(response)) {
         response = await GoogleOneTapSignIn.createAccount();
-        console.log("[Google] createAccount response:", JSON.stringify(response));
+        console.log(
+          "[Google] createAccount response:",
+          JSON.stringify(response),
+        );
       }
       if (isNoSavedCredentialFoundResponse(response)) {
         response = await GoogleOneTapSignIn.presentExplicitSignIn();
-        console.log("[Google] presentExplicitSignIn response:", JSON.stringify(response));
+        console.log(
+          "[Google] presentExplicitSignIn response:",
+          JSON.stringify(response),
+        );
       }
       if (!isSuccessResponse(response)) {
         const responseType = (response as any)?.type;
         console.log("[Google] not a success response, type:", responseType);
-        setErrors({ form: `Google Sign In failed (${responseType ?? "unknown"}). Please try again.` });
+        setErrors({
+          form: `Google Sign In failed (${responseType ?? "unknown"}). Please try again.`,
+        });
         return;
       }
       const { idToken } = response.data;
@@ -112,15 +127,22 @@ export default function LoginScreen() {
     } catch (err: any) {
       if (isCancelledResponse(err)) return;
       console.log("[Google] error:", JSON.stringify(err));
-      const message = err?.data?.message ?? "Google Sign In failed. Please try again.";
+      const message =
+        err?.data?.message ?? "Google Sign In failed. Please try again.";
       setErrors({ form: message });
     }
   }
 
   return (
     <View style={{ flex: 1 }}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+        >
           {Platform.OS === "android" && <View style={styles.grabber} />}
 
           <Text style={styles.title}>Welcome back</Text>
@@ -137,7 +159,10 @@ export default function LoginScreen() {
               mode="outlined"
               label="Email"
               value={email}
-              onChangeText={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: undefined, form: undefined })); }}
+              onChangeText={(v) => {
+                setEmail(v);
+                setErrors((e) => ({ ...e, email: undefined, form: undefined }));
+              }}
               autoCapitalize="none"
               keyboardType="email-address"
               autoCorrect={false}
@@ -145,20 +170,31 @@ export default function LoginScreen() {
               outlineStyle={styles.inputOutline}
               error={!!errors.email}
             />
-            {errors.email && <Text style={styles.fieldError}>{errors.email}</Text>}
+            {errors.email && (
+              <Text style={styles.fieldError}>{errors.email}</Text>
+            )}
 
             <TextInput
               mode="outlined"
               label="Password"
               value={password}
-              onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, form: undefined })); }}
+              onChangeText={(v) => {
+                setPassword(v);
+                setErrors((e) => ({
+                  ...e,
+                  password: undefined,
+                  form: undefined,
+                }));
+              }}
               secureTextEntry
               returnKeyType="done"
               onSubmitEditing={handleLogin}
               outlineStyle={styles.inputOutline}
               error={!!errors.password}
             />
-            {errors.password && <Text style={styles.fieldError}>{errors.password}</Text>}
+            {errors.password && (
+              <Text style={styles.fieldError}>{errors.password}</Text>
+            )}
           </View>
 
           <Button
@@ -180,8 +216,12 @@ export default function LoginScreen() {
 
           {Platform.OS === "ios" && (
             <AppleAuthentication.AppleAuthenticationButton
-              buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-              buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE}
+              buttonType={
+                AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+              }
+              buttonStyle={
+                AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+              }
               cornerRadius={25}
               style={styles.appleBtn}
               onPress={handleAppleSignIn}
@@ -213,9 +253,16 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
+  flex: { flex: 1, ...Platform.select({ ios: { paddingTop: 20 } }) },
   scroll: { padding: 24, paddingTop: 16 },
-  grabber: { width: 36, height: 4, borderRadius: 2, backgroundColor: "#555", alignSelf: "center", marginBottom: 28 },
+  grabber: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "#555",
+    alignSelf: "center",
+    marginBottom: 28,
+  },
   title: { fontSize: 38, fontFamily: "Bebas", color: "#fff", letterSpacing: 1 },
   subtitle: { fontSize: 14, color: "#666", marginTop: 2, marginBottom: 20 },
   formError: {
@@ -228,7 +275,12 @@ const styles = StyleSheet.create({
   formErrorText: { color: "#CF6679", fontSize: 13 },
   fields: { gap: 4, marginBottom: 16 },
   inputOutline: { borderRadius: 12 },
-  fieldError: { color: "#CF6679", fontSize: 12, paddingHorizontal: 4, marginBottom: 8 },
+  fieldError: {
+    color: "#CF6679",
+    fontSize: 12,
+    paddingHorizontal: 4,
+    marginBottom: 8,
+  },
   primaryBtn: { borderRadius: 25, marginBottom: 28 },
   primaryBtnContent: { paddingVertical: 6 },
   dividerRow: { flexDirection: "row", alignItems: "center", marginBottom: 16 },

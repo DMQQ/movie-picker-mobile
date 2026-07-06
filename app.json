@@ -91,6 +91,7 @@
       "infoPlist": {
         "NSCameraUsageDescription": "FlickMate uses your camera to scan QR codes for joining movie games. You can also join manually without camera access.",
         "NSCameraUsageDescription_pl": "FlickMate używa aparatu do skanowania kodów QR, aby dołączyć do gier filmowych. Możesz również dołączyć ręcznie bez dostępu do aparatu.",
+        "NSPhotoLibraryUsageDescription": "FlickMate accesses your photos to let you set a profile avatar.",
         "UIViewControllerBasedStatusBarAppearance": true,
         "ITSAppUsesNonExemptEncryption": false
       },

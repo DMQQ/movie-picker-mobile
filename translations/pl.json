@@ -628,6 +628,20 @@
     "update-button": "Aktualizuj",
     "dismiss": "Zamknij"
   },
+  "errors": {
+    "VALIDATION_ERROR": "Sprawdź wprowadzone dane i spróbuj ponownie.",
+    "EMAIL_ALREADY_IN_USE": "Konto z tym adresem e-mail już istnieje.",
+    "INVALID_CREDENTIALS": "Nieprawidłowy e-mail lub hasło.",
+    "INVALID_GOOGLE_TOKEN": "Logowanie przez Google nie powiodło się. Spróbuj ponownie.",
+    "INVALID_APPLE_TOKEN": "Logowanie przez Apple nie powiodło się. Spróbuj ponownie.",
+    "AVATAR_TOO_LARGE": "Obraz jest za duży. Wybierz mniejszy plik.",
+    "AVATAR_INVALID_TYPE": "Nieobsługiwany format obrazu. Użyj JPEG lub PNG.",
+    "LIST_NOT_FOUND": "Nie znaleziono listy.",
+    "LIST_ALREADY_EXISTS": "Lista o tej nazwie już istnieje.",
+    "RESERVED_LIST_TYPE": "Ten typ listy jest zarezerwowany i nie może zostać utworzony.",
+    "SYSTEM_LIST_PROTECTED": "Listy systemowe nie mogą być usuwane.",
+    "INTERNAL_ERROR": "Coś poszło nie tak. Spróbuj ponownie później."
+  },
   "ticket": {
     "unknown-movie": "Nieznany Film",
     "unknown": "Nieznane",

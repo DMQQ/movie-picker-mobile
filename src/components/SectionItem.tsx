@@ -12,14 +12,19 @@ const getColor = (score: number) => {
   return "#db2360"; // Red
 };
 
-interface SectionListItemProps extends Movie {
-  // href: { pathname: string; params: Record<string, any> };
-
+interface SectionListItemProps {
+  id: number;
+  type?: string;
+  poster_path: string;
+  vote_average: number;
+  title?: string;
+  name?: string;
+  genres?: { id: number; name: string }[] | string[];
   imageWidth?: number;
-
   isFlashListItem?: boolean;
-
   mapped_genres?: string[];
+  hideTitle?: boolean;
+  thumbnailSize?: number;
 }
 
 function getGenres(
@@ -39,15 +44,16 @@ export const SectionListItem = ({
   vote_average,
   name,
   title,
-  // href,
   imageWidth,
   genres,
   mapped_genres,
+  hideTitle = false,
+  thumbnailSize = ThumbnailSizes.poster.small,
   ...rest
 }: SectionListItemProps) => {
   const genreNames = getGenres(genres || mapped_genres);
   const sizes =
-    imageWidth !== undefined ? getSectionItemSize(imageWidth) : null;
+    imageWidth !== undefined ? getSectionItemSize(imageWidth, hideTitle) : null;
 
   return (
     <Link
@@ -72,7 +78,7 @@ export const SectionListItem = ({
             <Link.AppleZoom>
               <Thumbnail
                 path={poster_path}
-                size={ThumbnailSizes.poster.small}
+                size={thumbnailSize}
                 container={[sectionStyles.image, sizes?.image]}
                 alt={name || title}
                 showsPlaceholder={false}
@@ -102,32 +108,34 @@ export const SectionListItem = ({
                 </Text>
               </View>
             )}
-            <View
-              style={{
-                marginTop: 10,
-                paddingHorizontal: 10,
-                maxWidth: sizes?.image.width || sectionStyles.image.width,
-              }}
-            >
-              <Text
-                variant="bodyMedium"
-                numberOfLines={1}
+            {!hideTitle && (
+              <View
                 style={{
-                  maxWidth: sectionStyles.image.width,
-                  fontSize: 16,
-                  fontFamily: "Bebas",
+                  marginTop: 10,
+                  paddingHorizontal: 10,
+                  maxWidth: sizes?.image.width || sectionStyles.image.width,
                 }}
               >
-                {name || title}
-              </Text>
+                <Text
+                  variant="bodyMedium"
+                  numberOfLines={1}
+                  style={{
+                    maxWidth: sectionStyles.image.width,
+                    fontSize: 16,
+                    fontFamily: "Bebas",
+                  }}
+                >
+                  {name || title}
+                </Text>
 
-              <Text
-                numberOfLines={2}
-                style={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}
-              >
-                {genreNames.join(", ")}
-              </Text>
-            </View>
+                <Text
+                  numberOfLines={2}
+                  style={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}
+                >
+                  {genreNames.join(", ")}
+                </Text>
+              </View>
+            )}
           </View>
         </Link.Trigger>
 
@@ -142,10 +150,10 @@ const { width } = Dimensions.get("screen");
 export const SECTION_ITEM_WIDTH = Math.min(width * 0.35, 200);
 export const SECTION_ITEM_HEIGHT = Math.min(width * 0.3, 200) * 1.5 + 70;
 
-export const getSectionItemSize = (imageWidth?: number) => {
+export const getSectionItemSize = (imageWidth?: number, hideTitle = false) => {
   const itemWidth = imageWidth ?? SECTION_ITEM_WIDTH;
   const imageHeight = itemWidth * 1.5;
-  const itemHeight = imageHeight + 70;
+  const itemHeight = imageHeight + (hideTitle ? 0 : 70);
 
   return {
     item: { width: itemWidth, height: itemHeight },

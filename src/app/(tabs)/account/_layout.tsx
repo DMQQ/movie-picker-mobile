@@ -2,8 +2,9 @@ import { Stack } from "expo-router";
 
 export default function SettingsLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "#000" } }}>
       <Stack.Screen name="index" />
+      <Stack.Screen name="games/[id]" />
     </Stack>
   );
 }

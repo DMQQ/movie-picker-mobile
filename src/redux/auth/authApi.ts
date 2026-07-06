@@ -71,6 +71,10 @@ export const authApi = createApi({
         } catch {}
       },
     }),
+    deleteMe: build.mutation<{ ok: boolean }, void>({
+      query: () => ({ url: "/me", method: "DELETE" }),
+    }),
+
     updateMe: build.mutation<MeResponse, FormData>({
       queryFn: (body, { getState }) => {
         const token = (getState() as RootState).auth.token;
@@ -112,5 +116,6 @@ export const {
   useGoogleAuthMutation,
   useAppleAuthMutation,
   useMeQuery,
+  useDeleteMeMutation,
   useUpdateMeMutation,
 } = authApi;

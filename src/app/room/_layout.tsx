@@ -33,7 +33,7 @@ export default function RootLayout() {
 
             <Stack.Screen name="summary" options={{ headerShown: false }} />
 
-            <Stack.Screen name="[roomId]" options={{ headerShown: false }} />
+            <Stack.Screen name="[roomId]" options={{ headerShown: false, gestureEnabled: false }} />
 
             <Stack.Screen name="overview" options={{ headerShown: false }} />
 

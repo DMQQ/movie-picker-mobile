@@ -88,6 +88,7 @@ export const SocketProvider = ({
   const language = useSelector((st: RootState) => st.room.language);
   const regionalization =
     useSelector((st: RootState) => st.room.regionalization) || {};
+  const authToken = useSelector((st: RootState) => st.auth.token);
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const appState = useRef(AppState.currentState);
@@ -109,6 +110,9 @@ export const SocketProvider = ({
 
       const newSocket = socketIOClient(baseUrl + namespace, {
         ...connectionConfig,
+        auth: {
+          token: authToken ? `Bearer ${authToken}` : `Bearer ${envs.server_auth_token}`,
+        },
         extraHeaders: {
           "user-id": userId,
           ...makeHeaders(language, regionalization),
@@ -186,7 +190,7 @@ export const SocketProvider = ({
         s.removeAllListeners();
       }
     };
-  }, [language, regionalization]);
+  }, [language, regionalization, authToken]);
 
   const isInitialConnection = useRef(true);
 

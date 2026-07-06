@@ -1,6 +1,7 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as SecureStore from "expo-secure-store";
 import { Stack } from "expo-router";
+import { ThemeProvider, DarkTheme } from "expo-router/react-navigation";
 import { useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -127,10 +128,12 @@ function RootLayout() {
         <Provider store={store}>
           <DatabaseProvider>
             <PaperProvider theme={theme}>
-              <RootNavigator
-                isLoaded={isLoaded && migrationComplete}
-                isUpdating={isUpdating}
-              />
+              <ThemeProvider value={{ ...DarkTheme, colors: { ...DarkTheme.colors, background: "#000" } }}>
+                <RootNavigator
+                  isLoaded={isLoaded && migrationComplete}
+                  isUpdating={isUpdating}
+                />
+              </ThemeProvider>
             </PaperProvider>
           </DatabaseProvider>
         </Provider>
@@ -151,6 +154,7 @@ const RootNavigator = ({
   const dispatch = useAppDispatch();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const onboardingCompleted = useAppSelector((s) => s.app.onboardingCompleted);
+  const isPlaying = useAppSelector((s) => s.room.isPlaying);
   const needsOnboarding = settingsLoaded ? !onboardingCompleted : null;
   const { movieInteractions, isReady: dbReady } = useMovieInteractions();
 
@@ -229,7 +233,7 @@ const RootNavigator = ({
     ]);
   }, []);
 
-  if (!isLoaded || !settingsLoaded) {
+  if (!isLoaded || !settingsLoaded || needsOnboarding === null) {
     return null;
   }
 
@@ -250,7 +254,7 @@ const RootNavigator = ({
         <Stack.Protected guard={!needsOnboarding}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-          <Stack.Screen name="room" options={{ headerShown: false }} />
+          <Stack.Screen name="room" options={{ headerShown: false, gestureEnabled: !isPlaying }} />
 
           <Stack.Screen name="fortune" options={{ headerShown: false }} />
 

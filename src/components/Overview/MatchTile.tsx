@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import { View, StyleProp, ViewStyle } from "react-native";
-import { TouchableRipple } from "react-native-paper";
 import { Movie } from "../../../types";
 import Thumbnail from "../Thumbnail";
-import { router } from "expo-router";
+import { Link } from "expo-router";
+import Touch from "../Touch";
 
 interface MatchTileProps {
   match: Movie;
@@ -31,33 +31,30 @@ const MatchTile = ({
 
   return (
     <View style={[{ flex: 1 }, containerStyle]}>
-      <TouchableRipple
+      <Link
+        href={{
+          pathname: "/movie/type/[type]/[id]",
+          params: { id: match.id, type, img: match.poster_path },
+        }}
+        asChild
         disabled={disabled}
-        onPress={() =>
-          router.push({
-            pathname: "/movie/type/[type]/[id]",
-            params: {
-              id: match.id,
-              type,
-              img: match.poster_path,
-            },
-          })
-        }
-        onLongPress={() => onLongPress && onLongPress(match)}
       >
-        <View style={{ position: "relative" }}>
-          {badge}
-          <Thumbnail
-            size={posterSize}
-            path={match.poster_path}
-            style={{
-              width: "100%",
-              aspectRatio: 2 / 3,
-              borderRadius: 10,
-            }}
-          />
-        </View>
-      </TouchableRipple>
+        <Touch onLongPress={() => onLongPress && onLongPress(match)}>
+          <Link.Trigger>
+            <View style={{ position: "relative" }}>
+              {badge}
+              <Link.AppleZoom>
+                <Thumbnail
+                  size={posterSize}
+                  path={match.poster_path}
+                  style={{ width: "100%", aspectRatio: 2 / 3, borderRadius: 10 }}
+                />
+              </Link.AppleZoom>
+            </View>
+          </Link.Trigger>
+          <Link.Preview />
+        </Touch>
+      </Link>
       {renderFooter?.(match)}
     </View>
   );

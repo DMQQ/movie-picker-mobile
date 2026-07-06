@@ -628,6 +628,20 @@
     "update-button": "Actualizar",
     "dismiss": "Cerrar"
   },
+  "errors": {
+    "VALIDATION_ERROR": "Por favor revisa la información ingresada e inténtalo de nuevo.",
+    "EMAIL_ALREADY_IN_USE": "Ya existe una cuenta con este correo electrónico.",
+    "INVALID_CREDENTIALS": "Correo electrónico o contraseña incorrectos.",
+    "INVALID_GOOGLE_TOKEN": "El inicio de sesión con Google falló. Por favor inténtalo de nuevo.",
+    "INVALID_APPLE_TOKEN": "El inicio de sesión con Apple falló. Por favor inténtalo de nuevo.",
+    "AVATAR_TOO_LARGE": "La imagen es demasiado grande. Por favor elige un archivo más pequeño.",
+    "AVATAR_INVALID_TYPE": "Formato de imagen no compatible. Por favor usa JPEG o PNG.",
+    "LIST_NOT_FOUND": "Lista no encontrada.",
+    "LIST_ALREADY_EXISTS": "Ya existe una lista con este nombre.",
+    "RESERVED_LIST_TYPE": "Este tipo de lista está reservado y no puede ser creado.",
+    "SYSTEM_LIST_PROTECTED": "Las listas del sistema no pueden eliminarse.",
+    "INTERNAL_ERROR": "Algo salió mal. Por favor inténtalo de nuevo más tarde."
+  },
   "ticket": {
     "unknown-movie": "Película desconocida",
     "unknown": "Desconocido",

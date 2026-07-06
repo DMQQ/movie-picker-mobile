@@ -12,6 +12,7 @@ import { listenerMiddleware } from "./listenerMiddleware";
 import { authSlice } from "./auth/authSlice";
 import { authApi } from "./auth/authApi";
 import { appSlice } from "./app/appSlice";
+import { listsApi } from "./lists/listsApi";
 
 const store = configureStore({
   reducer: {
@@ -21,6 +22,7 @@ const store = configureStore({
     [movieApi?.reducerPath]: movieApi.reducer,
     [personApi?.reducerPath]: personApi.reducer,
     [authApi.reducerPath]: authApi.reducer,
+    [listsApi.reducerPath]: listsApi.reducer,
     favourite: favoritesSlice.reducer,
     builder: roomBuilderSlice.reducer,
     mediaFilters: mediaFiltersSlice.reducer,
@@ -30,7 +32,7 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .prepend(listenerMiddleware.middleware)
-      .concat([movieApi.middleware, personApi.middleware, authApi.middleware]),
+      .concat([movieApi.middleware, personApi.middleware, authApi.middleware, listsApi.middleware]),
 });
 
 export { store };
