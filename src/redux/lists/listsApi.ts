@@ -34,6 +34,12 @@ export interface GameSession {
   totalMatches: number;
 }
 
+export interface GameMember {
+  id: string;
+  name: string;
+  avatarUrl: string | null;
+}
+
 export interface UserGame {
   id: string;
   userId: string;
@@ -44,6 +50,7 @@ export interface UserGame {
   createdAt: number;
   updatedAt: number;
   matchCount: number;
+  members: GameMember[];
   session: GameSession | null;
 }
 
@@ -69,9 +76,14 @@ interface GetGamesResponse {
 }
 
 export interface GameByIdResponse {
-  list: Omit<UserGame, "matchCount" | "session">;
+  list: Omit<UserGame, "matchCount" | "session" | "members">;
   items: ListItem[];
+  members: GameMember[];
   session: GameSession | null;
+}
+
+interface GetGameMembersResponse {
+  members: GameMember[];
 }
 
 export interface AddItemBody {
@@ -169,6 +181,10 @@ export const listsApi = createApi({
     getGame: build.query<GameByIdResponse, string>({
       query: (id) => `/games/${id}`,
     }),
+
+    getGameMembers: build.query<GetGameMembersResponse, void>({
+      query: () => "/games/members",
+    }),
   }),
 });
 
@@ -182,4 +198,5 @@ export const {
   useMigrateListsMutation,
   useGetGamesQuery,
   useGetGameQuery,
+  useGetGameMembersQuery,
 } = listsApi;

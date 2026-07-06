@@ -2,12 +2,13 @@ import { Link, router, useLocalSearchParams } from "expo-router";
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import { Icon, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
+import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PageHeading from "../../../../components/PageHeading";
 import { SectionListItem } from "../../../../components/SectionItem";
 import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
 import { useGetGameQuery } from "../../../../redux/lists/listsApi";
-import type { ListItem } from "../../../../redux/lists/listsApi";
+import type { GameMember, ListItem } from "../../../../redux/lists/listsApi";
 
 const { width: SW } = Dimensions.get("window");
 const COLUMNS = 3;
@@ -38,6 +39,29 @@ function formatDuration(start: number, end: number | null) {
   return m > 0 ? `${m}m ${s}s` : `${s}s`;
 }
 
+function MemberChip({ member }: { member: GameMember }) {
+  return (
+    <View style={styles.memberChip}>
+      <View style={styles.memberAvatar}>
+        {member.avatarUrl ? (
+          <Image
+            style={styles.memberAvatarImg}
+            source={{ uri: member.avatarUrl }}
+            cachePolicy="memory-disk"
+          />
+        ) : (
+          <Text style={styles.memberAvatarLetter}>
+            {member.name.charAt(0).toUpperCase()}
+          </Text>
+        )}
+      </View>
+      <Text style={styles.memberName} numberOfLines={1}>
+        {member.name}
+      </Text>
+    </View>
+  );
+}
+
 function Pill({ icon, label }: { icon: string; label: string }) {
   return (
     <View style={styles.pill}>
@@ -54,6 +78,7 @@ export default function GameDetailScreen() {
 
   const session = data?.session ?? null;
   const items = data?.items ?? [];
+  const members = data?.members ?? [];
   const bannerHeight = insets.top + 280;
   const duration = session
     ? formatDuration(session.startTime, session.endTime)
@@ -127,6 +152,18 @@ export default function GameDetailScreen() {
                 )}
               </View>
             </View>
+
+            {/* Players */}
+            {members.length > 0 && (
+              <View style={styles.membersSection}>
+                <Text style={styles.membersSectionTitle}>Players</Text>
+                <View style={styles.membersList}>
+                  {members.map((m) => (
+                    <MemberChip key={m.id} member={m} />
+                  ))}
+                </View>
+              </View>
+            )}
 
             {/* Section heading */}
             {items.length > 0 && (
@@ -219,6 +256,38 @@ const styles = StyleSheet.create({
   row: { gap: GAP },
 
   listHeader: { marginBottom: 20 },
+
+  membersSection: { marginTop: 20, gap: 10 },
+  membersSectionTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "rgba(255,255,255,0.5)",
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  },
+  membersList: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  memberChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "rgba(255,255,255,0.07)",
+    borderRadius: 24,
+    paddingRight: 12,
+    paddingLeft: 4,
+    paddingVertical: 4,
+  },
+  memberAvatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#333",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
+  memberAvatarImg: { width: 28, height: 28 },
+  memberAvatarLetter: { fontSize: 12, fontWeight: "700", color: "#fff" },
+  memberName: { fontSize: 13, color: "rgba(255,255,255,0.8)", maxWidth: 100 },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",

@@ -2,7 +2,7 @@ import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as SecureStore from "expo-secure-store";
 import { Stack } from "expo-router";
 import { ThemeProvider, DarkTheme } from "expo-router/react-navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
@@ -157,6 +157,7 @@ const RootNavigator = ({
   const isPlaying = useAppSelector((s) => s.room.isPlaying);
   const needsOnboarding = settingsLoaded ? !onboardingCompleted : null;
   const { movieInteractions, isReady: dbReady } = useMovieInteractions();
+  const hasInitialized = useRef(false);
 
   useMaintenance();
 
@@ -167,6 +168,9 @@ const RootNavigator = ({
       if (!dbReady || !movieInteractions) {
         return;
       }
+
+      if (hasInitialized.current) return;
+      hasInitialized.current = true;
 
       try {
         const [nickname, storedToken] = await Promise.all([
