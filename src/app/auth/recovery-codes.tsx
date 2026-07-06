@@ -3,6 +3,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Platform, ScrollView, Share, StyleSheet, View } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
+import FadeSlide from "../../components/FadeSlide";
 
 export default function RecoveryCodesScreen() {
   const { codes: codesParam, replacing } = useLocalSearchParams<{ codes: string; replacing?: string }>();
@@ -30,59 +31,69 @@ export default function RecoveryCodesScreen() {
     >
       {Platform.OS === "android" && <View style={styles.grabber} />}
 
-      <View style={styles.iconWrap}>
-        <Icon source="shield-key-outline" size={48} color="#F59E0B" />
-      </View>
+      <FadeSlide delay={0}>
+        <View style={styles.iconWrap}>
+          <Icon source="shield-key-outline" size={48} color="#F59E0B" />
+        </View>
+      </FadeSlide>
 
-      <Text style={styles.title}>{isReplacing ? "New Recovery Codes" : "Recovery Codes"}</Text>
-      <Text style={styles.subtitle}>
-        {isReplacing
-          ? "Your old codes have been invalidated. Save these somewhere safe."
-          : "Save these somewhere safe — they won't be shown again."}
-      </Text>
+      <FadeSlide delay={80}>
+        <Text style={styles.title}>{isReplacing ? "New Recovery Codes" : "Recovery Codes"}</Text>
+        <Text style={styles.subtitle}>
+          {isReplacing
+            ? "Your old codes have been invalidated. Save these somewhere safe."
+            : "Save these somewhere safe — they won't be shown again."}
+        </Text>
+      </FadeSlide>
 
-      <View style={styles.warningRow}>
-        <Icon source="information-outline" size={14} color="#F59E0B" />
-        <Text style={styles.warningText}>Each code is single-use. Store them in a password manager.</Text>
-      </View>
+      <FadeSlide delay={160}>
+        <View style={styles.warningRow}>
+          <Icon source="information-outline" size={14} color="#F59E0B" />
+          <Text style={styles.warningText}>Each code is single-use. Store them in a password manager.</Text>
+        </View>
+      </FadeSlide>
 
       <View style={styles.grid}>
         {codes.map((code, i) => (
-          <View key={i} style={styles.codeCell}>
-            <Text style={styles.codeIndex}>{i + 1}</Text>
-            <Text style={styles.codeText}>{code}</Text>
-          </View>
+          <FadeSlide key={i} delay={240 + i * 35} style={styles.codeCellWrap}>
+            <View style={styles.codeCell}>
+              <Text style={styles.codeIndex}>{i + 1}</Text>
+              <Text style={styles.codeText}>{code}</Text>
+            </View>
+          </FadeSlide>
         ))}
       </View>
 
-      <View style={styles.actions}>
-        <Button
-          mode="outlined"
-          onPress={handleCopy}
-          icon={copied ? "check" : "content-copy"}
-          style={styles.actionBtn}
-          textColor={copied ? "#34A853" : undefined}
-        >
-          {copied ? "Copied!" : "Copy all"}
-        </Button>
-        <Button
-          mode="outlined"
-          onPress={handleShare}
-          icon="share-variant-outline"
-          style={styles.actionBtn}
-        >
-          Share
-        </Button>
-      </View>
+      <FadeSlide delay={240 + codes.length * 35 + 40}>
+        <View style={styles.actions}>
+          <Button
+            mode="outlined"
+            onPress={handleCopy}
+            icon={copied ? "check" : "content-copy"}
+            style={styles.actionBtn}
+            textColor={copied ? "#34A853" : undefined}
+          >
+            {copied ? "Copied!" : "Copy all"}
+          </Button>
+          <Button
+            mode="outlined"
+            onPress={handleShare}
+            icon="share-variant-outline"
+            style={styles.actionBtn}
+          >
+            Share
+          </Button>
+        </View>
 
-      <Button
-        mode="contained"
-        onPress={() => router.dismiss()}
-        style={styles.doneBtn}
-        contentStyle={styles.doneBtnContent}
-      >
-        I've saved my codes
-      </Button>
+        <Button
+          mode="contained"
+          onPress={() => router.dismissAll()}
+          style={styles.doneBtn}
+          contentStyle={styles.doneBtnContent}
+        >
+          I've saved my codes
+        </Button>
+      </FadeSlide>
     </ScrollView>
   );
 }
@@ -121,11 +132,12 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 20,
   },
+  codeCellWrap: { width: "48%" },
   codeCell: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    width: "48%",
+    width: "100%",
     backgroundColor: "rgba(255,255,255,0.06)",
     borderRadius: 10,
     borderWidth: 1,

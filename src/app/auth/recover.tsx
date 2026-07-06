@@ -4,6 +4,7 @@ import { useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Icon, Text, TextInput } from "react-native-paper";
 import { useRecoverMutation } from "../../redux/auth/authApi";
+import FadeSlide from "../../components/FadeSlide";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
@@ -38,7 +39,7 @@ export default function RecoverScreen() {
     try {
       const result = await recover({ email: email.trim(), code: code.replace(/-/g, "") }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.dismiss();
+      router.dismissAll();
     } catch (err: any) {
       setErrors({ form: err?.data?.message ?? "Recovery failed. Check your code and try again." });
     }
@@ -50,60 +51,66 @@ export default function RecoverScreen() {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           {Platform.OS === "android" && <View style={styles.grabber} />}
 
-          <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={10}>
-            <Icon source="arrow-left" size={18} color="rgba(255,255,255,0.6)" />
-            <Text style={styles.backText}>Back</Text>
-          </Pressable>
+          <FadeSlide delay={0}>
+            <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={10}>
+              <Icon source="arrow-left" size={18} color="rgba(255,255,255,0.6)" />
+              <Text style={styles.backText}>Back</Text>
+            </Pressable>
 
-          <Text style={styles.title}>Account Recovery</Text>
-          <Text style={styles.subtitle}>Enter your email and one of your recovery codes.</Text>
+            <Text style={styles.title}>Account Recovery</Text>
+            <Text style={styles.subtitle}>Enter your email and one of your recovery codes.</Text>
+          </FadeSlide>
 
-          {errors.form && (
-            <View style={styles.formError}>
-              <Text style={styles.formErrorText}>{errors.form}</Text>
+          <FadeSlide delay={120}>
+            {errors.form && (
+              <View style={styles.formError}>
+                <Text style={styles.formErrorText}>{errors.form}</Text>
+              </View>
+            )}
+
+            <View style={styles.fields}>
+              <TextInput
+                mode="outlined" label="Email" value={email}
+                onChangeText={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: undefined, form: undefined })); }}
+                autoCapitalize="none" keyboardType="email-address" autoCorrect={false}
+                returnKeyType="next" outlineStyle={styles.inputOutline} error={!!errors.email}
+              />
+              {errors.email && <Text style={styles.fieldError}>{errors.email}</Text>}
+
+              <TextInput
+                mode="outlined" label="Recovery code" value={code}
+                onChangeText={(v) => {
+                  setCode(formatCode(v));
+                  setErrors((e) => ({ ...e, code: undefined, form: undefined }));
+                }}
+                autoCapitalize="characters"
+                autoCorrect={false}
+                returnKeyType="done"
+                onSubmitEditing={handleRecover}
+                outlineStyle={styles.inputOutline}
+                style={styles.codeInput}
+                error={!!errors.code}
+                placeholder="ABKQW-37NVP"
+              />
+              {errors.code && <Text style={styles.fieldError}>{errors.code}</Text>}
             </View>
-          )}
+          </FadeSlide>
 
-          <View style={styles.fields}>
-            <TextInput
-              mode="outlined" label="Email" value={email}
-              onChangeText={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: undefined, form: undefined })); }}
-              autoCapitalize="none" keyboardType="email-address" autoCorrect={false}
-              returnKeyType="next" outlineStyle={styles.inputOutline} error={!!errors.email}
-            />
-            {errors.email && <Text style={styles.fieldError}>{errors.email}</Text>}
+          <FadeSlide delay={240}>
+            <Button
+              mode="contained" onPress={handleRecover} loading={isLoading}
+              disabled={isLoading} style={styles.primaryBtn} contentStyle={styles.primaryBtnContent}
+            >
+              Recover account
+            </Button>
 
-            <TextInput
-              mode="outlined" label="Recovery code" value={code}
-              onChangeText={(v) => {
-                setCode(formatCode(v));
-                setErrors((e) => ({ ...e, code: undefined, form: undefined }));
-              }}
-              autoCapitalize="characters"
-              autoCorrect={false}
-              returnKeyType="done"
-              onSubmitEditing={handleRecover}
-              outlineStyle={styles.inputOutline}
-              style={styles.codeInput}
-              error={!!errors.code}
-              placeholder="ABKQW-37NVP"
-            />
-            {errors.code && <Text style={styles.fieldError}>{errors.code}</Text>}
-          </View>
-
-          <Button
-            mode="contained" onPress={handleRecover} loading={isLoading}
-            disabled={isLoading} style={styles.primaryBtn} contentStyle={styles.primaryBtnContent}
-          >
-            Recover account
-          </Button>
-
-          <View style={styles.hint}>
-            <Icon source="information-outline" size={14} color="rgba(255,255,255,0.3)" />
-            <Text style={styles.hintText}>
-              Codes are case-insensitive. Dashes are optional.
-            </Text>
-          </View>
+            <View style={styles.hint}>
+              <Icon source="information-outline" size={14} color="rgba(255,255,255,0.3)" />
+              <Text style={styles.hintText}>
+                Codes are case-insensitive. Dashes are optional.
+              </Text>
+            </View>
+          </FadeSlide>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>

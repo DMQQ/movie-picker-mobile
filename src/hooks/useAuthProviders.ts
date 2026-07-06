@@ -32,7 +32,7 @@ export function useAuthProviders(onError: (msg: string) => void) {
           : null,
       }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.dismiss();
+      router.dismissAll();
     } catch (err: any) {
       if (err.code === "ERR_REQUEST_CANCELED") return;
       onError(err?.data?.message ?? "Apple Sign In failed. Please try again.");
@@ -57,7 +57,7 @@ export function useAuthProviders(onError: (msg: string) => void) {
       if (!idToken) throw new Error("No ID token");
       const result = await googleAuth({ idToken }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.dismiss();
+      router.dismissAll();
     } catch (err: any) {
       if (isCancelledResponse(err)) return;
       onError(err?.data?.message ?? "Google Sign In failed. Please try again.");
