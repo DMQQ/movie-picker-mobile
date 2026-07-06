@@ -8,8 +8,16 @@ interface AuthResponse {
   user: AuthUser;
 }
 
+interface RegisterResponse extends AuthResponse {
+  recoveryCodes: string[];
+}
+
 interface MeResponse {
   user: AuthUser;
+}
+
+interface RecoveryCodesResponse {
+  recoveryCodes: string[];
 }
 
 export const authApi = createApi({
@@ -32,12 +40,12 @@ export const authApi = createApi({
         } catch {}
       },
     }),
-    register: build.mutation<AuthResponse, { name: string; email: string; password: string }>({
+    register: build.mutation<RegisterResponse, { name: string; email: string; password: string }>({
       query: (body) => ({ url: "/register", method: "POST", body }),
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(authActions.setCredentials(data));
+          dispatch(authActions.setCredentials({ token: data.token, user: data.user }));
         } catch {}
       },
     }),
@@ -71,6 +79,20 @@ export const authApi = createApi({
         } catch {}
       },
     }),
+    recover: build.mutation<AuthResponse, { email: string; code: string }>({
+      query: (body) => ({ url: "/recover", method: "POST", body }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(authActions.setCredentials(data));
+        } catch {}
+      },
+    }),
+
+    regenerateCodes: build.mutation<RecoveryCodesResponse, void>({
+      query: () => ({ url: "/me/recovery-codes", method: "POST" }),
+    }),
+
     deleteMe: build.mutation<{ ok: boolean }, void>({
       query: () => ({ url: "/me", method: "DELETE" }),
     }),
@@ -115,6 +137,8 @@ export const {
   useRegisterMutation,
   useGoogleAuthMutation,
   useAppleAuthMutation,
+  useRecoverMutation,
+  useRegenerateCodesMutation,
   useMeQuery,
   useDeleteMeMutation,
   useUpdateMeMutation,

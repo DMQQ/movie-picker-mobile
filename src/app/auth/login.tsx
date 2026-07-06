@@ -120,6 +120,13 @@ export default function LoginScreen() {
               <Text style={styles.footerLink}>Sign up</Text>
             </Link>
           </View>
+
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Lost access? </Text>
+            <Link href="/auth/recover" asChild>
+              <Text style={styles.footerLink}>Use a recovery code</Text>
+            </Link>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>

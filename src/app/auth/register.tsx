@@ -43,7 +43,10 @@ export default function RegisterScreen() {
     try {
       const result = await register({ name: name.trim(), email: email.trim(), password }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.dismiss();
+      router.replace({
+        pathname: "/auth/recovery-codes",
+        params: { codes: JSON.stringify(result.recoveryCodes) },
+      });
     } catch (err: any) {
       setErrors({ form: err?.data?.message ?? "Registration failed. Please try again." });
     }

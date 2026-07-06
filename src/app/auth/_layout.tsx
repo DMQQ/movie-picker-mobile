@@ -12,6 +12,8 @@ export default function AuthLayout() {
     >
       <Stack.Screen name="login" />
       <Stack.Screen name="register" />
+      <Stack.Screen name="recover" />
+      <Stack.Screen name="recovery-codes" />
     </Stack>
   );
 }
