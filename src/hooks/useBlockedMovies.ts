@@ -10,33 +10,95 @@ import {
   clearAllBlocked as clearAllBlockedAction,
   addSessionDisliked,
   selectBlockedMovies,
-  selectBlockedIds,
-  selectBlockedIdSet,
   selectInteractionsLoading,
   selectInteractionsHydrated,
 } from "../redux/movieInteractions/movieInteractionsSlice";
+import {
+  useGetListQuery,
+  useAddItemMutation,
+  useRemoveItemMutation,
+} from "../redux/lists/listsApi";
 
 export function useBlockedMovies() {
   const dispatch = useAppDispatch();
   const { movieInteractions, isReady } = useMovieInteractions();
+  const token = useAppSelector((s) => s.auth.token);
+  const isAuthenticated = !!token;
 
-  const blockedMovies = useAppSelector(selectBlockedMovies);
-  const blockedIds = useAppSelector(selectBlockedIds);
-  const blockedIdSet = useAppSelector(selectBlockedIdSet);
-  const loading = useAppSelector(selectInteractionsLoading);
-  const hydrated = useAppSelector(selectInteractionsHydrated);
+  // Local selectors — always called to satisfy hook ordering rules
+  const localBlockedMovies = useAppSelector(selectBlockedMovies);
+  const localLoading = useAppSelector(selectInteractionsLoading);
+  const localHydrated = useAppSelector(selectInteractionsHydrated);
+  const sessionDisliked = useAppSelector((s) => s.movieInteractions.sessionDisliked);
 
+  // Remote path — skipped when not signed in
+  const { data: remoteData, isLoading: remoteLoading } = useGetListQuery("disliked", {
+    skip: !isAuthenticated,
+  });
+  const [addItem] = useAddItemMutation();
+  const [removeItem] = useRemoveItemMutation();
+
+  // Hydrate from local DB only when not authenticated
   useEffect(() => {
-    if (isReady && movieInteractions && !hydrated) {
+    if (!isAuthenticated && isReady && movieInteractions && !localHydrated) {
       dispatch(loadInteractions(movieInteractions));
     }
-  }, [isReady, movieInteractions, hydrated, dispatch]);
+  }, [isAuthenticated, isReady, movieInteractions, localHydrated, dispatch]);
+
+  const blockedMovies = useMemo(() => {
+    if (isAuthenticated) {
+      const remoteItems = (remoteData?.items ?? []).map((item) => ({
+        id: 0 as number,
+        movie_id: item.contentId,
+        movie_type: item.contentType as MovieType,
+        interaction_type: "blocked" as const,
+        title: item.content.title || null,
+        poster_path: item.content.poster_path || null,
+        created_at: item.createdAt,
+      }));
+      // Include un-migrated local items alongside remote (deduped by movie_id+type)
+      const remoteIds = new Set(remoteItems.map((i) => `${i.movie_id}:${i.movie_type}`));
+      const localOnly = localBlockedMovies.filter(
+        (m) => !remoteIds.has(`${m.movie_id}:${m.movie_type}`)
+      );
+      return [...remoteItems, ...localOnly];
+    }
+    return localBlockedMovies;
+  }, [isAuthenticated, remoteData, localBlockedMovies]);
+
+  const blockedIdSet = useMemo(() => {
+    const sessionKeys = Object.keys(sessionDisliked);
+    if (isAuthenticated) {
+      const remoteKeys = (remoteData?.items ?? []).map(
+        (i) => `${i.contentType === "movie" ? "m" : "t"}${i.contentId}`
+      );
+      const localKeys = localBlockedMovies.map(
+        (m) => `${m.movie_type === "movie" ? "m" : "t"}${m.movie_id}`
+      );
+      return new Set([...remoteKeys, ...localKeys, ...sessionKeys]);
+    }
+    const localKeys = localBlockedMovies.map(
+      (m) => `${m.movie_type === "movie" ? "m" : "t"}${m.movie_id}`
+    );
+    return new Set([...localKeys, ...sessionKeys]);
+  }, [isAuthenticated, remoteData, localBlockedMovies, sessionDisliked]);
 
   const blockMovie = useCallback(
     async (movie: Movie) => {
-      if (!movieInteractions) return;
       const movieType: MovieType = movie.type ?? (movie.first_air_date ? "tv" : "movie");
-
+      if (isAuthenticated) {
+        await addItem({
+          type: "disliked",
+          contentId: movie.id,
+          contentType: movieType,
+          content: {
+            title: movie.title || (movie as any).name || "",
+            poster_path: movie.poster_path || null,
+          },
+        });
+        return;
+      }
+      if (!movieInteractions) return;
       await dispatch(
         blockAction({
           repo: movieInteractions,
@@ -44,21 +106,28 @@ export function useBlockedMovies() {
             movie_id: movie.id,
             movie_type: movieType,
             interaction_type: "blocked",
-            title: movie.title || movie.name || null,
+            title: movie.title || (movie as any).name || null,
             poster_path: movie.poster_path || null,
           },
-        }),
+        })
       );
     },
-    [movieInteractions, dispatch],
+    [isAuthenticated, movieInteractions, dispatch, addItem]
   );
 
   const unblockMovie = useCallback(
     async (movieId: number, movieType: MovieType) => {
+      if (isAuthenticated) {
+        const item = remoteData?.items.find(
+          (i) => i.contentId === movieId && i.contentType === movieType
+        );
+        if (item) await removeItem({ itemId: item.id, listType: "disliked" });
+        return;
+      }
       if (!movieInteractions) return;
       await dispatch(unblockAction({ repo: movieInteractions, movieId, movieType }));
     },
-    [movieInteractions, dispatch],
+    [isAuthenticated, remoteData, movieInteractions, dispatch, removeItem]
   );
 
   const addDislikedMovie = useCallback(
@@ -67,7 +136,7 @@ export function useBlockedMovies() {
       const key = `${movieType === "movie" ? "m" : "t"}${movie.id}`;
       dispatch(addSessionDisliked(key));
     },
-    [dispatch],
+    [dispatch]
   );
 
   const isBlocked = useCallback(
@@ -75,17 +144,33 @@ export function useBlockedMovies() {
       const key = `${movieType === "movie" ? "m" : "t"}${movieId}`;
       return blockedIdSet.has(key);
     },
-    [blockedIdSet],
+    [blockedIdSet]
   );
 
   const getBlockedIds = useCallback((): { id: number; type: MovieType }[] => {
-    return blockedIds;
-  }, [blockedIds]);
+    if (isAuthenticated) {
+      const remoteIds = (remoteData?.items ?? []).map((i) => ({
+        id: i.contentId,
+        type: i.contentType as MovieType,
+      }));
+      const remoteSet = new Set(remoteIds.map((i) => `${i.id}:${i.type}`));
+      const localOnly = localBlockedMovies
+        .filter((m) => !remoteSet.has(`${m.movie_id}:${m.movie_type}`))
+        .map((m) => ({ id: m.movie_id, type: m.movie_type }));
+      return [...remoteIds, ...localOnly];
+    }
+    return localBlockedMovies.map((m) => ({ id: m.movie_id, type: m.movie_type }));
+  }, [isAuthenticated, remoteData, localBlockedMovies]);
 
   const clearAllBlocked = useCallback(async () => {
+    if (isAuthenticated) {
+      const items = remoteData?.items ?? [];
+      await Promise.all(items.map((item) => removeItem({ itemId: item.id, listType: "disliked" })));
+      return;
+    }
     if (!movieInteractions) return;
     await dispatch(clearAllBlockedAction(movieInteractions));
-  }, [movieInteractions, dispatch]);
+  }, [isAuthenticated, remoteData, movieInteractions, dispatch, removeItem]);
 
   const filterBlocked = useCallback(
     <T extends { id: number; type?: "movie" | "tv"; first_air_date?: string }>(movies: T[]): T[] => {
@@ -95,19 +180,20 @@ export function useBlockedMovies() {
         return !blockedIdSet.has(key);
       });
     },
-    [blockedIdSet],
+    [blockedIdSet]
   );
 
   const refresh = useCallback(async () => {
+    if (isAuthenticated) return; // RTK Query refetches automatically on invalidation
     if (!movieInteractions) return;
     await dispatch(loadInteractions(movieInteractions));
-  }, [movieInteractions, dispatch]);
+  }, [isAuthenticated, movieInteractions, dispatch]);
 
   return useMemo(
     () => ({
       blockedMovies,
-      loading,
-      isReady: hydrated,
+      loading: isAuthenticated ? remoteLoading : localLoading,
+      isReady: isAuthenticated ? !remoteLoading : localHydrated,
       blockMovie,
       unblockMovie,
       addDislikedMovie,
@@ -119,8 +205,10 @@ export function useBlockedMovies() {
     }),
     [
       blockedMovies,
-      loading,
-      hydrated,
+      isAuthenticated,
+      remoteLoading,
+      localLoading,
+      localHydrated,
       blockMovie,
       unblockMovie,
       addDislikedMovie,
@@ -129,6 +217,6 @@ export function useBlockedMovies() {
       clearAllBlocked,
       filterBlocked,
       refresh,
-    ],
+    ]
   );
 }

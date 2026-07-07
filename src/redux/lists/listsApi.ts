@@ -5,6 +5,14 @@ import { RootState } from "../store";
 export type SystemListType = "favourites" | "watchlist" | "watched" | "superliked" | "disliked";
 export type ContentType = "movie" | "tv";
 
+export interface UserListItem {
+  id: string;
+  contentId: number;
+  contentType: ContentType;
+  posterPath?: string | null;
+  content?: { title?: string; poster_path?: string | null };
+}
+
 export interface UserList {
   id: string;
   name: string;
@@ -14,6 +22,7 @@ export interface UserList {
   itemCount: number;
   createdAt: number;
   updatedAt: number;
+  items?: UserListItem[];
 }
 
 export interface ListItem {
@@ -171,7 +180,7 @@ export const listsApi = createApi({
 
     migrateLists: build.mutation<{ imported: number }, MigrateBody>({
       query: (body) => ({ url: "/lists/migrate", method: "POST", body }),
-      invalidatesTags: [{ type: "List", id: "ALL" }],
+      invalidatesTags: [{ type: "List", id: "ALL" }, { type: "ListItems" }],
     }),
 
     getGames: build.query<GetGamesResponse, void>({

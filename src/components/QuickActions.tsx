@@ -10,12 +10,11 @@ import useTranslation from "../service/useTranslation";
 
 export function useQuickActions(props: { movie: Movie }) {
   const dispatch = useAppDispatch();
-  const groups = useAppSelector((state) => state.favourite.groups);
+  const membershipIndex = useAppSelector((state) => state.favourite.membershipIndex);
 
   const isInGroup = (groupId: "1" | "2" | "999") => {
-    const group = groups.find((g) => g?.id === groupId);
-    if (!group) return false;
-    return group.movies.some((m) => m?.id === props?.movie?.id);
+    const movieType = props.movie?.type ?? (props.movie?.title ? "movie" : "tv");
+    return !!membershipIndex[groupId]?.[`${props.movie?.id}:${movieType}`];
   };
 
   const onPress = (groupId: "1" | "2" | "999") => {

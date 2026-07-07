@@ -1,5 +1,12 @@
-import { useAppSelector } from "../redux/store";
+import { AsyncStorage } from "expo-sqlite/kv-store";
+import { useAppDispatch, useAppSelector } from "../redux/store";
 import { useMigrateListsMutation, type MigrateBody } from "../redux/lists/listsApi";
+import { STORAGE_KEY } from "../redux/favourites/favourites";
+import { useMovieInteractions } from "../context/DatabaseContext";
+import {
+  clearAllBlocked,
+  clearAllSuperLiked,
+} from "../redux/movieInteractions/movieInteractionsSlice";
 
 const GROUP_NAME_TO_TYPE: Record<string, string> = {
   Favorites: "favourites",
@@ -12,20 +19,29 @@ function toSlug(name: string) {
 }
 
 export function useMigrateLibrary() {
-  const groups = useAppSelector((s) => s.favourite.groups);
+  const dispatch = useAppDispatch();
+  const { movieInteractions } = useMovieInteractions();
+
+  // Interactions come from SQLite-backed Redux state (hydrated before sign-in)
   const superLiked = useAppSelector((s) => s.movieInteractions.superLiked);
   const blocked = useAppSelector((s) => s.movieInteractions.blocked);
 
   const [migrate, result] = useMigrateListsMutation();
 
   async function migrateLibrary() {
+    // Read groups directly from AsyncStorage so this works even after the API
+    // has already overwritten state.favourite.groups post sign-in.
+    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    const localGroups: Array<{ name: string; movies: Array<{ id: number; type: string; imageUrl: string }> }> =
+      raw ? JSON.parse(raw).groups ?? [] : [];
+
     const body: MigrateBody = {
-      groups: groups.map((g) => ({
+      groups: localGroups.map((g) => ({
         name: g.name,
         type: GROUP_NAME_TO_TYPE[g.name] ?? toSlug(g.name),
         movies: g.movies.map((m) => ({
           id: m.id,
-          type: m.type,
+          type: m.type as "movie" | "tv",
           imageUrl: m.imageUrl,
         })),
       })),
@@ -48,8 +64,28 @@ export function useMigrateLibrary() {
       matches: [],
     };
 
-    return migrate(body).unwrap();
+    const migrationResult = await migrate(body).unwrap();
+
+    // Clear local storage so data isn't re-migrated or shown as "pending"
+    await AsyncStorage.removeItem(STORAGE_KEY);
+    if (movieInteractions) {
+      await Promise.all([
+        dispatch(clearAllSuperLiked(movieInteractions)),
+        dispatch(clearAllBlocked(movieInteractions)),
+      ]);
+    }
+
+    return migrationResult;
   }
 
-  return { migrateLibrary, ...result };
+  // Count of local items available to migrate
+  async function getLocalDataCount(): Promise<{ movies: number; interactions: number }> {
+    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    const localGroups: Array<{ movies: any[] }> = raw ? JSON.parse(raw).groups ?? [] : [];
+    const movies = localGroups.reduce((sum, g) => sum + (g.movies?.length ?? 0), 0);
+    const interactions = superLiked.length + blocked.length;
+    return { movies, interactions };
+  }
+
+  return { migrateLibrary, getLocalDataCount, ...result };
 }

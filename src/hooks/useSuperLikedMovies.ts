@@ -15,25 +15,91 @@ import {
   selectInteractionsLoading,
   selectInteractionsHydrated,
 } from "../redux/movieInteractions/movieInteractionsSlice";
+import {
+  useGetListQuery,
+  useAddItemMutation,
+  useRemoveItemMutation,
+} from "../redux/lists/listsApi";
 
 export function useSuperLikedMovies() {
   const dispatch = useAppDispatch();
   const { movieInteractions, isReady } = useMovieInteractions();
+  const token = useAppSelector((s) => s.auth.token);
+  const isAuthenticated = !!token;
 
-  const superLikedMovies = useAppSelector(selectSuperLikedMovies);
-  const loading = useAppSelector(selectInteractionsLoading);
-  const hydrated = useAppSelector(selectInteractionsHydrated);
+  // Local selectors — always called to satisfy hook ordering rules
+  const localSuperLikedMovies = useAppSelector(selectSuperLikedMovies);
+  const localLoading = useAppSelector(selectInteractionsLoading);
+  const localHydrated = useAppSelector(selectInteractionsHydrated);
 
+  // Remote path — skipped when not signed in
+  const { data: remoteData, isLoading: remoteLoading } = useGetListQuery("superliked", {
+    skip: !isAuthenticated,
+  });
+  const [addItem] = useAddItemMutation();
+  const [removeItem] = useRemoveItemMutation();
+
+  // Hydrate from local DB only when not authenticated
   useEffect(() => {
-    if (isReady && movieInteractions && !hydrated) {
+    if (!isAuthenticated && isReady && movieInteractions && !localHydrated) {
       dispatch(loadInteractions(movieInteractions));
     }
-  }, [isReady, movieInteractions, hydrated, dispatch]);
+  }, [isAuthenticated, isReady, movieInteractions, localHydrated, dispatch]);
+
+  const superLikedMovies = useMemo(() => {
+    if (isAuthenticated) {
+      const remoteItems = (remoteData?.items ?? []).map((item) => ({
+        id: 0 as number,
+        movie_id: item.contentId,
+        movie_type: item.contentType as MovieType,
+        interaction_type: "super_liked" as const,
+        title: item.content.title || null,
+        poster_path: item.content.poster_path || null,
+        created_at: item.createdAt,
+      }));
+      // Include un-migrated local items alongside remote (deduped by movie_id+type)
+      const remoteIds = new Set(remoteItems.map((i) => `${i.movie_id}:${i.movie_type}`));
+      const localOnly = localSuperLikedMovies.filter(
+        (m) => !remoteIds.has(`${m.movie_id}:${m.movie_type}`)
+      );
+      return [...remoteItems, ...localOnly];
+    }
+    return localSuperLikedMovies;
+  }, [isAuthenticated, remoteData, localSuperLikedMovies]);
 
   const superLikeMovie = useCallback(
     async (movie: Movie) => {
-      if (!movieInteractions) return;
       const movieType: MovieType = movie.type ?? (movie.first_air_date ? "tv" : "movie");
+
+      if (isAuthenticated) {
+        await addItem({
+          type: "superliked",
+          contentId: movie.id,
+          contentType: movieType,
+          content: {
+            title: movie.title || (movie as any).name || "",
+            poster_path: movie.poster_path || null,
+          },
+        });
+
+        const countAfterAdd = (remoteData?.items.length ?? 0) + 1;
+        const canReview =
+          countAfterAdd === 3 || (countAfterAdd > 3 && countAfterAdd % 10 === 0);
+
+        if (canReview) {
+          if (
+            Platform.OS !== "web" &&
+            (await StoreReview.hasAction()) &&
+            (await ReviewManager.canRequestReviewFromRating())
+          ) {
+            await StoreReview.requestReview();
+            await ReviewManager.recordReviewRequestFromRating();
+          }
+        }
+        return;
+      }
+
+      if (!movieInteractions) return;
 
       const result = await dispatch(
         superLikeAction({
@@ -42,56 +108,98 @@ export function useSuperLikedMovies() {
             movie_id: movie.id,
             movie_type: movieType,
             interaction_type: "super_liked",
-            title: movie.title || movie.name || null,
+            title: movie.title || (movie as any).name || null,
             poster_path: movie.poster_path || null,
           },
-        }),
+        })
       ).unwrap();
 
       if (result.canReview) {
-        if (Platform.OS !== "web" && (await StoreReview.hasAction()) && (await ReviewManager.canRequestReviewFromRating())) {
+        if (
+          Platform.OS !== "web" &&
+          (await StoreReview.hasAction()) &&
+          (await ReviewManager.canRequestReviewFromRating())
+        ) {
           await StoreReview.requestReview();
           await ReviewManager.recordReviewRequestFromRating();
         }
       }
     },
-    [movieInteractions, dispatch],
+    [isAuthenticated, movieInteractions, dispatch, addItem, remoteData]
   );
 
   const removeSuperLike = useCallback(
     async (movieId: number, movieType: MovieType) => {
+      if (isAuthenticated) {
+        const item = remoteData?.items.find(
+          (i) => i.contentId === movieId && i.contentType === movieType
+        );
+        if (item) await removeItem({ itemId: item.id, listType: "superliked" });
+        return;
+      }
       if (!movieInteractions) return;
       await dispatch(removeSuperLikeAction({ repo: movieInteractions, movieId, movieType }));
     },
-    [movieInteractions, dispatch],
+    [isAuthenticated, remoteData, movieInteractions, dispatch, removeItem]
   );
 
   const isSuperLiked = useCallback(
     (movieId: number, movieType: MovieType): boolean => {
-      return superLikedMovies.some((m) => m.movie_id === movieId && m.movie_type === movieType);
+      if (isAuthenticated) {
+        const inRemote = (remoteData?.items ?? []).some(
+          (i) => i.contentId === movieId && i.contentType === movieType
+        );
+        if (inRemote) return true;
+        // Also check local un-migrated items
+        return localSuperLikedMovies.some(
+          (m) => m.movie_id === movieId && m.movie_type === movieType
+        );
+      }
+      return localSuperLikedMovies.some(
+        (m) => m.movie_id === movieId && m.movie_type === movieType
+      );
     },
-    [superLikedMovies],
+    [isAuthenticated, remoteData, localSuperLikedMovies]
   );
 
   const getSuperLikedIds = useCallback((): { id: number; type: MovieType }[] => {
-    return superLikedMovies.map((m) => ({ id: m.movie_id, type: m.movie_type }));
-  }, [superLikedMovies]);
+    if (isAuthenticated) {
+      const remoteIds = (remoteData?.items ?? []).map((i) => ({
+        id: i.contentId,
+        type: i.contentType as MovieType,
+      }));
+      const remoteSet = new Set(remoteIds.map((i) => `${i.id}:${i.type}`));
+      const localOnly = localSuperLikedMovies
+        .filter((m) => !remoteSet.has(`${m.movie_id}:${m.movie_type}`))
+        .map((m) => ({ id: m.movie_id, type: m.movie_type }));
+      return [...remoteIds, ...localOnly];
+    }
+    return localSuperLikedMovies.map((m) => ({ id: m.movie_id, type: m.movie_type }));
+  }, [isAuthenticated, remoteData, localSuperLikedMovies]);
 
   const clearAllSuperLiked = useCallback(async () => {
+    if (isAuthenticated) {
+      const items = remoteData?.items ?? [];
+      await Promise.all(
+        items.map((item) => removeItem({ itemId: item.id, listType: "superliked" }))
+      );
+      return;
+    }
     if (!movieInteractions) return;
     await dispatch(clearAllSuperLikedAction(movieInteractions));
-  }, [movieInteractions, dispatch]);
+  }, [isAuthenticated, remoteData, movieInteractions, dispatch, removeItem]);
 
   const refresh = useCallback(async () => {
+    if (isAuthenticated) return; // RTK Query refetches automatically on invalidation
     if (!movieInteractions) return;
     await dispatch(loadInteractions(movieInteractions));
-  }, [movieInteractions, dispatch]);
+  }, [isAuthenticated, movieInteractions, dispatch]);
 
   return useMemo(
     () => ({
       superLikedMovies,
-      loading,
-      isReady: hydrated,
+      loading: isAuthenticated ? remoteLoading : localLoading,
+      isReady: isAuthenticated ? !remoteLoading : localHydrated,
       superLikeMovie,
       removeSuperLike,
       isSuperLiked,
@@ -99,6 +207,18 @@ export function useSuperLikedMovies() {
       clearAllSuperLiked,
       refresh,
     }),
-    [superLikedMovies, loading, hydrated, superLikeMovie, removeSuperLike, isSuperLiked, getSuperLikedIds, clearAllSuperLiked, refresh],
+    [
+      superLikedMovies,
+      isAuthenticated,
+      remoteLoading,
+      localLoading,
+      localHydrated,
+      superLikeMovie,
+      removeSuperLike,
+      isSuperLiked,
+      getSuperLikedIds,
+      clearAllSuperLiked,
+      refresh,
+    ]
   );
 }
