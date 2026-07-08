@@ -1,7 +1,14 @@
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback, useEffect, useRef } from "react";
-import { Dimensions, Platform, Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
 import Animated, {
@@ -19,6 +26,9 @@ import RatingIcons from "../RatingIcons";
 import Poster from "./Poster";
 import useTranslation from "../../service/useTranslation";
 import GenresView from "../GenresView";
+import Touch from "../Touch";
+import { Link } from "expo-router";
+import { router } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 
@@ -55,7 +65,14 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.6)",
     paddingHorizontal: 10,
   },
-  meta: { flexDirection: "row", marginTop: 12, alignItems: "center", gap: 6, flexWrap: "wrap", paddingLeft: 10 },
+  meta: {
+    flexDirection: "row",
+    marginTop: 12,
+    alignItems: "center",
+    gap: 6,
+    flexWrap: "wrap",
+    paddingLeft: 10,
+  },
 
   card: {
     borderWidth: 1,
@@ -74,7 +91,7 @@ const SwipeTile = ({
   card,
   index,
   length,
-  onPress,
+  href,
 
   ...actions
 }: {
@@ -85,7 +102,7 @@ const SwipeTile = ({
   blockCard?: () => void;
   superLikeCard?: () => void;
   length: number;
-  onPress: () => void;
+  href: any;
 }) => {
   const t = useTranslation();
   const posX = useSharedValue(0);
@@ -138,7 +155,12 @@ const SwipeTile = ({
     .enabled(index === 0);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const rotate = interpolate(posX.value, [-width * 0.35, width * 0.35], [-10, 10], Extrapolation.CLAMP);
+    const rotate = interpolate(
+      posX.value,
+      [-width * 0.35, width * 0.35],
+      [-10, 10],
+      Extrapolation.CLAMP,
+    );
 
     return {
       transform: [
@@ -211,41 +233,53 @@ const SwipeTile = ({
     <>
       <GestureDetector gesture={moveGesture}>
         <Animated.View style={[animatedStyle, { zIndex: 1000 - index }]}>
-          <Pressable onPress={onPress} style={[styles.container, styles.card]}>
-            <LinearGradient
-              colors={["transparent", "transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,1)"]}
-              style={[styles.gradientContainer, dims]}
-            >
-              <Text style={styles.title}>{card.title || card.name}</Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  paddingHorizontal: 10,
-                }}
+          <Link asChild href={href}>
+            <Touch style={StyleSheet.flatten([styles.container, styles.card])}>
+              <LinearGradient
+                colors={[
+                  "transparent",
+                  "transparent",
+                  "rgba(0,0,0,0.4)",
+                  "rgba(0,0,0,1)",
+                ]}
+                style={[styles.gradientContainer, dims]}
               >
-                <RatingIcons size={15} vote={card?.vote_average} />
-              </View>
-              {card.overview && (
-                <Text style={styles.overview} numberOfLines={3}>
-                  {card.overview}
-                </Text>
-              )}
+                <Text style={styles.title}>{card.title || card.name}</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    paddingHorizontal: 10,
+                  }}
+                >
+                  <RatingIcons size={15} vote={card?.vote_average} />
+                </View>
+                {card.overview && (
+                  <Text style={styles.overview} numberOfLines={3}>
+                    {card.overview}
+                  </Text>
+                )}
 
-              <View style={styles.meta}>
-                {card.genres ? <GenresView genres={card.genres.slice(0, 3)} /> : null}
-                <Text style={styles.release_date}>{card.release_date || card.first_air_date}</Text>
-              </View>
-            </LinearGradient>
+                <View style={styles.meta}>
+                  {card.genres ? (
+                    <GenresView genres={card.genres.slice(0, 3)} />
+                  ) : null}
+                  <Text style={styles.release_date}>
+                    {card.release_date || card.first_air_date}
+                  </Text>
+                </View>
+              </LinearGradient>
 
-            <Poster
-              isSwipeable
-              isLeftVisible={isLeftVisible}
-              isRightVisible={isRightVisible}
-              imageDimensions={dims}
-              translateX={posX}
-              card={card}
-            />
-          </Pressable>
+              <Poster
+                link
+                isSwipeable
+                isLeftVisible={isLeftVisible}
+                isRightVisible={isRightVisible}
+                imageDimensions={dims}
+                translateX={posX}
+                card={card}
+              />
+            </Touch>
+          </Link>
         </Animated.View>
       </GestureDetector>
 
@@ -254,9 +288,15 @@ const SwipeTile = ({
           zIndex={length - index}
           likeCard={moveOnPress(likeCard, "right")}
           removeCard={moveOnPress(removeCard, "left")}
-          openInfo={onPress}
-          blockCard={actions.blockCard ? moveOnPress(blockCard, "left") : undefined}
-          superLikeCard={actions.superLikeCard ? moveOnPress(superLikeCard, "right") : undefined}
+          openInfo={() => router.push(href)}
+          blockCard={
+            actions.blockCard ? moveOnPress(blockCard, "left") : undefined
+          }
+          superLikeCard={
+            actions.superLikeCard
+              ? moveOnPress(superLikeCard, "right")
+              : undefined
+          }
           labels={{
             block: t("swipe.block") as string,
             dislike: t("swipe.nope") as string,

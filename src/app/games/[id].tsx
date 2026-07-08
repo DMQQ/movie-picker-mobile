@@ -3,12 +3,11 @@ import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import { Icon, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import PageHeading from "../../../../components/PageHeading";
-import { SectionListItem } from "../../../../components/SectionItem";
-import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
-import { useGetGameQuery } from "../../../../redux/lists/listsApi";
-import type { GameMember, ListItem } from "../../../../redux/lists/listsApi";
+import PageHeading from "../../components/PageHeading";
+import { SectionListItem } from "../../components/SectionItem";
+import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
+import { useGetGameQuery } from "../../redux/lists/listsApi";
+import type { GameMember, ListItem } from "../../redux/lists/listsApi";
 
 const { width: SW } = Dimensions.get("window");
 const COLUMNS = 3;
@@ -74,12 +73,10 @@ function Pill({ icon, label }: { icon: string; label: string }) {
 export default function GameDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, isLoading, isError } = useGetGameQuery(id);
-  const insets = useSafeAreaInsets();
-
   const session = data?.session ?? null;
   const items = data?.items ?? [];
   const members = data?.members ?? [];
-  const bannerHeight = insets.top + 280;
+  const bannerHeight = Dimensions.get("window").height / 2;
   const duration = session
     ? formatDuration(session.startTime, session.endTime)
     : null;
@@ -107,7 +104,7 @@ export default function GameDetailScreen() {
                 {data?.list.posterPath ? (
                   <Thumbnail
                     path={data.list.posterPath}
-                    size={ThumbnailSizes.poster.large}
+                    size={ThumbnailSizes.poster.xlarge}
                     container={StyleSheet.absoluteFill}
                     showsPlaceholder={false}
                     priority="high"
@@ -125,17 +122,12 @@ export default function GameDetailScreen() {
                 style={StyleSheet.absoluteFill}
               />
 
-              <View
-                style={[styles.bannerContent, { paddingTop: insets.top + 52 }]}
-              >
+              <View style={[styles.bannerContent, { paddingTop: 52 }]}>
+                <Text style={styles.bannerTitle}>
+                  {formatGameType(session?.gameType ?? null)}
+                </Text>
                 <Text style={styles.bannerDate}>
                   {data ? formatDate(data.list.createdAt) : ""}
-                </Text>
-                <Text style={styles.bannerTitle}>
-                  {data?.list.sessionId ?? " "}
-                </Text>
-                <Text style={styles.bannerType}>
-                  {formatGameType(session?.gameType ?? null)}
                 </Text>
                 {session && (
                   <View style={styles.pills}>
@@ -234,12 +226,11 @@ const styles = StyleSheet.create({
   },
   bannerTitle: {
     fontFamily: "Bebas",
-    fontSize: 38,
+    fontSize: 42,
     color: "#fff",
     letterSpacing: 1,
-    lineHeight: 40,
+    lineHeight: 44,
   },
-  bannerType: { fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 6 },
   pills: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   pill: {
     flexDirection: "row",

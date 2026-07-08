@@ -269,6 +269,8 @@ const RootNavigator = ({
 
           <Stack.Screen name="group" options={{ headerShown: false }} />
 
+          <Stack.Screen name="games" options={{ headerShown: false }} />
+
           <Stack.Screen
             name="search-filters"
             options={{ headerShown: false }}

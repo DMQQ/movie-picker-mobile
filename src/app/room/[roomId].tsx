@@ -1,4 +1,11 @@
-import { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Alert, BackHandler, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { Movie } from "../../../types";
@@ -17,7 +24,9 @@ import { useLocalSearchParams } from "expo-router";
 import useRoomContext from "../../context/RoomContext";
 import { url, SocketContext } from "../../context/SocketContext";
 import envs from "../../constants/envs";
-import UserInputModal, { UserInputModalAction } from "../../components/UserInputModal";
+import UserInputModal, {
+  UserInputModalAction,
+} from "../../components/UserInputModal";
 import { useIsFocused } from "expo-router";
 
 const styles = StyleSheet.create({
@@ -39,7 +48,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   gameStatus: { fontSize: 20, width: "80%", textAlign: "center" },
-  gameFinishStatus: { fontSize: 20, marginTop: 15, textAlign: "center", width: "80%" },
+  gameFinishStatus: {
+    fontSize: 20,
+    marginTop: 15,
+    textAlign: "center",
+    width: "80%",
+  },
   spinnerContainer: {
     paddingVertical: 35,
     alignItems: "center",
@@ -49,8 +63,11 @@ const styles = StyleSheet.create({
 
 export default function Home() {
   const params = useLocalSearchParams();
-  const { cards, isPlaying, cardsLoading, roomId, joinError, isJoining } = useRoomContext();
-  const hasUserPlayed = useAppSelector((state) => state.room.room.hasUserPlayed);
+  const { cards, isPlaying, cardsLoading, roomId, joinError, isJoining } =
+    useRoomContext();
+  const hasUserPlayed = useAppSelector(
+    (state) => state.room.room.hasUserPlayed,
+  );
   const gameEnded = useAppSelector((state) => state.room.room.gameEnded);
   const canContinue = useAppSelector((state) => state.room.room.canContinue);
   const isHost = useAppSelector((state) => state.room.isHost);
@@ -79,7 +96,9 @@ export default function Home() {
             return;
           }
 
-          dispatch(roomActions.setRoomId((params.roomId as string).toUpperCase()));
+          dispatch(
+            roomActions.setRoomId((params.roomId as string).toUpperCase()),
+          );
         } catch (error) {
           console.error("Failed to verify room:", error);
           setShowError(true);
@@ -249,7 +268,10 @@ export default function Home() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <HomeAppbar roomId={params?.roomId as string} hasCards={cards.length > 0} />
+      <HomeAppbar
+        roomId={params?.roomId as string}
+        hasCards={cards.length > 0}
+      />
 
       {isPlaying ? (
         <>
@@ -257,8 +279,14 @@ export default function Home() {
 
           {cards.length === 0 && !cardsLoading && (
             <View style={styles.emptyListContainer}>
-              {!gameEnded && hasUserPlayed && <Text style={styles.noResultsText}>{t("room.no-more-results")}</Text>}
-              <Text style={styles.gameStatus}>{gameEnded ? t("room.finished") : t("room.waiting")}</Text>
+              {!gameEnded && hasUserPlayed && (
+                <Text style={styles.noResultsText}>
+                  {t("room.no-more-results")}
+                </Text>
+              )}
+              <Text style={styles.gameStatus}>
+                {gameEnded ? t("room.finished") : t("room.waiting")}
+              </Text>
             </View>
           )}
         </>
@@ -266,7 +294,13 @@ export default function Home() {
         <View style={styles.emptyListContainer}>
           <FancySpinner />
           <Text style={styles.gameFinishStatus}>
-            {gameEnded ? t("room.finished") : isJoining ? t("room.joining") : cardsLoading ? t("room.loading") : t("room.awaiting-start")}
+            {gameEnded
+              ? t("room.finished")
+              : isJoining
+                ? t("room.joining")
+                : cardsLoading
+                  ? t("room.loading")
+                  : t("room.awaiting-start")}
           </Text>
         </View>
       )}
@@ -319,43 +353,42 @@ interface SwipeContentProps {
 }
 
 const SwipeContent = memo(({ params }: SwipeContentProps) => {
-  const { cards, dislikeCard, likeCard, blockAndDislikeCard, superLikeAndLikeCard } = useRoomContext();
+  const {
+    cards,
+    dislikeCard,
+    likeCard,
+    blockAndDislikeCard,
+    superLikeAndLikeCard,
+  } = useRoomContext();
 
   const originalLength = useRef(cards.length);
 
-  const handleNavigateDetails = useCallback(
-    (card: Movie) => {
-      router.navigate({
+  return cards.slice(0, 3).map((card, index) => (
+    <SwipeTile
+      href={{
         pathname: "/movie/type/[type]/[id]",
         params: {
           id: card.id,
           type: params?.type || "movie",
           img: card.poster_path,
         },
-      });
-    },
-    [params?.type],
-  );
-
-  return cards
-    .slice(0, 3)
-    .map((card, index) => (
-      <SwipeTile
-        onPress={() => handleNavigateDetails(card)}
-        length={originalLength.current}
-        key={card.id}
-        card={card}
-        index={index}
-        likeCard={throttle(() => likeCard(card, index), 500)}
-        removeCard={throttle(() => dislikeCard(card, index), 500)}
-        blockCard={throttle(() => blockAndDislikeCard(card, index), 500)}
-        superLikeCard={throttle(() => superLikeAndLikeCard(card, index), 500)}
-      />
-    ));
+      }}
+      length={originalLength.current}
+      key={card.id}
+      card={card}
+      index={index}
+      likeCard={throttle(() => likeCard(card, index), 500)}
+      removeCard={throttle(() => dislikeCard(card, index), 500)}
+      blockCard={throttle(() => blockAndDislikeCard(card, index), 500)}
+      superLikeCard={throttle(() => superLikeAndLikeCard(card, index), 500)}
+    />
+  ));
 });
 
 const Matches = memo(({ roomId }: { roomId: string }) => {
   const { isFocused, hideMatchModal, match } = useRoomMatches(roomId);
 
-  return isFocused && <MatchModal hideMatchModal={hideMatchModal} match={match} />;
+  return (
+    isFocused && <MatchModal hideMatchModal={hideMatchModal} match={match} />
+  );
 });

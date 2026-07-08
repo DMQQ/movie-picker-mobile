@@ -11,11 +11,19 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
-import { memo, useMemo } from "react";
+import { Fragment, memo, useMemo } from "react";
 import { Movie } from "../../../types";
+import { Link } from "expo-router";
 
 const SwipeText = memo(
-  (props: { text: string; rotate: string; color: string; right: boolean; icon?: React.ReactNode; isVisible?: SharedValue<boolean> }) => {
+  (props: {
+    text: string;
+    rotate: string;
+    color: string;
+    right: boolean;
+    icon?: React.ReactNode;
+    isVisible?: SharedValue<boolean>;
+  }) => {
     const animatedStyle = useAnimatedStyle(() => {
       if (!props.isVisible) return {};
 
@@ -94,6 +102,8 @@ function Poster(props: {
   };
 
   isSwipeable?: boolean;
+
+  link: boolean;
 }) {
   const { height, width } = useWindowDimensions();
 
@@ -101,7 +111,11 @@ function Poster(props: {
     if (!props.translateX) return {};
 
     return {
-      opacity: interpolate(props.translateX.value, [-width * 0.15, 0, width * 0.15], [1, 0, 1]),
+      opacity: interpolate(
+        props.translateX.value,
+        [-width * 0.15, 0, width * 0.15],
+        [1, 0, 1],
+      ),
       backgroundColor: interpolateColor(
         props.translateX.value,
         [-width, 0, width],
@@ -119,6 +133,8 @@ function Poster(props: {
     [height, width, props?.imageDimensions],
   );
 
+  const LinkComponent = props.link ? Link.AppleZoom : Fragment;
+
   return (
     <View style={{ position: "relative" }}>
       {props.isSwipeable && (
@@ -133,7 +149,14 @@ function Poster(props: {
           />
 
           <SwipeText
-            icon={<Ionicons name="heart" size={32} color="#fff" style={{ transform: [{ translateY: 2 }] }} />}
+            icon={
+              <Ionicons
+                name="heart"
+                size={32}
+                color="#fff"
+                style={{ transform: [{ translateY: 2 }] }}
+              />
+            }
             isVisible={props.isLeftVisible}
             text="LIKE"
             color="#42DCA3"
@@ -153,13 +176,15 @@ function Poster(props: {
         ]}
       />
 
-      <Thumbnail
-        transition={0}
-        path={props.card.poster_path}
-        size={ThumbnailSizes.poster.xxlarge}
-        container={{ borderRadius: 19, ...imageDimensions }}
-        style={{ borderRadius: 19, ...imageDimensions }}
-      />
+      <LinkComponent>
+        <Thumbnail
+          transition={0}
+          path={props.card.poster_path}
+          size={ThumbnailSizes.poster.xxlarge}
+          container={{ borderRadius: 19, ...imageDimensions }}
+          style={{ borderRadius: 19, ...imageDimensions }}
+        />
+      </LinkComponent>
 
       {props.card.isSuperLiked && (
         <View style={styles.superLikeBadge}>

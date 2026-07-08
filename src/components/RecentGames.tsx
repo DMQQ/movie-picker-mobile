@@ -7,10 +7,11 @@ import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import Touch from "./Touch";
 import { useGetGamesQuery, type GameMember, type UserGame } from "../redux/lists/listsApi";
 
-const CARD_WIDTH = Dimensions.get("window").width - 60;
-const CARD_HEIGHT = 200;
+const CARD_WIDTH = Dimensions.get("window").width * 0.72;
+const CARD_HEIGHT = 190;
 const AVATAR_SIZE = 20;
 const AVATAR_OVERLAP = 8;
+const PREVIEW_LIMIT = 3;
 
 function formatDate(unix: number) {
   return new Date(unix * 1000).toLocaleDateString(undefined, {
@@ -56,7 +57,7 @@ function MemberAvatarStack({ members }: { members: GameMember[] }) {
 
 function GameCard({ game }: { game: UserGame }) {
   return (
-    <Link href={`/(tabs)/account/games/${game.id}` as any} asChild>
+    <Link href={`/games/${game.id}` as any} asChild>
       <Touch style={card.wrap}>
         <View style={{ flex: 1 }}>
           <Link.AppleZoom>
@@ -70,21 +71,20 @@ function GameCard({ game }: { game: UserGame }) {
               />
             ) : (
               <View style={[card.image, card.placeholder]}>
-                <Icon source="movie-open-outline" size={40} color="rgba(255,255,255,0.15)" />
+                <Icon source="movie-open-outline" size={36} color="rgba(255,255,255,0.12)" />
               </View>
             )}
           </Link.AppleZoom>
 
           <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.92)"]}
+            colors={["transparent", "rgba(0,0,0,0.45)", "rgba(0,0,0,0.95)"]}
+            locations={[0, 0.45, 1]}
             style={card.gradient}
           />
 
           <View style={card.meta}>
-            <Text style={card.sessionId} numberOfLines={1}>{game.sessionId}</Text>
-            <Text style={card.sub}>
-              {formatGameType(game.session?.gameType ?? null)} · {formatDate(game.createdAt)}
-            </Text>
+            <Text style={card.title}>{formatGameType(game.session?.gameType ?? null)}</Text>
+            <Text style={card.date}>{formatDate(game.createdAt)}</Text>
             <View style={card.stats}>
               <View style={card.statBadge}>
                 <Icon source="heart" size={11} color="#BB86FC" />
@@ -107,7 +107,8 @@ function GameCard({ game }: { game: UserGame }) {
 
 export default function RecentGames() {
   const { data, isLoading } = useGetGamesQuery();
-  const games = data?.games ?? [];
+  const allGames = data?.games ?? [];
+  const games = [...allGames].reverse().slice(0, PREVIEW_LIMIT);
 
   if (isLoading) {
     return (
@@ -121,7 +122,7 @@ export default function RecentGames() {
   if (games.length === 0) {
     return (
       <View style={styles.placeholder}>
-        <Icon source="controller-classic-outline" size={20} color="rgba(255,255,255,0.2)" />
+        <Icon source="controller-classic-outline" size={22} color="rgba(255,255,255,0.15)" />
         <Text style={styles.placeholderText}>No games yet — start swiping!</Text>
       </View>
     );
@@ -136,7 +137,7 @@ export default function RecentGames() {
       snapToAlignment="start"
       contentContainerStyle={styles.list}
     >
-      {[...games].reverse().map((g) => (
+      {games.map((g) => (
         <GameCard key={g.id} game={g} />
       ))}
     </ScrollView>
@@ -147,22 +148,22 @@ const card = StyleSheet.create({
   wrap: {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
-    borderRadius: 14,
+    borderRadius: 16,
     overflow: "hidden",
-    backgroundColor: "rgba(255,255,255,0.06)",
+    backgroundColor: "rgba(255,255,255,0.05)",
   },
   image: { width: CARD_WIDTH, height: CARD_HEIGHT },
   placeholder: { alignItems: "center", justifyContent: "center" },
   gradient: { ...StyleSheet.absoluteFill },
-  meta: { position: "absolute", bottom: 12, left: 14, right: 14, gap: 3 },
-  sessionId: { fontSize: 13, fontWeight: "700", color: "#fff" },
-  sub: { fontSize: 11, color: "rgba(255,255,255,0.55)" },
-  stats: { flexDirection: "row", gap: 8, marginTop: 4 },
+  meta: { position: "absolute", bottom: 12, left: 14, right: 14, gap: 2 },
+  title: { fontSize: 16, fontWeight: "700", color: "#fff", marginBottom: 2 },
+  date: { fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 4 },
+  stats: { flexDirection: "row", gap: 6, marginTop: 2 },
   statBadge: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: "rgba(0,0,0,0.5)",
     borderRadius: 20,
     paddingHorizontal: 8,
     paddingVertical: 3,
@@ -187,16 +188,16 @@ const ma = StyleSheet.create({
   letter: { fontSize: 9, fontWeight: "700", color: "#fff" },
   extra: { backgroundColor: "#444" },
   extraText: { fontSize: 8, fontWeight: "700", color: "rgba(255,255,255,0.7)" },
-  label: { fontSize: 10, color: "rgba(255,255,255,0.45)", marginLeft: 6 },
+  label: { fontSize: 10, color: "rgba(255,255,255,0.4)", marginLeft: 6 },
 });
 
 const styles = StyleSheet.create({
-  list: { gap: 12, paddingVertical: 2 },
+  list: { gap: 12, paddingVertical: 2, paddingRight: 4 },
   placeholder: {
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
-    paddingVertical: 16,
+    paddingVertical: 18,
   },
   placeholderText: { fontSize: 13, color: "rgba(255,255,255,0.3)" },
 });

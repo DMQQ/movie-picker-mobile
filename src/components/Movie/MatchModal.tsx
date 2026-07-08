@@ -293,6 +293,7 @@ export default function MatchModal({
             </LinearGradient>
 
             <Poster
+              link={false}
               imageDimensions={{
                 width: Dimensions.get("screen").width * 0.95 - 20,
                 height: Dimensions.get("screen").height * 0.7,
