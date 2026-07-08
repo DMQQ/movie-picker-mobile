@@ -13,6 +13,12 @@ export interface UserListItem {
   content?: { title?: string; poster_path?: string | null };
 }
 
+export interface ListPreviewItem {
+  contentId: number;
+  contentType: ContentType;
+  posterPath: string | null;
+}
+
 export interface UserList {
   id: string;
   name: string;
@@ -23,6 +29,7 @@ export interface UserList {
   createdAt: number;
   updatedAt: number;
   items?: UserListItem[];
+  previewItems?: ListPreviewItem[];
 }
 
 export interface ListItem {
@@ -65,11 +72,17 @@ export interface UserGame {
 
 interface GetListsResponse {
   lists: UserList[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 interface GetListResponse {
   list: UserList;
   items: ListItem[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 interface OkResponse {
@@ -135,13 +148,27 @@ export const listsApi = createApi({
   }),
   tagTypes: ["List", "ListItems"],
   endpoints: (build) => ({
-    getLists: build.query<GetListsResponse, void>({
-      query: () => "/lists",
+    getLists: build.query<GetListsResponse, { page?: number; limit?: number }>({
+      query: ({ page = 1, limit = 20 }) => `/lists?page=${page}&limit=${limit}`,
+      serializeQueryArgs: ({ endpointName }) => endpointName,
+      merge(currentCache, newItems, { arg }) {
+        if ((arg.page ?? 1) === 1) {
+          currentCache.lists = newItems.lists;
+        } else {
+          currentCache.lists.push(...newItems.lists);
+        }
+        currentCache.total = newItems.total;
+        currentCache.page = newItems.page;
+        currentCache.limit = newItems.limit;
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg?.page !== previousArg?.page;
+      },
       providesTags: [{ type: "List", id: "ALL" }],
     }),
 
     getList: build.query<GetListResponse, string>({
-      query: (type) => `/lists/${type}`,
+      query: (type) => `/lists/${type}?limit=200`,
       providesTags: (_result, _err, type) => [{ type: "ListItems", id: type }],
     }),
 

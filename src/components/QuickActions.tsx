@@ -13,7 +13,7 @@ export function useQuickActions(props: { movie: Movie }) {
   const membershipIndex = useAppSelector((state) => state.favourite.membershipIndex);
 
   const isInGroup = (groupId: "1" | "2" | "999") => {
-    const movieType = props.movie?.type ?? (props.movie?.title ? "movie" : "tv");
+    const movieType = props.movie?.type ?? (props.movie?.first_air_date ? "tv" : "movie");
     return !!membershipIndex[groupId]?.[`${props.movie?.id}:${movieType}`];
   };
 
@@ -28,7 +28,7 @@ export function useQuickActions(props: { movie: Movie }) {
           item: {
             id: props?.movie?.id,
             imageUrl: props?.movie?.poster_path,
-            type: props?.movie?.type || (props.movie?.title ? "movie" : "tv"),
+            type: props?.movie?.type || (props.movie?.first_air_date ? "tv" : "movie"),
           },
         })
       );

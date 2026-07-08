@@ -166,6 +166,10 @@ export function useBlockedMovies() {
     if (isAuthenticated) {
       const items = remoteData?.items ?? [];
       await Promise.all(items.map((item) => removeItem({ itemId: item.id, listType: "disliked" })));
+      // Also clear local un-migrated items so they stop appearing after clear-all
+      if (movieInteractions) {
+        await dispatch(clearAllBlockedAction(movieInteractions));
+      }
       return;
     }
     if (!movieInteractions) return;

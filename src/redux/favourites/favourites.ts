@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Movie } from "../../../types";
 import { listsApi } from "../lists/listsApi";
 import type { RootState } from "../store";
+import { toSlug } from "../../utils/utilities";
 
 type MediaType = "movie" | "tv";
 
@@ -39,24 +40,20 @@ const initialState: FavoritesState = {
 export const STORAGE_KEY = "favorites_groups";
 
 // System list type ↔ local group id mappings
-const LOCAL_ID_TO_TYPE: Record<string, string> = {
+export const LOCAL_ID_TO_TYPE: Record<string, string> = {
   "1": "favourites",
   "2": "watchlist",
   "999": "watched",
 };
 
-const TYPE_TO_LOCAL_ID: Record<string, string> = {
+export const TYPE_TO_LOCAL_ID: Record<string, string> = {
   favourites: "1",
   watchlist: "2",
   watched: "999",
 };
 
 // Types that have their own dedicated screens (not shown in the groups list)
-const INTERACTION_LIST_TYPES = new Set(["superliked", "disliked"]);
-
-function toSlug(name: string) {
-  return name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-}
+export const INTERACTION_LIST_TYPES = new Set(["superliked", "disliked"]);
 
 const makeDefaultGroups = () => {
   return [
@@ -87,45 +84,34 @@ export const loadFavorites = createAsyncThunk(
 
     if (token) {
       const listsResult = await d(dispatch)(
-        listsApi.endpoints.getLists.initiate(undefined, { forceRefetch: true })
+        listsApi.endpoints.getLists.initiate({ page: 1 }, { forceRefetch: true })
       ).unwrap();
 
       const filteredLists = (listsResult.lists as any[]).filter(
-        (l) => !INTERACTION_LIST_TYPES.has(l.type)
+        (l: any) => !INTERACTION_LIST_TYPES.has(l.type)
       );
 
-      // Build membership index from lightweight items — no extra round-trips
+      // Build groups + membership index from previewItems — single API call, no per-list round-trips
       const membershipIndex: Record<string, Record<string, true>> = {};
-      for (const list of filteredLists) {
+      const remoteGroups: FavoriteGroup[] = filteredLists.map((list: any) => {
         const localId = TYPE_TO_LOCAL_ID[list.type] ?? list.id;
         const entry: Record<string, true> = {};
-        for (const item of list.items ?? []) {
+        for (const item of list.previewItems ?? []) {
           entry[`${item.contentId}:${item.contentType}`] = true;
         }
         membershipIndex[localId] = entry;
-      }
-
-      // Fetch full content (with posters) per list — for display only
-      const remoteGroups: FavoriteGroup[] = await Promise.all(
-        filteredLists.map(async (list: any) => {
-          const localId = TYPE_TO_LOCAL_ID[list.type] ?? list.id;
-          const listResult = await d(dispatch)(
-            listsApi.endpoints.getList.initiate(list.type, { forceRefetch: true })
-          ).unwrap();
-          return {
-            id: localId,
-            type: list.type,
-            name: list.name,
-            posterPath: list.posterPath ?? undefined,
-            movies: (listResult.items as any[]).map((item) => ({
-              id: item.contentId,
-              imageUrl: item.content.poster_path || "",
-              type: item.contentType as MediaType,
-              remoteItemId: item.id,
-            })),
-          };
-        })
-      );
+        return {
+          id: localId,
+          type: list.type,
+          name: list.name,
+          posterPath: list.posterPath ?? undefined,
+          movies: (list.previewItems ?? []).map((item: any) => ({
+            id: item.contentId,
+            imageUrl: item.posterPath || "",
+            type: item.contentType as MediaType,
+          })),
+        };
+      });
 
       // Merge un-migrated local groups so they show before migration
       const raw = await AsyncStorage.getItem(STORAGE_KEY);
@@ -268,12 +254,33 @@ export const removeFromGroup = createAsyncThunk(
     if (token) {
       const group = state.favourite.groups.find((g) => g.id === groupId);
       const movie = group?.movies.find((m) => m.id === movieId);
+      const listType = group?.type ?? LOCAL_ID_TO_TYPE[groupId] ?? groupId;
 
-      if (movie?.remoteItemId) {
-        const listType = group?.type ?? LOCAL_ID_TO_TYPE[groupId] ?? groupId;
-        await d(dispatch)(
-          listsApi.endpoints.removeItem.initiate({ itemId: movie.remoteItemId, listType })
+      let remoteItemId = movie?.remoteItemId;
+      if (!remoteItemId) {
+        // previewItems don't carry remoteItemId — fetch from cache (or network) to resolve it
+        const listData = await d(dispatch)(
+          listsApi.endpoints.getList.initiate(listType, { forceRefetch: false })
         ).unwrap();
+        remoteItemId = (listData.items as any[]).find((i) => i.contentId === movieId)?.id;
+      }
+
+      if (remoteItemId) {
+        await d(dispatch)(
+          listsApi.endpoints.removeItem.initiate({ itemId: remoteItemId, listType })
+        ).unwrap();
+      } else {
+        // Local-only un-migrated item — remove from AsyncStorage so it doesn't reappear on reload
+        const raw = await AsyncStorage.getItem(STORAGE_KEY);
+        const storage = raw ? JSON.parse(raw) : { groups: [] };
+        const updated = {
+          ...storage,
+          groups: storage.groups.map((g: FavoriteGroup) => {
+            if (g.id !== groupId) return g;
+            return { ...g, movies: g.movies.filter((m: FavoriteItem) => m.id !== movieId) };
+          }),
+        };
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       }
 
       return state.favourite.groups.map((g) => {

@@ -7,16 +7,13 @@ import {
   clearAllBlocked,
   clearAllSuperLiked,
 } from "../redux/movieInteractions/movieInteractionsSlice";
+import { toSlug } from "../utils/utilities";
 
 const GROUP_NAME_TO_TYPE: Record<string, string> = {
   Favorites: "favourites",
   Watchlist: "watchlist",
   Watched: "watched",
 };
-
-function toSlug(name: string) {
-  return name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
-}
 
 export function useMigrateLibrary() {
   const dispatch = useAppDispatch();

@@ -134,7 +134,12 @@ export function useSuperLikedMovies() {
         const item = remoteData?.items.find(
           (i) => i.contentId === movieId && i.contentType === movieType
         );
-        if (item) await removeItem({ itemId: item.id, listType: "superliked" });
+        if (item) {
+          await removeItem({ itemId: item.id, listType: "superliked" });
+        } else if (movieInteractions) {
+          // Local-only un-migrated item — remove from SQLite/Redux
+          await dispatch(removeSuperLikeAction({ repo: movieInteractions, movieId, movieType }));
+        }
         return;
       }
       if (!movieInteractions) return;
