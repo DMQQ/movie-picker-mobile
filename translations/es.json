@@ -353,27 +353,27 @@
     },
     "ratings": {
       "interest": {
-        "label": "¿Quieres verla?",
+        "label": "Interés",
         "options": {
-          "0": "👎 Paso",
-          "1": "🤔 Quizás",
-          "2": "👍 Sí"
+          "0": "Meh",
+          "1": "Quizás",
+          "2": "La quiero"
         }
       },
       "mood": {
-        "label": "¿Encaja con el plan de hoy?",
+        "label": "Ambiente",
         "options": {
-          "0": "😐 Ahora no",
-          "1": "🙂 Podría funcionar",
-          "2": "😍 Perfecta"
+          "0": "No",
+          "1": "Podría ir",
+          "2": "Perfecto"
         }
       },
       "novelty": {
-        "label": "¿La has visto antes?",
+        "label": "Novedad",
         "options": {
-          "0": "✅ Ya la vi",
-          "1": "🔄 La conozco",
-          "2": "👀 Nueva para mí"
+          "0": "Ya la vi",
+          "1": "Vagamente",
+          "2": "Sin ver"
         }
       },
       "submit": "Enviar calificación"

@@ -144,6 +144,11 @@ function RootLayout() {
 
 SplashScreen.preventAutoHideAsync();
 
+function MaintenanceWatcher() {
+  useMaintenance();
+  return null;
+}
+
 const RootNavigator = ({
   isLoaded,
   isUpdating,
@@ -158,8 +163,6 @@ const RootNavigator = ({
   const needsOnboarding = settingsLoaded ? !onboardingCompleted : null;
   const { movieInteractions, isReady: dbReady } = useMovieInteractions();
   const hasInitialized = useRef(false);
-
-  useMaintenance();
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -243,6 +246,7 @@ const RootNavigator = ({
 
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
+      <MaintenanceWatcher />
       <Stack
         initialRouteName={needsOnboarding ? "onboarding" : "(tabs)"}
         screenOptions={{

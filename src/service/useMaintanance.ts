@@ -12,7 +12,7 @@ export interface MaintenanceCheckResult {
 }
 
 export default function useMaintenance(initialCheck = true) {
-  const { isConnected, isInternetReachable } = useNetInfo();
+  const { isConnected } = useNetInfo();
   const appState = useRef(AppState.currentState);
   const hasNavigated = useRef(false);
 
@@ -24,7 +24,7 @@ export default function useMaintenance(initialCheck = true) {
         setIsRetrying(true);
       }
 
-      const hasInternet = isConnected && isInternetReachable !== false;
+      const hasInternet = isConnected === true;
 
       const handleFailure = (
         type: "no-internet" | "server-error" | "maintenance" | "update",
@@ -36,7 +36,11 @@ export default function useMaintenance(initialCheck = true) {
             hasNavigated.current = true;
             router.push({
               pathname: "/modal",
-              params: { type, dismissible, ...(data && { data: JSON.stringify(data) }) },
+              params: {
+                type,
+                dismissible,
+                ...(data && { data: JSON.stringify(data) }),
+              },
             });
           }
         }
@@ -58,18 +62,32 @@ export default function useMaintenance(initialCheck = true) {
         const data = (await response.json()) as SettingsResponse;
 
         if (data.maintenance) {
-          const isActive = Platform.OS === "ios" ? data.maintenance.available.ios : data.maintenance.available.android;
+          const isActive =
+            Platform.OS === "ios"
+              ? data.maintenance.available.ios
+              : data.maintenance.available.android;
 
           if (isActive) {
-            return handleFailure("maintenance", String(data.maintenance.dismissible ?? false), data);
+            return handleFailure(
+              "maintenance",
+              String(data.maintenance.dismissible ?? false),
+              data,
+            );
           }
         }
 
         if (data.update) {
-          const isAvailable = Platform.OS === "ios" ? data.update.available.ios : data.update.available.android;
+          const isAvailable =
+            Platform.OS === "ios"
+              ? data.update.available.ios
+              : data.update.available.android;
 
           if (isAvailable) {
-            return handleFailure("update", String(data.update.available.dismissible ?? false), data);
+            return handleFailure(
+              "update",
+              String(data.update.available.dismissible ?? false),
+              data,
+            );
           }
         }
 
@@ -80,7 +98,7 @@ export default function useMaintenance(initialCheck = true) {
         return handleFailure("server-error", "false");
       }
     },
-    [isConnected, isInternetReachable, initialCheck],
+    [isConnected, initialCheck],
   );
 
   useEffect(() => {
@@ -91,14 +109,20 @@ export default function useMaintenance(initialCheck = true) {
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (appState.current.match(/inactive|background/) && nextAppState === "active") {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
         hasNavigated.current = false;
         checkSettings(false);
       }
       appState.current = nextAppState;
     };
 
-    const subscription = AppState.addEventListener("change", handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange,
+    );
     return () => subscription.remove();
   }, [checkSettings]);
 

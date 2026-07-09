@@ -261,7 +261,6 @@
     "cancel": "Cancel",
     "create": "Create"
   },
-
   "common": {
     "confirmation": "Confirmation",
     "cancel": "Cancel",
@@ -352,30 +351,29 @@
       "qrcode-scan": "Scan to join",
       "likes": "Swipes"
     },
-
     "ratings": {
       "interest": {
-        "label": "Want to watch?",
+        "label": "Interest",
         "options": {
-          "0": "👎 Pass",
-          "1": "🤔 Maybe",
-          "2": "👍 Yes"
+          "0": "Meh",
+          "1": "Maybe",
+          "2": "Want it"
         }
       },
       "mood": {
-        "label": "Fits tonight's vibe?",
+        "label": "Vibe",
         "options": {
-          "0": "😐 Not now",
-          "1": "🙂 Could work",
-          "2": "😍 Perfect"
+          "0": "Nope",
+          "1": "Could work",
+          "2": "Perfect"
         }
       },
       "novelty": {
-        "label": "Seen it before?",
+        "label": "Freshness",
         "options": {
-          "0": "✅ Seen it",
-          "1": "🔄 Heard of it",
-          "2": "👀 New to me"
+          "0": "Seen it",
+          "1": "Vaguely",
+          "2": "Never seen"
         }
       },
       "submit": "Submit rating"

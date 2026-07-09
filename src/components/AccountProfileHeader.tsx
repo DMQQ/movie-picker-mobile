@@ -3,7 +3,6 @@ import { Alert, Pressable, StyleSheet, View } from "react-native";
 import { Icon, Text, TextInput } from "react-native-paper";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import * as ImagePicker from "expo-image-picker";
 import * as SecureStore from "expo-secure-store";
 import { MD2DarkTheme } from "react-native-paper";
 import type { AuthUser } from "../redux/auth/authSlice";
@@ -38,49 +37,14 @@ export default function AccountProfileHeader({ user }: Props) {
       0,
     ) ?? 0;
 
-  async function handlePickAvatar() {
-    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!perm.granted) {
-      Alert.alert(
-        "Permission required",
-        "Allow photo library access to change your avatar.",
-      );
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.9,
-    });
-    if (result.canceled) return;
-    const asset = result.assets[0];
-    const form = new FormData();
-    form.append("avatar", {
-      uri: asset.uri,
-      name: "avatar.jpg",
-      type: asset.mimeType ?? "image/jpeg",
-    } as any);
-    try {
-      await updateMe(form).unwrap();
-    } catch {
-      Alert.alert(
-        "Upload failed",
-        "Could not update avatar. Please try again.",
-      );
-    }
-  }
-
   async function handleSaveName() {
     const trimmed = name.trim();
     if (!trimmed || trimmed === user.name) {
       setNameEditing(false);
       return;
     }
-    const form = new FormData();
-    form.append("name", trimmed);
     try {
-      await updateMe(form).unwrap();
+      await updateMe({ name: trimmed }).unwrap();
     } catch {
       Alert.alert("Update failed", "Could not update name. Please try again.");
       setName(user.name);
@@ -148,24 +112,19 @@ export default function AccountProfileHeader({ user }: Props) {
   return (
     <View style={styles.wrap}>
       <View style={styles.row}>
-        <Pressable onPress={handlePickAvatar} style={styles.avatarWrap}>
-          <View style={styles.avatar}>
-            {user.avatarUrl ? (
-              <Image
-                style={styles.avatarImage}
-                source={{ uri: user.avatarUrl }}
-                cachePolicy="memory-disk"
-              />
-            ) : (
-              <Text style={styles.avatarLetter}>
-                {user.name.charAt(0).toUpperCase()}
-              </Text>
-            )}
-          </View>
-          <View style={styles.avatarEditBadge}>
-            <Icon source="camera" size={11} color="#fff" />
-          </View>
-        </Pressable>
+        <View style={styles.avatar}>
+          {user.avatarUrl ? (
+            <Image
+              style={styles.avatarImage}
+              source={{ uri: user.avatarUrl }}
+              cachePolicy="memory-disk"
+            />
+          ) : (
+            <Text style={styles.avatarLetter}>
+              {user.name.charAt(0).toUpperCase()}
+            </Text>
+          )}
+        </View>
 
         <View style={styles.info}>
           {nameEditing ? (
@@ -274,7 +233,6 @@ const styles = StyleSheet.create({
   },
   info: { flex: 1, gap: 3 },
 
-  avatarWrap: { position: "relative" },
   avatar: {
     width: AVATAR_SIZE,
     height: AVATAR_SIZE,
@@ -288,19 +246,6 @@ const styles = StyleSheet.create({
   },
   avatarImage: { width: AVATAR_SIZE, height: AVATAR_SIZE },
   avatarLetter: { fontSize: 30, fontFamily: "Bebas", color: "#000" },
-  avatarEditBadge: {
-    position: "absolute",
-    bottom: 2,
-    right: 2,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: "#3a3a3a",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1.5,
-    borderColor: "#000",
-  },
 
   nameRow: { flexDirection: "row", alignItems: "center", gap: 6 },
   name: { fontSize: 20, fontWeight: "700", color: "#fff" },

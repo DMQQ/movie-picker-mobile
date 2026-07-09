@@ -62,12 +62,6 @@
       "expo-status-bar",
       "expo-apple-authentication",
       [
-        "expo-image-picker",
-        {
-          "photosPermission": "FlickMate accesses your photos to let you set a profile avatar."
-        }
-      ],
-      [
         "react-native-nitro-google-signin",
         {
           "iosGoogleServicesFile": "./GoogleService-Info.plist"

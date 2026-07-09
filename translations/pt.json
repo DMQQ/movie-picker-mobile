@@ -353,27 +353,27 @@
     },
     "ratings": {
       "interest": {
-        "label": "Quer assistir?",
+        "label": "Interesse",
         "options": {
-          "0": "👎 Passar",
-          "1": "🤔 Talvez",
-          "2": "👍 Sim"
+          "0": "Meh",
+          "1": "Talvez",
+          "2": "Quero ver"
         }
       },
       "mood": {
-        "label": "Combina com a noite de hoje?",
+        "label": "Vibe",
         "options": {
-          "0": "😐 Agora não",
-          "1": "🙂 Pode funcionar",
-          "2": "😍 Perfeito"
+          "0": "Não",
+          "1": "Pode ser",
+          "2": "Perfeito"
         }
       },
       "novelty": {
-        "label": "Já assistiu antes?",
+        "label": "Novidade",
         "options": {
-          "0": "✅ Já vi",
-          "1": "🔄 Já ouvi falar",
-          "2": "👀 Novidade pra mim"
+          "0": "Já vi",
+          "1": "Vagamente",
+          "2": "Nunca vi"
         }
       },
       "submit": "Enviar avaliação"

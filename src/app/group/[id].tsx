@@ -14,6 +14,10 @@ import TilesList from "../../components/Overview/TilesList";
 import PageHeading from "../../components/PageHeading";
 import { removeFromGroup } from "../../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
+import {
+  useGetListQuery,
+  useRemoveItemMutation,
+} from "../../redux/lists/listsApi";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import { useIsPreview, useLocalSearchParams } from "expo-router";
 import OverviewModal from "../../screens/Overview/Modal";
@@ -427,17 +431,45 @@ const shareStyles = StyleSheet.create({
 });
 
 export default function Group() {
-  const params = useLocalSearchParams();
-
+  const params = useLocalSearchParams<{ id: string; group?: string }>();
   const groups = useAppSelector((st) => st.favourite.groups);
+  const token = useAppSelector((s) => s.auth.token);
   const dispatch = useAppDispatch();
-
   const isPreview = useIsPreview();
 
-  const data = useMemo(
-    () => groups.find((g) => g.id === params.id),
-    [groups, params.id, isPreview],
-  );
+  const remoteGroupMeta = useMemo(() => {
+    if (!params.group) return null;
+    try { return JSON.parse(params.group) as { id: string; type: string; name: string }; }
+    catch { return null; }
+  }, [params.group]);
+
+  const isRemote = !!token && !!remoteGroupMeta;
+  const listType = remoteGroupMeta?.type ?? null;
+
+  const { data: remoteListData } = useGetListQuery(listType ?? "", {
+    skip: !isRemote || !listType,
+  });
+  const [removeItem] = useRemoveItemMutation();
+
+  const itemIdMap = useMemo(() => {
+    if (!remoteListData) return new Map<number, string>();
+    return new Map(remoteListData.items.map((item) => [item.contentId, item.id]));
+  }, [remoteListData]);
+
+  const data = useMemo(() => {
+    if (isRemote && remoteListData) {
+      return {
+        id: params.id,
+        name: remoteGroupMeta!.name,
+        movies: remoteListData.items.map((item) => ({
+          id: item.contentId,
+          imageUrl: item.content?.poster_path ?? "",
+          type: item.contentType,
+        })),
+      };
+    }
+    return groups.find((g) => g.id === params.id);
+  }, [isRemote, remoteListData, remoteGroupMeta, groups, params.id]);
 
   const insets = useSafeAreaInsets();
 
@@ -481,11 +513,14 @@ export default function Group() {
             <View style={tileStyles.footer}>
               <Button
                 mode="outlined"
-                onPress={() =>
-                  dispatch(
-                    removeFromGroup({ groupId: data?.id!, movieId: item.id }),
-                  )
-                }
+                onPress={() => {
+                  const remoteItemId = itemIdMap.get(item.id);
+                  if (isRemote && remoteItemId) {
+                    removeItem({ itemId: remoteItemId, listType: listType ?? undefined });
+                  } else {
+                    dispatch(removeFromGroup({ groupId: data?.id!, movieId: item.id }));
+                  }
+                }}
                 style={tileStyles.removeButton}
                 textColor={MD2DarkTheme.colors.error}
                 compact

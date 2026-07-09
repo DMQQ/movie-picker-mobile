@@ -353,27 +353,27 @@
     },
     "ratings": {
       "interest": {
-        "label": "Möchtest du das sehen?",
+        "label": "Interesse",
         "options": {
-          "0": "👎 Nein",
-          "1": "🤔 Vielleicht",
-          "2": "👍 Ja"
+          "0": "Meh",
+          "1": "Vielleicht",
+          "2": "Will's sehen"
         }
       },
       "mood": {
-        "label": "Passt zum heutigen Abend?",
+        "label": "Stimmung",
         "options": {
-          "0": "😐 Nicht jetzt",
-          "1": "🙂 Könnte passen",
-          "2": "😍 Perfekt"
+          "0": "Nein",
+          "1": "Geht so",
+          "2": "Perfekt"
         }
       },
       "novelty": {
-        "label": "Schon gesehen?",
+        "label": "Neuheit",
         "options": {
-          "0": "✅ Schon gesehen",
-          "1": "🔄 Davon gehört",
-          "2": "👀 Neu für mich"
+          "0": "Gesehen",
+          "1": "Vage",
+          "2": "Noch nie"
         }
       },
       "submit": "Bewertung absenden"
