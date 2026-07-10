@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PageHeading from "../../components/PageHeading";
 import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
 import { useGetGamesQuery, type UserGame } from "../../redux/lists/listsApi";
+import { formatGameType } from "../../utils/formatGameType";
 
 const POSTER_W = 46;
 const POSTER_H = 68;
@@ -15,13 +16,6 @@ function formatDate(unix: number) {
     day: "numeric",
     year: "numeric",
   });
-}
-
-function formatGameType(raw: string | null) {
-  if (!raw) return "Swipe Game";
-  if (raw.includes("/tv")) return "TV Shows";
-  if (raw.includes("/movie")) return "Movies";
-  return "Swipe Game";
 }
 
 function GameRow({ game }: { game: UserGame }) {

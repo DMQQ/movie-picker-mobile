@@ -6,6 +6,7 @@ import { Link } from "expo-router";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import Touch from "./Touch";
 import { useGetGamesQuery, type GameMember, type UserGame } from "../redux/lists/listsApi";
+import { formatGameType } from "../utils/formatGameType";
 
 const CARD_WIDTH = Dimensions.get("window").width * 0.72;
 const CARD_HEIGHT = 190;
@@ -19,13 +20,6 @@ function formatDate(unix: number) {
     day: "numeric",
     year: "numeric",
   });
-}
-
-function formatGameType(raw: string | null) {
-  if (!raw) return "Swipe Game";
-  if (raw.includes("/tv")) return "TV Shows";
-  if (raw.includes("/movie")) return "Movies";
-  return "Swipe Game";
 }
 
 function MemberAvatarStack({ members }: { members: GameMember[] }) {

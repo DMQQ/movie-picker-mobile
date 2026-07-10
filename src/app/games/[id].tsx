@@ -8,19 +8,13 @@ import { SectionListItem } from "../../components/SectionItem";
 import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
 import { useGetGameQuery } from "../../redux/lists/listsApi";
 import type { GameMember, ListItem } from "../../redux/lists/listsApi";
+import { formatGameType } from "../../utils/formatGameType";
 
 const { width: SW } = Dimensions.get("window");
 const COLUMNS = 3;
 const H_PAD = 12;
 const GAP = 6;
 const TILE_SIZE = Math.floor((SW - H_PAD * 2 - GAP * (COLUMNS - 1)) / COLUMNS);
-
-function formatGameType(raw: string | null) {
-  if (!raw) return "Swipe Game";
-  if (raw.includes("/tv")) return "TV Shows";
-  if (raw.includes("/movie")) return "Movies";
-  return "Swipe Game";
-}
 
 function formatDate(unix: number) {
   return new Date(unix * 1000).toLocaleDateString(undefined, {
