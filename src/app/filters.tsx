@@ -24,7 +24,9 @@ import { useFilterPreferences } from "../hooks/useFilterPreferences";
 function ProvidersSection() {
   const t = useTranslation();
   const dispatch = useAppDispatch();
-  const selectedProviders = useAppSelector((state) => state.mediaFilters.selectedProviders);
+  const selectedProviders = useAppSelector(
+    (state) => state.mediaFilters.selectedProviders,
+  );
   const { data: providers = [], isLoading } = useGetAllProvidersQuery({});
   const { savePreferences } = useFilterPreferences();
   const lastSavedRef = useRef<string>("");
@@ -68,10 +70,14 @@ function GenresSection() {
   const t = useTranslation();
   const dispatch = useAppDispatch();
   const mediaType = useAppSelector((state) => state.mediaFilters.mediaType);
-  const selectedGenres = useAppSelector((state) => state.mediaFilters.selectedGenres);
+  const selectedGenres = useAppSelector(
+    (state) => state.mediaFilters.selectedGenres,
+  );
 
   const genreType = mediaType === "both" ? "movie" : mediaType;
-  const { data: genres = [], isLoading } = useGetGenresWithThumbnailsQuery({ type: genreType });
+  const { data: genres = [], isLoading } = useGetGenresWithThumbnailsQuery({
+    type: genreType,
+  });
 
   const handleToggle = useCallback(
     (genre: { id: number; name: string }) => {
@@ -99,7 +105,10 @@ function GenresSection() {
                 selected={isSelected}
                 onPress={() => handleToggle({ id: genre.id, name: genre.name })}
                 style={[styles.chip, isSelected && styles.chipSelected]}
-                textStyle={[styles.chipText, isSelected && styles.chipTextSelected]}
+                textStyle={[
+                  styles.chipText,
+                  isSelected && styles.chipTextSelected,
+                ]}
                 showSelectedCheck={false}
               >
                 {genre.name}
@@ -115,7 +124,9 @@ function GenresSection() {
 function CategoriesSection({ onSelect }: { onSelect: (name: string) => void }) {
   const t = useTranslation();
   const { data: categories = [], isLoading } = useGetCategoriesQuery({});
-  const validCategories = categories.filter((c) => c.results && c.results.length > 0);
+  const validCategories = categories.filter(
+    (c) => c.results && c.results.length > 0,
+  );
 
   return (
     <View style={styles.section}>
@@ -150,9 +161,15 @@ export default function FiltersScreen() {
   const { showCategories } = useLocalSearchParams<{ showCategories: string }>();
 
   const mediaType = useAppSelector((state) => state.mediaFilters.mediaType);
-  const selectedDecade = useAppSelector((state) => state.mediaFilters.selectedDecade);
-  const providersCount = useAppSelector((state) => state.mediaFilters.selectedProviders.length);
-  const genresCount = useAppSelector((state) => state.mediaFilters.selectedGenres.length);
+  const selectedDecade = useAppSelector(
+    (state) => state.mediaFilters.selectedDecade,
+  );
+  const providersCount = useAppSelector(
+    (state) => state.mediaFilters.selectedProviders.length,
+  );
+  const genresCount = useAppSelector(
+    (state) => state.mediaFilters.selectedGenres.length,
+  );
 
   const activeFilterCount =
     (mediaType !== "both" ? 1 : 0) +
@@ -182,12 +199,13 @@ export default function FiltersScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} collapsable={false}>
       {Platform.OS === "android" && <View style={styles.grabber} />}
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        collapsable={false}
       >
         <View style={styles.section}>
           <Text variant="titleMedium" style={styles.sectionTitle}>
@@ -200,7 +218,10 @@ export default function FiltersScreen() {
           <Text variant="titleMedium" style={styles.sectionTitle}>
             {t("filters.decade")}
           </Text>
-          <DecadeSelector value={selectedDecade} onChange={handleDecadeChange} />
+          <DecadeSelector
+            value={selectedDecade}
+            onChange={handleDecadeChange}
+          />
         </View>
 
         <ProvidersSection />
@@ -211,7 +232,7 @@ export default function FiltersScreen() {
         )}
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={styles.footer} collapsable={false}>
         <Button
           mode="contained"
           onPress={handleApply}
@@ -231,7 +252,10 @@ export default function FiltersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Platform.OS === "android" ? "#121212" : "transparent",
+    backgroundColor: MD2DarkTheme.colors.surface,
+    ...Platform.select({
+      ios: { paddingTop: 20 },
+    }),
   },
   grabber: {
     width: 36,
@@ -293,9 +317,10 @@ const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: Platform.OS === "android" ? 24 : 8,
+    paddingBottom: Platform.OS === "android" ? 24 : 20,
     borderTopWidth: 1,
     borderTopColor: "#333",
+    backgroundColor: MD2DarkTheme.colors.surface,
   },
   applyButton: {
     borderRadius: 24,

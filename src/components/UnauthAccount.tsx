@@ -2,14 +2,14 @@ import { View, StyleSheet } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import useTranslation from "../service/useTranslation";
 
-const BENEFITS = [
-  { icon: "cloud-upload", text: "Cloud backup of your saved movie lists" },
-  { icon: "controller-classic", text: "Full game history & session stats" },
-  { icon: "account-group", text: "Friends list — one tap to start a game together" },
-  { icon: "star-shooting", text: "Personalized movie recommendations" },
-  { icon: "emoticon", text: "Custom nickname & avatar" },
-];
+const BENEFIT_ICONS = [
+  "cloud-upload",
+  "controller-classic",
+  "account-group",
+  "star-shooting",
+] as const;
 
 function BenefitRow({ icon, text }: { icon: string; text: string }) {
   return (
@@ -23,13 +23,22 @@ function BenefitRow({ icon, text }: { icon: string; text: string }) {
 }
 
 export default function UnauthAccount({ expired }: { expired: boolean }) {
+  const t = useTranslation();
+
+  const benefits = [
+    { icon: BENEFIT_ICONS[0], text: t("settings.unauth.benefit-cloud") },
+    { icon: BENEFIT_ICONS[1], text: t("settings.unauth.benefit-history") },
+    { icon: BENEFIT_ICONS[2], text: t("settings.unauth.benefit-friends") },
+    { icon: BENEFIT_ICONS[3], text: t("settings.unauth.benefit-recommendations") },
+  ];
+
   return (
     <View style={styles.wrap}>
       {expired && (
         <View style={styles.expiredBanner}>
           <Icon source="alert-circle-outline" size={18} color="#CF6679" />
           <Text style={styles.expiredText}>
-            Your session expired — please sign in again.
+            {t("settings.unauth.session-expired")}
           </Text>
         </View>
       )}
@@ -43,13 +52,13 @@ export default function UnauthAccount({ expired }: { expired: boolean }) {
             <Icon source="filmstrip" size={22} color="#BB86FC" />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.title}>Unlock the full experience</Text>
-            <Text style={styles.subtitle}>Sign in to get access to exclusive features</Text>
+            <Text style={styles.title}>{t("settings.unauth.title")}</Text>
+            <Text style={styles.subtitle}>{t("settings.unauth.subtitle")}</Text>
           </View>
         </View>
 
         <View style={styles.benefitList}>
-          {BENEFITS.map((b) => (
+          {benefits.map((b) => (
             <BenefitRow key={b.icon} icon={b.icon} text={b.text} />
           ))}
         </View>
@@ -60,7 +69,7 @@ export default function UnauthAccount({ expired }: { expired: boolean }) {
           style={styles.btn}
           contentStyle={styles.btnContent}
         >
-          Sign in
+          {t("settings.unauth.sign-in")}
         </Button>
         <Button
           mode="outlined"
@@ -68,7 +77,7 @@ export default function UnauthAccount({ expired }: { expired: boolean }) {
           style={[styles.btn, { marginTop: 8 }]}
           contentStyle={styles.btnContent}
         >
-          Create account
+          {t("settings.unauth.create-account")}
         </Button>
       </LinearGradient>
     </View>
@@ -93,7 +102,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(187,134,252,0.15)",
   },
-  header: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 18 },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginBottom: 18,
+  },
   iconCircle: {
     width: 44,
     height: 44,

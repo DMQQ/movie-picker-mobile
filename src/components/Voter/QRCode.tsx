@@ -1,8 +1,7 @@
-import { Share, TouchableOpacity, View } from "react-native";
-import { Button, MD2DarkTheme, Text, useTheme } from "react-native-paper";
-import QRCode from "react-native-qrcode-svg";
-import * as Clipboard from "expo-clipboard";
+import { Share, View } from "react-native";
+import { Button, Text, useTheme } from "react-native-paper";
 import { FontAwesome } from "@expo/vector-icons";
+import StyledQRCode from "../StyledQRCode";
 
 export default function QRCodeComponent(props: {
   sessionId: string;
@@ -13,22 +12,10 @@ export default function QRCodeComponent(props: {
   const theme = useTheme();
   return (
     <View>
-      <View
-        style={{
-          padding: 10,
-          borderColor: MD2DarkTheme.colors.primary,
-          borderWidth: 5,
-          width: props.size + 30,
-          height: props.size + 30,
-        }}
-      >
-        <QRCode
-          backgroundColor={theme.colors.surface}
-          color={theme.colors.primary}
-          value={`flickmate://voter/${props.sessionId}`}
-          size={props.size}
-        />
-      </View>
+      <StyledQRCode
+        value={`flickmate://voter/${props.sessionId}`}
+        size={props.size}
+      />
       <Button
         style={{ marginTop: 15 }}
         contentStyle={{ flexDirection: "row-reverse" }}
@@ -36,7 +23,7 @@ export default function QRCodeComponent(props: {
           <FontAwesome
             name="share"
             size={24}
-            color={MD2DarkTheme.colors.primary}
+            color={theme.colors.primary}
           />
         )}
         onPress={async () => {

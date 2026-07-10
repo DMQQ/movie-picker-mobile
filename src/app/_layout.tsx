@@ -13,7 +13,7 @@ import {
 import { Provider } from "react-redux";
 import { roomActions } from "../redux/room/roomSlice";
 import { authActions } from "../redux/auth/authSlice";
-import { appActions } from "../redux/app/appSlice";
+import { appActions, setUserId } from "../redux/app/appSlice";
 import { store, useAppDispatch, useAppSelector } from "../redux/store";
 import { baseUrl } from "../context/SocketContext";
 import useInit from "../service/useInit";
@@ -176,12 +176,15 @@ const RootNavigator = ({
       hasInitialized.current = true;
 
       try {
-        const [nickname, storedToken] = await Promise.all([
+        const [nickname, storedToken, userId] = await Promise.all([
           AsyncStorage.getItem("nickname"),
           SecureStore.getItemAsync("user_auth_token"),
+          AsyncStorage.getItem("userId"),
           dispatch(loadInteractions(movieInteractions)),
           dispatch(loadFilterPreferences()),
         ]);
+
+        if (userId) dispatch(setUserId(userId));
 
         if (storedToken) {
           try {

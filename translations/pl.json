@@ -76,6 +76,7 @@
     "randomize": "Losuj",
     "genre": "Gatunki",
     "next": "Dalej",
+    "active-game-banner": "Aktywna gra w pokoju",
     "finished": "Gra zakończona, nie ma więcej w tej kategorii",
     "randomize-search": "Losowe wyszukiwanie",
     "page-range-desc": "Wybierz liczbę stron do przeszukania",
@@ -319,7 +320,18 @@
     "selected-region": "Wybrany region",
     "timezone": "Strefa czasowa",
     "search-regions": "Szukaj regionów...",
-    "library": "Biblioteka"
+    "library": "Biblioteka",
+    "unauth": {
+      "session-expired": "Twoja sesja wygasła — zaloguj się ponownie.",
+      "title": "Odblokuj pełne doświadczenie",
+      "subtitle": "Zaloguj się, aby uzyskać dostęp do ekskluzywnych funkcji",
+      "benefit-cloud": "Kopia zapasowa Twoich list filmów w chmurze",
+      "benefit-history": "Pełna historia gier i statystyki sesji",
+      "benefit-friends": "(WKRÓTCE) Lista znajomych — jedno kliknięcie, by zagrać razem",
+      "benefit-recommendations": "Spersonalizowane rekomendacje filmów",
+      "sign-in": "Zaloguj się",
+      "create-account": "Utwórz konto"
+    }
   },
   "voter": {
     "games": "Gry",

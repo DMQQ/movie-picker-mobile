@@ -76,6 +76,7 @@
     "randomize": "Zufällig",
     "genre": "Genres",
     "next": "Weiter",
+    "active-game-banner": "Aktives Spiel im Raum",
     "finished": "Spiel beendet, keine weiteren Filme",
     "randomize-search": "Zufällige Suche",
     "page-range-desc": "Anzahl der zu durchsuchenden Seiten auswählen",
@@ -319,7 +320,18 @@
     "selected-region": "Ausgewählte Region",
     "timezone": "Zeitzone",
     "search-regions": "Regionen suchen...",
-    "library": "Bibliothek"
+    "library": "Bibliothek",
+    "unauth": {
+      "session-expired": "Deine Sitzung ist abgelaufen — bitte melde dich erneut an.",
+      "title": "Erlebe das volle Erlebnis",
+      "subtitle": "Melde dich an, um exklusive Funktionen zu nutzen",
+      "benefit-cloud": "Cloud-Backup deiner gespeicherten Filmlisten",
+      "benefit-history": "Vollständige Spielhistorie & Sitzungsstatistiken",
+      "benefit-friends": "(BALD) Freundesliste — ein Tipp, um gemeinsam zu spielen",
+      "benefit-recommendations": "Personalisierte Filmempfehlungen",
+      "sign-in": "Anmelden",
+      "create-account": "Konto erstellen"
+    }
   },
   "voter": {
     "title": "Für Filme abstimmen",

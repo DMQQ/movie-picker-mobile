@@ -76,6 +76,7 @@
     "randomize": "Aleatório",
     "genre": "Gêneros",
     "next": "Próximo",
+    "active-game-banner": "Jogo ativo na sala",
     "finished": "Jogo encerrado, sem mais filmes para mostrar",
     "randomize-search": "Busca aleatória",
     "page-range-desc": "Selecione o número de páginas para pesquisar",
@@ -319,7 +320,18 @@
     "selected-region": "Região selecionada",
     "timezone": "Fuso horário",
     "search-regions": "Pesquisar regiões...",
-    "library": "Biblioteca"
+    "library": "Biblioteca",
+    "unauth": {
+      "session-expired": "Sua sessão expirou — faça login novamente.",
+      "title": "Desbloqueie a experiência completa",
+      "subtitle": "Entre para acessar recursos exclusivos",
+      "benefit-cloud": "Backup em nuvem das suas listas de filmes",
+      "benefit-history": "Histórico completo de jogos e estatísticas de sessão",
+      "benefit-friends": "(EM BREVE) Lista de amigos — um toque para jogar juntos",
+      "benefit-recommendations": "Recomendações personalizadas de filmes",
+      "sign-in": "Entrar",
+      "create-account": "Criar conta"
+    }
   },
   "voter": {
     "title": "Vote nos filmes",

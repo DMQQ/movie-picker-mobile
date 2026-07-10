@@ -13,10 +13,10 @@ export async function handleNativeIntent(url: string): Promise<string | undefine
 
     case "voter":
       router.push({
-        pathname: "/voter/[sessionId]",
+        pathname: "/voter",
         params: { sessionId: value.toUpperCase() },
       });
-      return "/voter/[sessionId]";
+      return "/voter";
 
     case "create-room":
       router.push({

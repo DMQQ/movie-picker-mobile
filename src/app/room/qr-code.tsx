@@ -18,7 +18,7 @@ import {
   Share,
 } from "react-native";
 import { Avatar, Button, Text, useTheme } from "react-native-paper";
-import QRCode from "react-native-qrcode-svg";
+import StyledQRCode from "../../components/StyledQRCode";
 import { Movie } from "../../../types";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
 import PageHeading from "../../components/PageHeading";
@@ -446,23 +446,10 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
 
   return (
     <View style={styles.qrBoxContainer}>
-      <View
-        style={[
-          styles.qrCodeWrapper,
-          {
-            borderColor: theme.colors.primary,
-            backgroundColor: theme.colors.surface,
-            shadowColor: theme.colors.primary,
-          },
-        ]}
-      >
-        <QRCode
-          backgroundColor={theme.colors.surface}
-          color={theme.colors.primary}
-          value={`flickmate://room/${code.toUpperCase()}`}
-          size={Dimensions.get("screen").width * 0.6}
-        />
-      </View>
+      <StyledQRCode
+        value={`flickmate://room/${code.toUpperCase()}`}
+        size={Dimensions.get("screen").width * 0.6}
+      />
 
       <Pressable
         onPress={async () => {
@@ -588,15 +575,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
-  },
-  qrCodeWrapper: {
-    padding: 15,
-    borderWidth: 5,
-    borderRadius: 20,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 15,
-    elevation: 10,
   },
   shareButton: {
     marginTop: 10,

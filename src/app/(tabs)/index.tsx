@@ -1,10 +1,10 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import { Button, IconButton, Text, TouchableRipple } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import FortuneWheelAnimation from "../../components/GameListAnimations/FortuneWheelAnimation";
 import SwiperAnimation from "../../components/GameListAnimations/SwipeAnimation";
@@ -12,17 +12,18 @@ import VoterAnimation from "../../components/GameListAnimations/VoterAnimation";
 import RandomMovieAnimation from "../../components/GameListAnimations/RandomMovieAnimation";
 import PageHeading from "../../components/PageHeading";
 import { useUnviewedMatches } from "../../hooks/useUnviewedMatches";
+import Touch from "../../components/Touch";
+import ActiveGameBanner from "../../components/ActiveGameBanner";
 
 const CARD_HEIGHT = 280;
 
 interface GameCardProps {
   title: string;
   description: string;
-  onPress: () => void;
+  href: string;
   beta?: boolean;
   players?: string;
   duration?: string;
-
   index: number;
 }
 
@@ -33,63 +34,64 @@ const Animations = [
   <RandomMovieAnimation />,
 ];
 
-const AnimatedRipple = Animated.createAnimatedComponent(TouchableRipple);
-
 const GameCard = ({
   title,
   description,
-  onPress,
+  href,
   beta,
   players,
   duration,
   index,
 }: GameCardProps) => {
   return (
-    <AnimatedRipple
-      onPress={onPress}
+    <Animated.View
       style={styles.cardContainer}
       exiting={FadeInDown.delay((index + 1) * 75)}
     >
-      <Animated.View style={[styles.card]}>
-        {Animations[index]}
+      <Link href={href as any} asChild>
+        <Touch>
+          <View style={styles.card}>
+            {Animations[index]}
 
-        <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.8)"]}
-          style={styles.cardGradient}
-        >
-          <View style={styles.cardContent}>
-            <View style={styles.cardHeader}>
-              <View style={{ width: "100%" }}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text style={styles.cardTitle}>{title}</Text>
-                  <View style={styles.cardFooter}>
-                    {players && (
-                      <View style={styles.cardDetail}>
-                        <IconButton icon="account-group" size={20} />
-                        <Text style={styles.detailText}>{players}</Text>
+            <LinearGradient
+              colors={["transparent", "rgba(0,0,0,0.8)"]}
+              style={styles.cardGradient}
+            >
+              <View style={styles.cardContent}>
+                <View style={styles.cardHeader}>
+                  <View style={{ width: "100%" }}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={styles.cardTitle}>{title}</Text>
+                      <View style={styles.cardFooter}>
+                        {players && (
+                          <View style={styles.cardDetail}>
+                            <IconButton icon="account-group" size={20} />
+                            <Text style={styles.detailText}>{players}</Text>
+                          </View>
+                        )}
+                        {duration && (
+                          <View style={styles.cardDetail}>
+                            <IconButton icon="clock-outline" size={20} />
+                            <Text style={styles.detailText}>{duration}</Text>
+                          </View>
+                        )}
                       </View>
-                    )}
-                    {duration && (
-                      <View style={styles.cardDetail}>
-                        <IconButton icon="clock-outline" size={20} />
-                        <Text style={styles.detailText}>{duration}</Text>
-                      </View>
-                    )}
+                    </View>
+                    <Text style={styles.cardDescription}>{description}</Text>
                   </View>
                 </View>
-                <Text style={styles.cardDescription}>{description}</Text>
               </View>
-            </View>
+            </LinearGradient>
           </View>
-        </LinearGradient>
-      </Animated.View>
-    </AnimatedRipple>
+        </Touch>
+      </Link>
+    </Animated.View>
   );
 };
 
@@ -102,48 +104,39 @@ export default function GameList() {
       {
         title: t("games.voter.swipe"),
         description: t("games.voter.swipeDescription"),
-        route: "/room/setup",
+        href: "/room/setup",
         players: "1-8",
         duration: "3-10 min",
-        category: "popular",
         index: 0,
       },
-
       {
         title: t("games.fortunewheel.title"),
         description: t("games.fortunewheel.description"),
-        route: "/fortune",
+        href: "/fortune",
         players: "1",
         duration: "1 min",
-        category: "popular",
         index: 2,
       },
       {
         title: t("games.random.title"),
         description: t("games.random.description"),
-        route: "/random",
+        href: "/random",
         players: "1",
         duration: "< 1 min",
-        category: "popular",
         index: 3,
       },
       {
         title: t("games.voter.title"),
         description: t("games.voter.description"),
-        route: "/voter",
+        href: "/voter",
         beta: true,
         players: "2",
         duration: "5-10 min",
-        category: "new",
         index: 1,
       },
     ],
     [t],
   );
-
-  const handleGamePress = useCallback((route: string) => {
-    router.push(route as any);
-  }, []);
 
   return (
     <SafeIOSContainer
@@ -169,13 +162,14 @@ export default function GameList() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 60, paddingBottom: 50 }}
       >
+        <ActiveGameBanner />
         {games.map((game) => (
           <GameCard
             index={game.index}
             key={game.index}
             title={game.title as string}
             description={game.description as string}
-            onPress={() => handleGamePress(game.route)}
+            href={game.href}
             beta={game.beta}
             players={game.players}
             duration={game.duration}

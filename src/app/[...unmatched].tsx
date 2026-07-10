@@ -23,7 +23,7 @@ export default function Unmatched() {
     if (url.startsWith("voter/")) {
       const sessionId = url.replace("voter/", "");
       router.replace({
-        pathname: "/voter/[sessionId]",
+        pathname: "/voter",
         params: { sessionId: sessionId.toUpperCase() },
       });
       return;

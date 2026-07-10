@@ -1,7 +1,8 @@
 import React from "react";
 import { View, StyleSheet, Alert, Image, Linking } from "react-native";
-import { Button, Card, MD2DarkTheme, Text } from "react-native-paper";
+import { Button, MD2DarkTheme, Text } from "react-native-paper";
 import * as Updates from "expo-updates";
+import * as Sentry from "@sentry/react-native";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -13,7 +14,10 @@ interface ErrorBoundaryProps {
   children: React.ReactNode;
 }
 
-export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export default class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null };
@@ -29,6 +33,7 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
 
   componentDidCatch(error: Error, errorInfo: any) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
+    Sentry.captureException(error, errorInfo);
     this.setState({
       error,
       errorInfo,
@@ -39,10 +44,13 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
     const { error } = this.state;
     const subject = "App Error Report";
     const body = `I encountered an error in the app:\n\nError: ${error?.message || "Unknown error"}\nTime: ${new Date().toISOString()}`;
-    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const mailtoUrl = `mailto:contact@flickmate.app?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     Linking.openURL(mailtoUrl).catch(() => {
-      Alert.alert("Error", "Unable to open email app. Please send us an email describing the error.");
+      Alert.alert(
+        "Error",
+        "Unable to open email app. Please send us an email describing the error.",
+      );
     });
   };
 
@@ -56,6 +64,7 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
         },
       });
     } catch (error) {
+      Sentry.captureException(error);
       console.error("Failed to restart app:", error);
       this.retry();
     }
@@ -70,19 +79,43 @@ export default class ErrorBoundary extends React.Component<ErrorBoundaryProps, E
       return (
         <View style={styles.container}>
           <View style={{ flex: 1, justifyContent: "space-between" }}>
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-              <Image source={require("../../assets/images/icon-light.png")} style={styles.logo} resizeMode="contain" />
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                source={require("../../assets/images/icon-light.png")}
+                style={styles.logo}
+                resizeMode="contain"
+              />
 
               <Text style={styles.title}>I'm Sorry!</Text>
-              <Text style={styles.description}>Something unexpected happened. We apologize for the inconvenience.</Text>
+              <Text style={styles.description}>
+                Something unexpected happened. We apologize for the
+                inconvenience.
+              </Text>
             </View>
 
             <View style={styles.buttonContainer}>
-              <Button mode="contained" onPress={this.sendError} style={styles.sendButton} icon="send">
+              <Button
+                mode="contained"
+                onPress={this.sendError}
+                style={styles.sendButton}
+                icon="send"
+              >
                 Send Error Report
               </Button>
 
-              <Button mode="outlined" onPress={this.restartApp} style={styles.restartButton} icon="restart" textColor="#fff">
+              <Button
+                mode="outlined"
+                onPress={this.restartApp}
+                style={styles.restartButton}
+                icon="restart"
+                textColor="#fff"
+              >
                 Restart App
               </Button>
             </View>

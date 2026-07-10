@@ -7,8 +7,9 @@ import {
   useState,
 } from "react";
 import { Alert, BackHandler, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
 import { Movie } from "../../../types";
+import RoomLoader from "../../components/RoomLoader";
+import RoomEmptyState from "../../components/RoomEmptyState";
 import { FancySpinner } from "../../components/FancySpinner";
 import HomeAppbar from "../../components/Home/Appbar";
 import MatchModal from "../../components/Movie/MatchModal";
@@ -30,30 +31,6 @@ import UserInputModal, {
 import { useIsFocused } from "expo-router";
 
 const styles = StyleSheet.create({
-  navigation: {
-    padding: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  emptyListContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  noResultsText: {
-    fontSize: 40,
-    fontFamily: "Bebas",
-    color: "#fff",
-    width: "80%",
-    textAlign: "center",
-  },
-  gameStatus: { fontSize: 20, width: "80%", textAlign: "center" },
-  gameFinishStatus: {
-    fontSize: 20,
-    marginTop: 15,
-    textAlign: "center",
-    width: "80%",
-  },
   spinnerContainer: {
     paddingVertical: 35,
     alignItems: "center",
@@ -278,31 +255,21 @@ export default function Home() {
           <SwipeContent params={params as any} />
 
           {cards.length === 0 && !cardsLoading && (
-            <View style={styles.emptyListContainer}>
-              {!gameEnded && hasUserPlayed && (
-                <Text style={styles.noResultsText}>
-                  {t("room.no-more-results")}
-                </Text>
-              )}
-              <Text style={styles.gameStatus}>
-                {gameEnded ? t("room.finished") : t("room.waiting")}
-              </Text>
-            </View>
+            <RoomEmptyState gameEnded={gameEnded} hasUserPlayed={hasUserPlayed} />
           )}
         </>
       ) : (
-        <View style={styles.emptyListContainer}>
-          <FancySpinner />
-          <Text style={styles.gameFinishStatus}>
-            {gameEnded
-              ? t("room.finished")
+        <RoomLoader
+          label={
+            gameEnded
+              ? (t("room.finished") as string)
               : isJoining
-                ? t("room.joining")
+                ? (t("room.joining") as string)
                 : cardsLoading
-                  ? t("room.loading")
-                  : t("room.awaiting-start")}
-          </Text>
-        </View>
+                  ? (t("room.loading") as string)
+                  : (t("room.awaiting-start") as string)
+          }
+        />
       )}
 
       <UserInputModal
