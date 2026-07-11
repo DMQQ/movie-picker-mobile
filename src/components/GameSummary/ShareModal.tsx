@@ -1,0 +1,94 @@
+import { memo, useCallback, useEffect, useRef } from "react";
+import { Dimensions, Modal, Pressable, StyleSheet, View } from "react-native";
+import { IconButton, Text } from "react-native-paper";
+import ViewShot, { captureRef } from "react-native-view-shot";
+import * as Sharing from "expo-sharing";
+import * as Haptics from "expo-haptics";
+import { MaterialIcons } from "@expo/vector-icons";
+import { FancySpinner } from "../FancySpinner";
+import MarathonTicket from "../MarathonTicket";
+import { useLazyGetSummaryShareQuery } from "../../redux/movie/movieApi";
+import useTranslation from "../../service/useTranslation";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+interface Props {
+  visible: boolean;
+  onClose: () => void;
+  roomId: string;
+}
+
+export default memo(function ShareModal({ visible, onClose, roomId }: Props) {
+  const viewShotRef = useRef<ViewShot>(null);
+  const [fetchSummaryShare, { data, isLoading, error }] = useLazyGetSummaryShareQuery();
+  const t = useTranslation();
+
+  useEffect(() => {
+    if (visible && roomId) fetchSummaryShare({ roomId });
+  }, [visible, roomId, fetchSummaryShare]);
+
+  const captureAndShare = useCallback(async () => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      const uri = await captureRef(viewShotRef, {
+        format: "png", quality: 1, result: "tmpfile", fileName: `marathon-${roomId}.png`,
+      });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, {
+          mimeType: "image/png",
+          dialogTitle: t("game-summary.share.dialog-title") as string,
+        });
+      }
+    } catch (err) {
+      console.error("Failed to capture ticket:", err);
+    }
+  }, [roomId]);
+
+  useEffect(() => {
+    if (!data || !visible) return;
+    const timeout = setTimeout(() => captureAndShare(), 500);
+    return () => clearTimeout(timeout);
+  }, [data, visible, captureAndShare]);
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <View style={styles.overlay}>
+        <Pressable style={styles.backdrop} onPress={onClose} />
+        <View style={styles.content}>
+          <IconButton icon="close" size={24} onPress={onClose} style={styles.closeBtn} iconColor="#000" />
+          {isLoading ? (
+            <View style={styles.centered}>
+              <FancySpinner size={60} />
+              <Text style={styles.loadingText}>{t("game-summary.share.loading")}</Text>
+            </View>
+          ) : error ? (
+            <View style={styles.centered}>
+              <MaterialIcons name="error-outline" size={48} color="#ff6b6b" />
+              <Text style={styles.errorText}>{t("game-summary.share.error")}</Text>
+            </View>
+          ) : data?.movies && data.movies.length > 0 ? (
+            <ViewShot ref={viewShotRef} options={{ format: "png", quality: 1, fileName: `marathon-${roomId}.png` }} style={styles.viewShot}>
+              <MarathonTicket movies={data.movies} />
+            </ViewShot>
+          ) : (
+            <View style={styles.centered}>
+              <MaterialIcons name="movie" size={48} color="#666" />
+              <Text style={styles.errorText}>{t("game-summary.share.no-movies")}</Text>
+            </View>
+          )}
+        </View>
+      </View>
+    </Modal>
+  );
+});
+
+const styles = StyleSheet.create({
+  overlay: { flex: 1, justifyContent: "center", alignItems: "center" },
+  backdrop: { ...StyleSheet.absoluteFill, backgroundColor: "rgba(0,0,0,0.85)" },
+  content: { alignItems: "center", maxHeight: SCREEN_HEIGHT * 0.9 },
+  closeBtn: { position: "absolute", top: 25, right: 25, zIndex: 10, backgroundColor: "rgba(255,255,255,0.1)" },
+  viewShot: { backgroundColor: "#000", borderRadius: 16, overflow: "hidden" },
+  centered: { alignItems: "center", justifyContent: "center", padding: 40 },
+  loadingText: { marginTop: 16, color: "#fff", fontFamily: "Bebas", fontSize: 16, letterSpacing: 1 },
+  errorText: { marginTop: 12, color: "#999", fontFamily: "Bebas", fontSize: 16, letterSpacing: 1 },
+});
