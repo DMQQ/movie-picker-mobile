@@ -54,13 +54,19 @@
           "root": "./src/app"
         }
       ],
-      "expo-quick-actions",
       "expo-secure-store",
       "expo-localization",
       "expo-image",
       "expo-sharing",
       "expo-status-bar",
       "expo-apple-authentication",
+      [
+        "expo-navigation-bar",
+        {
+          "position": "relative",
+          "backgroundColor": "#000000"
+        }
+      ],
       [
         "react-native-nitro-google-signin",
         {

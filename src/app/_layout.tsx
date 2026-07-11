@@ -18,7 +18,6 @@ import { store, useAppDispatch, useAppSelector } from "../redux/store";
 import { baseUrl } from "../context/SocketContext";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
-import { STORAGE_KEY } from "../redux/favourites/favourites";
 import {
   DatabaseProvider,
   useMovieInteractions,
@@ -26,7 +25,6 @@ import {
 import { loadInteractions } from "../redux/movieInteractions/movieInteractionsSlice";
 import { loadFilterPreferences } from "../redux/filterPreferences/filterPreferencesSlice";
 import * as SplashScreen from "expo-splash-screen";
-import * as QuickActions from "expo-quick-actions";
 import useMaintenance from "../service/useMaintanance";
 import { getDeviceSettings } from "../service/useTranslation";
 
@@ -59,65 +57,8 @@ if (!__DEV__)
 
 const theme = MD2DarkTheme;
 
-const MIGRATION_FLAG = "securestore_to_kv_migration_complete";
-
-const KEYS_TO_MIGRATE = [
-  "nickname",
-  "userId",
-  STORAGE_KEY,
-  "app_review_requested",
-  "games_played_count",
-  "voterSessionId",
-  "room_builder_preferences",
-];
-
-async function migrateFromSecureStoreToKVStore() {
-  try {
-    const isMigrated = await AsyncStorage.getItem(MIGRATION_FLAG);
-    if (isMigrated === "true") return;
-
-    console.log("[Migration] Starting SecureStore to KVStore migration...");
-
-    const [kvStoreValues, secureStoreValues] = await Promise.all([
-      Promise.all(KEYS_TO_MIGRATE.map((key) => AsyncStorage.getItem(key))),
-      Promise.all(KEYS_TO_MIGRATE.map((key) => SecureStore.getItemAsync(key))),
-    ]);
-
-    const migrateOperations: Promise<void>[] = [];
-
-    KEYS_TO_MIGRATE.forEach((key, index) => {
-      const kvValue = kvStoreValues[index];
-      const secureValue = secureStoreValues[index];
-
-      if (secureValue && !kvValue) {
-        console.log(`[Migration] Migrating key: ${key}`);
-        migrateOperations.push(AsyncStorage.setItem(key, secureValue));
-      }
-    });
-
-    if (migrateOperations.length > 0) {
-      await Promise.all(migrateOperations);
-      console.log(`[Migration] Migrated ${migrateOperations.length} keys`);
-    } else {
-      console.log("[Migration] No keys to migrate");
-    }
-
-    await AsyncStorage.setItem(MIGRATION_FLAG, "true");
-    console.log("[Migration] Migration complete");
-  } catch (error) {
-    console.error("[Migration] Error during migration:", error);
-  }
-}
-
 function RootLayout() {
   const { isLoaded, isUpdating } = useInit();
-  const [migrationComplete, setMigrationComplete] = useState(false);
-
-  useEffect(() => {
-    migrateFromSecureStoreToKVStore().finally(() => {
-      setMigrationComplete(true);
-    });
-  }, []);
 
   return (
     <AppErrorBoundary>
@@ -125,18 +66,20 @@ function RootLayout() {
         initialMetrics={initialWindowMetrics}
         style={{ flex: 1, backgroundColor: "#000" }}
       >
-        <Provider store={store}>
-          <DatabaseProvider>
-            <PaperProvider theme={theme}>
-              <ThemeProvider value={{ ...DarkTheme, colors: { ...DarkTheme.colors, background: "#000" } }}>
-                <RootNavigator
-                  isLoaded={isLoaded && migrationComplete}
-                  isUpdating={isUpdating}
-                />
-              </ThemeProvider>
-            </PaperProvider>
-          </DatabaseProvider>
-        </Provider>
+        <ThemeProvider
+          value={{
+            ...DarkTheme,
+            colors: { ...DarkTheme.colors, background: "#000" },
+          }}
+        >
+          <PaperProvider theme={theme}>
+            <Provider store={store}>
+              <DatabaseProvider>
+                <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
+              </DatabaseProvider>
+            </Provider>
+          </PaperProvider>
+        </ThemeProvider>
       </SafeAreaProvider>
     </AppErrorBoundary>
   );
@@ -159,10 +102,31 @@ const RootNavigator = ({
   const dispatch = useAppDispatch();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const onboardingCompleted = useAppSelector((s) => s.app.onboardingCompleted);
-  const isPlaying = useAppSelector((s) => s.room.isPlaying);
   const needsOnboarding = settingsLoaded ? !onboardingCompleted : null;
   const { movieInteractions, isReady: dbReady } = useMovieInteractions();
   const hasInitialized = useRef(false);
+  const pendingToken = useRef<string | null>(null);
+
+  useEffect(() => {
+    const token = pendingToken.current;
+    if (!settingsLoaded || !token) return;
+
+    fetch(`${baseUrl}/api/auth/me`, {
+      headers: { authorization: `Bearer ${token}` },
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const { user } = await res.json();
+          dispatch(authActions.setCredentials({ token, user }));
+        } else {
+          await SecureStore.deleteItemAsync("user_auth_token");
+          dispatch(authActions.setSessionExpired());
+        }
+      })
+      .catch((authErr) => {
+        console.log("[Auth] session restore failed:", authErr);
+      });
+  }, [settingsLoaded, dispatch]);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -177,33 +141,19 @@ const RootNavigator = ({
 
       try {
         const [nickname, storedToken, userId] = await Promise.all([
-          AsyncStorage.getItem("nickname"),
+          AsyncStorage.getItemAsync("nickname"),
           SecureStore.getItemAsync("user_auth_token"),
-          AsyncStorage.getItem("userId"),
+          AsyncStorage.getItemAsync("userId"),
+        ]);
+
+        Promise.allSettled([
           dispatch(loadInteractions(movieInteractions)),
           dispatch(loadFilterPreferences()),
         ]);
 
         if (userId) dispatch(setUserId(userId));
 
-        if (storedToken) {
-          try {
-            const res = await fetch(`${baseUrl}/api/auth/me`, {
-              headers: { authorization: `Bearer ${storedToken}` },
-            });
-            if (res.ok) {
-              const { user } = await res.json();
-              dispatch(
-                authActions.setCredentials({ token: storedToken, user }),
-              );
-            } else {
-              await SecureStore.deleteItemAsync("user_auth_token");
-              dispatch(authActions.setSessionExpired());
-            }
-          } catch (authErr) {
-            console.log("[Auth] session restore failed:", authErr);
-          }
-        }
+        pendingToken.current = storedToken;
 
         const deviceSettings = getDeviceSettings();
 
@@ -231,18 +181,6 @@ const RootNavigator = ({
     initializeApp();
   }, [isLoaded, isUpdating, dbReady, movieInteractions, dispatch]);
 
-  useEffect(() => {
-    if (Platform.OS !== "ios") return;
-    QuickActions.setItems([
-      {
-        id: "uninstall",
-        title: "Thanks for trying us!",
-        subtitle: "We'd love to have you back",
-        icon: "symbol:hand.wave",
-      },
-    ]);
-  }, []);
-
   if (!isLoaded || !settingsLoaded || needsOnboarding === null) {
     return null;
   }
@@ -265,7 +203,7 @@ const RootNavigator = ({
         <Stack.Protected guard={!needsOnboarding}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-          <Stack.Screen name="room" options={{ headerShown: false, gestureEnabled: !isPlaying }} />
+          <Stack.Screen name="room" options={{ headerShown: false }} />
 
           <Stack.Screen name="fortune" options={{ headerShown: false }} />
 

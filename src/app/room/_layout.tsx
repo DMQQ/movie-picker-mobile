@@ -3,7 +3,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SocketProvider } from "../../context/SocketContext";
 import { RoomContextProvider } from "../../context/RoomContext";
 import { useEffect } from "react";
-import { useAppDispatch } from "../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { roomActions } from "../../redux/room/roomSlice";
 import { View } from "react-native";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
@@ -14,7 +14,6 @@ export default function RootLayout() {
 
   useEffect(() => {
     return () => {
-      console.log("Resetting room state");
       dispatch(roomActions.reset());
       dispatch(reset());
 
@@ -23,9 +22,20 @@ export default function RootLayout() {
   }, []);
 
   const insets = useSafeAreaInsets();
+  const isPlaying = useAppSelector((s) => s.room.isPlaying);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000", paddingTop: insets.top, paddingBottom: insets.bottom }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#000",
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+      }}
+    >
+      <Stack.Screen
+        options={{ gestureEnabled: !isPlaying, headerShown: false }}
+      />
       <SocketProvider namespace="/swipe">
         <RoomContextProvider>
           <Stack screenOptions={{ headerShown: false }}>
@@ -33,7 +43,10 @@ export default function RootLayout() {
 
             <Stack.Screen name="summary" options={{ headerShown: false }} />
 
-            <Stack.Screen name="[roomId]" options={{ headerShown: false, gestureEnabled: false }} />
+            <Stack.Screen
+              name="[roomId]"
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
 
             <Stack.Screen name="overview" options={{ headerShown: false }} />
 

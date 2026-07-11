@@ -193,8 +193,6 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
 
       if (!socket || !sessionId) return;
 
-      console.log("[voter] submitRating", { movieId, ratings, sessionId });
-
       socket.emit("voter:rating:submit", {
         sessionId,
         movieId,
@@ -205,11 +203,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
         },
       });
 
-      setCurrentMovies((prev) => {
-        const next = prev.filter((m: any) => m.id !== movieId);
-        console.log("[voter] movies remaining after submit:", next.length);
-        return next;
-      });
+      setCurrentMovies((prev) => prev.filter((m: any) => m.id !== movieId));
     },
     [socket, sessionId]
   );
@@ -224,16 +218,13 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     if (!socket) return;
 
     const handleSessionUsers = ({ users: newUsers, sessionId: updateSessionId }: any) => {
-      console.log("[voter] voter:session:users", { updateSessionId, count: newUsers.length });
       if (updateSessionId === sessionId) {
         setUsers(newUsers);
       }
     };
 
     const handleMoviesReceive = async ({ movies, setId }: any) => {
-      console.log("[voter] voter:movies:receive", { count: movies.length, setId, sessionId });
       if (movies.length === 0) {
-        console.log("[voter] empty movie batch, refetching...");
         await socket.emitWithAck("voter:movies:refetch", { sessionId });
         return;
       }
@@ -243,23 +234,17 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const handleSessionUpdate = ({ session }: any) => {
-      console.log("[voter] voter:session:update", { status: session.status });
       if (session.status === "completed") {
         setStatus("completed");
       }
     };
 
     const handleResults = ({ results }: any) => {
-      console.log("[voter] voter:results received", {
-        topPicksCount: results?.topPicks?.length,
-        selectedMovie: results?.selectedMovie?.title || results?.selectedMovie?.name,
-      });
       setSessionResults(results);
       setStatus("completed");
     };
 
     const handleError = ({ error }: any) => {
-      console.log("[voter] voter:error", error);
       setError(error);
     };
 

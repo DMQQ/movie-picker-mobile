@@ -28,8 +28,7 @@ interface PageHeadingProps extends PropsWithChildren {
 interface RightIconButtonProps extends PageHeadingProps {
   showRightIconButton?: boolean;
   rightIconName?:
-    | keyof typeof AntDesign.glyphMap
-    | keyof typeof Ionicons.glyphMap;
+    keyof typeof AntDesign.glyphMap | keyof typeof Ionicons.glyphMap;
   onRightIconPress?: () => void;
   extraScreenPaddingTop?: number;
   rightIconTitle?: string;
@@ -205,7 +204,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontFamily: "Bebas",
-    fontSize: 32,
+    fontSize: 26,
     color: "#fff",
     textAlign: "center",
   },

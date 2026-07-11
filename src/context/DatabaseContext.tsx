@@ -1,8 +1,21 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import type { SQLiteDatabase } from "expo-sqlite";
 import { getDatabase } from "../database";
-import { createMovieInteractionsRepo, type MovieInteractionsRepo } from "../database/repositories/movieInteractionsRepo";
-import { createMatchesRepo, type MatchesRepo } from "../database/repositories/matchesRepo";
+import {
+  createMovieInteractionsRepo,
+  type MovieInteractionsRepo,
+} from "../database/repositories/movieInteractionsRepo";
+import {
+  createMatchesRepo,
+  type MatchesRepo,
+} from "../database/repositories/matchesRepo";
 
 interface DatabaseContextValue {
   db: SQLiteDatabase | null;
@@ -20,7 +33,8 @@ const DatabaseContext = createContext<DatabaseContextValue>({
 
 export function DatabaseProvider({ children }: { children: ReactNode }) {
   const [db, setDb] = useState<SQLiteDatabase | null>(null);
-  const [movieInteractions, setMovieInteractions] = useState<MovieInteractionsRepo | null>(null);
+  const [movieInteractions, setMovieInteractions] =
+    useState<MovieInteractionsRepo | null>(null);
   const [matches, setMatches] = useState<MatchesRepo | null>(null);
   const [isReady, setIsReady] = useState(false);
 
@@ -48,8 +62,18 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  const context = useMemo(
+    () => ({
+      db,
+      movieInteractions,
+      matches,
+      isReady,
+    }),
+    [db, movieInteractions, matches, isReady],
+  );
+
   return (
-    <DatabaseContext.Provider value={{ db, movieInteractions, matches, isReady }}>
+    <DatabaseContext.Provider value={context}>
       {children}
     </DatabaseContext.Provider>
   );

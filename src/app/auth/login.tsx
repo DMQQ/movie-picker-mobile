@@ -112,8 +112,8 @@ export default function LoginScreen() {
 
                 <AuthProviderButtons
                   onEmailPress={() => setShowEmailForm(true)}
-                  onApplePress={handleAppleSignIn}
-                  onGooglePress={handleGoogleSignIn}
+                  onApplePress={() => { setErrors({}); handleAppleSignIn(); }}
+                  onGooglePress={() => { setErrors({}); handleGoogleSignIn(); }}
                   isGoogleLoading={isGoogleLoading}
                   disabled={anyLoading}
                   appleButtonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}

@@ -12,7 +12,7 @@ import envs from "../constants/envs";
 import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 
-const isDev = true; // envs.mode !== "production";
+const isDev = false; //envs.mode !== "production";
 
 export const baseUrl = isDev
   ? Platform.OS === "ios"
@@ -111,7 +111,9 @@ export const SocketProvider = ({
       const newSocket = socketIOClient(baseUrl + namespace, {
         ...connectionConfig,
         auth: {
-          token: authToken ? `Bearer ${authToken}` : `Bearer ${envs.server_auth_token}`,
+          token: authToken
+            ? `Bearer ${authToken}`
+            : `Bearer ${envs.server_auth_token}`,
         },
         extraHeaders: {
           "user-id": userId,

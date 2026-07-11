@@ -132,7 +132,9 @@ export const movieApi = createApi({
       infiniteQueryOptions: {
         initialPageParam: 0,
         getNextPageParam: (lastPage, _allPages, lastPageParam) =>
-          Array.isArray(lastPage) && lastPage.length > 0 ? lastPageParam + 1 : undefined,
+          Array.isArray(lastPage) && lastPage.length > 0
+            ? lastPageParam + 1
+            : undefined,
       },
     }),
 
@@ -166,7 +168,9 @@ export const movieApi = createApi({
         }
 
         const queryString = searchParams.toString();
-        return { url: `/landing/random${queryString ? `?${queryString}` : ""}` };
+        return {
+          url: `/landing/random${queryString ? `?${queryString}` : ""}`,
+        };
       },
     }),
 
@@ -188,11 +192,18 @@ export const movieApi = createApi({
       query: ({ type }) => `/movie/genres/${type}`,
     }),
 
-    getMaxPageRange: builder.query<{ maxCount: number }, { type: string; genres: string }>({
-      query: ({ type, genres }) => `/movie/max-count?type=${type}&genres=${genres}`,
+    getMaxPageRange: builder.query<
+      { maxCount: number },
+      { type: string; genres: string }
+    >({
+      query: ({ type, genres }) =>
+        `/movie/max-count?type=${type}&genres=${genres}`,
     }),
 
-    getSectionMovies: builder.query<{ name: string; results: Movie[]; totalPagesCount: number }, SectionParams>({
+    getSectionMovies: builder.query<
+      { name: string; results: Movie[]; totalPagesCount: number },
+      SectionParams
+    >({
       query: ({ name, page = 1 }) => `/landing/${name}/${page}`,
     }),
 
@@ -201,21 +212,29 @@ export const movieApi = createApi({
       { name: string },
       number
     >({
-      query: ({ queryArg: { name }, pageParam }) => `/landing/${name}/${pageParam}`,
+      query: ({ queryArg: { name }, pageParam }) =>
+        `/landing/${name}/${pageParam}`,
       infiniteQueryOptions: {
         // Page 1 is already provided by the landing endpoint via group.results,
         // so this query activates lazily and starts from page 2.
         initialPageParam: 2,
         getNextPageParam: (lastPage, _allPages, lastPageParam) =>
-          lastPage.results.length > 0 && lastPageParam < lastPage.totalPagesCount
+          lastPage.results.length > 0 &&
+          lastPageParam < lastPage.totalPagesCount
             ? lastPageParam + 1
             : undefined,
       },
     }),
 
-    getFeatured: builder.query<Movie & { tagline: string; genres: string[] }, { selectedChip: string }>({
-      query: ({ selectedChip }) => "/landing/featured?category=" + selectedChip || "all",
-      providesTags: (result, error, arg) => [{ type: "LandingPageInfinite", id: `featured-${arg.selectedChip}` }],
+    getFeatured: builder.query<
+      Movie & { tagline: string; genres: string[] },
+      { selectedChip: string }
+    >({
+      query: ({ selectedChip }) =>
+        "/landing/featured?category=" + selectedChip || "all",
+      providesTags: (result, error, arg) => [
+        { type: "LandingPageInfinite", id: `featured-${arg.selectedChip}` },
+      ],
     }),
 
     getSimilar: builder.query<
@@ -233,7 +252,10 @@ export const movieApi = createApi({
       query: () => "/categories",
     }),
 
-    getChipCategories: builder.query<{ id: string; label: string; image?: string }[], void>({
+    getChipCategories: builder.query<
+      { id: string; label: string; image?: string }[],
+      void
+    >({
       query: () => "/chip-categories",
     }),
 
@@ -256,19 +278,31 @@ export const movieApi = createApi({
       query: ({ type, id }) => `/${type}/${id}/trailers`,
     }),
 
-    getMovieCategoriesWithThumbnails: builder.query<CategoryWithThumbnails[], void>({
+    getMovieCategoriesWithThumbnails: builder.query<
+      CategoryWithThumbnails[],
+      void
+    >({
       query: () => "/movie/categories/movie/thumbnails",
     }),
 
-    getTVCategoriesWithThumbnails: builder.query<CategoryWithThumbnails[], void>({
+    getTVCategoriesWithThumbnails: builder.query<
+      CategoryWithThumbnails[],
+      void
+    >({
       query: () => "/movie/categories/tv/thumbnails",
     }),
 
-    getGenresWithThumbnails: builder.query<GenreWithThumbnail[], { type: "movie" | "tv" }>({
+    getGenresWithThumbnails: builder.query<
+      GenreWithThumbnail[],
+      { type: "movie" | "tv" }
+    >({
       query: ({ type }) => `/movie/genres/${type}/thumbnails`,
     }),
 
-    getSpecialCategoriesWithThumbnails: builder.query<SpecialCategoryWithThumbnail[], { type: "movie" | "tv" }>({
+    getSpecialCategoriesWithThumbnails: builder.query<
+      SpecialCategoryWithThumbnail[],
+      { type: "movie" | "tv" }
+    >({
       query: ({ type }) => `/movie/special-categories/${type}/thumbnails`,
     }),
 
@@ -280,7 +314,10 @@ export const movieApi = createApi({
       }),
     }),
 
-    prefetchRoomContent: builder.mutation<PrefetchResult, RoomConfig & { maxRounds?: number }>({
+    prefetchRoomContent: builder.mutation<
+      PrefetchResult,
+      RoomConfig & { maxRounds?: number }
+    >({
       query: (config) => ({
         url: "/room/prefetch",
         method: "POST",
@@ -288,7 +325,10 @@ export const movieApi = createApi({
       }),
     }),
 
-    search: builder.query<SearchResults, SearchParams & { operation?: "replace" | "append" }>({
+    search: builder.query<
+      SearchResults,
+      SearchParams & { operation?: "replace" | "append" }
+    >({
       query: (params) => {
         // Remove operation parameter from API request
         const { operation, ...apiParams } = params;
@@ -310,13 +350,12 @@ export const movieApi = createApi({
         };
       },
 
-      // Add cache tag which we can use for invalidation
       providesTags: ["SearchResults"],
 
       transformResponse: (response: any) => {
         return {
           ...response,
-          results: (response.results || []).map((item: any) => ({
+          results: (response?.results || []).map((item: any) => ({
             ...item,
             key: item.id.toString(),
           })),
@@ -328,7 +367,10 @@ export const movieApi = createApi({
       query: ({ roomId }) => `/room/summary/${roomId}/share`,
     }),
 
-    shareMovies: builder.mutation<SummaryShareResponse, { movies: { id: number; type: string }[] }>({
+    shareMovies: builder.mutation<
+      SummaryShareResponse,
+      { movies: { id: number; type: string }[] }
+    >({
       query: ({ movies }) => ({
         url: "/share",
         method: "POST",

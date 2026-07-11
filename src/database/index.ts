@@ -1,5 +1,5 @@
 import * as SQLite from "expo-sqlite";
-import { File, Directory, Paths } from "expo-file-system/next";
+import { File, Directory, Paths } from "expo-file-system";
 import { migrateDatabase } from "./schema";
 
 const DATABASE_NAME = "flickmate.db";

@@ -14,6 +14,7 @@ import PageHeading from "../../components/PageHeading";
 import { useUnviewedMatches } from "../../hooks/useUnviewedMatches";
 import Touch from "../../components/Touch";
 import ActiveGameBanner from "../../components/ActiveGameBanner";
+import layout from "../../utils/layout";
 
 const CARD_HEIGHT = 280;
 
@@ -67,7 +68,13 @@ const GameCard = ({
                         alignItems: "center",
                       }}
                     >
-                      <Text style={styles.cardTitle}>{title}</Text>
+                      <Text
+                        style={styles.cardTitle}
+                        numberOfLines={2}
+                        textBreakStrategy="highQuality"
+                      >
+                        {title}
+                      </Text>
                       <View style={styles.cardFooter}>
                         {players && (
                           <View style={styles.cardDetail}>
@@ -106,7 +113,7 @@ export default function GameList() {
         description: t("games.voter.swipeDescription"),
         href: "/room/setup",
         players: "1-8",
-        duration: "3-10 min",
+        duration: "3-10m",
         index: 0,
       },
       {
@@ -114,7 +121,7 @@ export default function GameList() {
         description: t("games.fortunewheel.description"),
         href: "/fortune",
         players: "1",
-        duration: "1 min",
+        duration: "1m",
         index: 2,
       },
       {
@@ -122,7 +129,7 @@ export default function GameList() {
         description: t("games.random.description"),
         href: "/random",
         players: "1",
-        duration: "< 1 min",
+        duration: "< 1m",
         index: 3,
       },
       {
@@ -272,6 +279,7 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     fontSize: 28,
     color: "#fff",
+    maxWidth: "55%",
   },
   cardDescription: {
     color: "rgba(255,255,255,0.8)",
@@ -300,7 +308,7 @@ const styles = StyleSheet.create({
   cardDetail: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 8,
+    marginRight: 4,
   },
   detailText: {
     color: "#fff",

@@ -20,17 +20,16 @@ export default function QRCodeComponent(props: {
         style={{ marginTop: 15 }}
         contentStyle={{ flexDirection: "row-reverse" }}
         icon={() => (
-          <FontAwesome
-            name="share"
-            size={24}
-            color={theme.colors.primary}
-          />
+          <FontAwesome name="share" size={24} color={theme.colors.primary} />
         )}
         onPress={async () => {
           Share.share({
-            message: "Hey! Join my room on Movie Picker: " + props.sessionId,
+            message:
+              "Hey! Join my room on Movie Picker: " +
+              "https://flickmate.app/voter/" +
+              props.sessionId.toUpperCase(),
             title: "Join my room on Movie Picker",
-            url: "https://flickmate.app/voter/" + props.sessionId.toUpperCase,
+            url: "https://flickmate.app/voter/" + props.sessionId.toUpperCase(),
           });
         }}
       >

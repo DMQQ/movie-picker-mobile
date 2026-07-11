@@ -2,7 +2,6 @@ import { memo, useCallback, useState } from "react";
 import { View } from "react-native";
 import { useGetChipCategoriesQuery } from "../../redux/movie/movieApi";
 import LandingHeader from "../../components/LandingHeader";
-import NoConnectionError from "../../components/NoConnectionError";
 import CategoryPage from "../../components/Landing/CategoryPage";
 import CategoryPagerIndicator from "../../components/Landing/CategoryPagerIndicator";
 import LoadingSkeleton from "../../components/Landing/LoadingSkeleton";
@@ -12,7 +11,6 @@ import { FeaturedSectionSkeleton } from "../../components/Landing/FeaturedSectio
 export default function Landing() {
   return (
     <View style={{ flex: 1, backgroundColor: "#000", paddingBottom: 15 }}>
-      <NoConnectionError />
       <PagerCategoryScreen />
       <LandingHeader />
     </View>
@@ -22,7 +20,8 @@ export default function Landing() {
 const PagerCategoryScreen = memo(() => {
   const [selectedChip, setSelectedChip] = useState("all");
 
-  const { data: chipCategories = [] } = useGetChipCategoriesQuery();
+  const { data: chipCategoriesData } = useGetChipCategoriesQuery();
+  const chipCategories = chipCategoriesData ?? [];
 
   const handleChipPress = useCallback((chip: string) => {
     setSelectedChip(chip);
