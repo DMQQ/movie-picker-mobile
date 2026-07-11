@@ -1,10 +1,20 @@
 import React, { memo, useCallback, useMemo } from "react";
-import { FlatList, Image, ListRenderItem, StyleSheet, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  ListRenderItem,
+  StyleSheet,
+  View,
+} from "react-native";
 import { MD2DarkTheme, TouchableRipple, Text } from "react-native-paper";
 import SkeletonCard from "./SkeletonCard";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-type Provider = { provider_id: number; logo_path: string; provider_name: string };
+type Provider = {
+  provider_id: number;
+  logo_path: string;
+  provider_name: string;
+};
 
 type ProviderListProps = {
   providers: Provider[];
@@ -22,61 +32,98 @@ interface ProviderIconProps {
   vertical: boolean;
 }
 
-const ProviderIcon = memo(({ item, isSelected, onToggle, vertical }: ProviderIconProps) => {
-  const handlePress = useCallback(() => {
-    onToggle(item.provider_id);
-  }, [onToggle, item.provider_id]);
+const ProviderIcon = memo(
+  ({ item, isSelected, onToggle, vertical }: ProviderIconProps) => {
+    const handlePress = useCallback(() => {
+      onToggle(item.provider_id);
+    }, [onToggle, item.provider_id]);
 
-  return (
-    <View style={vertical ? styles.providerContainerVertical : styles.providerContainer}>
-      <TouchableRipple
-        onPress={handlePress}
-        style={[vertical ? styles.providerWrapperVertical : styles.providerWrapper, isSelected && styles.selectedProvider]}
+    return (
+      <View
+        style={
+          vertical ? styles.providerContainerVertical : styles.providerContainer
+        }
       >
-        <>
-          <Image
-            source={{ uri: `https://image.tmdb.org/t/p/w300${item.logo_path}` }}
-            style={vertical ? styles.providerLogoVertical : styles.providerLogo}
-          />
-          {vertical && item.provider_name && (
-            <Text style={styles.providerName} numberOfLines={1}>
-              {item.provider_name}
-            </Text>
-          )}
-          {isSelected && (
-            <View
-              style={[
-                styles.checkmark,
-                { backgroundColor: MD2DarkTheme.colors.primary },
-                vertical ? styles.checkmarkVertical : styles.checkmarkHorizontal,
-              ]}
-            >
-              <MaterialIcons name="check" size={vertical ? 20 : 15} color="#fff" />
-            </View>
-          )}
-        </>
-      </TouchableRipple>
-    </View>
-  );
-});
+        <TouchableRipple
+          onPress={handlePress}
+          style={[
+            vertical ? styles.providerWrapperVertical : styles.providerWrapper,
+            isSelected && styles.selectedProvider,
+          ]}
+        >
+          <>
+            <Image
+              source={{
+                uri: `https://image.tmdb.org/t/p/w300${item.logo_path}`,
+              }}
+              style={
+                vertical ? styles.providerLogoVertical : styles.providerLogo
+              }
+            />
+            {vertical && item.provider_name && (
+              <Text style={styles.providerName} numberOfLines={1}>
+                {item.provider_name}
+              </Text>
+            )}
+            {isSelected && (
+              <View
+                style={[
+                  styles.checkmark,
+                  { backgroundColor: MD2DarkTheme.colors.primary },
+                  vertical
+                    ? styles.checkmarkVertical
+                    : styles.checkmarkHorizontal,
+                ]}
+              >
+                <MaterialCommunityIcons
+                  name="check"
+                  size={vertical ? 20 : 15}
+                  color="#fff"
+                />
+              </View>
+            )}
+          </>
+        </TouchableRipple>
+      </View>
+    );
+  },
+);
 
 const ProviderRowSkeleton = memo(() => (
   <View style={styles.providerRow}>
     {[1, 2, 3].map((item) => (
-      <SkeletonCard key={item} width={100} height={120} borderRadius={12} style={styles.skeletonMargin} />
+      <SkeletonCard
+        key={item}
+        width={100}
+        height={120}
+        borderRadius={12}
+        style={styles.skeletonMargin}
+      />
     ))}
   </View>
 ));
 
 const ProviderColumnSkeleton = memo(() => (
   <View>
-    <SkeletonCard width={60} height={54} borderRadius={8} style={styles.skeletonBottomMargin} />
+    <SkeletonCard
+      width={60}
+      height={54}
+      borderRadius={8}
+      style={styles.skeletonBottomMargin}
+    />
     <SkeletonCard width={60} height={54} borderRadius={8} />
   </View>
 ));
 
 const ProviderList = memo(
-  ({ providers = [], selectedProviders = [], onToggleProvider, isCategorySelected, vertical = false, isLoading = false }: ProviderListProps) => {
+  ({
+    providers = [],
+    selectedProviders = [],
+    onToggleProvider,
+    isCategorySelected,
+    vertical = false,
+    isLoading = false,
+  }: ProviderListProps) => {
     const handleToggle = useCallback(
       (providerId: number) => {
         const newProviders = selectedProviders.includes(providerId)
@@ -84,10 +131,13 @@ const ProviderList = memo(
           : [...selectedProviders, providerId];
         onToggleProvider(newProviders);
       },
-      [selectedProviders, onToggleProvider]
+      [selectedProviders, onToggleProvider],
     );
 
-    const selectedSet = useMemo(() => new Set(selectedProviders), [selectedProviders]);
+    const selectedSet = useMemo(
+      () => new Set(selectedProviders),
+      [selectedProviders],
+    );
 
     const providerRows = useMemo(() => {
       const rows: Provider[][] = [];
@@ -119,7 +169,7 @@ const ProviderList = memo(
           ))}
         </View>
       ),
-      [selectedSet, handleToggle]
+      [selectedSet, handleToggle],
     );
 
     const renderHorizontalColumn: ListRenderItem<Provider[]> = useCallback(
@@ -136,10 +186,13 @@ const ProviderList = memo(
           ))}
         </View>
       ),
-      [selectedSet, handleToggle]
+      [selectedSet, handleToggle],
     );
 
-    const keyExtractor = useCallback((_: Provider[], index: number) => `group-${index}`, []);
+    const keyExtractor = useCallback(
+      (_: Provider[], index: number) => `group-${index}`,
+      [],
+    );
 
     if (vertical) {
       if (isLoading) {
@@ -189,7 +242,7 @@ const ProviderList = memo(
         />
       </View>
     );
-  }
+  },
 );
 
 const styles = StyleSheet.create({

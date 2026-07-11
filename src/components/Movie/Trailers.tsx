@@ -1,11 +1,28 @@
 import { memo, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, AppState, Dimensions, Platform, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  AppState,
+  Dimensions,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import Animated, { FadeInDown, FadeInLeft, FadeOutLeft, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  FadeInLeft,
+  FadeOutLeft,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { useGetTrailersQuery } from "../../redux/movie/movieApi";
 import { hexToRgba } from "../../utils/hexToRgb";
 import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
-import { Entypo } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import YoutubeIframe from "react-native-youtube-iframe";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -40,7 +57,10 @@ function Trailers({
 
   const animatedValue = useAnimatedStyle(() => ({
     width: withSpring(isExpanded.value ? width - 30 : 115, config),
-    height: withSpring(isExpanded.value ? height - insets.top - 100 : 45, config),
+    height: withSpring(
+      isExpanded.value ? height - insets.top - 100 : 45,
+      config,
+    ),
   }));
 
   const [canPlay, setCanPlay] = useState(false);
@@ -81,20 +101,36 @@ function Trailers({
         <PlatformBlurView
           style={[
             styles.blurContainer,
-            Platform.OS === "android" && { backgroundColor: "#000", borderWidth: 1, borderColor: hexToRgba("#FFFFFF", 0.1) },
+            Platform.OS === "android" && {
+              backgroundColor: "#000",
+              borderWidth: 1,
+              borderColor: hexToRgba("#FFFFFF", 0.1),
+            },
           ]}
         >
           <Animated.View style={[animatedValue, styles.content]}>
             {isOpen && (
               <>
-                <Animated.View entering={FadeInDown.delay(100)} style={styles.videosContainer}>
+                <Animated.View
+                  entering={FadeInDown.delay(100)}
+                  style={styles.videosContainer}
+                >
                   <ScrollView
                     style={styles.scrollView}
-                    contentContainerStyle={[styles.scrollContent, { paddingBottom: 70 }]}
+                    contentContainerStyle={[
+                      styles.scrollContent,
+                      { paddingBottom: 70 },
+                    ]}
                     showsVerticalScrollIndicator={false}
                   >
                     {filteredItems.map((trailer, index) => (
-                      <PlayerItem key={trailer.id} canPlay={canPlay} index={index} name={trailer.name} videoKey={trailer.key} />
+                      <PlayerItem
+                        key={trailer.id}
+                        canPlay={canPlay}
+                        index={index}
+                        name={trailer.name}
+                        videoKey={trailer.key}
+                      />
                     ))}
                   </ScrollView>
                 </Animated.View>
@@ -120,10 +156,18 @@ function Trailers({
             >
               {!isOpen && (
                 <Animated.View entering={FadeInLeft} exiting={FadeOutLeft}>
-                  <Entypo name="youtube" size={24} color="#FF0000" />
+                  <MaterialCommunityIcons
+                    name="youtube"
+                    size={24}
+                    color="#FF0000"
+                  />
                 </Animated.View>
               )}
-              <Text variant="bodyMedium" style={styles.buttonText} numberOfLines={1}>
+              <Text
+                variant="bodyMedium"
+                style={styles.buttonText}
+                numberOfLines={1}
+              >
                 {isOpen ? "" : "Trailers"}
               </Text>
             </TouchableOpacity>
@@ -132,7 +176,10 @@ function Trailers({
       </Animated.View>
 
       {isOpen && (
-        <Animated.View style={[StyleSheet.absoluteFill, styles.overlay]} pointerEvents="auto">
+        <Animated.View
+          style={[StyleSheet.absoluteFill, styles.overlay]}
+          pointerEvents="auto"
+        >
           <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
         </Animated.View>
       )}
@@ -142,37 +189,62 @@ function Trailers({
 
 export default memo(Trailers);
 
-const PlayerItem = memo(({ name, videoKey, index, canPlay }: { name: string; videoKey: string; index: number; canPlay?: boolean }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isReady, setIsReady] = useState(false);
+const PlayerItem = memo(
+  ({
+    name,
+    videoKey,
+    index,
+    canPlay,
+  }: {
+    name: string;
+    videoKey: string;
+    index: number;
+    canPlay?: boolean;
+  }) => {
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isReady, setIsReady] = useState(false);
 
-  return (
-    <Animated.View entering={FadeInDown.delay(index * 80)} style={styles.playerItem}>
-      <BlurViewWrapper style={{ borderRadius: 15 }}>
-        <Pressable onPress={() => setIsPlaying((p) => !p)} style={styles.playerWrapper}>
-          {!isReady && (
-            <View style={styles.placeholder}>
-              <ActivityIndicator size="large" color={MD2DarkTheme.colors.primary} />
-              <Text variant="bodySmall" style={styles.loadingText}>
-                Loading...
-              </Text>
-            </View>
-          )}
-          <YoutubeIframe
-            play={isPlaying && canPlay}
-            width={width - 60}
-            height={(width - 60) * 0.5625}
-            videoId={videoKey}
-            onReady={() => setIsReady(true)}
-          />
-        </Pressable>
-        <Text variant="titleSmall" style={styles.videoTitle} numberOfLines={2}>
-          {name}
-        </Text>
-      </BlurViewWrapper>
-    </Animated.View>
-  );
-});
+    return (
+      <Animated.View
+        entering={FadeInDown.delay(index * 80)}
+        style={styles.playerItem}
+      >
+        <BlurViewWrapper style={{ borderRadius: 15 }}>
+          <Pressable
+            onPress={() => setIsPlaying((p) => !p)}
+            style={styles.playerWrapper}
+          >
+            {!isReady && (
+              <View style={styles.placeholder}>
+                <ActivityIndicator
+                  size="large"
+                  color={MD2DarkTheme.colors.primary}
+                />
+                <Text variant="bodySmall" style={styles.loadingText}>
+                  Loading...
+                </Text>
+              </View>
+            )}
+            <YoutubeIframe
+              play={isPlaying && canPlay}
+              width={width - 60}
+              height={(width - 60) * 0.5625}
+              videoId={videoKey}
+              onReady={() => setIsReady(true)}
+            />
+          </Pressable>
+          <Text
+            variant="titleSmall"
+            style={styles.videoTitle}
+            numberOfLines={2}
+          >
+            {name}
+          </Text>
+        </BlurViewWrapper>
+      </Animated.View>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   overlay: {

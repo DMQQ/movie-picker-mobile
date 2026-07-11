@@ -1,4 +1,4 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback, useMemo } from "react"; // useCallback kept for handleGamePress/handleSecondaryPress
@@ -267,7 +267,11 @@ const GameInviteSection = memo(
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <FontAwesome name={config.icon as any} size={18} color="#fff" />
+                <MaterialCommunityIcons
+                  name={config.icon as any}
+                  size={18}
+                  color="#fff"
+                />
                 <Text numberOfLines={1} style={gameInviteStyles.buttonText}>
                   {config.buttonText}
                 </Text>
@@ -285,7 +289,7 @@ const GameInviteSection = memo(
                 activeOpacity={0.8}
               >
                 <View style={gameInviteStyles.secondaryButtonInner}>
-                  <FontAwesome name="sliders" size={18} color="#fff" />
+                  <MaterialCommunityIcons name="slide" size={18} color="#fff" />
                   <Text numberOfLines={1} style={gameInviteStyles.buttonText}>
                     {config.secondaryButtonText}
                   </Text>

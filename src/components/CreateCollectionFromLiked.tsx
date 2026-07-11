@@ -1,4 +1,4 @@
-import { FontAwesome } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Keyboard, Pressable, View } from "react-native";
 import { MD2DarkTheme, Text, TextInput } from "react-native-paper";
@@ -14,7 +14,10 @@ interface CreateCollectionFromLikedProps {
   beforeCreate?: () => void;
 }
 
-export default function CreateCollectionFromLiked({ data, beforeCreate }: CreateCollectionFromLikedProps) {
+export default function CreateCollectionFromLiked({
+  data,
+  beforeCreate,
+}: CreateCollectionFromLikedProps) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [text, setText] = useState("");
   const dispatch = useAppDispatch();
@@ -55,7 +58,11 @@ export default function CreateCollectionFromLiked({ data, beforeCreate }: Create
             borderColor: MD2DarkTheme.colors.primary,
           }}
         >
-          <FontAwesome name="bookmark-o" color={MD2DarkTheme.colors.primary} size={16} />
+          <MaterialCommunityIcons
+            name="bookmark"
+            color={MD2DarkTheme.colors.primary}
+            size={16}
+          />
           <Text
             style={{
               color: MD2DarkTheme.colors.primary,

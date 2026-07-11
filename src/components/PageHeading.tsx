@@ -13,7 +13,7 @@ import {
 import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PlatformBlurView from "./PlatformBlurView";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface PageHeadingProps extends PropsWithChildren {
   title: string;
@@ -28,7 +28,8 @@ interface PageHeadingProps extends PropsWithChildren {
 interface RightIconButtonProps extends PageHeadingProps {
   showRightIconButton?: boolean;
   rightIconName?:
-    keyof typeof AntDesign.glyphMap | keyof typeof Ionicons.glyphMap;
+    | keyof typeof MaterialCommunityIcons.glyphMap
+    | keyof typeof MaterialCommunityIcons.glyphMap;
   onRightIconPress?: () => void;
   extraScreenPaddingTop?: number;
   rightIconTitle?: string;

@@ -43,7 +43,7 @@ const migrations: Record<number, string[]> = {
 async function getSchemaVersion(db: SQLiteDatabase): Promise<number> {
   try {
     const result = await db.getFirstAsync<{ version: number }>(
-      "SELECT MAX(version) as version FROM schema_version"
+      "SELECT MAX(version) as version FROM schema_version",
     );
     return result?.version ?? 0;
   } catch {
@@ -51,33 +51,35 @@ async function getSchemaVersion(db: SQLiteDatabase): Promise<number> {
   }
 }
 
-async function setSchemaVersion(db: SQLiteDatabase, version: number): Promise<void> {
+async function setSchemaVersion(
+  db: SQLiteDatabase,
+  version: number,
+): Promise<void> {
   await db.runAsync(
     "INSERT OR REPLACE INTO schema_version (version, applied_at) VALUES (?, strftime('%s', 'now'))",
-    [version]
+    [version],
   );
 }
 
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   const currentVersion = await getSchemaVersion(db);
 
-  console.log(`[DB Migration] Current version: ${currentVersion}, Target version: ${CURRENT_SCHEMA_VERSION}`);
-
   if (currentVersion >= CURRENT_SCHEMA_VERSION) {
-    // Safety check: ensure all tables exist even if version says we're up to date
     await ensureTablesExist(db);
     return;
   }
 
-  for (let version = currentVersion + 1; version <= CURRENT_SCHEMA_VERSION; version++) {
+  for (
+    let version = currentVersion + 1;
+    version <= CURRENT_SCHEMA_VERSION;
+    version++
+  ) {
     const migrationStatements = migrations[version];
     if (migrationStatements) {
-      console.log(`[DB Migration] Running migration ${version}`);
       for (const statement of migrationStatements) {
         try {
           await db.execAsync(statement);
         } catch (error) {
-          console.error(`[DB Migration] Failed to execute statement:`, statement, error);
           throw error;
         }
       }
@@ -91,7 +93,10 @@ async function ensureTablesExist(db: SQLiteDatabase): Promise<void> {
   // Run all CREATE TABLE IF NOT EXISTS statements to fix corrupted state
   for (const statements of Object.values(migrations)) {
     for (const statement of statements) {
-      if (statement.includes("CREATE TABLE IF NOT EXISTS") || statement.includes("CREATE INDEX IF NOT EXISTS")) {
+      if (
+        statement.includes("CREATE TABLE IF NOT EXISTS") ||
+        statement.includes("CREATE INDEX IF NOT EXISTS")
+      ) {
         try {
           await db.execAsync(statement);
         } catch (error) {

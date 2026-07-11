@@ -11,9 +11,8 @@ import useTranslation from "../../service/useTranslation";
 import FeaturedSection from "./FeaturedSection";
 import Section, { SECTION_HEIGHT } from "./Section";
 import LoadingSkeleton from "./LoadingSkeleton";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { SectionData } from "../../types";
-import { useGetFeaturedQuery } from "../../redux/movie/movieApi";
 
 const getItemCount = (data: any) => data?.length || 0;
 const getItem = (data: any, index: number) => data[index];
@@ -107,8 +106,8 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
           <LoadingSkeleton />
         ) : (
           <View style={styles.noMoreContainer}>
-            <FontAwesome
-              name="check-circle"
+            <MaterialCommunityIcons
+              name="check"
               size={32}
               color="rgba(255, 255, 255, 0.6)"
             />

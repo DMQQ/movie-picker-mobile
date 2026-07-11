@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo } from "react";
 import { Platform, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
 import FrostedGlass from "../FrostedGlass";
 import Thumbnail from "../Thumbnail";
@@ -67,16 +67,16 @@ const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvi
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "flatrate":
-        return { name: "subscriptions", color: "#2E7D32" }; // Darker green
+        return { name: "television-subscription", color: "#2E7D32" };
       case "rent":
       case "buy":
-        return { name: "shopping-cart", color: "#E65100" }; // Darker orange for both rent and buy
+        return { name: "cart", color: "#E65100" };
       case "free":
-        return { name: "star", color: "#F57F17" }; // Darker yellow
+        return { name: "star", color: "#F57F17" };
       case "ads":
-        return { name: "tv", color: "#6A1B9A" }; // Darker purple
+        return { name: "television", color: "#6A1B9A" };
       default:
-        return { name: "play-circle-outline", color: "#424242" }; // Darker gray
+        return { name: "play-circle-outline", color: "#424242" };
     }
   };
 
@@ -95,7 +95,7 @@ const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvi
     return uniqueIcons.slice(0, 4).map((item, index) => (
       <View key={item.type} style={[styles.iconBadge, { backgroundColor: item.iconInfo.color }, index > 0 && styles.iconMargin]}>
         {/* @ts-ignore */}
-        <MaterialIcons name={item.iconInfo.name} size={10} color="white" />
+        <MaterialCommunityIcons name={item.iconInfo.name as any} size={10} color="white" />
       </View>
     ));
   }, []);
@@ -133,28 +133,28 @@ const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvi
           <View style={styles.legendItem}>
             <View style={[styles.legendIcon, { backgroundColor: "#2E7D32" }]}>
               {/* @ts-ignore */}
-              <MaterialIcons name="subscriptions" size={10} color="white" />
+              <MaterialCommunityIcons name="television-subscription" size={10} color="white" />
             </View>
             <Text style={styles.legendText}>{t("global.provider_legend.subscription")}</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendIcon, { backgroundColor: "#E65100" }]}>
               {/* @ts-ignore */}
-              <MaterialIcons name="shopping-cart" size={10} color="white" />
+              <MaterialCommunityIcons name="cart" size={10} color="white" />
             </View>
             <Text style={styles.legendText}>{t("global.provider_legend.rent_buy")}</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendIcon, { backgroundColor: "#F57F17" }]}>
               {/* @ts-ignore */}
-              <MaterialIcons name="star" size={10} color="white" />
+              <MaterialCommunityIcons name="star" size={10} color="white" />
             </View>
             <Text style={styles.legendText}>{t("global.provider_legend.free")}</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendIcon, { backgroundColor: "#6A1B9A" }]}>
               {/* @ts-ignore */}
-              <MaterialIcons name="tv" size={10} color="white" />
+              <MaterialCommunityIcons name="television" size={10} color="white" />
             </View>
             <Text style={styles.legendText}>{t("global.provider_legend.ads")}</Text>
           </View>

@@ -1,17 +1,17 @@
-import * as Haptics from "expo-haptics";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
-import Animated, { useAnimatedStyle, withTiming, SharedValue } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+  SharedValue,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Movie } from "../../types";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import PlatformBlurView, { BlurViewWrapper } from "./PlatformBlurView";
-import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
-import { useAppDispatch, useAppSelector } from "../redux/store";
-import ShareTicketButton, { IconShareButton } from "./ShareTicketButton";
+import { IconShareButton } from "./ShareTicketButton";
 
 const { height } = Dimensions.get("screen");
 const IMG_HEIGHT = height * 0.75;
@@ -25,7 +25,12 @@ interface FloatingMovieHeaderProps {
   backButtonIcon?: string;
 }
 
-function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", onBack }: FloatingMovieHeaderProps) {
+function FloatingMovieHeader({
+  movie,
+  scrollY,
+  backButtonIcon = "chevron-left",
+  onBack,
+}: FloatingMovieHeaderProps) {
   const insets = useSafeAreaInsets();
 
   const threshold = useMemo(() => IMG_HEIGHT * 0.9, []);
@@ -33,14 +38,18 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
   const backgroundOpacity = useAnimatedStyle(() => {
     const isVisible = scrollY.value > threshold;
     return {
-      opacity: isVisible ? withTiming(1, { duration: 250 }) : withTiming(0, { duration: 150 }),
+      opacity: isVisible
+        ? withTiming(1, { duration: 250 })
+        : withTiming(0, { duration: 150 }),
     };
   });
 
   const contentOpacity = useAnimatedStyle(() => {
     const isVisible = scrollY.value > threshold;
     return {
-      opacity: isVisible ? withTiming(1, { duration: 250 }) : withTiming(0, { duration: 150 }),
+      opacity: isVisible
+        ? withTiming(1, { duration: 250 })
+        : withTiming(0, { duration: 150 }),
     };
   });
 
@@ -49,7 +58,9 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
     return {
       transform: [
         {
-          translateX: isVisible ? withTiming(0, { duration: 250 }) : withTiming(-20, { duration: 150 }),
+          translateX: isVisible
+            ? withTiming(0, { duration: 250 })
+            : withTiming(-20, { duration: 150 }),
         },
       ],
     };
@@ -60,7 +71,9 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
     return {
       transform: [
         {
-          translateY: isVisible ? withTiming(0, { duration: 250 }) : withTiming(10, { duration: 150 }),
+          translateY: isVisible
+            ? withTiming(0, { duration: 250 })
+            : withTiming(10, { duration: 150 }),
         },
       ],
     };
@@ -71,7 +84,9 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
     return {
       transform: [
         {
-          translateX: isVisible ? withTiming(0, { duration: 250 }) : withTiming(20, { duration: 150 }),
+          translateX: isVisible
+            ? withTiming(0, { duration: 250 })
+            : withTiming(20, { duration: 150 }),
         },
       ],
     };
@@ -84,22 +99,43 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
           <BlurViewWrapper style={styles.iosBlurBackground} />
         </Animated.View>
       ) : (
-        <Animated.View style={[styles.backgroundContainer, styles.androidBackground, backgroundOpacity]} />
+        <Animated.View
+          style={[
+            styles.backgroundContainer,
+            styles.androidBackground,
+            backgroundOpacity,
+          ]}
+        />
       )}
 
       <View style={styles.headerContent}>
         <PlatformBlurView interactive style={[styles.buttonContainer]}>
-          <IconButton icon={backButtonIcon} size={25} onPress={onBack} iconColor="white" />
+          <IconButton
+            icon={backButtonIcon}
+            size={25}
+            onPress={onBack}
+            iconColor="white"
+          />
         </PlatformBlurView>
 
         <Animated.View style={[styles.movieInfoContainer, contentOpacity]}>
           <Animated.View style={[styles.posterContainer, posterTransform]}>
-            <Thumbnail size={ThumbnailSizes.poster.small} container={[styles.posterThumbnail]} path={movie?.poster_path} priority="low" />
+            <Thumbnail
+              size={ThumbnailSizes.poster.small}
+              container={[styles.posterThumbnail]}
+              path={movie?.poster_path}
+              priority="low"
+            />
           </Animated.View>
 
           <View style={styles.textContainer}>
             <Animated.View style={textTransform}>
-              <Text variant="titleMedium" style={styles.movieTitle} numberOfLines={1} ellipsizeMode="tail">
+              <Text
+                variant="titleMedium"
+                style={styles.movieTitle}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
                 {movie?.title || movie?.name}
               </Text>
             </Animated.View>
@@ -107,12 +143,22 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
             <Animated.View style={[styles.metadataRow, textTransform]}>
               {(movie?.vote_average || 0) > 0 && (
                 <View style={styles.ratingContainer}>
-                  <AntDesign name="star" size={12} color="#FFD700" />
-                  <Text style={styles.ratingText}>{movie?.vote_average.toFixed(1)}</Text>
+                  <MaterialCommunityIcons
+                    name="star"
+                    size={12}
+                    color="#FFD700"
+                  />
+                  <Text style={styles.ratingText}>
+                    {movie?.vote_average.toFixed(1)}
+                  </Text>
                 </View>
               )}
 
-              {movie?.release_date && <Text style={styles.metadataText}>{new Date(movie.release_date).getFullYear()}</Text>}
+              {movie?.release_date && (
+                <Text style={styles.metadataText}>
+                  {new Date(movie.release_date).getFullYear()}
+                </Text>
+              )}
 
               {movie?.runtime > 0 && (
                 <Text style={styles.metadataText}>
@@ -121,19 +167,26 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
               )}
 
               {(movie as any)?.number_of_episodes > 0 && (
-                <Text style={styles.metadataText}>{(movie as any).number_of_episodes} episodes</Text>
+                <Text style={styles.metadataText}>
+                  {(movie as any).number_of_episodes} episodes
+                </Text>
               )}
 
               {(movie as any)?.number_of_seasons > 0 && (
                 <Text style={styles.metadataText}>
-                  {(movie as any).number_of_seasons} season{(movie as any).number_of_seasons > 1 ? "s" : ""}
+                  {(movie as any).number_of_seasons} season
+                  {(movie as any).number_of_seasons > 1 ? "s" : ""}
                 </Text>
               )}
             </Animated.View>
 
             {movie?.genres && movie.genres.length > 0 && (
               <Animated.View style={[styles.genresContainer, textTransform]}>
-                <Text style={styles.genresText} numberOfLines={1} ellipsizeMode="tail">
+                <Text
+                  style={styles.genresText}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
                   {movie.genres
                     .slice(0, 3)
                     .map((genre: any) => genre.name)
@@ -147,7 +200,10 @@ function FloatingMovieHeader({ movie, scrollY, backButtonIcon = "chevron-left", 
         <Animated.View style={[contentOpacity, heartTransform]}>
           <PlatformBlurView
             interactive
-            style={[styles.buttonContainer, Platform.OS === "android" && styles.androidButtonBackground]}
+            style={[
+              styles.buttonContainer,
+              Platform.OS === "android" && styles.androidButtonBackground,
+            ]}
             tintColor={MD2DarkTheme.colors.primary}
           >
             {movie && <IconShareButton movie={movie} />}

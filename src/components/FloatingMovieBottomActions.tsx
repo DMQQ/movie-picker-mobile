@@ -1,9 +1,21 @@
 import * as Haptics from "expo-haptics";
 import { useCallback, useMemo, useState } from "react";
-import { Dimensions, Platform, StyleSheet, View, Share, Linking, TouchableOpacity } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  StyleSheet,
+  View,
+  Share,
+  Linking,
+  TouchableOpacity,
+} from "react-native";
 import { IconButton, Text } from "react-native-paper";
-import Animated, { useAnimatedStyle, withTiming, SharedValue } from "react-native-reanimated";
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import Animated, {
+  useAnimatedStyle,
+  withTiming,
+  SharedValue,
+} from "react-native-reanimated";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Movie } from "../../types";
 import PlatformBlurView, { BlurViewWrapper } from "./PlatformBlurView";
 import { useGetTrailersQuery } from "../redux/movie/movieApi";
@@ -21,11 +33,20 @@ interface FloatingMovieBottomActionsProps {
   providers: any[];
 }
 
-export default function FloatingMovieBottomActions({ movie, scrollY, movieId, typeOfContent, providers }: FloatingMovieBottomActionsProps) {
+export default function FloatingMovieBottomActions({
+  movie,
+  scrollY,
+  movieId,
+  typeOfContent,
+  providers,
+}: FloatingMovieBottomActionsProps) {
   const navigation = useNavigation<any>();
   const [showTrailers, setShowTrailers] = useState(false);
 
-  const { data: trailers } = useGetTrailersQuery({ id: movieId, type: typeOfContent });
+  const { data: trailers } = useGetTrailersQuery({
+    id: movieId,
+    type: typeOfContent,
+  });
 
   const filteredTrailers = useMemo(() => {
     return trailers?.filter((v) => v.site === "YouTube" && v.official) || [];
@@ -37,7 +58,9 @@ export default function FloatingMovieBottomActions({ movie, scrollY, movieId, ty
 
     try {
       const title = movie.title || movie.name;
-      const year = movie.release_date ? new Date(movie.release_date).getFullYear() : "";
+      const year = movie.release_date
+        ? new Date(movie.release_date).getFullYear()
+        : "";
       const shareText = `Check out "${title}"${year ? ` (${year})` : ""}!`;
 
       await Share.share({
@@ -65,14 +88,20 @@ export default function FloatingMovieBottomActions({ movie, scrollY, movieId, ty
       const allProviders: any[] = [];
 
       // Collect providers from all categories
-      (["flatrate", "rent", "buy", "free", "ads"] as const).forEach((category) => {
-        if (Array.isArray((providers as any)[category])) {
-          allProviders.push(...(providers as any)[category]);
-        }
-      });
+      (["flatrate", "rent", "buy", "free", "ads"] as const).forEach(
+        (category) => {
+          if (Array.isArray((providers as any)[category])) {
+            allProviders.push(...(providers as any)[category]);
+          }
+        },
+      );
 
       // Extract unique provider IDs
-      const uniqueProviderIds = new Set(allProviders.filter((p: any) => p.provider_id).map((p: any) => p.provider_id));
+      const uniqueProviderIds = new Set(
+        allProviders
+          .filter((p: any) => p.provider_id)
+          .map((p: any) => p.provider_id),
+      );
 
       watchProviders = Array.from(uniqueProviderIds);
     }
@@ -88,7 +117,8 @@ export default function FloatingMovieBottomActions({ movie, scrollY, movieId, ty
     let searchQuery = "";
     if (genres.length === 0 && watchProviders.length === 0) {
       // Fallback to genre-based text search if no filters available
-      searchQuery = genreNames || typeOfContent === "movie" ? "action" : "drama";
+      searchQuery =
+        genreNames || typeOfContent === "movie" ? "action" : "drama";
     }
 
     router.navigate({
@@ -107,10 +137,14 @@ export default function FloatingMovieBottomActions({ movie, scrollY, movieId, ty
   const containerOpacity = useAnimatedStyle(() => {
     const isVisible = scrollY.value > threshold;
     return {
-      opacity: isVisible ? withTiming(1, { duration: 250 }) : withTiming(0, { duration: 150 }),
+      opacity: isVisible
+        ? withTiming(1, { duration: 250 })
+        : withTiming(0, { duration: 150 }),
       transform: [
         {
-          translateY: isVisible ? withTiming(0, { duration: 250 }) : withTiming(50, { duration: 150 }),
+          translateY: isVisible
+            ? withTiming(0, { duration: 250 })
+            : withTiming(50, { duration: 150 }),
         },
       ],
     };
@@ -119,29 +153,46 @@ export default function FloatingMovieBottomActions({ movie, scrollY, movieId, ty
   const backgroundOpacity = useAnimatedStyle(() => {
     const isVisible = scrollY.value > threshold;
     return {
-      opacity: isVisible ? withTiming(1, { duration: 250 }) : withTiming(0, { duration: 150 }),
+      opacity: isVisible
+        ? withTiming(1, { duration: 250 })
+        : withTiming(0, { duration: 150 }),
     };
   });
 
   return (
-    <Animated.View style={[styles.container, { paddingBottom: 15 }, containerOpacity]}>
+    <Animated.View
+      style={[styles.container, { paddingBottom: 15 }, containerOpacity]}
+    >
       {Platform.OS === "ios" ? (
         <Animated.View style={[styles.backgroundContainer, backgroundOpacity]}>
           <BlurViewWrapper style={styles.iosBlurBackground} />
         </Animated.View>
       ) : (
-        <Animated.View style={[styles.backgroundContainer, styles.androidBackground, backgroundOpacity]} />
+        <Animated.View
+          style={[
+            styles.backgroundContainer,
+            styles.androidBackground,
+            backgroundOpacity,
+          ]}
+        />
       )}
 
       <View style={styles.actionsContainer}>
         <TouchableOpacity
-          style={[styles.smartSearchButton, Platform.OS === "android" && styles.androidButtonBackground]}
+          style={[
+            styles.smartSearchButton,
+            Platform.OS === "android" && styles.androidButtonBackground,
+          ]}
           onPress={handleSmartSearchPress}
           activeOpacity={0.8}
         >
           <PlatformBlurView style={styles.smartSearchBlur}>
             <View style={styles.smartSearchContent}>
-              <Ionicons name="search" size={20} color="white" />
+              <MaterialCommunityIcons
+                name="search-web"
+                size={20}
+                color="white"
+              />
               <Text style={styles.searchButtonText} variant="bodySmall">
                 Smart Search
               </Text>
@@ -149,26 +200,51 @@ export default function FloatingMovieBottomActions({ movie, scrollY, movieId, ty
           </PlatformBlurView>
         </TouchableOpacity>
 
-        <PlatformBlurView style={[styles.buttonGroup, Platform.OS === "android" && styles.androidButtonBackground]}>
-          <IconButton icon={() => <Entypo name="youtube" size={24} color="#FF0000" />} size={30} onPress={handleTrailersPress} />
-          <IconButton icon="share-variant" size={30} onPress={handleShare} iconColor="white" />
+        <PlatformBlurView
+          style={[
+            styles.buttonGroup,
+            Platform.OS === "android" && styles.androidButtonBackground,
+          ]}
+        >
+          <IconButton
+            icon={() => <MaterialCommunityIcons name="youtube" size={24} color="#FF0000" />}
+            size={30}
+            onPress={handleTrailersPress}
+          />
+          <IconButton
+            icon="share-variant"
+            size={30}
+            onPress={handleShare}
+            iconColor="white"
+          />
         </PlatformBlurView>
       </View>
 
       {showTrailers && filteredTrailers.length > 0 && (
         <Animated.View style={styles.trailersContainer}>
-          <PlatformBlurView style={[styles.trailersBlur, Platform.OS === "android" && styles.androidButtonBackground]}>
+          <PlatformBlurView
+            style={[
+              styles.trailersBlur,
+              Platform.OS === "android" && styles.androidButtonBackground,
+            ]}
+          >
             {filteredTrailers.slice(0, 3).map((trailer) => (
               <TouchableOpacity
                 key={trailer.key}
                 onPress={() => {
-                  Linking.openURL(`https://www.youtube.com/watch?v=${trailer.key}`);
+                  Linking.openURL(
+                    `https://www.youtube.com/watch?v=${trailer.key}`,
+                  );
                 }}
                 style={styles.trailerButton}
                 activeOpacity={0.8}
               >
-                <Entypo name="youtube" size={16} color="#FF0000" />
-                <Text variant="bodySmall" style={styles.trailerText} numberOfLines={1}>
+                <MaterialCommunityIcons name="youtube" size={16} color="#FF0000" />
+                <Text
+                  variant="bodySmall"
+                  style={styles.trailerText}
+                  numberOfLines={1}
+                >
                   {trailer.name || "Trailer"}
                 </Text>
               </TouchableOpacity>

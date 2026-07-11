@@ -219,7 +219,7 @@ export const movieApi = createApi({
         // so this query activates lazily and starts from page 2.
         initialPageParam: 2,
         getNextPageParam: (lastPage, _allPages, lastPageParam) =>
-          lastPage.results.length > 0 &&
+          lastPage?.results?.length > 0 &&
           lastPageParam < lastPage.totalPagesCount
             ? lastPageParam + 1
             : undefined,

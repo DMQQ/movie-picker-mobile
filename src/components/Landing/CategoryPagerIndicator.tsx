@@ -6,7 +6,6 @@ import {
   FlatList,
   Platform,
 } from "react-native";
-import Animated, { FadeInUp } from "react-native-reanimated";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useRef } from "react";

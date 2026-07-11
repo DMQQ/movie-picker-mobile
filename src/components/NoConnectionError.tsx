@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import Feather from "@expo/vector-icons/Feather";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useEffect, useState } from "react";
 import { url } from "../context/SocketContext";
@@ -33,7 +33,7 @@ export default function NoConnectionError() {
 
   return (
     <View style={styles.container}>
-      <Feather name="wifi-off" size={45} color="#fff" />
+      <MaterialCommunityIcons name="wifi-off" size={45} color="#fff" />
       <Text style={styles.text}>No connection available.</Text>
     </View>
   );

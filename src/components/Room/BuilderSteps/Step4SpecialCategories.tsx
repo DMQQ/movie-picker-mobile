@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { MaterialIcons } from "@expo/vector-icons";
 import SelectionCard from "../SelectionCard";
 import SkeletonCard from "../SkeletonCard";
 import { useGetSpecialCategoriesWithThumbnailsQuery } from "../../../redux/movie/movieApi";

@@ -1,6 +1,6 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import useTranslation from "../../service/useTranslation";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Platform } from "react-native";
 import { MD2DarkTheme } from "react-native-paper";
 
@@ -113,7 +113,7 @@ function TabLayout() {
         <NativeTabs.Trigger.Icon
           selectedColor={selectedColor}
           sf="gamecontroller"
-          md="sports_esports"
+          src={<NativeTabs.Trigger.VectorIcon family={MaterialIcons} name="sports-esports" />}
         />
         <NativeTabs.Trigger.Label hidden={Platform.OS === "ios"}>
           {t("tabBar.games")}
@@ -124,7 +124,7 @@ function TabLayout() {
         <NativeTabs.Trigger.Icon
           selectedColor={selectedColor}
           sf="movieclapper"
-          md="movie"
+          src={<NativeTabs.Trigger.VectorIcon family={MaterialIcons} name="movie" />}
         />
         <NativeTabs.Trigger.Label hidden={Platform.OS === "ios"}>
           {t("tabBar.explore")}
@@ -135,7 +135,7 @@ function TabLayout() {
         <NativeTabs.Trigger.Icon
           selectedColor={selectedColor}
           sf="bookmark"
-          md="bookmarks"
+          src={<NativeTabs.Trigger.VectorIcon family={MaterialIcons} name="bookmarks" />}
         />
         <NativeTabs.Trigger.Label hidden={Platform.OS === "ios"}>
           {t("tabBar.favourites")}
@@ -146,7 +146,7 @@ function TabLayout() {
         <NativeTabs.Trigger.Icon
           selectedColor={selectedColor}
           sf="magnifyingglass"
-          md="search"
+          src={<NativeTabs.Trigger.VectorIcon family={MaterialIcons} name="search" />}
         />
         <NativeTabs.Trigger.Label hidden={Platform.OS === "ios"}>
           {t("tabBar.search")}
@@ -157,7 +157,7 @@ function TabLayout() {
         <NativeTabs.Trigger.Icon
           selectedColor={selectedColor}
           sf="person.circle"
-          md="account_circle"
+          src={<NativeTabs.Trigger.VectorIcon family={MaterialIcons} name="account-circle" />}
         />
         <NativeTabs.Trigger.Label hidden={Platform.OS === "ios"}>
           {t("tabBar.account")}

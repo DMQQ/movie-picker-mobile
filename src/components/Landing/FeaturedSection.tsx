@@ -1,18 +1,12 @@
 import { Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useMemo } from "react";
-import {
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Pressable,
-} from "react-native";
+import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import RatingIcons from "../RatingIcons";
 import Skeleton from "../Skeleton/Skeleton";
 import { Image, ImageBackground } from "expo-image";
-import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
@@ -71,8 +65,8 @@ const FeaturedQuickActions = ({ movie }: { movie: Movie }) => {
         style={styles.iconButton}
         onPress={() => handlePress("1")}
       >
-        <FontAwesome
-          name={isInGroup("1") ? "heart" : "heart-o"}
+        <MaterialCommunityIcons
+          name={isInGroup("1") ? "heart" : "heart-broken"}
           size={20}
           color="#fff"
         />

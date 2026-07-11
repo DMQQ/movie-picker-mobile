@@ -3,7 +3,7 @@ import { View, StyleSheet, Pressable, Dimensions } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Thumbnail from "../../Thumbnail";
 
 interface SwipeableGenreCardProps {
@@ -74,7 +74,7 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
                 <Text style={vertical ? styles.genreNameVertical : styles.genreName}>{genreName}</Text>
                 {isSelected && (
                   <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
-                    <MaterialIcons name="check" size={24} color="#fff" />
+                    <MaterialCommunityIcons name="check" size={24} color="#fff" />
                   </View>
                 )}
               </LinearGradient>
@@ -85,7 +85,7 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
                 <Text style={vertical ? styles.genreNameVertical : styles.genreName}>{genreName}</Text>
                 {isSelected && (
                   <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
-                    <MaterialIcons name="check" size={24} color="#fff" />
+                    <MaterialCommunityIcons name="check" size={24} color="#fff" />
                   </View>
                 )}
               </LinearGradient>

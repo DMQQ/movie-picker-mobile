@@ -1,7 +1,12 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
-import { Text, Button, MD2DarkTheme, TouchableRipple } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import {
+  Text,
+  Button,
+  MD2DarkTheme,
+  TouchableRipple,
+} from "react-native-paper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetAllProvidersQuery } from "../../../redux/movie/movieApi";
 import ProviderList from "../ProviderList";
 import useTranslation from "../../../service/useTranslation";
@@ -54,9 +59,7 @@ const Step3Providers = () => {
     if (!providers) return [];
     if (!searchQuery.trim()) return providers;
     const q = searchQuery.toLowerCase();
-    return providers.filter((p) =>
-      p.provider_name.toLowerCase().includes(q)
-    );
+    return providers.filter((p) => p.provider_name.toLowerCase().includes(q));
   }, [providers, searchQuery]);
 
   const onToggleRememberProviders = () => {
@@ -82,7 +85,12 @@ const Step3Providers = () => {
     <View style={styles.container}>
       {/* Search bar */}
       <View style={styles.searchContainer}>
-        <MaterialIcons name="search" size={20} color="#888" style={styles.searchIcon} />
+        <MaterialCommunityIcons
+          name="search-web"
+          size={20}
+          color="#888"
+          style={styles.searchIcon}
+        />
         <TextInput
           style={styles.searchInput}
           placeholder={t("room.builder.step3.search")}
@@ -94,30 +102,52 @@ const Step3Providers = () => {
           autoCorrect={false}
         />
         {searchQuery.length > 0 && (
-          <TouchableRipple onPress={() => setSearchQuery("")} style={styles.clearSearch} borderless>
-            <MaterialIcons name="close" size={18} color="#888" />
+          <TouchableRipple
+            onPress={() => setSearchQuery("")}
+            style={styles.clearSearch}
+            borderless
+          >
+            <MaterialCommunityIcons name="close" size={18} color="#888" />
           </TouchableRipple>
         )}
       </View>
 
       {/* Save preferences row */}
-      <TouchableRipple onPress={onToggleRememberProviders} style={styles.rememberContainer} borderless={false}>
+      <TouchableRipple
+        onPress={onToggleRememberProviders}
+        style={styles.rememberContainer}
+        borderless={false}
+      >
         <View style={styles.rememberInner}>
-          <View style={[styles.rememberIconWrap, rememberProviders && styles.rememberIconWrapActive]}>
-            <MaterialIcons
-              name={rememberProviders ? "bookmark" : "bookmark-border"}
+          <View
+            style={[
+              styles.rememberIconWrap,
+              rememberProviders && styles.rememberIconWrapActive,
+            ]}
+          >
+            <MaterialCommunityIcons
+              name={rememberProviders ? "bookmark" : "bookmark-outline"}
               size={18}
               color={rememberProviders ? "#fff" : "#888"}
             />
           </View>
           <View style={styles.rememberContent}>
-            <Text style={styles.rememberLabel}>{t("room.builder.step3.remember")}</Text>
+            <Text style={styles.rememberLabel}>
+              {t("room.builder.step3.remember")}
+            </Text>
             {hasSavedProviders && (
-              <Text style={styles.rememberSubtext}>{t("room.builder.step3.saved")}</Text>
+              <Text style={styles.rememberSubtext}>
+                {t("room.builder.step3.saved")}
+              </Text>
             )}
           </View>
           <View style={[styles.pill, rememberProviders && styles.pillActive]}>
-            <Text style={[styles.pillText, rememberProviders && styles.pillTextActive]}>
+            <Text
+              style={[
+                styles.pillText,
+                rememberProviders && styles.pillTextActive,
+              ]}
+            >
               {rememberProviders ? "ON" : "OFF"}
             </Text>
           </View>

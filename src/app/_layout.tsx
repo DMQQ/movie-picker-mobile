@@ -173,13 +173,17 @@ const RootNavigator = ({
         dispatch(appActions.setOnboardingCompleted());
       } finally {
         setSettingsLoaded(true);
-
-        await SplashScreen.hideAsync();
       }
     };
 
     initializeApp();
   }, [isLoaded, isUpdating, dbReady, movieInteractions, dispatch]);
+
+  useEffect(() => {
+    if (!(!isLoaded || !settingsLoaded || needsOnboarding === null)) {
+      SplashScreen.hideAsync();
+    }
+  }, [isLoaded, settingsLoaded, needsOnboarding]);
 
   if (!isLoaded || !settingsLoaded || needsOnboarding === null) {
     return null;

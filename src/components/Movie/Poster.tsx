@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, {
@@ -140,7 +140,13 @@ function Poster(props: {
       {props.isSwipeable && (
         <>
           <SwipeText
-            icon={<Ionicons name="close" size={32} color="#fff" />}
+            icon={
+              <MaterialCommunityIcons
+                name="thumb-down"
+                size={32}
+                color="#fff"
+              />
+            }
             isVisible={props.isRightVisible}
             text="NOPE"
             color="#FF4458"
@@ -150,8 +156,8 @@ function Poster(props: {
 
           <SwipeText
             icon={
-              <Ionicons
-                name="heart"
+              <MaterialCommunityIcons
+                name="thumb-up"
                 size={32}
                 color="#fff"
                 style={{ transform: [{ translateY: 2 }] }}
@@ -188,7 +194,7 @@ function Poster(props: {
 
       {props.card.isSuperLiked && (
         <View style={styles.superLikeBadge}>
-          <Ionicons name="star" size={15} color="#000" />
+          <MaterialCommunityIcons name="star" size={15} color="#000" />
           <Text style={styles.superLikeText}>SUPER LIKE</Text>
         </View>
       )}

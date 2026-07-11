@@ -1,9 +1,22 @@
-import { FontAwesome } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useCallback, useState } from "react";
-import { Modal, Platform, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { MD2DarkTheme, Portal } from "react-native-paper";
-import Animated, { FadeIn, FadeOut, withSpring, withTiming } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { Movie } from "../../types";
 import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
@@ -52,14 +65,22 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   return <Portal>{children}</Portal>;
 };
 
-export default function CustomFavourite({ movie, showLabel = true }: { movie: Movie; showLabel?: boolean }) {
+export default function CustomFavourite({
+  movie,
+  showLabel = true,
+}: {
+  movie: Movie;
+  showLabel?: boolean;
+}) {
   const dispatch = useAppDispatch<any>();
   const favourites = useAppSelector((state) => state.favourite.groups);
   const [visible, setVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const t = useTranslation();
 
-  const isFavorite = favourites?.some((group) => group.movies.some((m) => m?.id === movie?.id));
+  const isFavorite = favourites?.some((group) =>
+    group.movies.some((m) => m?.id === movie?.id),
+  );
 
   const closeModal = useCallback(() => {
     setVisible(false);
@@ -78,7 +99,7 @@ export default function CustomFavourite({ movie, showLabel = true }: { movie: Mo
           removeFromGroup({
             groupId: group.id,
             movieId: movie.id,
-          })
+          }),
         )
       : dispatch(
           addToGroup({
@@ -88,7 +109,7 @@ export default function CustomFavourite({ movie, showLabel = true }: { movie: Mo
               type: movie.type || (movie?.title !== undefined ? "movie" : "tv"),
             },
             groupId: group.id,
-          })
+          }),
         );
 
     handleClose();
@@ -98,17 +119,36 @@ export default function CustomFavourite({ movie, showLabel = true }: { movie: Mo
 
   return (
     <View>
-      <TouchableOpacity style={styles.iconButton} onPress={() => setVisible(true)}>
+      <TouchableOpacity
+        style={styles.iconButton}
+        onPress={() => setVisible(true)}
+      >
         <>
-          <FontAwesome name={isFavorite ? "bookmark" : "bookmark-o"} size={35} color="#fff" />
-          {showLabel && <Text style={styles.iconText}>{t("quick-actions.my-lists")}</Text>}
+          <MaterialCommunityIcons
+            name={isFavorite ? "bookmark-check" : "bookmark"}
+            size={35}
+            color="#fff"
+          />
+          {showLabel && (
+            <Text style={styles.iconText}>{t("quick-actions.my-lists")}</Text>
+          )}
         </>
       </TouchableOpacity>
 
       <Wrapper>
-        <Modal visible={visible} transparent onRequestClose={handleClose} animationType="none">
+        <Modal
+          visible={visible}
+          transparent
+          onRequestClose={handleClose}
+          animationType="none"
+        >
           {!isClosing && (
-            <AnimatedPressable entering={FadeIn} exiting={FadeOut.delay(200)} style={styles.overlay} onPress={handleClose}>
+            <AnimatedPressable
+              entering={FadeIn}
+              exiting={FadeOut.delay(200)}
+              style={styles.overlay}
+              onPress={handleClose}
+            >
               <AnimatedPressable
                 style={styles.dropdown}
                 entering={ModalEnteringTransition}
@@ -116,7 +156,10 @@ export default function CustomFavourite({ movie, showLabel = true }: { movie: Mo
                 onPress={(e) => e.stopPropagation()}
               >
                 <Text style={styles.modalTitle}>
-                  {t("quick-actions.modal")} <Text style={styles.movieTitle}>{movie.title || movie.name}</Text>
+                  {t("quick-actions.modal")}{" "}
+                  <Text style={styles.movieTitle}>
+                    {movie.title || movie.name}
+                  </Text>
                 </Text>
                 {favourites.map((group) => (
                   <TouchableOpacity
@@ -124,14 +167,17 @@ export default function CustomFavourite({ movie, showLabel = true }: { movie: Mo
                     style={[
                       styles.item,
                       {
-                        backgroundColor: group.movies.find((m) => m.id === movie.id)
+                        backgroundColor: group.movies.find(
+                          (m) => m.id === movie.id,
+                        )
                           ? MD2DarkTheme.colors.primary
                           : MD2DarkTheme.colors.background,
                       },
                     ]}
                     onPress={() => {
                       onPress(group);
-                      if (Platform.OS === "ios") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      if (Platform.OS === "ios")
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     }}
                   >
                     <Text style={styles.itemText}>{group.name}</Text>

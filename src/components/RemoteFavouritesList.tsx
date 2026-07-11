@@ -1,4 +1,4 @@
-import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ReactNode, useCallback, useState } from "react";
 import {
   Dimensions,
@@ -11,7 +11,10 @@ import {
 import { MD2DarkTheme, Text } from "react-native-paper";
 import { Link, router } from "expo-router";
 import { useGetListsQuery, type UserList } from "../redux/lists/listsApi";
-import { INTERACTION_LIST_TYPES, TYPE_TO_LOCAL_ID } from "../redux/favourites/favourites";
+import {
+  INTERACTION_LIST_TYPES,
+  TYPE_TO_LOCAL_ID,
+} from "../redux/favourites/favourites";
 import { useBlockedMovies } from "../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
 import Thumbnail from "./Thumbnail";
@@ -53,7 +56,9 @@ function GroupCard({ item }: { item: UserList }) {
       href={{ pathname: "/group/[id]", params: toGroupParams(item) }}
     >
       <Link.Trigger>
-        <View style={{ borderRadius: 10, overflow: "hidden", position: "relative" }}>
+        <View
+          style={{ borderRadius: 10, overflow: "hidden", position: "relative" }}
+        >
           <ImageBackground
             blurRadius={20}
             style={styles.cardBg}
@@ -61,8 +66,15 @@ function GroupCard({ item }: { item: UserList }) {
           >
             {isEmpty ? (
               <View style={styles.emptyInner}>
-                <AntDesign name="plus" size={50} color="white" style={{ opacity: 0.5 }} />
-                <Text style={{ fontSize: 11, textAlign: "center" }}>{t("favourites.empty")}</Text>
+                <MaterialCommunityIcons
+                  name="plus"
+                  size={50}
+                  color="white"
+                  style={{ opacity: 0.5 }}
+                />
+                <Text style={{ fontSize: 11, textAlign: "center" }}>
+                  {t("favourites.empty")}
+                </Text>
               </View>
             ) : (
               <View style={styles.thumbnailGrid}>
@@ -78,7 +90,9 @@ function GroupCard({ item }: { item: UserList }) {
             )}
           </ImageBackground>
           <View style={styles.labelRow}>
-            <Text style={[styles.labelText, { color: "#fff" }]}>{item.name}</Text>
+            <Text style={[styles.labelText, { color: "#fff" }]}>
+              {item.name}
+            </Text>
             <Text style={styles.countText}>({item.itemCount})</Text>
           </View>
         </View>
@@ -95,62 +109,108 @@ function SpecialCardsFooter() {
   return (
     <View style={{ gap: 15, marginTop: 15 }}>
       <Pressable onPress={() => router.push("/group/super-liked")}>
-        <View style={{ borderRadius: 10, overflow: "hidden", position: "relative" }}>
+        <View
+          style={{ borderRadius: 10, overflow: "hidden", position: "relative" }}
+        >
           <ImageBackground
             blurRadius={20}
             style={styles.cardBg}
             source={
               superLikedMovies[0]
-                ? { uri: "https://image.tmdb.org/t/p/w500" + superLikedMovies[0].poster_path }
+                ? {
+                    uri:
+                      "https://image.tmdb.org/t/p/w500" +
+                      superLikedMovies[0].poster_path,
+                  }
                 : undefined
             }
           >
-            <View style={[styles.overlay, { backgroundColor: "rgba(255, 215, 0, 0.12)" }]} />
+            <View
+              style={[
+                styles.overlay,
+                { backgroundColor: "rgba(255, 215, 0, 0.12)" },
+              ]}
+            />
             {superLikedMovies.length === 0 ? (
               <View style={styles.emptyInner}>
-                <MaterialCommunityIcons name="star" size={50} color="#FFD700" style={{ opacity: 0.5 }} />
+                <MaterialCommunityIcons
+                  name="star"
+                  size={50}
+                  color="#FFD700"
+                  style={{ opacity: 0.5 }}
+                />
               </View>
             ) : (
               <View style={styles.thumbnailGrid}>
                 {superLikedMovies.slice(0, 4).map((m) => (
-                  <Thumbnail key={m.movie_id} path={m.poster_path || ""} size={200} container={styles.thumbnail} />
+                  <Thumbnail
+                    key={m.movie_id}
+                    path={m.poster_path || ""}
+                    size={200}
+                    container={styles.thumbnail}
+                  />
                 ))}
               </View>
             )}
           </ImageBackground>
           <View style={styles.labelRow}>
-            <Text style={[styles.labelText, { color: "#FFD700" }]}>{t("super-liked.title")}</Text>
+            <Text style={[styles.labelText, { color: "#FFD700" }]}>
+              {t("super-liked.title")}
+            </Text>
             <Text style={styles.countText}>({superLikedMovies.length})</Text>
           </View>
         </View>
       </Pressable>
 
       <Pressable onPress={() => router.push("/group/blocked")}>
-        <View style={{ borderRadius: 10, overflow: "hidden", position: "relative" }}>
+        <View
+          style={{ borderRadius: 10, overflow: "hidden", position: "relative" }}
+        >
           <ImageBackground
             blurRadius={20}
             style={styles.cardBg}
             source={
               blockedMovies[0]
-                ? { uri: "https://image.tmdb.org/t/p/w500" + blockedMovies[0].poster_path }
+                ? {
+                    uri:
+                      "https://image.tmdb.org/t/p/w500" +
+                      blockedMovies[0].poster_path,
+                  }
                 : undefined
             }
           >
-            <View style={[styles.overlay, { backgroundColor: "rgba(255, 68, 88, 0.12)" }]} />
+            <View
+              style={[
+                styles.overlay,
+                { backgroundColor: "rgba(255, 68, 88, 0.12)" },
+              ]}
+            />
             {blockedMovies.length === 0 ? (
               <View style={styles.emptyInner}>
-                <MaterialCommunityIcons name="cancel" size={50} color="#FF4458" style={{ opacity: 0.5 }} />
+                <MaterialCommunityIcons
+                  name="cancel"
+                  size={50}
+                  color="#FF4458"
+                  style={{ opacity: 0.5 }}
+                />
               </View>
             ) : (
               <View style={styles.thumbnailGrid}>
                 {blockedMovies.slice(0, 4).map((m) => (
-                  <Thumbnail key={m.movie_id} path={m.poster_path || ""} size={200} container={styles.thumbnail} />
+                  <Thumbnail
+                    key={m.movie_id}
+                    path={m.poster_path || ""}
+                    size={200}
+                    container={styles.thumbnail}
+                  />
                 ))}
               </View>
             )}
           </ImageBackground>
           <View style={styles.labelRow}>
-            <Text style={[styles.labelText, { color: "#FF4458" }]}>{t("blocked.title")}</Text>
+            <Text style={[styles.labelText, { color: "#FF4458" }]}>
+              {t("blocked.title")}
+            </Text>
             <Text style={styles.countText}>({blockedMovies.length})</Text>
           </View>
         </View>
@@ -169,7 +229,9 @@ export default function RemoteFavouritesList({ listHeader, listRef }: Props) {
 
   const { data, isFetching } = useGetListsQuery({ page });
 
-  const groups = (data?.lists ?? []).filter((l) => !INTERACTION_LIST_TYPES.has(l.type));
+  const groups = (data?.lists ?? []).filter(
+    (l) => !INTERACTION_LIST_TYPES.has(l.type),
+  );
   // data.lists is the accumulated array across all pages; data.total is the server total
   const hasMore = data ? data.lists.length < data.total : false;
 

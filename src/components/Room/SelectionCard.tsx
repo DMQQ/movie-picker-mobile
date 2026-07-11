@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import Thumbnail from "../Thumbnail";
 
@@ -112,7 +112,7 @@ const SelectionCard = React.memo(
                     <Text style={[styles.labelTextVertical, { color: isSelected ? theme.colors.primary : "#fff" }]}>{label}</Text>
                     {isSelected && (
                       <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
-                        <MaterialIcons name="check" size={24} color="#fff" />
+                        <MaterialCommunityIcons name="check" size={24} color="#fff" />
                       </View>
                     )}
                   </LinearGradient>
@@ -124,7 +124,7 @@ const SelectionCard = React.memo(
                     <Text style={[styles.labelTextVertical, { color: isSelected ? theme.colors.primary : "#fff" }]}>{label}</Text>
                     {isSelected && (
                       <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
-                        <MaterialIcons name="check" size={24} color="#fff" />
+                        <MaterialCommunityIcons name="check" size={24} color="#fff" />
                       </View>
                     )}
                   </LinearGradient>

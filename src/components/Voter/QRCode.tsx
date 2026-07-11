@@ -1,6 +1,6 @@
 import { Share, View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
-import { FontAwesome } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import StyledQRCode from "../StyledQRCode";
 
 export default function QRCodeComponent(props: {
@@ -20,7 +20,11 @@ export default function QRCodeComponent(props: {
         style={{ marginTop: 15 }}
         contentStyle={{ flexDirection: "row-reverse" }}
         icon={() => (
-          <FontAwesome name="share" size={24} color={theme.colors.primary} />
+          <MaterialCommunityIcons
+            name="share"
+            size={24}
+            color={theme.colors.primary}
+          />
         )}
         onPress={async () => {
           Share.share({

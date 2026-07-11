@@ -1,4 +1,4 @@
-import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import {
@@ -473,7 +473,11 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
           </View>
           <Text style={styles.shareButtonText}>
             {t("room.share.button")}{" "}
-            <FontAwesome name="share" size={14} color={theme.colors.primary} />
+            <MaterialCommunityIcons
+              name="share"
+              size={20}
+              color={theme.colors.primary}
+            />
           </Text>
         </View>
       </Pressable>

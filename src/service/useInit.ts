@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
-import { Platform } from "react-native";
-import { loadAsync } from "expo-font";
+import { useEffect } from "react";
+import { useFonts } from "expo-font";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as Sentry from "@sentry/react-native";
 
 export default function useInit() {
-  const [isLoaded, setIsLoaded] = useState(Platform.OS !== "ios");
+  const [loaded, error] = useFonts({
+    Bebas: require("../../assets/fonts/Bebas.ttf"),
+    ...MaterialCommunityIcons.font,
+  });
 
   useEffect(() => {
-    loadAsync({
-      Bebas: require("../../assets/fonts/Bebas.ttf"),
-    }).then(() => {
-      setIsLoaded(true);
-    });
-  }, []);
+    if (error) Sentry.captureException(error);
+  }, [error]);
 
-  return { isLoaded: isLoaded, isUpdating: false };
+  return { isLoaded: loaded, isUpdating: false };
 }

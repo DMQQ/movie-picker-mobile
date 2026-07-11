@@ -1,9 +1,8 @@
-import { Dimensions, Pressable, StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
-import { Movie } from "../../types";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import { Link } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Touch from "./Touch";
 
 const getColor = (score: number) => {
@@ -103,7 +102,7 @@ export const SectionListItem = ({
                     },
                   ]}
                 >
-                  <AntDesign name="star" size={9} color="#000" />{" "}
+                  <MaterialCommunityIcons name="star" size={9} color="#000" />{" "}
                   {vote_average.toFixed(1)}
                 </Text>
               </View>

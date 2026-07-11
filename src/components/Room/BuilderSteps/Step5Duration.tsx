@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { View, StyleSheet, ScrollView, ActivityIndicator, Pressable } from "react-native";
 import { Text, Banner, useTheme } from "react-native-paper";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 // import { useValidateRoomConfigMutation } from "../../../redux/movie/movieApi";
 import useTranslation from "../../../service/useTranslation";
@@ -32,7 +32,7 @@ const PricingCard = React.memo(({ option, index, selectedDuration, onSelectDurat
           <Text style={styles.pricingBestFor}>{option.bestFor}</Text>
           {isSelected && (
             <View style={[styles.checkmarkPricing, { backgroundColor: theme.colors.primary }]}>
-              <MaterialIcons name="check" size={20} color="#fff" />
+              <MaterialCommunityIcons name="check" size={20} color="#fff" />
             </View>
           )}
         </Animated.View>
@@ -60,7 +60,7 @@ const Step5Duration: React.FC = React.memo(() => {
         minutes: t("room.builder.step5.gameTime.quick.duration"),
         moviesCount: t("room.builder.step5.gameTime.quick.rounds"),
         bestFor: t("room.builder.step5.gameTime.quick.bestFor"),
-        iconData: { component: MaterialIcons, name: "flash-on", color: "#FF6B35" },
+        iconData: { component: MaterialCommunityIcons, name: "flash", color: "#FF6B35" },
       },
       {
         value: 6,
@@ -68,7 +68,7 @@ const Step5Duration: React.FC = React.memo(() => {
         minutes: t("room.builder.step5.gameTime.standard.duration"),
         moviesCount: t("room.builder.step5.gameTime.standard.rounds"),
         bestFor: t("room.builder.step5.gameTime.standard.bestFor"),
-        iconData: { component: MaterialIcons, name: "schedule", color: "#4ECDC4" },
+        iconData: { component: MaterialCommunityIcons, name: "clock-outline", color: "#4ECDC4" },
       },
       {
         value: 10,
@@ -76,7 +76,7 @@ const Step5Duration: React.FC = React.memo(() => {
         minutes: t("room.builder.step5.gameTime.extended.duration"),
         moviesCount: t("room.builder.step5.gameTime.extended.rounds"),
         bestFor: t("room.builder.step5.gameTime.extended.bestFor"),
-        iconData: { component: MaterialIcons, name: "hourglass-empty", color: "#FFD23F" },
+        iconData: { component: MaterialCommunityIcons, name: "timer-sand-empty", color: "#FFD23F" },
       },
     ],
     [t]

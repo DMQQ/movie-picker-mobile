@@ -1,4 +1,4 @@
-import { AntDesign, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { ReactNode } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -10,10 +10,13 @@ import useTranslation from "../service/useTranslation";
 
 export function useQuickActions(props: { movie: Movie }) {
   const dispatch = useAppDispatch();
-  const membershipIndex = useAppSelector((state) => state.favourite.membershipIndex);
+  const membershipIndex = useAppSelector(
+    (state) => state.favourite.membershipIndex,
+  );
 
   const isInGroup = (groupId: "1" | "2" | "999") => {
-    const movieType = props.movie?.type ?? (props.movie?.first_air_date ? "tv" : "movie");
+    const movieType =
+      props.movie?.type ?? (props.movie?.first_air_date ? "tv" : "movie");
     return !!membershipIndex[groupId]?.[`${props.movie?.id}:${movieType}`];
   };
 
@@ -28,16 +31,18 @@ export function useQuickActions(props: { movie: Movie }) {
           item: {
             id: props?.movie?.id,
             imageUrl: props?.movie?.poster_path,
-            type: props?.movie?.type || (props.movie?.first_air_date ? "tv" : "movie"),
+            type:
+              props?.movie?.type ||
+              (props.movie?.first_air_date ? "tv" : "movie"),
           },
-        })
+        }),
       );
     else
       dispatch(
         removeFromGroup({
           groupId: groupId,
           movieId: props?.movie?.id,
-        })
+        }),
       );
   };
 
@@ -47,37 +52,74 @@ export function useQuickActions(props: { movie: Movie }) {
   };
 }
 
-export default function QuickActions(props: { movie: Movie; children?: ReactNode; hideLabels?: boolean }) {
+export default function QuickActions(props: {
+  movie: Movie;
+  children?: ReactNode;
+  hideLabels?: boolean;
+}) {
   const { isInGroup, onPress } = useQuickActions({ movie: props.movie });
   const t = useTranslation();
 
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <TouchableOpacity style={[styles.iconButton]} onPress={() => onPress("2")}>
-          <MaterialCommunityIcons name={isInGroup("2") ? "clock" : "clock-check-outline"} size={35} color="#fff" />
+        <TouchableOpacity
+          style={[styles.iconButton]}
+          onPress={() => onPress("2")}
+        >
+          <MaterialCommunityIcons
+            name={isInGroup("2") ? "clock" : "clock-check-outline"}
+            size={35}
+            color="#fff"
+          />
           {!props?.hideLabels && (
-            <Text numberOfLines={1} ellipsizeMode="tail" style={styles.iconText}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.iconText}
+            >
               {t("quick-actions.watch-later")}
             </Text>
           )}
         </TouchableOpacity>
       </View>
       <View style={styles.iconContainer}>
-        <TouchableOpacity style={styles.iconButton} onPress={() => onPress("1")}>
-          <FontAwesome name={isInGroup("1") ? "heart" : "heart-o"} size={35} color="#fff" />
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => onPress("1")}
+        >
+          <MaterialCommunityIcons
+            name={isInGroup("1") ? "heart" : "heart-broken"}
+            size={35}
+            color="#fff"
+          />
           {!props?.hideLabels && (
-            <Text numberOfLines={1} ellipsizeMode="clip" style={styles.iconText}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="clip"
+              style={styles.iconText}
+            >
               {t("quick-actions.favourite")}
             </Text>
           )}
         </TouchableOpacity>
       </View>
       <View style={styles.iconContainer}>
-        <TouchableOpacity style={styles.iconButton} onPress={() => onPress("999")}>
-          <AntDesign name={isInGroup("999") ? "eye" : "eye-invisible"} size={35} color="#fff" />
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => onPress("999")}
+        >
+          <MaterialCommunityIcons
+            name={isInGroup("999") ? "eye" : "eye-lock"}
+            size={35}
+            color="#fff"
+          />
           {!props?.hideLabels && (
-            <Text numberOfLines={1} ellipsizeMode="clip" style={styles.iconText}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="clip"
+              style={styles.iconText}
+            >
               {t("quick-actions.watched")}
             </Text>
           )}

@@ -14,7 +14,6 @@ import PageHeading from "../../components/PageHeading";
 import { useUnviewedMatches } from "../../hooks/useUnviewedMatches";
 import Touch from "../../components/Touch";
 import ActiveGameBanner from "../../components/ActiveGameBanner";
-import layout from "../../utils/layout";
 
 const CARD_HEIGHT = 280;
 
