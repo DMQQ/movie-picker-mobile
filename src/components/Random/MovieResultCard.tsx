@@ -1,4 +1,11 @@
-import { Dimensions, Platform, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Text, Chip } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -21,8 +28,8 @@ interface MovieResultCardProps {
   height?: number;
 }
 
-export const CARD_WIDTH = screenWidth * 0.9;
-export const CARD_HEIGHT = screenHeight * 0.65;
+export const CARD_WIDTH = screenWidth * 0.85;
+export const CARD_HEIGHT = screenHeight * 0.6;
 
 export default function MovieResultCard({
   movie,
@@ -40,12 +47,19 @@ export default function MovieResultCard({
       <Pressable onPress={onPress} style={styles.cardPressable}>
         <Image
           placeholder={`https://image.tmdb.org/t/p/${ThumbnailSizes.poster.tiny}${movie.poster_path}`}
-          source={{ uri: `https://image.tmdb.org/t/p/w780${movie.poster_path}` }}
+          source={{
+            uri: `https://image.tmdb.org/t/p/w780${movie.poster_path}`,
+          }}
           style={styles.poster}
           contentFit="cover"
         />
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)", "#000"]}
+          colors={[
+            "transparent",
+            "rgba(0,0,0,0.6)",
+            "rgba(0,0,0,0.95)",
+            "#000",
+          ]}
           locations={[0, 0.4, 0.75, 1]}
           style={styles.infoOverlay}
         >
@@ -57,7 +71,9 @@ export default function MovieResultCard({
             {movie.vote_average > 0 && (
               <>
                 <MaterialCommunityIcons name="star" size={16} color="#fbbf24" />
-                <Text style={styles.ratingText}>{movie.vote_average.toFixed(1)}</Text>
+                <Text style={styles.ratingText}>
+                  {movie.vote_average.toFixed(1)}
+                </Text>
               </>
             )}
             {details?.runtime ? (
@@ -71,7 +87,12 @@ export default function MovieResultCard({
               <>
                 <Text style={styles.dotSeparator}>•</Text>
                 {details.genres.slice(0, 3).map((genre) => (
-                  <Chip key={genre.id} style={styles.genreChip} textStyle={styles.genreText} compact>
+                  <Chip
+                    key={genre.id}
+                    style={styles.genreChip}
+                    textStyle={styles.genreText}
+                    compact
+                  >
                     {genre.name}
                   </Chip>
                 ))}
@@ -87,19 +108,36 @@ export default function MovieResultCard({
 
           <View style={styles.bottomRow}>
             <View style={styles.hintRow}>
-              <Text style={styles.hintText}>{t("fortune-wheel.tap-for-details")}</Text>
-              <MaterialCommunityIcons name="chevron-right" size={14} color="rgba(255,255,255,0.5)" />
+              <Text style={styles.hintText}>
+                {t("fortune-wheel.tap-for-details")}
+              </Text>
+              <MaterialCommunityIcons
+                name="chevron-right"
+                size={14}
+                color="rgba(255,255,255,0.5)"
+              />
             </View>
 
             <View style={styles.actionIcons}>
               {onSuperLike && (
-                <TouchableOpacity onPress={onSuperLike} style={styles.iconButton}>
-                  <MaterialCommunityIcons name={isSuperLiked ? "star" : "star-outline"} size={24} color="#fbbf24" />
+                <TouchableOpacity
+                  onPress={onSuperLike}
+                  style={styles.iconButton}
+                >
+                  <MaterialCommunityIcons
+                    name={isSuperLiked ? "star" : "star-outline"}
+                    size={24}
+                    color="#fbbf24"
+                  />
                 </TouchableOpacity>
               )}
               {onBlock && (
                 <TouchableOpacity onPress={onBlock} style={styles.iconButton}>
-                  <MaterialCommunityIcons name="block-helper" size={22} color="#ef4444" />
+                  <MaterialCommunityIcons
+                    name="block-helper"
+                    size={22}
+                    color="#ef4444"
+                  />
                 </TouchableOpacity>
               )}
               <IconShareButton movie={movie} />

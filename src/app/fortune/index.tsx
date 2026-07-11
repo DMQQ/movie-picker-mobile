@@ -1,12 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, Platform, StyleSheet, useWindowDimensions, View } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { Button, MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { Movie, MovieDetails } from "../../../types";
 import FateText from "../../components/FateText";
 import FortuneWheelComponent from "../../components/FortuneWheelComponent";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
-import { useLazyGetMovieQuery, useLazyGetRandomSectionQuery, useLazyGetSectionMoviesQuery } from "../../redux/movie/movieApi";
+import {
+  useLazyGetMovieQuery,
+  useLazyGetRandomSectionQuery,
+  useLazyGetSectionMoviesQuery,
+} from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
 import fillMissing from "../../utils/fillMissing";
 import { shuffleInPlace } from "../../utils/shuffle";
@@ -17,7 +27,9 @@ import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import * as Haptics from "expo-haptics";
-import MovieResultCard, { CARD_HEIGHT } from "../../components/Random/MovieResultCard";
+import MovieResultCard, {
+  CARD_HEIGHT,
+} from "../../components/Random/MovieResultCard";
 import PlatformBlurView from "../../components/PlatformBlurView";
 import { Image } from "expo-image";
 
@@ -45,7 +57,9 @@ export default function FortuneWheel() {
       const detailsResponse = await getMovieDetails({ id: item.id, type });
       if (detailsResponse.data) {
         prefetchedDetails.current = detailsResponse.data;
-        Image.prefetch(`https://image.tmdb.org/t/p/w780${detailsResponse.data.poster_path}`).catch(() => {});
+        Image.prefetch(
+          `https://image.tmdb.org/t/p/w780${detailsResponse.data.poster_path}`,
+        ).catch(() => {});
       }
     },
     [getMovieDetails],
@@ -145,7 +159,11 @@ export default function FortuneWheel() {
     }
 
     const handleResponse = async (response: any) => {
-      if (response.data && Array.isArray(response.data.results) && response.data.results.length > 0) {
+      if (
+        response.data &&
+        Array.isArray(response.data.results) &&
+        response.data.results.length > 0
+      ) {
         const movies = response.data.results as Movie[];
 
         const shuffled = shuffleInPlace([...movies]);
@@ -174,8 +192,14 @@ export default function FortuneWheel() {
     }
 
     const filterParams = getFilterParams();
-    const blockedIds = getBlockedIds().map((m) => `${m.type === "tv" ? "t" : "m"}${m.id}`);
-    getLazyRandomSection({ not: selectedCards.name, notMovies: blockedIds.join(","), ...filterParams })
+    const blockedIds = getBlockedIds().map(
+      (m) => `${m.type === "tv" ? "t" : "m"}${m.id}`,
+    );
+    getLazyRandomSection({
+      not: selectedCards.name,
+      notMovies: blockedIds.join(","),
+      ...filterParams,
+    })
       .then(handleResponse)
       .catch(handleError);
   };
@@ -236,7 +260,12 @@ export default function FortuneWheel() {
     if (!isFilterActive) return;
 
     handleThrowDice();
-  }, [params?.category, params?.movies, params?.title, params?.selectedCategory]);
+  }, [
+    params?.category,
+    params?.movies,
+    params?.title,
+    params?.selectedCategory,
+  ]);
 
   const { width, height } = useWindowDimensions();
 
@@ -244,15 +273,26 @@ export default function FortuneWheel() {
 
   return (
     <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
-      <PageHeading showGradientBackground showBackButton title={isSpin ? "" : (params?.title as string) || ""}>
+      <PageHeading
+        showGradientBackground
+        showBackButton
+        title={isSpin ? "" : (params?.title as string) || ""}
+      >
         <PlatformBlurView style={fortuneStyles.filterButtonWrapper}>
-          <FilterButton shouldAutoOpen size={25} onApply={handleThrowDice} showCategories />
+          <FilterButton
+            shouldAutoOpen
+            size={25}
+            onApply={handleThrowDice}
+            showCategories
+          />
         </PlatformBlurView>
       </PageHeading>
 
       {selectedMovie && (
         <Animated.View
-          entering={FadeIn.duration(400).withInitialValues({ transform: [{ translateY: 50 }] })}
+          entering={FadeIn.duration(400).withInitialValues({
+            transform: [{ translateY: 50 }],
+          })}
           exiting={FadeOut.duration(300)}
           style={fortuneStyles.cardOverlay}
         >
@@ -286,14 +326,24 @@ export default function FortuneWheel() {
             <Animated.View entering={FadeIn.delay(500)}>
               <Text
                 style={{
-                  fontSize: params?.movies ? (params?.title.length > 10 ? 55 : 70) : 70,
+                  fontSize: params?.movies
+                    ? params?.title.length > 10
+                      ? 55
+                      : 70
+                    : 70,
                   fontFamily: "Bebas",
                   textAlign: "center",
                 }}
               >
-                {params?.movies ? params?.title : t("fortune-wheel.pick-a-movie")}
+                {params?.movies
+                  ? params?.title
+                  : t("fortune-wheel.pick-a-movie")}
               </Text>
-              <Button rippleColor={"#fff"} icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
+              <Button
+                rippleColor={"#fff"}
+                icon="refresh"
+                onPress={throttle(() => handleThrowDice(), 200)}
+              >
                 {t("fortune-wheel.spin-again")}
               </Button>
             </Animated.View>
@@ -330,7 +380,11 @@ export default function FortuneWheel() {
           }}
           entering={FadeIn.delay(300)}
         >
-          <Button mode="text" icon="refresh" onPress={throttle(() => handleThrowDice(), 200)}>
+          <Button
+            mode="text"
+            icon="refresh"
+            onPress={throttle(() => handleThrowDice(), 200)}
+          >
             {t("fortune-wheel.spin-again")}
           </Button>
         </Animated.View>
@@ -352,7 +406,7 @@ const fortuneStyles = StyleSheet.create({
   },
   cardOverlay: {
     position: "absolute",
-    top: "10%",
+    top: "15%",
     left: 0,
     right: 0,
     alignItems: "center",

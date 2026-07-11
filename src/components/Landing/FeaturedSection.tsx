@@ -9,7 +9,6 @@ import {
   Pressable,
 } from "react-native";
 import { Button, Text } from "react-native-paper";
-import Animated, { FadeInDown } from "react-native-reanimated";
 import RatingIcons from "../RatingIcons";
 import Skeleton from "../Skeleton/Skeleton";
 import { Image, ImageBackground } from "expo-image";
@@ -20,6 +19,7 @@ import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
 import { Movie } from "../../../types";
 import useTranslation from "../../service/useTranslation";
 import { useGetFeaturedQuery } from "../../redux/movie/movieApi";
+import Touch from "../Touch";
 
 const { width, height } = Dimensions.get("screen");
 const HERO_HEIGHT = height * 0.72;
@@ -304,16 +304,18 @@ const FeaturedSection = memo(({ categoryId }: FeaturedSectionProps) => {
                 }}
                 asChild
               >
-                <Pressable>
+                <Touch>
                   <View style={styles.topContentContainer}>
                     {thumbnailUrl && (
-                      <Image
-                        source={{ uri: thumbnailUrl }}
-                        style={styles.thumbnail}
-                        contentFit="cover"
-                        transition={300}
-                        cachePolicy="disk"
-                      />
+                      <Link.AppleZoom>
+                        <Image
+                          source={{ uri: thumbnailUrl }}
+                          style={styles.thumbnail}
+                          contentFit="cover"
+                          transition={300}
+                          cachePolicy="disk"
+                        />
+                      </Link.AppleZoom>
                     )}
 
                     <View style={styles.detailsContainer}>
@@ -354,7 +356,7 @@ const FeaturedSection = memo(({ categoryId }: FeaturedSectionProps) => {
                   <Text numberOfLines={3} style={styles.overview}>
                     {featured?.overview}
                   </Text>
-                </Pressable>
+                </Touch>
               </Link>
 
               <View style={styles.actionRow}>

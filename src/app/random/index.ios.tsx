@@ -169,7 +169,7 @@ export default function RandomMovie() {
             style={styles.primaryButton}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}
-            icon={movie && isRevealed ? "refresh" : "dice-multiple"}
+            icon={isLoading ? undefined : movie && isRevealed ? "refresh" : "dice-multiple"}
             buttonColor={PRIMARY_COLOR}
             textColor="#fff"
           >

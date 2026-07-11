@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: MD2DarkTheme.colors.surface,
     ...Platform.select({
-      ios: { paddingTop: 20 },
+      ios: { paddingTop: 25 },
     }),
   },
   grabber: {

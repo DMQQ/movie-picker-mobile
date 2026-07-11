@@ -1,10 +1,35 @@
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import LottieView from "lottie-react-native";
-import { useContext, useEffect, useState, useRef, memo, useCallback, useMemo } from "react";
-import { Dimensions, FlatList, Platform, ScrollView, StyleSheet, View, ImageBackground, Animated, Modal, Pressable } from "react-native";
+import {
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  memo,
+  useCallback,
+  useMemo,
+} from "react";
+import {
+  Dimensions,
+  FlatList,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+  ImageBackground,
+  Animated,
+  Modal,
+  Pressable,
+} from "react-native";
 import { Image } from "expo-image";
-import { Avatar, Button, IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import {
+  Avatar,
+  Button,
+  IconButton,
+  MD2DarkTheme,
+  Text,
+} from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
@@ -127,7 +152,10 @@ export default function GameSummary() {
         const response = await socket.emitWithAck("get-game-summary", roomId);
 
         if (response.success) {
-          if (response.summary?.type) response.summary.type = response.summary.type.includes("movie") ? "movie" : "tv";
+          if (response.summary?.type)
+            response.summary.type = response.summary.type.includes("movie")
+              ? "movie"
+              : "tv";
           setSummary(response.summary);
         } else {
           setError(response.error);
@@ -173,7 +201,15 @@ export default function GameSummary() {
 
   const renderLikedItem = ({ item }: { item: Partial<Movie> }) => {
     return (
-      <MatchedItem {...item} summary={summary!} badge={(summary?.matchedMovies || [])?.findIndex((like) => like.id === item.id) >= 0} />
+      <MatchedItem
+        {...item}
+        summary={summary!}
+        badge={
+          (summary?.matchedMovies || [])?.findIndex(
+            (like) => like.id === item.id,
+          ) >= 0
+        }
+      />
     );
   };
 
@@ -189,7 +225,9 @@ export default function GameSummary() {
 
     let timeout = setTimeout(async () => {
       const canReview =
-        (await ReviewManager.canRequestReviewFromRating()) && Platform.OS !== "web" && (await StoreReview.isAvailableAsync());
+        (await ReviewManager.canRequestReviewFromRating()) &&
+        Platform.OS !== "web" &&
+        (await StoreReview.isAvailableAsync());
 
       if (shouldShowRatingPill() || !canReview) {
         setShouldShowRatingPill(true);
@@ -217,12 +255,18 @@ export default function GameSummary() {
     return (
       <View style={{ flex: 1, backgroundColor: "#000" }}>
         <View style={[styles.container, styles.centered]}>
-          <View>
-            <Text style={styles.errorText}>
-              {t("game-summary.error")}
-              {error}
-            </Text>
-            <Button mode="contained" onPress={handleBackToHome} style={styles.backButton}>
+          <View style={styles.errorCard}>
+            <View style={styles.errorIconWrapper}>
+              <MaterialIcons name="signal-wifi-off" size={36} color="#FF6B6B" />
+            </View>
+            <Text style={styles.errorHeading}>{t("game-summary.error")}</Text>
+            <Text style={styles.errorSubtext}>{error}</Text>
+            <Button
+              mode="contained"
+              onPress={handleBackToHome}
+              style={styles.backButton}
+              contentStyle={styles.backButtonContent}
+            >
               {t("game-summary.back-to-home")}
             </Button>
           </View>
@@ -233,7 +277,11 @@ export default function GameSummary() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      {(summary?.matchedMovies?.length || 0) > 0 && <AnimatedBackgroundImage matchedMovies={summary?.matchedMovies! || []} />}
+      {(summary?.matchedMovies?.length || 0) > 0 && (
+        <AnimatedBackgroundImage
+          matchedMovies={summary?.matchedMovies! || []}
+        />
+      )}
 
       <ScrollView
         style={[
@@ -251,7 +299,12 @@ export default function GameSummary() {
         <View style={styles.content}>
           <View style={styles.headerSection}>
             {summary?.matchedMovies && summary.matchedMovies.length > 0 && (
-              <LottieView source={require("../../assets/confetti.json")} autoPlay loop={false} style={styles.confetti} />
+              <LottieView
+                source={require("../../assets/confetti.json")}
+                autoPlay
+                loop={false}
+                style={styles.confetti}
+              />
             )}
 
             <View style={styles.titleContainer}>
@@ -259,17 +312,26 @@ export default function GameSummary() {
                 {summary?.gameEndReason === "all_users_finished" ? (
                   <MaterialIcons name="celebration" size={40} color="#FFD700" />
                 ) : (
-                  <MaterialIcons name="check-circle" size={40} color="#4CAF50" />
+                  <MaterialIcons
+                    name="check-circle"
+                    size={40}
+                    color="#4CAF50"
+                  />
                 )}
                 <Text style={styles.statusTitle}>
-                  {summary?.gameEndReason === "all_users_finished" ? t("game-summary.game-completed") : t("game-summary.game-finished")}
+                  {summary?.gameEndReason === "all_users_finished"
+                    ? t("game-summary.game-completed")
+                    : t("game-summary.game-finished")}
                 </Text>
               </View>
 
               {summary && (
                 <Text style={styles.gameSubtitle}>
                   {summary.maxRounds} {t("game-summary.rounds")} •{" "}
-                  {summary.type === "movie" ? t("game-summary.movies") : t("game-summary.tv-shows")} • {summary.roomId || roomId}
+                  {summary.type === "movie"
+                    ? t("game-summary.movies")
+                    : t("game-summary.tv-shows")}{" "}
+                  • {summary.roomId || roomId}
                 </Text>
               )}
             </View>
@@ -281,9 +343,13 @@ export default function GameSummary() {
                 <View style={styles.statBlock}>
                   <View style={styles.statHeader}>
                     <MaterialIcons name="people" size={18} color="#64B5F6" />
-                    <Text style={styles.statTitle}>{t("game-summary.players")}</Text>
+                    <Text style={styles.statTitle}>
+                      {t("game-summary.players")}
+                    </Text>
                   </View>
-                  <Text style={[styles.statValue, { color: "#64B5F6" }]}>{summary?.totalUsers || 0}</Text>
+                  <Text style={[styles.statValue, { color: "#64B5F6" }]}>
+                    {summary?.totalUsers || 0}
+                  </Text>
                 </View>
 
                 <View style={styles.statDivider} />
@@ -291,9 +357,13 @@ export default function GameSummary() {
                 <View style={styles.statBlock}>
                   <View style={styles.statHeader}>
                     <MaterialIcons name="favorite" size={18} color="#FF6B6B" />
-                    <Text style={styles.statTitle}>{t("game-summary.matches")}</Text>
+                    <Text style={styles.statTitle}>
+                      {t("game-summary.matches")}
+                    </Text>
                   </View>
-                  <Text style={[styles.statValue, { color: "#FF6B6B" }]}>{summary?.totalMatches || 0}</Text>
+                  <Text style={[styles.statValue, { color: "#FF6B6B" }]}>
+                    {summary?.totalMatches || 0}
+                  </Text>
                 </View>
 
                 <View style={styles.statDivider} />
@@ -301,10 +371,13 @@ export default function GameSummary() {
                 <View style={styles.statBlock}>
                   <View style={styles.statHeader}>
                     <MaterialIcons name="touch-app" size={18} color="#81C784" />
-                    <Text style={styles.statTitle}>{t("game-summary.total-picks")}</Text>
+                    <Text style={styles.statTitle}>
+                      {t("game-summary.total-picks")}
+                    </Text>
                   </View>
                   <Text style={[styles.statValue, { color: "#81C784" }]}>
-                    {summary?.users.find((u) => u.userId === userId)?.swipedMovies?.totalSwiped || "-"}
+                    {summary?.users.find((u) => u.userId === userId)
+                      ?.swipedMovies?.totalSwiped || "-"}
                   </Text>
                 </View>
               </View>
@@ -313,7 +386,9 @@ export default function GameSummary() {
 
           {summary?.users && (
             <View style={styles.playersContainer}>
-              <Text style={styles.playersTitle}>{t("game-summary.player-performance")}</Text>
+              <Text style={styles.playersTitle}>
+                {t("game-summary.player-performance")}
+              </Text>
               <View style={styles.playersGrid}>
                 {summary.users.map((user, index) => (
                   <View key={index} style={styles.playerChip}>
@@ -325,21 +400,35 @@ export default function GameSummary() {
                         style={{
                           borderWidth: 1.5,
                           borderColor: "rgba(255,255,255,0.4)",
-                          backgroundColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
+                          backgroundColor:
+                            AVATAR_COLORS[index % AVATAR_COLORS.length],
                         }}
                       />
-                      <View style={[styles.playerStatusIndicator, user.finished ? styles.finishedIndicator : styles.inProgressIndicator]}>
+                      <View
+                        style={[
+                          styles.playerStatusIndicator,
+                          user.finished
+                            ? styles.finishedIndicator
+                            : styles.inProgressIndicator,
+                        ]}
+                      >
                         {user.finished ? (
                           <MaterialIcons name="done" size={9} color="white" />
                         ) : (
-                          <MaterialIcons name="more-horiz" size={8} color="white" />
+                          <MaterialIcons
+                            name="more-horiz"
+                            size={8}
+                            color="white"
+                          />
                         )}
                       </View>
                     </View>
                     <Text style={styles.playerChipName}>{user.username}</Text>
                     <View style={styles.chipMetrics}>
                       <AntDesign name="heart" size={12} color="#FF6B6B" />
-                      <Text style={styles.chipPickCount}>{user.swipedMovies?.liked?.length ?? 0}</Text>
+                      <Text style={styles.chipPickCount}>
+                        {user.swipedMovies?.liked?.length ?? 0}
+                      </Text>
                     </View>
                   </View>
                 ))}
@@ -357,7 +446,9 @@ export default function GameSummary() {
                   marginBottom: 15,
                 }}
               >
-                <Text style={styles.matchesTitle}>{t("game-summary.matched-movies")}</Text>
+                <Text style={styles.matchesTitle}>
+                  {t("game-summary.matched-movies")}
+                </Text>
 
                 <CreateCollectionFromLiked data={summary.matchedMovies} />
               </View>
@@ -369,7 +460,9 @@ export default function GameSummary() {
                     alignItems: "center",
                   }}
                 >
-                  <Text style={{ color: "#fff", fontSize: 16 }}>{t("game-summary.no-matches")}</Text>
+                  <Text style={{ color: "#fff", fontSize: 16 }}>
+                    {t("game-summary.no-matches")}
+                  </Text>
                 </View>
               ) : (
                 <FlatList
@@ -392,7 +485,11 @@ export default function GameSummary() {
                 marginTop: 30,
               }}
             >
-              <Text style={{ color: "#fff", fontSize: 45, fontFamily: "Bebas" }}>{t("game-summary.no-matches")}</Text>
+              <Text
+                style={{ color: "#fff", fontSize: 45, fontFamily: "Bebas" }}
+              >
+                {t("game-summary.no-matches")}
+              </Text>
               <Text
                 style={{
                   color: "#fff",
@@ -404,7 +501,9 @@ export default function GameSummary() {
               >
                 {t("game-summary.no-matches-desc")}
               </Text>
-              <Button onPress={handleTryAgain}>{t("game-summary.try-again")}</Button>
+              <Button onPress={handleTryAgain}>
+                {t("game-summary.try-again")}
+              </Button>
             </View>
           )}
 
@@ -422,7 +521,9 @@ export default function GameSummary() {
                   marginBottom: 15,
                 }}
               >
-                <Text style={styles.matchesTitle}>{t("game-summary.your-picks")}</Text>
+                <Text style={styles.matchesTitle}>
+                  {t("game-summary.your-picks")}
+                </Text>
 
                 <CreateCollectionFromLiked data={likes} />
               </View>
@@ -452,7 +553,12 @@ export default function GameSummary() {
           backgroundColor: "#000",
         }}
       >
-        <Button mode="contained" onPress={handleBackToHome} style={styles.backButton} contentStyle={styles.backButtonContent}>
+        <Button
+          mode="contained"
+          onPress={handleBackToHome}
+          style={styles.backButton}
+          contentStyle={styles.backButtonContent}
+        >
           {t("game-summary.back-to-home")}
         </Button>
 
@@ -472,7 +578,11 @@ export default function GameSummary() {
         )}
       </View>
 
-      <ShareTicketModal visible={shareModalVisible} onClose={() => setShareModalVisible(false)} roomId={roomId} />
+      <ShareTicketModal
+        visible={shareModalVisible}
+        onClose={() => setShareModalVisible(false)}
+        roomId={roomId}
+      />
     </View>
   );
 }
@@ -485,88 +595,112 @@ interface ShareTicketModalProps {
   roomId: string;
 }
 
-const ShareTicketModal = memo(({ visible, onClose, roomId }: ShareTicketModalProps) => {
-  const viewShotRef = useRef<ViewShot>(null);
-  const [fetchSummaryShare, { data, isLoading, error }] = useLazyGetSummaryShareQuery();
-  const t = useTranslation();
+const ShareTicketModal = memo(
+  ({ visible, onClose, roomId }: ShareTicketModalProps) => {
+    const viewShotRef = useRef<ViewShot>(null);
+    const [fetchSummaryShare, { data, isLoading, error }] =
+      useLazyGetSummaryShareQuery();
+    const t = useTranslation();
 
-  useEffect(() => {
-    if (visible && roomId) {
-      fetchSummaryShare({ roomId });
-    }
-  }, [visible, roomId, fetchSummaryShare]);
-
-  const captureAndShare = useCallback(async () => {
-    try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-      const uri = await captureRef(viewShotRef, {
-        format: "png",
-        quality: 1,
-        result: "tmpfile",
-        fileName: `marathon-${roomId}.png`,
-      });
-
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(uri, {
-          mimeType: "image/png",
-          dialogTitle: t("game-summary.share.dialog-title") as string,
-        });
+    useEffect(() => {
+      if (visible && roomId) {
+        fetchSummaryShare({ roomId });
       }
-    } catch (err) {
-      console.error("Failed to capture ticket:", err);
-    }
-  }, [roomId]);
+    }, [visible, roomId, fetchSummaryShare]);
 
-  useEffect(() => {
-    if (!data || !visible) return;
+    const captureAndShare = useCallback(async () => {
+      try {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
-    let timeout = setTimeout(() => {
-      captureAndShare();
-    }, 500);
+        const uri = await captureRef(viewShotRef, {
+          format: "png",
+          quality: 1,
+          result: "tmpfile",
+          fileName: `marathon-${roomId}.png`,
+        });
 
-    return () => clearTimeout(timeout);
-  }, [data, visible, captureAndShare]);
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(uri, {
+            mimeType: "image/png",
+            dialogTitle: t("game-summary.share.dialog-title") as string,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to capture ticket:", err);
+      }
+    }, [roomId]);
 
-  return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={shareModalStyles.modalOverlay}>
-        <Pressable style={shareModalStyles.modalBackdrop} onPress={onClose} />
+    useEffect(() => {
+      if (!data || !visible) return;
 
-        <View style={shareModalStyles.modalContent}>
-          <IconButton icon="close" size={24} onPress={onClose} style={shareModalStyles.closeButton} iconColor="#000" />
+      let timeout = setTimeout(() => {
+        captureAndShare();
+      }, 500);
 
-          {isLoading ? (
-            <View style={shareModalStyles.loadingContainer}>
-              <FancySpinner size={60} />
-              <Text style={shareModalStyles.loadingText}>{t("game-summary.share.loading")}</Text>
-            </View>
-          ) : error ? (
-            <View style={shareModalStyles.errorContainer}>
-              <MaterialIcons name="error-outline" size={48} color="#ff6b6b" />
-              <Text style={shareModalStyles.errorText}>{t("game-summary.share.error")}</Text>
-            </View>
-          ) : data?.movies && data.movies.length > 0 ? (
-            <>
-              <ViewShot
-                ref={viewShotRef}
-                options={{ format: "png", quality: 1, fileName: `marathon-${roomId}.png` }}
-                style={shareModalStyles.viewShot}
-              >
-                <MarathonTicket movies={data.movies} />
-              </ViewShot>
-            </>
-          ) : (
-            <View style={shareModalStyles.errorContainer}>
-              <MaterialIcons name="movie" size={48} color="#666" />
-              <Text style={shareModalStyles.errorText}>{t("game-summary.share.no-movies")}</Text>
-            </View>
-          )}
+      return () => clearTimeout(timeout);
+    }, [data, visible, captureAndShare]);
+
+    return (
+      <Modal
+        visible={visible}
+        transparent
+        animationType="fade"
+        onRequestClose={onClose}
+      >
+        <View style={shareModalStyles.modalOverlay}>
+          <Pressable style={shareModalStyles.modalBackdrop} onPress={onClose} />
+
+          <View style={shareModalStyles.modalContent}>
+            <IconButton
+              icon="close"
+              size={24}
+              onPress={onClose}
+              style={shareModalStyles.closeButton}
+              iconColor="#000"
+            />
+
+            {isLoading ? (
+              <View style={shareModalStyles.loadingContainer}>
+                <FancySpinner size={60} />
+                <Text style={shareModalStyles.loadingText}>
+                  {t("game-summary.share.loading")}
+                </Text>
+              </View>
+            ) : error ? (
+              <View style={shareModalStyles.errorContainer}>
+                <MaterialIcons name="error-outline" size={48} color="#ff6b6b" />
+                <Text style={shareModalStyles.errorText}>
+                  {t("game-summary.share.error")}
+                </Text>
+              </View>
+            ) : data?.movies && data.movies.length > 0 ? (
+              <>
+                <ViewShot
+                  ref={viewShotRef}
+                  options={{
+                    format: "png",
+                    quality: 1,
+                    fileName: `marathon-${roomId}.png`,
+                  }}
+                  style={shareModalStyles.viewShot}
+                >
+                  <MarathonTicket movies={data.movies} />
+                </ViewShot>
+              </>
+            ) : (
+              <View style={shareModalStyles.errorContainer}>
+                <MaterialIcons name="movie" size={48} color="#666" />
+                <Text style={shareModalStyles.errorText}>
+                  {t("game-summary.share.no-movies")}
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
-      </View>
-    </Modal>
-  );
-});
+      </Modal>
+    );
+  },
+);
 
 const shareModalStyles = StyleSheet.create({
   modalOverlay: {
@@ -630,98 +764,131 @@ const shareModalStyles = StyleSheet.create({
   },
 });
 
-const AnimatedBackgroundImage = memo(({ matchedMovies }: { matchedMovies: Partial<Movie>[] }) => {
-  const [bgImageIndexA, setBgImageIndexA] = useState(0);
-  const [bgImageIndexB, setBgImageIndexB] = useState(1);
-  const [activeLayer, setActiveLayer] = useState<"A" | "B">("A");
-  const layerAOpacity = useRef(new Animated.Value(1)).current;
-  const layerBOpacity = useRef(new Animated.Value(0)).current;
+const AnimatedBackgroundImage = memo(
+  ({ matchedMovies }: { matchedMovies: Partial<Movie>[] }) => {
+    const [bgImageIndexA, setBgImageIndexA] = useState(0);
+    const [bgImageIndexB, setBgImageIndexB] = useState(1);
+    const [activeLayer, setActiveLayer] = useState<"A" | "B">("A");
+    const layerAOpacity = useRef(new Animated.Value(1)).current;
+    const layerBOpacity = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    if (matchedMovies && matchedMovies.length > 1) {
-      const interval = setInterval(() => {
-        if (activeLayer === "A") {
-          const nextIndex = (bgImageIndexA + 1) % matchedMovies.length;
-          setBgImageIndexB(nextIndex);
+    useEffect(() => {
+      if (matchedMovies && matchedMovies.length > 1) {
+        const interval = setInterval(() => {
+          if (activeLayer === "A") {
+            const nextIndex = (bgImageIndexA + 1) % matchedMovies.length;
+            setBgImageIndexB(nextIndex);
 
-          Animated.parallel([
-            Animated.timing(layerAOpacity, {
-              toValue: 0,
-              duration: 1000,
-              useNativeDriver: true,
-            }),
-            Animated.timing(layerBOpacity, {
-              toValue: 1,
-              duration: 1000,
-              useNativeDriver: true,
-            }),
-          ]).start(() => {
-            setActiveLayer("B");
-          });
-        } else {
-          const nextIndex = (bgImageIndexB + 1) % matchedMovies.length;
-          setBgImageIndexA(nextIndex);
+            Animated.parallel([
+              Animated.timing(layerAOpacity, {
+                toValue: 0,
+                duration: 1000,
+                useNativeDriver: true,
+              }),
+              Animated.timing(layerBOpacity, {
+                toValue: 1,
+                duration: 1000,
+                useNativeDriver: true,
+              }),
+            ]).start(() => {
+              setActiveLayer("B");
+            });
+          } else {
+            const nextIndex = (bgImageIndexB + 1) % matchedMovies.length;
+            setBgImageIndexA(nextIndex);
 
-          Animated.parallel([
-            Animated.timing(layerBOpacity, {
-              toValue: 0,
-              duration: 1000,
-              useNativeDriver: true,
-            }),
-            Animated.timing(layerAOpacity, {
-              toValue: 1,
-              duration: 1000,
-              useNativeDriver: true,
-            }),
-          ]).start(() => {
-            setActiveLayer("A");
-          });
-        }
-      }, 5000);
+            Animated.parallel([
+              Animated.timing(layerBOpacity, {
+                toValue: 0,
+                duration: 1000,
+                useNativeDriver: true,
+              }),
+              Animated.timing(layerAOpacity, {
+                toValue: 1,
+                duration: 1000,
+                useNativeDriver: true,
+              }),
+            ]).start(() => {
+              setActiveLayer("A");
+            });
+          }
+        }, 5000);
 
-      return () => clearInterval(interval);
-    }
-  }, [matchedMovies, activeLayer, bgImageIndexA, bgImageIndexB, layerAOpacity, layerBOpacity]);
+        return () => clearInterval(interval);
+      }
+    }, [
+      matchedMovies,
+      activeLayer,
+      bgImageIndexA,
+      bgImageIndexB,
+      layerAOpacity,
+      layerBOpacity,
+    ]);
 
-  const backgroundUriA = matchedMovies?.[bgImageIndexA]?.poster_path
-    ? `https://image.tmdb.org/t/p/w300${matchedMovies[bgImageIndexA].poster_path}`
-    : null;
+    const backgroundUriA = matchedMovies?.[bgImageIndexA]?.poster_path
+      ? `https://image.tmdb.org/t/p/w300${matchedMovies[bgImageIndexA].poster_path}`
+      : null;
 
-  const backgroundUriB = matchedMovies?.[bgImageIndexB]?.poster_path
-    ? `https://image.tmdb.org/t/p/w300${matchedMovies[bgImageIndexB].poster_path}`
-    : null;
+    const backgroundUriB = matchedMovies?.[bgImageIndexB]?.poster_path
+      ? `https://image.tmdb.org/t/p/w300${matchedMovies[bgImageIndexB].poster_path}`
+      : null;
 
-  return (
-    (backgroundUriA || backgroundUriB) && (
-      <>
-        {/* Layer A */}
-        {backgroundUriA && (
-          <Animated.View style={[styles.backgroundImageContainer, { opacity: layerAOpacity }]}>
-            <ImageBackground source={{ uri: backgroundUriA }} style={styles.backgroundImage} blurRadius={8}>
-              <BlurView intensity={15} style={styles.blurOverlay} />
-            </ImageBackground>
-          </Animated.View>
-        )}
+    return (
+      (backgroundUriA || backgroundUriB) && (
+        <>
+          {/* Layer A */}
+          {backgroundUriA && (
+            <Animated.View
+              style={[
+                styles.backgroundImageContainer,
+                { opacity: layerAOpacity },
+              ]}
+            >
+              <ImageBackground
+                source={{ uri: backgroundUriA }}
+                style={styles.backgroundImage}
+                blurRadius={8}
+              >
+                <BlurView intensity={15} style={styles.blurOverlay} />
+              </ImageBackground>
+            </Animated.View>
+          )}
 
-        {/* Layer B */}
-        {backgroundUriB && (
-          <Animated.View style={[styles.backgroundImageContainer, { opacity: layerBOpacity }]}>
-            <ImageBackground source={{ uri: backgroundUriB }} style={styles.backgroundImage} blurRadius={8}>
-              <BlurView intensity={15} style={styles.blurOverlay} />
-            </ImageBackground>
-          </Animated.View>
-        )}
-      </>
-    )
-  );
-});
+          {/* Layer B */}
+          {backgroundUriB && (
+            <Animated.View
+              style={[
+                styles.backgroundImageContainer,
+                { opacity: layerBOpacity },
+              ]}
+            >
+              <ImageBackground
+                source={{ uri: backgroundUriB }}
+                style={styles.backgroundImage}
+                blurRadius={8}
+              >
+                <BlurView intensity={15} style={styles.blurOverlay} />
+              </ImageBackground>
+            </Animated.View>
+          )}
+        </>
+      )
+    );
+  },
+);
 
-const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { summary: { type: string }; badge?: boolean }) => {
+const MatchedItem = ({
+  summary,
+  badge = false,
+  ...item
+}: Partial<Movie> & { summary: { type: string }; badge?: boolean }) => {
   const dispatch = useAppDispatch();
   const groups = useAppSelector((state) => state.favourite.groups);
   const t = useTranslation();
 
-  const isInGroup1 = groups.find((g) => g?.id === "1")?.movies.some((m) => m?.id === item?.id) ?? false;
+  const isInGroup1 =
+    groups.find((g) => g?.id === "1")?.movies.some((m) => m?.id === item?.id) ??
+    false;
 
   const onFavouritePress = () => {
     isInGroup1
@@ -753,13 +920,21 @@ const MatchedItem = ({ summary, badge = false, ...item }: Partial<Movie> & { sum
           <Button
             style={{
               marginTop: 8,
-              borderColor: isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary,
+              borderColor: isInGroup1
+                ? MD2DarkTheme.colors.error
+                : MD2DarkTheme.colors.primary,
             }}
             mode="outlined"
             onPress={onFavouritePress}
-            textColor={isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary}
+            textColor={
+              isInGroup1
+                ? MD2DarkTheme.colors.error
+                : MD2DarkTheme.colors.primary
+            }
           >
-            {isInGroup1 ? t("game-summary.remove-from-favourites") : t("game-summary.add-to-favourites")}
+            {isInGroup1
+              ? t("game-summary.remove-from-favourites")
+              : t("game-summary.add-to-favourites")}
           </Button>
         </View>
       )}
@@ -845,6 +1020,41 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
     fontWeight: "bold",
+  },
+  errorCard: {
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+    padding: 32,
+    marginHorizontal: 16,
+    gap: 12,
+  },
+  errorIconWrapper: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: "rgba(255,107,107,0.12)",
+    borderWidth: 1,
+    borderColor: "rgba(255,107,107,0.3)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+  },
+  errorHeading: {
+    fontSize: 36,
+    fontFamily: "Bebas",
+    color: "#FFFFFF",
+    letterSpacing: 1,
+    textAlign: "center",
+  },
+  errorSubtext: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.5)",
+    textAlign: "center",
+    lineHeight: 20,
+    marginBottom: 8,
   },
   dashboardContainer: {
     marginBottom: 24,
@@ -1064,7 +1274,6 @@ const styles = StyleSheet.create({
   },
   backButton: {
     borderRadius: 100,
-    flex: 1,
   },
   backButtonContent: {
     paddingVertical: 7.5,
