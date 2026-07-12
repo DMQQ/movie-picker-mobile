@@ -1,6 +1,6 @@
 import { ReactElement, useCallback, useEffect, useRef } from "react";
 import { LayoutRectangle, StyleProp, View, ViewStyle } from "react-native";
-import { useTourContext } from "./TourContext";
+import { useTourStableContext } from "./TourContext";
 
 interface Props {
   index: number;
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function TourAttachStep({ index, children, fill = false, style }: Props) {
-  const { registerMeasurer } = useTourContext();
+  const { registerMeasurer } = useTourStableContext();
   const ref = useRef<View>(null);
 
   const measure = useCallback((): Promise<LayoutRectangle> => {

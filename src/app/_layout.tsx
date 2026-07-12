@@ -226,6 +226,22 @@ const RootNavigator = ({
           />
 
           <Stack.Screen
+            name="favourite-groups"
+            options={{
+              headerShown: false,
+              gestureEnabled: true,
+              presentation: "formSheet",
+              sheetGrabberVisible: true,
+              contentStyle: {
+                backgroundColor:
+                  Platform.OS === "android" ? "#121212" : "transparent",
+              },
+              sheetAllowedDetents: [0.5, 0.85],
+              sheetInitialDetentIndex: 0,
+            }}
+          />
+
+          <Stack.Screen
             name="filters"
             options={{
               headerShown: false,

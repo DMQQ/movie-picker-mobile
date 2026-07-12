@@ -715,5 +715,27 @@
         "El after"
       ]
     }
+  },
+  "tutorial": {
+    "swipe": {
+      "title": "Desliza con amigos",
+      "description": "Crea una sala, comparte el código, y todos deslizan películas. Cuando a todos les guste la misma — ¡es un match!"
+    },
+    "fortune": {
+      "title": "Ruleta de la fortuna",
+      "description": "Gira la ruleta para obtener una película aleatoria basada en tus filtros de género y proveedor."
+    },
+    "random": {
+      "title": "Selección aleatoria",
+      "description": "¿Necesitas algo rápido? Toca para obtener una recomendación de película al instante en segundos."
+    },
+    "voter": {
+      "title": "Votación",
+      "description": "Dos jugadores califican la misma película en interés, estado de ánimo y originalidad. Compara y decide juntos."
+    },
+    "join": {
+      "title": "Unirse a una sala",
+      "description": "¿Ya tienes un código de sala? Toca aquí para escanear el código QR y unirte al juego de un amigo al instante."
+    }
   }
 }

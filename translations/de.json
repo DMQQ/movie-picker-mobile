@@ -715,5 +715,27 @@
         "Die After-Party"
       ]
     }
+  },
+  "tutorial": {
+    "swipe": {
+      "title": "Swipen mit Freunden",
+      "description": "Erstelle einen Raum, teile den Code, und alle swipen durch Filme. Wenn alle denselben mögen — es ist ein Match!"
+    },
+    "fortune": {
+      "title": "Glücksrad",
+      "description": "Drehe das Rad für eine zufällige Filmauswahl basierend auf deinen Genre- und Anbieterfiltern."
+    },
+    "random": {
+      "title": "Zufällige Auswahl",
+      "description": "Brauchst du etwas schnell? Tippe für eine sofortige zufällige Filmempfehlung in Sekunden."
+    },
+    "voter": {
+      "title": "Abstimmung",
+      "description": "Zwei Spieler bewerten denselben Film nach Interesse, Stimmung und Einzigartigkeit. Vergleicht und entscheidet gemeinsam."
+    },
+    "join": {
+      "title": "Raum beitreten",
+      "description": "Hast du bereits einen Raumcode? Tippe hier, um den QR-Code zu scannen und sofort dem Spiel eines Freundes beizutreten."
+    }
   }
 }

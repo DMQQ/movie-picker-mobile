@@ -714,5 +714,27 @@
         "After Party"
       ]
     }
+  },
+  "tutorial": {
+    "swipe": {
+      "title": "Swipuj ze znajomymi",
+      "description": "Utwórz pokój, udostępnij kod, a wszyscy swipują filmy. Gdy wszyscy polubią ten sam — to dopasowanie!"
+    },
+    "fortune": {
+      "title": "Koło fortuny",
+      "description": "Zakręć kołem, aby losowo wybrać film na podstawie twoich filtrów gatunku i platformy."
+    },
+    "random": {
+      "title": "Losowy wybór",
+      "description": "Potrzebujesz czegoś szybko? Dotknij, aby uzyskać natychmiastową losową rekomendację filmową w kilka sekund."
+    },
+    "voter": {
+      "title": "Głosowanie",
+      "description": "Dwóch graczy ocenia ten sam film pod kątem zainteresowania, nastroju i oryginalności. Porównajcie i zdecydujcie razem."
+    },
+    "join": {
+      "title": "Dołącz do pokoju",
+      "description": "Masz już kod pokoju? Dotknij tutaj, aby zeskanować kod QR i natychmiast dołączyć do gry znajomego."
+    }
   }
 }

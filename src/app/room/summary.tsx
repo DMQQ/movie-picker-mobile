@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#000",
   },
-  backBtn: { borderRadius: 100 },
+  backBtn: { borderRadius: 100, flex: 1 },
   btnContent: { paddingVertical: 7.5 },
   shareBtn: { borderRadius: 100, borderColor: "rgba(255,255,255,0.3)" },
 });

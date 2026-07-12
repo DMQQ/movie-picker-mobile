@@ -46,14 +46,13 @@ const PagerCategoryScreen = memo(() => {
           <LoadingSkeleton />
         </View>
       )}
+      <CategoryPage key={selectedChip} categoryId={selectedChip} />
 
       <CategoryPagerIndicator
         chipCategories={chipCategories}
         selectedChip={selectedChip}
         onChipPress={handleChipPress}
       />
-
-      <CategoryPage key={selectedChip} categoryId={selectedChip} />
     </SafeIOSContainer>
   );
 });

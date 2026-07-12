@@ -715,5 +715,27 @@
         "The After Party"
       ]
     }
+  },
+  "tutorial": {
+    "swipe": {
+      "title": "Swipe with friends",
+      "description": "Create a room, share the code, and everyone swipes through movies. When you all like the same one — it's a match!"
+    },
+    "fortune": {
+      "title": "Fortune wheel",
+      "description": "Spin the wheel to get a random movie pick based on your genre and provider filters."
+    },
+    "random": {
+      "title": "Random pick",
+      "description": "Need something fast? Tap for an instant random movie recommendation in seconds."
+    },
+    "voter": {
+      "title": "Voter",
+      "description": "Two players each rate the same movie on interest, mood, and uniqueness. Compare and decide together."
+    },
+    "join": {
+      "title": "Join a room",
+      "description": "Already have a room code? Tap here to scan the QR code and join a friend's game instantly."
+    }
   }
 }

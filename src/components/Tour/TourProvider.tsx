@@ -17,7 +17,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { TourContext, TourRef, TourStep } from "./TourContext";
+import { TourContext, TourRef, TourStep, TourStableContext } from "./TourContext";
 
 const { width: W, height: H } = Dimensions.get("screen");
 const SPOTLIGHT_PADDING = 10;
@@ -163,11 +163,14 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
   }, [spot]);
 
   const ctx = useMemo(
-    () => ({ current, spot, steps, next, stop, registerMeasurer }),
-    [current, spot, steps, next, stop, registerMeasurer],
+    () => ({ current, spot, steps, next, stop }),
+    [current, spot, steps, next, stop],
   );
 
+  const stableCtx = useMemo(() => ({ registerMeasurer }), [registerMeasurer]);
+
   return (
+    <TourStableContext.Provider value={stableCtx}>
     <TourContext.Provider value={ctx}>
       {children}
 
@@ -214,6 +217,7 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
         </Animated.View>
       </Modal>
     </TourContext.Provider>
+    </TourStableContext.Provider>
   );
 });
 

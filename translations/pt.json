@@ -715,5 +715,27 @@
         "A festa depois"
       ]
     }
+  },
+  "tutorial": {
+    "swipe": {
+      "title": "Deslize com amigos",
+      "description": "Crie uma sala, compartilhe o código, e todos deslizam filmes. Quando todos gostarem do mesmo — é um match!"
+    },
+    "fortune": {
+      "title": "Roda da fortuna",
+      "description": "Gire a roda para obter uma escolha aleatória de filme com base nos seus filtros de gênero e provedor."
+    },
+    "random": {
+      "title": "Escolha aleatória",
+      "description": "Precisa de algo rápido? Toque para obter uma recomendação aleatória de filme em segundos."
+    },
+    "voter": {
+      "title": "Votação",
+      "description": "Dois jogadores avaliam o mesmo filme em interesse, humor e originalidade. Compare e decida juntos."
+    },
+    "join": {
+      "title": "Entrar em uma sala",
+      "description": "Já tem um código de sala? Toque aqui para escanear o código QR e entrar no jogo de um amigo instantaneamente."
+    }
   }
 }

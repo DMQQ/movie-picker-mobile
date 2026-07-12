@@ -138,8 +138,8 @@ export default function GameList() {
         render: props => (
           <TutorialTooltip
             {...props}
-            title="Swipe with friends"
-            description="Create a room, share the code, and everyone swipes through movies. When you all like the same one — it's a match!"
+            title={t("tutorial.swipe.title") as string}
+            description={t("tutorial.swipe.description") as string}
           />
         ),
         spotRadius: 16,
@@ -149,8 +149,8 @@ export default function GameList() {
         render: props => (
           <TutorialTooltip
             {...props}
-            title="Fortune wheel"
-            description="Spin the wheel to get a random movie pick based on your genre and provider filters."
+            title={t("tutorial.fortune.title") as string}
+            description={t("tutorial.fortune.description") as string}
           />
         ),
         spotRadius: 16,
@@ -161,8 +161,8 @@ export default function GameList() {
         render: props => (
           <TutorialTooltip
             {...props}
-            title="Random pick"
-            description="Need something fast? Tap for an instant random movie recommendation in seconds."
+            title={t("tutorial.random.title") as string}
+            description={t("tutorial.random.description") as string}
           />
         ),
         spotRadius: 16,
@@ -173,8 +173,8 @@ export default function GameList() {
         render: props => (
           <TutorialTooltip
             {...props}
-            title="Voter"
-            description="Two players each rate the same movie on interest, mood, and uniqueness. Compare and decide together."
+            title={t("tutorial.voter.title") as string}
+            description={t("tutorial.voter.description") as string}
           />
         ),
         spotRadius: 16,
@@ -185,8 +185,8 @@ export default function GameList() {
         render: props => (
           <TutorialTooltip
             {...props}
-            title="Join a room"
-            description="Already have a room code? Tap here to scan the QR code and join a friend's game instantly."
+            title={t("tutorial.join.title") as string}
+            description={t("tutorial.join.description") as string}
           />
         ),
         spotRadius: 100,
@@ -194,7 +194,7 @@ export default function GameList() {
         before: () => scrollTo(0),
       },
     ],
-    [scrollTo],
+    [scrollTo, t],
   );
 
   const games = useMemo(

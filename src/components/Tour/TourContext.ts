@@ -27,6 +27,9 @@ export interface TourContextValue {
   steps: TourStep[];
   next: () => void;
   stop: () => void;
+}
+
+export interface TourStableContextValue {
   registerMeasurer: (index: number, fn: () => Promise<LayoutRectangle>) => void;
 }
 
@@ -36,9 +39,16 @@ export const TourContext = createContext<TourContextValue>({
   steps: [],
   next: () => {},
   stop: () => {},
+});
+
+export const TourStableContext = createContext<TourStableContextValue>({
   registerMeasurer: () => {},
 });
 
 export function useTourContext() {
   return useContext(TourContext);
+}
+
+export function useTourStableContext() {
+  return useContext(TourStableContext);
 }

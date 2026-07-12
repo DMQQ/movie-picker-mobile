@@ -372,7 +372,7 @@ export default function FortuneWheel() {
         <Animated.View
           style={{
             position: "absolute",
-            top: height * 0.1 + CARD_HEIGHT - 15,
+            top: height * 0.1 + CARD_HEIGHT + 20,
             left: 0,
             right: 0,
             justifyContent: "center",

@@ -67,7 +67,7 @@ const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvi
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "flatrate":
-        return { name: "television-subscription", color: "#2E7D32" };
+        return { name: "television-play", color: "#2E7D32" };
       case "rent":
       case "buy":
         return { name: "cart", color: "#E65100" };
@@ -133,7 +133,7 @@ const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvi
           <View style={styles.legendItem}>
             <View style={[styles.legendIcon, { backgroundColor: "#2E7D32" }]}>
               {/* @ts-ignore */}
-              <MaterialCommunityIcons name="television-subscription" size={10} color="white" />
+              <MaterialCommunityIcons name="television-play" size={10} color="white" />
             </View>
             <Text style={styles.legendText}>{t("global.provider_legend.subscription")}</Text>
           </View>

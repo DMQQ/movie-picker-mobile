@@ -107,10 +107,6 @@ export default function MovieDetailsScreen() {
     },
   );
 
-  if (movie) {
-    console.log(JSON.stringify(movie, null, 2));
-  }
-
   const { data: similarData } = useGetSimilarQuery(
     {
       id: numericId,

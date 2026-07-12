@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Image, ImageProps } from "expo-image";
 import { MD2DarkTheme, Text } from "react-native-paper";
 
@@ -84,7 +84,7 @@ export default function Thumbnail({
     <View style={[styles.container, container]}>
       {alt && <Text style={styles.altText}>{alt}</Text>}
       <Image
-        transition={200}
+        transition={Platform.OS === "android" ? 0 : 200}
         {...rest}
         priority={priority}
         source={{
@@ -92,7 +92,7 @@ export default function Thumbnail({
         }}
         style={[styles.image, rest.style]}
         placeholderContentFit="cover"
-        cachePolicy={"disk"}
+        cachePolicy={"memory-disk"}
         recyclingKey={path}
         contentFit="cover"
         {...(showsPlaceholder && { placeholder: `https://image.tmdb.org/t/p/w${ThumbnailSizes.poster.tiny}` + path })}
