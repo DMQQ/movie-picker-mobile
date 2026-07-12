@@ -2,6 +2,7 @@ import { AsyncStorage } from "expo-sqlite/kv-store";
 import { useState } from "react";
 import { Dimensions, Image, StyleSheet, View } from "react-native";
 import { Button, IconButton, Text } from "react-native-paper";
+import PrimaryButton from "../components/PrimaryButton";
 import Animated, { FadeInDown, FadeInUp, SlideInRight, SlideOutLeft } from "react-native-reanimated";
 import SafeIOSContainer from "../components/SafeIOSContainer";
 import useTranslation from "../service/useTranslation";
@@ -231,16 +232,14 @@ export default function OnboardingScreen({ onClose }: OnboardingScreenProps) {
             </Button>
           )}
 
-          <Button
-            mode="contained"
+          <PrimaryButton
             onPress={handleNext}
             loading={isLoading}
             disabled={isLoading}
             style={[styles.nextButton, isLastPage && styles.fullWidthButton]}
-            contentStyle={styles.nextButtonContent}
           >
             {isLastPage ? t("onboarding.features.getStarted") : t("onboarding.features.next")}
-          </Button>
+          </PrimaryButton>
         </View>
       </Animated.View>
     </SafeIOSContainer>

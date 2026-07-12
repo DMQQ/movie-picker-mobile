@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Dimensions,
   Platform,
   Pressable,
@@ -261,14 +262,13 @@ export default function RandomMovie() {
           <Button
             mode="contained"
             onPress={fetchRandomMovie}
-            loading={isLoading}
             disabled={isLoading}
             style={styles.primaryButton}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}
             icon={
               isLoading
-                ? undefined
+                ? ({ color }: { color: string }) => <ActivityIndicator size={16} color={color} />
                 : movie && isRevealed
                   ? "refresh"
                   : "dice-multiple"

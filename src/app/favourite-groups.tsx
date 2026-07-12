@@ -39,10 +39,12 @@ export default function FavouriteGroupsScreen() {
     : groups;
 
   const onPress = (group: (typeof groups)[number]) => {
-    const inGroup = group.movies.some((m) => m.id === movieId);
+    const inGroup = group.movies.some(
+      (m) => +m.id === +movieId && m.type === movieType,
+    );
 
     if (inGroup) {
-      dispatch(removeFromGroup({ groupId: group.id, movieId }));
+      dispatch(removeFromGroup({ groupId: group.id, movieId: +movieId }));
     } else {
       dispatch(
         addToGroup({
@@ -64,9 +66,8 @@ export default function FavouriteGroupsScreen() {
   };
 
   return (
-    <View
-      style={[styles.container, { paddingBottom: insets.bottom + 16 }]}
-    >
+    <View style={[styles.container, { paddingBottom: insets.bottom + 16 }]}>
+      {Platform.OS === "android" && <View style={styles.grabber} />}
       <Text style={styles.title}>
         {t("quick-actions.modal")}{" "}
         <Text style={styles.movieTitle}>{movieTitle || movieName}</Text>
@@ -117,18 +118,12 @@ export default function FavouriteGroupsScreen() {
               <MaterialCommunityIcons
                 name={inGroup ? "bookmark-check" : "bookmark-outline"}
                 size={22}
-                color={
-                  inGroup ? "#fff" : MD2DarkTheme.colors.placeholder
-                }
+                color={inGroup ? "#fff" : MD2DarkTheme.colors.placeholder}
                 style={styles.itemIcon}
               />
               <Text style={styles.itemText}>{group.name}</Text>
               {inGroup && (
-                <MaterialCommunityIcons
-                  name="check"
-                  size={18}
-                  color="#fff"
-                />
+                <MaterialCommunityIcons name="check" size={18} color="#fff" />
               )}
             </Pressable>
           );
@@ -142,8 +137,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#121212",
-    paddingTop: 24,
     paddingHorizontal: 20,
+  },
+  grabber: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "#555",
+    alignSelf: "center",
+    marginTop: 12,
+    marginBottom: 15,
   },
   title: {
     color: MD2DarkTheme.colors.text,
@@ -162,6 +165,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 16,
     height: 46,
+    borderWidth: 1,
+    borderColor: MD2DarkTheme.colors.disabled,
   },
   searchIcon: {
     marginRight: 8,

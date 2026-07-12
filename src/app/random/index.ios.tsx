@@ -1,4 +1,4 @@
-import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
 import Animated, {
   FadeIn,
@@ -164,12 +164,11 @@ export default function RandomMovie() {
           <Button
             mode="contained"
             onPress={fetchRandomMovie}
-            loading={isLoading}
             disabled={isLoading}
             style={styles.primaryButton}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}
-            icon={isLoading ? undefined : movie && isRevealed ? "refresh" : "dice-multiple"}
+            icon={isLoading ? ({ color }) => <ActivityIndicator size={16} color={color} /> : movie && isRevealed ? "refresh" : "dice-multiple"}
             buttonColor={PRIMARY_COLOR}
             textColor="#fff"
           >

@@ -1,4 +1,4 @@
-import { BackHandler, Linking, Platform, StyleSheet, View } from "react-native";
+import { ActivityIndicator, BackHandler, Linking, Platform, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { useLocalSearchParams, router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -32,7 +32,7 @@ function NoInternetContent({ loading, onDismiss }: { loading?: boolean; onDismis
       <Text style={styles.title}>{t("status-modal.no-internet.title")}</Text>
       <Text style={styles.message}>{t("status-modal.no-internet.message")}</Text>
       {onDismiss && (
-        <Button loading={loading} mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
+        <Button icon={loading ? ({ color }) => <ActivityIndicator size={16} color={color} /> : undefined} disabled={loading} mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
           {t("status-modal.retry")}
         </Button>
       )}
@@ -48,7 +48,7 @@ function ServerErrorContent({ loading, onDismiss }: { loading?: boolean; onDismi
       <Text style={styles.title}>{t("status-modal.server.title")}</Text>
       <Text style={styles.message}>{t("status-modal.server.message")}</Text>
       {onDismiss && (
-        <Button loading={loading} mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
+        <Button icon={loading ? ({ color }) => <ActivityIndicator size={16} color={color} /> : undefined} disabled={loading} mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
           {t("status-modal.retry")}
         </Button>
       )}
@@ -68,7 +68,7 @@ function MaintenanceContent({ loading, data, onDismiss }: { loading?: boolean; d
       <Text style={styles.title}>{t("status-modal.maintenance.title")}</Text>
       <Text style={styles.message}>{serverMessage || t("status-modal.maintenance.message")}</Text>
       {onDismiss && (
-        <Button loading={loading} mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
+        <Button icon={loading ? ({ color }) => <ActivityIndicator size={16} color={color} /> : undefined} disabled={loading} mode="contained" onPress={onDismiss} style={styles.button} contentStyle={styles.buttonContent}>
           {t("status-modal.dismiss")}
         </Button>
       )}
@@ -91,7 +91,8 @@ function UpdateContent({ loading, data, onDismiss }: { loading?: boolean; data: 
       <View style={styles.buttonContainer}>
         {link && (
           <Button
-            loading={loading}
+            icon={loading ? ({ color }) => <ActivityIndicator size={16} color={color} /> : undefined}
+            disabled={loading}
             mode="contained"
             onPress={() => Linking.openURL(link)}
             style={styles.button}
@@ -102,7 +103,7 @@ function UpdateContent({ loading, data, onDismiss }: { loading?: boolean; data: 
         )}
         {onDismiss && (
           <Button
-            loading={loading}
+            disabled={loading}
             mode="text"
             onPress={onDismiss}
             textColor="#888"

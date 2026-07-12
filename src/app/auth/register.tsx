@@ -4,6 +4,7 @@ import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Icon, Text, TextInput } from "react-native-paper";
+import PrimaryButton from "../../components/PrimaryButton";
 import { useRegisterMutation } from "../../redux/auth/authApi";
 import { useAuthProviders } from "../../hooks/useAuthProviders";
 import AuthProviderButtons from "../../components/AuthProviderButtons";
@@ -108,12 +109,14 @@ export default function RegisterScreen() {
                   {errors.password && <Text style={styles.fieldError}>{errors.password}</Text>}
                 </View>
 
-                <Button
-                  mode="contained" onPress={handleRegister} loading={isLoading}
-                  disabled={anyLoading} style={styles.primaryBtn} contentStyle={styles.primaryBtnContent}
+                <PrimaryButton
+                  onPress={handleRegister}
+                  loading={isLoading}
+                  disabled={anyLoading}
+                  style={styles.primaryBtn}
                 >
                   Create account
-                </Button>
+                </PrimaryButton>
               </>
             ) : (
               <>

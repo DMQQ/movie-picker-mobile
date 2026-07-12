@@ -4,6 +4,7 @@ import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Icon, Text, TextInput } from "react-native-paper";
+import PrimaryButton from "../../components/PrimaryButton";
 import { useLoginMutation } from "../../redux/auth/authApi";
 import { useAuthProviders } from "../../hooks/useAuthProviders";
 import AuthProviderButtons from "../../components/AuthProviderButtons";
@@ -93,12 +94,14 @@ export default function LoginScreen() {
                   {errors.password && <Text style={styles.fieldError}>{errors.password}</Text>}
                 </View>
 
-                <Button
-                  mode="contained" onPress={handleLogin} loading={isLoading}
-                  disabled={anyLoading} style={styles.primaryBtn} contentStyle={styles.primaryBtnContent}
+                <PrimaryButton
+                  onPress={handleLogin}
+                  loading={isLoading}
+                  disabled={anyLoading}
+                  style={styles.primaryBtn}
                 >
                   Sign in
-                </Button>
+                </PrimaryButton>
               </>
             ) : (
               <>

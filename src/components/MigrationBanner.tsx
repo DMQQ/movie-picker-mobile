@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 
 type Props = {
@@ -36,7 +36,7 @@ export default function MigrationBanner({ counts, isMigrating, onSync, onDismiss
         mode="text"
         compact
         onPress={onSync}
-        loading={isMigrating}
+        icon={isMigrating ? ({ color }) => <ActivityIndicator size={16} color={color} /> : undefined}
         disabled={isMigrating}
         textColor="#BB86FC"
         style={{ marginRight: -4 }}

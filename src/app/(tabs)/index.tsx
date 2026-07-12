@@ -1,6 +1,12 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
@@ -125,7 +131,7 @@ export default function GameList() {
 
   const scrollTo = useCallback(
     (y: number) =>
-      new Promise<void>(resolve => {
+      new Promise<void>((resolve) => {
         scrollRef.current?.scrollTo({ y, animated: true });
         setTimeout(resolve, 380);
       }),
@@ -135,7 +141,7 @@ export default function GameList() {
   const steps = useMemo<TourStep[]>(
     () => [
       {
-        render: props => (
+        render: (props) => (
           <TutorialTooltip
             {...props}
             title={t("tutorial.swipe.title") as string}
@@ -146,7 +152,7 @@ export default function GameList() {
         placement: "bottom",
       },
       {
-        render: props => (
+        render: (props) => (
           <TutorialTooltip
             {...props}
             title={t("tutorial.fortune.title") as string}
@@ -158,7 +164,7 @@ export default function GameList() {
         before: () => scrollTo(CARD_HEIGHT + CARD_GAP - 40),
       },
       {
-        render: props => (
+        render: (props) => (
           <TutorialTooltip
             {...props}
             title={t("tutorial.random.title") as string}
@@ -170,7 +176,7 @@ export default function GameList() {
         before: () => scrollTo(2 * (CARD_HEIGHT + CARD_GAP) - 40),
       },
       {
-        render: props => (
+        render: (props) => (
           <TutorialTooltip
             {...props}
             title={t("tutorial.voter.title") as string}
@@ -182,7 +188,7 @@ export default function GameList() {
         before: () => scrollTo(3 * (CARD_HEIGHT + CARD_GAP)),
       },
       {
-        render: props => (
+        render: (props) => (
           <TutorialTooltip
             {...props}
             title={t("tutorial.join.title") as string}
@@ -272,7 +278,12 @@ export default function GameList() {
         >
           <ActiveGameBanner />
           {games.map((game, arrayIndex) => (
-            <TourAttachStep key={game.index} index={arrayIndex} fill style={{ marginBottom: CARD_GAP }}>
+            <TourAttachStep
+              key={game.index}
+              index={arrayIndex}
+              fill
+              style={{ marginBottom: CARD_GAP }}
+            >
               <GameCard
                 index={game.index}
                 title={game.title as string}

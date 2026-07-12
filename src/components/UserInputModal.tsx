@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { View, StyleSheet, Modal, Dimensions, Platform } from "react-native";
+import { ActivityIndicator, View, StyleSheet, Modal, Dimensions, Platform } from "react-native";
 import { Text, Button } from "react-native-paper";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -82,8 +82,8 @@ export default function UserInputModal({
                     key={index}
                     mode={action.mode || "contained"}
                     onPress={() => handleActionPress(action)}
-                    disabled={action.disabled}
-                    loading={action.loading}
+                    disabled={action.disabled || action.loading}
+                    icon={action.loading ? ({ color }) => <ActivityIndicator size={16} color={color} /> : undefined}
                     textColor={action.textColor}
                     style={[styles.actionButton, actionsLayout === "horizontal" && styles.actionButtonHorizontal]}
                     contentStyle={styles.actionButtonContent}

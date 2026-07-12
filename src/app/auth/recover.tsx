@@ -3,6 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Icon, Text, TextInput } from "react-native-paper";
+import PrimaryButton from "../../components/PrimaryButton";
 import { useRecoverMutation } from "../../redux/auth/authApi";
 import FadeSlide from "../../components/FadeSlide";
 
@@ -97,12 +98,14 @@ export default function RecoverScreen() {
           </FadeSlide>
 
           <FadeSlide delay={240}>
-            <Button
-              mode="contained" onPress={handleRecover} loading={isLoading}
-              disabled={isLoading} style={styles.primaryBtn} contentStyle={styles.primaryBtnContent}
+            <PrimaryButton
+              onPress={handleRecover}
+              loading={isLoading}
+              disabled={isLoading}
+              style={styles.primaryBtn}
             >
               Recover account
-            </Button>
+            </PrimaryButton>
 
             <View style={styles.hint}>
               <Icon source="information-outline" size={14} color="rgba(255,255,255,0.3)" />
