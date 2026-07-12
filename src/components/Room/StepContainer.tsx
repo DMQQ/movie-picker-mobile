@@ -1,12 +1,16 @@
 import React, { useCallback } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { Button, IconButton, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { router } from "expo-router";
-import { goNext, goToStep, setQuickStartMode } from "../../redux/roomBuilder/roomBuilderSlice";
+import {
+  goNext,
+  goToStep,
+  setQuickStartMode,
+} from "../../redux/roomBuilder/roomBuilderSlice";
 import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
 
 interface StepContainerProps {
@@ -17,13 +21,21 @@ interface StepContainerProps {
   children: React.ReactNode;
 }
 
-const StepContainer: React.FC<StepContainerProps> = ({ currentStep, isLastStep = false, nextButtonText, children, footerSubtitle }) => {
+const StepContainer: React.FC<StepContainerProps> = ({
+  currentStep,
+  isLastStep = false,
+  nextButtonText,
+  children,
+  footerSubtitle,
+}) => {
   const dispatch = useAppDispatch();
   const t = useTranslation();
   const category = useAppSelector((state) => state.builder.category);
   const state = useAppSelector((state) => state.builder);
-  const { preferences: savedProviders, isLoading: providersLoading } = useBuilderPreferences();
-  const hasProviders = savedProviders?.providers && savedProviders.providers.length > 0;
+  const { preferences: savedProviders, isLoading: providersLoading } =
+    useBuilderPreferences();
+  const hasProviders =
+    savedProviders?.providers && savedProviders.providers.length > 0;
 
   const canGoNext = () => {
     switch (currentStep) {
@@ -101,8 +113,13 @@ const StepContainer: React.FC<StepContainerProps> = ({ currentStep, isLastStep =
         </Animated.View>
       </View>
 
-      <LinearGradient style={styles.buttonContainer} colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}>
-        {footerSubtitle && <Text style={styles.footerSubtitle}>{footerSubtitle}</Text>}
+      <LinearGradient
+        style={styles.buttonContainer}
+        colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}
+      >
+        {footerSubtitle && (
+          <Text style={styles.footerSubtitle}>{footerSubtitle}</Text>
+        )}
 
         {currentStep === 1 ? (
           <View style={styles.step1NavigationRow}>
@@ -133,7 +150,9 @@ const StepContainer: React.FC<StepContainerProps> = ({ currentStep, isLastStep =
             onPress={handleNext}
           >
             {nextButtonText ||
-              (isLastStep || (currentStep === 3 && state.quickStartMode) ? t("room.builder.createRoom") : t("room.builder.next"))}
+              (isLastStep || (currentStep === 3 && state.quickStartMode)
+                ? t("room.builder.createRoom")
+                : t("room.builder.next"))}
           </Button>
         )}
       </LinearGradient>
@@ -164,6 +183,11 @@ const styles = StyleSheet.create({
     right: 0,
     paddingHorizontal: 16,
     paddingTop: 8,
+    ...Platform.select({
+      android: {
+        paddingBottom: 15,
+      },
+    }),
   },
   footerSubtitle: {
     fontSize: 14,

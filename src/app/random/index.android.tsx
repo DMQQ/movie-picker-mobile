@@ -1,4 +1,10 @@
-import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
 import Animated, {
   FadeIn,
@@ -22,7 +28,10 @@ import { Canvas, RadialGradient, Rect, vec } from "@shopify/react-native-skia";
 import { FilterButton } from "../../components/MediaFilters";
 import ShareTicketButton from "../../components/ShareTicketButton";
 import { useRandomMovie } from "../../hooks/useRandomMovie";
-import { RandomQuestionMarks, ActionButtons } from "../../components/Random/shared";
+import {
+  RandomQuestionMarks,
+  ActionButtons,
+} from "../../components/Random/shared";
 import { ThumbnailSizes } from "../../components/Thumbnail";
 import GenresView from "../../components/GenresView";
 import PlatformBlurView from "../../components/PlatformBlurView";
@@ -40,25 +49,47 @@ export default function RandomMovie() {
   const scale = useSharedValue(1);
   const diceRotate = useSharedValue(0);
 
-  const { movie, details, isLoading, isRevealed, superLikeIconScale, fetchRandomMovie, handleViewDetails, handleSuperLike, handleBlock } =
-    useRandomMovie({
-      diceRotate,
-      onReveal: () => {
-        rotateY.value = withSequence(
-          withTiming(0, { duration: 0 }),
-          withTiming(180, { duration: 600, easing: Easing.out(Easing.back(1.5)) }),
-        );
-        scale.value = withSequence(withTiming(0.9, { duration: 100 }), withSpring(1, { damping: 12, stiffness: 100 }));
-      },
-      onReset: () => {
-        rotateY.value = withTiming(0, { duration: 400, easing: Easing.out(Easing.cubic) });
-      },
-    });
+  const {
+    movie,
+    details,
+    isLoading,
+    isRevealed,
+    superLikeIconScale,
+    fetchRandomMovie,
+    handleViewDetails,
+    handleSuperLike,
+    handleBlock,
+  } = useRandomMovie({
+    diceRotate,
+    onReveal: () => {
+      rotateY.value = withSequence(
+        withTiming(0, { duration: 0 }),
+        withTiming(180, {
+          duration: 600,
+          easing: Easing.out(Easing.back(1.5)),
+        }),
+      );
+      scale.value = withSequence(
+        withTiming(0.9, { duration: 100 }),
+        withSpring(1, { damping: 12, stiffness: 100 }),
+      );
+    },
+    onReset: () => {
+      rotateY.value = withTiming(0, {
+        duration: 400,
+        easing: Easing.out(Easing.cubic),
+      });
+    },
+  });
 
   const frontAnimatedStyle = useAnimatedStyle(() => {
     const rotateValue = interpolate(rotateY.value, [0, 180], [0, 180]);
     return {
-      transform: [{ perspective: 1000 }, { rotateY: `${rotateValue}deg` }, { scale: scale.value }],
+      transform: [
+        { perspective: 1000 },
+        { rotateY: `${rotateValue}deg` },
+        { scale: scale.value },
+      ],
       zIndex: rotateY.value < 90 ? 1 : 0,
       opacity: rotateY.value < 90 ? 1 : 0,
     };
@@ -67,7 +98,11 @@ export default function RandomMovie() {
   const backAnimatedStyle = useAnimatedStyle(() => {
     const rotateValue = interpolate(rotateY.value, [0, 180], [180, 360]);
     return {
-      transform: [{ perspective: 1000 }, { rotateY: `${rotateValue}deg` }, { scale: scale.value }],
+      transform: [
+        { perspective: 1000 },
+        { rotateY: `${rotateValue}deg` },
+        { scale: scale.value },
+      ],
       zIndex: rotateY.value >= 90 ? 1 : 0,
       opacity: rotateY.value >= 90 ? 1 : 0,
     };
@@ -96,35 +131,64 @@ export default function RandomMovie() {
         <View style={styles.content}>
           <View style={styles.cardContainer}>
             {/* FRONT FACE (Dice) */}
-            <Animated.View style={[styles.cardFace, styles.frontFace, frontAnimatedStyle]}>
+            <Animated.View
+              style={[styles.cardFace, styles.frontFace, frontAnimatedStyle]}
+            >
               <View style={styles.solidFrontBackground}>
                 <Canvas style={StyleSheet.absoluteFill}>
                   <Rect x={0} y={0} width={CARD_WIDTH} height={CARD_HEIGHT}>
-                    <RadialGradient c={vec(CARD_WIDTH / 2, CARD_HEIGHT / 2)} r={CARD_WIDTH * 0.8} colors={["#9370DB", "#4B0082"]} />
+                    <RadialGradient
+                      c={vec(CARD_WIDTH / 2, CARD_HEIGHT / 2)}
+                      r={CARD_WIDTH * 0.8}
+                      colors={["#9370DB", "#4B0082"]}
+                    />
                   </Rect>
                 </Canvas>
 
                 <Animated.View style={diceIconStyle}>
-                  <MaterialCommunityIcons name="dice-multiple" size={100} color="rgba(255,255,255,0.9)" />
+                  <MaterialCommunityIcons
+                    name="dice-multiple"
+                    size={100}
+                    color="rgba(255,255,255,0.9)"
+                  />
                 </Animated.View>
-                <Text style={styles.frontText}>{isLoading ? t("games.random.revealing") : t("games.random.hint")}</Text>
+                <Text style={styles.frontText}>
+                  {isLoading
+                    ? t("games.random.revealing")
+                    : t("games.random.hint")}
+                </Text>
 
-                <RandomQuestionMarks cardWidth={CARD_WIDTH} cardHeight={CARD_HEIGHT} />
+                <RandomQuestionMarks
+                  cardWidth={CARD_WIDTH}
+                  cardHeight={CARD_HEIGHT}
+                />
               </View>
             </Animated.View>
 
             {/* BACK FACE (Movie) */}
-            <Animated.View style={[styles.cardFace, styles.backFace, backAnimatedStyle]}>
+            <Animated.View
+              style={[styles.cardFace, styles.backFace, backAnimatedStyle]}
+            >
               {movie && (
-                <Pressable onPress={handleViewDetails} style={styles.cardPressable}>
+                <Pressable
+                  onPress={handleViewDetails}
+                  style={styles.cardPressable}
+                >
                   <Image
                     placeholder={`https://image.tmdb.org/t/p/${ThumbnailSizes.poster.tiny}${movie.poster_path}`}
-                    source={{ uri: `https://image.tmdb.org/t/p/w780${movie.poster_path}` }}
+                    source={{
+                      uri: `https://image.tmdb.org/t/p/w780${movie.poster_path}`,
+                    }}
                     style={styles.poster}
                     contentFit="cover"
                   />
                   <LinearGradient
-                    colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)", "#000"]}
+                    colors={[
+                      "transparent",
+                      "rgba(0,0,0,0.6)",
+                      "rgba(0,0,0,0.95)",
+                      "#000",
+                    ]}
                     locations={[0, 0.4, 0.75, 1]}
                     style={styles.infoOverlay}
                   >
@@ -133,12 +197,20 @@ export default function RandomMovie() {
                     </Text>
 
                     <View style={styles.ratingRow}>
-                      <MaterialCommunityIcons name="star" size={16} color="#fbbf24" />
-                      <Text style={styles.ratingText}>{movie.vote_average.toFixed(1)}</Text>
+                      <MaterialCommunityIcons
+                        name="star"
+                        size={16}
+                        color="#fbbf24"
+                      />
+                      <Text style={styles.ratingText}>
+                        {movie.vote_average.toFixed(1)}
+                      </Text>
                       {details?.runtime ? (
                         <>
                           <Text style={styles.dotSeparator}>•</Text>
-                          <Text style={styles.ratingText}>{details.runtime} min</Text>
+                          <Text style={styles.ratingText}>
+                            {details.runtime} min
+                          </Text>
                         </>
                       ) : null}
 
@@ -158,8 +230,14 @@ export default function RandomMovie() {
 
                     <View style={styles.actions}>
                       <View style={styles.hintRow}>
-                        <Text style={styles.hintText}>{t("fortune-wheel.tap-for-details")}</Text>
-                        <MaterialCommunityIcons name="chevron-right" size={14} color="rgba(255,255,255,0.5)" />
+                        <Text style={styles.hintText}>
+                          {t("fortune-wheel.tap-for-details")}
+                        </Text>
+                        <MaterialCommunityIcons
+                          name="chevron-right"
+                          size={14}
+                          color="rgba(255,255,255,0.5)"
+                        />
                       </View>
                       <ActionButtons
                         onSuperLike={handleSuperLike}
@@ -176,7 +254,10 @@ export default function RandomMovie() {
           </View>
         </View>
 
-        <Animated.View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, 24) }]} entering={SlideInDown.duration(400)}>
+        <Animated.View
+          style={[styles.bottomBar, { paddingBottom: 15 }]}
+          entering={SlideInDown.duration(400)}
+        >
           <Button
             mode="contained"
             onPress={fetchRandomMovie}
@@ -185,16 +266,31 @@ export default function RandomMovie() {
             style={styles.primaryButton}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}
-            icon={isLoading ? undefined : movie && isRevealed ? "refresh" : "dice-multiple"}
+            icon={
+              isLoading
+                ? undefined
+                : movie && isRevealed
+                  ? "refresh"
+                  : "dice-multiple"
+            }
             buttonColor={PRIMARY_COLOR}
             textColor="#fff"
           >
-            {movie && isRevealed ? t("games.random.try-again") : t("games.random.reveal")}
+            {movie && isRevealed
+              ? t("games.random.try-again")
+              : t("games.random.reveal")}
           </Button>
 
           {movie && isRevealed && details && (
             <Animated.View entering={FadeIn} style={styles.shareButtonWrapper}>
-              <ShareTicketButton movie={{ ...movie, genres: details.genres, tagline: details.tagline }} providers={details.providers} />
+              <ShareTicketButton
+                movie={{
+                  ...movie,
+                  genres: details.genres,
+                  tagline: details.tagline,
+                }}
+                providers={details.providers}
+              />
             </Animated.View>
           )}
         </Animated.View>
@@ -326,8 +422,7 @@ const styles = StyleSheet.create({
   },
   bottomBar: {
     flexDirection: "row",
-    paddingHorizontal: 24,
-    paddingTop: 20,
+    padding: 15,
     gap: 12,
     backgroundColor: "rgba(0,0,0,0.4)",
     borderTopWidth: 1,
@@ -349,7 +444,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  actions: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  actions: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
 
   hintRow: {
     flexDirection: "row",

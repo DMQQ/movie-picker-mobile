@@ -68,7 +68,7 @@ export default function QuickActions(props: {
           onPress={() => onPress("2")}
         >
           <MaterialCommunityIcons
-            name={isInGroup("2") ? "clock" : "clock-check-outline"}
+            name={isInGroup("2") ? "clock" : "clock-outline"}
             size={35}
             color="#fff"
           />
@@ -89,7 +89,7 @@ export default function QuickActions(props: {
           onPress={() => onPress("1")}
         >
           <MaterialCommunityIcons
-            name={isInGroup("1") ? "heart" : "heart-broken"}
+            name={isInGroup("1") ? "heart" : "heart-outline"}
             size={35}
             color="#fff"
           />
@@ -110,7 +110,7 @@ export default function QuickActions(props: {
           onPress={() => onPress("999")}
         >
           <MaterialCommunityIcons
-            name={isInGroup("999") ? "eye" : "eye-lock"}
+            name={isInGroup("999") ? "eye" : "eye-outline"}
             size={35}
             color="#fff"
           />

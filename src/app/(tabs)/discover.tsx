@@ -1,5 +1,5 @@
 import { memo, useCallback, useState } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useGetChipCategoriesQuery } from "../../redux/movie/movieApi";
 import LandingHeader from "../../components/LandingHeader";
 import CategoryPage from "../../components/Landing/CategoryPage";
@@ -7,10 +7,11 @@ import CategoryPagerIndicator from "../../components/Landing/CategoryPagerIndica
 import LoadingSkeleton from "../../components/Landing/LoadingSkeleton";
 import useIsMounted from "../../hooks/useIsMounted";
 import { FeaturedSectionSkeleton } from "../../components/Landing/FeaturedSection";
+import SafeIOSContainer from "../../components/SafeIOSContainer";
 
 export default function Landing() {
   return (
-    <View style={{ flex: 1, backgroundColor: "#000", paddingBottom: 15 }}>
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
       <PagerCategoryScreen />
       <LandingHeader />
     </View>
@@ -39,11 +40,11 @@ const PagerCategoryScreen = memo(() => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      {chipCategories.length > 0 ? (
-        <CategoryPage key={selectedChip} categoryId={selectedChip} />
-      ) : (
-        <LoadingSkeleton />
+    <SafeIOSContainer style={{ flex: 1, paddingBottom: 0 }}>
+      {chipCategories.length === 0 && (
+        <View style={StyleSheet.absoluteFill}>
+          <LoadingSkeleton />
+        </View>
       )}
 
       <CategoryPagerIndicator
@@ -51,6 +52,8 @@ const PagerCategoryScreen = memo(() => {
         selectedChip={selectedChip}
         onChipPress={handleChipPress}
       />
-    </View>
+
+      <CategoryPage key={selectedChip} categoryId={selectedChip} />
+    </SafeIOSContainer>
   );
 });

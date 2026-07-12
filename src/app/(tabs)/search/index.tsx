@@ -1,30 +1,64 @@
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Dimensions, ImageBackground, Platform, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { ActivityIndicator, MD2DarkTheme, Searchbar, Text } from "react-native-paper";
-import { useLazySearchQuery, useLazyGetSimilarQuery } from "../../../redux/movie/movieApi";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Dimensions,
+  ImageBackground,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import {
+  ActivityIndicator,
+  MD2DarkTheme,
+  Searchbar,
+  Text,
+} from "react-native-paper";
+import {
+  useLazySearchQuery,
+  useLazyGetSimilarQuery,
+} from "../../../redux/movie/movieApi";
 import { FlashList } from "@shopify/flash-list";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../../types";
 import FrostedGlass from "../../../components/FrostedGlass";
-import Thumbnail, { prefetchThumbnail, ThumbnailSizes } from "../../../components/Thumbnail";
+import Thumbnail, {
+  prefetchThumbnail,
+  ThumbnailSizes,
+} from "../../../components/Thumbnail";
 import useTranslation from "../../../service/useTranslation";
-import useIsMounted from "../../../hooks/useIsMounted";
 import { isLiquidGlassSupported } from "@callstack/liquid-glass";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; index: number }) => {
+const MovieCard = ({
+  item,
+  index,
+}: {
+  item: Movie & { release_date?: string };
+  index: number;
+}) => {
   const t = useTranslation();
   const data = [
     !!!item?.title ? t("voter.types.series") : t("voter.types.movie"),
     `${item?.vote_average?.toFixed(2)}/10`,
     item?.adult ? "18+" : "All ages",
     item?.release_date || item?.first_air_date,
-    (item?.title || item?.name) === (item?.original_title || item?.original_name) ? "" : item?.original_title || item?.original_name,
+    (item?.title || item?.name) ===
+    (item?.original_title || item?.original_name)
+      ? ""
+      : item?.original_title || item?.original_name,
     ...(item?.genres || [])?.map((g: any) => g.name),
   ].filter((v) => v !== undefined && v !== "") as any;
 
@@ -55,11 +89,24 @@ const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; i
         style={{ flex: 1 }}
         imageStyle={{ flex: 1, borderRadius: 15 }}
       >
-        <View style={{ position: "relative", justifyContent: "center", alignItems: "center", padding: 15 }}>
-          <Thumbnail path={item.poster_path} container={[styles.cardImage]} size={ThumbnailSizes.poster.xlarge} />
+        <View
+          style={{
+            position: "relative",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 15,
+          }}
+        >
+          <Thumbnail
+            path={item.poster_path}
+            container={[styles.cardImage]}
+            size={ThumbnailSizes.poster.xlarge}
+          />
         </View>
 
-        <FrostedGlass style={{ flex: 1, padding: 15, overflow: "hidden", gap: 2.5 }}>
+        <FrostedGlass
+          style={{ flex: 1, padding: 15, overflow: "hidden", gap: 2.5 }}
+        >
           <Text
             numberOfLines={2}
             style={{
@@ -70,10 +117,16 @@ const MovieCard = ({ item, index }: { item: Movie & { release_date?: string }; i
             {item?.title || item?.name}
           </Text>
 
-          <Text style={{ color: "rgba(255, 255, 255, 0.8)" }}>{data.join(" | ")}</Text>
+          <Text style={{ color: "rgba(255, 255, 255, 0.8)" }}>
+            {data.join(" | ")}
+          </Text>
 
           <View style={{ flex: 1, overflow: "hidden" }}>
-            <Text numberOfLines={4} ellipsizeMode="tail" style={{ marginTop: 5 }}>
+            <Text
+              numberOfLines={4}
+              ellipsizeMode="tail"
+              style={{ marginTop: 5 }}
+            >
               {item.overview}
             </Text>
           </View>
@@ -102,7 +155,10 @@ const SearchScreen = () => {
   const routeParamsRef = useRef(searchParams);
 
   const [search, { isLoading, isFetching }] = useLazySearchQuery();
-  const [getSimilar, { isLoading: isLoadingSimilar, isFetching: isFetchingSimilar }] = useLazyGetSimilarQuery();
+  const [
+    getSimilar,
+    { isLoading: isLoadingSimilar, isFetching: isFetchingSimilar },
+  ] = useLazyGetSimilarQuery();
   const t = useTranslation();
 
   useEffect(() => {
@@ -139,9 +195,12 @@ const SearchScreen = () => {
     const prevParams = routeParamsRef.current || {};
 
     const hasParamsChanged =
-      JSON.stringify(currentParams.genres) !== JSON.stringify(prevParams.genres) ||
-      JSON.stringify(currentParams.providers) !== JSON.stringify(prevParams.providers) ||
-      JSON.stringify(currentParams.people) !== JSON.stringify(prevParams.people);
+      JSON.stringify(currentParams.genres) !==
+        JSON.stringify(prevParams.genres) ||
+      JSON.stringify(currentParams.providers) !==
+        JSON.stringify(prevParams.providers) ||
+      JSON.stringify(currentParams.people) !==
+        JSON.stringify(prevParams.people);
 
     if (hasParamsChanged) {
       routeParamsRef.current = searchParams;
@@ -180,7 +239,11 @@ const SearchScreen = () => {
 
     try {
       // Handle similar movies mode
-      if (searchParams?.mode === "similar" && searchParams?.movieId && searchParams?.type) {
+      if (
+        searchParams?.mode === "similar" &&
+        searchParams?.movieId &&
+        searchParams?.type
+      ) {
         const response = await getSimilar({
           id: searchParams.movieId,
           type: searchParams.type,
@@ -213,14 +276,20 @@ const SearchScreen = () => {
       if (response.page === page) {
         lastReceivedApiPage.current = page;
 
-        Promise.any(response.results.map((item) => prefetchThumbnail(item, ThumbnailSizes.poster.xxlarge)));
+        Promise.any(
+          response.results.map((item) =>
+            prefetchThumbnail(item, ThumbnailSizes.poster.xxlarge),
+          ),
+        );
 
         if (page === 1) {
           setAllResults(response.results);
         } else {
           setAllResults((prevResults) => {
             const existingIds = new Set(prevResults.map((item) => item.id));
-            const newResults = response.results.filter((item) => !existingIds.has(item.id));
+            const newResults = response.results.filter(
+              (item) => !existingIds.has(item.id),
+            );
             return [...prevResults, ...newResults];
           });
         }
@@ -236,7 +305,11 @@ const SearchScreen = () => {
 
   // Load next page
   const handleEndReached = useCallback(() => {
-    if (!(isFetching || isFetchingSimilar) && hasNextPage && !isLoadingNextPage.current) {
+    if (
+      !(isFetching || isFetchingSimilar) &&
+      hasNextPage &&
+      !isLoadingNextPage.current
+    ) {
       const nextPage = currentPage + 1;
 
       isLoadingNextPage.current = true;
@@ -254,7 +327,13 @@ const SearchScreen = () => {
 
   const renderEmptyComponent = useCallback(() => {
     if ((isLoading || isLoadingSimilar) && currentPage === 1)
-      return <ActivityIndicator style={[styles.loader, { marginTop: 50 }]} animating={true} color={MD2DarkTheme.colors.primary} />;
+      return (
+        <ActivityIndicator
+          style={[styles.loader, { marginTop: 50 }]}
+          animating={true}
+          color={MD2DarkTheme.colors.primary}
+        />
+      );
 
     if (searchQuery.trim().length === 0 && !searchParams) {
       return (
@@ -312,7 +391,7 @@ const SearchScreen = () => {
   );
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: 15 }]}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       {memoStack}
 
       {Platform.OS !== "ios" && (
@@ -327,10 +406,27 @@ const SearchScreen = () => {
         </View>
       )}
 
-      <View style={[styles.chipContainer, { marginTop: Platform.OS === "ios" ? insets.top + (isLiquidGlassSupported ? 0 : 30) : 0 }]}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesContainer}>
+      <View
+        style={[
+          styles.chipContainer,
+          {
+            marginTop:
+              Platform.OS === "ios"
+                ? insets.top + (isLiquidGlassSupported ? 0 : 30)
+                : 0,
+          },
+        ]}
+      >
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoriesContainer}
+        >
           {categories.map((category, index) => (
-            <Animated.View key={category.id} entering={FadeInUp.delay(50 * (index + 1))}>
+            <Animated.View
+              key={category.id}
+              entering={FadeInUp.delay(50 * (index + 1))}
+            >
               <TouchableOpacity
                 onPress={() => handleFilterChange(category.id)}
                 style={[
@@ -342,14 +438,24 @@ const SearchScreen = () => {
                   },
                 ]}
               >
-                <Text style={[styles.chipText, filters.type === category.id && styles.chipTextActive]}>{category.label}</Text>
+                <Text
+                  style={[
+                    styles.chipText,
+                    filters.type === category.id && styles.chipTextActive,
+                  ]}
+                >
+                  {category.label}
+                </Text>
               </TouchableOpacity>
             </Animated.View>
           ))}
         </ScrollView>
         <TouchableOpacity
           onPress={() => {
-            router.push({ pathname: "/search-filters", params: { ...searchParams, type: filters.type } });
+            router.push({
+              pathname: "/search-filters",
+              params: { ...searchParams, type: filters.type },
+            });
           }}
           style={[styles.chipWrapper, styles.chip]}
         >
@@ -360,7 +466,9 @@ const SearchScreen = () => {
       <FlashList
         contentContainerStyle={{ padding: 15 }}
         data={allResults}
-        renderItem={({ item, index }) => <MovieCard index={index} item={item} />}
+        renderItem={({ item, index }) => (
+          <MovieCard index={index} item={item} />
+        )}
         keyExtractor={(item, index) => {
           const mediaType = item.media_type || filters.type;
           const uniqueId = `${item.id}-${mediaType}`;
@@ -370,7 +478,11 @@ const SearchScreen = () => {
         onEndReachedThreshold={0.5}
         ListFooterComponent={() =>
           (isFetching || isFetchingSimilar) && currentPage > 1 ? (
-            <ActivityIndicator style={styles.loader} animating={true} color={MD2DarkTheme.colors.primary} />
+            <ActivityIndicator
+              style={styles.loader}
+              animating={true}
+              color={MD2DarkTheme.colors.primary}
+            />
           ) : null
         }
         ListEmptyComponent={renderEmptyComponent}

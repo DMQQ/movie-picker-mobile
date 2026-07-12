@@ -98,8 +98,7 @@ export default function WaitingState({
         style={{
           height: 100,
           justifyContent: "flex-end",
-          paddingHorizontal: 15,
-          paddingTop: 15,
+          padding: 15,
         }}
       >
         {!currentUserReady && (

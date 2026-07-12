@@ -20,7 +20,6 @@ const getItem = (data: any, index: number) => data[index];
 const styles = StyleSheet.create({
   listContent: {
     paddingTop: 100,
-    paddingBottom: 50,
   },
   footer: {
     height: 250,
@@ -96,7 +95,7 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
 
   const featuredSection = useMemo(
     () => <FeaturedSection categoryId={categoryId} />,
-    [],
+    [categoryId],
   );
 
   const listFooterComponent = useMemo(
@@ -140,7 +139,6 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
       ListHeaderComponent={featuredSection}
       contentContainerStyle={styles.listContent}
       refreshControl={refreshControl}
-      style={styles.flex}
       ListFooterComponent={listFooterComponent}
     />
   );

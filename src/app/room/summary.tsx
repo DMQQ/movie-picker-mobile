@@ -27,7 +27,8 @@ export default function GameSummary() {
   const insets = useSafeAreaInsets();
   const likes = useAppSelector((st) => st.room.room.likes);
   const [shareVisible, setShareVisible] = useState(false);
-  const { summary, loading, error, shouldShowRatingPill, userId } = useGameSummary(roomId);
+  const { summary, loading, error, shouldShowRatingPill, userId } =
+    useGameSummary(roomId);
 
   const handleBackToHome = () => {
     dispatch(roomActions.reset());
@@ -65,9 +66,17 @@ export default function GameSummary() {
         <AnimatedBg matchedMovies={summary!.matchedMovies} />
       )}
       <ScrollView
-        style={[styles.scroll, { paddingTop: Platform.OS === "android" ? insets.top : 0, marginTop: Platform.OS === "ios" ? -insets.top : 0 }]}
+        style={[
+          styles.scroll,
+          {
+            paddingTop: Platform.OS === "android" ? insets.top : 0,
+            marginTop: Platform.OS === "ios" ? -insets.top : 0,
+          },
+        ]}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: Platform.OS === "ios" ? insets.top : 0 }}
+        contentContainerStyle={{
+          paddingTop: Platform.OS === "ios" ? insets.top : 0,
+        }}
       >
         <View style={styles.content}>
           <GameSummaryHeader
@@ -79,21 +88,36 @@ export default function GameSummary() {
           />
           {summary && <StatsDashboard summary={summary} userId={userId} />}
           {summary?.users && <PlayerPerformance users={summary.users} />}
-          {summary && <MatchedMoviesSection summary={summary} onTryAgain={handleTryAgain} />}
-          {summary && (likes?.length || 0) > 0 && <YourPicksList likes={likes!} summary={summary} />}
+          {summary && (
+            <MatchedMoviesSection
+              summary={summary}
+              onTryAgain={handleTryAgain}
+            />
+          )}
+          {summary && (likes?.length || 0) > 0 && (
+            <YourPicksList likes={likes!} summary={summary} />
+          )}
         </View>
       </ScrollView>
 
       <GameRatingPill shouldShow={shouldShowRatingPill} roomId={roomId} />
 
       <View style={styles.buttonRow}>
-        <Button mode="contained" onPress={handleBackToHome} style={styles.backBtn} contentStyle={styles.btnContent}>
+        <Button
+          mode="contained"
+          onPress={handleBackToHome}
+          style={styles.backBtn}
+          contentStyle={styles.btnContent}
+        >
           {t("game-summary.back-to-home")}
         </Button>
         {(summary?.matchedMovies?.length || 0) > 0 && (
           <Button
             mode="outlined"
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShareVisible(true); }}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setShareVisible(true);
+            }}
             style={styles.shareBtn}
             contentStyle={styles.btnContent}
             icon="share-variant"
@@ -103,7 +127,11 @@ export default function GameSummary() {
         )}
       </View>
 
-      <ShareModal visible={shareVisible} onClose={() => setShareVisible(false)} roomId={roomId} />
+      <ShareModal
+        visible={shareVisible}
+        onClose={() => setShareVisible(false)}
+        roomId={roomId}
+      />
     </View>
   );
 }
@@ -113,8 +141,18 @@ const styles = StyleSheet.create({
   centered: { justifyContent: "center", alignItems: "center" },
   scroll: { flex: 1, paddingHorizontal: 15 },
   content: { paddingTop: 15, paddingBottom: 20 },
-  loadingText: { fontSize: 18, marginTop: 15, opacity: 0.7, fontWeight: "bold" },
-  buttonRow: { padding: 15, paddingBottom: 0, gap: 10, flexDirection: "row", backgroundColor: "#000" },
+  loadingText: {
+    fontSize: 18,
+    marginTop: 15,
+    opacity: 0.7,
+    fontWeight: "bold",
+  },
+  buttonRow: {
+    padding: 15,
+    gap: 10,
+    flexDirection: "row",
+    backgroundColor: "#000",
+  },
   backBtn: { borderRadius: 100 },
   btnContent: { paddingVertical: 7.5 },
   shareBtn: { borderRadius: 100, borderColor: "rgba(255,255,255,0.3)" },

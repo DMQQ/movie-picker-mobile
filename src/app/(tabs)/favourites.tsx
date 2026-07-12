@@ -68,8 +68,6 @@ export default function Favourites() {
         style={{
           paddingHorizontal: 15,
           flex: 1,
-          marginTop: Platform.OS === "android" ? 30 : 0,
-          paddingBottom: 15,
         }}
       >
         {token ? (
@@ -98,8 +96,16 @@ export default function Favourites() {
         dismissable
         actionsLayout="horizontal"
         actions={[
-          { label: t("favourites.create.cancel"), onPress: closeCreateModal, mode: "outlined" },
-          { label: t("favourites.create.create"), onPress: handleCreateGroup, mode: "contained" },
+          {
+            label: t("favourites.create.cancel"),
+            onPress: closeCreateModal,
+            mode: "outlined",
+          },
+          {
+            label: t("favourites.create.create"),
+            onPress: handleCreateGroup,
+            mode: "contained",
+          },
         ]}
       >
         <TextInput

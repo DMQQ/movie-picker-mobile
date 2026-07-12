@@ -166,5 +166,6 @@ const styles = StyleSheet.create({
   },
   page: {
     flex: 1,
+    paddingBottom: 15,
   },
 });

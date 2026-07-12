@@ -513,8 +513,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bottomSection: {
-    paddingHorizontal: 15,
-    paddingTop: 15,
+    padding: 15,
     gap: 7.5,
   },
   activeUsersRow: {

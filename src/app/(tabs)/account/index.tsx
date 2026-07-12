@@ -1,7 +1,7 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as Updates from "expo-updates";
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
@@ -116,7 +116,15 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000", paddingBottom: 50 },
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+    ...Platform.select({
+      ios: {
+        paddingBottom: 50,
+      },
+    }),
+  },
   scrollView: { flex: 1, paddingTop: 80 },
   scrollContent: { paddingHorizontal: 15, paddingTop: 20, gap: 25 },
   section: { gap: 10 },

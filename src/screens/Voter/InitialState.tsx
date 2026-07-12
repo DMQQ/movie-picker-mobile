@@ -13,7 +13,11 @@ interface Props {
   onGoBack: () => void;
 }
 
-export default function InitialState({ sessionSettings, actions, onGoBack }: Props) {
+export default function InitialState({
+  sessionSettings,
+  actions,
+  onGoBack,
+}: Props) {
   const t = useTranslation();
 
   return (
@@ -66,11 +70,11 @@ export default function InitialState({ sessionSettings, actions, onGoBack }: Pro
           />
         </View>
       </View>
-      <View style={{ paddingHorizontal: 15, paddingTop: 15 }}>
+      <View style={{ padding: 15, paddingTop: 0 }}>
         <Button
           mode="contained"
           onPress={actions.createSession}
-          style={{ marginTop: 0, borderRadius: 100 }}
+          style={{ borderRadius: 100 }}
           contentStyle={{ padding: 7.5 }}
         >
           {t("voter.home.create")}

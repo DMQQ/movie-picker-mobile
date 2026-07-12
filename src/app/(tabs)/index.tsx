@@ -146,7 +146,7 @@ export default function GameList() {
 
   return (
     <SafeIOSContainer
-      style={{ flex: 1, backgroundColor: "#000", paddingBottom: 15 }}
+      style={{ flex: 1, backgroundColor: "#000", paddingBottom: 0 }}
     >
       <PageHeading
         rightIconName="camera"

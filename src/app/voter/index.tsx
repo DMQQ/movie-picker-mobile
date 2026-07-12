@@ -7,7 +7,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function VoterPage() {
   const insets = useSafeAreaInsets();
   return (
-    <View style={{ flex: 1, backgroundColor: "#000", paddingTop: insets.top, paddingBottom: insets.bottom }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#000",
+        paddingBottom: insets.bottom,
+      }}
+    >
       <SocketProvider namespace="/voter">
         <MovieVoterProvider>
           <Home />

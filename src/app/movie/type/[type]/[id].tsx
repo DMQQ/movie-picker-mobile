@@ -91,8 +91,9 @@ export default function MovieDetailsScreen() {
   );
 
   const numericId = Number(movieId);
-  const isValidId = !!movieId && movieId !== "undefined" && !isNaN(numericId) && numericId > 0;
-  const isValidType = !!typeOfContent && typeOfContent !== "undefined";
+  const isValidId =
+    !!movieId && movieId !== "undefined" && !isNaN(numericId) && numericId > 0;
+  const isValidType = !!typeOfContent && typeof typeOfContent !== "undefined";
 
   const { data: movie = {} as Movie, isLoading: loading } = useGetMovieQuery(
     {
@@ -105,6 +106,10 @@ export default function MovieDetailsScreen() {
       skip: !isValidId || !isValidType,
     },
   );
+
+  if (movie) {
+    console.log(JSON.stringify(movie, null, 2));
+  }
 
   const { data: similarData } = useGetSimilarQuery(
     {

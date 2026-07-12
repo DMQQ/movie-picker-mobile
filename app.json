@@ -61,13 +61,6 @@
       "expo-status-bar",
       "expo-apple-authentication",
       [
-        "expo-navigation-bar",
-        {
-          "position": "relative",
-          "backgroundColor": "#000000"
-        }
-      ],
-      [
         "react-native-nitro-google-signin",
         {
           "iosGoogleServicesFile": "./GoogleService-Info.plist"
@@ -140,7 +133,7 @@
         "projectId": "ab2d7ea0-e25f-4063-a2e2-1a449547340b"
       }
     },
-    "runtimeVersion": "5.0.0",
+    "runtimeVersion": "6.0.0",
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
@@ -148,7 +141,7 @@
     "updates": {
       "url": "https://flickmate.app/api/manifest",
       "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 1000,
+      "fallbackToCacheTimeout": 1500,
       "runtimeVersion": "6.0.0"
     }
   }

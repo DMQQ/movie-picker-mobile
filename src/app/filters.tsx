@@ -123,7 +123,8 @@ function GenresSection() {
 
 function CategoriesSection({ onSelect }: { onSelect: (name: string) => void }) {
   const t = useTranslation();
-  const { data: categories = [], isLoading } = useGetCategoriesQuery({});
+  const { data: categoriesData, isLoading } = useGetCategoriesQuery({});
+  const categories = categoriesData ?? [];
   const validCategories = categories.filter(
     (c) => c.results && c.results.length > 0,
   );
