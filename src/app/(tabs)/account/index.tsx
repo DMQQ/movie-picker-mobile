@@ -110,6 +110,20 @@ export default function SettingsScreen() {
             {(Updates.manifest as any)?.createdAt?.toString().split("T")[0]}
           </Text>
         </View>
+
+        {__DEV__ && (
+          <Section title="Dev tools">
+            <Text
+              style={styles.devButton}
+              onPress={async () => {
+                await AsyncStorage.removeItem("tutorial_home_seen");
+                await AsyncStorage.removeItem("tutorial_swipe_seen");
+              }}
+            >
+              Reset tutorial
+            </Text>
+          </Section>
+        )}
       </ScrollView>
     </View>
   );
@@ -143,4 +157,16 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   aboutText: { fontSize: 14, color: "rgba(255,255,255,0.5)" },
+  devButton: {
+    color: "#FF4458",
+    fontSize: 15,
+    fontWeight: "600",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    backgroundColor: "rgba(255,68,88,0.1)",
+    borderRadius: 10,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255,68,88,0.3)",
+  },
 });

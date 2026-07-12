@@ -29,6 +29,7 @@ import UserInputModal, {
   UserInputModalAction,
 } from "../../components/UserInputModal";
 import { useIsFocused } from "expo-router";
+import SwipeHintOverlay from "../../components/SwipeHintOverlay";
 
 const styles = StyleSheet.create({
   spinnerContainer: {
@@ -253,6 +254,7 @@ export default function Home() {
       {isPlaying ? (
         <>
           <SwipeContent params={params as any} />
+          {cards.length > 0 && <SwipeHintOverlay />}
 
           {cards.length === 0 && !cardsLoading && (
             <RoomEmptyState gameEnded={gameEnded} hasUserPlayed={hasUserPlayed} />

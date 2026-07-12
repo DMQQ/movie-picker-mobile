@@ -1,7 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { useMemo } from "react";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import { Link, router } from "expo-router";
@@ -14,8 +14,15 @@ import PageHeading from "../../components/PageHeading";
 import { useUnviewedMatches } from "../../hooks/useUnviewedMatches";
 import Touch from "../../components/Touch";
 import ActiveGameBanner from "../../components/ActiveGameBanner";
+import { TourAttachStep } from "../../components/Tour/TourAttachStep";
+import { TourProvider } from "../../components/Tour/TourProvider";
+import { type TourRef, type TourStep } from "../../components/Tour/TourContext";
+import TutorialTooltip from "../../components/TutorialTooltip";
+import { useTutorialSeen } from "../../hooks/useTutorial";
+import PlatformBlurView from "../../components/PlatformBlurView";
 
 const CARD_HEIGHT = 280;
+const CARD_GAP = 24;
 
 interface GameCardProps {
   title: string;
@@ -105,6 +112,91 @@ export default function GameList() {
   const t = useTranslation();
   useUnviewedMatches();
 
+  const tourRef = useRef<TourRef>(null);
+  const scrollRef = useRef<ScrollView>(null);
+  const { seen, markSeen } = useTutorialSeen("tutorial_home_seen");
+
+  useEffect(() => {
+    if (seen === false) {
+      const timer = setTimeout(() => tourRef.current?.start(), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [seen]);
+
+  const scrollTo = useCallback(
+    (y: number) =>
+      new Promise<void>(resolve => {
+        scrollRef.current?.scrollTo({ y, animated: true });
+        setTimeout(resolve, 380);
+      }),
+    [],
+  );
+
+  const steps = useMemo<TourStep[]>(
+    () => [
+      {
+        render: props => (
+          <TutorialTooltip
+            {...props}
+            title="Swipe with friends"
+            description="Create a room, share the code, and everyone swipes through movies. When you all like the same one — it's a match!"
+          />
+        ),
+        spotRadius: 16,
+        placement: "bottom",
+      },
+      {
+        render: props => (
+          <TutorialTooltip
+            {...props}
+            title="Fortune wheel"
+            description="Spin the wheel to get a random movie pick based on your genre and provider filters."
+          />
+        ),
+        spotRadius: 16,
+        placement: "bottom",
+        before: () => scrollTo(CARD_HEIGHT + CARD_GAP - 40),
+      },
+      {
+        render: props => (
+          <TutorialTooltip
+            {...props}
+            title="Random pick"
+            description="Need something fast? Tap for an instant random movie recommendation in seconds."
+          />
+        ),
+        spotRadius: 16,
+        placement: "top",
+        before: () => scrollTo(2 * (CARD_HEIGHT + CARD_GAP) - 40),
+      },
+      {
+        render: props => (
+          <TutorialTooltip
+            {...props}
+            title="Voter"
+            description="Two players each rate the same movie on interest, mood, and uniqueness. Compare and decide together."
+          />
+        ),
+        spotRadius: 16,
+        placement: "top",
+        before: () => scrollTo(3 * (CARD_HEIGHT + CARD_GAP)),
+      },
+      {
+        render: props => (
+          <TutorialTooltip
+            {...props}
+            title="Join a room"
+            description="Already have a room code? Tap here to scan the QR code and join a friend's game instantly."
+          />
+        ),
+        spotRadius: 100,
+        placement: "bottom",
+        before: () => scrollTo(0),
+      },
+    ],
+    [scrollTo],
+  );
+
   const games = useMemo(
     () => [
       {
@@ -145,44 +237,56 @@ export default function GameList() {
   );
 
   return (
-    <SafeIOSContainer
-      style={{ flex: 1, backgroundColor: "#000", paddingBottom: 0 }}
-    >
-      <PageHeading
-        rightIconName="camera"
-        rightIconTitle={t("scanner.button") as string}
-        title={t("voter.games") as string}
-        showBackButton={false}
-        showRightIconButton
-        extraScreenPaddingTop={Platform.OS === "android" ? 0 : 0}
-        onRightIconPress={() => {
-          router.push("/qr-scanner");
-        }}
-      />
-
-      <ScrollView
-        style={[
-          styles.container,
-          Platform.OS === "android" && { marginTop: 30 },
-        ]}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingTop: 60, paddingBottom: 50 }}
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
+      <SafeIOSContainer
+        style={{ flex: 1, backgroundColor: "#000", paddingBottom: 0 }}
       >
-        <ActiveGameBanner />
-        {games.map((game) => (
-          <GameCard
-            index={game.index}
-            key={game.index}
-            title={game.title as string}
-            description={game.description as string}
-            href={game.href}
-            beta={game.beta}
-            players={game.players}
-            duration={game.duration}
-          />
-        ))}
-      </ScrollView>
-    </SafeIOSContainer>
+        <PageHeading
+          title={t("voter.games") as string}
+          showBackButton={false}
+          showRightIconButton={false}
+          rightIconTitle={t("scanner.button") as string}
+          extraScreenPaddingTop={Platform.OS === "android" ? 0 : 0}
+        >
+          <TourAttachStep index={4}>
+            <PlatformBlurView interactive style={styles.qrButtonContainer}>
+              <Pressable
+                onPress={() => router.push("/qr-scanner")}
+                style={styles.qrButton}
+              >
+                <IconButton icon="camera" size={20} iconColor="white" />
+                <Text style={styles.qrButtonText}>{t("scanner.button")}</Text>
+              </Pressable>
+            </PlatformBlurView>
+          </TourAttachStep>
+        </PageHeading>
+
+        <ScrollView
+          ref={scrollRef}
+          style={[
+            styles.container,
+            Platform.OS === "android" && { marginTop: 30 },
+          ]}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingTop: 60, paddingBottom: 50 }}
+        >
+          <ActiveGameBanner />
+          {games.map((game, arrayIndex) => (
+            <TourAttachStep key={game.index} index={arrayIndex} fill style={{ marginBottom: CARD_GAP }}>
+              <GameCard
+                index={game.index}
+                title={game.title as string}
+                description={game.description as string}
+                href={game.href}
+                beta={game.beta}
+                players={game.players}
+                duration={game.duration}
+              />
+            </TourAttachStep>
+          ))}
+        </ScrollView>
+      </SafeIOSContainer>
+    </TourProvider>
   );
 }
 
@@ -241,7 +345,6 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   cardContainer: {
-    marginBottom: 24,
     borderRadius: 16,
     overflow: "hidden",
   },
@@ -312,5 +415,26 @@ const styles = StyleSheet.create({
   detailText: {
     color: "#fff",
     marginLeft: -4,
+  },
+  qrButtonContainer: {
+    borderRadius: 100,
+    overflow: "hidden",
+    ...Platform.select({
+      android: {
+        backgroundColor: MD2DarkTheme.colors.surface,
+        borderWidth: 1,
+        borderColor: "#343434ff",
+      },
+    }),
+  },
+  qrButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  qrButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    paddingRight: 10,
   },
 });
