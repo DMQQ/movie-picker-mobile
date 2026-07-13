@@ -1,6 +1,9 @@
 import React, { memo } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated";
 import { useGetGenresWithThumbnailsQuery } from "../../../redux/movie/movieApi";
 import SwipeableGenreCard from "./SwipeableGenreCard";
 import SkeletonCard from "../SkeletonCard";
@@ -19,7 +22,9 @@ const Step2Genres: React.FC = () => {
   const dispatch = useAppDispatch();
   const gameType = useAppSelector((state) => state.builder.gameType);
   const selectedGenres = useAppSelector((state) => state.builder.genres);
-  const { data: genres, isLoading } = useGetGenresWithThumbnailsQuery({ type: gameType });
+  const { data: genres, isLoading } = useGetGenresWithThumbnailsQuery({
+    type: gameType,
+  });
   const scrollX = useSharedValue(0);
 
   const scrollHandler = useAnimatedScrollHandler({
@@ -29,7 +34,10 @@ const Step2Genres: React.FC = () => {
   });
 
   const isGenreSelected = (genreId: number) => {
-    return selectedGenres.some((g) => g.id === genreId);
+    return (
+      selectedGenres.some((g) => g.id === genreId) ||
+      (Array.isArray(selectedGenres) && selectedGenres.length === 0)
+    );
   };
 
   const onToggleGenre = (genre: Genre) => {
@@ -64,7 +72,12 @@ const Step2Genres: React.FC = () => {
           isLoading ? (
             <>
               {[1, 2, 3].map((item) => (
-                <SkeletonCard key={item} width={cardWidth} height={cardHeight} borderRadius={16} />
+                <SkeletonCard
+                  key={item}
+                  width={cardWidth}
+                  height={cardHeight}
+                  borderRadius={16}
+                />
               ))}
             </>
           ) : null
