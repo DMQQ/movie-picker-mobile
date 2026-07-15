@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Button, Chip, IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { Chip, IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import PrimaryButton from "../PrimaryButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import {
@@ -246,17 +247,10 @@ export default function FilterSheet({ visible, onClose, onCategorySelect, showCa
                 {t("filters.clear")}
               </Button>
             )} */}
-            <Button
-              mode="contained"
-              onPress={handleApply}
-              style={styles.applyButton}
-              labelStyle={styles.applyButtonLabel}
-              buttonColor={MD2DarkTheme.colors.primary}
-              contentStyle={{ padding: 7.5 }}
-            >
+            <PrimaryButton onPress={handleApply} style={styles.applyButton}>
               {t("filters.apply")}
               {activeFilterCount > 0 && ` (${activeFilterCount})`}
-            </Button>
+            </PrimaryButton>
           </View>
         </View>
       </View>

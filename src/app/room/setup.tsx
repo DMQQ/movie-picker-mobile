@@ -7,7 +7,6 @@ import Step1GameType from "../../components/Room/BuilderSteps/Step1GameType";
 import Step2Genres from "../../components/Room/BuilderSteps/Step2Genres";
 import Step3Providers from "../../components/Room/BuilderSteps/Step3Providers";
 import Step4SpecialCategories from "../../components/Room/BuilderSteps/Step4SpecialCategories";
-import Step5Duration from "../../components/Room/BuilderSteps/Step5Duration";
 import CircularStepProgress from "../../components/Room/BuilderSteps/CircularStepProgress";
 import useTranslation from "../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -35,14 +34,14 @@ export default function RoomSetup() {
   const currentStep = useAppSelector((state) => state.builder.currentStep);
 
   const getStepTitle = useCallback(() => {
-    if (currentStep >= 1 && currentStep <= 5) {
+    if (currentStep >= 1 && currentStep <= 4) {
       return t(`room.builder.step${currentStep}.title`) as string;
     }
     return t("room.movie") as string;
   }, [currentStep, t]);
 
   const getStepSubtitle = useCallback(() => {
-    if (currentStep >= 1 && currentStep <= 5) {
+    if (currentStep >= 1 && currentStep <= 4) {
       return t(`room.builder.step${currentStep}.subtitle`);
     }
     return "";
@@ -58,8 +57,6 @@ export default function RoomSetup() {
         return <Step3Providers key="step3" />;
       case 4:
         return <Step4SpecialCategories key="step4" />;
-      case 5:
-        return <Step5Duration key="step5" />;
       default:
         return null;
     }
@@ -85,12 +82,12 @@ export default function RoomSetup() {
         useSafeArea={false}
         title={getStepTitle()}
       >
-        <CircularStepProgress currentStep={currentStep} totalSteps={5} />
+        <CircularStepProgress currentStep={currentStep} totalSteps={4} />
       </PageHeading>
 
       <StepContainer
         currentStep={currentStep}
-        isLastStep={currentStep === 5}
+        isLastStep={currentStep === 4}
         footerSubtitle={getStepSubtitle()}
       >
         {renderStep}

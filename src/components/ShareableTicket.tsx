@@ -1,6 +1,8 @@
 import { useRef, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { Button, useTheme } from "react-native-paper";
+import { useTheme } from "react-native-paper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import PrimaryButton from "./PrimaryButton";
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
@@ -124,16 +126,13 @@ export default function ShareableTicket({
       </ViewShot>
 
       {showShareButton && (
-        <Button
-          mode="contained"
+        <PrimaryButton
           onPress={captureAndShare}
           style={styles.shareButton}
-          contentStyle={styles.shareButtonContent}
-          labelStyle={styles.shareButtonLabel}
-          icon="share-variant"
+          icon={({ color }) => <MaterialCommunityIcons name="share-variant" size={16} color={color} />}
         >
           SHARE TICKET
-        </Button>
+        </PrimaryButton>
       )}
     </View>
   );

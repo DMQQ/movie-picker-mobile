@@ -17,7 +17,8 @@ import {
   Pressable,
   Share,
 } from "react-native";
-import { Avatar, Button, Text, useTheme } from "react-native-paper";
+import { Avatar, Text, useTheme } from "react-native-paper";
+import PrimaryButton from "../../components/PrimaryButton";
 import StyledQRCode from "../../components/StyledQRCode";
 import { Movie } from "../../../types";
 import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
@@ -359,7 +360,7 @@ export default function QRCodePage() {
           ) : null}
         </View>
 
-        <Button
+        <PrimaryButton
           disabled={
             !qrCode ||
             isLoadingMovies ||
@@ -367,9 +368,7 @@ export default function QRCodePage() {
             createRoomLoading ||
             isPending
           }
-          mode="contained"
           style={styles.startButton}
-          contentStyle={styles.startButtonContent}
           onPress={() => {
             onJoinOwnRoom(qrCode);
           }}
@@ -381,7 +380,7 @@ export default function QRCodePage() {
               : users.length === 1
                 ? t("room.play-alone")
                 : t("room.start")}
-        </Button>
+        </PrimaryButton>
       </View>
     </View>
   );

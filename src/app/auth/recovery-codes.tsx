@@ -3,6 +3,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Platform, ScrollView, Share, StyleSheet, View } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
+import PrimaryButton from "../../components/PrimaryButton";
 import FadeSlide from "../../components/FadeSlide";
 
 export default function RecoveryCodesScreen() {
@@ -85,14 +86,9 @@ export default function RecoveryCodesScreen() {
           </Button>
         </View>
 
-        <Button
-          mode="contained"
-          onPress={() => router.dismissAll()}
-          style={styles.doneBtn}
-          contentStyle={styles.doneBtnContent}
-        >
+        <PrimaryButton onPress={() => router.dismissAll()} style={styles.doneBtn}>
           I've saved my codes
-        </Button>
+        </PrimaryButton>
       </FadeSlide>
     </ScrollView>
   );

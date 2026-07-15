@@ -1,6 +1,8 @@
 import React from "react";
 import { View, StyleSheet, Alert, Image, Linking } from "react-native";
-import { Button, MD2DarkTheme, Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import PrimaryButton from "./PrimaryButton";
 import * as Updates from "expo-updates";
 import * as Sentry from "@sentry/react-native";
 
@@ -100,14 +102,13 @@ export default class ErrorBoundary extends React.Component<
             </View>
 
             <View style={styles.buttonContainer}>
-              <Button
-                mode="contained"
+              <PrimaryButton
                 onPress={this.sendError}
                 style={styles.sendButton}
-                icon="send"
+                icon={({ color }) => <MaterialCommunityIcons name="send" size={16} color={color} />}
               >
                 Send Error Report
-              </Button>
+              </PrimaryButton>
 
               <Button
                 mode="outlined"
@@ -184,7 +185,6 @@ const styles = StyleSheet.create({
   sendButton: {
     borderRadius: 100,
     paddingVertical: 4,
-    backgroundColor: MD2DarkTheme.colors.primary,
   },
   restartButton: {
     borderRadius: 100,

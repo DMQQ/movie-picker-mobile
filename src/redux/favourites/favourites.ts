@@ -12,6 +12,8 @@ interface FavoriteItem {
   imageUrl: string;
   type: MediaType;
   remoteItemId?: string;
+  rating?: number | null;
+  note?: string | null;
 }
 
 interface FavoriteGroup {
@@ -410,6 +412,31 @@ export const createGroupFromArray = createAsyncThunk(
   }
 );
 
+export const rateInGroup = createAsyncThunk(
+  "favorites/rateInGroup",
+  async (
+    { groupId, movieId, rating, note }: { groupId: string; movieId: number; rating?: number | null; note?: string | null },
+    { getState }
+  ) => {
+    const state = getState() as RootState;
+    const groups = state.favourite.groups.map((g) => {
+      if (g.id !== groupId) return g;
+      return {
+        ...g,
+        movies: g.movies.map((m) =>
+          m.id === movieId ? { ...m, rating: rating ?? null, note: note ?? null } : m
+        ),
+      };
+    });
+
+    const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    const storage = raw ? JSON.parse(raw) : { groups: [] };
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ ...storage, groups }));
+
+    return groups;
+  }
+);
+
 export const favoritesSlice = createSlice({
   name: "favorites",
   initialState,
@@ -448,6 +475,9 @@ export const favoritesSlice = createSlice({
       .addCase(deleteGroup.fulfilled, (state, action) => {
         state.groups = state.groups.filter((group) => group.id !== action.payload);
         delete state.membershipIndex[action.payload];
+      })
+      .addCase(rateInGroup.fulfilled, (state, action) => {
+        state.groups = action.payload;
       })
       .addCase(createGroupFromArray.fulfilled, (state, action) => {
         state.groups.push(action.payload);

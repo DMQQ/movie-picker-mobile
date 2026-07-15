@@ -1,7 +1,8 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import PrimaryButton from "./PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useTutorialSeen } from "../hooks/useTutorial";
 import PlatformBlurView from "./PlatformBlurView";
@@ -140,15 +141,9 @@ export default function SwipeHintOverlay() {
                   />
                 ))}
               </View>
-              <Button
-                mode="contained"
-                onPress={handleNext}
-                style={styles.nextButton}
-                contentStyle={styles.nextButtonContent}
-                labelStyle={styles.nextButtonLabel}
-              >
+              <PrimaryButton onPress={handleNext} style={styles.nextButton}>
                 {isLast ? "Got it" : "Next"}
-              </Button>
+              </PrimaryButton>
             </View>
           </View>
         </View>

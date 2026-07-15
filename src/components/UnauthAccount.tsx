@@ -1,5 +1,6 @@
 import { View, StyleSheet } from "react-native";
 import { Button, Icon, Text } from "react-native-paper";
+import PrimaryButton from "./PrimaryButton";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import useTranslation from "../service/useTranslation";
@@ -63,14 +64,9 @@ export default function UnauthAccount({ expired }: { expired: boolean }) {
           ))}
         </View>
 
-        <Button
-          mode="contained"
-          onPress={() => router.push("/auth/login")}
-          style={styles.btn}
-          contentStyle={styles.btnContent}
-        >
+        <PrimaryButton onPress={() => router.push("/auth/login")} style={styles.btn}>
           {t("settings.unauth.sign-in")}
-        </Button>
+        </PrimaryButton>
         <Button
           mode="outlined"
           onPress={() => router.push("/auth/register")}

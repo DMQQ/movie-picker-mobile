@@ -36,13 +36,13 @@ export const roomBuilderSlice = createSlice({
   initialState,
   reducers: {
     goToStep: (state, action: PayloadAction<number>) => {
-      state.currentStep = Math.max(1, Math.min(5, action.payload));
+      state.currentStep = Math.max(1, Math.min(4, action.payload));
     },
     goBack: (state) => {
       state.currentStep = Math.max(1, state.currentStep - 1);
     },
     goNext: (state) => {
-      state.currentStep = Math.min(5, state.currentStep + 1);
+      state.currentStep = Math.min(4, state.currentStep + 1);
     },
     setCategory: (state, action: PayloadAction<{ id: string; path: string; type: "movie" | "tv" }>) => {
       state.category = action.payload.path;
@@ -72,9 +72,6 @@ export const roomBuilderSlice = createSlice({
         state.specialCategories.push(action.payload);
       }
     },
-    setMaxRounds: (state, action: PayloadAction<number>) => {
-      state.maxRounds = action.payload;
-    },
     setCacheKey: (state, action: PayloadAction<string>) => {
       state.cacheKey = action.payload;
     },
@@ -87,7 +84,7 @@ export const roomBuilderSlice = createSlice({
   },
 });
 
-export const { goToStep, goBack, goNext, setCategory, toggleGenre, setProviders, toggleSpecialCategory, setMaxRounds, setCacheKey, setQuickStartMode, reset } =
+export const { goToStep, goBack, goNext, setCategory, toggleGenre, setProviders, toggleSpecialCategory, setCacheKey, setQuickStartMode, reset } =
   roomBuilderSlice.actions;
 
 export default roomBuilderSlice.reducer;

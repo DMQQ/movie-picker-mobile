@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Button, IconButton, Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
+import PrimaryButton from "../../components/PrimaryButton";
 import { ImageBackground } from "react-native";
 import { router } from "expo-router";
 import { Pressable } from "react-native-gesture-handler";
@@ -37,13 +38,9 @@ export default function Results() {
     return (
       <View style={styles.center}>
         <Text>No movies matched your preferences</Text>
-        <Button
-          mode="contained"
-          onPress={() => router.replace("/")}
-          style={styles.button}
-        >
+        <PrimaryButton onPress={() => router.replace("/")} style={styles.button}>
           {t("voter.home.quit")}
-        </Button>
+        </PrimaryButton>
       </View>
     );
   }
@@ -214,17 +211,15 @@ export default function Results() {
           </View>
         </View>
 
-        <Button
-          mode="contained"
+        <PrimaryButton
           onPress={() => {
             ReviewManager.onGameComplete(true);
             router.replace("/");
           }}
           style={[styles.button, { marginBottom: 15 }]}
-          contentStyle={{ padding: 7.5 }}
         >
           {t("voter.home.quit")}
-        </Button>
+        </PrimaryButton>
       </ScrollView>
     </ImageBackground>
   );

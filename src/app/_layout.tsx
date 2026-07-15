@@ -13,7 +13,7 @@ import {
 import { Provider } from "react-redux";
 import { roomActions } from "../redux/room/roomSlice";
 import { authActions } from "../redux/auth/authSlice";
-import { appActions, setUserId } from "../redux/app/appSlice";
+import { setUserId } from "../redux/app/appSlice";
 import { store, useAppDispatch, useAppSelector } from "../redux/store";
 import { baseUrl } from "../context/SocketContext";
 import useInit from "../service/useInit";
@@ -101,8 +101,6 @@ const RootNavigator = ({
 }) => {
   const dispatch = useAppDispatch();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
-  const onboardingCompleted = useAppSelector((s) => s.app.onboardingCompleted);
-  const needsOnboarding = settingsLoaded ? !onboardingCompleted : null;
   const { movieInteractions, isReady: dbReady } = useMovieInteractions();
   const hasInitialized = useRef(false);
   const pendingToken = useRef<string | null>(null);
@@ -165,12 +163,8 @@ const RootNavigator = ({
           }),
         );
 
-        if (nickname) {
-          dispatch(appActions.setOnboardingCompleted());
-        }
       } catch (error) {
         console.error("[RootNavigator] Error:", error);
-        dispatch(appActions.setOnboardingCompleted());
       } finally {
         setSettingsLoaded(true);
       }
@@ -180,12 +174,12 @@ const RootNavigator = ({
   }, [isLoaded, isUpdating, dbReady, movieInteractions, dispatch]);
 
   useEffect(() => {
-    if (!(!isLoaded || !settingsLoaded || needsOnboarding === null)) {
+    if (isLoaded && settingsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [isLoaded, settingsLoaded, needsOnboarding]);
+  }, [isLoaded, settingsLoaded]);
 
-  if (!isLoaded || !settingsLoaded || needsOnboarding === null) {
+  if (!isLoaded || !settingsLoaded) {
     return null;
   }
 
@@ -193,7 +187,7 @@ const RootNavigator = ({
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
       <MaintenanceWatcher />
       <Stack
-        initialRouteName={needsOnboarding ? "onboarding" : "(tabs)"}
+        initialRouteName="(tabs)"
         screenOptions={{
           headerShown: false,
           contentStyle: {
@@ -201,11 +195,7 @@ const RootNavigator = ({
           },
         }}
       >
-        <Stack.Protected guard={needsOnboarding === true}>
-          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-        </Stack.Protected>
-        <Stack.Protected guard={!needsOnboarding}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
           <Stack.Screen name="room" options={{ headerShown: false }} />
 
@@ -297,7 +287,6 @@ const RootNavigator = ({
               sheetInitialDetentIndex: 0,
             }}
           />
-        </Stack.Protected>
       </Stack>
     </GestureHandlerRootView>
   );

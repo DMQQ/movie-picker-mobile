@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import { Button, Chip, MD2DarkTheme, Text } from "react-native-paper";
+import { Chip, MD2DarkTheme, Text } from "react-native-paper";
+import PrimaryButton from "../components/PrimaryButton";
 import { router, useLocalSearchParams } from "expo-router";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import {
@@ -234,17 +235,10 @@ export default function FiltersScreen() {
       </ScrollView>
 
       <View style={styles.footer} collapsable={false}>
-        <Button
-          mode="contained"
-          onPress={handleApply}
-          style={styles.applyButton}
-          labelStyle={styles.applyButtonLabel}
-          buttonColor={MD2DarkTheme.colors.primary}
-          contentStyle={{ padding: 7.5 }}
-        >
+        <PrimaryButton onPress={handleApply} style={styles.applyButton}>
           {t("filters.apply")}
           {activeFilterCount > 0 && ` (${activeFilterCount})`}
-        </Button>
+        </PrimaryButton>
       </View>
     </View>
   );

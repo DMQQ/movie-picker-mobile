@@ -1,6 +1,7 @@
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, FlatList, Platform, Pressable, StyleSheet, View } from "react-native";
-import { Button, IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import PrimaryButton from "../components/PrimaryButton";
 import { router } from "expo-router";
 import { useMatches } from "../context/DatabaseContext";
 import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
@@ -116,9 +117,9 @@ function UnviewedMatchesScreen() {
       <View style={{ flex: 1 }} />
 
       <View style={[styles.actions, { paddingBottom: Platform.OS === "android" ? insets.bottom + 20 : 0 }]}>
-        <Button mode="contained" onPress={handlePlay} style={styles.button} contentStyle={styles.buttonContent}>
+        <PrimaryButton onPress={handlePlay} style={styles.button}>
           {t("matches.start-new-game")}
-        </Button>
+        </PrimaryButton>
         <CreateCollectionFromLiked
           data={unviewedMatches.map((m) => ({
             id: m.movie_id,

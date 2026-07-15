@@ -1,5 +1,6 @@
-import { ActivityIndicator, Dimensions, View } from "react-native";
-import { Button, Chip, MD2DarkTheme, Text } from "react-native-paper";
+import { Dimensions, View } from "react-native";
+import { Chip, MD2DarkTheme, Text } from "react-native-paper";
+import PrimaryButton from "../../components/PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import PageHeading from "../../components/PageHeading";
 import QRCodeComponent from "../../components/Voter/QRCode";
@@ -102,41 +103,21 @@ export default function WaitingState({
         }}
       >
         {!currentUserReady && (
-          <Button
-            mode="contained"
-            onPress={handleReady}
-            style={{ marginTop: 15, borderRadius: 100 }}
-            contentStyle={{ padding: 7.5 }}
-          >
+          <PrimaryButton onPress={handleReady} style={{ marginTop: 15 }}>
             {t("voter.home.ready-status")}
-          </Button>
+          </PrimaryButton>
         )}
 
         {allReady && isHost && (
-          <Button
+          <PrimaryButton
             disabled={loadingInitialContent}
-            mode="contained"
+            loading={loadingInitialContent}
             onPress={actions.startSession}
-            style={[
-              { marginTop: 15, borderRadius: 100 },
-              {
-                backgroundColor: MD2DarkTheme.colors.accent,
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              },
-            ]}
-            contentStyle={{ padding: 7.5 }}
+            style={{ marginTop: 15 }}
+            buttonColor={MD2DarkTheme.colors.accent}
           >
-            {loadingInitialContent && (
-              <ActivityIndicator
-                style={{ marginHorizontal: 10 }}
-                size={15}
-                color="#fff"
-              />
-            )}
             {t("voter.home.start")}
-          </Button>
+          </PrimaryButton>
         )}
       </View>
     </Animated.View>

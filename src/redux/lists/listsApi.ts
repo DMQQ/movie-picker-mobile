@@ -38,6 +38,8 @@ export interface ListItem {
   contentId: number;
   contentType: ContentType;
   content: { title: string; poster_path: string | null };
+  rating?: number | null;
+  note?: string | null;
   createdAt: number;
 }
 
@@ -205,6 +207,17 @@ export const listsApi = createApi({
       invalidatesTags: [{ type: "List", id: "ALL" }],
     }),
 
+    patchItem: build.mutation<OkResponse, { itemId: string; listType?: string; rating?: number | null; note?: string | null }>({
+      query: ({ itemId, listType: _listType, ...body }) => ({
+        url: `/lists/items/${itemId}`,
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (_result, _err, { listType }) => [
+        ...(listType ? [{ type: "ListItems" as const, id: listType }] : []),
+      ],
+    }),
+
     migrateLists: build.mutation<{ imported: number }, MigrateBody>({
       query: (body) => ({ url: "/lists/migrate", method: "POST", body }),
       invalidatesTags: [{ type: "List", id: "ALL" }, { type: "ListItems" }],
@@ -231,6 +244,7 @@ export const {
   useRemoveItemMutation,
   useCreateListMutation,
   useDeleteListMutation,
+  usePatchItemMutation,
   useMigrateListsMutation,
   useGetGamesQuery,
   useGetGameQuery,

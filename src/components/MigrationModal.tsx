@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { ActivityIndicator, Modal, Pressable, StyleSheet, View } from "react-native";
+import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
+import PrimaryButton from "./PrimaryButton";
 
 type Props = {
   visible: boolean;
@@ -44,16 +45,14 @@ export default function MigrationModal({ visible, counts, isMigrating, onSync, o
             )}
             {" stored locally. Upload them to your account so they're available everywhere."}
           </Text>
-          <Button
-            mode="contained"
+          <PrimaryButton
             onPress={onSync}
-            icon={isMigrating ? ({ color }) => <ActivityIndicator size={16} color={color} /> : undefined}
+            loading={isMigrating}
             disabled={isMigrating}
             style={styles.syncBtn}
-            contentStyle={{ paddingVertical: 4 }}
           >
             Sync now
-          </Button>
+          </PrimaryButton>
           <Button
             mode="text"
             onPress={onDismiss}

@@ -1,13 +1,17 @@
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { MD2DarkTheme } from "react-native-paper";
 import type { ReactNode } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 
 const H = 50;
 const D = 4; // equal x and y shadow offset
-const RADIUS = 10;
+const RADIUS = 100;
 const SPRING = { damping: 18, stiffness: 500 };
 
 function darken(hex: string): string {

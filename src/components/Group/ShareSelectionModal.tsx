@@ -8,7 +8,8 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Button, IconButton, Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
+import PrimaryButton from "../PrimaryButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
 import { FancySpinner } from "../FancySpinner";
@@ -152,19 +153,17 @@ export default function ShareSelectionModal({
                   showsVerticalScrollIndicator={false}
                   style={styles.list}
                 />
-                <Button
-                  mode="contained"
+                <PrimaryButton
                   onPress={handleShare}
                   disabled={selectedIds.size === 0}
                   style={styles.shareButton}
-                  contentStyle={styles.shareButtonContent}
-                  icon="share-variant"
+                  icon={({ color }) => <MaterialCommunityIcons name="share-variant" size={16} color={color} />}
                 >
                   {(t("favourites.share.button") as string).replace(
                     "{count}",
                     String(selectedIds.size),
                   )}
-                </Button>
+                </PrimaryButton>
               </>
             )}
           </View>

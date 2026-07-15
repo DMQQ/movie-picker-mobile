@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { ActivityIndicator, View, StyleSheet, Modal, Dimensions, Platform } from "react-native";
 import { Text, Button } from "react-native-paper";
+import PrimaryButton from "./PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import PlatformBlurView from "./PlatformBlurView";
@@ -77,20 +78,37 @@ export default function UserInputModal({
 
             {actions.length > 0 && (
               <View style={[styles.actionsContainer, actionsLayout === "horizontal" && styles.actionsContainerHorizontal]}>
-                {actions.map((action, index) => (
-                  <Button
-                    key={index}
-                    mode={action.mode || "contained"}
-                    onPress={() => handleActionPress(action)}
-                    disabled={action.disabled || action.loading}
-                    icon={action.loading ? ({ color }) => <ActivityIndicator size={16} color={color} /> : undefined}
-                    textColor={action.textColor}
-                    style={[styles.actionButton, actionsLayout === "horizontal" && styles.actionButtonHorizontal]}
-                    contentStyle={styles.actionButtonContent}
-                  >
-                    {action.label}
-                  </Button>
-                ))}
+                {actions.map((action, index) => {
+                  const mode = action.mode || "contained";
+                  if (mode === "contained") {
+                    return (
+                      <PrimaryButton
+                        key={index}
+                        onPress={() => handleActionPress(action)}
+                        disabled={action.disabled || action.loading}
+                        loading={action.loading}
+                        textColor={action.textColor}
+                        style={[styles.actionButton, actionsLayout === "horizontal" && styles.actionButtonHorizontal]}
+                      >
+                        {action.label}
+                      </PrimaryButton>
+                    );
+                  }
+                  return (
+                    <Button
+                      key={index}
+                      mode={mode}
+                      onPress={() => handleActionPress(action)}
+                      disabled={action.disabled || action.loading}
+                      icon={action.loading ? ({ color }) => <ActivityIndicator size={16} color={color} /> : undefined}
+                      textColor={action.textColor}
+                      style={[styles.actionButton, actionsLayout === "horizontal" && styles.actionButtonHorizontal]}
+                      contentStyle={styles.actionButtonContent}
+                    >
+                      {action.label}
+                    </Button>
+                  );
+                })}
               </View>
             )}
           </Animated.View>

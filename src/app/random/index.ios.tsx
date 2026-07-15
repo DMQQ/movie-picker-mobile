@@ -1,5 +1,6 @@
-import { ActivityIndicator, Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
-import { Button, Text, Chip, MD2DarkTheme } from "react-native-paper";
+import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
+import { Text, Chip, MD2DarkTheme } from "react-native-paper";
+import PrimaryButton from "../../components/PrimaryButton";
 import Animated, {
   FadeIn,
   SlideInDown,
@@ -161,19 +162,16 @@ export default function RandomMovie() {
         </View>
 
         <Animated.View style={[styles.bottomBar]} entering={SlideInDown.duration(400)}>
-          <Button
-            mode="contained"
+          <PrimaryButton
             onPress={fetchRandomMovie}
             disabled={isLoading}
+            loading={isLoading}
             style={styles.primaryButton}
-            contentStyle={styles.buttonContent}
-            labelStyle={styles.buttonLabel}
-            icon={isLoading ? ({ color }) => <ActivityIndicator size={16} color={color} /> : movie && isRevealed ? "refresh" : "dice-multiple"}
             buttonColor={PRIMARY_COLOR}
-            textColor="#fff"
+            icon={!isLoading ? ({ color }) => <MaterialCommunityIcons name={movie && isRevealed ? "refresh" : "dice-multiple"} size={16} color={color} /> : undefined}
           >
             {movie && isRevealed ? t("games.random.try-again") : t("games.random.reveal")}
-          </Button>
+          </PrimaryButton>
 
           {movie && isRevealed && details && (
             <Animated.View entering={FadeIn} style={styles.shareButtonWrapper}>

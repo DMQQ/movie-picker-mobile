@@ -1,8 +1,8 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { ImageBackground } from "expo-image";
 import {
   Dimensions,
   FlatList,
-  ImageBackground,
   Pressable,
   StyleSheet,
   View,

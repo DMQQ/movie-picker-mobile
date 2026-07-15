@@ -1,0 +1,51 @@
+import { Pressable, StyleSheet, View } from "react-native";
+import { Text } from "react-native-paper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+interface RateButtonProps {
+  rating?: number | null;
+  onPress: () => void;
+}
+
+export default function RateButton({ rating, onPress }: RateButtonProps) {
+  const isRated = rating != null;
+
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
+      <MaterialCommunityIcons
+        name={isRated ? "star" : "star-outline"}
+        size={13}
+        color={isRated ? "#FFD700" : "#aaa"}
+      />
+      <Text style={[styles.label, isRated && styles.labelRated]}>
+        {isRated ? String(rating) : "Rate"}
+      </Text>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  button: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    borderWidth: 1,
+    borderColor: "#333",
+    borderRadius: 6,
+    paddingVertical: 5,
+  },
+  pressed: {
+    opacity: 0.6,
+  },
+  label: {
+    fontSize: 11,
+    color: "#aaa",
+    fontFamily: "Bebas",
+    letterSpacing: 0.3,
+  },
+  labelRated: {
+    color: "#FFD700",
+  },
+});

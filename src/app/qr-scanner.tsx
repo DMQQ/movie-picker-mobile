@@ -1,7 +1,8 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, ToastAndroid, Vibration, View } from "react-native";
-import { Button, MD2DarkTheme, Text, TextInput, useTheme } from "react-native-paper";
+import { MD2DarkTheme, Text, TextInput, useTheme } from "react-native-paper";
+import PrimaryButton from "../components/PrimaryButton";
 import PageHeading from "../components/PageHeading";
 import useTranslation from "../service/useTranslation";
 import { throttle } from "../utils/throttle";
@@ -164,9 +165,9 @@ export default function QRScanner() {
       <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
         <Text style={{ marginTop: 25, fontWeight: "bold", fontSize: 25 }}>Requesting camera permission</Text>
 
-        <Button mode="contained" onPress={() => request()}>
+        <PrimaryButton onPress={() => request()}>
           {t("scanner.request-permission")}
-        </Button>
+        </PrimaryButton>
       </SafeIOSContainer>
     );
   }

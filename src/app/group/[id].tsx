@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, MD2DarkTheme } from "react-native-paper";
-import { useIsPreview } from "expo-router";
+import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { useIsPreview, router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import GroupScreenLayout from "../../components/Group/GroupScreenLayout";
 import MoviesActionButtons from "../../components/MoviesActionButtons";
 import OverviewModal from "../../screens/Overview/Modal";
 import ShareSelectionModal from "../../components/Group/ShareSelectionModal";
+import RateButton from "../../components/Group/RateButton";
 import { useGroupData, GroupMovie } from "../../hooks/useGroupData";
 
 export default function Group() {
-  const { data, isListLoading, isRemote, handleRemoveItem } = useGroupData();
+  const { data, isListLoading, isRemote, handleRemoveItem, itemIdMap, listType } = useGroupData();
   const isPreview = useIsPreview();
 
   const [match, setMatch] = useState<GroupMovie | undefined>(undefined);
@@ -18,6 +19,21 @@ export default function Group() {
 
   const movies = data?.movies ?? [];
   const fortuneMovies = movies.map((m) => ({ ...m, poster_path: m.imageUrl }));
+
+  const openRateSheet = (item: GroupMovie) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push({
+      pathname: "/group/rate-movie",
+      params: {
+        movieId: String(item.id),
+        groupId: data?.id ?? "",
+        remoteItemId: itemIdMap.get(item.id) ?? "",
+        listType: listType ?? "",
+        rating: item.rating != null ? String(item.rating) : "",
+        note: item.note ?? "",
+      },
+    });
+  };
 
   return (
     <GroupScreenLayout
@@ -33,15 +49,22 @@ export default function Group() {
       }}
       renderItemFooter={(item) => (
         <View style={styles.footer}>
-          <Button
-            mode="outlined"
-            onPress={() => handleRemoveItem(item.id)}
-            style={styles.removeButton}
-            textColor={MD2DarkTheme.colors.error}
-            compact
-          >
-            Remove
-          </Button>
+          <View style={styles.footerRow}>
+            <IconButton
+              icon="trash-can-outline"
+              iconColor={MD2DarkTheme.colors.error}
+              size={18}
+              onPress={() => handleRemoveItem(item.id)}
+              style={styles.trashButton}
+            />
+            <RateButton
+              rating={item.rating}
+              onPress={() => openRateSheet(item)}
+            />
+          </View>
+          {!!item.note && (
+            <Text style={styles.note} numberOfLines={1}>{item.note}</Text>
+          )}
         </View>
       )}
     >
@@ -72,6 +95,20 @@ export default function Group() {
 }
 
 const styles = StyleSheet.create({
-  footer: { flex: 1, justifyContent: "space-between", marginTop: 5 },
-  removeButton: { marginTop: 8, borderColor: MD2DarkTheme.colors.error },
+  footer: {
+    marginTop: 8,
+  },
+  footerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  trashButton: {
+    margin: 0,
+  },
+  note: {
+    fontSize: 10,
+    color: "#888",
+    marginTop: 4,
+    marginLeft: 2,
+  },
 });

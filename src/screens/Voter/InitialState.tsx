@@ -1,5 +1,6 @@
 import { View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import PrimaryButton from "../../components/PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import PickCategory from "../../components/Voter/PickCategory";
 import PickGenres from "../../components/Voter/PickGenres";
@@ -71,14 +72,9 @@ export default function InitialState({
         </View>
       </View>
       <View style={{ padding: 15, paddingTop: 0 }}>
-        <Button
-          mode="contained"
-          onPress={actions.createSession}
-          style={{ borderRadius: 100 }}
-          contentStyle={{ padding: 7.5 }}
-        >
+        <PrimaryButton onPress={actions.createSession}>
           {t("voter.home.create")}
-        </Button>
+        </PrimaryButton>
       </View>
     </Animated.View>
   );

@@ -2,6 +2,7 @@ import { BlurView } from "expo-blur";
 import React, { useMemo, useState } from "react";
 import { Dimensions, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Divider, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import PrimaryButton from "../components/PrimaryButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import { useGetAllProvidersQuery, useGetGenresQuery } from "../redux/movie/movieApi";
@@ -178,9 +179,9 @@ export default function SearchFilters({ route }: any) {
           </ScrollView>
 
           <BlurView style={[styles.bottomBar, { paddingBottom: insets.bottom }]} tint="dark" intensity={50}>
-            <Button mode="contained" onPress={applyFilters} style={styles.applyButton} contentStyle={styles.buttonContent}>
+            <PrimaryButton onPress={applyFilters} style={styles.applyButton}>
               {getFilterCount() > 0 ? `${t("search.apply")} (` + getFilterCount() + ")" : t("search.apply")}
-            </Button>
+            </PrimaryButton>
           </BlurView>
         </View>
       </BlurView>

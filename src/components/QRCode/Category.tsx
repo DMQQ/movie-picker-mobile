@@ -1,5 +1,6 @@
 import { View } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Text, TextInput } from "react-native-paper";
+import PrimaryButton from "../PrimaryButton";
 import useTranslation from "../../service/useTranslation";
 
 const categories = [
@@ -47,11 +48,9 @@ export default function Category({
 
       <View>
         {categories.map((c, i) => (
-          <Button
+          <PrimaryButton
             key={i}
-            mode="contained"
-            contentStyle={{ padding: 5 }}
-            style={{ marginTop: 10, borderRadius: 10 }}
+            style={{ marginTop: 10 }}
             onPress={() => {
               setCategory(c);
               handleGenerateCode(c);
@@ -59,7 +58,7 @@ export default function Category({
             }}
           >
             {c}
-          </Button>
+          </PrimaryButton>
         ))}
       </View>
     </View>

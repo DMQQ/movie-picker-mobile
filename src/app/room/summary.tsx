@@ -2,6 +2,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
+import PrimaryButton from "../../components/PrimaryButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -103,14 +104,9 @@ export default function GameSummary() {
       <GameRatingPill shouldShow={shouldShowRatingPill} roomId={roomId} />
 
       <View style={styles.buttonRow}>
-        <Button
-          mode="contained"
-          onPress={handleBackToHome}
-          style={styles.backBtn}
-          contentStyle={styles.btnContent}
-        >
+        <PrimaryButton onPress={handleBackToHome} style={styles.backBtn}>
           {t("game-summary.back-to-home")}
-        </Button>
+        </PrimaryButton>
         {(summary?.matchedMovies?.length || 0) > 0 && (
           <Button
             mode="outlined"

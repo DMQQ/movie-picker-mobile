@@ -1,5 +1,6 @@
 import { StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import PrimaryButton from "../PrimaryButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
 
@@ -17,14 +18,9 @@ export default function GameSummaryError({ error, onBack }: Props) {
       </View>
       <Text style={styles.heading}>{t("game-summary.error")}</Text>
       <Text style={styles.subtext}>{error}</Text>
-      <Button
-        mode="contained"
-        onPress={onBack}
-        style={styles.btn}
-        contentStyle={styles.btnContent}
-      >
+      <PrimaryButton onPress={onBack} style={styles.btn}>
         {t("game-summary.back-to-home")}
-      </Button>
+      </PrimaryButton>
     </View>
   );
 }

@@ -49,7 +49,20 @@ export const ScratchCard = ({
   const STROKE_WIDTH = useRef<number>(40);
   const totalAreaScratched = useRef<number>(0);
   const [isScratched, setIsScratched] = useState(false);
-  const [paths, setPaths] = useState<SkPath[]>([]);
+  const [strokes, setStrokes] = useState<{ x: number; y: number }[][]>([]);
+
+  const paths = useMemo(
+    () =>
+      strokes.map((points) => {
+        if (points.length === 0) return null;
+        const builder = Skia.PathBuilder.Make().moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+          builder.lineTo(points[i].x, points[i].y);
+        }
+        return builder.detach();
+      }).filter((p): p is SkPath => p !== null),
+    [strokes]
+  );
 
   useEffect(() => {
     RNImage.prefetch(imageUrl);
@@ -58,17 +71,14 @@ export const ScratchCard = ({
   const pan = Gesture.Pan()
     .runOnJS(true)
     .onStart((g) => {
-      const path = Skia.PathBuilder.Make().moveTo(g.x, g.y).detach();
-      setPaths((prev) => [...prev, path]);
+      setStrokes((prev) => [...prev, [{ x: g.x, y: g.y }]]);
     })
     .onUpdate((g) => {
-      setPaths((prev) => {
-        const newPaths = [...prev];
-        const path = newPaths[newPaths.length - 1];
-        if (path) {
-          path.lineTo?.(g.x, g.y);
-        }
-        return newPaths;
+      setStrokes((prev) => {
+        const next = [...prev];
+        const last = next[next.length - 1];
+        if (last) next[next.length - 1] = [...last, { x: g.x, y: g.y }];
+        return next;
       });
     })
     .onEnd(() => {
@@ -103,7 +113,7 @@ export const ScratchCard = ({
 
   useLayoutEffect(() => {
     setIsScratched(false);
-    setPaths([]);
+    setStrokes([]);
     totalAreaScratched.current = 0;
     revealProgress.value = 0;
   }, [imageUrl]);

@@ -1,5 +1,6 @@
 import { Platform, StyleSheet, View } from "react-native";
 import { Button, MD2DarkTheme, Text } from "react-native-paper";
+import PrimaryButton from "./PrimaryButton";
 import type { TourStepRenderProps } from "./Tour/TourContext";
 import PlatformBlurView from "./PlatformBlurView";
 
@@ -51,16 +52,9 @@ export default function TutorialTooltip({
                   Skip
                 </Button>
               )}
-              <Button
-                mode="contained"
-                onPress={next}
-                compact
-                style={styles.nextButton}
-                contentStyle={styles.nextButtonContent}
-                labelStyle={styles.nextLabel}
-              >
+              <PrimaryButton onPress={next} style={styles.nextButton}>
                 {isLast ? "Done" : "Next"}
-              </Button>
+              </PrimaryButton>
             </View>
           </View>
         </View>

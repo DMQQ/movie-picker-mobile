@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import { Button, IconButton, Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
+import PrimaryButton from "../PrimaryButton";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
@@ -44,7 +45,6 @@ const StepContainer: React.FC<StepContainerProps> = ({
       case 2:
       case 3:
       case 4:
-      case 5:
         return true;
       default:
         return false;
@@ -52,7 +52,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
   };
 
   const handleNext = () => {
-    if (currentStep === 5 || (currentStep === 3 && state.quickStartMode)) {
+    if (currentStep === 4 || (currentStep === 3 && state.quickStartMode)) {
       handleCreateRoom();
     } else {
       dispatch(goNext());
@@ -123,15 +123,13 @@ const StepContainer: React.FC<StepContainerProps> = ({
 
         {currentStep === 1 ? (
           <View style={styles.step1NavigationRow}>
-            <Button
-              mode="contained"
+            <PrimaryButton
               style={styles.quickStartButton}
-              contentStyle={styles.quickStartButtonContent}
               disabled={!canGoNext() || providersLoading}
               onPress={handleQuickStart}
             >
               {t("room.builder.quickStart")}
-            </Button>
+            </PrimaryButton>
             <IconButton
               icon="tune-variant"
               size={24}
@@ -142,10 +140,8 @@ const StepContainer: React.FC<StepContainerProps> = ({
             />
           </View>
         ) : (
-          <Button
-            mode="contained"
+          <PrimaryButton
             style={styles.nextButton}
-            contentStyle={styles.nextButtonContent}
             disabled={!canGoNext()}
             onPress={handleNext}
           >
@@ -153,7 +149,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
               (isLastStep || (currentStep === 3 && state.quickStartMode)
                 ? t("room.builder.createRoom")
                 : t("room.builder.next"))}
-          </Button>
+          </PrimaryButton>
         )}
       </LinearGradient>
     </View>
