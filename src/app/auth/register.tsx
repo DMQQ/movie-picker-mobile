@@ -2,6 +2,7 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import { Link, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
+import AsyncStorage from "expo-sqlite/kv-store";
 import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Icon, Text, TextInput } from "react-native-paper";
 import PrimaryButton from "../../components/PrimaryButton";
@@ -43,7 +44,8 @@ export default function RegisterScreen() {
     if (!validate()) return;
     setErrors({});
     try {
-      const result = await register({ name: name.trim(), email: email.trim(), password }).unwrap();
+      const anonymousId = await AsyncStorage.getItem("userId");
+      const result = await register({ name: name.trim(), email: email.trim(), password, ...(anonymousId ? { anonymousId } : {}) }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
       router.replace({
         pathname: "/auth/recovery-codes",

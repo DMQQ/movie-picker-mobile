@@ -122,24 +122,19 @@ export default function Home() {
     }
   }, [gameEnded, isPlaying, isHost, canContinue]);
 
+  // When the host starts a new round, the server sends room:state with
+  // gameEnded:false. useRoom already dispatches setRoom for all room:state
+  // events, so we react to the Redux transition rather than the raw socket
+  // event — avoiding a double dispatch.
+  const prevGameEnded = useRef<boolean | undefined>(undefined);
   useEffect(() => {
-    if (!socket) return;
-
-    const handleRoomStateUpdate = (data: any) => {
-      if (data.gameEnded === false) {
-        dispatch(roomActions.setRoom(data));
-        setShowPlayAgainDialog(false);
-        setWaitingForHost(false);
-        setPlayAgainLoading(false);
-      }
-    };
-
-    socket.on("room:state", handleRoomStateUpdate);
-
-    return () => {
-      socket.off("room:state", handleRoomStateUpdate);
-    };
-  }, [socket, dispatch]);
+    if (prevGameEnded.current === true && gameEnded === false) {
+      setShowPlayAgainDialog(false);
+      setWaitingForHost(false);
+      setPlayAgainLoading(false);
+    }
+    prevGameEnded.current = gameEnded;
+  }, [gameEnded]);
 
   const handlePlayAgain = useCallback(async () => {
     if (!socket || !roomId) return;
@@ -216,7 +211,7 @@ export default function Home() {
       socket?.emit("leave-room", roomId);
       router.replace("/");
     }
-  }, [isHost, socket, roomId, dispatch]);
+  }, [isHost, socket, roomId]);
 
   useEffect(() => {
     if (!isFocused) return;

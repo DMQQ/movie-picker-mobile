@@ -53,7 +53,7 @@ export default function useRoomMatches(room: string) {
     return () => {
       socket?.off("matched", handleMatched);
     };
-  }, [socket]);
+  }, [socket, handleMatched]);
 
   return useMemo(() => ({ match, hideMatchModal, isFocused }), [match, hideMatchModal, isFocused]);
 }

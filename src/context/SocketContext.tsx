@@ -12,7 +12,7 @@ import envs from "../constants/envs";
 import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 
-const isDev = envs.mode !== "production";
+const isDev = true; // envs.mode !== "production";
 
 export const baseUrl = isDev
   ? Platform.OS === "ios"
@@ -92,8 +92,6 @@ export const SocketProvider = ({
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const appState = useRef(AppState.currentState);
-  const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
-  const backgroundTimer = useRef<NodeJS.Timeout | null>(null);
   const wasConnected = useRef(false);
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -124,37 +122,32 @@ export const SocketProvider = ({
       newSocket.on("connect", () => {
         console.log("✅ Socket connected successfully");
 
+        // Emit before updating refs so listeners registered against the previous
+        // socket object are still alive when onReconnected runs.
+        const isReconnect = wasConnected.current;
         wasConnected.current = true;
         socketRef.current = newSocket;
         setSocket(newSocket);
+
+        if (isReconnect) {
+          emitter.emit("reconnected", true);
+        }
       });
 
       newSocket.on("disconnect", (reason) => {
         console.log("❌ Socket disconnected, reason:", reason);
-        setSocket(null);
-        socketRef.current = null;
-        if (wasConnected.current && reason === "transport close") {
-          console.log("🔄 Scheduling reconnect due to transport close");
-          scheduleReconnect();
-        }
+        // Do NOT null socket state or socketRef here — socket.io reconnects the
+        // same object internally (reconnectionAttempts: 25). Nulling would tear
+        // down all onAny listeners and create a gap where events are missed.
       });
 
       newSocket.on("connect_error", (error) => {
         console.log("🚨 Socket connection error:", error);
-        scheduleReconnect();
+        // socket.io's internal reconnect handles retries.
       });
 
       socketRef.current = newSocket;
     } catch (error) {}
-  };
-
-  const scheduleReconnect = () => {
-    if (reconnectTimeout.current) {
-      clearTimeout(reconnectTimeout.current);
-    }
-    reconnectTimeout.current = setTimeout(() => {
-      reconnect();
-    }, 500);
   };
 
   const handleAppStateChange = async (nextAppState: AppStateStatus) => {
@@ -177,8 +170,7 @@ export const SocketProvider = ({
 
     return () => {
       subscription.remove();
-      if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current);
-      if (backgroundTimer.current) clearTimeout(backgroundTimer.current);
+      wasConnected.current = false;
 
       const s = socketRef.current;
 
@@ -190,24 +182,19 @@ export const SocketProvider = ({
           s.disconnect();
         } catch {}
         s.removeAllListeners();
+        socketRef.current = null;
       }
     };
   }, [language, regionalization, authToken]);
 
-  const isInitialConnection = useRef(true);
-
-  useEffect(() => {
-    if (socket && wasConnected.current) {
-      if (isInitialConnection.current) {
-        isInitialConnection.current = false;
-        return;
-      }
-      emitter.emit("reconnected", true);
-    }
-  }, [socket]);
-
   const reconnect = async () => {
     if (socketRef.current) {
+      // Force a full cycle. On iOS, the OS can kill the WebSocket transport
+      // without firing a disconnect event, leaving socket.connected stale-true.
+      // Calling connect() alone is a no-op in that state. disconnect() first
+      // resets the internal state so the subsequent connect() actually fires
+      // the 'connect' event and triggers join-room via the reconnected emitter.
+      socketRef.current.disconnect();
       socketRef.current.connect();
     } else {
       initializeSocket();

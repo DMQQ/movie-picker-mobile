@@ -9,7 +9,9 @@ import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
 
 export default function useRoom() {
   const dispatch = useAppDispatch();
-  const { socket, emitter } = useContext(SocketContext);
+  const { socket, emitter, userId } = useContext(SocketContext);
+  const userIdRef = useRef(userId);
+  userIdRef.current = userId;
   const attemptTimeout = useRef<number | null>(null);
   const { getBlockedIds, addDislikedMovie, isReady: blockedReady } = useBlockedMovies();
   const { getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
@@ -32,7 +34,7 @@ export default function useRoom() {
       if (!socket) return null;
       const mappedBlocked = blockedMovies.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
       const mappedSuperLiked = superLikedMovies.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
-      const response = await socket.emitWithAck("join-room", code, nickname, mappedBlocked, mappedSuperLiked);
+      const response = await socket.timeout(6000).emitWithAck("join-room", code, nickname, mappedBlocked, mappedSuperLiked);
       return response;
     },
     [socket, nickname],
@@ -108,6 +110,10 @@ export default function useRoom() {
       setCards(_cards.movies, _cards.index);
     };
 
+    const handleHostChanged = (data: { host: string }) => {
+      dispatch(roomActions.setHost(data.host === userIdRef.current));
+    };
+
     const handleListeners = (event: string, ...args: any[]) => {
       if (event === "movies") {
         handleMovies(args[0]);
@@ -117,6 +123,8 @@ export default function useRoom() {
         handleActive(args[0]);
       } else if (event === "movies:blocked-update") {
         handleBlockedUpdate(args[0]);
+      } else if (event === "room:host:changed") {
+        handleHostChanged(args[0]);
       }
     };
 
@@ -125,7 +133,7 @@ export default function useRoom() {
     return () => {
       socket?.offAny(handleListeners);
     };
-  }, [socket?.on, socket?.id, roomId]);
+  }, [socket, roomId]);
 
   // useEffect(() => {
   //   // Only attempt if playing, no cards, and socket exists
@@ -204,10 +212,13 @@ export default function useRoom() {
 
   useEffect(() => {
     if (cards.length === 5 && isPlaying) {
-      socket?.emitWithAck("get-next-page", roomId, movieIndexRef.current).then((response) => {
+      socket?.timeout(8000).emitWithAck("get-next-page", roomId, movieIndexRef.current).then((response) => {
         if (response?.movies && response.movies.length > 0) {
           dispatch(roomActions.appendMovies({ movies: response.movies, index: response.index }));
         }
+      }).catch(() => {
+        // ack timed out or socket disconnected — socket.io will retry the emit
+        // on reconnect; next card removal will re-trigger this effect if still at 5
       });
     }
   }, [cards.length, socket, roomId, dispatch, isPlaying]);

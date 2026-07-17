@@ -39,6 +39,15 @@ import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 
+const SYNC_PHRASES = [
+  "Calculating scores...",
+  "Finding best movies...",
+  "Syncing your library...",
+  "Curating your picks...",
+  "Analyzing taste profiles...",
+  "Getting the best results...",
+];
+
 interface RoomSetupParams {
   category: string;
   maxRounds: number;
@@ -67,6 +76,8 @@ export default function QRCodePage() {
   const t = useTranslation();
   const [moviesCount, setMoviesCount] = useState<number | null>(null);
   const [isLoadingMovies, setIsLoadingMovies] = useState(false);
+  const [isRefetching, setIsRefetching] = useState(false);
+  const [syncPhraseIndex, setSyncPhraseIndex] = useState(0);
   const hashOptionsRef = useRef<string>("");
   const [isPending, startTransition] = useTransition();
   const { qrCode, nickname } = useAppSelector((state) => state.room);
@@ -250,12 +261,20 @@ export default function QRCodePage() {
       if (!!movies) dispatch(roomActions.addMovies({ movies, index }));
     };
 
+    const handleRefetching = ({ refetching }: { refetching: boolean }) => {
+      setIsRefetching(refetching);
+      setIsLoadingMovies(refetching);
+      if (refetching) setMoviesCount(null);
+    };
+
     socket.on("active", handleActive);
     socket.on("movies", handleMovies);
+    socket.on("room:refetching", handleRefetching);
 
     return () => {
       socket.off("active", handleActive);
       socket.off("movies", handleMovies);
+      socket.off("room:refetching", handleRefetching);
     };
   }, [socket]);
 
@@ -271,6 +290,18 @@ export default function QRCodePage() {
 
     return () => clearTimeout(timeout);
   }, [isLoadingMovies, moviesCount]);
+
+  useEffect(() => {
+    if (!isRefetching) {
+      setSyncPhraseIndex(0);
+      return;
+    }
+    const id = setInterval(
+      () => setSyncPhraseIndex((i) => (i + 1) % SYNC_PHRASES.length),
+      2200,
+    );
+    return () => clearInterval(id);
+  }, [isRefetching]);
 
   const onJoinOwnRoom = (code: string) => {
     startTransition(() => {
@@ -347,7 +378,7 @@ export default function QRCodePage() {
             height: 15,
           }}
         >
-          {isLoadingMovies ? (
+          {isLoadingMovies && !isRefetching ? (
             <Text style={styles.infoText}>Checking available movies...</Text>
           ) : moviesCount === 0 ? (
             <Text style={styles.warningText}>{t("room.too-restricted")}</Text>
@@ -373,13 +404,15 @@ export default function QRCodePage() {
             onJoinOwnRoom(qrCode);
           }}
         >
-          {isLoadingMovies
-            ? "Loading..."
-            : moviesCount === 0
-              ? t("room.too-restricted")
-              : users.length === 1
-                ? t("room.play-alone")
-                : t("room.start")}
+          {isRefetching
+            ? SYNC_PHRASES[syncPhraseIndex]
+            : isLoadingMovies
+              ? "Loading..."
+              : moviesCount === 0
+                ? t("room.too-restricted")
+                : users.length === 1
+                  ? t("room.play-alone")
+                  : t("room.start")}
         </PrimaryButton>
       </View>
     </View>
@@ -513,6 +546,7 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     padding: 15,
+    paddingBottom: 0,
     gap: 7.5,
   },
   activeUsersRow: {

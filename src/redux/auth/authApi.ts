@@ -31,7 +31,7 @@ export const authApi = createApi({
     },
   }),
   endpoints: (build) => ({
-    login: build.mutation<AuthResponse, { email: string; password: string }>({
+    login: build.mutation<AuthResponse, { email: string; password: string; anonymousId?: string }>({
       query: (body) => ({ url: "/login", method: "POST", body }),
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
@@ -40,7 +40,7 @@ export const authApi = createApi({
         } catch {}
       },
     }),
-    register: build.mutation<RegisterResponse, { name: string; email: string; password: string }>({
+    register: build.mutation<RegisterResponse, { name: string; email: string; password: string; anonymousId?: string }>({
       query: (body) => ({ url: "/register", method: "POST", body }),
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {

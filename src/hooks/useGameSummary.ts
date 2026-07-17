@@ -32,7 +32,7 @@ export function useGameSummary(roomId: string) {
       setLoading(true);
       setError(null);
       try {
-        const response = await socket.emitWithAck("get-game-summary", roomId);
+        const response = await socket.timeout(10000).emitWithAck("get-game-summary", roomId);
         if (response.success) {
           if (response.summary?.type)
             response.summary.type = response.summary.type.includes("movie") ? "movie" : "tv";

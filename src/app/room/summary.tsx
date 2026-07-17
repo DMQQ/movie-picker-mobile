@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   fill: { flex: 1, backgroundColor: "#000" },
   centered: { justifyContent: "center", alignItems: "center" },
   scroll: { flex: 1, paddingHorizontal: 15 },
-  content: { paddingTop: 15, paddingBottom: 20 },
+  content: { paddingTop: 15 },
   loadingText: {
     fontSize: 18,
     marginTop: 15,
@@ -148,6 +148,7 @@ const styles = StyleSheet.create({
     gap: 10,
     flexDirection: "row",
     backgroundColor: "#000",
+    paddingBottom: 0,
   },
   backBtn: { borderRadius: 100, flex: 1 },
   btnContent: { paddingVertical: 7.5 },
