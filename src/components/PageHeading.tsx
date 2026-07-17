@@ -10,7 +10,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PlatformBlurView from "./PlatformBlurView";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -222,12 +222,5 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 100,
     overflow: "hidden",
-    ...Platform.select({
-      android: {
-        backgroundColor: MD2DarkTheme.colors.surface,
-        borderWidth: 1,
-        borderColor: "#343434ff",
-      },
-    }),
   },
 });

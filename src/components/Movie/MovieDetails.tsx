@@ -1,6 +1,6 @@
 import { Platform, StyleSheet, View } from "react-native";
 import { Image } from "expo-image";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { Movie, MovieDetails as MovieDetailsType } from "../../../types";
 import useTranslation from "../../service/useTranslation";
 import CustomFavourite from "../Favourite";
@@ -204,14 +204,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingLeft: 5,
     borderRadius: 20,
-    ...Platform.select({
-      android: {
-        backgroundColor: MD2DarkTheme.colors.surface + "cc",
-        borderRadius: 20,
-        borderWidth: 2,
-        borderColor: "#343434ff",
-      },
-    }),
   },
 
   text: { fontSize: 15, color: "rgba(255,255,255,0.6)" },

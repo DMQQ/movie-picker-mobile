@@ -134,9 +134,11 @@ const WheelOverlay = ({ size }: { size: number }) => {
 
       {/* 5. THE PREMIUM GOLD-SILVER HUB */}
       <Group>
-        <Circle cx={center.x} cy={center.y} r={hubRadius + 25} color={MD2DarkTheme.colors.surface} opacity={0.7}>
-          <BlurMask blur={12} style="normal" />
-        </Circle>
+        {Platform.OS === "ios" && (
+          <Circle cx={center.x} cy={center.y} r={hubRadius + 25} color={MD2DarkTheme.colors.surface} opacity={0.7}>
+            <BlurMask blur={12} style="normal" />
+          </Circle>
+        )}
 
         <Circle cx={center.x} cy={center.y} r={hubRadius} style="stroke" strokeWidth={25}>
           <SweepGradient
@@ -182,14 +184,12 @@ const WheelBackground = ({ size, items }: { size: number; items: any[] }) => {
     <Canvas style={{ width: size, height: size, position: "absolute" }}>
       {items.map((_, index) => {
         const startAngle = index * segmentAngle;
-
         const rect = { x: 0, y: 0, width: size, height: size };
         const p = Skia.PathBuilder.Make()
           .moveTo(center, center)
           .arcToOval(rect, startAngle - 90, segmentAngle, false)
           .close()
           .detach();
-
         return <Path key={index} path={p} color={COLORS[index % COLORS.length]} />;
       })}
     </Canvas>
@@ -371,7 +371,7 @@ const Wheel = forwardRef<{ spin: () => void; stop: () => void }, WheelProps>(
     }));
 
     const animatedBounceStyle = useAnimatedStyle(() => ({
-      transform: [{ translateY: translateY.value }],
+      transform: [{ translateY: size * 0.6 + translateY.value }],
     }));
 
     const animatedPointerStyle = useAnimatedStyle(() => ({
@@ -379,7 +379,7 @@ const Wheel = forwardRef<{ spin: () => void; stop: () => void }, WheelProps>(
     }));
 
     return (
-      <View style={[{ bottom: -(size * 0.6), position: "absolute", left: 0, right: 0 }]} pointerEvents="box-none">
+      <View style={[{ bottom: 0, position: "absolute", left: 0, right: 0 }]} pointerEvents="box-none">
         <GestureDetector gesture={gesture}>
           <Animated.View style={[styles.container, { height: size }, animatedBounceStyle]}>
             {/* IMPROVED POINTER */}

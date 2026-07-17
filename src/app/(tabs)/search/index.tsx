@@ -1,4 +1,4 @@
-import { router, Stack, useLocalSearchParams } from "expo-router";
+import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import React, {
   useCallback,
   useEffect,
@@ -37,44 +37,25 @@ import Thumbnail, {
 } from "../../../components/Thumbnail";
 import useTranslation from "../../../service/useTranslation";
 import { isLiquidGlassSupported } from "@callstack/liquid-glass";
+import Touch from "../../../components/Touch";
+import RatingIcons from "../../../components/RatingIcons";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-const MovieCard = ({
-  item,
-  index,
-}: {
-  item: Movie & { release_date?: string };
-  index: number;
-}) => {
-  const t = useTranslation();
-  const data = [
-    !!!item?.title ? t("voter.types.series") : t("voter.types.movie"),
-    `${item?.vote_average?.toFixed(2)}/10`,
-    item?.adult ? "18+" : "All ages",
-    item?.release_date || item?.first_air_date,
-    (item?.title || item?.name) ===
-    (item?.original_title || item?.original_name)
-      ? ""
-      : item?.original_title || item?.original_name,
-    ...(item?.genres || [])?.map((g: any) => g.name),
-  ].filter((v) => v !== undefined && v !== "") as any;
-
+const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
   return (
-    <AnimatedPressable
-      entering={FadeIn.delay(Math.min(index * 50, 500))}
-      onPress={() => {
-        router.push({
-          pathname: "/movie/type/[type]/[id]",
-          params: {
-            id: item.id.toString(),
-            type: item?.title ? "movie" : "tv",
-            img: item.poster_path,
-          },
-        });
+    <Link
+      href={{
+        pathname: "/movie/type/[type]/[id]",
+        params: {
+          id: item.id.toString(),
+          type: item?.title ? "movie" : "tv",
+          img: item.poster_path,
+        },
       }}
+
       style={{
         width: SCREEN_WIDTH - 30,
         borderRadius: 15,
@@ -82,57 +63,64 @@ const MovieCard = ({
         borderWidth: 2,
         borderColor: "rgba(255,255,255,0.1)",
       }}
+      asChild
     >
-      <ImageBackground
-        source={{ uri: `https://image.tmdb.org/t/p/w780${item.backdrop_path}` }}
-        blurRadius={10}
-        style={{ flex: 1 }}
-        imageStyle={{ flex: 1, borderRadius: 15 }}
-      >
-        <View
-          style={{
-            position: "relative",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 15,
+      <Touch>
+        <ImageBackground
+          source={{
+            uri: `https://image.tmdb.org/t/p/w780${item.backdrop_path}`,
           }}
+          blurRadius={10}
+          style={{ flex: 1 }}
+          imageStyle={{ flex: 1, borderRadius: 15 }}
         >
-          <Thumbnail
-            path={item.poster_path}
-            container={[styles.cardImage]}
-            size={ThumbnailSizes.poster.xlarge}
-          />
-        </View>
-
-        <FrostedGlass
-          style={{ flex: 1, padding: 15, overflow: "hidden", gap: 2.5 }}
-        >
-          <Text
-            numberOfLines={2}
+          <View
             style={{
-              fontFamily: "Bebas",
-              fontSize: 40,
+              position: "relative",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 15,
             }}
           >
-            {item?.title || item?.name}
-          </Text>
-
-          <Text style={{ color: "rgba(255, 255, 255, 0.8)" }}>
-            {data.join(" | ")}
-          </Text>
-
-          <View style={{ flex: 1, overflow: "hidden" }}>
-            <Text
-              numberOfLines={4}
-              ellipsizeMode="tail"
-              style={{ marginTop: 5 }}
-            >
-              {item.overview}
-            </Text>
+            <Thumbnail
+              path={item.poster_path}
+              container={[styles.cardImage]}
+              size={ThumbnailSizes.poster.xlarge}
+            />
           </View>
-        </FrostedGlass>
-      </ImageBackground>
-    </AnimatedPressable>
+
+          <FrostedGlass
+            style={{ flex: 1, padding: 15, overflow: "hidden", gap: 2.5 }}
+          >
+            <Text
+              numberOfLines={2}
+              style={{
+                fontFamily: "Bebas",
+                fontSize: 40,
+              }}
+            >
+              {item?.title || item?.name}
+            </Text>
+
+            <View style={{ flexDirection: "row" }}>
+              {item?.vote_average && (
+                <RatingIcons vote={item.vote_average} size={20} />
+              )}
+            </View>
+
+            <View style={{ flex: 1, overflow: "hidden" }}>
+              <Text
+                numberOfLines={4}
+                ellipsizeMode="tail"
+                style={{ marginTop: 5 }}
+              >
+                {item.overview}
+              </Text>
+            </View>
+          </FrostedGlass>
+        </ImageBackground>
+      </Touch>
+    </Link>
   );
 };
 
@@ -466,10 +454,8 @@ const SearchScreen = () => {
       <FlashList
         contentContainerStyle={{ padding: 15 }}
         data={allResults}
-        renderItem={({ item, index }) => (
-          <MovieCard index={index} item={item} />
-        )}
-        keyExtractor={(item, index) => {
+        renderItem={({ item, index }) => <MovieCard item={item} />}
+        keyExtractor={(item) => {
           const mediaType = item.media_type || filters.type;
           const uniqueId = `${item.id}-${mediaType}`;
           return uniqueId;

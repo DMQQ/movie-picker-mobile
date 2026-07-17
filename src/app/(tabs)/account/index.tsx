@@ -23,7 +23,9 @@ interface SectionProps {
 function Section({ title, children }: SectionProps) {
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      {title && title.trim() !== "" && (
+        <Text style={styles.sectionTitle}>{title}</Text>
+      )}
       <View style={styles.sectionContent}>{children}</View>
     </View>
   );
@@ -68,6 +70,7 @@ export default function SettingsScreen() {
         rightIconName="logout"
         rightIconColor="#CF6679"
         onRightIconPress={handleSignOut}
+        gradientHeight={60}
       />
 
       <ScrollView
@@ -140,7 +143,7 @@ const styles = StyleSheet.create({
     }),
   },
   scrollView: { flex: 1, paddingTop: 80 },
-  scrollContent: { paddingHorizontal: 15, paddingTop: 20, gap: 25 },
+  scrollContent: { paddingHorizontal: 15, gap: 25, paddingTop: 15 },
   section: { gap: 10 },
   sectionTitle: { fontSize: 25, fontFamily: "Bebas", color: "#fff" },
   sectionContent: { gap: 10 },

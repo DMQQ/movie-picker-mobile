@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     position: "absolute",
-    bottom: 10,
+    bottom: 5,
     left: 15,
     gap: 5,
   },

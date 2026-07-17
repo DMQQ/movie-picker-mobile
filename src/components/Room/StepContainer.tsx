@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingBottom: 90,
-    paddingTop: 60,
+    paddingTop: 40,
   },
   stepContent: {
     flex: 1,

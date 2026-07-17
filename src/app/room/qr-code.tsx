@@ -335,12 +335,7 @@ export default function QRCodePage() {
           router.canGoBack() ? router.back() : router.replace("/(tabs)")
         }
       />
-      <View
-        style={[
-          styles.contentContainer,
-          Platform.OS === "android" && styles.contentContainerAndroid,
-        ]}
-      >
+      <View style={styles.contentContainer}>
         {createRoomLoading ? (
           <Animated.View entering={FadeInDown} style={styles.loadingContainer}>
             <FancySpinner size={100} />
@@ -355,27 +350,11 @@ export default function QRCodePage() {
         )}
       </View>
       <View style={styles.bottomSection}>
-        <View style={styles.activeUsersRow}>
-          <Text style={styles.activeUsersLabel}>{t("room.active")}:</Text>
-          <View style={styles.avatarsContainer}>
-            {users.map((nick, index) => (
-              <View key={nick + index} style={styles.avatarWrapper}>
-                <Avatar.Text
-                  size={25}
-                  label={nick[0].toUpperCase()}
-                  style={{ backgroundColor: AVATAR_COLORS[index % 5] }}
-                />
-              </View>
-            ))}
-          </View>
-        </View>
-
         <View
           style={{
             width: "100%",
             alignItems: "center",
-            marginTop: 5,
-            height: 15,
+            height: 20,
           }}
         >
           {isLoadingMovies && !isRefetching ? (
@@ -389,6 +368,21 @@ export default function QRCodePage() {
           ) : users.length <= 1 ? (
             <Text style={styles.infoText}>{t("room.waiting-for-players")}</Text>
           ) : null}
+        </View>
+
+        <View style={styles.activeUsersRow}>
+          <Text style={styles.activeUsersLabel}>{t("room.active")}:</Text>
+          <View style={styles.avatarsContainer}>
+            {users.map((nick, index) => (
+              <View key={nick + index} style={styles.avatarWrapper}>
+                <Avatar.Text
+                  size={25}
+                  label={nick[0].toUpperCase()}
+                  style={{ backgroundColor: AVATAR_COLORS[index % 5] }}
+                />
+              </View>
+            ))}
+          </View>
         </View>
 
         <PrimaryButton
@@ -525,12 +519,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
   contentContainer: {
-    position: "relative",
     flex: 1,
     paddingHorizontal: 15,
-  },
-  contentContainerAndroid: {
-    marginTop: 20,
   },
   loadingContainer: {
     flex: 1,
@@ -546,7 +536,7 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     padding: 15,
-    paddingBottom: 0,
+    paddingBottom: 15,
     gap: 7.5,
   },
   activeUsersRow: {

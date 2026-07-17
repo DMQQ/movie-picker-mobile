@@ -249,14 +249,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 100,
     overflow: "hidden",
-
-    ...Platform.select({
-      android: {
-        backgroundColor: MD2DarkTheme.colors.surface,
-        borderWidth: 2,
-        borderColor: "#343434ff",
-      },
-    }),
   },
   androidButtonBackground: {
     backgroundColor: "rgba(0,0,0,0.5)",

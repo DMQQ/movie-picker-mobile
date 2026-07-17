@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
@@ -7,7 +8,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import { Link, router } from "expo-router";
@@ -51,7 +52,6 @@ const GameCard = ({
   title,
   description,
   href,
-  beta,
   players,
   duration,
   index,
@@ -67,43 +67,32 @@ const GameCard = ({
             {Animations[index]}
 
             <LinearGradient
-              colors={["transparent", "rgba(0,0,0,0.8)"]}
+              colors={["transparent", "rgba(0,0,0,0.85)"]}
               style={styles.cardGradient}
             >
               <View style={styles.cardContent}>
-                <View style={styles.cardHeader}>
-                  <View style={{ width: "100%" }}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text
-                        style={styles.cardTitle}
-                        numberOfLines={2}
-                        textBreakStrategy="highQuality"
-                      >
-                        {title}
-                      </Text>
-                      <View style={styles.cardFooter}>
-                        {players && (
-                          <View style={styles.cardDetail}>
-                            <IconButton icon="account-group" size={20} />
-                            <Text style={styles.detailText}>{players}</Text>
-                          </View>
-                        )}
-                        {duration && (
-                          <View style={styles.cardDetail}>
-                            <IconButton icon="clock-outline" size={20} />
-                            <Text style={styles.detailText}>{duration}</Text>
-                          </View>
-                        )}
-                      </View>
+                <Text
+                  style={styles.cardTitle}
+                  numberOfLines={2}
+                  textBreakStrategy="highQuality"
+                >
+                  {title}
+                </Text>
+                <Text style={styles.cardDescription}>{description}</Text>
+                <View style={styles.cardMeta}>
+                  {players && (
+                    <View style={styles.metaItem}>
+                      <MaterialCommunityIcons name="account-group" size={12} color="rgba(255,255,255,0.5)" />
+                      <Text style={styles.metaText}>{players}</Text>
                     </View>
-                    <Text style={styles.cardDescription}>{description}</Text>
-                  </View>
+                  )}
+                  {players && duration && <Text style={styles.metaDot}>·</Text>}
+                  {duration && (
+                    <View style={styles.metaItem}>
+                      <MaterialCommunityIcons name="clock-outline" size={12} color="rgba(255,255,255,0.5)" />
+                      <Text style={styles.metaText}>{duration}</Text>
+                    </View>
+                  )}
                 </View>
               </View>
             </LinearGradient>
@@ -377,66 +366,42 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   cardContent: {
-    flex: 1,
     paddingHorizontal: 15,
-    paddingVertical: 7.5,
-    justifyContent: "flex-end",
-    borderRadius: 20,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
+    paddingVertical: 12,
   },
   cardTitle: {
     fontFamily: "Bebas",
     fontSize: 28,
     color: "#fff",
-    maxWidth: "55%",
   },
   cardDescription: {
-    color: "rgba(255,255,255,0.8)",
-    fontSize: 14,
-    lineHeight: 20,
-    maxWidth: "90%",
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 2,
   },
-  betaBadge: {
-    backgroundColor: "#FFD700",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 10,
-    position: "absolute",
-    top: 10,
-    left: 10,
-  },
-  betaText: {
-    color: "#000",
-    fontSize: 12,
-    fontWeight: "bold",
-  },
-  cardFooter: {
-    flexDirection: "row",
-    marginTop: -5,
-  },
-  cardDetail: {
+  cardMeta: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 4,
+    gap: 6,
+    marginTop: 8,
   },
-  detailText: {
-    color: "#fff",
-    marginLeft: -4,
+  metaItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  metaText: {
+    color: "rgba(255,255,255,0.45)",
+    fontSize: 12,
+  },
+  metaDot: {
+    color: "rgba(255,255,255,0.25)",
+    fontSize: 12,
   },
   qrButtonContainer: {
     borderRadius: 100,
     overflow: "hidden",
-    ...Platform.select({
-      android: {
-        backgroundColor: MD2DarkTheme.colors.surface,
-        borderWidth: 1,
-        borderColor: "#343434ff",
-      },
-    }),
   },
   qrButton: {
     flexDirection: "row",

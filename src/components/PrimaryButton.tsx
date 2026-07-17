@@ -33,7 +33,7 @@ export default function PrimaryButton({
       textColor={textColor}
       icon={icon}
       style={style}
-      contentStyle={{ height: 50 }}
+      contentStyle={{ height: 50, borderRadius: 100 }}
       labelStyle={{ fontSize: 14, fontWeight: "600", letterSpacing: 0.8 }}
     >
       {children}

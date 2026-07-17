@@ -141,8 +141,9 @@ const ProviderList = memo(
 
     const providerRows = useMemo(() => {
       const rows: Provider[][] = [];
-      for (let i = 0; i < providers.length; i += 3) {
-        rows.push(providers.slice(i, i + 3));
+      const list = providers ?? [];
+      for (let i = 0; i < list.length; i += 3) {
+        rows.push(list.slice(i, i + 3));
       }
       return rows;
     }, [providers]);

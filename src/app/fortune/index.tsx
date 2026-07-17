@@ -6,7 +6,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { Button, MD2DarkTheme, Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { Movie, MovieDetails } from "../../../types";
 import FateText from "../../components/FateText";
@@ -396,13 +396,6 @@ export default function FortuneWheel() {
 const fortuneStyles = StyleSheet.create({
   filterButtonWrapper: {
     borderRadius: 100,
-    ...Platform.select({
-      android: {
-        backgroundColor: MD2DarkTheme.colors.surface,
-        borderWidth: 1,
-        borderColor: "#343434ff",
-      },
-    }),
   },
   cardOverlay: {
     position: "absolute",

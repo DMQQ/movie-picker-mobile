@@ -14,6 +14,7 @@ interface PosterCardProps {
   scrollX?: Animated.SharedValue<number>;
   index?: number;
   cardWidth?: number;
+  cardHeight?: number;
 }
 
 const PosterCard: React.FC<PosterCardProps> = ({
@@ -26,6 +27,7 @@ const PosterCard: React.FC<PosterCardProps> = ({
   scrollX,
   index = 0,
   cardWidth = 200,
+  cardHeight,
 }) => {
   const theme = useTheme();
   const scale = useSharedValue(1);
@@ -63,6 +65,8 @@ const PosterCard: React.FC<PosterCardProps> = ({
         <Animated.View
           style={[
             large ? styles.cardLarge : styles.card,
+            cardHeight !== undefined && { height: cardHeight },
+            { width: cardWidth },
             animatedStyle,
             isSelected && { borderColor: theme.colors.primary, borderWidth: 3 },
           ]}
