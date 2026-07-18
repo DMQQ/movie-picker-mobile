@@ -64,15 +64,15 @@ export default function RateMovieScreen() {
       <Text style={styles.title}>Rate this movie</Text>
 
       <View style={styles.stars}>
-        {[1, 2, 3, 4, 5].map((star) => (
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
           <Pressable
             key={star}
             onPress={() => setRating(rating === star ? null : star)}
-            hitSlop={8}
+            hitSlop={6}
           >
             <MaterialCommunityIcons
               name={rating !== null && star <= rating ? "star" : "star-outline"}
-              size={40}
+              size={28}
               color={rating !== null && star <= rating ? "#FFD700" : "#555"}
             />
           </Pressable>
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
   stars: {
     flexDirection: "row",
-    gap: 12,
+    gap: 6,
     marginBottom: 24,
   },
   noteInput: {

@@ -22,8 +22,6 @@ import Animated, {
   clamp,
   Easing,
   runOnJS,
-  SlideInDown,
-  SlideOutDown,
   useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
@@ -440,7 +438,7 @@ const Wheel = forwardRef<{ spin: () => void; stop: () => void }, WheelProps>(
               {t("fortune-wheel.drag")}
             </Animated.Text>
 
-            <Animated.View entering={SlideInDown} exiting={SlideOutDown} style={[styles.wheelContainer]}>
+            <Animated.View style={[styles.wheelContainer]}>
               <Animated.View style={[{ width: size, height: size }, animatedWheelStyle]}>
                 <WheelBackground size={size} items={items} />
 

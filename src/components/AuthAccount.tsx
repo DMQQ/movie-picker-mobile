@@ -33,7 +33,11 @@ function SectionHeader({ icon, title, badge, onSeeAll }: SectionHeaderProps) {
       {onSeeAll && (
         <Pressable onPress={onSeeAll} style={styles.seeAllBtn} hitSlop={10}>
           <Text style={styles.seeAllText}>See all</Text>
-          <Icon source="chevron-right" size={13} color="rgba(187,134,252,0.7)" />
+          <Icon
+            source="chevron-right"
+            size={13}
+            color="rgba(187,134,252,0.7)"
+          />
         </Pressable>
       )}
     </View>
@@ -55,7 +59,9 @@ export default function AuthAccount({ user }: Props) {
           icon="history"
           title="Recent Games"
           badge={gameCount > 0 ? gameCount : undefined}
-          onSeeAll={gameCount > 0 ? () => router.push("/games" as any) : undefined}
+          onSeeAll={
+            gameCount > 0 ? () => router.push("/games" as any) : undefined
+          }
         />
         <RecentGames />
       </View>
@@ -69,7 +75,7 @@ export default function AuthAccount({ user }: Props) {
 }
 
 const styles = StyleSheet.create({
-  wrap: { width: "100%", gap: 0 },
+  wrap: { width: "100%", gap: 0, marginTop: 30 },
 
   divider: {
     height: StyleSheet.hairlineWidth,
@@ -99,8 +105,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
     paddingVertical: 1,
   },
-  badgeText: { fontSize: 11, fontWeight: "600", color: "rgba(255,255,255,0.4)" },
+  badgeText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: "rgba(255,255,255,0.4)",
+  },
 
   seeAllBtn: { flexDirection: "row", alignItems: "center", gap: 2 },
-  seeAllText: { fontSize: 12, color: "rgba(187,134,252,0.7)", fontWeight: "500" },
+  seeAllText: {
+    fontSize: 12,
+    color: "rgba(187,134,252,0.7)",
+    fontWeight: "500",
+  },
 });
