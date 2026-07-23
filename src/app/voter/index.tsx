@@ -11,6 +11,7 @@ export default function VoterPage() {
       style={{
         flex: 1,
         backgroundColor: "#000",
+        paddingTop: insets.top,
         paddingBottom: insets.bottom,
       }}
     >

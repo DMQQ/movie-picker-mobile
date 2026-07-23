@@ -27,6 +27,7 @@ import { type TourRef, type TourStep } from "../../components/Tour/TourContext";
 import TutorialTooltip from "../../components/TutorialTooltip";
 import { useTutorialSeen } from "../../hooks/useTutorial";
 import PlatformBlurView from "../../components/PlatformBlurView";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CARD_HEIGHT = 280;
 const CARD_GAP = 24;
@@ -82,14 +83,22 @@ const GameCard = ({
                 <View style={styles.cardMeta}>
                   {players && (
                     <View style={styles.metaItem}>
-                      <MaterialCommunityIcons name="account-group" size={12} color="rgba(255,255,255,0.5)" />
+                      <MaterialCommunityIcons
+                        name="account-group"
+                        size={12}
+                        color="rgba(255,255,255,0.5)"
+                      />
                       <Text style={styles.metaText}>{players}</Text>
                     </View>
                   )}
                   {players && duration && <Text style={styles.metaDot}>·</Text>}
                   {duration && (
                     <View style={styles.metaItem}>
-                      <MaterialCommunityIcons name="clock-outline" size={12} color="rgba(255,255,255,0.5)" />
+                      <MaterialCommunityIcons
+                        name="clock-outline"
+                        size={12}
+                        color="rgba(255,255,255,0.5)"
+                      />
                       <Text style={styles.metaText}>{duration}</Text>
                     </View>
                   )}
@@ -110,6 +119,7 @@ export default function GameList() {
   const tourRef = useRef<TourRef>(null);
   const scrollRef = useRef<ScrollView>(null);
   const { seen, markSeen } = useTutorialSeen("tutorial_home_seen");
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (seen === false) {
@@ -263,7 +273,10 @@ export default function GameList() {
             Platform.OS === "android" && { marginTop: 30 },
           ]}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingTop: 60, paddingBottom: 50 }}
+          contentContainerStyle={{
+            paddingTop: 60,
+            paddingBottom: insets.bottom,
+          }}
         >
           <ActiveGameBanner />
           {games.map((game, arrayIndex) => (

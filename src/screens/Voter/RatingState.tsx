@@ -1,4 +1,4 @@
-import { Platform, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { MD2DarkTheme, Text } from "react-native-paper";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { ImageBackground } from "react-native";
@@ -38,6 +38,9 @@ export default function RatingState({
   setLocalRatings,
 }: Props) {
   const t = useTranslation();
+  const { height: screenHeight } = useWindowDimensions();
+  const posterHeight = screenHeight * 0.35;
+  const posterWidth = posterHeight * (2 / 3);
 
   if (!card) {
     return (
@@ -89,7 +92,7 @@ export default function RatingState({
     <Animated.View
       style={{
         position: "absolute",
-        top: -(insets.top + (Platform.OS === "android" ? 30 : 0)),
+        top: -insets.top,
         left: 0,
         right: 0,
         bottom: -insets.bottom,
@@ -104,110 +107,113 @@ export default function RatingState({
         style={{ flex: 1 }}
       >
         <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)" }}>
-          <View style={{ flex: 1 }}>
-            <View
-              style={{
-                paddingHorizontal: 15,
-                paddingTop: insets.top + 5,
-                paddingBottom: 8,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>
-                {t("voter.home.rate")} 🎬
-              </Text>
-              <Text style={{ fontFamily: "Bebas", fontSize: 20 }}>
-                {currentMovies.length} {t("voter.home.left")}
-              </Text>
-            </View>
-
-            <View style={{ alignItems: "center", paddingHorizontal: 15 }}>
-              <TouchableOpacity
-                disabled={typeof card?.id === "undefined"}
-                activeOpacity={0.85}
-                onPress={() =>
-                  router.push({
-                    pathname: "/movie/type/[type]/[id]",
-                    params: {
-                      id: card?.id,
-                      type: card?.title ? "movie" : "tv",
-                      img: card?.poster_path,
-                    },
-                  })
-                }
-                style={{ borderRadius: 12, overflow: "hidden" }}
-              >
-                <Animated.Image
-                  entering={FadeIn.duration(300)}
-                  exiting={FadeOut.duration(300)}
-                  source={{
-                    uri: "https://image.tmdb.org/t/p/w342" + card?.poster_path,
-                  }}
-                  style={{ width: 190, height: 285, borderRadius: 12 }}
-                />
-              </TouchableOpacity>
-
-              <Text
-                style={{
-                  fontSize: scaleTitle((card?.title || card?.name)! as string, 38),
-                  fontFamily: "Bebas",
-                  textAlign: "center",
-                  marginTop: 10,
-                }}
-              >
-                {card?.title || card?.name}
-              </Text>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 6,
-                  marginTop: 4,
-                  flexWrap: "wrap",
-                  justifyContent: "center",
-                }}
-              >
-                <RatingIcons vote={card.vote_average} size={11} />
-                <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>
-                  {[
-                    card?.release_date?.slice(0, 4),
-                    card?.original_language?.toUpperCase(),
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </Text>
-              </View>
-
-              <Text
-                numberOfLines={3}
-                style={{
-                  marginTop: 8,
-                  color: "rgba(255,255,255,0.85)",
-                  fontSize: 15,
-                  textAlign: "center",
-                  lineHeight: 22,
-                }}
-              >
-                {card?.overview}
-              </Text>
-            </View>
-          </View>
-
+          {/* Header */}
           <View
             style={{
               paddingHorizontal: 15,
+              paddingTop: insets.top + 5,
+              paddingBottom: 8,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>
+              {t("voter.home.rate")} 🎬
+            </Text>
+            <Text style={{ fontFamily: "Bebas", fontSize: 20 }}>
+              {currentMovies.length} {t("voter.home.left")}
+            </Text>
+          </View>
+
+          {/* Poster — flex:1 so it fills whatever vertical space remains above the rating rows */}
+          <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 15 }}>
+            <TouchableOpacity
+              disabled={typeof card?.id === "undefined"}
+              activeOpacity={0.85}
+              onPress={() =>
+                router.push({
+                  pathname: "/movie/type/[type]/[id]",
+                  params: {
+                    id: card?.id,
+                    type: card?.title ? "movie" : "tv",
+                    img: card?.poster_path,
+                  },
+                })
+              }
+              style={{ width: posterWidth, height: posterHeight, borderRadius: 12, overflow: "hidden" }}
+            >
+              <Animated.Image
+                entering={FadeIn.duration(300)}
+                exiting={FadeOut.duration(300)}
+                source={{
+                  uri: "https://image.tmdb.org/t/p/w342" + card?.poster_path,
+                }}
+                style={{ width: "100%", height: "100%", borderRadius: 12 }}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+
+            <Text
+              style={{
+                fontSize: scaleTitle((card?.title || card?.name)! as string, 34),
+                fontFamily: "Bebas",
+                textAlign: "center",
+                marginTop: 8,
+              }}
+            >
+              {card?.title || card?.name}
+            </Text>
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 6,
+                marginTop: 3,
+                flexWrap: "wrap",
+                justifyContent: "center",
+              }}
+            >
+              <RatingIcons vote={card.vote_average} size={11} />
+              <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>
+                {[
+                  card?.release_date?.slice(0, 4),
+                  card?.original_language?.toUpperCase(),
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </Text>
+            </View>
+
+            <Text
+              numberOfLines={2}
+              style={{
+                marginTop: 6,
+                color: "rgba(255,255,255,0.75)",
+                fontSize: 13,
+                textAlign: "center",
+                lineHeight: 19,
+              }}
+            >
+              {card?.overview}
+            </Text>
+          </View>
+
+          {/* Rating rows */}
+          <View
+            style={{
+              paddingHorizontal: 15,
+              paddingTop: 10,
               paddingBottom: insets.bottom + 10,
-              gap: 14,
+              gap: 10,
             }}
           >
             {ratingRows.map(({ key, label, options }) => (
-              <View key={key} style={{ gap: 6 }}>
+              <View key={key} style={{ gap: 5 }}>
                 <Text
                   style={{
-                    fontSize: 15,
+                    fontSize: 14,
                     fontFamily: "Bebas",
                     color: "rgba(255,255,255,0.7)",
                   }}
@@ -227,10 +233,10 @@ export default function RatingState({
                         }}
                         style={{
                           flex: 1,
-                          height: 72,
+                          height: 64,
                           alignItems: "center",
                           justifyContent: "center",
-                          gap: 5,
+                          gap: 4,
                           borderRadius: 12,
                           backgroundColor: isSelected
                             ? MD2DarkTheme.colors.primary
@@ -241,10 +247,10 @@ export default function RatingState({
                             : "rgba(255,255,255,0.12)",
                         }}
                       >
-                        <Text style={{ fontSize: 22 }}>{option.icon}</Text>
+                        <Text style={{ fontSize: 20 }}>{option.icon}</Text>
                         <Text
                           style={{
-                            fontSize: 12,
+                            fontSize: 11,
                             color: "#fff",
                             textAlign: "center",
                             paddingHorizontal: 4,

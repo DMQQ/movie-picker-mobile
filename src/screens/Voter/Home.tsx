@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Image, Platform, View } from "react-native";
+import { Image, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
@@ -126,7 +126,7 @@ export default function Home() {
   }
 
   return (
-    <View style={{ flex: 1, paddingTop: Platform.OS === "android" ? 30 : 0 }}>
+    <View style={{ flex: 1 }}>
       {status === "idle" && (
         <InitialState
           sessionSettings={sessionSettings}

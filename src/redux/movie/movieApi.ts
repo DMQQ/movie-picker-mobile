@@ -377,6 +377,20 @@ export const movieApi = createApi({
         body: { movies },
       }),
     }),
+
+    getCombinedMovieDetails: builder.query<
+      {
+        movie: MovieDetails | null;
+        similar: { name: string; results: Movie[]; page: number; total_pages: number } | null;
+        trailers: any[] | null;
+        keyPeople: { actors: Array<{ id: number; name: string; character: string; profile_path: string | null }>; directors: Array<{ id: number; name: string; job: string; department: string; profile_path: string | null }> } | null;
+        providers: any[] | null;
+      },
+      { id: number; type: "movie" | "tv"; page?: number; actorLimit?: number; includeDirector?: boolean }
+    >({
+      query: ({ id, type, page = 1, actorLimit = 20, includeDirector = true }) =>
+        `/${type}/${id}/combined?page=${page}&actorLimit=${actorLimit}&includeDirector=${includeDirector}`,
+    }),
   }),
 });
 
@@ -434,4 +448,5 @@ export const {
   useGetSummaryShareQuery,
   useLazyGetSummaryShareQuery,
   useShareMoviesMutation,
+  useGetCombinedMovieDetailsQuery,
 } = movieApi;

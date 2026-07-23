@@ -244,7 +244,7 @@ const SwipeTile = ({
                 ]}
                 style={[styles.gradientContainer, dims]}
               >
-                <Text style={styles.title}>{card.title || card.name}</Text>
+                <Text style={styles.title}>{card?.title || card?.name}</Text>
                 <View
                   style={{
                     flexDirection: "row",

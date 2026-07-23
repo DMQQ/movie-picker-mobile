@@ -737,5 +737,39 @@
       "title": "Unirse a una sala",
       "description": "¿Ya tienes un código de sala? Toca aquí para escanear el código QR y unirte al juego de un amigo al instante."
     }
+  },
+  "swipe_tutorial": {
+    "how_to_vote": {
+      "title": "Cómo votar",
+      "like_label": "Me gusta",
+      "like_desc": "Desliza a la derecha o toca ❤ — quieres verlo",
+      "pass_label": "Pasar",
+      "pass_desc": "Desliza a la izquierda o toca ✕ — no te apetece",
+      "details_label": "Detalles",
+      "details_desc": "Toca la tarjeta para ver el reparto, el tráiler e información"
+    },
+    "special_actions": {
+      "title": "Acciones especiales",
+      "super_like_label": "Super Like",
+      "super_like_desc": "Sí definitivo — también se guarda en tu lista de imprescindibles",
+      "block_label": "Bloquear",
+      "block_desc": "No mostrar este título nunca más en ningún juego"
+    },
+    "getting_a_match": {
+      "title": "Conseguir un match",
+      "match_label": "¡Match!",
+      "match_desc": "Cuando todos en la sala les gusta la misma película — es un match",
+      "saved_label": "Guardado",
+      "saved_desc": "Todos tus matches se guardan en el historial del juego"
+    },
+    "track_session": {
+      "title": "Sigue tu sesión",
+      "liked_label": "Películas que te gustaron",
+      "liked_desc": "Toca los pósters apilados en la esquina superior derecha para ver tus likes y matches",
+      "progress_label": "Anillo de progreso",
+      "progress_desc": "El círculo alrededor de los pósters muestra cuánto has avanzado en el mazo de películas"
+    },
+    "got_it": "Entendido",
+    "next": "Siguiente"
   }
 }

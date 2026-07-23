@@ -737,5 +737,39 @@
       "title": "Join a room",
       "description": "Already have a room code? Tap here to scan the QR code and join a friend's game instantly."
     }
+  },
+  "swipe_tutorial": {
+    "how_to_vote": {
+      "title": "How to vote",
+      "like_label": "Like",
+      "like_desc": "Swipe right or tap ❤ — you want to watch this",
+      "pass_label": "Pass",
+      "pass_desc": "Swipe left or tap ✕ — not feeling it",
+      "details_label": "Details",
+      "details_desc": "Tap the card to see cast, trailer and info"
+    },
+    "special_actions": {
+      "title": "Special actions",
+      "super_like_label": "Super Like",
+      "super_like_desc": "Strong yes — also saves to your must-watch list",
+      "block_label": "Block",
+      "block_desc": "Never show this title again across all games"
+    },
+    "getting_a_match": {
+      "title": "Getting a match",
+      "match_label": "Match!",
+      "match_desc": "When everyone in the room likes the same film — it's a match",
+      "saved_label": "Saved",
+      "saved_desc": "All your matches are saved to the game history"
+    },
+    "track_session": {
+      "title": "Track your session",
+      "liked_label": "Liked movies",
+      "liked_desc": "Tap the stacked posters in the top-right to browse all your likes and matches so far",
+      "progress_label": "Progress ring",
+      "progress_desc": "The circle around the posters shows how far through the movie deck you've swiped"
+    },
+    "got_it": "Got it",
+    "next": "Next"
   }
 }

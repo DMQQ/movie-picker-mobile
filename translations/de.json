@@ -737,5 +737,39 @@
       "title": "Raum beitreten",
       "description": "Hast du bereits einen Raumcode? Tippe hier, um den QR-Code zu scannen und sofort dem Spiel eines Freundes beizutreten."
     }
+  },
+  "swipe_tutorial": {
+    "how_to_vote": {
+      "title": "So wird abgestimmt",
+      "like_label": "Gefällt mir",
+      "like_desc": "Nach rechts wischen oder ❤ tippen — du möchtest das sehen",
+      "pass_label": "Überspringen",
+      "pass_desc": "Nach links wischen oder ✕ tippen — nicht interessiert",
+      "details_label": "Details",
+      "details_desc": "Tippe auf die Karte, um Besetzung, Trailer und Infos zu sehen"
+    },
+    "special_actions": {
+      "title": "Spezielle Aktionen",
+      "super_like_label": "Super Like",
+      "super_like_desc": "Klares Ja — wird auch auf deiner Must-Watch-Liste gespeichert",
+      "block_label": "Blockieren",
+      "block_desc": "Diesen Titel nie wieder in allen Spielen anzeigen"
+    },
+    "getting_a_match": {
+      "title": "Ein Match erzielen",
+      "match_label": "Match!",
+      "match_desc": "Wenn alle im Raum denselben Film mögen — es ist ein Match",
+      "saved_label": "Gespeichert",
+      "saved_desc": "Alle deine Matches werden in der Spielhistorie gespeichert"
+    },
+    "track_session": {
+      "title": "Deine Sitzung verfolgen",
+      "liked_label": "Gemochte Filme",
+      "liked_desc": "Tippe auf die gestapelten Poster oben rechts, um deine Likes und Matches zu durchsuchen",
+      "progress_label": "Fortschrittsring",
+      "progress_desc": "Der Kreis um die Poster zeigt, wie weit du im Filmstapel vorankommen bist"
+    },
+    "got_it": "Verstanden",
+    "next": "Weiter"
   }
 }

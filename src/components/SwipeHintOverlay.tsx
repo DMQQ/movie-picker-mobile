@@ -6,88 +6,49 @@ import PrimaryButton from "./PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useTutorialSeen } from "../hooks/useTutorial";
 import PlatformBlurView from "./PlatformBlurView";
+import useTranslation from "../service/useTranslation";
 
-const PAGES = [
-  {
-    title: "How to vote",
-    rows: [
-      {
-        icon: "heart" as const,
-        color: "#42DCA3",
-        label: "Like",
-        desc: "Swipe right or tap ❤ — you want to watch this",
-      },
-      {
-        icon: "close" as const,
-        color: "#FF4458",
-        label: "Pass",
-        desc: "Swipe left or tap ✕ — not feeling it",
-      },
-      {
-        icon: "information-outline" as const,
-        color: "rgba(255,255,255,0.4)",
-        label: "Details",
-        desc: "Tap the card to see cast, trailer and info",
-      },
-    ],
-  },
-  {
-    title: "Special actions",
-    rows: [
-      {
-        icon: "star" as const,
-        color: "#FFD700",
-        label: "Super Like",
-        desc: "Strong yes — also saves to your must-watch list",
-      },
-      {
-        icon: "cancel" as const,
-        color: "#8B0000",
-        label: "Block",
-        desc: "Never show this title again across all games",
-      },
-    ],
-  },
-  {
-    title: "Getting a match",
-    rows: [
-      {
-        icon: "fire" as const,
-        color: "#FF6B35",
-        label: "Match!",
-        desc: "When everyone in the room likes the same film — it's a match",
-      },
-      {
-        icon: "bookmark-multiple" as const,
-        color: "#BB86FC",
-        label: "Saved",
-        desc: "All your matches are saved to the game history",
-      },
-    ],
-  },
-  {
-    title: "Track your session",
-    rows: [
-      {
-        icon: "cards" as const,
-        color: "#BB86FC",
-        label: "Liked movies",
-        desc: "Tap the stacked posters in the top-right to browse all your likes and matches so far",
-      },
-      {
-        icon: "chart-donut" as const,
-        color: "#42DCA3",
-        label: "Progress ring",
-        desc: "The circle around the posters shows how far through the movie deck you've swiped",
-      },
-    ],
-  },
-];
+const PAGE_KEYS = [
+  "how_to_vote",
+  "special_actions",
+  "getting_a_match",
+  "track_session",
+] as const;
+
+type PageKey = (typeof PAGE_KEYS)[number];
+
+const PAGE_ROWS: Record<PageKey, { icon: string; color: string; labelKey: string; descKey: string }[]> = {
+  how_to_vote: [
+    { icon: "heart", color: "#42DCA3", labelKey: "swipe_tutorial.how_to_vote.like_label", descKey: "swipe_tutorial.how_to_vote.like_desc" },
+    { icon: "close", color: "#FF4458", labelKey: "swipe_tutorial.how_to_vote.pass_label", descKey: "swipe_tutorial.how_to_vote.pass_desc" },
+    { icon: "information-outline", color: "rgba(255,255,255,0.4)", labelKey: "swipe_tutorial.how_to_vote.details_label", descKey: "swipe_tutorial.how_to_vote.details_desc" },
+  ],
+  special_actions: [
+    { icon: "star", color: "#FFD700", labelKey: "swipe_tutorial.special_actions.super_like_label", descKey: "swipe_tutorial.special_actions.super_like_desc" },
+    { icon: "cancel", color: "#8B0000", labelKey: "swipe_tutorial.special_actions.block_label", descKey: "swipe_tutorial.special_actions.block_desc" },
+  ],
+  getting_a_match: [
+    { icon: "fire", color: "#FF6B35", labelKey: "swipe_tutorial.getting_a_match.match_label", descKey: "swipe_tutorial.getting_a_match.match_desc" },
+    { icon: "bookmark-multiple", color: "#BB86FC", labelKey: "swipe_tutorial.getting_a_match.saved_label", descKey: "swipe_tutorial.getting_a_match.saved_desc" },
+  ],
+  track_session: [
+    { icon: "cards", color: "#BB86FC", labelKey: "swipe_tutorial.track_session.liked_label", descKey: "swipe_tutorial.track_session.liked_desc" },
+    { icon: "chart-donut", color: "#42DCA3", labelKey: "swipe_tutorial.track_session.progress_label", descKey: "swipe_tutorial.track_session.progress_desc" },
+  ],
+};
+
+const PAGE_TITLE_KEYS: Record<PageKey, string> = {
+  how_to_vote: "swipe_tutorial.how_to_vote.title",
+  special_actions: "swipe_tutorial.special_actions.title",
+  getting_a_match: "swipe_tutorial.getting_a_match.title",
+  track_session: "swipe_tutorial.track_session.title",
+};
 
 export default function SwipeHintOverlay() {
   const { seen, markSeen } = useTutorialSeen("tutorial_swipe_seen");
   const [page, setPage] = useState(0);
-  const isLast = page === PAGES.length - 1;
+  const isLast = page === PAGE_KEYS.length - 1;
+  const t = useTranslation();
 
   const handleNext = () => {
     if (isLast) {
@@ -99,7 +60,9 @@ export default function SwipeHintOverlay() {
 
   if (seen === null || seen) return null;
 
-  const current = PAGES[page];
+  const currentKey = PAGE_KEYS[page];
+  const currentRows = PAGE_ROWS[currentKey];
+  const currentTitle = t(PAGE_TITLE_KEYS[currentKey]);
 
   return (
     <Animated.View
@@ -116,17 +79,17 @@ export default function SwipeHintOverlay() {
       >
         <View style={styles.darkOverlay}>
           <View style={styles.cardInner}>
-            <Text style={styles.title}>{current.title}</Text>
+            <Text style={styles.title}>{currentTitle}</Text>
 
             <View style={styles.rows}>
-              {current.rows.map(row => (
-                <View key={row.label} style={styles.row}>
+              {currentRows.map(row => (
+                <View key={row.labelKey} style={styles.row}>
                   <View style={[styles.iconWrap, { borderColor: row.color + "55" }]}>
-                    <MaterialCommunityIcons name={row.icon} size={22} color={row.color} />
+                    <MaterialCommunityIcons name={row.icon as any} size={22} color={row.color} />
                   </View>
                   <View style={styles.rowText}>
-                    <Text style={[styles.rowLabel, { color: row.color }]}>{row.label}</Text>
-                    <Text style={styles.rowDesc}>{row.desc}</Text>
+                    <Text style={[styles.rowLabel, { color: row.color }]}>{t(row.labelKey)}</Text>
+                    <Text style={styles.rowDesc}>{t(row.descKey)}</Text>
                   </View>
                 </View>
               ))}
@@ -134,7 +97,7 @@ export default function SwipeHintOverlay() {
 
             <View style={styles.footer}>
               <View style={styles.dots}>
-                {PAGES.map((_, i) => (
+                {PAGE_KEYS.map((_, i) => (
                   <View
                     key={i}
                     style={[styles.dot, i === page ? styles.dotActive : styles.dotInactive]}
@@ -142,7 +105,7 @@ export default function SwipeHintOverlay() {
                 ))}
               </View>
               <PrimaryButton onPress={handleNext} style={styles.nextButton}>
-                {isLast ? "Got it" : "Next"}
+                {isLast ? t("swipe_tutorial.got_it") : t("swipe_tutorial.next")}
               </PrimaryButton>
             </View>
           </View>

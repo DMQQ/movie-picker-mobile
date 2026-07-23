@@ -737,5 +737,39 @@
       "title": "Entrar em uma sala",
       "description": "Já tem um código de sala? Toque aqui para escanear o código QR e entrar no jogo de um amigo instantaneamente."
     }
+  },
+  "swipe_tutorial": {
+    "how_to_vote": {
+      "title": "Como votar",
+      "like_label": "Curtir",
+      "like_desc": "Deslize para a direita ou toque em ❤ — você quer assistir isso",
+      "pass_label": "Passar",
+      "pass_desc": "Deslize para a esquerda ou toque em ✕ — não está afim",
+      "details_label": "Detalhes",
+      "details_desc": "Toque no cartão para ver elenco, trailer e informações"
+    },
+    "special_actions": {
+      "title": "Ações especiais",
+      "super_like_label": "Super Like",
+      "super_like_desc": "Sim definitivo — também salva na sua lista de must-watch",
+      "block_label": "Bloquear",
+      "block_desc": "Nunca mostrar este título novamente em todos os jogos"
+    },
+    "getting_a_match": {
+      "title": "Conseguindo um match",
+      "match_label": "Match!",
+      "match_desc": "Quando todos na sala curtirem o mesmo filme — é um match",
+      "saved_label": "Salvo",
+      "saved_desc": "Todos os seus matches são salvos no histórico do jogo"
+    },
+    "track_session": {
+      "title": "Acompanhe sua sessão",
+      "liked_label": "Filmes curtidos",
+      "liked_desc": "Toque nos pôsteres empilhados no canto superior direito para ver seus curtidas e matches",
+      "progress_label": "Anel de progresso",
+      "progress_desc": "O círculo ao redor dos pôsteres mostra o quanto você avançou no baralho de filmes"
+    },
+    "got_it": "Entendi",
+    "next": "Próximo"
   }
 }

@@ -249,6 +249,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: 100,
     overflow: "hidden",
+    backgroundColor: "#000",
   },
   androidButtonBackground: {
     backgroundColor: "rgba(0,0,0,0.5)",

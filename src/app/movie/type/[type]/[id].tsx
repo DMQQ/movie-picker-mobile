@@ -10,13 +10,7 @@ import FloatingMovieHeader from "../../../../components/FloatingMovieHeader";
 import MovieDetails from "../../../../components/Movie/MovieDetails";
 import MovieDetailsSkeleton from "../../../../components/Movie/MovieDetailsSkeleton";
 import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
-import {
-  useGetMovieProvidersQuery,
-  useGetMovieQuery,
-  useGetSimilarQuery,
-  useGetTrailersQuery,
-} from "../../../../redux/movie/movieApi";
-import { useGetMovieKeyPeopleQuery } from "../../../../redux/person/personApi";
+import { useGetCombinedMovieDetailsQuery } from "../../../../redux/movie/movieApi";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -95,11 +89,8 @@ export default function MovieDetailsScreen() {
     !!movieId && movieId !== "undefined" && !isNaN(numericId) && numericId > 0;
   const isValidType = !!typeOfContent && typeof typeOfContent !== "undefined";
 
-  const { data: movie = {} as Movie, isLoading: loading } = useGetMovieQuery(
-    {
-      id: numericId,
-      type: typeOfContent,
-    },
+  const { data: combined, isLoading: loading } = useGetCombinedMovieDetailsQuery(
+    { id: numericId, type: typeOfContent as "movie" | "tv" },
     {
       refetchOnReconnect: true,
       refetchOnMountOrArgChange: true,
@@ -107,48 +98,11 @@ export default function MovieDetailsScreen() {
     },
   );
 
-  const { data: similarData } = useGetSimilarQuery(
-    {
-      id: numericId,
-      type: params.type as "movie" | "tv",
-      page: 1,
-    },
-    {
-      skip: !isValidId || !isValidType,
-    },
-  );
-
-  const { data: trailersData } = useGetTrailersQuery(
-    {
-      id: numericId,
-      type: params.type,
-    },
-    {
-      skip: !isValidId || !isValidType,
-    },
-  );
-
-  const { data: castData } = useGetMovieKeyPeopleQuery(
-    {
-      id: numericId,
-      type: params.type as "movie" | "tv",
-      actorLimit: 20,
-      includeDirector: true,
-    },
-    {
-      skip: !isValidId || !isValidType,
-    },
-  );
-
-  const { data: providers } = useGetMovieProvidersQuery(
-    {
-      id: numericId,
-      type: typeOfContent,
-    },
-    {
-      skip: !isValidId || !isValidType,
-    },
-  );
+  const movie = (combined?.movie ?? {}) as Movie;
+  const similarData = combined?.similar ?? undefined;
+  const trailersData = combined?.trailers ?? undefined;
+  const castData = combined?.keyPeople ?? undefined;
+  const providers = combined?.providers ?? undefined;
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000", width, height }}>

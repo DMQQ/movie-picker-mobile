@@ -252,7 +252,10 @@ export default function Home() {
           {cards.length > 0 && <SwipeHintOverlay />}
 
           {cards.length === 0 && !cardsLoading && (
-            <RoomEmptyState gameEnded={gameEnded} hasUserPlayed={hasUserPlayed} />
+            <RoomEmptyState
+              gameEnded={gameEnded}
+              hasUserPlayed={hasUserPlayed}
+            />
           )}
         </>
       ) : (
@@ -327,7 +330,7 @@ const SwipeContent = memo(({ params }: SwipeContentProps) => {
 
   const originalLength = useRef(cards.length);
 
-  return cards.slice(0, 3).map((card, index) => (
+  return cards.slice(0, 2).map((card, index) => (
     <SwipeTile
       href={{
         pathname: "/movie/type/[type]/[id]",

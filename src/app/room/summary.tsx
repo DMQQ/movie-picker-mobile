@@ -77,6 +77,7 @@ export default function GameSummary() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: Platform.OS === "ios" ? insets.top : 0,
+          paddingBottom: insets.bottom,
         }}
       >
         <View style={styles.content}>
@@ -148,7 +149,6 @@ const styles = StyleSheet.create({
     gap: 10,
     flexDirection: "row",
     backgroundColor: "#000",
-    paddingBottom: 0,
   },
   backBtn: { borderRadius: 100, flex: 1 },
   btnContent: { paddingVertical: 7.5 },

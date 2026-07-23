@@ -736,5 +736,39 @@
       "title": "Dołącz do pokoju",
       "description": "Masz już kod pokoju? Dotknij tutaj, aby zeskanować kod QR i natychmiast dołączyć do gry znajomego."
     }
+  },
+  "swipe_tutorial": {
+    "how_to_vote": {
+      "title": "Jak głosować",
+      "like_label": "Lubię",
+      "like_desc": "Przesuń w prawo lub dotknij ❤ — chcesz to obejrzeć",
+      "pass_label": "Pomiń",
+      "pass_desc": "Przesuń w lewo lub dotknij ✕ — nie w tym nastroju",
+      "details_label": "Szczegóły",
+      "details_desc": "Dotknij kartę, aby zobaczyć obsadę, zwiastun i informacje"
+    },
+    "special_actions": {
+      "title": "Specjalne akcje",
+      "super_like_label": "Super Like",
+      "super_like_desc": "Zdecydowane tak — zapisuje też na listę must-watch",
+      "block_label": "Zablokuj",
+      "block_desc": "Nigdy więcej nie pokazuj tego tytułu w żadnej grze"
+    },
+    "getting_a_match": {
+      "title": "Jak uzyskać dopasowanie",
+      "match_label": "Dopasowanie!",
+      "match_desc": "Gdy wszyscy w pokoju polubiją ten sam film — to dopasowanie",
+      "saved_label": "Zapisano",
+      "saved_desc": "Wszystkie dopasowania są zapisywane w historii gry"
+    },
+    "track_session": {
+      "title": "Śledź swoją sesję",
+      "liked_label": "Polubione filmy",
+      "liked_desc": "Dotknij ułożonych plakatów w prawym górnym rogu, aby przeglądać polubienia i dopasowania",
+      "progress_label": "Pierścień postępu",
+      "progress_desc": "Okrąg wokół plakatów pokazuje, jak daleko jesteś w talii filmów"
+    },
+    "got_it": "Rozumiem",
+    "next": "Dalej"
   }
 }

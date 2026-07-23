@@ -40,8 +40,6 @@ import { isLiquidGlassSupported } from "@callstack/liquid-glass";
 import Touch from "../../../components/Touch";
 import RatingIcons from "../../../components/RatingIcons";
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
@@ -103,7 +101,7 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
             </Text>
 
             <View style={{ flexDirection: "row" }}>
-              {item?.vote_average && (
+              {!!item?.vote_average && (
                 <RatingIcons vote={item.vote_average} size={20} />
               )}
             </View>
@@ -454,7 +452,7 @@ const SearchScreen = () => {
       <FlashList
         contentContainerStyle={{ padding: 15 }}
         data={allResults}
-        renderItem={({ item, index }) => <MovieCard item={item} />}
+        renderItem={({ item }) => <MovieCard item={item} />}
         keyExtractor={(item) => {
           const mediaType = item.media_type || filters.type;
           const uniqueId = `${item.id}-${mediaType}`;

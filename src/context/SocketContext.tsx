@@ -12,7 +12,7 @@ import envs from "../constants/envs";
 import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 
-const isDev = true; // envs.mode !== "production";
+const isDev = envs.mode !== "production";
 
 export const baseUrl = isDev
   ? Platform.OS === "ios"
