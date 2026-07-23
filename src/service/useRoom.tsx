@@ -13,7 +13,11 @@ export default function useRoom() {
   const userIdRef = useRef(userId);
   userIdRef.current = userId;
   const attemptTimeout = useRef<number | null>(null);
-  const { getBlockedIds, addDislikedMovie, isReady: blockedReady } = useBlockedMovies();
+  const {
+    getBlockedIds,
+    addDislikedMovie,
+    isReady: blockedReady,
+  } = useBlockedMovies();
   const { getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
   const joined = useAppSelector((state) => state.room.joined);
   const roomId = useAppSelector((state) => state.room.room.roomId);
@@ -32,9 +36,21 @@ export default function useRoom() {
       superLikedMovies: { id: number; type: "movie" | "tv" }[] = [],
     ) => {
       if (!socket) return null;
-      const mappedBlocked = blockedMovies.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
-      const mappedSuperLiked = superLikedMovies.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
-      const response = await socket.timeout(6000).emitWithAck("join-room", code, nickname, mappedBlocked, mappedSuperLiked);
+      const mappedBlocked = blockedMovies.map(
+        (m) => `${m.type === "movie" ? "m" : "t"}${m.id}`,
+      );
+      const mappedSuperLiked = superLikedMovies.map(
+        (m) => `${m.type === "movie" ? "m" : "t"}${m.id}`,
+      );
+      const response = await socket
+        .timeout(6000)
+        .emitWithAck(
+          "join-room",
+          code,
+          nickname,
+          mappedBlocked,
+          mappedSuperLiked,
+        );
       return response;
     },
     [socket, nickname],
@@ -54,8 +70,15 @@ export default function useRoom() {
       }
 
       try {
-        const [blockedMovies, superLikedMovies] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
-        const response = await joinGame(roomId, blockedMovies, superLikedMovies);
+        const [blockedMovies, superLikedMovies] = await Promise.all([
+          getBlockedIds(),
+          getSuperLikedIds(),
+        ]);
+        const response = await joinGame(
+          roomId,
+          blockedMovies,
+          superLikedMovies,
+        );
         if (!response) {
           throw new Error("Failed to rejoin room after reconnection");
         }
@@ -74,7 +97,16 @@ export default function useRoom() {
         clearTimeout(attemptTimeout.current);
       }
     };
-  }, [roomId, blockedReady, superLikedReady, joinGame, emitter, getBlockedIds, getSuperLikedIds, joined]);
+  }, [
+    roomId,
+    blockedReady,
+    superLikedReady,
+    joinGame,
+    emitter,
+    getBlockedIds,
+    getSuperLikedIds,
+    joined,
+  ]);
   const initialCardsLength = useRef(0);
 
   const setCards = useCallback((_movies: Movie[], index?: number) => {
@@ -87,11 +119,19 @@ export default function useRoom() {
   }, []);
 
   useEffect(() => {
-    const handleMovies = async (_cards: { movies: Movie[]; index?: number }) => {
+    const handleMovies = async (_cards: {
+      movies: Movie[];
+      index?: number;
+    }) => {
       setCards(_cards.movies, _cards.index);
 
       Promise.allSettled(
-        _cards.movies.map((card: Movie) => prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge)),
+        _cards.movies.map((card: Movie) =>
+          prefetchThumbnail(
+            card.poster_path || card.backdrop_path || "",
+            ThumbnailSizes.poster.xxlarge,
+          ),
+        ),
       ).catch(console.error);
     };
 
@@ -106,7 +146,10 @@ export default function useRoom() {
       dispatch(roomActions.setActiveUsers(users));
     };
 
-    const handleBlockedUpdate = (_cards: { movies: Movie[]; index?: number }) => {
+    const handleBlockedUpdate = (_cards: {
+      movies: Movie[];
+      index?: number;
+    }) => {
       setCards(_cards.movies, _cards.index);
     };
 
@@ -134,40 +177,6 @@ export default function useRoom() {
       socket?.offAny(handleListeners);
     };
   }, [socket, roomId]);
-
-  // useEffect(() => {
-  //   // Only attempt if playing, no cards, and socket exists
-  //   if (!isPlaying || cards.length > 0 || !socket) return;
-
-  //   console.log("Attempting to fetch movies for room:", roomId);
-
-  //   let attempts = 0;
-  //   const maxAttempts = 3;
-  //   const retryDelay = 1500;
-  //   let timeoutId: NodeJS.Timeout | null = null;
-  //   let cancelled = false;
-
-  //   const attemptFetch = () => {
-  //     if (cancelled || attempts >= maxAttempts) {
-  //       if (attempts >= maxAttempts) {
-  //       }
-  //       return;
-  //     }
-
-  //     attempts++;
-
-  //     socket?.emit("get-movies", roomId);
-
-  //     timeoutId = setTimeout(attemptFetch, retryDelay);
-  //   };
-
-  //   attemptFetch();
-
-  //   return () => {
-  //     cancelled = true;
-  //     if (timeoutId) clearTimeout(timeoutId);
-  //   };
-  // }, [isPlaying, cards.length, roomId, socket]);
 
   const removeCardLocally = useCallback(
     (id: number) => {
@@ -212,14 +221,23 @@ export default function useRoom() {
 
   useEffect(() => {
     if (cards.length === 5 && isPlaying) {
-      socket?.timeout(8000).emitWithAck("get-next-page", roomId, movieIndexRef.current).then((response) => {
-        if (response?.movies && response.movies.length > 0) {
-          dispatch(roomActions.appendMovies({ movies: response.movies, index: response.index }));
-        }
-      }).catch(() => {
-        // ack timed out or socket disconnected — socket.io will retry the emit
-        // on reconnect; next card removal will re-trigger this effect if still at 5
-      });
+      socket
+        ?.timeout(8000)
+        .emitWithAck("get-next-page", roomId, movieIndexRef.current)
+        .then((response) => {
+          if (response?.movies && response.movies.length > 0) {
+            dispatch(
+              roomActions.appendMovies({
+                movies: response.movies,
+                index: response.index,
+              }),
+            );
+          }
+        })
+        .catch(() => {
+          // ack timed out or socket disconnected — socket.io will retry the emit
+          // on reconnect; next card removal will re-trigger this effect if still at 5
+        });
     }
   }, [cards.length, socket, roomId, dispatch, isPlaying]);
 
