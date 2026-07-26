@@ -6,6 +6,7 @@ import { Button, Icon, Text, TextInput } from "react-native-paper";
 import PrimaryButton from "../../components/PrimaryButton";
 import { useRecoverMutation } from "../../redux/auth/authApi";
 import FadeSlide from "../../components/FadeSlide";
+import useTranslation from "../../service/useTranslation";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
@@ -21,15 +22,16 @@ export default function RecoverScreen() {
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const t = useTranslation();
   const [recover, { isLoading }] = useRecoverMutation();
 
   function validate() {
     const next: Errors = {};
-    if (!email.trim()) next.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(email)) next.email = "Enter a valid email";
+    if (!email.trim()) next.email = t("auth.emailRequired");
+    else if (!/\S+@\S+\.\S+/.test(email)) next.email = t("auth.emailInvalid");
     const rawCode = code.replace(/-/g, "");
-    if (!rawCode) next.code = "Recovery code is required";
-    else if (rawCode.length !== 10) next.code = "Code must be 10 characters";
+    if (!rawCode) next.code = t("auth.codeRequired");
+    else if (rawCode.length !== 10) next.code = t("auth.codeLength");
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -42,7 +44,7 @@ export default function RecoverScreen() {
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
       router.dismissAll();
     } catch (err: any) {
-      setErrors({ form: err?.data?.message ?? "Recovery failed. Check your code and try again." });
+      setErrors({ form: err?.data?.message ?? t("auth.recoveryFailed") });
     }
   }
 
@@ -55,11 +57,11 @@ export default function RecoverScreen() {
           <FadeSlide delay={0}>
             <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={10}>
               <Icon source="arrow-left" size={18} color="rgba(255,255,255,0.6)" />
-              <Text style={styles.backText}>Back</Text>
+              <Text style={styles.backText}>{t("auth.back")}</Text>
             </Pressable>
 
-            <Text style={styles.title}>Account Recovery</Text>
-            <Text style={styles.subtitle}>Enter your email and one of your recovery codes.</Text>
+            <Text style={styles.title}>{t("auth.accountRecovery")}</Text>
+            <Text style={styles.subtitle}>{t("auth.recoverySubtitle")}</Text>
           </FadeSlide>
 
           <FadeSlide delay={120}>
@@ -71,7 +73,7 @@ export default function RecoverScreen() {
 
             <View style={styles.fields}>
               <TextInput
-                mode="outlined" label="Email" value={email}
+                mode="outlined" label={t("auth.emailLabel")} value={email}
                 onChangeText={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: undefined, form: undefined })); }}
                 autoCapitalize="none" keyboardType="email-address" autoCorrect={false}
                 returnKeyType="next" outlineStyle={styles.inputOutline} error={!!errors.email}
@@ -79,7 +81,7 @@ export default function RecoverScreen() {
               {errors.email && <Text style={styles.fieldError}>{errors.email}</Text>}
 
               <TextInput
-                mode="outlined" label="Recovery code" value={code}
+                mode="outlined" label={t("auth.recoveryCodeLabel")} value={code}
                 onChangeText={(v) => {
                   setCode(formatCode(v));
                   setErrors((e) => ({ ...e, code: undefined, form: undefined }));
@@ -104,13 +106,13 @@ export default function RecoverScreen() {
               disabled={isLoading}
               style={styles.primaryBtn}
             >
-              Recover account
+              {t("auth.recoverAccount")}
             </PrimaryButton>
 
             <View style={styles.hint}>
               <Icon source="information-outline" size={14} color="rgba(255,255,255,0.3)" />
               <Text style={styles.hintText}>
-                Codes are case-insensitive. Dashes are optional.
+                {t("auth.recoveryHint")}
               </Text>
             </View>
           </FadeSlide>

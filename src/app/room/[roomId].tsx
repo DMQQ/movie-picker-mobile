@@ -5,24 +5,25 @@ import {
   useEffect,
   useRef,
   useState,
+  useTransition,
 } from "react";
 import { Alert, BackHandler, StyleSheet, View } from "react-native";
-import { Movie } from "../../../types";
+import { useSharedValue } from "react-native-reanimated";
 import RoomLoader from "../../components/RoomLoader";
 import RoomEmptyState from "../../components/RoomEmptyState";
 import { FancySpinner } from "../../components/FancySpinner";
 import HomeAppbar from "../../components/Home/Appbar";
 import MatchModal from "../../components/Movie/MatchModal";
 import SwipeTile from "../../components/Movie/SwipeTiles";
+import TabBar from "../../components/Home/TabBar";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
-import { throttle } from "../../utils/throttle";
-import useRoomMatches from "../../service/useRoomMatches";
+import useRoomContext from "../../context/RoomContext";
 import { roomActions } from "../../redux/room/roomSlice";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
-import useRoomContext from "../../context/RoomContext";
+import useRoomMatches from "../../service/useRoomMatches";
 import { url, SocketContext } from "../../context/SocketContext";
 import envs from "../../constants/envs";
 import UserInputModal, {
@@ -328,28 +329,87 @@ const SwipeContent = memo(({ params }: SwipeContentProps) => {
     superLikeAndLikeCard,
   } = useRoomContext();
 
+  const t = useTranslation();
   const originalLength = useRef(cards.length);
+  const dragProgress = useSharedValue(0);
+  const buttonSwipe = useSharedValue(0);
+  const [isPending, startTransition] = useTransition();
+  const busy = useRef(false);
 
-  return cards.slice(0, 2).map((card, index) => (
-    <SwipeTile
-      href={{
-        pathname: "/movie/type/[type]/[id]",
-        params: {
-          id: card.id,
-          type: params?.type || "movie",
-          img: card.poster_path,
-        },
-      }}
-      length={originalLength.current}
-      key={card.id}
-      card={card}
-      index={index}
-      likeCard={throttle(() => likeCard(card, index), 500)}
-      removeCard={throttle(() => dislikeCard(card, index), 500)}
-      blockCard={throttle(() => blockAndDislikeCard(card, index), 500)}
-      superLikeCard={throttle(() => superLikeAndLikeCard(card, index), 500)}
-    />
-  ));
+  useEffect(() => {
+    busy.current = false;
+  }, [cards]);
+
+  const swipe = useCallback(
+    (dir: number, fn: () => void) => {
+      if (busy.current || isPending || cards.length === 0) return;
+      busy.current = true;
+      buttonSwipe.value = dir;
+      startTransition(() => {
+        fn();
+      });
+    },
+    [isPending, cards.length, buttonSwipe],
+  );
+
+  const topCard = cards[0];
+
+  return (
+    <>
+      {cards.slice(0, 3).map((card, index) => (
+        <SwipeTile
+          href={{
+            pathname: "/movie/type/[type]/[id]",
+            params: {
+              id: card.id,
+              type: params?.type || "movie",
+              img: card.poster_path,
+            },
+          }}
+          length={originalLength.current}
+          key={card.id}
+          card={card}
+          index={index}
+          dragProgress={dragProgress}
+          buttonSwipe={index === 0 ? buttonSwipe : undefined}
+          likeCard={() => likeCard(card, index)}
+          removeCard={() => dislikeCard(card, index)}
+          blockCard={() => blockAndDislikeCard(card, index)}
+          superLikeCard={() => superLikeAndLikeCard(card, index)}
+        />
+      ))}
+      {topCard && (
+        <TabBar
+          zIndex={0}
+          disabled={isPending}
+          likeCard={() => swipe(1, () => likeCard(topCard, 0))}
+          removeCard={() => swipe(-1, () => dislikeCard(topCard, 0))}
+          openInfo={() =>
+            router.push({
+              pathname: "/movie/type/[type]/[id]",
+              params: {
+                id: topCard.id,
+                type: params?.type || "movie",
+                img: topCard.poster_path,
+              },
+            })
+          }
+          blockCard={() =>
+            swipe(-2, () => blockAndDislikeCard(topCard, 0))
+          }
+          superLikeCard={() =>
+            swipe(2, () => superLikeAndLikeCard(topCard, 0))
+          }
+          labels={{
+            block: t("swipe.block") as string,
+            dislike: t("swipe.nope") as string,
+            like: t("swipe.like") as string,
+            superLike: t("swipe.super") as string,
+          }}
+        />
+      )}
+    </>
+  );
 });
 
 const Matches = memo(({ roomId }: { roomId: string }) => {

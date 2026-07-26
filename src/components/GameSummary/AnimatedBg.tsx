@@ -9,6 +9,15 @@ export default memo(function AnimatedBg({ matchedMovies }: { matchedMovies: Part
   const [activeLayer, setActiveLayer] = useState<"A" | "B">("A");
   const opacityA = useRef(new Animated.Value(1)).current;
   const opacityB = useRef(new Animated.Value(0)).current;
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+      opacityA.stopAnimation();
+      opacityB.stopAnimation();
+    };
+  }, [opacityA, opacityB]);
 
   useEffect(() => {
     if (!matchedMovies || matchedMovies.length <= 1) return;
@@ -19,13 +28,13 @@ export default memo(function AnimatedBg({ matchedMovies }: { matchedMovies: Part
         Animated.parallel([
           Animated.timing(opacityA, { toValue: 0, duration: 1000, useNativeDriver: true }),
           Animated.timing(opacityB, { toValue: 1, duration: 1000, useNativeDriver: true }),
-        ]).start(() => setActiveLayer("B"));
+        ]).start(() => { if (isMounted.current) setActiveLayer("B"); });
       } else {
         setIndexA((indexB + 1) % matchedMovies.length);
         Animated.parallel([
           Animated.timing(opacityB, { toValue: 0, duration: 1000, useNativeDriver: true }),
           Animated.timing(opacityA, { toValue: 1, duration: 1000, useNativeDriver: true }),
-        ]).start(() => setActiveLayer("A"));
+        ]).start(() => { if (isMounted.current) setActiveLayer("A"); });
       }
     }, 5000);
 

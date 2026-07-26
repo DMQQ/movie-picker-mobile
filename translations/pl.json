@@ -392,7 +392,9 @@
     },
     "overview": {
       "title": "Najlepszy wybór",
-      "h2": "Inne pasujące"
+      "h2": "Inne pasujące",
+      "loading": "Ładowanie wyników...",
+      "no-matches": "Żaden film nie pasuje do twoich preferencji"
     }
   },
   "quick-actions": {
@@ -770,5 +772,48 @@
     },
     "got_it": "Rozumiem",
     "next": "Dalej"
-  }
+  },
+  "auth": {
+  "welcomeBack": "Witaj z powrotem",
+  "createAccount": "Utwórz konto",
+  "signInWithEmail": "Zaloguj się przez e-mail",
+  "signUpWithEmail": "Zarejestruj się przez e-mail",
+  "signInSubtitle": "Zaloguj się do swojego konta",
+  "signUpSubtitle": "Zacznij odkrywać filmy razem",
+  "back": "Wstecz",
+  "emailLabel": "E-mail",
+  "passwordLabel": "Hasło",
+  "nameLabel": "Nazwa",
+  "signIn": "Zaloguj się",
+  "signUp": "Utwórz konto",
+  "continueWithEmail": "Kontynuuj z e-mailem",
+  "continueWithGoogle": "Kontynuuj z Google",
+  "signInWithGoogle": "Zaloguj się przez Google",
+  "signUpWithGoogle": "Zarejestruj się przez Google",
+  "noAccount": "Nie masz konta?",
+  "haveAccount": "Masz już konto?",
+  "signUpLink": "Zarejestruj się",
+  "signInLink": "Zaloguj się",
+  "lostAccess": "Utraciłeś dostęp?",
+  "recoveryCodeLink": "Użyj kodu odzyskiwania",
+  "accountRecovery": "Odzyskiwanie konta",
+  "recoverySubtitle": "Wpisz swój e-mail i jeden z kodów odzyskiwania.",
+  "recoveryCodeLabel": "Kod odzyskiwania",
+  "recoverAccount": "Odzyskaj konto",
+  "recoveryHint": "W kodach nie ma znaczenia wielkość liter. Myślniki są opcjonalne.",
+  "emailRequired": "E-mail jest wymagany",
+  "emailInvalid": "Wpisz poprawny e-mail",
+  "passwordRequired": "Hasło jest wymagane",
+  "passwordMinLength": "Hasło musi mieć co najmniej 8 znaków",
+  "nameRequired": "Nazwa jest wymagana",
+  "nameMinLength": "Nazwa musi mieć co najmniej 2 znaki",
+  "codeRequired": "Kod odzyskiwania jest wymagany",
+  "codeLength": "Kod musi mieć 10 znaków",
+  "loginFailed": "Logowanie nie powiodło się. Spróbuj ponownie.",
+  "registrationFailed": "Rejestracja nie powiodła się. Spróbuj ponownie.",
+  "recoveryFailed": "Odzyskiwanie nie powiodło się. Sprawdź kod i spróbuj ponownie.",
+  "appleSignInFailed": "Logowanie przez Apple nie powiodło się. Spróbuj ponownie.",
+  "googleSignInFailed": "Logowanie przez Google nie powiodło się. Spróbuj ponownie.",
+  "googleNoAccounts": "Nie znaleziono kont Google na tym urządzeniu. Dodaj konto Google w ustawieniach urządzenia i spróbuj ponownie."
+}
 }

@@ -29,7 +29,7 @@ export default function Results() {
   if (!sessionResults) {
     return (
       <View style={styles.center}>
-        <Text>Loading results...</Text>
+        <Text>{t("voter.overview.loading")}</Text>
       </View>
     );
   }
@@ -37,8 +37,8 @@ export default function Results() {
   if (!sessionResults.topPicks.length) {
     return (
       <View style={styles.center}>
-        <Text>No movies matched your preferences</Text>
-        <PrimaryButton onPress={() => router.replace("/")} style={styles.button}>
+        <Text>{t("voter.overview.no-matches")}</Text>
+        <PrimaryButton onPress={() => router.dismissAll()} style={styles.button}>
           {t("voter.home.quit")}
         </PrimaryButton>
       </View>
@@ -66,7 +66,7 @@ export default function Results() {
         <IconButton
           style={{ position: "absolute", left: 10, top: 10, zIndex: 100 }}
           icon="chevron-left"
-          onPress={() => router.replace("/games")}
+          onPress={() => router.dismissAll()}
           size={28}
         />
         <Text
@@ -214,7 +214,7 @@ export default function Results() {
         <PrimaryButton
           onPress={() => {
             ReviewManager.onGameComplete(true);
-            router.replace("/");
+            router.dismissAll();
           }}
           style={[styles.button, { marginBottom: 15 }]}
         >

@@ -18,8 +18,6 @@ import {
 } from "react-native-paper";
 import Animated, {
   FadeIn,
-  LinearTransition,
-  SlideInRight,
   useAnimatedProps,
   useSharedValue,
   withSpring,
@@ -246,7 +244,7 @@ const LikedMoviesPreview = memo(() => {
           ) : (
             itemsToDisplay.map((movie, index) => (
               <Animated.View
-                entering={SlideInRight.delay(index * 50)}
+                entering={FadeIn}
                 key={`display-${movie.id}`}
                 style={[
                   styles.stackedCard,
@@ -279,17 +277,10 @@ const LikedMovieImage = memo(({ movie }: { movie: Movie }) => {
 
   return (
     <View style={styles.imageWrapper}>
-      <MaterialCommunityIcons
-        name="movie-outline"
-        size={12}
-        color="rgba(255,255,255,0.2)"
-        style={styles.imagePlaceholderIcon}
-      />
       <Image
         style={styles.likedImage}
-        cachePolicy="memory"
+        cachePolicy="memory-disk"
         source={{ uri, width: 24, height: 36 }}
-        transition={150}
       />
     </View>
   );
@@ -372,9 +363,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     justifyContent: "center",
     alignItems: "center",
-  },
-  imagePlaceholderIcon: {
-    position: "absolute",
   },
   likedImage: {
     width: 24,

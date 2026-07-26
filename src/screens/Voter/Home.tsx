@@ -121,8 +121,7 @@ export default function Home() {
   };
 
   function onGoBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace("/games");
+    router.dismissAll();
   }
 
   return (

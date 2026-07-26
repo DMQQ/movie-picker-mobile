@@ -392,7 +392,9 @@
     },
     "overview": {
       "title": "Mejores elecciones",
-      "h2": "Otras elecciones"
+      "h2": "Otras elecciones",
+      "loading": "Cargando resultados...",
+      "no-matches": "Ninguna película coincide con tus preferencias"
     }
   },
   "quick-actions": {
@@ -771,5 +773,48 @@
     },
     "got_it": "Entendido",
     "next": "Siguiente"
-  }
+  },
+  "auth": {
+  "welcomeBack": "Bienvenido de nuevo",
+  "createAccount": "Crear cuenta",
+  "signInWithEmail": "Inicia sesión con tu correo",
+  "signUpWithEmail": "Regístrate con tu correo",
+  "signInSubtitle": "Inicia sesión en tu cuenta",
+  "signUpSubtitle": "Empieza a descubrir películas juntos",
+  "back": "Volver",
+  "emailLabel": "Correo electrónico",
+  "passwordLabel": "Contraseña",
+  "nameLabel": "Nombre",
+  "signIn": "Iniciar sesión",
+  "signUp": "Crear cuenta",
+  "continueWithEmail": "Continuar con correo",
+  "continueWithGoogle": "Continuar con Google",
+  "signInWithGoogle": "Iniciar sesión con Google",
+  "signUpWithGoogle": "Registrarse con Google",
+  "noAccount": "¿No tienes cuenta?",
+  "haveAccount": "¿Ya tienes cuenta?",
+  "signUpLink": "Registrarse",
+  "signInLink": "Iniciar sesión",
+  "lostAccess": "¿Perdiste el acceso?",
+  "recoveryCodeLink": "Usar código de recuperación",
+  "accountRecovery": "Recuperación de cuenta",
+  "recoverySubtitle": "Ingresa tu correo y uno de tus códigos de recuperación.",
+  "recoveryCodeLabel": "Código de recuperación",
+  "recoverAccount": "Recuperar cuenta",
+  "recoveryHint": "Los códigos no distinguen mayúsculas. Los guiones son opcionales.",
+  "emailRequired": "El correo es obligatorio",
+  "emailInvalid": "Ingresa un correo válido",
+  "passwordRequired": "La contraseña es obligatoria",
+  "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+  "nameRequired": "El nombre es obligatorio",
+  "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+  "codeRequired": "El código de recuperación es obligatorio",
+  "codeLength": "El código debe tener 10 caracteres",
+  "loginFailed": "Inicio de sesión fallido. Inténtalo de nuevo.",
+  "registrationFailed": "Registro fallido. Inténtalo de nuevo.",
+  "recoveryFailed": "Recuperación fallida. Verifica el código e inténtalo de nuevo.",
+  "appleSignInFailed": "Inicio de sesión con Apple fallido. Inténtalo de nuevo.",
+  "googleSignInFailed": "Inicio de sesión con Google fallido. Inténtalo de nuevo.",
+  "googleNoAccounts": "No se encontraron cuentas de Google en este dispositivo. Añade una cuenta de Google en los ajustes del dispositivo e inténtalo de nuevo."
+}
 }

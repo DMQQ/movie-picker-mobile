@@ -392,7 +392,9 @@
     },
     "overview": {
       "title": "Melhores escolhas",
-      "h2": "Outras escolhas"
+      "h2": "Outras escolhas",
+      "loading": "Carregando resultados...",
+      "no-matches": "Nenhum filme corresponde às suas preferências"
     }
   },
   "quick-actions": {
@@ -771,5 +773,48 @@
     },
     "got_it": "Entendi",
     "next": "Próximo"
-  }
+  },
+  "auth": {
+  "welcomeBack": "Bem-vindo de volta",
+  "createAccount": "Criar conta",
+  "signInWithEmail": "Entrar com e-mail",
+  "signUpWithEmail": "Cadastrar com e-mail",
+  "signInSubtitle": "Entre na sua conta",
+  "signUpSubtitle": "Comece a descobrir filmes juntos",
+  "back": "Voltar",
+  "emailLabel": "E-mail",
+  "passwordLabel": "Senha",
+  "nameLabel": "Nome",
+  "signIn": "Entrar",
+  "signUp": "Criar conta",
+  "continueWithEmail": "Continuar com e-mail",
+  "continueWithGoogle": "Continuar com Google",
+  "signInWithGoogle": "Entrar com Google",
+  "signUpWithGoogle": "Cadastrar com Google",
+  "noAccount": "Não tem conta?",
+  "haveAccount": "Já tem conta?",
+  "signUpLink": "Cadastrar",
+  "signInLink": "Entrar",
+  "lostAccess": "Perdeu o acesso?",
+  "recoveryCodeLink": "Usar código de recuperação",
+  "accountRecovery": "Recuperação de conta",
+  "recoverySubtitle": "Digite seu e-mail e um dos códigos de recuperação.",
+  "recoveryCodeLabel": "Código de recuperação",
+  "recoverAccount": "Recuperar conta",
+  "recoveryHint": "Códigos não diferenciam maiúsculas. Hífens são opcionais.",
+  "emailRequired": "E-mail é obrigatório",
+  "emailInvalid": "Digite um e-mail válido",
+  "passwordRequired": "Senha é obrigatória",
+  "passwordMinLength": "A senha deve ter pelo menos 8 caracteres",
+  "nameRequired": "Nome é obrigatório",
+  "nameMinLength": "O nome deve ter pelo menos 2 caracteres",
+  "codeRequired": "Código de recuperação é obrigatório",
+  "codeLength": "O código deve ter 10 caracteres",
+  "loginFailed": "Falha no login. Tente novamente.",
+  "registrationFailed": "Falha no cadastro. Tente novamente.",
+  "recoveryFailed": "Falha na recuperação. Verifique o código e tente novamente.",
+  "appleSignInFailed": "Falha no login com Apple. Tente novamente.",
+  "googleSignInFailed": "Falha no login com Google. Tente novamente.",
+  "googleNoAccounts": "Nenhuma conta Google encontrada neste dispositivo. Adicione uma conta Google nas configurações do dispositivo e tente novamente."
+}
 }

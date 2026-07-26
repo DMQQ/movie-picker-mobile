@@ -76,7 +76,7 @@ export default function WaitingState({
               {user.userId === currentUserId
                 ? t("voter.home.you")
                 : t("voter.home.user")}
-              {user.ready ? " (Ready)" : ""}
+              {user.ready ? ` (${t("voter.home.ready-status")})` : ""}
             </Chip>
           ))}
         </View>

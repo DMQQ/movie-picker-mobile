@@ -1,6 +1,7 @@
 import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
 import Svg, { Path } from "react-native-svg";
+import useTranslation from "../service/useTranslation";
 
 function GoogleG({ size = 18 }: { size?: number }) {
   return (
@@ -36,8 +37,10 @@ export default function GoogleSignInButton({
   onPress,
   loading,
   disabled,
-  label = "Continue with Google",
+  label,
 }: Props) {
+  const t = useTranslation();
+  const displayLabel = label ?? t("auth.continueWithGoogle");
   return (
     <Pressable
       onPress={onPress}
@@ -53,7 +56,7 @@ export default function GoogleSignInButton({
       ) : (
         <GoogleG size={18} />
       )}
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.label}>{displayLabel}</Text>
     </Pressable>
   );
 }

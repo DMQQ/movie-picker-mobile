@@ -8,10 +8,12 @@ import {
   isSuccessResponse,
 } from "react-native-nitro-google-signin";
 import { useGoogleAuthMutation, useAppleAuthMutation } from "../redux/auth/authApi";
+import useTranslation from "../service/useTranslation";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
 export function useAuthProviders(onError: (msg: string) => void) {
+  const t = useTranslation();
   const [googleAuth, { isLoading: isGoogleLoading }] = useGoogleAuthMutation();
   const [appleAuth, { isLoading: isAppleLoading }] = useAppleAuthMutation();
 
@@ -35,7 +37,7 @@ export function useAuthProviders(onError: (msg: string) => void) {
       router.dismissAll();
     } catch (err: any) {
       if (err.code === "ERR_REQUEST_CANCELED") return;
-      onError(err?.data?.message ?? "Apple Sign In failed. Please try again.");
+      onError(err?.data?.message ?? t("auth.appleSignInFailed"));
     }
   }
 
@@ -43,24 +45,46 @@ export function useAuthProviders(onError: (msg: string) => void) {
     try {
       await GoogleOneTapSignIn.checkPlayServices();
       let response = await GoogleOneTapSignIn.signIn();
+
+      // User dismissed One Tap bottom sheet — not an error
+      if (isCancelledResponse(response)) return;
+
+      let sawPicker = false;
+
       if (isNoSavedCredentialFoundResponse(response)) {
         response = await GoogleOneTapSignIn.createAccount();
+        // createAccount only shows UI if it didn't return noSavedCredential
+        sawPicker = !isNoSavedCredentialFoundResponse(response);
       }
-      if (isNoSavedCredentialFoundResponse(response)) {
+
+      // User saw the account picker and dismissed it — legit cancel
+      if (isCancelledResponse(response) && sawPicker) return;
+
+      // No accounts found by createAccount, or it cancelled without showing UI → try explicit
+      if (isNoSavedCredentialFoundResponse(response) || isCancelledResponse(response)) {
         response = await GoogleOneTapSignIn.presentExplicitSignIn();
+        if (isCancelledResponse(response)) {
+          if (!sawPicker) {
+            onError(t("auth.googleNoAccounts"));
+          }
+          return;
+        }
       }
+
       if (!isSuccessResponse(response)) {
-        onError("Google Sign In failed. Please try again.");
+        onError(t("auth.googleSignInFailed"));
         return;
       }
+
       const { idToken } = response.data;
       if (!idToken) throw new Error("No ID token");
+
       const result = await googleAuth({ idToken }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
       router.dismissAll();
     } catch (err: any) {
       if (isCancelledResponse(err)) return;
-      onError(err?.data?.message ?? "Google Sign In failed. Please try again.");
+      onError(err?.data?.message ?? t("auth.googleSignInFailed"));
     }
   }
 

@@ -10,6 +10,7 @@ import { useLoginMutation } from "../../redux/auth/authApi";
 import { useAuthProviders } from "../../hooks/useAuthProviders";
 import AuthProviderButtons from "../../components/AuthProviderButtons";
 import FadeSlide from "../../components/FadeSlide";
+import useTranslation from "../../service/useTranslation";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
@@ -22,6 +23,7 @@ export default function LoginScreen() {
   const [errors, setErrors] = useState<Errors>({});
   const [login, { isLoading }] = useLoginMutation();
 
+  const t = useTranslation();
   const { handleAppleSignIn, handleGoogleSignIn, isGoogleLoading, isAppleLoading } =
     useAuthProviders((msg) => setErrors({ form: msg }));
 
@@ -29,9 +31,9 @@ export default function LoginScreen() {
 
   function validate() {
     const next: Errors = {};
-    if (!email.trim()) next.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(email)) next.email = "Enter a valid email";
-    if (!password.trim()) next.password = "Password is required";
+    if (!email.trim()) next.email = t("auth.emailRequired");
+    else if (!/\S+@\S+\.\S+/.test(email)) next.email = t("auth.emailInvalid");
+    if (!password.trim()) next.password = t("auth.passwordRequired");
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -45,7 +47,7 @@ export default function LoginScreen() {
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
       router.dismiss();
     } catch (err: any) {
-      setErrors({ form: err?.data?.message ?? "Login failed. Please try again." });
+      setErrors({ form: err?.data?.message ?? t("auth.loginFailed") });
     }
   }
 
@@ -58,18 +60,18 @@ export default function LoginScreen() {
           <FadeSlide delay={0}>
             <View style={styles.header}>
               <Image source={require("../../../assets/images/icon-light.png")} style={styles.logo} />
-              <Text style={styles.title}>Welcome back</Text>
+              <Text style={styles.title}>{t("auth.welcomeBack")}</Text>
             </View>
           </FadeSlide>
 
           <FadeSlide key={showEmailForm ? "email" : "providers"} delay={160}>
             {showEmailForm ? (
               <>
-                <Text style={styles.subtitle}>Sign in with your email</Text>
+                <Text style={styles.subtitle}>{t("auth.signInWithEmail")}</Text>
 
                 <Pressable onPress={() => { setShowEmailForm(false); setErrors({}); }} style={styles.backBtn} hitSlop={10}>
                   <Icon source="arrow-left" size={18} color="rgba(255,255,255,0.6)" />
-                  <Text style={styles.backText}>Back</Text>
+                  <Text style={styles.backText}>{t("auth.back")}</Text>
                 </Pressable>
 
                 {errors.form && (
@@ -80,7 +82,7 @@ export default function LoginScreen() {
 
                 <View style={styles.fields}>
                   <TextInput
-                    mode="outlined" label="Email" value={email}
+                    mode="outlined" label={t("auth.emailLabel")} value={email}
                     onChangeText={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: undefined, form: undefined })); }}
                     autoCapitalize="none" keyboardType="email-address" autoCorrect={false}
                     returnKeyType="next" outlineStyle={styles.inputOutline} error={!!errors.email}
@@ -88,7 +90,7 @@ export default function LoginScreen() {
                   {errors.email && <Text style={styles.fieldError}>{errors.email}</Text>}
 
                   <TextInput
-                    mode="outlined" label="Password" value={password}
+                    mode="outlined" label={t("auth.passwordLabel")} value={password}
                     onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, form: undefined })); }}
                     secureTextEntry returnKeyType="done" onSubmitEditing={handleLogin}
                     outlineStyle={styles.inputOutline} error={!!errors.password}
@@ -102,12 +104,12 @@ export default function LoginScreen() {
                   disabled={anyLoading}
                   style={styles.primaryBtn}
                 >
-                  Sign in
+                  {t("auth.signIn")}
                 </PrimaryButton>
               </>
             ) : (
               <>
-                <Text style={styles.subtitle}>Sign in to your account</Text>
+                <Text style={styles.subtitle}>{t("auth.signInSubtitle")}</Text>
 
                 {errors.form && (
                   <View style={styles.formError}>
@@ -122,6 +124,7 @@ export default function LoginScreen() {
                   isGoogleLoading={isGoogleLoading}
                   disabled={anyLoading}
                   appleButtonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+                  googleLabel={t("auth.signInWithGoogle")}
                 />
               </>
             )}
@@ -129,16 +132,16 @@ export default function LoginScreen() {
 
           <FadeSlide delay={320}>
             <View style={styles.footer}>
-              <Text style={styles.footerText}>Don't have an account? </Text>
+              <Text style={styles.footerText}>{t("auth.noAccount")} </Text>
               <Link href="/auth/register" asChild>
-                <Text style={styles.footerLink}>Sign up</Text>
+                <Text style={styles.footerLink}>{t("auth.signUpLink")}</Text>
               </Link>
             </View>
 
             <View style={styles.footer}>
-              <Text style={styles.footerText}>Lost access? </Text>
+              <Text style={styles.footerText}>{t("auth.lostAccess")} </Text>
               <Link href="/auth/recover" asChild>
-                <Text style={styles.footerLink}>Use a recovery code</Text>
+                <Text style={styles.footerLink}>{t("auth.recoveryCodeLink")}</Text>
               </Link>
             </View>
           </FadeSlide>

@@ -392,7 +392,9 @@
     },
     "overview": {
       "title": "Top picks",
-      "h2": "Other picks"
+      "h2": "Other picks",
+      "loading": "Loading results...",
+      "no-matches": "No movies matched your preferences"
     }
   },
   "quick-actions": {
@@ -771,5 +773,48 @@
     },
     "got_it": "Got it",
     "next": "Next"
-  }
+  },
+  "auth": {
+  "welcomeBack": "Welcome back",
+  "createAccount": "Create account",
+  "signInWithEmail": "Sign in with your email",
+  "signUpWithEmail": "Sign up with your email",
+  "signInSubtitle": "Sign in to your account",
+  "signUpSubtitle": "Start discovering movies together",
+  "back": "Back",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "nameLabel": "Name",
+  "signIn": "Sign in",
+  "signUp": "Create account",
+  "continueWithEmail": "Continue with Email",
+  "continueWithGoogle": "Continue with Google",
+  "signInWithGoogle": "Sign in with Google",
+  "signUpWithGoogle": "Sign up with Google",
+  "noAccount": "Don't have an account?",
+  "haveAccount": "Already have an account?",
+  "signUpLink": "Sign up",
+  "signInLink": "Sign in",
+  "lostAccess": "Lost access?",
+  "recoveryCodeLink": "Use a recovery code",
+  "accountRecovery": "Account Recovery",
+  "recoverySubtitle": "Enter your email and one of your recovery codes.",
+  "recoveryCodeLabel": "Recovery code",
+  "recoverAccount": "Recover account",
+  "recoveryHint": "Codes are case-insensitive. Dashes are optional.",
+  "emailRequired": "Email is required",
+  "emailInvalid": "Enter a valid email",
+  "passwordRequired": "Password is required",
+  "passwordMinLength": "Password must be at least 8 characters",
+  "nameRequired": "Name is required",
+  "nameMinLength": "Name must be at least 2 characters",
+  "codeRequired": "Recovery code is required",
+  "codeLength": "Code must be 10 characters",
+  "loginFailed": "Login failed. Please try again.",
+  "registrationFailed": "Registration failed. Please try again.",
+  "recoveryFailed": "Recovery failed. Check your code and try again.",
+  "appleSignInFailed": "Apple Sign In failed. Please try again.",
+  "googleSignInFailed": "Google Sign In failed. Please try again.",
+  "googleNoAccounts": "No Google accounts found on this device. Add a Google account in your device settings and try again."
+}
 }

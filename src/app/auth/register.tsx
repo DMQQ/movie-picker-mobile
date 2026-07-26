@@ -10,6 +10,7 @@ import { useRegisterMutation } from "../../redux/auth/authApi";
 import { useAuthProviders } from "../../hooks/useAuthProviders";
 import AuthProviderButtons from "../../components/AuthProviderButtons";
 import FadeSlide from "../../components/FadeSlide";
+import useTranslation from "../../service/useTranslation";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
@@ -23,6 +24,7 @@ export default function RegisterScreen() {
   const [errors, setErrors] = useState<Errors>({});
   const [register, { isLoading }] = useRegisterMutation();
 
+  const t = useTranslation();
   const { handleAppleSignIn, handleGoogleSignIn, isGoogleLoading, isAppleLoading } =
     useAuthProviders((msg) => setErrors({ form: msg }));
 
@@ -30,12 +32,12 @@ export default function RegisterScreen() {
 
   function validate() {
     const next: Errors = {};
-    if (!name.trim()) next.name = "Name is required";
-    else if (name.trim().length < 2) next.name = "Name must be at least 2 characters";
-    if (!email.trim()) next.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(email)) next.email = "Enter a valid email";
-    if (!password.trim()) next.password = "Password is required";
-    else if (password.length < 8) next.password = "Password must be at least 8 characters";
+    if (!name.trim()) next.name = t("auth.nameRequired");
+    else if (name.trim().length < 2) next.name = t("auth.nameMinLength");
+    if (!email.trim()) next.email = t("auth.emailRequired");
+    else if (!/\S+@\S+\.\S+/.test(email)) next.email = t("auth.emailInvalid");
+    if (!password.trim()) next.password = t("auth.passwordRequired");
+    else if (password.length < 8) next.password = t("auth.passwordMinLength");
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -52,7 +54,7 @@ export default function RegisterScreen() {
         params: { codes: JSON.stringify(result.recoveryCodes) },
       });
     } catch (err: any) {
-      setErrors({ form: err?.data?.message ?? "Registration failed. Please try again." });
+      setErrors({ form: err?.data?.message ?? t("auth.registrationFailed") });
     }
   }
 
@@ -65,18 +67,18 @@ export default function RegisterScreen() {
           <FadeSlide delay={0}>
             <View style={styles.header}>
               <Image source={require("../../../assets/images/icon-light.png")} style={styles.logo} />
-              <Text style={styles.title}>Create account</Text>
+              <Text style={styles.title}>{t("auth.createAccount")}</Text>
             </View>
           </FadeSlide>
 
           <FadeSlide key={showEmailForm ? "email" : "providers"} delay={160}>
             {showEmailForm ? (
               <>
-                <Text style={styles.subtitle}>Sign up with your email</Text>
+                <Text style={styles.subtitle}>{t("auth.signUpWithEmail")}</Text>
 
                 <Pressable onPress={() => { setShowEmailForm(false); setErrors({}); }} style={styles.backBtn} hitSlop={10}>
                   <Icon source="arrow-left" size={18} color="rgba(255,255,255,0.6)" />
-                  <Text style={styles.backText}>Back</Text>
+                  <Text style={styles.backText}>{t("auth.back")}</Text>
                 </Pressable>
 
                 {errors.form && (
@@ -87,7 +89,7 @@ export default function RegisterScreen() {
 
                 <View style={styles.fields}>
                   <TextInput
-                    mode="outlined" label="Name" value={name}
+                    mode="outlined" label={t("auth.nameLabel")} value={name}
                     onChangeText={(v) => { setName(v); setErrors((e) => ({ ...e, name: undefined, form: undefined })); }}
                     autoCapitalize="words" returnKeyType="next"
                     outlineStyle={styles.inputOutline} error={!!errors.name}
@@ -95,7 +97,7 @@ export default function RegisterScreen() {
                   {errors.name && <Text style={styles.fieldError}>{errors.name}</Text>}
 
                   <TextInput
-                    mode="outlined" label="Email" value={email}
+                    mode="outlined" label={t("auth.emailLabel")} value={email}
                     onChangeText={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: undefined, form: undefined })); }}
                     autoCapitalize="none" keyboardType="email-address" autoCorrect={false}
                     returnKeyType="next" outlineStyle={styles.inputOutline} error={!!errors.email}
@@ -103,7 +105,7 @@ export default function RegisterScreen() {
                   {errors.email && <Text style={styles.fieldError}>{errors.email}</Text>}
 
                   <TextInput
-                    mode="outlined" label="Password" value={password}
+                    mode="outlined" label={t("auth.passwordLabel")} value={password}
                     onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, form: undefined })); }}
                     secureTextEntry returnKeyType="done" onSubmitEditing={handleRegister}
                     outlineStyle={styles.inputOutline} error={!!errors.password}
@@ -117,12 +119,12 @@ export default function RegisterScreen() {
                   disabled={anyLoading}
                   style={styles.primaryBtn}
                 >
-                  Create account
+                  {t("auth.signUp")}
                 </PrimaryButton>
               </>
             ) : (
               <>
-                <Text style={styles.subtitle}>Start discovering movies together</Text>
+                <Text style={styles.subtitle}>{t("auth.signUpSubtitle")}</Text>
 
                 {errors.form && (
                   <View style={styles.formError}>
@@ -137,7 +139,7 @@ export default function RegisterScreen() {
                   isGoogleLoading={isGoogleLoading}
                   disabled={anyLoading}
                   appleButtonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP}
-                  googleLabel="Sign up with Google"
+                  googleLabel={t("auth.signUpWithGoogle")}
                 />
               </>
             )}
@@ -145,9 +147,9 @@ export default function RegisterScreen() {
 
           <FadeSlide delay={320}>
             <View style={styles.footer}>
-              <Text style={styles.footerText}>Already have an account? </Text>
+              <Text style={styles.footerText}>{t("auth.haveAccount")} </Text>
               <Link href="/auth/login" asChild>
-                <Text style={styles.footerLink}>Sign in</Text>
+                <Text style={styles.footerLink}>{t("auth.signInLink")}</Text>
               </Link>
             </View>
           </FadeSlide>

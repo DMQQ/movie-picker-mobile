@@ -162,7 +162,7 @@ export default function MovieDetailsScreen() {
         </View>
       </Animated.ScrollView>
 
-      {!isPreview && !!movie?.id && (
+      {!isPreview && (
         <Actions
           movieId={Number(movieId)}
           type={typeOfContent as "movie" | "tv"}

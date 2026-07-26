@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "customization-migrator": {
+      "source": "react-native-nitro-google-signin/google-signin",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/customization-migrator/SKILL.md",
+      "computedHash": "4741e5f6287154bcda35102632341d10f89db4c8a8341809aae4cd0c819332ff"
+    },
+    "issue-fixer": {
+      "source": "react-native-nitro-google-signin/google-signin",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/issue-fixer/SKILL.md",
+      "computedHash": "fe1a1faa8cd3adc7fc1c59ac6aae0988cd7a37aaa6fa00a756a1664ea9a19180"
+    },
+    "react-native-nitro-google-signin": {
+      "source": "react-native-nitro-google-signin/google-signin",
+      "sourceType": "github",
+      "skillPath": "skills/react-native-nitro-google-signin/SKILL.md",
+      "computedHash": "844c3b7a070d8b843f55980f18434567c8e58014f4fc1755c4d7341e0b263be1"
+    }
+  }
+}

@@ -23,6 +23,7 @@ const AnimatedButton = ({
   text,
   label,
   small = false,
+  disabled = false,
 }: {
   onPress: () => void;
   icon?: string;
@@ -32,6 +33,7 @@ const AnimatedButton = ({
   text?: string;
   label?: string;
   small?: boolean;
+  disabled?: boolean;
 }) => {
   const scale = useSharedValue(1);
 
@@ -58,6 +60,7 @@ const AnimatedButton = ({
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
+        disabled={disabled}
         style={[
           animatedStyle,
           {
@@ -121,6 +124,7 @@ interface TabBarProps {
   zIndex: number;
   blockCard?: () => void;
   superLikeCard?: () => void;
+  disabled?: boolean;
   labels?: {
     block?: string;
     dislike?: string;
@@ -150,7 +154,7 @@ export default function TabBar(props: TabBarProps) {
       ]}
     >
       {props.blockCard && (
-        <AnimatedButton onPress={props.blockCard} icon="cancel" size={18} variant="block" small label={props.labels?.block ?? "Block"} />
+        <AnimatedButton onPress={props.blockCard} icon="cancel" size={18} variant="block" small disabled={props.disabled} label={props.labels?.block ?? "Block"} />
       )}
 
       <AnimatedButton
@@ -159,10 +163,11 @@ export default function TabBar(props: TabBarProps) {
         color="#fff"
         size={25}
         variant="dislike"
+        disabled={props.disabled}
         label={props.labels?.dislike ?? "Nope"}
       />
 
-      <AnimatedButton onPress={props.likeCard} icon="heart" color="#fff" size={25} variant="like" label={props.labels?.like ?? "Like"} />
+      <AnimatedButton onPress={props.likeCard} icon="heart" color="#fff" size={25} variant="like" disabled={props.disabled} label={props.labels?.like ?? "Like"} />
 
       {props.superLikeCard && (
         <AnimatedButton
@@ -171,6 +176,7 @@ export default function TabBar(props: TabBarProps) {
           size={18}
           variant="superLike"
           small
+          disabled={props.disabled}
           label={props.labels?.superLike ?? "Super"}
         />
       )}

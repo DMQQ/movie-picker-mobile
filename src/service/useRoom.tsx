@@ -126,12 +126,16 @@ export default function useRoom() {
       setCards(_cards.movies, _cards.index);
 
       Promise.allSettled(
-        _cards.movies.map((card: Movie) =>
+        _cards.movies.flatMap((card: Movie) => [
           prefetchThumbnail(
             card.poster_path || card.backdrop_path || "",
             ThumbnailSizes.poster.xxlarge,
           ),
-        ),
+          prefetchThumbnail(
+            card.poster_path || "",
+            ThumbnailSizes.logo.tiny,
+          ),
+        ]),
       ).catch(console.error);
     };
 

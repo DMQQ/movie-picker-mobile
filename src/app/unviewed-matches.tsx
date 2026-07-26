@@ -1,5 +1,12 @@
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { Dimensions, FlatList, Platform, Pressable, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  FlatList,
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
 import PrimaryButton from "../components/PrimaryButton";
 import { router } from "expo-router";
@@ -63,14 +70,20 @@ function UnviewedMatchesScreen() {
       params: { quickStart: true },
     });
   }, []);
-  const gridConfig = useMemo(() => getGridConfig(unviewedMatches.length), [unviewedMatches.length]);
+  const gridConfig = useMemo(
+    () => getGridConfig(unviewedMatches.length),
+    [unviewedMatches.length],
+  );
   const itemWidth = GRID_WIDTH / gridConfig.numColumns;
   const itemHeight = itemWidth * 1.5;
   const gridHeight = itemHeight * 2.25;
 
   const renderMatch = useCallback(
     ({ item }: { item: StoredMatch }) => (
-      <Pressable onPress={() => handleViewMatch(item)} style={{ width: itemWidth, height: itemHeight }}>
+      <Pressable
+        onPress={() => handleViewMatch(item)}
+        style={{ width: itemWidth, height: itemHeight }}
+      >
         <Thumbnail
           path={item.poster_path || ""}
           size={gridConfig.thumbnailSize}
@@ -90,12 +103,20 @@ function UnviewedMatchesScreen() {
 
   return (
     <View style={styles.container}>
-      <IconButton icon="close" size={24} onPress={handleDismiss} style={styles.closeButton} iconColor="#fff" />
+      <IconButton
+        icon="close"
+        size={24}
+        onPress={handleDismiss}
+        style={styles.closeButton}
+        iconColor="#fff"
+      />
 
       <View style={styles.headerRow}>
         <View>
           <Text style={styles.title}>{t("matches.unviewed-title")}</Text>
-          <Text style={styles.subtitle}>{t("matches.unviewed-subtitle", { count: unviewedMatches.length })}</Text>
+          <Text style={styles.subtitle}>
+            {t("matches.unviewed-subtitle", { count: unviewedMatches.length })}
+          </Text>
         </View>
       </View>
 
@@ -116,7 +137,7 @@ function UnviewedMatchesScreen() {
 
       <View style={{ flex: 1 }} />
 
-      <View style={[styles.actions, { paddingBottom: Platform.OS === "android" ? insets.bottom + 20 : 0 }]}>
+      <View style={[styles.actions, { paddingBottom: insets.bottom + 15 }]}>
         <PrimaryButton onPress={handlePlay} style={styles.button}>
           {t("matches.start-new-game")}
         </PrimaryButton>
@@ -139,9 +160,10 @@ export default memo(UnviewedMatchesScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Platform.OS === "android" ? MD2DarkTheme.colors.surface : "transparent",
+    backgroundColor:
+      Platform.OS === "android" ? MD2DarkTheme.colors.surface : "transparent",
     padding: GRID_PADDING,
-    paddingBottom: 0,
+    paddingBottom: 15,
   },
   closeButton: {
     position: "absolute",

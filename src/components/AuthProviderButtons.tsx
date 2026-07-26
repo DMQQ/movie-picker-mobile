@@ -2,6 +2,7 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { Icon, Text } from "react-native-paper";
 import GoogleSignInButton from "./GoogleSignInButton";
+import useTranslation from "../service/useTranslation";
 
 interface Props {
   onEmailPress: () => void;
@@ -22,6 +23,7 @@ export default function AuthProviderButtons({
   appleButtonType,
   googleLabel,
 }: Props) {
+  const t = useTranslation();
   return (
     <View style={styles.options}>
       <Pressable
@@ -30,7 +32,7 @@ export default function AuthProviderButtons({
         style={({ pressed }) => [styles.emailBtn, pressed && styles.emailBtnPressed]}
       >
         <Icon source="email-outline" size={20} color="rgba(255,255,255,0.85)" />
-        <Text style={styles.emailBtnText}>Continue with Email</Text>
+        <Text style={styles.emailBtnText}>{t("auth.continueWithEmail")}</Text>
       </Pressable>
 
       {Platform.OS === "ios" && (
