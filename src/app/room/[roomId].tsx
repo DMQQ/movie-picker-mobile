@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   useTransition,
@@ -42,8 +43,11 @@ const styles = StyleSheet.create({
 
 export default function Home() {
   const params = useLocalSearchParams();
-  const { cards, isPlaying, cardsLoading, roomId, joinError, isJoining } =
-    useRoomContext();
+  const cards = useAppSelector((state) => state.room.room.movies);
+  const isPlaying = useAppSelector((state) => state.room.isPlaying);
+  const roomId = useAppSelector((state) => state.room.room.roomId);
+  const joinError = useAppSelector((state) => state.room.joinError);
+  const isJoining = useAppSelector((state) => state.room.isJoining);
   const hasUserPlayed = useAppSelector(
     (state) => state.room.room.hasUserPlayed,
   );
@@ -53,161 +57,55 @@ export default function Home() {
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
   const dispatch = useAppDispatch();
-  const [showError, setShowError] = useState(false);
-  const [showPlayAgainDialog, setShowPlayAgainDialog] = useState(false);
-  const [playAgainLoading, setPlayAgainLoading] = useState(false);
-  const [waitingForHost, setWaitingForHost] = useState(false);
+  const isFocused = useIsFocused();
+
+  const roomIdStr = (params?.roomId as string) ?? "";
+  const mediaType = (params?.type as string) || "movie";
+
+  const [showRoomError, setShowRoomError] = useState(false);
 
   useEffect(() => {
-    const verifyAndJoinRoom = async () => {
-      if (params?.roomId && !isPlaying) {
-        try {
-          const response = await fetch(`${url}/room/verify/${params.roomId}`, {
-            headers: {
-              authorization: `Bearer ${envs.server_auth_token}`,
-            },
-          });
+    if (!params?.roomId || isPlaying) return;
 
-          const data = await response.json();
-
-          if (!data.exists) {
-            setShowError(true);
-            return;
-          }
-
-          dispatch(
-            roomActions.setRoomId((params.roomId as string).toUpperCase()),
-          );
-        } catch (error) {
-          console.error("Failed to verify room:", error);
-          setShowError(true);
+    const controller = new AbortController();
+    const verify = async () => {
+      try {
+        const res = await fetch(`${url}/room/verify/${params.roomId}`, {
+          headers: { authorization: `Bearer ${envs.server_auth_token}` },
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        if (!data.exists) {
+          setShowRoomError(true);
+          return;
         }
+        dispatch(
+          roomActions.setRoomId((params.roomId as string).toUpperCase()),
+        );
+      } catch (err) {
+        if (!controller.signal.aborted) setShowRoomError(true);
       }
     };
-
-    verifyAndJoinRoom();
-  }, [params?.roomId, dispatch]);
+    verify();
+    return () => controller.abort();
+  }, [params?.roomId, dispatch, isPlaying]);
 
   useEffect(() => {
     if (!socket) return;
-
-    const handleGameEndedByHost = (data: { roomId: string }) => {
+    const handler = (data: { roomId: string }) => {
       router.replace({
         pathname: "/room/summary",
         params: { roomId: data.roomId },
       });
     };
-
-    socket.on("game:ended-by-host", handleGameEndedByHost);
-
-    return () => {
-      socket.off("game:ended-by-host", handleGameEndedByHost);
-    };
+    socket.on("game:ended-by-host", handler);
+    return () => { socket.off("game:ended-by-host", handler); };
   }, [socket]);
-
-  useEffect(() => {
-    if (gameEnded && isPlaying === false) {
-      if (!canContinue) {
-        router.replace({
-          pathname: "/room/summary",
-          params: { roomId },
-        });
-
-        return;
-      }
-      if (isHost) {
-        setShowPlayAgainDialog(true);
-      } else {
-        setWaitingForHost(true);
-      }
-    }
-  }, [gameEnded, isPlaying, isHost, canContinue]);
-
-  // When the host starts a new round, the server sends room:state with
-  // gameEnded:false. useRoom already dispatches setRoom for all room:state
-  // events, so we react to the Redux transition rather than the raw socket
-  // event — avoiding a double dispatch.
-  const prevGameEnded = useRef<boolean | undefined>(undefined);
-  useEffect(() => {
-    if (prevGameEnded.current === true && gameEnded === false) {
-      setShowPlayAgainDialog(false);
-      setWaitingForHost(false);
-      setPlayAgainLoading(false);
-    }
-    prevGameEnded.current = gameEnded;
-  }, [gameEnded]);
-
-  const handlePlayAgain = useCallback(async () => {
-    if (!socket || !roomId) return;
-
-    setPlayAgainLoading(true);
-
-    try {
-      const response = await socket.emitWithAck("play-again", roomId);
-
-      if (!response.success) {
-        alert(response.error || t("game-summary.play-again-failed"));
-        setPlayAgainLoading(false);
-      }
-    } catch (error) {
-      console.error("Play again failed:", error);
-      setPlayAgainLoading(false);
-    }
-  }, [socket, roomId]);
-
-  const handleViewSummary = useCallback(() => {
-    setShowPlayAgainDialog(false);
-    setWaitingForHost(false);
-    router.replace({
-      pathname: "/room/summary",
-      params: { roomId: roomId },
-    });
-  }, [roomId]);
-
-  const handleEndGame = useCallback(() => {
-    if (!socket || !roomId) return;
-    socket?.emit("end-game", roomId);
-    setShowPlayAgainDialog(false);
-    router.replace({
-      pathname: "/room/summary",
-      params: { roomId },
-    });
-  }, [socket, roomId]);
-
-  const playAgainActions: UserInputModalAction[] = [
-    {
-      label: t("dialogs.scan-code.endGame") as string,
-      mode: "text" as const,
-      textColor: "rgba(255, 100, 100, 0.9)",
-      onPress: handleEndGame,
-      disabled: playAgainLoading,
-    },
-    {
-      label: t("game-summary.play-again") as string,
-      mode: "contained",
-      onPress: handlePlayAgain,
-      disabled: playAgainLoading,
-      loading: playAgainLoading,
-    },
-  ];
-
-  const waitingActions: UserInputModalAction[] = [
-    {
-      label: t("game-summary.view-summary") as string,
-      mode: "outlined",
-      onPress: handleViewSummary,
-    },
-  ];
-
-  const isFocused = useIsFocused();
 
   const handleLeaveRoom = useCallback(() => {
     if (isHost) {
       socket?.emit("end-game", roomId);
-      router.replace({
-        pathname: "/room/summary",
-        params: { roomId },
-      });
+      router.replace({ pathname: "/room/summary", params: { roomId } });
     } else {
       socket?.emit("leave-room", roomId);
       router.replace("/");
@@ -216,43 +114,30 @@ export default function Home() {
 
   useEffect(() => {
     if (!isFocused) return;
-
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
       Alert.alert(
         t("dialogs.leave-room.title") as string,
         t("dialogs.leave-room.message") as string,
         [
-          {
-            text: t("common.cancel") as string,
-            style: "cancel",
-          },
-          {
-            text: t("common.yes") as string,
-            onPress: handleLeaveRoom,
-          },
+          { text: t("common.cancel") as string, style: "cancel" },
+          { text: t("common.yes") as string, onPress: handleLeaveRoom },
         ],
         { userInterfaceStyle: "dark", cancelable: true },
       );
-
       return true;
     });
-
     return () => sub.remove();
-  }, [isFocused, handleLeaveRoom]);
+  }, [isFocused, handleLeaveRoom, t]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      <HomeAppbar
-        roomId={params?.roomId as string}
-        hasCards={cards.length > 0}
-      />
+      <HomeAppbar roomId={roomIdStr} hasCards={cards.length > 0} />
 
       {isPlaying ? (
         <>
-          <SwipeContent params={params as any} />
+          <SwipeContent mediaType={mediaType} />
           {cards.length > 0 && <SwipeHintOverlay />}
-
-          {cards.length === 0 && !cardsLoading && (
+          {cards.length === 0 && (
             <RoomEmptyState
               gameEnded={gameEnded}
               hasUserPlayed={hasUserPlayed}
@@ -266,63 +151,192 @@ export default function Home() {
               ? (t("room.finished") as string)
               : isJoining
                 ? (t("room.joining") as string)
-                : cardsLoading
-                  ? (t("room.loading") as string)
-                  : (t("room.awaiting-start") as string)
+                : (t("room.awaiting-start") as string)
           }
         />
       )}
 
-      <UserInputModal
-        visible={showError || joinError}
-        title={t("dialogs.qr.error") as string}
-        subtitle={t("dialogs.qr.error-desc") as string}
-        actions={[
-          {
-            label: t("dialogs.qr.close") as string,
-            mode: "contained",
-            onPress: () => {
-              setShowError(false);
-              router.replace("/(tabs)");
-            },
-          },
-        ]}
+      <RoomErrorModal
+        visible={showRoomError || joinError}
+        onClose={() => {
+          setShowRoomError(false);
+          router.replace("/(tabs)");
+        }}
       />
 
-      <UserInputModal
-        visible={showPlayAgainDialog}
-        title={t("game-summary.game-completed") as string}
-        subtitle={t("room.play-again-prompt") as string}
-        actions={playAgainActions}
-        statusBarTranslucent
-        maxHeight="50%"
+      <GameEndFlow
+        roomId={roomId}
+        isHost={isHost}
+        gameEnded={gameEnded}
+        isPlaying={isPlaying}
+        canContinue={canContinue}
       />
 
-      <UserInputModal
-        visible={waitingForHost}
-        title={t("game-summary.game-completed") as string}
-        subtitle={t("room.waiting-for-host-decision") as string}
-        actions={waitingActions}
-        statusBarTranslucent
-        maxHeight="50%"
-      >
-        <View style={styles.spinnerContainer}>
-          <FancySpinner size={60} />
-        </View>
-      </UserInputModal>
-
-      <Matches roomId={params?.roomId as string} />
+      <Matches roomId={roomIdStr} />
     </View>
   );
 }
 
-interface SwipeContentProps {
-  params: Record<string, string | undefined>;
+
+const RoomErrorModal = memo(
+  ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
+    const t = useTranslation();
+    const actions = useMemo<UserInputModalAction[]>(
+      () => [
+        {
+          label: t("dialogs.qr.close") as string,
+          mode: "contained",
+          onPress: onClose,
+        },
+      ],
+      [t, onClose],
+    );
+
+    return (
+      <UserInputModal
+        visible={visible}
+        title={t("dialogs.qr.error") as string}
+        subtitle={t("dialogs.qr.error-desc") as string}
+        actions={actions}
+      />
+    );
+  },
+);
+
+
+interface GameEndFlowProps {
+  roomId: string;
+  isHost: boolean;
+  gameEnded: boolean;
+  isPlaying: boolean;
+  canContinue: boolean;
 }
 
-const SwipeContent = memo(({ params }: SwipeContentProps) => {
+const GameEndFlow = memo(
+  ({ roomId, isHost, gameEnded, isPlaying, canContinue }: GameEndFlowProps) => {
+    const { socket } = useContext(SocketContext);
+    const t = useTranslation();
+    const [showDialog, setShowDialog] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [waiting, setWaiting] = useState(false);
+
+    useEffect(() => {
+      if (gameEnded && isPlaying === false) {
+        if (!canContinue) {
+          router.replace({
+            pathname: "/room/summary",
+            params: { roomId },
+          });
+          return;
+        }
+        if (isHost) {
+          setShowDialog(true);
+        } else {
+          setWaiting(true);
+        }
+      }
+    }, [gameEnded, isPlaying, isHost, canContinue, roomId]);
+
+    const prevGameEnded = useRef<boolean | undefined>(undefined);
+    useEffect(() => {
+      if (prevGameEnded.current === true && gameEnded === false) {
+        setShowDialog(false);
+        setWaiting(false);
+        setLoading(false);
+      }
+      prevGameEnded.current = gameEnded;
+    }, [gameEnded]);
+
+    const handlePlayAgain = useCallback(async () => {
+      if (!socket || !roomId) return;
+      setLoading(true);
+      try {
+        const response = await socket.emitWithAck("play-again", roomId);
+        if (!response.success) {
+          alert(response.error || t("game-summary.play-again-failed"));
+          setLoading(false);
+        }
+      } catch {
+        setLoading(false);
+      }
+    }, [socket, roomId, t]);
+
+    const handleEndGame = useCallback(() => {
+      if (!socket || !roomId) return;
+      socket.emit("end-game", roomId);
+      setShowDialog(false);
+      router.replace({ pathname: "/room/summary", params: { roomId } });
+    }, [socket, roomId]);
+
+    const handleViewSummary = useCallback(() => {
+      setShowDialog(false);
+      setWaiting(false);
+      router.replace({ pathname: "/room/summary", params: { roomId } });
+    }, [roomId]);
+
+    const playAgainActions = useMemo<UserInputModalAction[]>(
+      () => [
+        {
+          label: t("dialogs.scan-code.endGame") as string,
+          mode: "text",
+          textColor: "rgba(255, 100, 100, 0.9)",
+          onPress: handleEndGame,
+          disabled: loading,
+        },
+        {
+          label: t("game-summary.play-again") as string,
+          mode: "contained",
+          onPress: handlePlayAgain,
+          disabled: loading,
+          loading,
+        },
+      ],
+      [t, handleEndGame, handlePlayAgain, loading],
+    );
+
+    const waitingActions = useMemo<UserInputModalAction[]>(
+      () => [
+        {
+          label: t("game-summary.view-summary") as string,
+          mode: "outlined",
+          onPress: handleViewSummary,
+        },
+      ],
+      [t, handleViewSummary],
+    );
+
+    return (
+      <>
+        <UserInputModal
+          visible={showDialog}
+          title={t("game-summary.game-completed") as string}
+          subtitle={t("room.play-again-prompt") as string}
+          actions={playAgainActions}
+          statusBarTranslucent
+          maxHeight="50%"
+        />
+
+        <UserInputModal
+          visible={waiting}
+          title={t("game-summary.game-completed") as string}
+          subtitle={t("room.waiting-for-host-decision") as string}
+          actions={waitingActions}
+          statusBarTranslucent
+          maxHeight="50%"
+        >
+          <View style={styles.spinnerContainer}>
+            <FancySpinner size={60} />
+          </View>
+        </UserInputModal>
+      </>
+    );
+  },
+);
+
+
+const SwipeContent = memo(({ mediaType }: { mediaType: string }) => {
+  const cards = useAppSelector((state) => state.room.room.movies);
   const {
-    cards,
     dislikeCard,
     likeCard,
     blockAndDislikeCard,
@@ -362,7 +376,7 @@ const SwipeContent = memo(({ params }: SwipeContentProps) => {
             pathname: "/movie/type/[type]/[id]",
             params: {
               id: card.id,
-              type: params?.type || "movie",
+              type: mediaType,
               img: card.poster_path,
             },
           }}
@@ -389,7 +403,7 @@ const SwipeContent = memo(({ params }: SwipeContentProps) => {
               pathname: "/movie/type/[type]/[id]",
               params: {
                 id: topCard.id,
-                type: params?.type || "movie",
+                type: mediaType,
                 img: topCard.poster_path,
               },
             })
@@ -412,9 +426,9 @@ const SwipeContent = memo(({ params }: SwipeContentProps) => {
   );
 });
 
+
 const Matches = memo(({ roomId }: { roomId: string }) => {
   const { isFocused, hideMatchModal, match } = useRoomMatches(roomId);
-
   return (
     isFocused && <MatchModal hideMatchModal={hideMatchModal} match={match} />
   );

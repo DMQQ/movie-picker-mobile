@@ -118,8 +118,6 @@ const SwipeTile = ({
     }
   }, []);
 
-  // Snapshot dragProgress during render so all cards see the same value,
-  // even after a sibling effect resets the shared value on the UI thread.
   const dragSnapshot = dragProgress?.value ?? 0;
 
   useEffect(() => {
@@ -127,7 +125,6 @@ const SwipeTile = ({
     prevIndex.current = index;
 
     if (dragSnapshot > 0 && oldIndex !== index) {
-      // Card shifted index while drag was active — preserve visual position
       const oldDragY = oldIndex > 0 ? Math.min(dragSnapshot, 1) * 7.5 : 0;
       const oldDragS = oldIndex > 0 ? Math.min(dragSnapshot, 1) * 0.05 : 0;
       const visualY = posY.value + oldDragY;
@@ -157,8 +154,6 @@ const SwipeTile = ({
     posScale.value = withSpring(1 - index * 0.05, cfg);
   }, [index, dragSnapshot]);
 
-  // React to TabBar button presses — animate off-screen. The parent
-  // calls the action via startTransition; we only handle the animation.
   useAnimatedReaction(
     () => buttonSwipe?.value ?? 0,
     (current, previous) => {

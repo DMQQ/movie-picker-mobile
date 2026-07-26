@@ -11,6 +11,8 @@ const initialState = {
   language: "en",
   regionalization: {} as Record<string, string>,
   isPlaying: false,
+  joinError: false,
+  isJoining: false,
   beenFired: false,
 
   room: {
@@ -265,6 +267,14 @@ const roomSlice = createSlice({
       state.room.roomId = payload;
       state.qrCode = payload;
       state.joined = true;
+    },
+
+    setJoinError(state, { payload }: { payload: boolean }) {
+      state.joinError = payload;
+    },
+
+    setIsJoining(state, { payload }: { payload: boolean }) {
+      state.isJoining = payload;
     },
   },
 });

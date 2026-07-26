@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import useTranslation from "../../service/useTranslation";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
@@ -6,17 +7,39 @@ import { MD2DarkTheme } from "react-native-paper";
 
 import { Tabs } from "expo-router/tabs";
 import { isLiquidGlassSupported } from "@callstack/liquid-glass";
+import { useAppDispatch } from "../../redux/store";
+import { loadInteractions } from "../../redux/movieInteractions/movieInteractionsSlice";
+import { loadFilterPreferences } from "../../redux/filterPreferences/filterPreferencesSlice";
+import { useMovieInteractions } from "../../context/DatabaseContext";
 
 export const unstable_settings = {
   initialRouteName: "index",
 };
 
+function LazyDataLoader() {
+  const dispatch = useAppDispatch();
+  const { movieInteractions, isReady } = useMovieInteractions();
+
+  useEffect(() => {
+    if (!isReady || !movieInteractions) return;
+    dispatch(loadInteractions(movieInteractions));
+    dispatch(loadFilterPreferences());
+  }, [isReady, movieInteractions, dispatch]);
+
+  return null;
+}
+
 export default function Layout() {
-  return (Platform.OS === "ios" && isLiquidGlassSupported) ||
-    Platform.OS === "android" ? (
-    <TabLayout />
-  ) : (
-    <Pre26IosLayout />
+  return (
+    <>
+      <LazyDataLoader />
+      {(Platform.OS === "ios" && isLiquidGlassSupported) ||
+      Platform.OS === "android" ? (
+        <TabLayout />
+      ) : (
+        <Pre26IosLayout />
+      )}
+    </>
   );
 }
 

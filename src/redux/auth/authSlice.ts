@@ -1,4 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import * as SecureStore from "expo-secure-store";
+import { baseUrl } from "../../context/SocketContext";
 
 export interface AuthUser {
   id: string;
@@ -20,6 +22,21 @@ const initialState: AuthState = {
   sessionExpired: false,
 };
 
+export const restoreSession = createAsyncThunk(
+  "auth/restoreSession",
+  async (token: string) => {
+    const res = await fetch(`${baseUrl}/api/auth/me`, {
+      headers: { authorization: `Bearer ${token}` },
+    });
+    if (res.ok) {
+      const { user } = await res.json();
+      return { token, user };
+    }
+    await SecureStore.deleteItemAsync("user_auth_token");
+    throw new Error("Session expired");
+  },
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -40,6 +57,17 @@ export const authSlice = createSlice({
     setSessionExpired(state) {
       state.sessionExpired = true;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(restoreSession.fulfilled, (state, action) => {
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        state.sessionExpired = false;
+      })
+      .addCase(restoreSession.rejected, (state) => {
+        state.sessionExpired = true;
+      });
   },
 });
 

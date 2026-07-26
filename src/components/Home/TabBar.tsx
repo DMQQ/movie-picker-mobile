@@ -1,17 +1,30 @@
 import { Platform, Pressable, View, useWindowDimensions } from "react-native";
 import { Icon, Text } from "react-native-paper";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+import Touch from "../Touch";
 
 type ButtonVariant = "default" | "like" | "dislike" | "block" | "superLike";
 
-const BUTTON_COLORS: Record<ButtonVariant, { bg: string; border: string; shadow: string }> = {
-  default: { bg: "rgba(255,255,255,0.15)", border: "rgba(255,255,255,0.3)", shadow: "transparent" },
+const BUTTON_COLORS: Record<
+  ButtonVariant,
+  { bg: string; border: string; shadow: string }
+> = {
+  default: {
+    bg: "rgba(255,255,255,0.15)",
+    border: "rgba(255,255,255,0.3)",
+    shadow: "transparent",
+  },
   like: { bg: "#42DCA3", border: "rgba(66, 220, 163, 0.8)", shadow: "#42DCA3" },
-  dislike: { bg: "#FF4458", border: "rgba(255, 68, 88, 0.8)", shadow: "#FF4458" },
+  dislike: {
+    bg: "#FF4458",
+    border: "rgba(255, 68, 88, 0.8)",
+    shadow: "#FF4458",
+  },
   block: { bg: "#8B0000", border: "rgba(139, 0, 0, 0.8)", shadow: "#8B0000" },
-  superLike: { bg: "#FFD700", border: "rgba(255, 215, 0, 0.8)", shadow: "#FFD700" },
+  superLike: {
+    bg: "#FFD700",
+    border: "rgba(255, 215, 0, 0.8)",
+    shadow: "#FFD700",
+  },
 };
 
 const AnimatedButton = ({
@@ -35,34 +48,16 @@ const AnimatedButton = ({
   small?: boolean;
   disabled?: boolean;
 }) => {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scale.value }],
-    };
-  });
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.9, { damping: 15, stiffness: 300 });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 300 });
-  };
-
   const colors = BUTTON_COLORS[variant];
   const isAccent = variant !== "default";
 
   return (
     <View style={{ alignItems: "center", gap: 4 }}>
-      <AnimatedPressable
+      <Touch
         onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
+
         disabled={disabled}
         style={[
-          animatedStyle,
           {
             borderRadius: 100,
             padding: small ? 10 : 15,
@@ -87,7 +82,13 @@ const AnimatedButton = ({
           },
         ]}
       >
-        {icon && <Icon source={icon} size={small ? 18 : size} color={isAccent ? "#fff" : color} />}
+        {icon && (
+          <Icon
+            source={icon}
+            size={small ? 18 : size}
+            color={isAccent ? "#fff" : color}
+          />
+        )}
         {text && (
           <Text
             style={{
@@ -100,7 +101,7 @@ const AnimatedButton = ({
             {text}
           </Text>
         )}
-      </AnimatedPressable>
+      </Touch>
       {label && (
         <Text
           style={{
@@ -154,7 +155,15 @@ export default function TabBar(props: TabBarProps) {
       ]}
     >
       {props.blockCard && (
-        <AnimatedButton onPress={props.blockCard} icon="cancel" size={18} variant="block" small disabled={props.disabled} label={props.labels?.block ?? "Block"} />
+        <AnimatedButton
+          onPress={props.blockCard}
+          icon="cancel"
+          size={18}
+          variant="block"
+          small
+          disabled={props.disabled}
+          label={props.labels?.block ?? "Block"}
+        />
       )}
 
       <AnimatedButton
@@ -167,7 +176,15 @@ export default function TabBar(props: TabBarProps) {
         label={props.labels?.dislike ?? "Nope"}
       />
 
-      <AnimatedButton onPress={props.likeCard} icon="heart" color="#fff" size={25} variant="like" disabled={props.disabled} label={props.labels?.like ?? "Like"} />
+      <AnimatedButton
+        onPress={props.likeCard}
+        icon="heart"
+        color="#fff"
+        size={25}
+        variant="like"
+        disabled={props.disabled}
+        label={props.labels?.like ?? "Like"}
+      />
 
       {props.superLikeCard && (
         <AnimatedButton

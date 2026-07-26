@@ -12,28 +12,26 @@ import {
 } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { roomActions } from "../redux/room/roomSlice";
-import { authActions } from "../redux/auth/authSlice";
+import { restoreSession } from "../redux/auth/authSlice";
 import { setUserId } from "../redux/app/appSlice";
-import { store, useAppDispatch, useAppSelector } from "../redux/store";
-import { baseUrl } from "../context/SocketContext";
+import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
-import {
-  DatabaseProvider,
-  useMovieInteractions,
-} from "../context/DatabaseContext";
-import { loadInteractions } from "../redux/movieInteractions/movieInteractionsSlice";
-import { loadFilterPreferences } from "../redux/filterPreferences/filterPreferencesSlice";
+import { DatabaseProvider } from "../context/DatabaseContext";
 import * as SplashScreen from "expo-splash-screen";
 import useMaintenance from "../service/useMaintanance";
 import { getDeviceSettings } from "../service/useTranslation";
 
 import * as Sentry from "@sentry/react-native";
 import { GoogleOneTapSignIn } from "react-native-nitro-google-signin";
+import { enableFreeze } from "react-native-screens";
+import { allSettled } from "../utils/utilities";
 
 GoogleOneTapSignIn.configure({
   webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID!,
 });
+
+enableFreeze(true);
 
 if (!__DEV__)
   Sentry.init({
@@ -101,57 +99,23 @@ const RootNavigator = ({
 }) => {
   const dispatch = useAppDispatch();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
-  const { movieInteractions, isReady: dbReady } = useMovieInteractions();
-  const hasInitialized = useRef(false);
-  const pendingToken = useRef<string | null>(null);
-
-  useEffect(() => {
-    const token = pendingToken.current;
-    if (!settingsLoaded || !token) return;
-
-    fetch(`${baseUrl}/api/auth/me`, {
-      headers: { authorization: `Bearer ${token}` },
-    })
-      .then(async (res) => {
-        if (res.ok) {
-          const { user } = await res.json();
-          dispatch(authActions.setCredentials({ token, user }));
-        } else {
-          await SecureStore.deleteItemAsync("user_auth_token");
-          dispatch(authActions.setSessionExpired());
-        }
-      })
-      .catch((authErr) => {
-        console.log("[Auth] session restore failed:", authErr);
-      });
-  }, [settingsLoaded, dispatch]);
 
   useEffect(() => {
     const initializeApp = async () => {
       if (!isLoaded || isUpdating) return;
 
-      if (!dbReady || !movieInteractions) {
-        return;
-      }
-
-      if (hasInitialized.current) return;
-      hasInitialized.current = true;
-
       try {
-        const [nickname, storedToken, userId] = await Promise.all([
-          AsyncStorage.getItemAsync("nickname"),
-          SecureStore.getItemAsync("user_auth_token"),
-          AsyncStorage.getItemAsync("userId"),
-        ]);
-
-        Promise.allSettled([
-          dispatch(loadInteractions(movieInteractions)),
-          dispatch(loadFilterPreferences()),
-        ]);
+        const [nickname, storedToken, userId] = await allSettled(
+          Promise.allSettled([
+            AsyncStorage.getItemAsync("nickname"),
+            SecureStore.getItemAsync("user_auth_token"),
+            AsyncStorage.getItemAsync("userId"),
+          ]),
+          null,
+        );
 
         if (userId) dispatch(setUserId(userId));
-
-        pendingToken.current = storedToken;
+        if (storedToken) dispatch(restoreSession(storedToken));
 
         const deviceSettings = getDeviceSettings();
 
@@ -162,7 +126,6 @@ const RootNavigator = ({
             regionalization: deviceSettings.regionalization,
           }),
         );
-
       } catch (error) {
         console.error("[RootNavigator] Error:", error);
       } finally {
@@ -171,7 +134,7 @@ const RootNavigator = ({
     };
 
     initializeApp();
-  }, [isLoaded, isUpdating, dbReady, movieInteractions, dispatch]);
+  }, [isLoaded, isUpdating, dispatch]);
 
   useEffect(() => {
     if (isLoaded && settingsLoaded) {
@@ -197,96 +160,93 @@ const RootNavigator = ({
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-          <Stack.Screen name="room" options={{ headerShown: false }} />
+        <Stack.Screen name="room" options={{ headerShown: false }} />
 
-          <Stack.Screen name="fortune" options={{ headerShown: false }} />
+        <Stack.Screen name="fortune" options={{ headerShown: false }} />
 
-          <Stack.Screen
-            name="qr-scanner"
-            options={{ headerShown: false, presentation: "modal" }}
-          />
+        <Stack.Screen
+          name="qr-scanner"
+          options={{ headerShown: false, presentation: "modal" }}
+        />
 
-          <Stack.Screen name="group" options={{ headerShown: false }} />
+        <Stack.Screen name="group" options={{ headerShown: false }} />
 
-          <Stack.Screen name="games" options={{ headerShown: false }} />
+        <Stack.Screen name="games" options={{ headerShown: false }} />
 
-          <Stack.Screen
-            name="search-filters"
-            options={{ headerShown: false }}
-          />
+        <Stack.Screen name="search-filters" options={{ headerShown: false }} />
 
-          <Stack.Screen
-            name="favourite-groups"
-            options={{
-              headerShown: false,
-              gestureEnabled: true,
-              presentation: "formSheet",
-              sheetGrabberVisible: true,
-              contentStyle: {
-                backgroundColor:
-                  Platform.OS === "android" ? "#121212" : "transparent",
-              },
-              sheetAllowedDetents: [0.5, 0.85],
-              sheetInitialDetentIndex: 0,
-            }}
-          />
+        <Stack.Screen
+          name="favourite-groups"
+          options={{
+            headerShown: false,
+            gestureEnabled: true,
+            presentation: "formSheet",
+            sheetGrabberVisible: true,
+            contentStyle: {
+              backgroundColor:
+                Platform.OS === "android" ? "#121212" : "transparent",
+            },
+            sheetAllowedDetents: [0.5, 0.85],
+            sheetInitialDetentIndex: 0,
+          }}
+        />
 
-          <Stack.Screen
-            name="filters"
-            options={{
-              headerShown: false,
-              gestureEnabled: true,
-              presentation: "formSheet",
-              sheetGrabberVisible: true,
-              contentStyle: {
-                backgroundColor:
-                  Platform.OS === "android" ? "#121212" : "transparent",
-              },
-              sheetAllowedDetents: [0.85, 1.0],
-              sheetInitialDetentIndex: 0,
-            }}
-          />
+        <Stack.Screen
+          name="filters"
+          options={{
+            headerShown: false,
+            gestureEnabled: true,
+            presentation: "formSheet",
+            sheetGrabberVisible: true,
+            contentStyle: {
+              backgroundColor:
+                Platform.OS === "android" ? "#121212" : "transparent",
+            },
+            sheetAllowedDetents: [0.85, 1.0],
+            sheetInitialDetentIndex: 0,
+          }}
+        />
 
-          <Stack.Screen
-            name="modal"
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
-              presentation: "modal",
-            }}
-          />
+        <Stack.Screen
+          name="modal"
+          options={{
+            headerShown: false,
+            gestureEnabled: false,
+            presentation: "modal",
+          }}
+        />
 
-          <Stack.Screen
-            name="unviewed-matches"
-            options={{
-              headerShown: false,
-              presentation: "formSheet",
-              gestureEnabled: true,
-              sheetGrabberVisible: false,
-              contentStyle: {
-                backgroundColor:
-                  Platform.OS === "android"
-                    ? MD2DarkTheme.colors.surface
-                    : "transparent",
-              },
-              sheetAllowedDetents: [0.7], // 70%
-              sheetInitialDetentIndex: 0,
-              sheetLargestUndimmedDetentIndex: 0,
-            }}
-          />
+        <Stack.Screen
+          name="unviewed-matches"
+          options={{
+            headerShown: false,
+            presentation: "formSheet",
+            gestureEnabled: true,
+            sheetGrabberVisible: false,
+            contentStyle: {
+              backgroundColor:
+                Platform.OS === "android"
+                  ? MD2DarkTheme.colors.surface
+                  : "transparent",
+            },
+            sheetAllowedDetents: [0.7], // 70%
+            sheetInitialDetentIndex: 0,
+            sheetLargestUndimmedDetentIndex: 0,
+          }}
+        />
 
-          <Stack.Screen
-            name="auth"
-            options={{
-              headerShown: false,
-              gestureEnabled: true,
-              presentation: "formSheet",
-              sheetGrabberVisible: true,
-              contentStyle: { backgroundColor: "transparent" },
-              sheetAllowedDetents: [0.6, 0.95],
-              sheetInitialDetentIndex: 0,
-            }}
-          />
+        <Stack.Screen
+          name="auth"
+          options={{
+            headerShown: false,
+            gestureEnabled: true,
+            presentation: "formSheet",
+            sheetGrabberVisible: true,
+            contentStyle: { backgroundColor: "transparent" },
+            sheetAllowedDetents: [0.6, 0.95],
+            sheetInitialDetentIndex: 0,
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );

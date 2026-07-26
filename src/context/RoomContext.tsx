@@ -1,34 +1,32 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import useRoom from "../service/useRoom";
 import { useBlockedMovies } from "../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
 import type { Movie } from "../../types";
 import { useDatabase, useMatches } from "./DatabaseContext";
-import { useAppSelector } from "../redux/store";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { roomActions } from "../redux/room/roomSlice";
 import { Platform } from "react-native";
 import ReviewManager from "../utils/rate";
 import * as StoreReview from "expo-store-review";
 
-type RoomContextValue = ReturnType<typeof useRoom> & {
+type RoomActions = {
+  likeCard: (card: Movie, index: number) => Promise<void>;
+  dislikeCard: (card: Movie, index: number) => void;
   blockAndDislikeCard: (card: Movie, index: number) => Promise<void>;
   superLikeAndLikeCard: (card: Movie, index: number) => Promise<void>;
-  joinError: boolean;
-  isJoining: boolean;
+  joinGame: (code: string, blockedMovies?: { id: number; type: "movie" | "tv" }[], superLikedMovies?: { id: number; type: "movie" | "tv" }[]) => Promise<any>;
 };
 
-const RoomContext = createContext<RoomContextValue>({
-  cards: [],
-  isPlaying: false,
-  cardsLoading: false,
-  dislikeCard: () => {},
-  likeCard: (...args: any) => new Promise(() => {}),
-  roomId: "",
+const noop = () => {};
+const noopAsync = async () => {};
+
+const RoomContext = createContext<RoomActions>({
+  likeCard: noopAsync,
+  dislikeCard: noop,
+  blockAndDislikeCard: noopAsync,
+  superLikeAndLikeCard: noopAsync,
   joinGame: async () => null,
-  socket: null,
-  blockAndDislikeCard: async () => {},
-  superLikeAndLikeCard: async () => {},
-  joinError: false,
-  isJoining: false,
 });
 
 export default function useRoomContext() {
@@ -37,17 +35,15 @@ export default function useRoomContext() {
 
 export function RoomContextProvider({ children }: { children: React.ReactNode }) {
   const room = useRoom();
+  const dispatch = useAppDispatch();
   const { blockMovie, getBlockedIds, isReady: blockedReady } = useBlockedMovies();
   const { superLikeMovie, getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
   const { matches: matchesRepo } = useMatches();
   const usersCount = useAppSelector((state) => state.room.room.usersCount);
-  const [joinError, setJoinError] = useState(false);
-  const [isJoining, setIsJoining] = useState(false);
   const hasJoined = useRef(false);
   const lastJoinedRoomId = useRef<string | null>(null);
 
   useEffect(() => {
-    // Reset join flag when room changes
     if (room.roomId !== lastJoinedRoomId.current) {
       hasJoined.current = false;
     }
@@ -57,27 +53,25 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
       lastJoinedRoomId.current = room.roomId;
 
       (async () => {
-        setIsJoining(true);
-        setJoinError(false);
+        dispatch(roomActions.setIsJoining(true));
+        dispatch(roomActions.setJoinError(false));
         try {
           const [blockedMovies, superLikedMovies] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
           const response = await room.joinGame(room.roomId, blockedMovies, superLikedMovies);
 
           if (!response?.joined) {
-            console.error("Failed to join room - room may not exist");
-            setJoinError(true);
-            hasJoined.current = false; // Allow retry on failure
+            dispatch(roomActions.setJoinError(true));
+            hasJoined.current = false;
           }
-        } catch (error) {
-          console.error("Error joining room:", error);
-          setJoinError(true);
-          hasJoined.current = false; // Allow retry on failure
+        } catch {
+          dispatch(roomActions.setJoinError(true));
+          hasJoined.current = false;
         } finally {
-          setIsJoining(false);
+          dispatch(roomActions.setIsJoining(false));
         }
       })();
     }
-  }, [room.roomId, room.socket?.connected, blockedReady, superLikedReady]);
+  }, [room.roomId, room.socket?.connected, blockedReady, superLikedReady, room.joinGame, dispatch, getBlockedIds, getSuperLikedIds]);
 
   const blockAndDislikeCard = useCallback(
     async (card: Movie, index: number) => {
@@ -89,12 +83,10 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
 
   const { movieInteractions, isReady } = useDatabase();
 
-  // Wrap likeCard to save likes as matches when playing solo
   const likeCard = useCallback(
     async (card: Movie, index: number) => {
       await room.likeCard(card, index);
 
-      // In solo play, likes are effectively matches
       if (usersCount <= 1 && matchesRepo && room.roomId) {
         matchesRepo.add({
           movie_id: card.id,
@@ -113,7 +105,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
       await superLikeMovie(card);
       await likeCard(card, index);
 
-      if (isReady && movieInteractions)
+      if (isReady && movieInteractions) {
         movieInteractions.canReview().then(async (canReview) => {
           if (canReview) {
             if (Platform.OS !== "web" && (await StoreReview.hasAction()) && (await ReviewManager.canRequestReviewFromRating())) {
@@ -122,20 +114,20 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
             }
           }
         });
+      }
     },
-    [superLikeMovie, likeCard, isReady],
+    [superLikeMovie, likeCard, isReady, movieInteractions],
   );
 
-  const value = useMemo(
+  const value = useMemo<RoomActions>(
     () => ({
-      ...room,
       likeCard,
       blockAndDislikeCard,
       superLikeAndLikeCard,
-      joinError,
-      isJoining,
+      dislikeCard: room.dislikeCard,
+      joinGame: room.joinGame,
     }),
-    [room, likeCard, blockAndDislikeCard, superLikeAndLikeCard, joinError, isJoining],
+    [likeCard, blockAndDislikeCard, superLikeAndLikeCard, room.dislikeCard, room.joinGame],
   );
 
   return <RoomContext.Provider value={value}>{children}</RoomContext.Provider>;
