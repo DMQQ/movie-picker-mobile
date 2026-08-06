@@ -16,6 +16,7 @@ import {
 import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
 import { memo, useMemo } from "react";
 import MovieTabs from "./MovieTabs";
+import { fontSize, radius, spacing } from "../../constants/design";
 
 interface MovieDetailsProps {
   movie: Movie & Record<string, string>;
@@ -105,7 +106,7 @@ function MovieDetails({
 
   return (
     <BlurViewWrapper style={styles.blurWrapper}>
-      <View style={{ width: "100%", alignItems: "center", padding: 10 }}>
+      <View style={{ width: "100%", alignItems: "center", padding: spacing.sm + 2 }}>
         <View
           style={{
             width: 60,
@@ -115,7 +116,7 @@ function MovieDetails({
           }}
         />
       </View>
-      <View style={{ padding: 15 }}>
+      <View style={{ padding: spacing.screen }}>
         <Text numberOfLines={3} style={styles.heading}>
           {movie?.title || movie?.name || "-"}
         </Text>
@@ -141,7 +142,7 @@ function MovieDetails({
           <Text style={styles.categories}>{originalTitle}</Text>
         )}
 
-        <View style={{ paddingVertical: 15 }}>
+        <View style={{ paddingVertical: spacing.screen }}>
           <PlatformBlurView style={styles.quickActions}>
             <QuickActions movie={movie}>
               <View style={{ flex: 1 }}>
@@ -199,33 +200,33 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontFamily: "Bebas",
     lineHeight: 55,
-    marginTop: 10,
+    marginTop: spacing.sm + 2,
   },
 
   tagline: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
     color: "rgba(255,255,255,0.95)",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
 
-  categories: { color: "rgba(255,255,255,0.7)", fontSize: 15 },
-  chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm - 2, marginTop: 8 },
+  categories: { color: "rgba(255,255,255,0.7)", fontSize: fontSize.md + 1 },
+  chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm - 2, marginTop: spacing.sm },
 
-  rating: { flexDirection: "row", marginBottom: 10 },
+  rating: { flexDirection: "row", marginBottom: spacing.sm + 2 },
 
   quickActions: {
-    paddingVertical: 20,
-    paddingLeft: 5,
-    borderRadius: 20,
+    paddingVertical: spacing.xl,
+    paddingLeft: spacing.xs + 1,
+    borderRadius: radius.modal,
   },
 
-  text: { fontSize: 15, color: "rgba(255,255,255,0.6)" },
+  text: { fontSize: fontSize.md + 1, color: "rgba(255,255,255,0.6)" },
 
   attributions: {
-    padding: 20,
+    padding: spacing.xl,
     justifyContent: "center",
     alignItems: "center",
-    gap: 5,
+    gap: spacing.xs + 1,
   },
 
   tmdbLogo: { width: 40, height: 40 },

@@ -5,7 +5,7 @@ import {
   Button,
   TouchableRipple,
 } from "react-native-paper";
-import { colors, fontWeight } from "../../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetAllProvidersQuery } from "../../../redux/movie/movieApi";
 import ProviderList from "../ProviderList";
@@ -182,35 +182,35 @@ const Step3Providers = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 16,
+    paddingTop: spacing.lg,
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.07)",
     borderRadius: radius.md,
-    paddingHorizontal: 12,
-    marginBottom: 10,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.sm + 2,
     height: 46,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",
   },
   searchIcon: {
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   searchInput: {
     flex: 1,
     color: "#fff",
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
     height: "100%",
   },
   clearSearch: {
-    padding: 4,
+    padding: spacing.xs,
     borderRadius: radius.md,
   },
   rememberContainer: {
     borderRadius: radius.md,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
     overflow: "hidden",
   },
   rememberInner: {
@@ -219,14 +219,14 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.05)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",
-    padding: 12,
+    padding: spacing.md,
     borderRadius: radius.md,
-    gap: 12,
+    gap: spacing.md,
   },
   rememberIconWrap: {
     width: 34,
     height: 34,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     backgroundColor: "rgba(255,255,255,0.08)",
     justifyContent: "center",
     alignItems: "center",
@@ -244,13 +244,13 @@ const styles = StyleSheet.create({
   },
   rememberSubtext: {
     color: "#888",
-    fontSize: 11,
-    marginTop: 2,
+    fontSize: fontSize.sm - 1,
+    marginTop: spacing.xs - 2,
   },
   pill: {
     paddingHorizontal: spacing.sm + 2,
-    paddingVertical: 4,
-    borderRadius: 20,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.modal,
     backgroundColor: "rgba(255,255,255,0.08)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.12)",
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   pillText: {
     color: "#888",
-    fontSize: 11,
+    fontSize: fontSize.sm - 1,
     fontWeight: fontWeight.bold,
     letterSpacing: 0.5,
   },
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   },
   clearButton: {
     alignSelf: "flex-start",
-    marginBottom: 12,
+    marginBottom: spacing.md,
     marginLeft: -4,
   },
   clearButtonLabel: {

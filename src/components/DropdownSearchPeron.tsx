@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, FlatList, Image, ListRenderItem, StyleSheet, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, Avatar, Surface, Text, TextInput, TouchableRipple } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import { useLazySearchPeopleQuery } from "../redux/person/personApi";
 import useTranslation from "../service/useTranslation";
 
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     lineHeight: 30,
     fontFamily: "Bebas",
-    marginBottom: 15,
+    marginBottom: spacing.screen,
   },
   searchContainer: {
     position: "relative",
@@ -220,18 +220,18 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: colors.surface,
-    borderRadius: 8,
-    marginTop: 4,
+    borderRadius: radius.sm,
+    marginTop: spacing.xs,
     elevation: 5,
     maxHeight: 350,
     zIndex: 1000,
   },
   loadingContainer: {
-    padding: 20,
+    padding: spacing.xl,
     alignItems: "center",
   },
   dropdownMessage: {
-    padding: 16,
+    padding: spacing.lg,
     color: "#aaa",
     textAlign: "center",
   },
@@ -239,14 +239,14 @@ const styles = StyleSheet.create({
     maxHeight: 350,
   },
   resultsContent: {
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
   },
   resultsHeaderContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: "#333",
   },
@@ -259,8 +259,8 @@ const styles = StyleSheet.create({
     color: "#007AFF",
   },
   personItem: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
   },
   personContent: {
     flexDirection: "row",
@@ -269,12 +269,12 @@ const styles = StyleSheet.create({
   personImage: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: radius.modal,
   },
   placeholderImage: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: radius.modal,
     backgroundColor: "#444",
     justifyContent: "center",
     alignItems: "center",
@@ -282,10 +282,10 @@ const styles = StyleSheet.create({
   placeholderText: {
     color: "#fff",
     fontSize: fontSize.xl,
-    fontWeight: "bold",
+    fontWeight: fontWeight.bold,
   },
   personInfo: {
-    marginLeft: 12,
+    marginLeft: spacing.md,
     flex: 1,
   },
   personName: {
@@ -297,15 +297,15 @@ const styles = StyleSheet.create({
     color: "#aaa",
   },
   selectedContainer: {
-    marginTop: 16,
+    marginTop: spacing.lg,
   },
   selectedContent: {
-    paddingVertical: 5,
+    paddingVertical: spacing.xs + 1,
   },
   selectedPerson: {
-    marginRight: 12,
-    marginVertical: 4,
-    borderRadius: 20,
+    marginRight: spacing.md,
+    marginVertical: spacing.xs,
+    borderRadius: radius.modal,
     overflow: "hidden",
     elevation: 3,
     backgroundColor: colors.surface,
@@ -313,17 +313,17 @@ const styles = StyleSheet.create({
   selectedPersonInner: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 6,
+    paddingVertical: spacing.xs + 2,
     paddingHorizontal: spacing.sm + 2,
   },
   selectedPersonImage: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    marginRight: 8,
+    borderRadius: radius.card + 2,
+    marginRight: spacing.sm,
   },
   selectedPersonAvatar: {
-    marginRight: 8,
+    marginRight: spacing.sm,
     backgroundColor: "#007AFF",
   },
   selectedPersonAvatarLabel: {
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   selectedPersonName: {
     fontSize: fontSize.md,
     color: "#fff",
-    marginRight: 6,
+    marginRight: spacing.xs + 2,
     maxWidth: 120,
   },
   removeButton: {
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.3)",
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 2,
+    marginLeft: spacing.xs - 2,
   },
   removeButtonText: {
     color: "#fff",

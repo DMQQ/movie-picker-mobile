@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Pressable, Dimensions } from "react-native";
 import { Text, useTheme } from "react-native-paper";
-import { colors } from "../../../constants/design";
+import { colors, radius, spacing, typography } from "../../../constants/design";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -100,16 +100,16 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginRight: 16,
+    marginRight: spacing.lg,
   },
   containerVertical: {
-    marginBottom: 16,
+    marginBottom: spacing.lg,
     width: "100%",
   },
   card: {
     width: Dimensions.get("window").width * 0.75,
     height: Dimensions.get("window").height * 0.65,
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
     backgroundColor: "#1a1a1a",
     borderWidth: 3,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   cardVertical: {
     width: "100%",
     height: 200,
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
     backgroundColor: "#1a1a1a",
     borderWidth: 3,
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: "100%",
-    borderRadius: 16,
+    borderRadius: radius.card,
   },
   placeholder: {
     backgroundColor: "#2a2a2a",
@@ -149,13 +149,13 @@ const styles = StyleSheet.create({
     right: -3,
     top: 0,
     justifyContent: "flex-end",
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    borderRadius: 16,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xxl,
+    borderRadius: radius.card,
   },
   genreName: {
     color: "#fff",
-    fontSize: 38,
+    fontSize: typography.bebasSize.auth,
     fontFamily: "Bebas",
     textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: 0, height: 2 },
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     right: 16,
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.card + 2,
     justifyContent: "center",
     alignItems: "center",
   },

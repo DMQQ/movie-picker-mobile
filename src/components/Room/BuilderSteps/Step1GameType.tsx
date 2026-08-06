@@ -14,6 +14,7 @@ import SkeletonCard from "../SkeletonCard";
 import useTranslation from "../../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import { setCategory } from "../../../redux/roomBuilder/roomBuilderSlice";
+import { fontSize, spacing } from "../../../constants/design";
 
 const Step1GameType: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -99,7 +100,7 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
               />
             )}
             ListEmptyComponent={
-              <View style={{ flexDirection: "row", gap: 12 }}>
+              <View style={{ flexDirection: "row", gap: spacing.md }}>
                 {moviesLoading && [1, 2, 3, 4].map((item) => <SkeletonCard key={item} width={cardWidth} height={listHeight} borderRadius={12} />)}
               </View>
             }
@@ -159,7 +160,7 @@ const SeriesSection = ({ onSelectCategory }: SectionPrpos) => {
               />
             )}
             ListEmptyComponent={
-              <View style={{ flexDirection: "row", gap: 12 }}>
+              <View style={{ flexDirection: "row", gap: spacing.md }}>
                 {tvLoading && [1, 2, 3, 4].map((item) => <SkeletonCard key={item} width={cardWidth} height={listHeight} borderRadius={12} />)}
               </View>
             }
@@ -173,14 +174,14 @@ const SeriesSection = ({ onSelectCategory }: SectionPrpos) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
-    gap: 16,
+    paddingTop: spacing.xl,
+    gap: spacing.lg,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 16,
+    gap: spacing.lg,
   },
   loadingText: {
     color: "#999",
@@ -196,10 +197,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: "Bebas",
     color: "#fff",
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   scrollContent: {
-    paddingRight: 16,
+    paddingRight: spacing.lg,
   },
 });
 

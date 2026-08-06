@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback, useMemo } from "react"; // useCallback kept for handleGamePress/handleSecondaryPress
@@ -21,11 +21,11 @@ export const GAME_SECTION_HEIGHT = Math.min(width * 0.25, 200) * 1.75 + 50;
 
 const gameInviteStyles = StyleSheet.create({
   container: {
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
     height: GAME_SECTION_HEIGHT,
-    paddingHorizontal: 15,
-    paddingBottom: 30,
+    paddingHorizontal: spacing.screen,
+    paddingBottom: spacing.xxl + 6,
   },
   backgroundMovies: {
     position: "absolute",
@@ -36,7 +36,7 @@ const gameInviteStyles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     opacity: 0.5,
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
   },
   movieThumbnail: {
@@ -46,17 +46,17 @@ const gameInviteStyles = StyleSheet.create({
   },
   blurContainer: {
     flex: 1,
-    padding: 20,
+    padding: spacing.xl,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 16,
+    borderRadius: radius.card,
   },
   title: {
     fontSize: 28,
     fontFamily: "Bebas",
     color: "#fff",
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
     textShadowColor: "rgba(0,0,0,0.8)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
@@ -65,14 +65,14 @@ const gameInviteStyles = StyleSheet.create({
     fontSize: fontSize.lg,
     color: "rgba(255,255,255,0.95)",
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: spacing.xl,
     lineHeight: 22,
     textShadowColor: "rgba(0,0,0,0.8)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
   button: {
-    borderRadius: 25,
+    borderRadius: radius.lg + 1,
     overflow: "hidden",
     minWidth: 180,
     elevation: 3,
@@ -82,12 +82,12 @@ const gameInviteStyles = StyleSheet.create({
     shadowRadius: 3.84,
   },
   buttonGradient: {
-    paddingHorizontal: 24,
-    paddingVertical: 14,
+    paddingHorizontal: spacing.xxl,
+    paddingVertical: spacing.md + 2,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    gap: 8,
+    gap: spacing.sm,
   },
   buttonText: {
     color: "#fff",
@@ -108,12 +108,12 @@ const gameInviteStyles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.3)",
   },
   secondaryButtonInner: {
-    paddingHorizontal: 24,
-    paddingVertical: 14,
+    paddingHorizontal: spacing.xxl,
+    paddingVertical: spacing.md + 2,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    gap: 8,
+    gap: spacing.sm,
   },
 });
 

@@ -2,6 +2,7 @@ import { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
 import PlatformBlurView from "../PlatformBlurView";
+import { radius, spacing } from "../../constants/design";
 
 interface PageIndicatorProps {
   categories: any[];
@@ -18,20 +19,20 @@ const pageIndicatorStyles = StyleSheet.create({
     zIndex: 1000,
   },
   blurContainer: {
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    borderRadius: radius.modal,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
     overflow: "hidden",
   },
   dotsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
   },
   dot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: radius.xs,
   },
 });
 

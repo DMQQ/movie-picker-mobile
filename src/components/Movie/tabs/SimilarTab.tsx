@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from "react";
-import { fontWeight } from "../../../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../../../constants/design";
 import {
   Dimensions,
   StyleSheet,
@@ -105,8 +105,8 @@ export default memo(SimilarTab);
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 15,
-    paddingTop: 10,
+    paddingHorizontal: spacing.screen,
+    paddingTop: spacing.sm + 2,
   },
   gridContainer: {
     flexDirection: "row",
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     width: imageWidth,
   },
   emptyContainer: {
-    padding: 20,
+    padding: spacing.xl,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -127,15 +127,15 @@ const styles = StyleSheet.create({
     fontSize: fontSize.lg,
   },
   footer: {
-    paddingVertical: 20,
+    paddingVertical: spacing.xl,
     alignItems: "center",
     justifyContent: "center",
   },
   loadMoreButton: {
     paddingVertical: spacing.sm + 2,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
     backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 8,
+    borderRadius: radius.sm,
   },
   loadMoreText: {
     color: "#fff",

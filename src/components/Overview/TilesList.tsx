@@ -7,6 +7,7 @@ import useTranslation from "../../service/useTranslation";
 import CreateCollectionFromLiked from "../CreateCollectionFromLiked";
 import MatchTile from "./MatchTile";
 import { router } from "expo-router";
+import { fontSize, spacing, typography } from "../../constants/design";
 
 interface TileListProps
   extends Omit<
@@ -36,15 +37,15 @@ export default function TilesList<T>({ data, label, onLongItemPress, useMovieTyp
         {...rest}
         style={[{ flex: 1 }, rest.style]}
         numColumns={3}
-        contentContainerStyle={[rest.contentContainerStyle, { gap: 15, paddingBottom: 60 }]}
-        columnWrapperStyle={{ gap: 15 }}
+        contentContainerStyle={[rest.contentContainerStyle, { gap: spacing.screen, paddingBottom: spacing.xl * 3 }]}
+        columnWrapperStyle={{ gap: spacing.screen }}
         ListHeaderComponent={
           subheader || label ? (
             <>
               {subheader}
               {label ? (
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                  <Text style={{ fontSize: 35, marginBottom: 15, fontFamily: "Bebas", maxWidth: "70%" }}>{label}</Text>
+                  <Text style={{ fontSize: typography.bebasSize.section, marginBottom: spacing.screen, fontFamily: "Bebas", maxWidth: "70%" }}>{label}</Text>
                   <CreateCollectionFromLiked data={data} />
                 </View>
               ) : null}
@@ -52,9 +53,9 @@ export default function TilesList<T>({ data, label, onLongItemPress, useMovieTyp
           ) : null
         }
         ListEmptyComponent={
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", minHeight: 400, paddingHorizontal: 30 }}>
-            <Text style={{ fontSize: 28, fontFamily: "Bebas", marginBottom: 15, textAlign: "center" }}>{t("overview.empty-title")}</Text>
-            <Text style={{ fontSize: fontSize.md, opacity: 0.7, marginBottom: 25, textAlign: "center", lineHeight: 20 }}>{t("overview.empty")}</Text>
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", minHeight: 400, paddingHorizontal: spacing.xxl + 6 }}>
+            <Text style={{ fontSize: 28, fontFamily: "Bebas", marginBottom: spacing.screen, textAlign: "center" }}>{t("overview.empty-title")}</Text>
+            <Text style={{ fontSize: fontSize.md, opacity: 0.7, marginBottom: spacing.xxl + 1, textAlign: "center", lineHeight: 20 }}>{t("overview.empty")}</Text>
             <Button mode="text" onPress={() => router.back()} compact>
               {t("overview.back-to-game")}
             </Button>

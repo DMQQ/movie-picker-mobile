@@ -9,6 +9,7 @@ import { FancySpinner } from "../FancySpinner";
 import MarathonTicket from "../MarathonTicket";
 import { useLazyGetSummaryShareQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
+import { fontSize, radius, spacing } from "../../constants/design";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -126,17 +127,17 @@ const styles = StyleSheet.create({
     zIndex: 10,
     backgroundColor: "rgba(255,255,255,0.1)",
   },
-  viewShot: { backgroundColor: "#000", borderRadius: 16, overflow: "hidden" },
-  centered: { alignItems: "center", justifyContent: "center", padding: 40 },
+  viewShot: { backgroundColor: "#000", borderRadius: radius.card, overflow: "hidden" },
+  centered: { alignItems: "center", justifyContent: "center", padding: spacing.xxl + 16 },
   loadingText: {
-    marginTop: 16,
+    marginTop: spacing.lg,
     color: "#fff",
     fontFamily: "Bebas",
     fontSize: fontSize.lg,
     letterSpacing: 1,
   },
   errorText: {
-    marginTop: 12,
+    marginTop: spacing.md,
     color: "#999",
     fontFamily: "Bebas",
     fontSize: fontSize.lg,

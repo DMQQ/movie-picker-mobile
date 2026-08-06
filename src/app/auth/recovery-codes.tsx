@@ -1,5 +1,5 @@
 import * as Clipboard from "expo-clipboard";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Platform, ScrollView, Share, StyleSheet, View } from "react-native";
@@ -97,53 +97,53 @@ export default function RecoveryCodesScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  scroll: { padding: 24, paddingTop: 16, paddingBottom: 40 },
+  scroll: { padding: spacing.xxl, paddingTop: spacing.lg, paddingBottom: spacing.xxl + 16 },
   grabber: {
     width: 36,
     height: 4,
-    borderRadius: 2,
+    borderRadius: radius.xs - 2,
     backgroundColor: "#555",
     alignSelf: "center",
-    marginBottom: 28,
+    marginBottom: spacing.xxl + 4,
   },
 
-  iconWrap: { alignItems: "center", marginBottom: 16 },
-  title: { fontSize: 34, fontFamily: "Bebas", color: "#fff", letterSpacing: 1, marginBottom: 6 },
-  subtitle: { fontSize: fontSize.md, color: "#666", marginBottom: 16, lineHeight: 20 },
+  iconWrap: { alignItems: "center", marginBottom: spacing.lg },
+  title: { fontSize: 34, fontFamily: "Bebas", color: "#fff", letterSpacing: 1, marginBottom: spacing.xs + 2 },
+  subtitle: { fontSize: fontSize.md, color: "#666", marginBottom: spacing.lg, lineHeight: 20 },
 
   warningRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
     backgroundColor: "rgba(245,158,11,0.1)",
     borderRadius: radius.sm + 2,
     paddingVertical: spacing.sm + 2,
-    paddingHorizontal: 14,
-    marginBottom: 24,
+    paddingHorizontal: spacing.md + 2,
+    marginBottom: spacing.xxl,
   },
-  warningText: { fontSize: 13, color: "#F59E0B", flex: 1, lineHeight: 18 },
+  warningText: { fontSize: fontSize.md - 1, color: "#F59E0B", flex: 1, lineHeight: 18 },
 
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 20,
+    gap: spacing.sm,
+    marginBottom: spacing.xl,
   },
   codeCellWrap: { width: "48%" },
   codeCell: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
     width: "100%",
     backgroundColor: "rgba(255,255,255,0.06)",
     borderRadius: radius.sm + 2,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",
     paddingVertical: spacing.sm + 2,
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.md,
   },
   codeIndex: {
-    fontSize: 11,
+    fontSize: fontSize.sm - 1,
     color: "rgba(255,255,255,0.3)",
     width: 14,
     textAlign: "center",
@@ -159,10 +159,10 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: "row",
     gap: spacing.sm + 2,
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
-  actionBtn: { flex: 1, borderRadius: 25 },
+  actionBtn: { flex: 1, borderRadius: radius.lg + 1 },
 
-  doneBtn: { borderRadius: 25 },
-  doneBtnContent: { paddingVertical: 6 },
+  doneBtn: { borderRadius: radius.lg + 1 },
+  doneBtnContent: { paddingVertical: spacing.xs + 2 },
 });

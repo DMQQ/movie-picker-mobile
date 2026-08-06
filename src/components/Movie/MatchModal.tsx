@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { Text, useTheme } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, radius, spacing } from "../../constants/design";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -36,8 +36,8 @@ const AUTO_DISMISS_MS = 5000;
 
 const styles = StyleSheet.create({
   matchModal: {
-    padding: 20,
-    borderRadius: 20,
+    padding: spacing.xl,
+    borderRadius: radius.modal,
     backgroundColor: "rgba(0,0,0,0.75)",
     ...StyleSheet.absoluteFill,
     height: Dimensions.get("screen").height,
@@ -56,14 +56,14 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     position: "absolute",
     zIndex: 10,
-    paddingBottom: 20,
+    paddingBottom: spacing.xl,
     borderBottomRightRadius: 19,
     borderBottomLeftRadius: 19,
   },
   release_date: {
     color: "rgba(255,255,255,1)",
     paddingHorizontal: spacing.sm + 2,
-    marginTop: 5,
+    marginTop: spacing.xs + 1,
   },
   title: {
     color: "white",
@@ -83,11 +83,11 @@ const styles = StyleSheet.create({
   },
   meta: {
     flexDirection: "row",
-    marginTop: 5,
+    marginTop: spacing.xs + 1,
     alignItems: "center",
     gap: spacing.sm - 2,
     flexWrap: "wrap",
-    paddingLeft: 10,
+    paddingLeft: spacing.sm + 2,
   },
   share: {
     position: "absolute",
@@ -155,7 +155,7 @@ export default function MatchModal({
 
         {isPartial && didLike === false && (
           <Animated.Text
-            style={[styles.matchText, { color: theme.colors.primary, fontSize: 36, marginTop: 2 }]}
+            style={[styles.matchText, { color: theme.colors.primary, fontSize: 36, marginTop: spacing.xs - 2 }]}
             entering={SlideInUp.delay(150)}
             exiting={SlideOutUp}
           >
@@ -196,7 +196,7 @@ export default function MatchModal({
                 style={{
                   flexDirection: "row",
                   paddingHorizontal: spacing.sm + 2,
-                  marginBottom: 5,
+                  marginBottom: spacing.xs + 1,
                 }}
               >
                 <RatingIcons size={15} vote={match?.vote_average} />

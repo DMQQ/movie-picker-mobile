@@ -18,7 +18,7 @@ import {
   Share,
 } from "react-native";
 import { Avatar, Text, useTheme } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import StyledQRCode from "../../components/StyledQRCode";
 import { Movie } from "../../../types";
@@ -485,7 +485,7 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         style={styles.shareButton}
       >
         <View>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.xs + 1 }}>
             {!!code && code.length > 0 ? (
               <>
                 {code.split("").map((char, index) => (
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    paddingHorizontal: 15,
+    paddingHorizontal: spacing.screen,
   },
   loadingContainer: {
     flex: 1,
@@ -530,15 +530,15 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     color: "#fff",
-    marginTop: 20,
+    marginTop: spacing.xl,
   },
   qrCodeContainer: {
     flex: 1,
   },
   bottomSection: {
-    padding: 15,
-    paddingBottom: 15,
-    gap: 7.5,
+    padding: spacing.screen,
+    paddingBottom: spacing.screen,
+    gap: spacing.xs + 3.5,
   },
   activeUsersRow: {
     flexDirection: "row",
@@ -551,13 +551,13 @@ const styles = StyleSheet.create({
   },
   avatarsContainer: {
     flexDirection: "row",
-    gap: 5,
+    gap: spacing.xs + 1,
   },
   avatarWrapper: {
     flexDirection: "row",
     backgroundColor: "#000",
-    gap: 5,
-    borderRadius: 100,
+    gap: spacing.xs + 1,
+    borderRadius: radius.pill,
     alignItems: "center",
   },
   warningText: {
@@ -568,27 +568,27 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   startButton: {
-    borderRadius: 100,
-    marginTop: 10,
+    borderRadius: radius.pill,
+    marginTop: spacing.sm + 2,
   },
   startButtonContent: {
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
   },
   tutorialContainer: {
-    marginTop: 15,
+    marginTop: spacing.screen,
     paddingHorizontal: spacing.sm + 2,
     gap: spacing.sm + 2,
   },
   tipRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: spacing.md,
     width: "80%",
   },
   tipIconContainer: {
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.card + 2,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -604,17 +604,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   shareButton: {
-    marginTop: 10,
+    marginTop: spacing.sm + 2,
   },
   codeRow: {
     flexDirection: "row",
-    gap: 5,
+    gap: spacing.xs + 1,
     justifyContent: "center",
     alignItems: "center",
   },
   codeChar: {
     fontSize: fontSize.xxl,
-    fontWeight: "bold",
+    fontWeight: fontWeight.bold,
   },
   shareButtonText: {
     opacity: 0.7,

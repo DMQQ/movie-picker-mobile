@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   extra: { backgroundColor: colors.overlay },
   extraText: { fontSize: fontSize.xs, fontWeight: fontWeight.bold, color: mutedText },
 
-  info: { flex: 1, gap: 2 },
+  info: { flex: 1, gap: spacing.xs - 2 },
   countRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs + 1 },
   count: { fontSize: fontSize.lg - 1, fontWeight: fontWeight.bold, color: colors.text },
   names: { fontSize: fontSize.xs + 1, color: mutedText },

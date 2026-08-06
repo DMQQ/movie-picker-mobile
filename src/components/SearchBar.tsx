@@ -2,7 +2,7 @@ import { useNavigation } from "expo-router";
 import { BlurView } from "expo-blur";
 import { StyleSheet, TextInput, View } from "react-native";
 import { IconButton } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontSize, radius, spacing } from "../constants/design";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import PlatformBlurView from "./PlatformBlurView";
 
@@ -16,7 +16,7 @@ const CustomSearchBar = ({ value, onChangeText, placeholder = "Search movies and
   const navigation = useNavigation();
 
   return (
-    <Animated.View style={{ paddingHorizontal: 15 }} entering={FadeInUp}>
+    <Animated.View style={{ paddingHorizontal: spacing.screen }} entering={FadeInUp}>
       <View style={styles.container}>
         <PlatformBlurView style={styles.searchContainer} intensity={5}>
           <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} style={styles.backButton} />
@@ -41,16 +41,16 @@ const CustomSearchBar = ({ value, onChangeText, placeholder = "Search movies and
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 15,
-    borderRadius: 100,
+    marginBottom: spacing.screen,
+    borderRadius: radius.pill,
     overflow: "hidden",
     borderWidth: 2,
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: 100,
-    paddingHorizontal: 5,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.xs + 1,
   },
   backButton: {
     margin: 0,
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: "#fff",
     fontSize: fontSize.lg,
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.sm,
     height: "100%",
   },
   clearButton: {

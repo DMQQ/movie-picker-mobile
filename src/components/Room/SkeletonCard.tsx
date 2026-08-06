@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
+import { spacing } from "../../constants/design";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -49,7 +50,7 @@ const SkeletonCard: React.FC<SkeletonCardProps> = ({ width, height, borderRadius
 
 const styles = StyleSheet.create({
   container: {
-    marginRight: 16,
+    marginRight: spacing.lg,
   },
   skeleton: {
     backgroundColor: "#2a2a2a",

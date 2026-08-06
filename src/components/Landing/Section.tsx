@@ -9,6 +9,7 @@ import SectionListItem, {
 } from "../SectionItem";
 import Skeleton from "../Skeleton/Skeleton";
 import { useInfiniteSectionMovies } from "../../hooks/useInfiniteSectionMovies";
+import { radius, spacing, typography } from "../../constants/design";
 
 interface SectionProps {
   group: { name: string; results: Movie[] };
@@ -18,14 +19,14 @@ export const SECTION_HEIGHT = SECTION_ITEM_HEIGHT + 80;
 
 const sectionStyles = StyleSheet.create({
   container: {
-    paddingHorizontal: 15,
+    paddingHorizontal: spacing.screen,
     height: SECTION_HEIGHT,
   },
   title: {
     color: "#fff",
-    fontSize: 35,
+    fontSize: typography.bebasSize.section,
     fontFamily: "Bebas",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
 });
 
@@ -33,7 +34,7 @@ const skeletonStyles = StyleSheet.create({
   moviesList: {
     flexDirection: "row",
     gap: spacing.sm + 2,
-    marginTop: 15,
+    marginTop: spacing.screen,
   },
   movieCard: {
     alignItems: "center",
@@ -76,7 +77,7 @@ export const Section = memo(
                           width: SECTION_ITEM_WIDTH,
                           height: SECTION_ITEM_HEIGHT,
                           backgroundColor: "#333",
-                          borderRadius: 8,
+                          borderRadius: radius.sm,
                         }}
                       />
                     </Skeleton>

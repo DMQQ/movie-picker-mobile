@@ -251,9 +251,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.appBackground,
-    ...Platform.select({ ios: { paddingBottom: 50 } }),
+    ...Platform.select({ ios: { paddingBottom: spacing.xxl * 2 + 2 } }),
   },
-  scrollView: { flex: 1, paddingTop: 80 },
+  scrollView: { flex: 1, paddingTop: spacing.xl * 4 },
   scrollContent: { paddingHorizontal: spacing.screen, gap: spacing.xxl, paddingTop: spacing.screen },
 
   section: { gap: spacing.sm + 2 },
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.overlay,
     borderRadius: radius.sm,
     paddingHorizontal: spacing.xs + 3,
-    paddingVertical: 1,
+    paddingVertical: spacing.xs - 3,
   },
   labelBadgeDev: { backgroundColor: "rgba(255,68,88,0.15)" },
   labelBadgeText: {

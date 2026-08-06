@@ -1,5 +1,5 @@
 import { useNavigation } from "expo-router";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../constants/design";
 import * as Haptic from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { PropsWithChildren } from "react";
@@ -139,7 +139,7 @@ export default function PageHeading({
                       style={[
                         styles.rightText,
                         !rightIconName && {
-                          paddingHorizontal: 15,
+                          paddingHorizontal: spacing.screen,
                           paddingVertical: spacing.sm + 2,
                         },
                       ]}
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 60,
-    paddingHorizontal: 15,
+    paddingHorizontal: spacing.screen,
     zIndex: 10,
   },
   sideContainer: {
@@ -218,10 +218,10 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
-    paddingRight: 10,
+    paddingRight: spacing.sm + 2,
   },
   buttonContainer: {
-    borderRadius: 100,
+    borderRadius: radius.pill,
     overflow: "hidden",
   },
 });

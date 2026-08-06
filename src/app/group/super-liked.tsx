@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import useTranslation from "../../service/useTranslation";
 import GroupScreenLayout from "../../components/Group/GroupScreenLayout";
+import { fontSize, radius, spacing } from "../../constants/design";
 
 export default function SuperLikedGroup() {
   const { superLikedMovies, removeSuperLike } = useSuperLikedMovies();
@@ -51,18 +52,18 @@ export default function SuperLikedGroup() {
 }
 
 const styles = StyleSheet.create({
-  footer: { flex: 1, justifyContent: "flex-end", marginTop: 5 },
-  button: { marginTop: 8, borderColor: "#FFD700" },
+  footer: { flex: 1, justifyContent: "flex-end", marginTop: spacing.xs + 1 },
+  button: { marginTop: spacing.sm, borderColor: "#FFD700" },
   banner: {
     flexDirection: "row",
     alignItems: "flex-start",
     backgroundColor: "rgba(255, 215, 0, 0.08)",
     borderLeftWidth: 3,
     borderLeftColor: "#FFD700",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 20,
+    borderRadius: radius.sm,
+    padding: spacing.md,
+    marginBottom: spacing.xl,
   },
-  bannerIcon: { marginRight: 10, marginTop: 1 },
-  bannerText: { flex: 1, fontSize: 13, lineHeight: 19, color: "rgba(255, 255, 255, 0.75)" },
+  bannerIcon: { marginRight: spacing.sm + 2, marginTop: spacing.xs - 3 },
+  bannerText: { flex: 1, fontSize: fontSize.md - 1, lineHeight: 19, color: "rgba(255, 255, 255, 0.75)" },
 });

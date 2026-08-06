@@ -1,5 +1,6 @@
 import { StyleProp, ViewStyle } from "react-native";
 import { Card as CardComponent } from "react-native-paper";
+import { radius } from "../../constants/design";
 
 export default function Card({
   children,
@@ -17,7 +18,7 @@ export default function Card({
         {
           width: "auto",
           height: "auto",
-          borderRadius: 25,
+          borderRadius: radius.lg + 1,
         },
         style,
       ]}

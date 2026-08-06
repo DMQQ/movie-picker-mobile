@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontSize, spacing } from "../../constants/design";
 import { useIsPreview, router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import GroupScreenLayout from "../../components/Group/GroupScreenLayout";
@@ -71,7 +71,7 @@ export default function Group() {
     >
       {match && (
         <OverviewModal
-          styles={{ paddingTop: 50 }}
+          styles={{ paddingTop: spacing.xxl * 2 + 2 }}
           onClose={() => setMatch(undefined)}
           match={{ ...match, poster_path: match.imageUrl }}
         />
@@ -97,7 +97,7 @@ export default function Group() {
 
 const styles = StyleSheet.create({
   footer: {
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   footerRow: {
     flexDirection: "row",
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   note: {
     fontSize: fontSize.xs,
     color: "#888",
-    marginTop: 4,
-    marginLeft: 2,
+    marginTop: spacing.xs,
+    marginLeft: spacing.xs - 2,
   },
 });

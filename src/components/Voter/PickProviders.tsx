@@ -1,6 +1,6 @@
 import { Dimensions, FlatList, Image } from "react-native";
 import { TouchableRipple } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, radius, spacing } from "../../constants/design";
 import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
 
 const MARGIN = 8;
@@ -24,7 +24,7 @@ export default function PickProviders({
 
   return (
     <FlatList
-      style={{ marginTop: 15, paddingHorizontal: CONTAINER_PADDING }}
+      style={{ marginTop: spacing.screen, paddingHorizontal: CONTAINER_PADDING }}
       contentContainerStyle={{ alignItems: "center" }}
       numColumns={NUM_COLUMNS}
       keyExtractor={(i) => i.provider_id.toString()}
@@ -53,7 +53,7 @@ export default function PickProviders({
         >
           <Image
             source={{ uri: `https://image.tmdb.org/t/p/w200${item?.logo_path}` }}
-            style={{ width: size - 4, height: size - 4, borderRadius: 7.5 }}
+            style={{ width: size - 4, height: size - 4, borderRadius: radius.xs + 3.5 }}
             resizeMode="contain"
           />
         </TouchableRipple>

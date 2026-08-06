@@ -5,6 +5,7 @@ import CreateCollectionFromLiked from "../CreateCollectionFromLiked";
 import MatchedItem from "./MatchedItem";
 import useTranslation from "../../service/useTranslation";
 import { IGameSummary } from "./types";
+import { spacing, typography } from "../../constants/design";
 
 interface Props {
   likes: Partial<Movie>[];
@@ -42,8 +43,8 @@ export default function YourPicksList({ likes, summary }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { marginTop: 30 },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15 },
-  title: { fontSize: 35, fontFamily: "Bebas" },
-  row: { gap: spacing.sm + 2, marginBottom: 15 },
+  container: { marginTop: spacing.xxl + 6 },
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.screen },
+  title: { fontSize: typography.bebasSize.section, fontFamily: "Bebas" },
+  row: { gap: spacing.sm + 2, marginBottom: spacing.screen },
 });

@@ -7,6 +7,7 @@ import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
 import CinemaTicket from "./CinemaTicket";
+import { fontSize, radius, spacing } from "../constants/design";
 
 interface Genre {
   id: number;
@@ -180,12 +181,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
   shareButton: {
-    marginTop: 20,
-    borderRadius: 100,
+    marginTop: spacing.xl,
+    borderRadius: radius.pill,
   },
   shareButtonContent: {
-    paddingVertical: 8,
-    paddingHorizontal: 24,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.xxl,
   },
   shareButtonLabel: {
     fontFamily: "Bebas",

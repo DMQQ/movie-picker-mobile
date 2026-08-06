@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../constants/design";
 import { useState } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "82%",
-    borderRadius: 24,
+    borderRadius: radius.lg,
     overflow: "hidden",
     ...Platform.select({
       android: {
@@ -141,23 +141,23 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(10,10,10,0.82)",
   },
   cardInner: {
-    padding: 24,
+    padding: spacing.xxl,
   },
   title: {
     fontFamily: "Bebas",
     fontSize: 28,
     color: "#fff",
     letterSpacing: 0.8,
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   rows: {
-    gap: 16,
-    marginBottom: 28,
+    gap: spacing.lg,
+    marginBottom: spacing.xxl + 4,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 14,
+    gap: spacing.md + 2,
   },
   iconWrap: {
     width: 44,
@@ -172,12 +172,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   rowLabel: {
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     fontWeight: fontWeight.bold,
-    marginBottom: 2,
+    marginBottom: spacing.xs - 2,
   },
   rowDesc: {
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     color: "rgba(255,255,255,0.58)",
     lineHeight: 18,
   },
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   dot: {
     height: 6,
-    borderRadius: 3,
+    borderRadius: radius.xs - 1,
   },
   dotActive: {
     width: 20,
@@ -203,11 +203,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.25)",
   },
   nextButton: {
-    borderRadius: 100,
+    borderRadius: radius.pill,
   },
   nextButtonContent: {
     paddingHorizontal: spacing.sm + 2,
-    paddingVertical: 2,
+    paddingVertical: spacing.xs - 2,
   },
   nextButtonLabel: {
     fontSize: fontSize.md,

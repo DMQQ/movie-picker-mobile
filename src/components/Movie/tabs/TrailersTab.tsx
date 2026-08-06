@@ -1,7 +1,7 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, AppState, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { colors, fontWeight } from "../../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../../../constants/design";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { hexToRgba } from "../../../utils/hexToRgb";
 import { BlurViewWrapper } from "../../PlatformBlurView";
@@ -60,7 +60,7 @@ const PlayerItem = memo(({ name, videoKey, index, canPlay }: { name: string; vid
 
   return (
     <Animated.View entering={FadeInDown.delay(index * 80)} style={styles.playerItem}>
-      <BlurViewWrapper style={{ borderRadius: 15 }}>
+      <BlurViewWrapper style={{ borderRadius: radius.md + 3 }}>
         <Pressable onPress={() => setIsPlaying((p) => !p)} style={styles.playerWrapper}>
           {!isReady && (
             <View style={styles.placeholder}>
@@ -88,8 +88,8 @@ const PlayerItem = memo(({ name, videoKey, index, canPlay }: { name: string; vid
 
 const styles = StyleSheet.create({
   scrollContent: {
-    paddingHorizontal: 15,
-    paddingVertical: 15,
+    paddingHorizontal: spacing.screen,
+    paddingVertical: spacing.screen,
   },
   playerItem: {
     gap: spacing.sm + 2,
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: spacing.xl,
   },
   emptyText: {
     color: "rgba(255,255,255,0.6)",

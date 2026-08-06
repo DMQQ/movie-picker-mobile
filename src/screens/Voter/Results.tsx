@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { IconButton, Text } from "react-native-paper";
 import PrimaryButton from "../../components/PrimaryButton";
 import { ImageBackground } from "react-native";
@@ -87,12 +87,12 @@ export default function Results() {
         style={{
           flex: 1,
           backgroundColor: "rgba(0,0,0,0.2)",
-          paddingHorizontal: 15,
-          paddingBottom: 15,
+          paddingHorizontal: spacing.screen,
+          paddingBottom: spacing.screen,
         }}
       >
         <View style={{ flex: 1 }}>
-          <View style={{ flexDirection: "row", gap: 15 }}>
+          <View style={{ flexDirection: "row", gap: spacing.screen }}>
             <Pressable
               disabled={!card?.id}
               onPress={() =>
@@ -122,7 +122,7 @@ export default function Results() {
                 flex: 1,
                 gap: spacing.sm + 2,
                 justifyContent: "space-between",
-                paddingVertical: 15,
+                paddingVertical: spacing.screen,
               }}
             >
               <Text
@@ -133,7 +133,7 @@ export default function Results() {
               >
                 {card?.title || card?.name}
               </Text>
-              <Text style={{ width: "100%", marginBottom: 10 }}>
+              <Text style={{ width: "100%", marginBottom: spacing.sm + 2 }}>
                 ★{card?.vote_average.toFixed(2)}/10 {card?.release_date} |{" "}
                 {card?.original_language}
               </Text>
@@ -143,17 +143,17 @@ export default function Results() {
 
           <Text
             style={{
-              marginTop: 10,
+              marginTop: spacing.sm + 2,
               color: "rgba(255,255,255,0.9)",
-              fontSize: 15,
+              fontSize: fontSize.md + 1,
               fontWeight: fontWeight.medium,
             }}
           >
             {card?.overview}
           </Text>
 
-          <View style={{ marginTop: 30 }}>
-            <Text style={{ fontSize: 30, fontFamily: "Bebas", marginBottom: 15 }}>
+          <View style={{ marginTop: spacing.xxl + 6 }}>
+            <Text style={{ fontSize: 30, fontFamily: "Bebas", marginBottom: spacing.screen }}>
               {t("voter.overview.h2")}
             </Text>
             {sessionResults?.topPicks?.slice(1).map((item) => (
@@ -162,7 +162,7 @@ export default function Results() {
                 disabled={!item.movie.id}
                 key={item.movie.id}
                 style={{
-                  marginBottom: 15,
+                  marginBottom: spacing.screen,
                   width: Dimensions.get("screen").width - 30,
                   overflow: "hidden",
                 }}
@@ -177,12 +177,12 @@ export default function Results() {
                   })
                 }
               >
-                <View style={{ flexDirection: "row", gap: 15 }}>
+                <View style={{ flexDirection: "row", gap: spacing.screen }}>
                   <Image
                     source={{
                       uri: "https://image.tmdb.org/t/p/w200" + item.movie.poster_path,
                     }}
-                    style={{ width: 80, height: 120, borderRadius: 5 }}
+                    style={{ width: 80, height: 120, borderRadius: radius.xs + 1 }}
                   />
                   <View>
                     <View
@@ -217,7 +217,7 @@ export default function Results() {
             ReviewManager.onGameComplete(true);
             router.dismissAll();
           }}
-          style={[styles.button, { marginBottom: 15 }]}
+          style={[styles.button, { marginBottom: spacing.screen }]}
         >
           {t("voter.home.quit")}
         </PrimaryButton>
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    marginTop: 15,
-    borderRadius: 100,
+    marginTop: spacing.screen,
+    borderRadius: radius.pill,
   },
 });

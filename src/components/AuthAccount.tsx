@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.overlay,
     borderRadius: radius.sm + 2,
     paddingHorizontal: spacing.xs + 3,
-    paddingVertical: 1,
+    paddingVertical: spacing.xs - 3,
   },
   badgeText: {
     fontSize: fontSize.xs + 1,
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     color: colors.placeholder,
   },
 
-  seeAllBtn: { flexDirection: "row", alignItems: "center", gap: 2 },
+  seeAllBtn: { flexDirection: "row", alignItems: "center", gap: spacing.xs - 2 },
   seeAllText: {
     fontSize: fontSize.sm,
     color: colors.primary,

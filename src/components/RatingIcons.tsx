@@ -1,5 +1,6 @@
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { spacing } from "../constants/design";
 
 interface RatingIconsProps {
   vote: number;
@@ -57,7 +58,7 @@ export default function RatingIcons({
       })}
 
       {showText && (
-        <Text style={{ color: "white", marginLeft: 5, fontSize: size * 0.8 }}>
+        <Text style={{ color: "white", marginLeft: spacing.xs + 1, fontSize: size * 0.8 }}>
           {vote === 10 ? "10/10" : vote.toFixed(1)}/10
         </Text>
       )}

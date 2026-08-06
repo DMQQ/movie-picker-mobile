@@ -32,6 +32,7 @@ import MovieResultCard, {
 } from "../../components/Random/MovieResultCard";
 import PlatformBlurView from "../../components/PlatformBlurView";
 import { Image } from "expo-image";
+import { radius } from "../../constants/design";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -395,7 +396,7 @@ export default function FortuneWheel() {
 
 const fortuneStyles = StyleSheet.create({
   filterButtonWrapper: {
-    borderRadius: 100,
+    borderRadius: radius.pill,
   },
   cardOverlay: {
     position: "absolute",

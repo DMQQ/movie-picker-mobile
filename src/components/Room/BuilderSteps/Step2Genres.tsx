@@ -9,6 +9,7 @@ import SwipeableGenreCard from "./SwipeableGenreCard";
 import SkeletonCard from "../SkeletonCard";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import { toggleGenre } from "../../../redux/roomBuilder/roomBuilderSlice";
+import { fontSize, spacing } from "../../../constants/design";
 
 interface Genre {
   id: number;
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 16,
+    gap: spacing.lg,
   },
   loadingText: {
     color: "#999",

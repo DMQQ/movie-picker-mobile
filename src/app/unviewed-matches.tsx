@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { IconButton, Text } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontSize, radius, spacing } from "../constants/design";
 import PrimaryButton from "../components/PrimaryButton";
 import { router } from "expo-router";
 import { useMatches } from "../context/DatabaseContext";
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     backgroundColor:
       Platform.OS === "android" ? colors.surface : "transparent",
     padding: GRID_PADDING,
-    paddingBottom: 15,
+    paddingBottom: spacing.screen,
   },
   closeButton: {
     position: "absolute",
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   title: {
     fontFamily: "Bebas",
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   gridWrapper: {
-    borderRadius: 8,
+    borderRadius: radius.sm,
     overflow: "hidden",
     width: GRID_WIDTH,
   },
@@ -198,14 +198,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
     paddingTop: GRID_PADDING,
   },
   button: {
-    borderRadius: 25,
+    borderRadius: radius.lg + 1,
     flex: 1,
   },
   buttonContent: {
-    paddingVertical: 7.5,
+    paddingVertical: spacing.xs + 3.5,
   },
 });

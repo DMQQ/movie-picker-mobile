@@ -12,6 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../service/useTranslation";
+import { fontSize, spacing } from "../constants/design";
 
 function PulseRing({ color, delay }: { color: string; delay: number }) {
   const scale = useSharedValue(1);
@@ -71,14 +72,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 44,
+    paddingHorizontal: spacing.xxl + 20,
   },
   iconWrap: {
     width: 90,
     height: 90,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 32,
+    marginBottom: spacing.xxl + 8,
   },
   ring: {
     position: "absolute",
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     letterSpacing: 1.5,
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
   subtitle: {
     fontSize: fontSize.md,

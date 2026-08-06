@@ -5,6 +5,7 @@ import useTranslation from "../../../service/useTranslation";
 import WatchProviders from "../WatchProviders";
 import { memo } from "react";
 import { ScrollView } from "react-native-gesture-handler";
+import { fontSize, spacing } from "../../../constants/design";
 
 interface DetailsTabProps {
   movie: Movie & Record<string, string>;
@@ -41,24 +42,24 @@ export default memo(DetailsTab);
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 15,
-    paddingTop: 15,
+    paddingHorizontal: spacing.screen,
+    paddingTop: spacing.screen,
     minHeight: 400,
   },
 
   overview: {
-    fontSize: 19,
+    fontSize: fontSize.xl + 1,
     color: "rgba(255,255,255,0.95)",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
   info: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: spacing.sm + 2,
+    marginBottom: spacing.sm + 2,
   },
   text: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
     color: "rgba(255,255,255,0.6)",
   },
 });

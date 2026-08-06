@@ -6,6 +6,7 @@ import TilesList from "../../components/Overview/TilesList";
 import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
 import Modal from "./Modal";
+import { spacing } from "../../constants/design";
 
 export default function MatchesScreen() {
   const matches = useAppSelector((state) => state.room.matches);
@@ -25,7 +26,7 @@ export default function MatchesScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, padding: 15 }}>
+      <View style={{ flex: 1, padding: spacing.screen }}>
         <TilesList label={t("matched.title")} data={data} />
       </View>
 

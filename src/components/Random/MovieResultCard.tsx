@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -144,7 +144,7 @@ export default function MovieResultCard({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 28,
+    borderRadius: radius.lg + 4,
     overflow: "hidden",
     backgroundColor: "#1e1e1e",
     shadowColor: "#000",
@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 20,
-    paddingTop: 80,
+    padding: spacing.xl,
+    paddingTop: spacing.xl * 4,
     justifyContent: "flex-end",
   },
   movieTitle: {
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm - 2,
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
     flexWrap: "wrap",
   },
   ratingText: {
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   },
   overview: {
     color: "rgba(255,255,255,0.85)",
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     lineHeight: 18,
     fontWeight: fontWeight.normal,
   },
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 12,
+    marginTop: spacing.md,
   },
   hintRow: {
     flexDirection: "row",
@@ -217,9 +217,9 @@ const styles = StyleSheet.create({
   actionIcons: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
   },
   iconButton: {
-    padding: 4,
+    padding: spacing.xs,
   },
 });

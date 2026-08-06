@@ -1,5 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import Skeleton from "../Skeleton/Skeleton";
+import { radius, spacing } from "../../constants/design";
 
 const { width } = Dimensions.get("screen");
 const CONTENT_WIDTH = width - 40;
@@ -10,62 +11,62 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     borderTopEndRadius: 25,
     borderTopStartRadius: 25,
-    padding: 20,
+    padding: spacing.xl,
   },
   handle: {
     width: 60,
     height: 4,
     borderRadius: radius.sm + 2,
     alignSelf: "center",
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   title: {
     width: CONTENT_WIDTH * 0.7,
     height: 50,
-    borderRadius: 5,
-    marginBottom: 8,
+    borderRadius: radius.xs + 1,
+    marginBottom: spacing.sm,
   },
   title2: {
     width: CONTENT_WIDTH * 0.5,
     height: 50,
-    borderRadius: 5,
-    marginBottom: 15,
+    borderRadius: radius.xs + 1,
+    marginBottom: spacing.screen,
   },
   tagline: {
     width: CONTENT_WIDTH * 0.6,
     height: 18,
-    borderRadius: 5,
-    marginBottom: 10,
+    borderRadius: radius.xs + 1,
+    marginBottom: spacing.sm + 2,
   },
   rating: {
     width: 120,
     height: 20,
-    borderRadius: 5,
-    marginBottom: 10,
+    borderRadius: radius.xs + 1,
+    marginBottom: spacing.sm + 2,
   },
   metaLine: {
     width: CONTENT_WIDTH * 0.8,
     height: 16,
-    borderRadius: 5,
-    marginBottom: 10,
+    borderRadius: radius.xs + 1,
+    marginBottom: spacing.sm + 2,
   },
   quickActions: {
     width: CONTENT_WIDTH,
     height: 70,
-    borderRadius: 20,
-    marginTop: 5,
-    marginBottom: 20,
+    borderRadius: radius.modal,
+    marginTop: spacing.xs + 1,
+    marginBottom: spacing.xl,
   },
   overview: {
     width: CONTENT_WIDTH,
     height: 140,
     borderRadius: radius.sm + 2,
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   castRow: {
     flexDirection: "row",
     gap: spacing.sm + 2,
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   castItem: {
     width: 80,
@@ -75,15 +76,15 @@ const styles = StyleSheet.create({
   sectionTitle: {
     width: CONTENT_WIDTH * 0.4,
     height: 22,
-    borderRadius: 5,
-    marginBottom: 15,
+    borderRadius: radius.xs + 1,
+    marginBottom: spacing.screen,
   },
   attribution: {
     width: 120,
     height: 16,
-    borderRadius: 5,
+    borderRadius: radius.xs + 1,
     alignSelf: "center",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
 });
 

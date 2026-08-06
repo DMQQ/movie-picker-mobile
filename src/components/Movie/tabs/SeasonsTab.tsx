@@ -1,6 +1,7 @@
 import { StyleSheet, View, ScrollView } from "react-native";
 import Seasons from "../SeasonsList";
 import { memo } from "react";
+import { spacing } from "../../../constants/design";
 
 interface SeasonsTabProps {
   id: number;
@@ -19,7 +20,7 @@ export default memo(SeasonsTab);
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 15,
+    paddingHorizontal: spacing.screen,
     minHeight: 400,
   },
 });

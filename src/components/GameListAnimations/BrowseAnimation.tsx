@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated, Easing } from "react-native";
+import { radius, spacing } from "../../constants/design";
 
 const BrowseAnimation = () => {
   const scrollAnim = useRef(new Animated.Value(0)).current;
@@ -118,11 +119,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1A1A1A",
-    padding: 15,
+    padding: spacing.screen,
     justifyContent: "center",
   },
   featuredSection: {
-    marginBottom: 15,
+    marginBottom: spacing.screen,
   },
   featuredPoster: {
     height: 80,
@@ -138,44 +139,44 @@ const styles = StyleSheet.create({
   },
   featuredInfo: {
     flex: 1,
-    padding: 12,
+    padding: spacing.md,
     justifyContent: "center",
   },
   featuredTitle: {
     height: 14,
     width: "70%",
     backgroundColor: "#444",
-    borderRadius: 4,
-    marginBottom: 8,
+    borderRadius: radius.xs,
+    marginBottom: spacing.sm,
   },
   featuredSubtitle: {
     height: 10,
     width: "50%",
     backgroundColor: "#333",
-    borderRadius: 4,
+    borderRadius: radius.xs,
   },
   categoryLabel: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
     gap: spacing.sm - 2,
   },
   categoryText: {
     height: 12,
     width: 80,
     backgroundColor: "#444",
-    borderRadius: 4,
+    borderRadius: radius.xs,
   },
   categoryDot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
+    borderRadius: radius.xs - 1,
     backgroundColor: "#333",
   },
   scrollContainer: {
     height: 90,
     overflow: "hidden",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
   moviesRow: {
     flexDirection: "row",
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
   movieCard: {
     width: 60,
     height: 85,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     overflow: "hidden",
   },
   moviePoster: {
@@ -192,27 +193,27 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.2)",
   },
   movieInfo: {
-    padding: 6,
+    padding: spacing.xs + 2,
     backgroundColor: "rgba(0,0,0,0.3)",
   },
   movieTitle: {
     height: 6,
     width: "80%",
     backgroundColor: "rgba(255,255,255,0.3)",
-    borderRadius: 2,
-    marginBottom: 4,
+    borderRadius: radius.xs - 2,
+    marginBottom: spacing.xs,
   },
   movieRating: {
     height: 4,
     width: "50%",
     backgroundColor: "rgba(255,255,255,0.2)",
-    borderRadius: 2,
+    borderRadius: radius.xs - 2,
   },
   bottomNav: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 20,
-    marginTop: 10,
+    gap: spacing.xl,
+    marginTop: spacing.sm + 2,
   },
   navItem: {
     width: 24,

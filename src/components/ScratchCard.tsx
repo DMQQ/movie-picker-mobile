@@ -1,5 +1,5 @@
 import { Canvas, Group, Image, Mask, Path, Rect, Skia, SkPath, useImage } from "@shopify/react-native-skia";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../constants/design";
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, Vibration, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get("screen").width - 30,
     height: 350,
     backgroundColor: "#fff",
-    borderRadius: 15,
+    borderRadius: radius.md + 3,
     overflow: "hidden",
   },
   canvas: {
@@ -202,9 +202,9 @@ const styles = StyleSheet.create({
   },
   buttonContent: {
     flex: 1,
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 25,
+    paddingVertical: spacing.screen,
+    paddingHorizontal: spacing.xl,
+    borderRadius: radius.lg + 1,
     alignItems: "center",
     justifyContent: "center",
     elevation: 5,

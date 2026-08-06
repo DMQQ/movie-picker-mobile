@@ -7,6 +7,7 @@ import { Movie } from "../../types";
 import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
+import { fontSize, spacing } from "../constants/design";
 
 export function useQuickActions(props: { movie: Movie }) {
   const dispatch = useAppDispatch();

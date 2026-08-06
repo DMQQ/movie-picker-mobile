@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
@@ -63,11 +63,11 @@ export default function StatsDashboard({ summary, userId }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { marginBottom: 24 },
+  container: { marginBottom: spacing.xxl },
   card: {
     backgroundColor: "rgba(255,255,255,0.08)",
-    borderRadius: 25,
-    padding: 15,
+    borderRadius: radius.lg + 1,
+    padding: spacing.screen,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.12)",
   },
@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 3,
-    marginBottom: 8,
+    gap: spacing.xs - 1,
+    marginBottom: spacing.sm,
   },
   label: {
     fontSize: fontSize.xs,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 35,
-    fontWeight: "bold",
+    fontWeight: fontWeight.bold,
     fontFamily: "Bebas",
     textShadowColor: "rgba(0,0,0,0.3)",
     textShadowOffset: { width: 0, height: 1 },
@@ -99,6 +99,6 @@ const styles = StyleSheet.create({
     width: 1,
     height: 40,
     backgroundColor: "rgba(255,255,255,0.2)",
-    marginHorizontal: 15,
+    marginHorizontal: spacing.screen,
   },
 });

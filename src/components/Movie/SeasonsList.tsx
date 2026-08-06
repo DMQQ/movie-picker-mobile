@@ -1,6 +1,6 @@
 import { FlatList, Image, Pressable, View } from "react-native";
 import { Text } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontSize, radius, spacing, typography } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 import Thumbnail from "../Thumbnail";
 import FrostedGlass from "../FrostedGlass";
@@ -45,8 +45,8 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
   if (seasons?.length === 0 || seasons === undefined) return null;
 
   return (
-    <View style={{ marginTop: 15, paddingBottom: 20 }}>
-      <Text style={{ fontSize: 35, marginBottom: 10, fontFamily: "Bebas" }}>
+    <View style={{ marginTop: spacing.screen, paddingBottom: spacing.xl }}>
+      <Text style={{ fontSize: typography.bebasSize.section, marginBottom: spacing.sm + 2, fontFamily: "Bebas" }}>
         {t("movie.details.season")} {seasons.length}
       </Text>
       <FlatList
@@ -63,14 +63,14 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
           >
             <FrostedGlass
               style={{
-                borderRadius: 15,
+                borderRadius: radius.md + 3,
                 flexDirection: "row",
                 width: 250,
-                padding: 15,
+                padding: spacing.screen,
                 flex: 0,
               }}
               container={{
-                marginRight: 15,
+                marginRight: spacing.screen,
                 ...(item.season_number === selectedSeason ? { borderColor: colors.primary } : {}),
               }}
             >
@@ -90,20 +90,20 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
                   flex: 1,
                   alignItems: "flex-start",
                   padding: spacing.sm + 2,
-                  paddingRight: 20,
+                  paddingRight: spacing.xl,
                   justifyContent: "space-between",
                 }}
               >
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontSize: fontSize.xxl, fontFamily: "Bebas" }}>{item.name}</Text>
-                  <Text style={{ color: "#9E9E9E", marginTop: 2.5, fontSize: fontSize.sm }}>
+                  <Text style={{ color: "#9E9E9E", marginTop: spacing.xs - 2.5, fontSize: fontSize.sm }}>
                     {t("movie.details.episode")} ({item.episode_count})
                   </Text>
                   <Text
                     style={{
                       color: "#9E9E9E",
                       fontSize: fontSize.sm,
-                      marginTop: 2.5,
+                      marginTop: spacing.xs - 2.5,
                     }}
                   >
                     {item.air_date}

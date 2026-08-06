@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated, Easing } from "react-native";
 import Svg, { Path, G, Circle } from "react-native-svg";
+import { radius } from "../../constants/design";
 
 // Wheel segment colors
 const COLORS = [
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
     height: 200,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 100,
+    borderRadius: radius.pill,
     borderWidth: 4,
     borderColor: "#444",
     overflow: "hidden",

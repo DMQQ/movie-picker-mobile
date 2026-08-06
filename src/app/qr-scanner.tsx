@@ -2,7 +2,7 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, ToastAndroid, Vibration, View } from "react-native";
 import { Text, TextInput, useTheme } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import PrimaryButton from "../components/PrimaryButton";
 import PageHeading from "../components/PageHeading";
 import useTranslation from "../service/useTranslation";
@@ -175,7 +175,7 @@ export default function QRScanner() {
   if (hasPermission === null) {
     return (
       <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ marginTop: 25, fontWeight: "bold", fontSize: 25 }}>Requesting camera permission</Text>
+        <Text style={{ marginTop: spacing.xxl + 1, fontWeight: fontWeight.bold, fontSize: 25 }}>Requesting camera permission</Text>
 
         <PrimaryButton onPress={() => request()}>
           {t("scanner.request-permission")}
@@ -189,7 +189,7 @@ export default function QRScanner() {
       <PageHeading
         title={t("scanner.heading")}
         useSafeArea={Platform.OS === "android"}
-        styles={Platform.OS === "ios" ? { marginTop: 15 } : {}}
+        styles={Platform.OS === "ios" ? { marginTop: spacing.screen } : {}}
         showBackButton
         showRightIconButton
         onRightIconPress={() => setIsManual(true)}
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: "rgba(255,255,255,0.05)",
-    borderRadius: 20,
+    borderRadius: radius.modal,
   },
   corner: {
     position: "absolute",
@@ -328,14 +328,14 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 20,
   },
   textInput: {
-    borderRadius: 20,
+    borderRadius: radius.modal,
     fontSize: fontSize.xxl,
     letterSpacing: 1,
   },
   errorText: {
     color: "#ff6b6b",
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     textAlign: "center",
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
 });

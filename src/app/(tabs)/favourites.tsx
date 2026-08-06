@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { useMigrationPrompt } from "../../hooks/useMigrationPrompt";
 import { listsApi } from "../../redux/lists/listsApi";
 import useTranslation from "../../service/useTranslation";
+import { spacing } from "../../constants/design";
 
 export default function Favourites() {
   const params = useLocalSearchParams();
@@ -75,7 +76,7 @@ export default function Favourites() {
 
       <View
         style={{
-          paddingHorizontal: 15,
+          paddingHorizontal: spacing.screen,
           flex: 1,
         }}
       >

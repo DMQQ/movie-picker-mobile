@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PrimaryButton from "./PrimaryButton";
 import * as Updates from "expo-updates";
 import * as Sentry from "@sentry/react-native";
+import { fontSize, fontWeight, radius, spacing } from "../constants/design";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -135,7 +136,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: spacing.xl,
   },
   logoContainer: {
     alignItems: "center",
@@ -159,36 +160,36 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   cardContent: {
-    paddingVertical: 24,
-    paddingHorizontal: 20,
+    paddingVertical: spacing.xxl,
+    paddingHorizontal: spacing.xl,
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: fontWeight.bold,
     color: "#fff",
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: spacing.lg,
   },
   description: {
     fontSize: fontSize.lg,
     color: "#ccc",
     textAlign: "center",
-    marginBottom: 32,
+    marginBottom: spacing.xxl + 8,
     lineHeight: 22,
   },
   buttonContainer: {
-    gap: 16,
+    gap: spacing.lg,
     flexDirection: "row",
     width: "100%",
-    paddingBottom: 30,
+    paddingBottom: spacing.xxl + 6,
   },
   sendButton: {
-    borderRadius: 100,
-    paddingVertical: 4,
+    borderRadius: radius.pill,
+    paddingVertical: spacing.xs,
   },
   restartButton: {
-    borderRadius: 100,
-    paddingVertical: 4,
+    borderRadius: radius.pill,
+    paddingVertical: spacing.xs,
     borderColor: "#555",
   },
 });

@@ -1,5 +1,5 @@
 import LottieView from "lottie-react-native";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, spacing } from "../../constants/design";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -61,13 +61,13 @@ export default function GameSummaryHeader({
 }
 
 const styles = StyleSheet.create({
-  section: { marginBottom: 20, position: "relative" },
+  section: { marginBottom: spacing.xl, position: "relative" },
   titleContainer: { alignItems: "center" },
   iconRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm + 2,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   title: {
     fontSize: 55,

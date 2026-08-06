@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
+import { radius, spacing } from "../constants/design";
 
 const { width, height } = Dimensions.get("window");
 
@@ -66,14 +67,14 @@ function SkeletonCard({ index }: { index: number }) {
       />
 
       <View style={styles.cardContent}>
-        <View style={[styles.line, { width: "60%", height: 28, marginBottom: 10 }]} />
-        <View style={[styles.line, { width: "88%", height: 10, marginBottom: 6 }]} />
-        <View style={[styles.line, { width: "72%", height: 10, marginBottom: 6 }]} />
-        <View style={[styles.line, { width: "50%", height: 10, marginBottom: 18 }]} />
-        <View style={{ flexDirection: "row", gap: 8 }}>
-          <View style={[styles.line, { width: 58, height: 22, borderRadius: 11 }]} />
-          <View style={[styles.line, { width: 58, height: 22, borderRadius: 11 }]} />
-          <View style={[styles.line, { width: 58, height: 22, borderRadius: 11 }]} />
+        <View style={[styles.line, { width: "60%", height: 28, marginBottom: spacing.sm + 2 }]} />
+        <View style={[styles.line, { width: "88%", height: 10, marginBottom: spacing.xs + 2 }]} />
+        <View style={[styles.line, { width: "72%", height: 10, marginBottom: spacing.xs + 2 }]} />
+        <View style={[styles.line, { width: "50%", height: 10, marginBottom: spacing.lg + 2 }]} />
+        <View style={{ flexDirection: "row", gap: spacing.sm }}>
+          <View style={[styles.line, { width: 58, height: 22, borderRadius: radius.sm + 3 }]} />
+          <View style={[styles.line, { width: 58, height: 22, borderRadius: radius.sm + 3 }]} />
+          <View style={[styles.line, { width: 58, height: 22, borderRadius: radius.sm + 3 }]} />
         </View>
       </View>
     </Animated.View>
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
-    borderRadius: 25,
+    borderRadius: radius.lg + 1,
     backgroundColor: "#111",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",
@@ -117,13 +118,13 @@ const styles = StyleSheet.create({
     height: CARD_HEIGHT * 0.45,
   },
   cardContent: {
-    padding: 16,
-    paddingBottom: 24,
+    padding: spacing.lg,
+    paddingBottom: spacing.xxl,
     zIndex: 2,
   },
   line: {
     backgroundColor: "rgba(255,255,255,0.09)",
-    borderRadius: 4,
+    borderRadius: radius.xs,
   },
   labelWrap: {
     position: "absolute",

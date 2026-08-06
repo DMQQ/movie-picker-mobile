@@ -3,6 +3,7 @@ import { Surface, Text } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
 import Thumbnail from "../Thumbnail";
 import FrostedGlass from "../FrostedGlass";
+import { fontSize, radius, spacing, typography } from "../../constants/design";
 
 const LastEpisodeToAir = ({ lastEpisode }: { lastEpisode: any }) => {
   const t = useTranslation();
@@ -10,12 +11,12 @@ const LastEpisodeToAir = ({ lastEpisode }: { lastEpisode: any }) => {
 
   return (
     <>
-      <Text style={{ fontSize: 35, fontFamily: "Bebas", lineHeight: 35, marginTop: 30, marginBottom: 10 }}>
+      <Text style={{ fontSize: typography.bebasSize.section, fontFamily: "Bebas", lineHeight: 35, marginTop: spacing.xxl + 6, marginBottom: spacing.sm + 2 }}>
         {t("movie.details.lastEpisode")}
       </Text>
 
       <FrostedGlass>
-        <View style={{ borderRadius: 20, padding: 15 }}>
+        <View style={{ borderRadius: radius.modal, padding: spacing.screen }}>
           <Thumbnail
             container={{
               width: "100%",
@@ -27,7 +28,7 @@ const LastEpisodeToAir = ({ lastEpisode }: { lastEpisode: any }) => {
             path={lastEpisode.still_path}
           />
 
-          <View style={{ paddingHorizontal: spacing.sm + 2, paddingBottom: 5, marginTop: 15 }}>
+          <View style={{ paddingHorizontal: spacing.sm + 2, paddingBottom: spacing.xs + 1, marginTop: spacing.screen }}>
             <Text
               style={{
                 fontSize: 25,
@@ -37,9 +38,9 @@ const LastEpisodeToAir = ({ lastEpisode }: { lastEpisode: any }) => {
               {lastEpisode.name}
             </Text>
 
-            <Text style={{ color: "rgba(255,255,255,0.9)", marginTop: 5, fontSize: 15 }}>{lastEpisode.overview}</Text>
+            <Text style={{ color: "rgba(255,255,255,0.9)", marginTop: spacing.xs + 1, fontSize: fontSize.md + 1 }}>{lastEpisode.overview}</Text>
 
-            <Text style={{ color: "#9E9E9E", marginTop: 7.5 }}>
+            <Text style={{ color: "#9E9E9E", marginTop: spacing.xs + 3.5 }}>
               {t("movie.details.episode")} {lastEpisode.episode_number} {t("movie.details.season")} {lastEpisode.season_number}
             </Text>
           </View>

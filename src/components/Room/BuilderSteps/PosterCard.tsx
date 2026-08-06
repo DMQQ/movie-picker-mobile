@@ -3,7 +3,7 @@ import { View, StyleSheet, Pressable, Image } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { fontWeight, colors, radius, spacing, typography } from "../../../constants/design";
+import { fontWeight, colors, radius, spacing, typography, fontSize } from "../../../constants/design";
 
 interface PosterCardProps {
   posterUrl: string;
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     right: spacing.sm,
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: radius.md + 2,
     justifyContent: "center",
     alignItems: "center",
   },

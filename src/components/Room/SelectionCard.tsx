@@ -2,7 +2,7 @@
 import React from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import { Text, useTheme } from "react-native-paper";
-import { colors, fontWeight } from "../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing, typography } from "../../constants/design";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -166,22 +166,22 @@ SelectionCard.displayName = "SelectionCard";
 
 const styles = StyleSheet.create({
   cardContainer: {
-    marginRight: 15,
-    marginBottom: 10,
+    marginRight: spacing.screen,
+    marginBottom: spacing.sm + 2,
   },
   cardContainerVertical: {
-    marginRight: 16,
+    marginRight: spacing.lg,
   },
   innerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 7.5,
-    paddingHorizontal: 15,
+    padding: spacing.xs + 3.5,
+    paddingHorizontal: spacing.screen,
     height: 60,
     gap: spacing.sm + 2,
   },
   cardVertical: {
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
     backgroundColor: "#1a1a1a",
     borderWidth: 3,
@@ -201,10 +201,10 @@ const styles = StyleSheet.create({
     right: -3,
     top: 0,
     justifyContent: "flex-end",
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    gap: 12,
-    borderRadius: 16,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xxl,
+    gap: spacing.md,
+    borderRadius: radius.card,
   },
   placeholder: {
     backgroundColor: "#2a2a2a",
@@ -214,25 +214,25 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: "#2a2a2a",
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
   },
   placeholderGradient: {
     flex: 1,
     justifyContent: "flex-end",
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-    gap: 12,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xxl,
+    gap: spacing.md,
   },
   labelText: {
-    marginLeft: 10,
+    marginLeft: spacing.sm + 2,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.bold,
     fontFamily: "Bebas",
     flex: 1,
   },
   labelTextVertical: {
-    fontSize: 38,
+    fontSize: typography.bebasSize.auth,
     fontWeight: fontWeight.bold,
     fontFamily: "Bebas",
     textShadowColor: "rgba(0, 0, 0, 0.75)",
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     right: 16,
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: radius.card + 2,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: "100%",
-    borderRadius: 16,
+    borderRadius: radius.card,
   },
 });
 

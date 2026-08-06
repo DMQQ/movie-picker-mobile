@@ -14,6 +14,7 @@ import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
 import { Fragment, memo, useMemo } from "react";
 import { Movie } from "../../../types";
 import { Link } from "expo-router";
+import { fontSize, radius, spacing, typography } from "../../constants/design";
 
 const SwipeText = memo(
   (props: {
@@ -187,8 +188,8 @@ function Poster(props: {
           transition={0}
           path={props.card.poster_path}
           size={ThumbnailSizes.poster.xxlarge}
-          container={{ borderRadius: 19, ...imageDimensions }}
-          style={{ borderRadius: 19, ...imageDimensions }}
+          container={{ borderRadius: radius.modal - 1, ...imageDimensions }}
+          style={{ borderRadius: radius.modal - 1, ...imageDimensions }}
         />
       </LinkComponent>
 
@@ -209,14 +210,14 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    borderRadius: 19,
+    borderRadius: radius.modal - 1,
     zIndex: 1,
     opacity: 0,
   },
 
   swipeText: {
     fontFamily: "Bebas",
-    fontSize: 35,
+    fontSize: typography.bebasSize.section,
     color: "#fff",
     letterSpacing: 1.5,
     textShadowColor: "rgba(0, 0, 0, 0.25)",
@@ -225,24 +226,24 @@ const styles = StyleSheet.create({
   },
 
   swipe: {
-    borderRadius: 20,
+    borderRadius: radius.modal,
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
-    gap: 8,
+    gap: spacing.sm,
     zIndex: 10,
     position: "absolute",
     overflow: "hidden", // Important for BlurView
   },
 
   blurContainer: {
-    borderRadius: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+    borderRadius: radius.modal,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
-    gap: 8,
+    gap: spacing.sm,
     minWidth: 120,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.2)",
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: radius.modal,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden", // Important for BlurView
@@ -262,12 +263,12 @@ const styles = StyleSheet.create({
     top: 15,
     right: 15,
     backgroundColor: "#FFD700",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
     borderRadius: radius.md,
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: spacing.xs,
     zIndex: 10,
     justifyContent: "center",
   },

@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useMemo } from "react";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -103,8 +103,8 @@ export const FeaturedSectionSkeleton = memo(() => {
                     width: "85%",
                     height: 32,
                     backgroundColor: "#222",
-                    borderRadius: 4,
-                    marginBottom: 12,
+                    borderRadius: radius.xs,
+                    marginBottom: spacing.md,
                   }}
                 />
               </Skeleton>
@@ -115,8 +115,8 @@ export const FeaturedSectionSkeleton = memo(() => {
                     width: "60%",
                     height: 14,
                     backgroundColor: "#222",
-                    borderRadius: 4,
-                    marginBottom: 12,
+                    borderRadius: radius.xs,
+                    marginBottom: spacing.md,
                   }}
                 />
               </Skeleton>
@@ -128,14 +128,14 @@ export const FeaturedSectionSkeleton = memo(() => {
                       width: 100,
                       height: 16,
                       backgroundColor: "#222",
-                      borderRadius: 4,
+                      borderRadius: radius.xs,
                     }}
                   />
                 </Skeleton>
               </View>
 
               {/* Genres */}
-              <View style={[styles.genreContainer, { marginTop: 8 }]}>
+              <View style={[styles.genreContainer, { marginTop: spacing.sm }]}>
                 {[1, 2].map((i) => (
                   <Skeleton key={i}>
                     <View
@@ -143,7 +143,7 @@ export const FeaturedSectionSkeleton = memo(() => {
                         width: 55,
                         height: 22,
                         backgroundColor: "#222",
-                        borderRadius: 6,
+                        borderRadius: radius.xs + 2,
                       }}
                     />
                   </Skeleton>
@@ -153,15 +153,15 @@ export const FeaturedSectionSkeleton = memo(() => {
           </View>
 
           {/* Overview Block - This fills the gap between thumbnail and buttons */}
-          <View style={{ marginTop: 20, marginBottom: 20, gap: spacing.sm + 2 }}>
+          <View style={{ marginTop: spacing.xl, marginBottom: spacing.xl, gap: spacing.sm + 2 }}>
             <Skeleton>
               <View
                 style={{
                   width: "100%",
                   height: 14,
                   backgroundColor: "#222",
-                  borderRadius: 4,
-                  marginBottom: 8,
+                  borderRadius: radius.xs,
+                  marginBottom: spacing.sm,
                 }}
               />
             </Skeleton>
@@ -171,8 +171,8 @@ export const FeaturedSectionSkeleton = memo(() => {
                   width: "90%",
                   height: 14,
                   backgroundColor: "#222",
-                  borderRadius: 4,
-                  marginBottom: 8,
+                  borderRadius: radius.xs,
+                  marginBottom: spacing.sm,
                 }}
               />
             </Skeleton>
@@ -182,7 +182,7 @@ export const FeaturedSectionSkeleton = memo(() => {
                   width: "40%",
                   height: 14,
                   backgroundColor: "#222",
-                  borderRadius: 4,
+                  borderRadius: radius.xs,
                 }}
               />
             </Skeleton>
@@ -196,7 +196,7 @@ export const FeaturedSectionSkeleton = memo(() => {
                   width: width * 0.5,
                   height: 42,
                   backgroundColor: "#222",
-                  borderRadius: 100,
+                  borderRadius: radius.pill,
                 }}
               />
             </Skeleton>
@@ -208,7 +208,7 @@ export const FeaturedSectionSkeleton = memo(() => {
                     width: 44,
                     height: 44,
                     backgroundColor: "#222",
-                    borderRadius: 22,
+                    borderRadius: radius.modal + 2,
                   }}
                 />
               </Skeleton>
@@ -218,7 +218,7 @@ export const FeaturedSectionSkeleton = memo(() => {
                     width: 44,
                     height: 44,
                     backgroundColor: "#222",
-                    borderRadius: 22,
+                    borderRadius: radius.modal + 2,
                   }}
                 />
               </Skeleton>
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     width,
     height: HERO_HEIGHT,
     position: "relative",
-    marginBottom: 20,
+    marginBottom: spacing.xl,
     marginTop: -100,
   },
   gradientContainer: {
@@ -407,13 +407,13 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   contentWrapper: {
-    paddingHorizontal: 20,
-    paddingBottom: 35,
-    paddingTop: 20,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xxl + 11,
+    paddingTop: spacing.xl,
   },
   topContentContainer: {
     flexDirection: "row",
-    marginBottom: 15,
+    marginBottom: spacing.screen,
     alignItems: "flex-end",
   },
   thumbnail: {
@@ -431,8 +431,8 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     flex: 1,
-    marginLeft: 15,
-    paddingTop: 2,
+    marginLeft: spacing.screen,
+    paddingTop: spacing.xs - 2,
     justifyContent: "flex-end",
   },
   title: {
@@ -445,22 +445,22 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
   },
   tagline: {
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     fontStyle: "italic",
     color: "rgba(255,255,255,0.8)",
-    marginBottom: 8,
-    marginTop: 2,
+    marginBottom: spacing.sm,
+    marginTop: spacing.xs - 2,
     lineHeight: 16,
   },
   ratingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   yearText: {
     color: "rgba(255,255,255,0.7)",
-    fontSize: 13,
-    marginLeft: 6,
+    fontSize: fontSize.md - 1,
+    marginLeft: spacing.xs + 2,
     fontWeight: fontWeight.semibold,
   },
   genreContainer: {
@@ -472,8 +472,8 @@ const styles = StyleSheet.create({
     fontSize: fontSize.md,
     color: "rgba(255,255,255,0.85)",
     lineHeight: 20,
-    marginBottom: 20,
-    marginTop: 5,
+    marginBottom: spacing.xl,
+    marginTop: spacing.xs + 1,
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 5,
@@ -482,24 +482,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 5,
+    marginTop: spacing.xs + 1,
   },
   seeMoreButton: {
-    borderRadius: 100,
+    borderRadius: radius.pill,
     borderColor: "rgba(255,255,255,0.5)",
     borderWidth: 1,
     backgroundColor: "rgba(255,255,255,0.1)",
     flex: 1,
-    marginRight: 20,
+    marginRight: spacing.xl,
   },
   seeMoreLabel: {
     fontSize: fontSize.md,
-    fontWeight: "bold",
+    fontWeight: fontWeight.bold,
     letterSpacing: 0.5,
   },
   quickActionsRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: spacing.md,
     alignItems: "center",
   },
   iconButton: {

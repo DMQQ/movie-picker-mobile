@@ -32,6 +32,8 @@ export const radius = {
   card: s(16),
   /** Modal / sheet corner. */
   modal: s(20),
+  /** Large cards / tickets (24 — auth cards, game summary). */
+  lg: s(24),
   /** Full pill / circle — clamped to 100 (unlimited rounding looks bad). */
   pill: 100,
 };

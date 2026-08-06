@@ -1,6 +1,6 @@
 import { TouchableOpacity, useWindowDimensions, View } from "react-native";
 import { Text } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontSize, radius, spacing } from "../../constants/design";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { ImageBackground } from "react-native";
 import * as Haptics from "expo-haptics";
@@ -50,7 +50,7 @@ export default function RatingState({
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          gap: 15,
+          gap: spacing.screen,
         }}
       >
         <FancySpinner />
@@ -111,9 +111,9 @@ export default function RatingState({
           {/* Header */}
           <View
             style={{
-              paddingHorizontal: 15,
+              paddingHorizontal: spacing.screen,
               paddingTop: insets.top + 5,
-              paddingBottom: 8,
+              paddingBottom: spacing.sm,
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
@@ -128,7 +128,7 @@ export default function RatingState({
           </View>
 
           {/* Poster — flex:1 so it fills whatever vertical space remains above the rating rows */}
-          <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 15 }}>
+          <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.screen }}>
             <TouchableOpacity
               disabled={typeof card?.id === "undefined"}
               activeOpacity={0.85}
@@ -160,7 +160,7 @@ export default function RatingState({
                 fontSize: scaleTitle((card?.title || card?.name)! as string, 34),
                 fontFamily: "Bebas",
                 textAlign: "center",
-                marginTop: 8,
+                marginTop: spacing.sm,
               }}
             >
               {card?.title || card?.name}
@@ -171,7 +171,7 @@ export default function RatingState({
                 flexDirection: "row",
                 alignItems: "center",
                 gap: spacing.sm - 2,
-                marginTop: 3,
+                marginTop: spacing.xs - 1,
                 flexWrap: "wrap",
                 justifyContent: "center",
               }}
@@ -190,9 +190,9 @@ export default function RatingState({
             <Text
               numberOfLines={2}
               style={{
-                marginTop: 6,
+                marginTop: spacing.xs + 2,
                 color: "rgba(255,255,255,0.75)",
-                fontSize: 13,
+                fontSize: fontSize.md - 1,
                 textAlign: "center",
                 lineHeight: 19,
               }}
@@ -204,14 +204,14 @@ export default function RatingState({
           {/* Rating rows */}
           <View
             style={{
-              paddingHorizontal: 15,
-              paddingTop: 10,
+              paddingHorizontal: spacing.screen,
+              paddingTop: spacing.sm + 2,
               paddingBottom: insets.bottom + 10,
               gap: spacing.sm + 2,
             }}
           >
             {ratingRows.map(({ key, label, options }) => (
-              <View key={key} style={{ gap: 5 }}>
+              <View key={key} style={{ gap: spacing.xs + 1 }}>
                 <Text
                   style={{
                     fontSize: fontSize.md,
@@ -221,7 +221,7 @@ export default function RatingState({
                 >
                   {label}
                 </Text>
-                <View style={{ flexDirection: "row", gap: 8 }}>
+                <View style={{ flexDirection: "row", gap: spacing.sm }}>
                   {options.map((option) => {
                     const isSelected = localRatings[key] === option.value;
                     return (
@@ -237,7 +237,7 @@ export default function RatingState({
                           height: 64,
                           alignItems: "center",
                           justifyContent: "center",
-                          gap: 4,
+                          gap: spacing.xs,
                           borderRadius: radius.md,
                           backgroundColor: isSelected
                             ? colors.primary
@@ -251,10 +251,10 @@ export default function RatingState({
                         <Text style={{ fontSize: fontSize.xxl }}>{option.icon}</Text>
                         <Text
                           style={{
-                            fontSize: 11,
+                            fontSize: fontSize.sm - 1,
                             color: "#fff",
                             textAlign: "center",
-                            paddingHorizontal: 4,
+                            paddingHorizontal: spacing.xs,
                           }}
                         >
                           {option.label}

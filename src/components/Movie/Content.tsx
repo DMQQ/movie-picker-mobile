@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { MD3Theme, Text } from "react-native-paper";
 import { Movie, TVShow } from "../../../types";
+import { fontSize, fontWeight, radius, spacing } from "../../constants/design";
 
 const reviewRange = (rating: number) => {
   if (rating >= 7.5) {
@@ -22,7 +23,7 @@ export default function Content(card: ContentProps) {
       <Text style={styles.title}>{card.title ? card.title : card.name}</Text>
 
       <View style={styles.row}>
-        <Text style={{ fontSize: fontSize.xl, fontWeight: "bold" }}>
+        <Text style={{ fontSize: fontSize.xl, fontWeight: fontWeight.bold }}>
           {card.release_date || card.first_air_date}
         </Text>
         <Text
@@ -46,21 +47,21 @@ const styles = StyleSheet.create({
   container: {
     padding: spacing.sm + 2,
   },
-  title: { fontSize: 25, fontWeight: "bold" },
+  title: { fontSize: 25, fontWeight: fontWeight.bold },
   row: {
     flexDirection: "row",
-    marginTop: 5,
+    marginTop: spacing.xs + 1,
     justifyContent: "space-between",
   },
   votes: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
     alignItems: "center",
-    fontWeight: "bold",
-    marginLeft: 10,
+    fontWeight: fontWeight.bold,
+    marginLeft: spacing.sm + 2,
     paddingHorizontal: spacing.sm + 2,
-    borderRadius: 100,
+    borderRadius: radius.pill,
     color: "#000",
     lineHeight: 25,
   },
-  overview: { fontSize: fontSize.xl, fontWeight: "bold", marginTop: 10 },
+  overview: { fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginTop: spacing.sm + 2 },
 });

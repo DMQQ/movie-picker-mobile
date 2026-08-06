@@ -4,6 +4,7 @@ import { Movie } from "../../../types";
 import Thumbnail from "../Thumbnail";
 import { Link } from "expo-router";
 import Touch from "../Touch";
+import { radius } from "../../constants/design";
 
 interface MatchTileProps {
   match: Movie;

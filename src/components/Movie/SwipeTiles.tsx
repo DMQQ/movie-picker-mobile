@@ -28,6 +28,7 @@ import RatingIcons from "../RatingIcons";
 import Poster from "./Poster";
 import GenresView from "../GenresView";
 import { Link } from "expo-router";
+import { fontSize, radius, spacing } from "../../constants/design";
 
 const { width, height } = Dimensions.get("window");
 
@@ -36,17 +37,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: width * 0.1 - 10,
     backgroundColor: "#000",
-    borderRadius: 25,
+    borderRadius: radius.lg + 1,
     overflow: "hidden",
   },
   gradientContainer: {
     flex: 1,
-    borderRadius: 19,
+    borderRadius: radius.modal - 1,
     overflow: "hidden",
     justifyContent: "flex-end",
     position: "absolute",
     zIndex: 10,
-    paddingBottom: 20,
+    paddingBottom: spacing.xl,
   },
   title: {
     color: "white",
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
   overview: {
     color: "rgba(255,255,255,0.8)",
     paddingHorizontal: spacing.sm + 2,
-    marginTop: 5,
+    marginTop: spacing.xs + 1,
     fontSize: fontSize.lg,
   },
   release_date: {
@@ -66,11 +67,11 @@ const styles = StyleSheet.create({
   },
   meta: {
     flexDirection: "row",
-    marginTop: 12,
+    marginTop: spacing.md,
     alignItems: "center",
     gap: spacing.sm - 2,
     flexWrap: "wrap",
-    paddingLeft: 10,
+    paddingLeft: spacing.sm + 2,
   },
 
   card: {

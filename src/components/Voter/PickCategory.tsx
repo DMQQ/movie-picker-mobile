@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { View } from "react-native";
 import { Button } from "react-native-paper";
 import useTranslation from "../../service/useTranslation";
+import { radius, spacing } from "../../constants/design";
 
 export default function PickCategory({
   setCategory,
@@ -26,8 +27,8 @@ export default function PickCategory({
       style={{
         flexDirection: "row",
         paddingVertical: spacing.sm + 2,
-        gap: 15,
-        marginTop: 15,
+        gap: spacing.screen,
+        marginTop: spacing.screen,
       }}
     >
       {categories.map((item, index) => (

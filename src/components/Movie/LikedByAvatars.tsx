@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, radius } from "../../constants/design";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { getUserAvatarColor } from "../../utils/avatar";
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 38,
     height: 38,
-    borderRadius: 19,
+    borderRadius: radius.modal - 1,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,
@@ -27,14 +27,14 @@ const styles = StyleSheet.create({
   initial: {
     color: "#fff",
     fontWeight: fontWeight.bold,
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
   },
   thumbBadge: {
     position: "absolute",
     bottom: -4,
     right: -4,
     backgroundColor: "#1e88e5",
-    borderRadius: 9,
+    borderRadius: radius.sm + 1,
     width: 18,
     height: 18,
     alignItems: "center",

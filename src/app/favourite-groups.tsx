@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { colors } from "../constants/design";
+import { colors, fontSize, radius, spacing } from "../constants/design";
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
@@ -137,22 +137,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#121212",
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
   },
   grabber: {
     width: 36,
     height: 4,
-    borderRadius: 2,
+    borderRadius: radius.xs - 2,
     backgroundColor: "#555",
     alignSelf: "center",
-    marginTop: 12,
-    marginBottom: 15,
+    marginTop: spacing.md,
+    marginBottom: spacing.screen,
   },
   title: {
     color: colors.text,
     fontSize: 26,
     fontFamily: "Bebas",
-    marginBottom: 18,
+    marginBottom: spacing.lg + 2,
   },
   movieTitle: {
     color: colors.primary,
@@ -162,22 +162,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.surface,
     borderRadius: radius.md,
-    paddingHorizontal: 12,
-    marginBottom: 16,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.lg,
     height: 46,
     borderWidth: 1,
     borderColor: colors.disabled,
   },
   searchIcon: {
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   searchInput: {
     flex: 1,
     color: colors.text,
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
   },
   clearBtn: {
-    padding: 4,
+    padding: spacing.xs,
   },
   list: {
     gap: spacing.sm + 2,
@@ -187,11 +187,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.surface,
     borderRadius: radius.md,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.md + 2,
+    paddingHorizontal: spacing.lg,
   },
   itemIcon: {
-    marginRight: 12,
+    marginRight: spacing.md,
   },
   itemText: {
     flex: 1,

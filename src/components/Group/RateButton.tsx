@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { fontSize, radius, spacing } from "../../constants/design";
 
 interface RateButtonProps {
   rating?: number | null;
@@ -30,17 +31,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 4,
+    gap: spacing.xs,
     borderWidth: 1,
     borderColor: "#333",
-    borderRadius: 6,
-    paddingVertical: 5,
+    borderRadius: radius.xs + 2,
+    paddingVertical: spacing.xs + 1,
   },
   pressed: {
     opacity: 0.6,
   },
   label: {
-    fontSize: 11,
+    fontSize: fontSize.sm - 1,
     color: "#aaa",
     fontFamily: "Bebas",
     letterSpacing: 0.3,

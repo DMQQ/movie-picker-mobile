@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
+import { radius, spacing } from "../../constants/design";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -38,13 +39,13 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 15,
-    paddingTop: 80,
+    gap: spacing.screen,
+    paddingTop: spacing.xl * 4,
   },
   tile: {
     width: TILE_WIDTH,
     height: TILE_HEIGHT,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     backgroundColor: "#2a2a2a",
   },
 });

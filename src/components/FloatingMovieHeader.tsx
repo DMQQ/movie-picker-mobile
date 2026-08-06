@@ -1,7 +1,7 @@
 import { memo, useMemo } from "react";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
-import { colors, fontWeight } from "../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../constants/design";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    paddingBottom: 10,
+    paddingBottom: spacing.sm + 2,
     zIndex: 1000,
   },
   backgroundContainer: {
@@ -244,11 +244,11 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 15,
-    paddingTop: 5,
+    paddingHorizontal: spacing.screen,
+    paddingTop: spacing.xs + 1,
   },
   buttonContainer: {
-    borderRadius: 100,
+    borderRadius: radius.pill,
     overflow: "hidden",
     backgroundColor: "#000",
   },
@@ -259,13 +259,13 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 15,
-    gap: 12,
+    paddingHorizontal: spacing.screen,
+    gap: spacing.md,
   },
   posterContainer: {
     width: 40,
     height: 60,
-    borderRadius: 6,
+    borderRadius: radius.xs + 2,
     overflow: "hidden",
     backgroundColor: "rgba(255,255,255,0.1)",
   },
@@ -279,13 +279,13 @@ const styles = StyleSheet.create({
   movieTitle: {
     color: "white",
     fontWeight: fontWeight.semibold,
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
   metadataRow: {
     flexDirection: "row",
     alignItems: "center",
     flexWrap: "wrap",
-    gap: 8,
+    gap: spacing.sm,
   },
   ratingContainer: {
     flexDirection: "row",
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: fontSize.sm,
     fontWeight: fontWeight.medium,
-    marginLeft: 3,
+    marginLeft: spacing.xs - 1,
   },
   metadataText: {
     color: "rgba(255,255,255,0.8)",
@@ -303,10 +303,10 @@ const styles = StyleSheet.create({
   },
   genresContainer: {
     flexDirection: "row",
-    marginTop: 3,
+    marginTop: spacing.xs - 1,
   },
   genresText: {
     color: "rgba(255,255,255,0.6)",
-    fontSize: 11,
+    fontSize: fontSize.sm - 1,
   },
 });

@@ -13,6 +13,7 @@ import {
   setQuickStartMode,
 } from "../../redux/roomBuilder/roomBuilderSlice";
 import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
+import { fontSize, radius, spacing } from "../../constants/design";
 
 interface StepContainerProps {
   currentStep: number;
@@ -165,9 +166,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
     paddingBottom: 90,
-    paddingTop: 40,
+    paddingTop: spacing.xxl + 16,
   },
   stepContent: {
     flex: 1,
@@ -177,11 +178,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
     ...Platform.select({
       android: {
-        paddingBottom: 15,
+        paddingBottom: spacing.screen,
       },
     }),
   },
@@ -189,26 +190,26 @@ const styles = StyleSheet.create({
     fontSize: fontSize.md,
     color: "#999",
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   nextButton: {
-    borderRadius: 100,
+    borderRadius: radius.pill,
   },
   nextButtonContent: {
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
   },
   step1NavigationRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: spacing.md,
   },
   filtersIconButton: {},
   quickStartButton: {
     flex: 1,
-    borderRadius: 100,
+    borderRadius: radius.pill,
   },
   quickStartButtonContent: {
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
   },
 });
 

@@ -3,6 +3,7 @@ import { Text } from "react-native-paper";
 import PrimaryButton from "../PrimaryButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
+import { fontSize, radius, spacing } from "../../constants/design";
 
 interface Props {
   error: string;
@@ -29,12 +30,12 @@ const styles = StyleSheet.create({
   card: {
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.06)",
-    borderRadius: 24,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
-    padding: 32,
-    marginHorizontal: 16,
-    gap: 12,
+    padding: spacing.xxl + 8,
+    marginHorizontal: spacing.lg,
+    gap: spacing.md,
   },
   iconWrap: {
     width: 72,
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,107,107,0.3)",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   heading: {
     fontSize: 36,
@@ -59,8 +60,8 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.5)",
     textAlign: "center",
     lineHeight: 20,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
-  btn: { borderRadius: 100 },
-  btnContent: { paddingVertical: 7.5 },
+  btn: { borderRadius: radius.pill },
+  btnContent: { paddingVertical: spacing.xs + 3.5 },
 });

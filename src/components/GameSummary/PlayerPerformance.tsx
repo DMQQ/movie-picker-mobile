@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { Avatar, Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { getUserAvatarColor } from "../../utils/avatar";
@@ -65,11 +65,11 @@ export default function PlayerPerformance({
 }
 
 const styles = StyleSheet.create({
-  container: { marginBottom: 30 },
+  container: { marginBottom: spacing.xxl + 6 },
   title: {
     fontSize: 32,
     fontFamily: "Bebas",
-    marginBottom: 16,
+    marginBottom: spacing.lg,
     color: "#FFFFFF",
     letterSpacing: 1,
     textShadowColor: "rgba(0,0,0,0.3)",
@@ -79,21 +79,21 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: spacing.sm,
     justifyContent: "flex-start",
   },
   chip: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.08)",
-    borderRadius: 25,
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    paddingRight: 12,
+    borderRadius: radius.lg + 1,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    paddingRight: spacing.md,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.15)",
-    gap: 8,
-    marginBottom: 8,
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
   },
   avatarWrap: { position: "relative" },
   indicator: {
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     right: -1,
     width: 14,
     height: 14,
-    borderRadius: 7,
+    borderRadius: radius.xs + 3,
     borderWidth: 1.5,
     borderColor: "white",
     alignItems: "center",
@@ -119,11 +119,11 @@ const styles = StyleSheet.create({
   metrics: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: spacing.xs,
     backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: radius.md,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs + 2,
   },
   count: { fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: "#FFFFFF" },
 });

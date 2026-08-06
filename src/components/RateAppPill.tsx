@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity, Platform } from "react-native";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../constants/design";
 import { Text } from "react-native-paper";
 import Animated, { FadeInUp, FadeOutUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -60,11 +60,11 @@ const styles = StyleSheet.create({
   pill: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
     backgroundColor: "rgba(30, 30, 30, 0.95)",
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    borderRadius: 24,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.15)",
   },
@@ -74,8 +74,8 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.semibold,
   },
   closeButton: {
-    marginLeft: 4,
-    padding: 6,
+    marginLeft: spacing.xs,
+    padding: spacing.xs + 2,
     backgroundColor: "rgba(30, 30, 30, 0.95)",
     borderRadius: radius.md,
     borderWidth: 1,

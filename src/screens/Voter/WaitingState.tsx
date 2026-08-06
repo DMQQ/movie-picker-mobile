@@ -1,6 +1,6 @@
 import { Dimensions, View } from "react-native";
 import { Chip, Text } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, spacing } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import PageHeading from "../../components/PageHeading";
@@ -51,15 +51,15 @@ export default function WaitingState({
         gradientHeight={50}
       />
 
-      <View style={{ padding: 15, flex: 1 }}>
-        <Text style={{ marginTop: 50 }}>
+      <View style={{ padding: spacing.screen, flex: 1 }}>
+        <Text style={{ marginTop: spacing.xxl * 2 + 2 }}>
           {t("voter.home.waiting")}... ({users.length}/2)
         </Text>
         <View
           style={{
             flexDirection: "row",
             flexWrap: "wrap",
-            marginVertical: 16,
+            marginVertical: spacing.lg,
             height: 60,
           }}
         >
@@ -68,7 +68,7 @@ export default function WaitingState({
               key={user.userId}
               icon={user.ready ? "check" : "clock"}
               style={[
-                { margin: 4 },
+                { margin: spacing.xs },
                 user.userId === currentUserId && {
                   backgroundColor: "#1e88e5",
                 },
@@ -100,11 +100,11 @@ export default function WaitingState({
         style={{
           height: 100,
           justifyContent: "flex-end",
-          padding: 15,
+          padding: spacing.screen,
         }}
       >
         {!currentUserReady && (
-          <PrimaryButton onPress={handleReady} style={{ marginTop: 15 }}>
+          <PrimaryButton onPress={handleReady} style={{ marginTop: spacing.screen }}>
             {t("voter.home.ready-status")}
           </PrimaryButton>
         )}
@@ -114,7 +114,7 @@ export default function WaitingState({
             disabled={loadingInitialContent}
             loading={loadingInitialContent}
             onPress={actions.startSession}
-            style={{ marginTop: 15 }}
+            style={{ marginTop: spacing.screen }}
             buttonColor={colors.accent}
           >
             {t("voter.home.start")}

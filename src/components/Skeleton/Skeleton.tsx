@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, spacing } from "../../constants/design";
 
 interface SkeletonProps {
   children: React.ReactElement;
@@ -44,7 +44,7 @@ Skeleton.Item = ({ width, height, borderRadius = 5 }: ItemProps) => (
 
 const styles = StyleSheet.create({
   item: {
-    marginTop: 10,
+    marginTop: spacing.sm + 2,
     backgroundColor: "#333",
   },
 });

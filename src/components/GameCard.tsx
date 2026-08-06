@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: "rgba(255,255,255,0.12)",
     paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
+    paddingVertical: spacing.xs - 1,
   },
   chipAccent: {
     backgroundColor: "rgba(187,134,252,0.12)",
@@ -155,7 +155,7 @@ const av = StyleSheet.create({
     overflow: "hidden",
   },
   img: { width: AVATAR_SIZE, height: AVATAR_SIZE },
-  letter: { fontSize: 9, fontWeight: fontWeight.bold, color: colors.text },
+  letter: { fontSize: fontSize.xs - 1, fontWeight: fontWeight.bold, color: colors.text },
   extra: { backgroundColor: colors.overlay },
-  extraText: { fontSize: 8, fontWeight: fontWeight.bold, color: "rgba(255,255,255,0.7)" },
+  extraText: { fontSize: fontSize.xs - 2, fontWeight: fontWeight.bold, color: "rgba(255,255,255,0.7)" },
 });

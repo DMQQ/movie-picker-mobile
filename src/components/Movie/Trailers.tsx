@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import { Text } from "react-native-paper";
-import { colors, fontWeight } from "../../constants/design";
+import { colors, fontWeight, radius, spacing } from "../../constants/design";
 import Animated, {
   FadeInDown,
   FadeInLeft,
@@ -120,7 +120,7 @@ function Trailers({
                     style={styles.scrollView}
                     contentContainerStyle={[
                       styles.scrollContent,
-                      { paddingBottom: 70 },
+                      { paddingBottom: spacing.xl * 3 + 10 },
                     ]}
                     showsVerticalScrollIndicator={false}
                   >
@@ -210,7 +210,7 @@ const PlayerItem = memo(
         entering={FadeInDown.delay(index * 80)}
         style={styles.playerItem}
       >
-        <BlurViewWrapper style={{ borderRadius: 15 }}>
+        <BlurViewWrapper style={{ borderRadius: radius.md + 3 }}>
           <Pressable
             onPress={() => setIsPlaying((p) => !p)}
             style={styles.playerWrapper}
@@ -259,8 +259,8 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   blurContainer: {
-    borderRadius: 15,
-    marginRight: 15,
+    borderRadius: radius.md + 3,
+    marginRight: spacing.screen,
     overflow: "hidden",
   },
   content: {
@@ -278,14 +278,14 @@ const styles = StyleSheet.create({
   },
   videosContainer: {
     flex: 1,
-    paddingTop: 15,
+    paddingTop: spacing.screen,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 15,
-    gap: 20,
+    paddingHorizontal: spacing.screen,
+    gap: spacing.xl,
   },
   playerItem: {
     gap: spacing.sm + 2,
@@ -327,6 +327,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontWeight: "bold",
+    fontWeight: fontWeight.bold,
   },
 });

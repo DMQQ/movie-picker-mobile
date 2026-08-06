@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { colors, fontWeight } from "../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../constants/design";
 import GenreChip from "../components/GenreChip";
 import PrimaryButton from "../components/PrimaryButton";
 import { router, useLocalSearchParams } from "expo-router";
@@ -241,39 +241,39 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.surface,
     ...Platform.select({
-      ios: { paddingTop: 25 },
+      ios: { paddingTop: spacing.xxl + 1 },
     }),
   },
   grabber: {
     width: 36,
     height: 4,
-    borderRadius: 2,
+    borderRadius: radius.xs - 2,
     backgroundColor: "#555",
     alignSelf: "center",
-    marginTop: 12,
-    marginBottom: 4,
+    marginTop: spacing.md,
+    marginBottom: spacing.xs,
   },
   scroll: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
   },
   scrollContent: {
-    paddingTop: 8,
-    paddingBottom: 24,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xxl,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: spacing.xxl,
   },
   sectionTitle: {
     color: "#fff",
     fontFamily: "Bebas",
     fontSize: 22,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   chipsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: spacing.sm,
   },
   loadingContainer: {
     height: 80,
@@ -284,18 +284,18 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   footer: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
     paddingBottom: Platform.OS === "android" ? 24 : 20,
     borderTopWidth: 1,
     borderTopColor: "#333",
     backgroundColor: colors.surface,
   },
   applyButton: {
-    borderRadius: 24,
+    borderRadius: radius.lg,
   },
   applyButtonLabel: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
     fontWeight: fontWeight.semibold,
   },
 });

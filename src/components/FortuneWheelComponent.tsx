@@ -13,7 +13,7 @@ import {
   vec,
 } from "@shopify/react-native-skia";
 import * as Haptics from "expo-haptics";
-import { colors } from "../constants/design";
+import { colors, radius } from "../constants/design";
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from "react";
 import { Dimensions, Image, Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -49,18 +49,18 @@ interface SegmentProps {
 }
 
 const Segment = memo(({ item, segmentAngle, wheelSize, startAngle }: SegmentProps) => {
-  const radius = wheelSize / 2;
+  const wheelRadius = wheelSize / 2;
   const middleAngle = startAngle + segmentAngle / 2;
   const angleInRadians = (middleAngle - 90) * (Math.PI / 180);
 
   const imageSize = wheelSize * 0.13;
-  const distanceFromCenter = radius - imageSize / 2 - BORDER_WIDTH - 55;
+  const distanceFromCenter = wheelRadius - imageSize / 2 - BORDER_WIDTH - 55;
 
   const translateX = Math.cos(angleInRadians) * distanceFromCenter;
   const translateY = Math.sin(angleInRadians) * distanceFromCenter;
 
-  const left = radius - imageSize / 2 + translateX;
-  const top = radius - imageSize / 2 + translateY;
+  const left = wheelRadius - imageSize / 2 + translateX;
+  const top = wheelRadius - imageSize / 2 + translateY;
 
   return (
     <View
@@ -87,7 +87,7 @@ const Segment = memo(({ item, segmentAngle, wheelSize, startAngle }: SegmentProp
         style={{
           width: imageSize,
           height: imageSize * 1.5,
-          borderRadius: 4,
+          borderRadius: radius.xs,
           backgroundColor: "#000",
         }}
       />
@@ -98,7 +98,7 @@ const Segment = memo(({ item, segmentAngle, wheelSize, startAngle }: SegmentProp
 // --- THE FANCY OVERLAY (Gold-Silver Hub + Dual Rim) ---
 const WheelOverlay = ({ size }: { size: number }) => {
   const center = vec(size / 2, size / 2);
-  const radius = size / 2;
+  const ringRadius = size / 2;
   const hubRadius = size * 0.175;
 
   return (
@@ -107,20 +107,20 @@ const WheelOverlay = ({ size }: { size: number }) => {
       <Rect x={0} y={0} width={size} height={size}>
         <RadialGradient
           c={center}
-          r={radius}
+          r={ringRadius}
           colors={["rgba(255,255,255,0.1)", "rgba(0,0,0,0.1)", "transparent"]}
           positions={[0.6, 0.8, 1]}
         />
       </Rect>
 
       {/* 2. OUTER GOLD RIM (Primary) */}
-      <Circle cx={center.x} cy={center.y} r={radius - BORDER_WIDTH / 2} style="stroke" strokeWidth={BORDER_WIDTH}>
+      <Circle cx={center.x} cy={center.y} r={ringRadius - BORDER_WIDTH / 2} style="stroke" strokeWidth={BORDER_WIDTH}>
         <SweepGradient c={center} colors={["#FFD700", "#FFF8DC", "#B8860B", "#FFD700", "#FFF8DC", "#B8860B", "#FFD700"]} />
         <BlurMask blur={2} style="solid" />
       </Circle>
 
       {/* 3. NEW: SECOND EDGE (Silver/Platinum Inner Lip) */}
-      <Circle cx={center.x} cy={center.y} r={radius - BORDER_WIDTH - 2} style="stroke" strokeWidth={10}>
+      <Circle cx={center.x} cy={center.y} r={ringRadius - BORDER_WIDTH - 2} style="stroke" strokeWidth={10}>
         <SweepGradient
           c={center}
           colors={["#c0c0c08e", "#e5e4e290", "#70707080", "#c0c0c08e"]} // Metallic Silver Gradient
@@ -128,7 +128,7 @@ const WheelOverlay = ({ size }: { size: number }) => {
       </Circle>
 
       {/* 4. Thin Highlight on the Gold Rim */}
-      <Circle cx={center.x} cy={center.y} r={radius - BORDER_WIDTH / 2} style="stroke" strokeWidth={5} color="rgba(255,255,255,0.65)" />
+      <Circle cx={center.x} cy={center.y} r={ringRadius - BORDER_WIDTH / 2} style="stroke" strokeWidth={5} color="rgba(255,255,255,0.65)" />
 
       {/* 5. THE PREMIUM GOLD-SILVER HUB */}
       <Group>

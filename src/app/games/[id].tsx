@@ -1,5 +1,5 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import { Icon, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
@@ -119,7 +119,7 @@ export default function GameDetailScreen() {
                 style={StyleSheet.absoluteFill}
               />
 
-              <View style={[styles.bannerContent, { paddingTop: 52 }]}>
+              <View style={[styles.bannerContent, { paddingTop: spacing.xxl * 2 + 4 }]}>
                 <Text style={styles.bannerTitle}>
                   {formatGameType(session?.gameType ?? null)}
                 </Text>
@@ -213,8 +213,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     paddingHorizontal: H_PAD,
-    paddingBottom: 20,
-    gap: 4,
+    paddingBottom: spacing.xl,
+    gap: spacing.xs,
   },
   bannerDate: {
     fontSize: fontSize.sm,
@@ -232,55 +232,55 @@ const styles = StyleSheet.create({
   pill: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 5,
+    gap: spacing.xs + 1,
     backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 20,
+    borderRadius: radius.modal,
     paddingHorizontal: spacing.sm + 2,
-    paddingVertical: 5,
+    paddingVertical: spacing.xs + 1,
   },
-  pillText: { fontSize: 11, color: "rgba(255,255,255,0.75)" },
+  pillText: { fontSize: fontSize.sm - 1, color: "rgba(255,255,255,0.75)" },
 
-  list: { paddingHorizontal: H_PAD, paddingBottom: 40 },
+  list: { paddingHorizontal: H_PAD, paddingBottom: spacing.xxl + 16 },
   row: { gap: GAP },
 
-  listHeader: { marginBottom: 20 },
+  listHeader: { marginBottom: spacing.xl },
 
-  membersSection: { marginTop: 20, gap: spacing.sm + 2 },
+  membersSection: { marginTop: spacing.xl, gap: spacing.sm + 2 },
   membersSectionTitle: {
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     fontWeight: fontWeight.semibold,
     color: "rgba(255,255,255,0.5)",
     textTransform: "uppercase",
     letterSpacing: 0.8,
   },
-  membersList: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  membersList: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   memberChip: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
     backgroundColor: "rgba(255,255,255,0.07)",
-    borderRadius: 24,
-    paddingRight: 12,
-    paddingLeft: 4,
-    paddingVertical: 4,
+    borderRadius: radius.lg,
+    paddingRight: spacing.md,
+    paddingLeft: spacing.xs,
+    paddingVertical: spacing.xs,
   },
   memberAvatar: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: radius.md + 2,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
   },
   memberAvatarImg: { width: 28, height: 28 },
   memberAvatarLetter: { fontSize: fontSize.sm, fontWeight: fontWeight.bold, color: "#fff" },
-  memberName: { fontSize: 13, color: "rgba(255,255,255,0.8)", maxWidth: 100 },
+  memberName: { fontSize: fontSize.md - 1, color: "rgba(255,255,255,0.8)", maxWidth: 100 },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 2,
-    marginTop: 20,
+    gap: spacing.sm,
+    paddingHorizontal: spacing.xs - 2,
+    marginTop: spacing.xl,
   },
   sectionTitle: {
     fontSize: fontSize.xl,
@@ -290,17 +290,17 @@ const styles = StyleSheet.create({
   },
   sectionBadge: {
     backgroundColor: "rgba(187,134,252,0.2)",
-    borderRadius: 20,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    borderRadius: radius.modal,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs - 2,
   },
   sectionBadgeText: { fontSize: fontSize.sm, color: "#BB86FC", fontWeight: fontWeight.semibold },
 
   empty: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 48,
-    gap: 12,
+    paddingTop: spacing.xxl * 2,
+    gap: spacing.md,
   },
   emptyText: { fontSize: fontSize.md, color: "rgba(255,255,255,0.3)" },
 });

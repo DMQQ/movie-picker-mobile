@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated, Easing } from "react-native";
+import { radius, spacing } from "../../constants/design";
 
 const VoterAnimation = () => {
   // Create animated values for each card
@@ -168,21 +169,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#555555",
   },
   movieInfo: {
-    padding: 8,
+    padding: spacing.sm,
     height: "30%",
   },
   movieTitle: {
     width: "80%",
     height: 10,
     backgroundColor: "#6C6C6C",
-    borderRadius: 2,
-    marginBottom: 8,
+    borderRadius: radius.xs - 2,
+    marginBottom: spacing.sm,
   },
   movieDetails: {
     width: "60%",
     height: 8,
     backgroundColor: "#6C6C6C",
-    borderRadius: 2,
+    borderRadius: radius.xs - 2,
   },
   starsContainer: {
     flexDirection: "row",
@@ -195,7 +196,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: radius.md,
-    marginHorizontal: 4,
+    marginHorizontal: spacing.xs,
   },
   starFilled: {
     backgroundColor: "#FFD700",

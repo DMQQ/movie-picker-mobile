@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { FlatList, View } from "react-native";
 import { useGetGenresQuery } from "../../redux/movie/movieApi";
 import GenreChip from "../GenreChip";
+import { spacing } from "../../constants/design";
 
 export default function PickGenres({
   genres,
@@ -42,7 +43,7 @@ export default function PickGenres({
   if (!combined.length) return null;
 
   return (
-    <View style={{ marginVertical: 15 }}>
+    <View style={{ marginVertical: spacing.screen }}>
       <FlatList
         showsHorizontalScrollIndicator={false}
         horizontal
@@ -61,7 +62,7 @@ export default function PickGenres({
             }}
           />
         )}
-        contentContainerStyle={{ gap: 12 }}
+        contentContainerStyle={{ gap: spacing.md }}
       />
     </View>
   );

@@ -2,7 +2,7 @@ import { BlurView } from "expo-blur";
 import React, { useMemo, useState } from "react";
 import { Dimensions, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Divider, IconButton, Text, TouchableRipple } from "react-native-paper";
-import { colors, fontWeight } from "../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../constants/design";
 import PrimaryButton from "../components/PrimaryButton";
 import GenreChip from "../components/GenreChip";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.sm,
   },
   headerTitle: {
     fontSize: fontSize.xxl,
@@ -223,42 +223,42 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flex: 1,
-    paddingHorizontal: 15,
-    marginTop: 15,
+    paddingHorizontal: spacing.screen,
+    marginTop: spacing.screen,
   },
   scrollContentContainer: {
-    paddingBottom: 100,
+    paddingBottom: spacing.xl * 5,
   },
   divider: {
     backgroundColor: "rgba(255,255,255,0.08)",
     height: 1,
-    marginVertical: 12,
+    marginVertical: spacing.md,
   },
   section: {
-    paddingVertical: 5,
+    paddingVertical: spacing.xs + 1,
   },
   sectionTitle: {
     fontSize: 30,
     lineHeight: 30,
     fontFamily: "Bebas",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
     color: "#fff",
   },
   providersGrid: {
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
   },
   providerWrapper: {
     width: (width - 60) / 6,
     height: (width - 60) / 6,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
     borderRadius: radius.md,
     borderWidth: 2,
     borderColor: "transparent",
 
     overflow: "hidden",
-    marginRight: 5,
+    marginRight: spacing.xs + 1,
   },
   selectedProvider: {
     borderColor: colors.primary,
@@ -268,24 +268,24 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     resizeMode: "contain",
-    borderRadius: 8,
+    borderRadius: radius.sm,
   },
   genreTabsContainer: {
     flexDirection: "row",
-    marginBottom: 16,
+    marginBottom: spacing.lg,
     gap: spacing.sm + 2,
   },
   chipWrapper: {
     flex: 1,
-    borderRadius: 100,
+    borderRadius: radius.pill,
     overflow: "hidden",
     borderWidth: 2,
     borderColor: "rgba(255, 255, 255, 0.1)",
   },
   chip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.modal,
     alignItems: "center",
   },
   chipText: {
@@ -300,14 +300,14 @@ const styles = StyleSheet.create({
   genreChipsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: spacing.sm,
   },
   bottomBar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 15,
-    paddingVertical: 15,
+    paddingHorizontal: spacing.screen,
+    paddingVertical: spacing.screen,
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.08)",
     elevation: 8,
@@ -320,15 +320,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   filterCountText: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
     color: "#aaa",
   },
   applyButton: {
-    borderRadius: 24,
+    borderRadius: radius.lg,
     width: "100%",
     backgroundColor: colors.primary,
   },
   buttonContent: {
-    padding: 7.5,
+    padding: spacing.xs + 3.5,
   },
 });

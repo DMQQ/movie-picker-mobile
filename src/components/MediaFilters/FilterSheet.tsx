@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
-import { colors, fontWeight } from "../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import GenreChip from "../GenreChip";
 import PrimaryButton from "../PrimaryButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -241,7 +241,7 @@ export default function FilterSheet({ visible, onClose, onCategorySelect, showCa
                 onPress={handleClearAll}
                 style={styles.clearButton}
                 labelStyle={styles.clearButtonLabel}
-                contentStyle={{ padding: 7.5 }}
+                contentStyle={{ padding: spacing.xs + 3.5 }}
                 textColor="#999"
               >
                 {t("filters.clear")}
@@ -275,14 +275,14 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    paddingTop: 16,
+    paddingTop: spacing.lg,
   },
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    paddingHorizontal: 16,
+    paddingHorizontal: spacing.lg,
   },
   title: {
     color: "#fff",
@@ -295,17 +295,17 @@ const styles = StyleSheet.create({
     right: 8,
   },
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: spacing.xxl,
   },
   sectionTitle: {
     color: "#fff",
     fontFamily: "Bebas",
     fontSize: 22,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   selectedCount: {
     color: colors.primary,
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   genresContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: spacing.sm,
   },
   genreLoading: {
     height: 100,
@@ -326,26 +326,26 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: "row",
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    gap: 12,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
+    gap: spacing.md,
     borderTopWidth: 1,
     borderTopColor: "#333",
   },
   clearButton: {
     flex: 1,
-    borderRadius: 24,
+    borderRadius: radius.lg,
     borderColor: "#666",
   },
   clearButtonLabel: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
   },
   applyButton: {
     flex: 2,
-    borderRadius: 24,
+    borderRadius: radius.lg,
   },
   applyButtonLabel: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
     fontWeight: fontWeight.semibold,
   },
 });

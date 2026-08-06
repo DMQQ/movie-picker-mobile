@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { colors } from "../../constants/design";
+import { colors, radius, spacing } from "../../constants/design";
 import { Platform, View } from "react-native";
 import { LiquidGlassView } from "@callstack/liquid-glass";
 import ThumbsUp from "../../assets/ThumbsUp";
@@ -10,7 +10,7 @@ const Badge = memo(() => (
       position: "absolute",
       top: 5,
       left: 5,
-      borderRadius: 100,
+      borderRadius: radius.pill,
       overflow: "hidden",
       zIndex: 10,
     }}
@@ -20,8 +20,8 @@ const Badge = memo(() => (
       tintColor={colors.primary + "aa"}
       style={[
         {
-          borderRadius: 100,
-          padding: 5,
+          borderRadius: radius.pill,
+          padding: spacing.xs + 1,
           borderWidth: 1,
           borderColor: colors.primary,
         },

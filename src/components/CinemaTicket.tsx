@@ -6,6 +6,7 @@ import QRCode from "react-native-qrcode-svg";
 import GenresView from "./GenresView";
 import RatingIcons from "./RatingIcons";
 import useTranslation from "../service/useTranslation";
+import { fontSize, radius, spacing } from "../constants/design";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const TICKET_WIDTH = SCREEN_WIDTH - 48;
@@ -174,7 +175,7 @@ const CinemaTicket = forwardRef<View, CinemaTicketProps>(
             </View>
 
             {movie?.overview ? (
-              <Text style={{ color: "#888", marginBottom: 16 }} numberOfLines={4}>
+              <Text style={{ color: "#888", marginBottom: spacing.lg }} numberOfLines={4}>
                 {movie.overview}
               </Text>
             ) : null}
@@ -253,19 +254,19 @@ CinemaTicket.displayName = "CinemaTicket";
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    padding: 16,
+    padding: spacing.lg,
     backgroundColor: "#000",
   },
   ticketBody: {
     width: TICKET_WIDTH,
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
     position: "relative",
   },
   holesRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.md,
     width: TICKET_WIDTH,
     marginTop: -5,
     zIndex: 10,
@@ -273,7 +274,7 @@ const styles = StyleSheet.create({
   hole: {
     width: 16,
     height: 16,
-    borderRadius: 100,
+    borderRadius: radius.pill,
     backgroundColor: "#000",
   },
   backdropContainer: {
@@ -286,11 +287,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  posterContainer: { position: "absolute", top: 0, left: 0, right: 0, justifyContent: "center", alignItems: "center", paddingTop: 7.5 },
+  posterContainer: { position: "absolute", top: 0, left: 0, right: 0, justifyContent: "center", alignItems: "center", paddingTop: spacing.xs + 3.5 },
   poster: {
     width: 120,
     height: 175,
-    borderRadius: 5,
+    borderRadius: radius.xs + 1,
   },
 
   backdropOverlay: {
@@ -298,16 +299,16 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.15)",
   },
   infoSection: {
-    padding: 20,
-    paddingTop: 20,
-    paddingBottom: 16,
+    padding: spacing.xl,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.lg,
   },
   headerText: {
     fontFamily: "Bebas",
     fontSize: fontSize.md,
     letterSpacing: 3,
     color: "#888",
-    marginBottom: 4,
+    marginBottom: spacing.xs,
     textTransform: "uppercase",
   },
   movieTitle: {
@@ -319,24 +320,24 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontStyle: "italic",
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     color: "#888",
-    marginBottom: 14,
+    marginBottom: spacing.md + 2,
     lineHeight: 18,
   },
   metaRow: {
     flexDirection: "row",
     alignItems: "center",
     flexWrap: "wrap",
-    marginBottom: 12,
+    marginBottom: spacing.md,
     gap: spacing.sm - 2,
   },
   metaDot: {
     width: 4,
     height: 4,
-    borderRadius: 2,
+    borderRadius: radius.xs - 2,
     backgroundColor: "#999",
-    marginHorizontal: 4,
+    marginHorizontal: spacing.xs,
   },
   yearText: {
     fontFamily: "Bebas",
@@ -351,21 +352,21 @@ const styles = StyleSheet.create({
   },
   ratingRow: {
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: spacing.lg,
     position: "absolute",
     top: -12.5,
     left: 0,
     right: 0,
     justifyContent: "center",
   },
-  ratingRowInner: { paddingHorizontal: 4, paddingVertical: 4, borderRadius: 20, flexDirection: "row" },
+  ratingRowInner: { paddingHorizontal: spacing.xs, paddingVertical: spacing.xs, borderRadius: radius.modal, flexDirection: "row" },
   inviteBox: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#d8d4d0",
     borderRadius: radius.md,
-    padding: 12,
+    padding: spacing.md,
     gap: spacing.sm + 2,
   },
   inviteEmoji: {
@@ -381,17 +382,17 @@ const styles = StyleSheet.create({
   providersSection: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    marginBottom: 20,
+    gap: spacing.md,
+    marginBottom: spacing.xl,
   },
   providersRow: {
     flexDirection: "row",
-    gap: 8,
+    gap: spacing.sm,
   },
   providerLogoWrapper: {
     position: "relative",
     overflow: "hidden",
-    borderRadius: 6,
+    borderRadius: radius.xs + 2,
   },
   providerLogo: {
     width: 32,
@@ -403,7 +404,7 @@ const styles = StyleSheet.create({
   },
   providersTitle: {
     fontFamily: "Bebas",
-    fontSize: 11,
+    fontSize: fontSize.sm - 1,
     letterSpacing: 1,
     color: "#888",
     textTransform: "uppercase",
@@ -411,8 +412,8 @@ const styles = StyleSheet.create({
   tearLineSection: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 4,
-    marginBottom: 4,
+    marginTop: spacing.xs,
+    marginBottom: spacing.xs,
     position: "relative",
   },
   notch: {
@@ -437,31 +438,31 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
     height: 3,
   },
   dash: {
     width: 8,
     height: 3,
-    borderRadius: 1,
+    borderRadius: radius.xs - 3,
   },
   stubSection: {
     flexDirection: "row",
-    padding: 20,
-    paddingTop: 16,
-    paddingBottom: 24,
+    padding: spacing.xl,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xxl,
     alignItems: "center",
     justifyContent: "space-between",
   },
   stubLeft: {
     flex: 1,
-    marginRight: 16,
+    marginRight: spacing.lg,
   },
   stubLabel: {
     fontFamily: "Bebas",
     fontSize: fontSize.xs,
     letterSpacing: 2,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
     color: "#999",
   },
   logoRow: {
@@ -491,9 +492,9 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   qrContainer: {
-    padding: 8,
+    padding: spacing.sm,
     backgroundColor: "#fff",
-    borderRadius: 8,
+    borderRadius: radius.sm,
   },
   watermark: {
     position: "absolute",

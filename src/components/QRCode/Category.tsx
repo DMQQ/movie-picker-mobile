@@ -2,6 +2,7 @@ import { View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 import PrimaryButton from "../PrimaryButton";
 import useTranslation from "../../service/useTranslation";
+import { fontWeight, spacing } from "../../constants/design";
 
 const categories = [
   "/discover/movie",
@@ -33,7 +34,7 @@ export default function Category({
   return (
     <View style={{ flex: 1, justifyContent: "space-between" }}>
       <View style={{ flexDirection: "column" }}>
-        <Text style={{ fontSize: 25, fontWeight: "bold", marginTop: 5 }}>{t("room.choose-category")}</Text>
+        <Text style={{ fontSize: 25, fontWeight: fontWeight.bold, marginTop: spacing.xs + 1 }}>{t("room.choose-category")}</Text>
         <TextInput
           keyboardType="numeric"
           mode="outlined"
@@ -42,7 +43,7 @@ export default function Category({
           onChangeText={(text) => {
             setPageRange(text.replace(/[^0-9]/g, "").replace(/^0+/, ""));
           }}
-          style={{ marginTop: 10 }}
+          style={{ marginTop: spacing.sm + 2 }}
         />
       </View>
 
@@ -50,7 +51,7 @@ export default function Category({
         {categories.map((c, i) => (
           <PrimaryButton
             key={i}
-            style={{ marginTop: 10 }}
+            style={{ marginTop: spacing.sm + 2 }}
             onPress={() => {
               setCategory(c);
               handleGenerateCode(c);

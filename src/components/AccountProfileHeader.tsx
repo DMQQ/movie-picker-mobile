@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   avatarImage: { width: AVATAR_SIZE, height: AVATAR_SIZE },
   avatarLetter: { fontSize: fontSize.xxl + 2, fontFamily: "Bebas", color: colors.background },
 
-  topInfo: { flex: 1, gap: 2 },
+  topInfo: { flex: 1, gap: spacing.xs - 2 },
 
   nameRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs + 1 },
   name: { fontSize: fontSize.xl, fontWeight: fontWeight.bold, color: colors.text },
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: fontSize.xs + 1,
     color: colors.primary,
-    marginTop: 1,
+    marginTop: spacing.xs - 3,
   },
 
   statsRow: {
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md - 2,
     paddingVertical: spacing.md,
   },
-  stat: { flex: 1, alignItems: "center", gap: 2 },
+  stat: { flex: 1, alignItems: "center", gap: spacing.xs - 2 },
   statValue: { fontSize: fontSize.xxl, fontWeight: fontWeight.bold, color: colors.text },
   statAccent: { color: colors.primary },
   statLabel: {

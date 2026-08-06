@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
-import { colors } from "../../../constants/design";
+import { colors, radius, spacing } from "../../../constants/design";
 
 interface BuilderProgressProps {
   currentStep: number;
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 4,
     height: 4,
-    borderRadius: 5,
+    borderRadius: radius.xs + 1,
   },
   completedDot: {
     width: 8,
@@ -53,12 +53,12 @@ const styles = StyleSheet.create({
   currentDot: {
     width: 12,
     height: 12,
-    borderRadius: 7,
+    borderRadius: radius.xs + 3,
   },
   futureDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: radius.xs,
     backgroundColor: "#444",
   },
 });

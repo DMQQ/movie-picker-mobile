@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Image, ImageProps } from "expo-image";
 import { Text } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, spacing } from "../constants/design";
 
 type Shared = {
   path: string;
@@ -61,7 +61,7 @@ const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path"
     >
       <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={colors.placeholder} />
 
-      <Text style={{ color: colors.placeholder, marginTop: 8, textAlign: "center" }} variant="bodyMedium">
+      <Text style={{ color: colors.placeholder, marginTop: spacing.sm, textAlign: "center" }} variant="bodyMedium">
         {rest.alt || "No Image Available"}
       </Text>
     </View>

@@ -21,7 +21,7 @@ import {
   Searchbar,
   Text,
 } from "react-native-paper";
-import { colors, fontWeight } from "../../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../../../constants/design";
 import {
   useLazySearchQuery,
   useLazyGetSimilarQuery,
@@ -56,8 +56,8 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
 
       style={{
         width: SCREEN_WIDTH - 30,
-        borderRadius: 15,
-        marginTop: 15,
+        borderRadius: radius.md + 3,
+        marginTop: spacing.screen,
         borderWidth: 2,
         borderColor: "rgba(255,255,255,0.1)",
       }}
@@ -70,14 +70,14 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
           }}
           blurRadius={10}
           style={{ flex: 1 }}
-          imageStyle={{ flex: 1, borderRadius: 15 }}
+          imageStyle={{ flex: 1, borderRadius: radius.md + 3 }}
         >
           <View
             style={{
               position: "relative",
               justifyContent: "center",
               alignItems: "center",
-              padding: 15,
+              padding: spacing.screen,
             }}
           >
             <Thumbnail
@@ -88,7 +88,7 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
           </View>
 
           <FrostedGlass
-            style={{ flex: 1, padding: 15, overflow: "hidden", gap: 2.5 }}
+            style={{ flex: 1, padding: spacing.screen, overflow: "hidden", gap: spacing.xs - 2.5 }}
           >
             <Text
               numberOfLines={2}
@@ -110,7 +110,7 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
               <Text
                 numberOfLines={4}
                 ellipsizeMode="tail"
-                style={{ marginTop: 5 }}
+                style={{ marginTop: spacing.xs + 1 }}
               >
                 {item.overview}
               </Text>
@@ -315,7 +315,7 @@ const SearchScreen = () => {
     if ((isLoading || isLoadingSimilar) && currentPage === 1)
       return (
         <ActivityIndicator
-          style={[styles.loader, { marginTop: 50 }]}
+          style={[styles.loader, { marginTop: spacing.xxl * 2 + 2 }]}
           animating={true}
           color={colors.primary}
         />
@@ -450,7 +450,7 @@ const SearchScreen = () => {
       </View>
 
       <FlashList
-        contentContainerStyle={{ padding: 15 }}
+        contentContainerStyle={{ padding: spacing.screen }}
         data={allResults}
         renderItem={({ item }) => <MovieCard item={item} />}
         keyExtractor={(item) => {
@@ -481,13 +481,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
   searchContainer: {
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    paddingTop: 15,
+    paddingHorizontal: spacing.screen,
+    marginBottom: spacing.screen,
+    paddingTop: spacing.screen,
   },
   searchbar: {
     backgroundColor: "rgba(255, 255, 255, 0.08)",
-    borderRadius: 100,
+    borderRadius: radius.pill,
     borderWidth: 2,
     borderColor: "rgba(255, 255, 255, 0.1)",
   },
@@ -497,13 +497,13 @@ const styles = StyleSheet.create({
   chipContainer: {
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
-    paddingBottom: 15,
+    paddingBottom: spacing.screen,
     flexDirection: "row",
-    paddingRight: 15,
+    paddingRight: spacing.screen,
   },
   listContent: {
-    paddingHorizontal: 15,
-    paddingBottom: 20,
+    paddingHorizontal: spacing.screen,
+    paddingBottom: spacing.xl,
     minHeight: 100,
   },
   cardImage: {
@@ -520,45 +520,45 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   loader: {
-    marginVertical: 20,
+    marginVertical: spacing.xl,
   },
   emptyText: {
     textAlign: "center",
-    marginTop: 40,
+    marginTop: spacing.xxl + 16,
     opacity: 0.7,
   },
   errorText: {
     textAlign: "center",
-    marginTop: 40,
+    marginTop: spacing.xxl + 16,
     color: "#ff6b6b",
     fontSize: fontSize.lg,
   },
   modal: {
     backgroundColor: "#1e1e1e",
-    margin: 20,
-    padding: 20,
+    margin: spacing.xl,
+    padding: spacing.xl,
     borderRadius: radius.sm + 2,
   },
   modalTitle: {
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
   divider: {
-    marginVertical: 10,
+    marginVertical: spacing.sm + 2,
   },
   applyButton: {
-    marginTop: 20,
+    marginTop: spacing.xl,
   },
   chipWrapper: {
-    marginRight: 10,
-    borderRadius: 100,
+    marginRight: spacing.sm + 2,
+    borderRadius: radius.pill,
     overflow: "hidden",
     borderWidth: 2,
     borderColor: "rgba(255, 255, 255, 0.1)",
   },
   chip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.modal,
   },
   chipText: {
     color: "rgba(255, 255, 255, 0.8)",
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.semibold,
   },
   categoriesContainer: {
-    paddingHorizontal: 15,
+    paddingHorizontal: spacing.screen,
   },
 });
 

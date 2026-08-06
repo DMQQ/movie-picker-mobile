@@ -5,6 +5,7 @@ import PrimaryButton from "./PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import PlatformBlurView from "./PlatformBlurView";
+import { fontSize, radius, spacing } from "../constants/design";
 
 export interface UserInputModalAction {
   label: string;
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.7)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: spacing.xl,
   },
   modalContent: {
     borderRadius: 35,
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     }),
   },
   modalInner: {
-    padding: 30,
+    padding: spacing.xxl + 6,
     alignItems: "center",
   },
   modalTitle: {
@@ -147,20 +148,20 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     color: "#fff",
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
     letterSpacing: 1.2,
   },
   modalSubtitle: {
     fontSize: fontSize.md,
     color: "rgba(255, 255, 255, 0.75)",
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: spacing.xl,
     lineHeight: 20,
     paddingHorizontal: spacing.sm + 2,
   },
   contentContainer: {
     width: "100%",
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   actionsContainer: {
     width: "100%",
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   actionButton: {
-    borderRadius: 100,
+    borderRadius: radius.pill,
     overflow: "hidden",
   },
   actionButtonHorizontal: {
@@ -178,6 +179,6 @@ const styles = StyleSheet.create({
   },
   actionButtonContent: {
     paddingVertical: spacing.sm + 2,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
   },
 });

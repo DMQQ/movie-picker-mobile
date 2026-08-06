@@ -1,5 +1,5 @@
 import { Platform, Pressable, View, useWindowDimensions } from "react-native";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, colors, fontSize, radius, spacing } from "../../constants/design";
 import { Icon, Text } from "react-native-paper";
 import Touch from "../Touch";
 
@@ -53,14 +53,14 @@ const AnimatedButton = ({
   const isAccent = variant !== "default";
 
   return (
-    <View style={{ alignItems: "center", gap: 4 }}>
+    <View style={{ alignItems: "center", gap: spacing.xs }}>
       <Touch
         onPress={onPress}
 
         disabled={disabled}
         style={[
           {
-            borderRadius: 100,
+            borderRadius: radius.pill,
             padding: small ? 10 : 15,
             paddingHorizontal: small ? 15 : 25,
             backgroundColor: colors.bg,
@@ -94,7 +94,7 @@ const AnimatedButton = ({
           <Text
             style={{
               color: isAccent ? "#fff" : color,
-              fontSize: 15,
+              fontSize: fontSize.md + 1,
               textAlign: "center",
               fontWeight: fontWeight.semibold,
             }}
@@ -150,7 +150,7 @@ export default function TabBar(props: TabBarProps) {
           flexDirection: "row",
           justifyContent: "center",
           alignItems: "center",
-          gap: 12,
+          gap: spacing.md,
           zIndex: props.zIndex,
         },
       ]}

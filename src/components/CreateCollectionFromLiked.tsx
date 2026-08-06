@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Keyboard, Pressable, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import { createGroupFromArray } from "../redux/favourites/favourites";
 import { useAppDispatch } from "../redux/store";
 import useTranslation from "../service/useTranslation";
@@ -51,11 +51,11 @@ export default function CreateCollectionFromLiked({
           style={{
             flexDirection: "row",
             alignItems: "center",
-            paddingHorizontal: 15,
+            paddingHorizontal: spacing.screen,
             paddingVertical: spacing.sm + 2,
-            borderRadius: 100,
+            borderRadius: radius.pill,
             borderWidth: 1,
-            gap: 5,
+            gap: spacing.xs + 1,
             borderColor: colors.primary,
           }}
         >
@@ -67,7 +67,7 @@ export default function CreateCollectionFromLiked({
           <Text
             style={{
               color: colors.primary,
-              fontWeight: "bold",
+              fontWeight: fontWeight.bold,
               fontSize: fontSize.md,
             }}
           >

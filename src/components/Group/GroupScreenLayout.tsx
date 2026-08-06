@@ -5,6 +5,7 @@ import SafeIOSContainer from "../SafeIOSContainer";
 import PageHeading from "../PageHeading";
 import TilesList from "../Overview/TilesList";
 import GroupSkeleton from "./GroupSkeleton";
+import { spacing } from "../../constants/design";
 
 interface GroupScreenLayoutProps {
   title: string;
@@ -67,7 +68,7 @@ export default function GroupScreenLayout({
 
 const styles = StyleSheet.create({
   container: { flex: 1, overflow: "hidden" },
-  content: { flex: 1, paddingHorizontal: 15 },
-  androidOffset: { marginTop: 30 },
-  listPadding: { paddingTop: 80 },
+  content: { flex: 1, paddingHorizontal: spacing.screen },
+  androidOffset: { marginTop: spacing.xxl + 6 },
+  listPadding: { paddingTop: spacing.xl * 4 },
 });

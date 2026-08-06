@@ -1,5 +1,5 @@
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, spacing } from "../../constants/design";
 import { Icon, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PageHeading from "../../components/PageHeading";
@@ -23,10 +23,10 @@ export default function AllGamesScreen() {
         keyExtractor={(g) => g.id}
         renderItem={({ item }) => <GameCard game={item} width={CARD_WIDTH} height={CARD_HEIGHT} />}
         contentContainerStyle={{
-          paddingTop: 120,
+          paddingTop: spacing.xxl * 5,
           paddingBottom: insets.bottom + 24,
-          paddingHorizontal: 16,
-          gap: 12,
+          paddingHorizontal: spacing.lg,
+          gap: spacing.md,
         }}
         ListHeaderComponent={
           games.length > 0 ? (
@@ -61,19 +61,19 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
 
   countLabel: {
-    fontSize: 11,
+    fontSize: fontSize.sm - 1,
     color: "rgba(255,255,255,0.25)",
-    paddingBottom: 4,
+    paddingBottom: spacing.xs,
     textTransform: "uppercase",
     letterSpacing: 0.8,
   },
 
-  empty: { alignItems: "center", gap: spacing.sm + 2, paddingTop: 72 },
-  emptyText: { fontSize: 15, fontWeight: fontWeight.semibold, color: "rgba(255,255,255,0.25)" },
+  empty: { alignItems: "center", gap: spacing.sm + 2, paddingTop: spacing.xxl * 3 },
+  emptyText: { fontSize: fontSize.md + 1, fontWeight: fontWeight.semibold, color: "rgba(255,255,255,0.25)" },
   emptyHint: {
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     color: "rgba(255,255,255,0.15)",
     textAlign: "center",
-    paddingHorizontal: 40,
+    paddingHorizontal: spacing.xxl + 16,
   },
 });

@@ -22,6 +22,7 @@ import ShareModal from "../../components/GameSummary/ShareModal";
 import { useGameSummary } from "../../hooks/useGameSummary";
 import useTranslation from "../../service/useTranslation";
 import { FlatList } from "react-native";
+import { fontSize, fontWeight, radius, spacing, typography } from "../../constants/design";
 
 type MovieLike = { id?: number; title?: string; poster_path?: string };
 
@@ -208,7 +209,7 @@ export default function GameSummary() {
           marginTop: Platform.OS === "ios" ? -insets.top : 0,
         }}
         contentContainerStyle={{
-          paddingHorizontal: 15,
+          paddingHorizontal: spacing.screen,
           paddingTop: Platform.OS === "ios" ? insets.top + 15 : 15,
           paddingBottom: insets.bottom,
         }}
@@ -252,41 +253,41 @@ const styles = StyleSheet.create({
   list: { flex: 1 },
   loadingText: {
     fontSize: fontSize.xl,
-    marginTop: 15,
+    marginTop: spacing.screen,
     opacity: 0.7,
-    fontWeight: "bold",
+    fontWeight: fontWeight.bold,
   },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 15,
-    marginTop: 30,
+    marginBottom: spacing.screen,
+    marginTop: spacing.xxl + 6,
   },
-  sectionTitle: { fontSize: 35, fontFamily: "Bebas" },
-  movieRow: { flexDirection: "row", gap: spacing.sm + 2, marginBottom: 15 },
+  sectionTitle: { fontSize: typography.bebasSize.section, fontFamily: "Bebas" },
+  movieRow: { flexDirection: "row", gap: spacing.sm + 2, marginBottom: spacing.screen },
   movieCell: { flex: 1 },
   emptyState: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 30,
+    marginTop: spacing.xxl + 6,
   },
-  emptyTitle: { color: "#fff", fontSize: 45, fontFamily: "Bebas" },
+  emptyTitle: { color: "#fff", fontSize: typography.bebasSize.empty, fontFamily: "Bebas" },
   emptyDesc: {
     color: "#fff",
     fontSize: fontSize.lg,
     textAlign: "center",
-    marginVertical: 15,
+    marginVertical: spacing.screen,
     maxWidth: 300,
   },
   buttonRow: {
-    padding: 15,
+    padding: spacing.screen,
     gap: spacing.sm + 2,
     flexDirection: "row",
     backgroundColor: "#000",
   },
-  backBtn: { borderRadius: 100, flex: 1 },
-  btnContent: { paddingVertical: 7.5 },
-  shareBtn: { borderRadius: 100, borderColor: "rgba(255,255,255,0.3)" },
+  backBtn: { borderRadius: radius.pill, flex: 1 },
+  btnContent: { paddingVertical: spacing.xs + 3.5 },
+  shareBtn: { borderRadius: radius.pill, borderColor: "rgba(255,255,255,0.3)" },
 });

@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import { Link } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -68,7 +68,7 @@ export const SectionListItem = ({
       style={[
         sectionStyles.item,
         sizes?.item,
-        !imageWidth && { marginRight: 15 },
+        !imageWidth && { marginRight: spacing.screen },
       ]}
       asChild
     >
@@ -111,7 +111,7 @@ export const SectionListItem = ({
             {!hideTitle && (
               <View
                 style={{
-                  marginTop: 10,
+                  marginTop: spacing.sm + 2,
                   paddingHorizontal: spacing.sm + 2,
                   maxWidth: sizes?.image.width || sectionStyles.image.width,
                 }}
@@ -168,13 +168,13 @@ const sectionStyles = StyleSheet.create({
     width: SECTION_ITEM_WIDTH,
     height: SECTION_ITEM_HEIGHT,
     backgroundColor: colors.surface,
-    borderRadius: 5,
+    borderRadius: radius.xs + 1,
   },
 
   image: {
     width: SECTION_ITEM_WIDTH,
     height: SECTION_ITEM_HEIGHT - 70,
-    borderRadius: 5,
+    borderRadius: radius.xs + 1,
   },
 
   badgeContainer: {
@@ -182,16 +182,16 @@ const sectionStyles = StyleSheet.create({
     right: 5,
     top: 5,
     backgroundColor: colors.surface,
-    paddingHorizontal: 5,
-    paddingVertical: 3,
-    borderRadius: 5,
+    paddingHorizontal: spacing.xs + 1,
+    paddingVertical: spacing.xs - 1,
+    borderRadius: radius.xs + 1,
   },
 
   badgeItem: {
     fontSize: fontSize.xs,
     transform: [{ skewX: "10deg" }],
     color: "rgba(255,255,255,0.8)",
-    fontWeight: "800",
+    fontWeight: fontWeight.bold,
   },
 });
 

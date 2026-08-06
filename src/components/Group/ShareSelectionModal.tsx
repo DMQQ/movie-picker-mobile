@@ -17,6 +17,7 @@ import MarathonTicket from "../MarathonTicket";
 import PlatformBlurView from "../PlatformBlurView";
 import useTranslation from "../../service/useTranslation";
 import ShareThumbnailItem from "./ShareThumbnailItem";
+import { fontSize, radius, spacing } from "../../constants/design";
 import {
   useShareSelection,
   MAX_SELECTION,
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
     backgroundColor: "rgba(255,255,255,0.1)",
   },
-  viewShot: { backgroundColor: "#000", borderRadius: 16 },
+  viewShot: { backgroundColor: "#000", borderRadius: radius.card },
   content: {
     width: SCREEN_WIDTH - 30,
     maxHeight: SCREEN_HEIGHT * 0.85,
@@ -198,37 +199,37 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  inner: { padding: 30, alignItems: "center" },
+  inner: { padding: spacing.xxl + 6, alignItems: "center" },
   closeButton: { position: "absolute", top: 0, right: 0, zIndex: 10 },
   title: {
     fontSize: 32,
     fontFamily: "Bebas",
     color: "#fff",
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
     letterSpacing: 1.2,
   },
   subtitle: {
     fontSize: fontSize.md,
     color: "rgba(255,255,255,0.75)",
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   list: { maxHeight: SCREEN_HEIGHT * 0.45, width: "100%" },
-  listContent: { paddingBottom: 10 },
-  columnWrapper: { justifyContent: "space-between", marginBottom: 10 },
-  shareButton: { marginTop: 20, borderRadius: 100, width: "100%" },
-  shareButtonContent: { paddingVertical: spacing.sm + 2, paddingHorizontal: 20 },
-  centeredBox: { alignItems: "center", justifyContent: "center", padding: 40 },
+  listContent: { paddingBottom: spacing.sm + 2 },
+  columnWrapper: { justifyContent: "space-between", marginBottom: spacing.sm + 2 },
+  shareButton: { marginTop: spacing.xl, borderRadius: radius.pill, width: "100%" },
+  shareButtonContent: { paddingVertical: spacing.sm + 2, paddingHorizontal: spacing.xl },
+  centeredBox: { alignItems: "center", justifyContent: "center", padding: spacing.xxl + 16 },
   loadingText: {
-    marginTop: 16,
+    marginTop: spacing.lg,
     color: "#fff",
     fontFamily: "Bebas",
     fontSize: fontSize.lg,
     letterSpacing: 1,
   },
   errorText: {
-    marginTop: 12,
+    marginTop: spacing.md,
     color: "#999",
     fontFamily: "Bebas",
     fontSize: fontSize.lg,

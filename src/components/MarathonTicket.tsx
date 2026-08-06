@@ -6,6 +6,7 @@ import QRCode from "react-native-qrcode-svg";
 import GenresView from "./GenresView";
 import RatingIcons from "./RatingIcons";
 import useTranslation from "../service/useTranslation";
+import { fontSize, radius, spacing } from "../constants/design";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const TICKET_WIDTH = SCREEN_WIDTH - 48;
@@ -97,7 +98,7 @@ const MovieRow = memo(({ movie, isLast, unknownText }: { movie: MarathonMovie; i
         </Text>
 
         {movie?.tagline ? (
-          <Text style={{ fontStyle: "italic", fontSize: 11, color: "#888" }} numberOfLines={2}>
+          <Text style={{ fontStyle: "italic", fontSize: fontSize.sm - 1, color: "#888" }} numberOfLines={2}>
             "{movie.tagline}"
           </Text>
         ) : null}
@@ -267,19 +268,19 @@ MarathonTicket.displayName = "MarathonTicket";
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    padding: 16,
+    padding: spacing.lg,
     backgroundColor: "#000",
   },
   ticketBody: {
     width: TICKET_WIDTH,
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
     position: "relative",
   },
   holesRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 12,
+    paddingHorizontal: spacing.md,
     width: TICKET_WIDTH,
     marginTop: -5,
     zIndex: 10,
@@ -287,21 +288,21 @@ const styles = StyleSheet.create({
   hole: {
     width: 16,
     height: 16,
-    borderRadius: 100,
+    borderRadius: radius.pill,
     backgroundColor: "#000",
   },
   headerSection: {
     alignItems: "center",
-    paddingTop: 24,
-    paddingBottom: 16,
-    paddingHorizontal: 20,
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.lg,
+    paddingHorizontal: spacing.xl,
   },
   headerLabel: {
     fontFamily: "Bebas",
     fontSize: fontSize.xs,
     letterSpacing: 3,
     color: "#999",
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
   headerText: {
     fontFamily: "Bebas",
@@ -313,8 +314,8 @@ const styles = StyleSheet.create({
   countBadge: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 8,
-    gap: 8,
+    marginTop: spacing.sm,
+    gap: spacing.sm,
   },
   countText: {
     fontFamily: "Bebas",
@@ -325,17 +326,17 @@ const styles = StyleSheet.create({
   countDot: {
     width: 4,
     height: 4,
-    borderRadius: 2,
+    borderRadius: radius.xs - 2,
     backgroundColor: "#999",
   },
   moviesSection: {
-    paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.lg,
   },
   movieRow: {
     flexDirection: "row",
-    paddingVertical: 12,
-    gap: 12,
+    paddingVertical: spacing.md,
+    gap: spacing.md,
   },
   movieRowBorder: {
     borderBottomWidth: 1,
@@ -344,12 +345,12 @@ const styles = StyleSheet.create({
   poster: {
     width: 60,
     height: 90,
-    borderRadius: 4,
+    borderRadius: radius.xs,
   },
   movieInfo: {
     flex: 1,
     justifyContent: "center",
-    gap: 4,
+    gap: spacing.xs,
   },
   movieTitle: {
     fontFamily: "Bebas",
@@ -367,7 +368,7 @@ const styles = StyleSheet.create({
   metaDot: {
     width: 3,
     height: 3,
-    borderRadius: 1.5,
+    borderRadius: radius.xs - 3.5,
     backgroundColor: "#999",
   },
   runtimeText: {
@@ -377,15 +378,15 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   ratingRow: {
-    marginTop: 2,
+    marginTop: spacing.xs - 2,
     flexDirection: "row",
   },
   bonusSection: {
-    paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.lg,
     borderTopWidth: 1,
     borderTopColor: "rgba(0,0,0,0.08)",
-    paddingTop: 12,
+    paddingTop: spacing.md,
   },
   bonusHeading: {
     fontFamily: "Bebas",
@@ -393,12 +394,12 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     color: "#888",
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   bonusRow: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 12,
+    gap: spacing.md,
   },
   bonusItem: {
     alignItems: "center",
@@ -408,7 +409,7 @@ const styles = StyleSheet.create({
   bonusPoster: {
     width: 55,
     height: 82,
-    borderRadius: 4,
+    borderRadius: radius.xs,
   },
   bonusTitle: {
     fontFamily: "Bebas",
@@ -416,12 +417,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     color: "#666",
     textAlign: "center",
-    marginTop: 6,
+    marginTop: spacing.xs + 2,
     lineHeight: 12,
   },
   inviteSection: {
-    paddingHorizontal: 20,
-    paddingBottom: 16,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.lg,
   },
   inviteBox: {
     flexDirection: "row",
@@ -429,7 +430,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#d8d4d0",
     borderRadius: radius.md,
-    padding: 12,
+    padding: spacing.md,
     gap: spacing.sm + 2,
   },
   inviteEmoji: {
@@ -445,8 +446,8 @@ const styles = StyleSheet.create({
   tearLineSection: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 4,
-    marginBottom: 4,
+    marginTop: spacing.xs,
+    marginBottom: spacing.xs,
     position: "relative",
   },
   notch: {
@@ -471,31 +472,31 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
     height: 3,
   },
   dash: {
     width: 8,
     height: 3,
-    borderRadius: 1,
+    borderRadius: radius.xs - 3,
   },
   stubSection: {
     flexDirection: "row",
-    padding: 20,
-    paddingTop: 16,
-    paddingBottom: 24,
+    padding: spacing.xl,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xxl,
     alignItems: "center",
     justifyContent: "space-between",
   },
   stubLeft: {
     flex: 1,
-    marginRight: 16,
+    marginRight: spacing.lg,
   },
   stubLabel: {
     fontFamily: "Bebas",
     fontSize: fontSize.xs,
     letterSpacing: 2,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
     color: "#999",
   },
   logoRow: {
@@ -525,9 +526,9 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   qrContainer: {
-    padding: 8,
+    padding: spacing.sm,
     backgroundColor: "#fff",
-    borderRadius: 8,
+    borderRadius: radius.sm,
   },
   watermark: {
     position: "absolute",

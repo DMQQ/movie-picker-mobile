@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Chip } from "react-native-paper";
-import { colors, fontWeight } from "../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 import { DecadeFilter } from "../../redux/mediaFilters/mediaFiltersSlice";
 
@@ -51,12 +51,12 @@ const styles = StyleSheet.create({
     marginVertical: 0,
   },
   scrollContent: {
-    gap: 8,
-    paddingRight: 16,
+    gap: spacing.sm,
+    paddingRight: spacing.lg,
   },
   chip: {
     backgroundColor: "#1a1a1a",
-    borderRadius: 20,
+    borderRadius: radius.modal,
     borderWidth: 1,
     borderColor: "#333",
   },

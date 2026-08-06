@@ -1,6 +1,6 @@
 import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native";
 import { Text, Chip } from "react-native-paper";
-import { colors, fontWeight } from "../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Animated, {
   FadeIn,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   filterButtonWrapper: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    borderRadius: 100,
+    borderRadius: radius.pill,
     ...Platform.select({
       android: {
         backgroundColor: colors.surface,
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 60,
+    paddingTop: spacing.xl * 3,
   },
   cardContainer: {
     width: CARD_WIDTH,
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     position: "absolute",
-    borderRadius: 28,
+    borderRadius: radius.lg + 4,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 12 },
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     backgroundColor: PRIMARY_COLOR,
     alignItems: "center",
     justifyContent: "center",
-    gap: 24,
+    gap: spacing.xxl,
   },
   frontText: {
     color: "#fff",
@@ -262,14 +262,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 20,
-    paddingTop: 80,
+    padding: spacing.xl,
+    paddingTop: spacing.xl * 4,
     justifyContent: "flex-end",
   },
   movieTitle: {
     fontSize: 32,
     color: "#fff",
-    marginBottom: 8,
+    marginBottom: spacing.sm,
     fontFamily: "Bebas",
     textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 0, height: 1 },
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm - 2,
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
   ratingText: {
     color: "#e2e8f0",
@@ -294,19 +294,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: spacing.sm - 2,
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
   overview: {
     color: "rgba(255,255,255,0.85)",
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     lineHeight: 18,
     fontWeight: fontWeight.normal,
   },
   bottomBar: {
     flexDirection: "row",
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    gap: 12,
+    paddingHorizontal: spacing.xxl,
+    paddingTop: spacing.xl,
+    gap: spacing.md,
     backgroundColor: "rgba(0,0,0,0.4)",
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.1)",
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   buttonContent: {
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
   },
   buttonLabel: {
     fontSize: fontSize.lg,
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   hintRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 12,
+    marginTop: spacing.md,
   },
   hintText: {
     color: "rgba(255,255,255,0.5)",

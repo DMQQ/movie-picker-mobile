@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { Text } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontSize, radius, spacing } from "../constants/design";
 import { Link, router } from "expo-router";
 import { useGetListsQuery, type UserList } from "../redux/lists/listsApi";
 import {
@@ -54,7 +54,7 @@ function GroupCard({ item }: { item: UserList }) {
   return (
     <Link
       disabled={isEmpty}
-      style={{ marginBottom: 15 }}
+      style={{ marginBottom: spacing.screen }}
       href={{ pathname: "/group/[id]", params: toGroupParams(item) }}
     >
       <Link.Trigger>
@@ -74,7 +74,7 @@ function GroupCard({ item }: { item: UserList }) {
                   color="white"
                   style={{ opacity: 0.5 }}
                 />
-                <Text style={{ fontSize: 11, textAlign: "center" }}>
+                <Text style={{ fontSize: fontSize.sm - 1, textAlign: "center" }}>
                   {t("favourites.empty")}
                 </Text>
               </View>
@@ -109,7 +109,7 @@ function SpecialCardsFooter() {
   const t = useTranslation();
 
   return (
-    <View style={{ gap: 15, marginTop: 15 }}>
+    <View style={{ gap: spacing.screen, marginTop: spacing.screen }}>
       <Pressable onPress={() => router.push("/group/super-liked")}>
         <View
           style={{ borderRadius: radius.sm + 2, overflow: "hidden", position: "relative" }}
@@ -249,7 +249,7 @@ export default function RemoteFavouritesList({ listHeader, listRef }: Props) {
       showsVerticalScrollIndicator={false}
       data={groups}
       keyExtractor={(item) => item.id}
-      contentContainerStyle={{ paddingTop: 80, paddingBottom: 60 }}
+      contentContainerStyle={{ paddingTop: spacing.xl * 4, paddingBottom: spacing.xl * 3 }}
       onEndReached={loadMore}
       onEndReachedThreshold={0.5}
       ListHeaderComponent={listHeader ? <>{listHeader}</> : null}
@@ -263,11 +263,11 @@ const styles = StyleSheet.create({
   cardBg: {
     width: WINDOW_WIDTH - 30,
     height: CARD_HEIGHT,
-    borderRadius: 15,
+    borderRadius: radius.md + 3,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.surface,
-    paddingBottom: 25,
+    paddingBottom: spacing.xxl + 1,
   },
   overlay: {
     position: "absolute",
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: (WINDOW_WIDTH / 2 - 25) * 0.45,
     height: (WINDOW_WIDTH / 2 - 25) * 0.65,
-    borderRadius: 5,
+    borderRadius: radius.xs + 1,
   },
   labelRow: {
     flexDirection: "row",
@@ -298,13 +298,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 5,
     left: 15,
-    gap: 5,
+    gap: spacing.xs + 1,
   },
   labelText: {
     fontSize: 25,
     fontFamily: "Bebas",
   },
   countText: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
   },
 });

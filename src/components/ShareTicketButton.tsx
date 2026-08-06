@@ -5,6 +5,7 @@ import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
 import CinemaTicket from "./CinemaTicket";
+import { fontSize, radius, spacing } from "../constants/design";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -209,8 +210,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#F5F0E1",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
     gap: spacing.sm - 2,
     position: "relative",
   },
@@ -272,15 +273,15 @@ const styles = StyleSheet.create({
   },
   viewShot: {
     backgroundColor: "#000",
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
   },
   shareButton: {
-    marginTop: 16,
+    marginTop: spacing.lg,
     backgroundColor: "#fff",
-    paddingVertical: 12,
-    paddingHorizontal: 40,
-    borderRadius: 100,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xxl + 16,
+    borderRadius: radius.pill,
   },
   shareButtonPressed: {
     opacity: 0.8,

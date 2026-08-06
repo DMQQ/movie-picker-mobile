@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../constants/design";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import PrimaryButton from "./PrimaryButton";
@@ -28,7 +28,7 @@ export default function MigrationModal({ visible, counts, isMigrating, onSync, o
             name="cloud-upload-outline"
             size={36}
             color="#BB86FC"
-            style={{ marginBottom: 12 }}
+            style={{ marginBottom: spacing.md }}
           />
           <Text style={styles.title}>Sync your collection</Text>
           <Text style={styles.body}>
@@ -74,12 +74,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.7)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 24,
+    padding: spacing.xxl,
   },
   card: {
     backgroundColor: "#1C1C1E",
-    borderRadius: 20,
-    padding: 28,
+    borderRadius: radius.modal,
+    padding: spacing.xxl + 4,
     width: "100%",
     alignItems: "center",
     borderWidth: 1,
@@ -90,22 +90,22 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     color: "#fff",
     letterSpacing: 0.8,
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
   body: {
     fontSize: fontSize.md,
     color: "rgba(255,255,255,0.65)",
     textAlign: "center",
     lineHeight: 20,
-    marginBottom: 24,
+    marginBottom: spacing.xxl,
   },
   highlight: {
     color: "#BB86FC",
     fontWeight: fontWeight.semibold,
   },
   syncBtn: {
-    borderRadius: 25,
+    borderRadius: radius.lg + 1,
     width: "100%",
-    marginBottom: 6,
+    marginBottom: spacing.xs + 2,
   },
 });

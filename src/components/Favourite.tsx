@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Movie } from "../../types";
 import { useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
+import { fontSize, spacing } from "../constants/design";
 
 export default function CustomFavourite({
   movie,

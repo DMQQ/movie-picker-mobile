@@ -1,6 +1,6 @@
 import { StyleSheet, View, TouchableOpacity, ScrollView, Platform } from "react-native";
 import { Text } from "react-native-paper";
-import { colors, fontWeight } from "../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { memo, useState } from "react";
 import PlatformBlurView from "../PlatformBlurView";
 import DetailsTab from "./tabs/DetailsTab";
@@ -71,35 +71,35 @@ export default memo(MovieTabs);
 
 const styles = StyleSheet.create({
   tabBarContainer: {
-    borderRadius: 20,
-    marginBottom: 10,
-    marginHorizontal: 15,
+    borderRadius: radius.modal,
+    marginBottom: spacing.sm + 2,
+    marginHorizontal: spacing.screen,
     ...Platform.select({
       android: {
         backgroundColor: colors.surface + "cc",
-        borderRadius: 20,
+        borderRadius: radius.modal,
         borderWidth: 2,
         borderColor: "#343434ff",
       },
     }),
   },
   tabBarScrollContainer: {
-    paddingHorizontal: 8,
-    paddingVertical: 8,
-    gap: 8,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+    gap: spacing.sm,
   },
   tabButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 15,
+    borderRadius: radius.md + 3,
   },
   activeTabButton: {
     backgroundColor: colors.primary + "aa",
   },
   tabLabel: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
     fontWeight: fontWeight.semibold,
     color: "rgba(255,255,255,0.7)",
     textTransform: "capitalize",

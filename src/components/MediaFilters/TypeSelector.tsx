@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
-import { colors, fontWeight } from "../../constants/design";
+import { colors, fontWeight, fontSize, radius } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 
 type MediaType = "movie" | "tv" | "both";

@@ -1,5 +1,5 @@
 import { useNavigation } from "expo-router";
-import { colors } from "../constants/design";
+import { colors, radius, spacing } from "../constants/design";
 import { Platform, StyleProp, View, ViewStyle } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PrimaryButton from "./PrimaryButton";
@@ -40,12 +40,12 @@ export default function MoviesActionButtons({
         Platform.OS === "android" && {},
         {
           flexDirection: "row",
-          gap: 15,
+          gap: spacing.screen,
           position: "absolute",
           bottom: 15,
           left: 15,
           right: 15,
-          borderRadius: 100,
+          borderRadius: radius.pill,
           zIndex: 10,
         },
         containerStyle,

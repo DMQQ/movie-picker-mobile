@@ -1,5 +1,5 @@
 import * as AppleAuthentication from "expo-apple-authentication";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../constants/design";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { Icon, Text } from "react-native-paper";
 import GoogleSignInButton from "./GoogleSignInButton";
@@ -57,21 +57,21 @@ export default function AuthProviderButtons({
 }
 
 const styles = StyleSheet.create({
-  options: { gap: 12, marginBottom: 28 },
+  options: { gap: spacing.md, marginBottom: spacing.xxl + 4 },
   emailBtn: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: spacing.sm + 2,
     height: 50,
-    borderRadius: 25,
+    borderRadius: radius.lg + 1,
     backgroundColor: "rgba(255,255,255,0.08)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.12)",
   },
   emailBtnPressed: { backgroundColor: "rgba(255,255,255,0.13)" },
   emailBtnText: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
     fontWeight: fontWeight.medium,
     color: "rgba(255,255,255,0.85)",
     letterSpacing: 0.2,

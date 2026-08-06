@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import Cast from "../Cast";
 import { memo } from "react";
+import { spacing } from "../../../constants/design";
 
 interface CastTabProps {
   id: number;
@@ -20,7 +21,7 @@ export default memo(CastTab);
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 10,
-    paddingHorizontal: 15,
+    paddingTop: spacing.sm + 2,
+    paddingHorizontal: spacing.screen,
   },
 });

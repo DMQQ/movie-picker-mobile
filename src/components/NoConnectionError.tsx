@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useEffect, useState } from "react";
 import { url } from "../context/SocketContext";
+import { fontSize, spacing } from "../constants/design";
 
 export default function NoConnectionError() {
   const isConnected = useNetInfo().isConnected;
@@ -52,5 +53,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 9999,
   },
-  text: { color: "#fff", fontSize: fontSize.lg, marginTop: 10 },
+  text: { color: "#fff", fontSize: fontSize.lg, marginTop: spacing.sm + 2 },
 });

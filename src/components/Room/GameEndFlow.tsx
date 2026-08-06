@@ -6,10 +6,11 @@ import useTranslation from "../../service/useTranslation";
 import { FancySpinner } from "../FancySpinner";
 import UserInputModal, { UserInputModalAction } from "../UserInputModal";
 import { useAppSelector } from "../../redux/store";
+import { spacing } from "../../constants/design";
 
 const styles = StyleSheet.create({
   spinnerContainer: {
-    paddingVertical: 35,
+    paddingVertical: spacing.xxl + 11,
     alignItems: "center",
     justifyContent: "center",
   },

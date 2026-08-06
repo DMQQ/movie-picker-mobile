@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, radius, spacing } from "../constants/design";
 import QRCode from "react-native-qrcode-svg";
 
 interface StyledQRCodeProps {
@@ -45,9 +45,9 @@ export default function StyledQRCode({
 
 const styles = StyleSheet.create({
   wrapper: {
-    padding: 15,
+    padding: spacing.screen,
     borderWidth: 5,
-    borderRadius: 20,
+    borderRadius: radius.modal,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.3,
     shadowRadius: 15,

@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../constants/design";
 import { View, StyleSheet, TouchableOpacity, Platform, TextInput } from "react-native";
 import { Text } from "react-native-paper";
 import { withSpring, withSequence, useSharedValue } from "react-native-reanimated";
@@ -207,14 +207,14 @@ export default function GameRatingPill({ roomId, shouldShow }: GameRatingPillPro
 const styles = StyleSheet.create({
   ratingsRow: {
     flexDirection: "row",
-    gap: 16,
+    gap: spacing.lg,
     justifyContent: "center",
   },
   ratingButton: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 12,
-    borderRadius: 16,
+    padding: spacing.md,
+    borderRadius: radius.card,
     backgroundColor: "rgba(255, 255, 255, 0.08)",
     minWidth: 80,
     gap: spacing.sm - 2,
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   feedbackInput: {
     backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: radius.md,
-    padding: 16,
+    padding: spacing.lg,
     color: "#fff",
     fontSize: fontSize.md,
     minHeight: 100,

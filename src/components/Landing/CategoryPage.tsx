@@ -1,5 +1,5 @@
 import { memo, useCallback, useMemo } from "react";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, spacing } from "../../constants/design";
 import {
   RefreshControl,
   StyleSheet,
@@ -20,7 +20,7 @@ const getItem = (data: any, index: number) => data[index];
 
 const styles = StyleSheet.create({
   listContent: {
-    paddingTop: 100,
+    paddingTop: spacing.xl * 5,
   },
   footer: {
     height: 250,
@@ -28,17 +28,17 @@ const styles = StyleSheet.create({
   noMoreContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 40,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
+    paddingTop: spacing.xxl + 16,
+    paddingBottom: spacing.xl,
+    paddingHorizontal: spacing.xl,
   },
   noMoreText: {
     color: "#fff",
     fontSize: fontSize.xl,
     fontWeight: fontWeight.semibold,
     textAlign: "center",
-    marginTop: 12,
-    marginBottom: 4,
+    marginTop: spacing.md,
+    marginBottom: spacing.xs,
   },
   noMoreSubtitle: {
     color: "rgba(255, 255, 255, 0.6)",

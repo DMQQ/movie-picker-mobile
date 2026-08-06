@@ -1,5 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../constants/design";
 import { Text } from "react-native-paper";
 import Svg, { Path } from "react-native-svg";
 import useTranslation from "../service/useTranslation";
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: spacing.sm + 2,
     height: 50,
-    borderRadius: 25,
+    borderRadius: radius.lg + 1,
     backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#dadce0",
@@ -78,13 +78,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 3,
     elevation: 2,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xl,
   },
   pressed: { backgroundColor: "#f1f3f4" },
   disabled: { opacity: 0.55 },
   label: {
     color: "#3c4043",
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
     fontWeight: fontWeight.medium,
     letterSpacing: 0.2,
   },

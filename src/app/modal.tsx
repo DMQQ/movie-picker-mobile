@@ -8,6 +8,7 @@ import useTranslation from "../service/useTranslation";
 import { useAppSelector } from "../redux/store";
 import { useEffect } from "react";
 import useMaintenance from "../service/useMaintanance";
+import { fontSize, radius, spacing } from "../constants/design";
 
 type ModalType = "no-internet" | "server-error" | "maintenance" | "update";
 type IconName = "wifi-off" | "server-off" | "wrench" | "cellphone-arrow-down";
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#1a1a1a",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: spacing.xxl,
   },
   iconContainer: {
     width: 80,
@@ -158,31 +159,31 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.1)",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   title: {
     fontSize: 28,
     fontFamily: "Bebas",
     color: "#fff",
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   message: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
     color: "rgba(255,255,255,0.7)",
     textAlign: "center",
     lineHeight: 22,
-    marginBottom: 24,
+    marginBottom: spacing.xxl,
   },
   buttonContainer: {
     width: "100%",
-    gap: 12,
+    gap: spacing.md,
   },
   button: {
-    borderRadius: 25,
+    borderRadius: radius.lg + 1,
     width: "100%",
   },
   buttonContent: {
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
   },
 });

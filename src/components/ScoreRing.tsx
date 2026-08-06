@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius } from "../constants/design";
 import { Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import FrostedGlass from "./FrostedGlass";
@@ -12,8 +12,8 @@ const getColor = (score: number) => {
 
 const size = 40;
 const strokeWidth = 3;
-const radius = (size - strokeWidth) / 2;
-const circumference = radius * 2 * Math.PI;
+const circleRadius = (size - strokeWidth) / 2;
+const circumference = circleRadius * 2 * Math.PI;
 
 const absoluteContainer = {
   position: "absolute",
@@ -29,12 +29,12 @@ const ScoreRing = memo(({ score }: { score: number }) => {
   const progress = (score / 10) * circumference;
 
   return (
-    <FrostedGlass style={container} container={{ borderRadius: 100 }}>
+    <FrostedGlass style={container} container={{ borderRadius: radius.pill }}>
       <Svg width={size} height={size}>
         <Circle
           cx={size / 2}
           cy={size / 2}
-          r={radius}
+          r={circleRadius}
           stroke={getColor(score)}
           strokeWidth={strokeWidth}
           fill="transparent"

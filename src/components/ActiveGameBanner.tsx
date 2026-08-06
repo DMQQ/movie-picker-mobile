@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet } from "react-native";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../constants/design";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -48,17 +48,17 @@ const styles = StyleSheet.create({
   banner: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
     backgroundColor: "#1a1a2e",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
     borderRadius: radius.sm + 2,
-    marginBottom: 15,
+    marginBottom: spacing.screen,
   },
   text: {
     flex: 1,
     color: "#fff",
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     fontWeight: fontWeight.medium,
   },
   code: {

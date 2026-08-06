@@ -15,7 +15,7 @@ import {
   Text,
   useTheme,
 } from "react-native-paper";
-import { colors, fontWeight } from "../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import Animated, {
   FadeIn,
   useAnimatedProps,
@@ -101,8 +101,8 @@ function HomeAppbar() {
           tintColor={"#ff4444"}
           style={[
             {
-              borderRadius: 100,
-              marginLeft: 10,
+              borderRadius: radius.pill,
+              marginLeft: spacing.sm + 2,
               overflow: "hidden",
               zIndex: 50,
             },
@@ -327,9 +327,9 @@ const PlaceholderStack = memo(() => (
 const styles = StyleSheet.create({
   smallButton: {
     height: 30,
-    paddingHorizontal: 12.5,
-    paddingVertical: 5,
-    borderRadius: 14,
+    paddingHorizontal: spacing.md + 0.5,
+    paddingVertical: spacing.xs + 1,
+    borderRadius: radius.md + 2,
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -340,10 +340,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonIcon: {
-    marginRight: 4,
+    marginRight: spacing.xs,
   },
   buttonText: {
-    fontSize: 11,
+    fontSize: fontSize.sm - 1,
     fontWeight: fontWeight.medium,
     includeFontPadding: false,
   },
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   },
   stackedCard: {
     position: "absolute",
-    borderRadius: 4,
+    borderRadius: radius.xs,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -370,14 +370,14 @@ const styles = StyleSheet.create({
     width: 24,
     height: 36,
     backgroundColor: colors.surface,
-    borderRadius: 4,
+    borderRadius: radius.xs,
     justifyContent: "center",
     alignItems: "center",
   },
   likedImage: {
     width: 24,
     height: 36,
-    borderRadius: 4,
+    borderRadius: radius.xs,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
@@ -395,14 +395,14 @@ const styles = StyleSheet.create({
     right: 8,
     bottom: 8,
     backgroundColor: colors.surface,
-    borderRadius: 8,
-    paddingHorizontal: 4,
-    paddingVertical: 1,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: spacing.xs - 3,
     zIndex: 100,
   },
   moreText: {
-    fontSize: 8,
-    fontWeight: "bold",
+    fontSize: fontSize.xs - 2,
+    fontWeight: fontWeight.bold,
     color: "#fff",
   },
   midSection: {
@@ -425,19 +425,19 @@ const styles = StyleSheet.create({
   progressLabel: {
     position: "absolute",
     bottom: -10,
-    fontSize: 8,
+    fontSize: fontSize.xs - 2,
     color: "rgba(255,255,255,0.4)",
     fontWeight: fontWeight.semibold,
   },
   connectionChip: {
-    marginTop: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    marginTop: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs - 2,
     borderRadius: radius.sm + 2,
     borderWidth: 1,
   },
   connectionChipText: {
-    fontSize: 9,
+    fontSize: fontSize.xs - 1,
     fontWeight: fontWeight.semibold,
   },
 });

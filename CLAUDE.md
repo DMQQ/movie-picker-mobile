@@ -382,6 +382,7 @@ For intermediate values, derive from the grid: `spacing.sm + 2` (10), `spacing.s
 | `radius.md` | 12 | Cards (compact), inputs |
 | `radius.card` | 16 | Default card corner |
 | `radius.modal` | 20 | Modal/sheet corner |
+| `radius.lg` | 24 | Large cards, tickets (auth cards, game summary) |
 | `radius.pill` | 100 | Pill buttons, chips |
 
 #### Font Sizes (`fontSize.*`)
@@ -445,7 +446,7 @@ Use `getUserAvatarColor(name: string)` from `src/utils/avatar.ts` — returns a 
 - Page background: `colors.appBackground` (`#000`) for screen containers, `colors.background` (`#121212`) for paper-compatible pages.
 - Responsive sizing: `layout.pxToDp()` or `layout.responsivePxToDp()` from `src/utils/layout.ts` for layout dimensions (width, height). Spacing/radius are already responsive.
 - Animations: `react-native-reanimated` v4 (`FadeInDown`, `withSpring`, `withTiming`); Skia for canvas effects; Lottie for JSON animations.
-- **Future: remaining hardcoded values** — `fontSize: 13/15/11` (body variants), `fontSize: 22/28/30/35/38/42/45` (display/Bebas), `borderRadius: 5/25/15/24/14` (non-grid radii) — still need design tokens or ad-hoc expressions. Add to `design.ts` if a pattern emerges.
+- **Future: remaining hardcoded values** — display/Bebas sizes (`fontSize: 22/25/28/30/32/34/36/40/42/45/50/55/65`, chosen per-layout for hero text), one-off radii (`borderRadius: 30/32/35/36/40/50/90`), plus `letterSpacing`, `lineHeight`, `borderWidth` values. For non-grid values use expressions off the grid (`spacing.sm + 2`, `fontSize.md - 1`, `radius.md + 3`). Add to `design.ts` if a pattern emerges.
 
 ### i18n
 `useTranslation()` — supported: `en`, `pl`, `de`, `es`, `pt`. Falls back to `en`. Keys in `src/translations/*.json`.

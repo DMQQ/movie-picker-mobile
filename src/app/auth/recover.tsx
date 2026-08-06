@@ -7,6 +7,7 @@ import PrimaryButton from "../../components/PrimaryButton";
 import { useRecoverMutation } from "../../redux/auth/authApi";
 import FadeSlide from "../../components/FadeSlide";
 import useTranslation from "../../service/useTranslation";
+import { fontSize, radius, spacing, typography } from "../../constants/design";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
@@ -124,21 +125,21 @@ export default function RecoverScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  flex: { flex: 1, ...Platform.select({ ios: { paddingTop: 20 } }) },
-  scroll: { padding: 24, paddingTop: 16 },
-  grabber: { width: 36, height: 4, borderRadius: 2, backgroundColor: "#555", alignSelf: "center", marginBottom: 28 },
-  title: { fontSize: 38, fontFamily: "Bebas", color: "#fff", letterSpacing: 1 },
-  subtitle: { fontSize: fontSize.md, color: "#666", marginTop: 2, marginBottom: 28, lineHeight: 20 },
-  backBtn: { flexDirection: "row", alignItems: "center", gap: spacing.sm - 2, marginBottom: 20, alignSelf: "flex-start" },
+  flex: { flex: 1, ...Platform.select({ ios: { paddingTop: spacing.xl } }) },
+  scroll: { padding: spacing.xxl, paddingTop: spacing.lg },
+  grabber: { width: 36, height: 4, borderRadius: radius.xs - 2, backgroundColor: "#555", alignSelf: "center", marginBottom: spacing.xxl + 4 },
+  title: { fontSize: typography.bebasSize.auth, fontFamily: "Bebas", color: "#fff", letterSpacing: 1 },
+  subtitle: { fontSize: fontSize.md, color: "#666", marginTop: spacing.xs - 2, marginBottom: spacing.xxl + 4, lineHeight: 20 },
+  backBtn: { flexDirection: "row", alignItems: "center", gap: spacing.sm - 2, marginBottom: spacing.xl, alignSelf: "flex-start" },
   backText: { fontSize: fontSize.md, color: "rgba(255,255,255,0.6)" },
-  formError: { backgroundColor: "rgba(207,102,121,0.12)", borderRadius: radius.sm + 2, paddingVertical: spacing.sm + 2, paddingHorizontal: 14, marginBottom: 16 },
-  formErrorText: { color: "#CF6679", fontSize: 13 },
-  fields: { gap: 4, marginBottom: 16 },
+  formError: { backgroundColor: "rgba(207,102,121,0.12)", borderRadius: radius.sm + 2, paddingVertical: spacing.sm + 2, paddingHorizontal: spacing.md + 2, marginBottom: spacing.lg },
+  formErrorText: { color: "#CF6679", fontSize: fontSize.md - 1 },
+  fields: { gap: spacing.xs, marginBottom: spacing.lg },
   inputOutline: { borderRadius: radius.md },
   codeInput: { fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace", letterSpacing: 2 },
-  fieldError: { color: "#CF6679", fontSize: fontSize.sm, paddingHorizontal: 4, marginBottom: 8 },
-  primaryBtn: { borderRadius: 25, marginBottom: 20 },
-  primaryBtnContent: { paddingVertical: 6 },
-  hint: { flexDirection: "row", alignItems: "center", gap: 8 },
+  fieldError: { color: "#CF6679", fontSize: fontSize.sm, paddingHorizontal: spacing.xs, marginBottom: spacing.sm },
+  primaryBtn: { borderRadius: radius.lg + 1, marginBottom: spacing.xl },
+  primaryBtnContent: { paddingVertical: spacing.xs + 2 },
+  hint: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
   hintText: { fontSize: fontSize.sm, color: "rgba(255,255,255,0.3)", flex: 1 },
 });

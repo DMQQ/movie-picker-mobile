@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../constants/design";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 
@@ -27,7 +27,7 @@ export default function MigrationBanner({ counts, isMigrating, onSync, onDismiss
         name="cloud-upload-outline"
         size={20}
         color="#BB86FC"
-        style={{ marginTop: 1 }}
+        style={{ marginTop: spacing.xs - 3 }}
       />
       <View style={styles.text}>
         <Text style={styles.title}>Sync to cloud</Text>
@@ -44,7 +44,7 @@ export default function MigrationBanner({ counts, isMigrating, onSync, onDismiss
       >
         Sync
       </Button>
-      <Pressable onPress={onDismiss} hitSlop={10} style={{ padding: 4 }}>
+      <Pressable onPress={onDismiss} hitSlop={10} style={{ padding: spacing.xs }}>
         <MaterialCommunityIcons name="close" size={16} color="rgba(255,255,255,0.4)" />
       </Pressable>
     </View>
@@ -61,21 +61,21 @@ const styles = StyleSheet.create({
     borderLeftColor: "#BB86FC",
     borderRadius: radius.sm + 2,
     paddingVertical: spacing.sm + 2,
-    paddingLeft: 12,
-    paddingRight: 4,
-    marginBottom: 14,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.xs,
+    marginBottom: spacing.md + 2,
   },
   text: {
     flex: 1,
   },
   title: {
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     fontWeight: fontWeight.semibold,
     color: "#BB86FC",
   },
   sub: {
     fontSize: fontSize.sm,
     color: "rgba(255,255,255,0.5)",
-    marginTop: 1,
+    marginTop: spacing.xs - 3,
   },
 });

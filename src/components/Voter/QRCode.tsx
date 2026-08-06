@@ -1,6 +1,6 @@
 import { Share, View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, spacing } from "../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import StyledQRCode from "../StyledQRCode";
 
@@ -18,7 +18,7 @@ export default function QRCodeComponent(props: {
         size={props.size}
       />
       <Button
-        style={{ marginTop: 15 }}
+        style={{ marginTop: spacing.screen }}
         contentStyle={{ flexDirection: "row-reverse" }}
         icon={() => (
           <MaterialCommunityIcons

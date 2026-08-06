@@ -1,6 +1,7 @@
 import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Checkbox } from "react-native-paper";
 import Thumbnail from "../Thumbnail";
+import { radius } from "../../constants/design";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -22,8 +23,8 @@ export default function ShareThumbnailItem({
       <Thumbnail
         size={185}
         path={imageUrl}
-        container={{ width: "100%", height: "100%", borderRadius: 8 }}
-        style={{ width: "100%", height: "100%", borderRadius: 8 }}
+        container={{ width: "100%", height: "100%", borderRadius: radius.sm }}
+        style={{ width: "100%", height: "100%", borderRadius: radius.sm }}
       />
       <View style={[styles.checkboxOverlay, isSelected && styles.checkboxSelected]}>
         <Checkbox
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
   container: {
     width: (SCREEN_WIDTH - 90) / 3,
     aspectRatio: 2 / 3,
-    borderRadius: 8,
+    borderRadius: radius.sm,
     overflow: "hidden",
     position: "relative",
   },
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     top: 4,
     right: 4,
     backgroundColor: "rgba(0,0,0,0.5)",
-    borderRadius: 100,
+    borderRadius: radius.pill,
   },
   checkboxSelected: { backgroundColor: "rgba(103, 80, 164, 0.8)" },
 });

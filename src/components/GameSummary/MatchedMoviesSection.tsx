@@ -4,6 +4,7 @@ import CreateCollectionFromLiked from "../CreateCollectionFromLiked";
 import MatchedItem from "./MatchedItem";
 import useTranslation from "../../service/useTranslation";
 import { IGameSummary } from "./types";
+import { fontSize, spacing, typography } from "../../constants/design";
 
 interface Props {
   summary: IGameSummary;
@@ -44,11 +45,11 @@ export default function MatchedMoviesSection({ summary, onTryAgain }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { marginBottom: 30 },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15 },
-  title: { fontSize: 35, fontFamily: "Bebas" },
-  row: { gap: spacing.sm + 2, marginBottom: 15 },
-  empty: { flex: 1, justifyContent: "center", alignItems: "center", marginTop: 30 },
-  emptyTitle: { color: "#fff", fontSize: 45, fontFamily: "Bebas" },
-  emptyDesc: { color: "#fff", fontSize: fontSize.lg, textAlign: "center", marginVertical: 15, maxWidth: 300 },
+  container: { marginBottom: spacing.xxl + 6 },
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.screen },
+  title: { fontSize: typography.bebasSize.section, fontFamily: "Bebas" },
+  row: { gap: spacing.sm + 2, marginBottom: spacing.screen },
+  empty: { flex: 1, justifyContent: "center", alignItems: "center", marginTop: spacing.xxl + 6 },
+  emptyTitle: { color: "#fff", fontSize: typography.bebasSize.empty, fontFamily: "Bebas" },
+  emptyDesc: { color: "#fff", fontSize: fontSize.lg, textAlign: "center", marginVertical: spacing.screen, maxWidth: 300 },
 });

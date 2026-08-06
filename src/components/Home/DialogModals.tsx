@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { useContext } from "react";
 import { Dimensions, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
 import QRCode from "react-native-qrcode-svg";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -105,9 +105,9 @@ export default function DialogModals({
             style={{
               color: theme.colors.primary,
               textAlign: "center",
-              marginTop: 15,
+              marginTop: spacing.screen,
               fontSize: fontSize.xl,
-              fontWeight: "bold",
+              fontWeight: fontWeight.bold,
               letterSpacing: 3,
             }}
           >

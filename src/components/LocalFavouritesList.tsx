@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Text } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontSize, radius, spacing } from "../constants/design";
 import { Link, router } from "expo-router";
 import { useAppSelector } from "../redux/store";
 import { useBlockedMovies } from "../hooks/useBlockedMovies";
@@ -34,7 +34,7 @@ export default function LocalFavouritesList({ listRef }: Props) {
       showsVerticalScrollIndicator={false}
       data={groups}
       keyExtractor={(item, index) => item.id + "-" + index}
-      contentContainerStyle={{ paddingTop: 80, paddingBottom: 60 }}
+      contentContainerStyle={{ paddingTop: spacing.xl * 4, paddingBottom: spacing.xl * 3 }}
       ListFooterComponent={
         <View style={styles.footerContainer}>
           <Pressable
@@ -165,7 +165,7 @@ export default function LocalFavouritesList({ listRef }: Props) {
       renderItem={({ item }) => (
         <Link
           disabled={item?.movies?.length === 0}
-          style={{ marginBottom: 15 }}
+          style={{ marginBottom: spacing.screen }}
           href={{
             pathname: "/group/[id]",
             params: { id: item.id, group: JSON.stringify(item) },
@@ -196,7 +196,7 @@ export default function LocalFavouritesList({ listRef }: Props) {
                       color="white"
                       style={{ opacity: 0.5 }}
                     />
-                    <Text style={{ fontSize: 11, textAlign: "center" }}>
+                    <Text style={{ fontSize: fontSize.sm - 1, textAlign: "center" }}>
                       {t("favourites.empty")}
                     </Text>
                   </View>
@@ -228,8 +228,8 @@ export default function LocalFavouritesList({ listRef }: Props) {
 
 const styles = StyleSheet.create({
   footerContainer: {
-    gap: 15,
-    marginTop: 15,
+    gap: spacing.screen,
+    marginTop: spacing.screen,
   },
   footerCard: {
     marginBottom: 0,
@@ -237,11 +237,11 @@ const styles = StyleSheet.create({
   cardBg: {
     width: WINDOW_WIDTH - 30,
     height: WINDOW_WIDTH / 2 - 30,
-    borderRadius: 15,
+    borderRadius: radius.md + 3,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.surface,
-    paddingBottom: 25,
+    paddingBottom: spacing.xxl + 1,
   },
   overlay: {
     position: "absolute",
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: (WINDOW_WIDTH / 2 - 25) * 0.45,
     height: (WINDOW_WIDTH / 2 - 25) * 0.65,
-    borderRadius: 5,
+    borderRadius: radius.xs + 1,
   },
   labelRow: {
     flexDirection: "row",
@@ -272,13 +272,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 10,
     left: 15,
-    gap: 5,
+    gap: spacing.xs + 1,
   },
   labelText: {
     fontSize: 25,
     fontFamily: "Bebas",
   },
   countText: {
-    fontSize: 15,
+    fontSize: fontSize.md + 1,
   },
 });

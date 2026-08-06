@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { IconButton, Text, useTheme } from "react-native-paper";
-import { colors, fontWeight } from "../../constants/design";
+import { colors, fontWeight, fontSize, spacing } from "../../constants/design";
 import PagerView from "react-native-pager-view";
 import Animated, {
   useAnimatedStyle,
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.sm,
     height: 56,
   },
   track: {
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   tabLabel: {
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     fontWeight: fontWeight.medium,
     color: "rgba(255,255,255,0.45)",
     letterSpacing: 0.3,
@@ -167,6 +167,6 @@ const styles = StyleSheet.create({
   },
   page: {
     flex: 1,
-    paddingBottom: 15,
+    paddingBottom: spacing.screen,
   },
 });

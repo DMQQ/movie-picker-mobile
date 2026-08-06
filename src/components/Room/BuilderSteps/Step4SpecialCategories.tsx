@@ -7,6 +7,7 @@ import SkeletonCard from "../SkeletonCard";
 import { useGetSpecialCategoriesWithThumbnailsQuery } from "../../../redux/movie/movieApi";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import { toggleSpecialCategory } from "../../../redux/roomBuilder/roomBuilderSlice";
+import { fontSize, spacing } from "../../../constants/design";
 
 const Step4SpecialCategories: React.FC = React.memo(() => {
   const dispatch = useAppDispatch();
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingText: {
-    marginTop: 12,
+    marginTop: spacing.md,
     fontSize: fontSize.lg,
     opacity: 0.7,
   },

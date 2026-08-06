@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import { TouchableRipple, Text } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontSize, radius, spacing } from "../../constants/design";
 import SkeletonCard from "./SkeletonCard";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -257,18 +257,18 @@ const styles = StyleSheet.create({
   providerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 12,
-    gap: 8,
+    marginBottom: spacing.md,
+    gap: spacing.sm,
   },
   providerContainer: {
-    marginRight: 15,
-    marginBottom: 10,
+    marginRight: spacing.screen,
+    marginBottom: spacing.sm + 2,
   },
   providerContainerVertical: {
     flex: 1,
   },
   providerWrapper: {
-    borderRadius: 8,
+    borderRadius: radius.sm,
     borderWidth: 2,
     borderColor: "transparent",
     backgroundColor: "#1a1a1a",
@@ -286,8 +286,8 @@ const styles = StyleSheet.create({
     height: 100,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 8,
-    paddingHorizontal: 4,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.xs,
     gap: spacing.sm - 2,
   },
   selectedProvider: {
@@ -296,16 +296,16 @@ const styles = StyleSheet.create({
   providerLogo: {
     width: 50,
     height: 50,
-    borderRadius: 6,
+    borderRadius: radius.xs + 2,
   },
   providerLogoVertical: {
     width: 50,
     height: 50,
-    borderRadius: 8,
+    borderRadius: radius.sm,
   },
   providerName: {
     color: "#fff",
-    fontSize: 11,
+    fontSize: fontSize.sm - 1,
     textAlign: "center",
     maxWidth: "100%",
   },
@@ -328,10 +328,10 @@ const styles = StyleSheet.create({
     height: 18,
   },
   skeletonMargin: {
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   skeletonBottomMargin: {
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
   skeletonRow: {
     flexDirection: "row",

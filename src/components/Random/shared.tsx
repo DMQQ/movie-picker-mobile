@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { Icon, Text } from "react-native-paper";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -126,15 +126,15 @@ const styles = StyleSheet.create({
   actionButtons: {
     flexDirection: "row",
     gap: spacing.sm + 2,
-    marginTop: 12,
+    marginTop: spacing.md,
   },
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm - 2,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 20,
+    paddingVertical: spacing.xs + 2,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.modal,
     borderWidth: 1,
   },
   actionButtonText: {

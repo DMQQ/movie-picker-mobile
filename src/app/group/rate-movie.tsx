@@ -14,6 +14,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useAppDispatch } from "../../redux/store";
 import { usePatchItemMutation } from "../../redux/lists/listsApi";
 import { rateInGroup } from "../../redux/favourites/favourites";
+import { fontSize, radius, spacing } from "../../constants/design";
 
 export default function RateMovieScreen() {
   const params = useLocalSearchParams<{
@@ -104,33 +105,33 @@ export default function RateMovieScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 24,
+    paddingHorizontal: spacing.xxl,
+    paddingTop: spacing.xxl,
   },
   title: {
     fontSize: 22,
     fontFamily: "Bebas",
-    marginBottom: 24,
+    marginBottom: spacing.xxl,
     letterSpacing: 0.5,
   },
   stars: {
     flexDirection: "row",
     gap: spacing.sm - 2,
-    marginBottom: 24,
+    marginBottom: spacing.xxl,
   },
   noteInput: {
     backgroundColor: "#242424",
     borderRadius: radius.sm + 2,
-    padding: 12,
+    padding: spacing.md,
     color: "#fff",
     fontSize: fontSize.md,
     minHeight: 90,
     textAlignVertical: "top",
-    marginBottom: 24,
+    marginBottom: spacing.xxl,
   },
   actions: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    gap: 8,
+    gap: spacing.sm,
   },
 });

@@ -7,6 +7,7 @@ import PickGenres from "../../components/Voter/PickGenres";
 import PickProviders from "../../components/Voter/PickProviders";
 import PageHeading from "../../components/PageHeading";
 import useTranslation from "../../service/useTranslation";
+import { fontSize, spacing } from "../../constants/design";
 
 interface Props {
   sessionSettings: any;
@@ -36,13 +37,13 @@ export default function InitialState({
       <View
         style={{
           flex: 1,
-          paddingHorizontal: 15,
-          paddingBottom: 15,
-          paddingTop: 60,
+          paddingHorizontal: spacing.screen,
+          paddingBottom: spacing.screen,
+          paddingTop: spacing.xl * 3,
         }}
       >
         <View style={{ flex: 1 }}>
-          <View style={{ marginTop: 15 }}>
+          <View style={{ marginTop: spacing.screen }}>
             <Text style={{ fontSize: fontSize.xl }}>{t("voter.home.howto")}</Text>
           </View>
           <PickCategory
@@ -71,7 +72,7 @@ export default function InitialState({
           />
         </View>
       </View>
-      <View style={{ padding: 15, paddingTop: 0 }}>
+      <View style={{ padding: spacing.screen, paddingTop: 0 }}>
         <PrimaryButton onPress={actions.createSession}>
           {t("voter.home.create")}
         </PrimaryButton>

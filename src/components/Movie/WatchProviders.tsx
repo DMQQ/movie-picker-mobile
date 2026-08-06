@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo } from "react";
 import { Platform, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Text } from "react-native-paper";
-import { colors, fontWeight } from "../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing, typography } from "../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
 import FrostedGlass from "../FrostedGlass";
@@ -169,24 +169,24 @@ const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvi
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 30,
+    marginTop: spacing.xxl + 6,
   },
   title: {
-    fontSize: 35,
+    fontSize: typography.bebasSize.section,
     fontFamily: "Bebas",
     lineHeight: 35,
   },
   frostedGlass: {
-    marginTop: 15,
+    marginTop: spacing.screen,
     padding: spacing.sm + 2,
-    paddingHorizontal: 15,
-    borderRadius: 15,
+    paddingHorizontal: spacing.screen,
+    borderRadius: radius.md + 3,
     ...Platform.select({
       android: {
         backgroundColor: colors.surface + "cc",
         borderWidth: 2,
         borderColor: "#343434ff",
-        borderRadius: 15,
+        borderRadius: radius.md + 3,
       },
     }),
   },
@@ -194,20 +194,20 @@ const styles = StyleSheet.create({
     height: 95,
   },
   scrollContent: {
-    paddingVertical: 5,
+    paddingVertical: spacing.xs + 1,
   },
   providerContainer: {
-    marginRight: 15,
+    marginRight: spacing.screen,
     alignItems: "center",
   },
   thumbnailWrapper: {
     position: "relative",
-    marginTop: 5,
+    marginTop: spacing.xs + 1,
   },
   thumbnail: {
     width: 50,
     height: 50,
-    borderRadius: 7.5,
+    borderRadius: radius.xs + 3.5,
   },
   iconsContainer: {
     position: "absolute",
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   iconBadge: {
-    borderRadius: 8,
+    borderRadius: radius.sm,
     width: 16,
     height: 16,
     justifyContent: "center",
@@ -226,25 +226,25 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.3)",
   },
   iconMargin: {
-    marginLeft: 2,
+    marginLeft: spacing.xs - 2,
   },
   overflowBadge: {
     backgroundColor: "#666",
   },
   overflowText: {
     color: "white",
-    fontSize: 8,
-    fontWeight: "bold",
+    fontSize: fontSize.xs - 2,
+    fontWeight: fontWeight.bold,
   },
   attribution: {
     color: "rgba(255,255,255,0.8)",
     textAlign: "center",
-    fontSize: 11,
-    marginTop: 2.5,
+    fontSize: fontSize.sm - 1,
+    marginTop: spacing.xs - 2.5,
   },
   legendContainer: {
-    marginTop: 12,
-    marginBottom: 8,
+    marginTop: spacing.md,
+    marginBottom: spacing.sm,
   },
   legendRow: {
     flexDirection: "row",
@@ -255,17 +255,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     justifyContent: "center",
-    marginHorizontal: 2,
+    marginHorizontal: spacing.xs - 2,
   },
   legendIcon: {
-    borderRadius: 8,
+    borderRadius: radius.sm,
     width: 16,
     height: 16,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.3)",
-    marginRight: 6,
+    marginRight: spacing.xs + 2,
   },
   legendText: {
     fontSize: fontSize.xs,

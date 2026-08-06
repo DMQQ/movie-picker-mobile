@@ -1,6 +1,6 @@
 import { Platform, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
-import { colors, fontWeight } from "../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing } from "../constants/design";
 import PrimaryButton from "./PrimaryButton";
 import type { TourStepRenderProps } from "./Tour/TourContext";
 import PlatformBlurView from "./PlatformBlurView";
@@ -84,20 +84,20 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(8,8,8,0.88)",
   },
   inner: {
-    padding: 24,
+    padding: spacing.xxl,
   },
   title: {
     fontFamily: "Bebas",
     fontSize: 28,
     color: "#fff",
     letterSpacing: 1,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   description: {
     color: "rgba(255,255,255,0.62)",
     fontSize: fontSize.md,
     lineHeight: 21,
-    marginBottom: 20,
+    marginBottom: spacing.xl,
   },
   footer: {
     flexDirection: "row",
@@ -112,28 +112,28 @@ const styles = StyleSheet.create({
   dot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
+    borderRadius: radius.xs - 1,
     backgroundColor: "rgba(255,255,255,0.2)",
   },
   dotActive: {
     width: 18,
-    borderRadius: 3,
+    borderRadius: radius.xs - 1,
     backgroundColor: PRIMARY,
   },
   actions: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: spacing.xs,
   },
   skipLabel: {
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
   },
   nextButton: {
-    borderRadius: 100,
+    borderRadius: radius.pill,
   },
   nextButtonContent: {
     paddingHorizontal: spacing.sm + 2,
-    paddingVertical: 2,
+    paddingVertical: spacing.xs - 2,
   },
   nextLabel: {
     fontSize: fontSize.md,

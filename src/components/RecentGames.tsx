@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
 
   info: { flex: 1, gap: spacing.xs },
   title: { fontSize: fontSize.lg - 1, fontWeight: fontWeight.bold, color: colors.text },
-  meta: { gap: 2 },
+  meta: { gap: spacing.xs - 2 },
   stat: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
   statValue: { fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: colors.primary },
   latestRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },

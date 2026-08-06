@@ -7,7 +7,7 @@ import {
   Platform,
 } from "react-native";
 import { Text } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontSize, radius, spacing } from "../../constants/design";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingHorizontal: spacing.sm + 2,
-    paddingVertical: 4,
+    paddingVertical: spacing.xs,
   },
   chipButton: {
     alignItems: "center",
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   chipImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 9,
+    borderRadius: radius.sm + 1,
   },
 });
 

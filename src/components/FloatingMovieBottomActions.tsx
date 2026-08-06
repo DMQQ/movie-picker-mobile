@@ -1,5 +1,5 @@
 import * as Haptics from "expo-haptics";
-import { fontWeight } from "../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../constants/design";
 import { useCallback, useMemo, useState } from "react";
 import {
   Dimensions,
@@ -162,7 +162,7 @@ export default function FloatingMovieBottomActions({
 
   return (
     <Animated.View
-      style={[styles.container, { paddingBottom: 15 }, containerOpacity]}
+      style={[styles.container, { paddingBottom: spacing.screen }, containerOpacity]}
     >
       {Platform.OS === "ios" ? (
         <Animated.View style={[styles.backgroundContainer, backgroundOpacity]}>
@@ -263,8 +263,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingTop: 10,
-    paddingHorizontal: 15,
+    paddingTop: spacing.sm + 2,
+    paddingHorizontal: spacing.screen,
     zIndex: 1000,
   },
   backgroundContainer: {
@@ -291,35 +291,35 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: spacing.sm + 2,
     paddingHorizontal: spacing.sm + 2,
-    gap: 15,
+    gap: spacing.screen,
   },
   buttonGroup: {
     flexDirection: "row",
-    borderRadius: 100,
+    borderRadius: radius.pill,
     overflow: "hidden",
     alignItems: "center",
-    paddingHorizontal: 2,
+    paddingHorizontal: spacing.xs - 2,
   },
   smartSearchButton: {
-    borderRadius: 25,
+    borderRadius: radius.lg + 1,
     overflow: "hidden",
   },
   smartSearchBlur: {
-    borderRadius: 25,
+    borderRadius: radius.lg + 1,
     overflow: "hidden",
-    paddingHorizontal: 16,
-    paddingVertical: 6,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xs + 2,
     minHeight: 48,
     justifyContent: "center",
   },
   smartSearchContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: spacing.sm,
   },
   searchButtonText: {
     color: "white",
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     fontWeight: fontWeight.semibold,
   },
   trailersContainer: {
@@ -329,20 +329,20 @@ const styles = StyleSheet.create({
     right: 15,
   },
   trailersBlur: {
-    borderRadius: 15,
+    borderRadius: radius.md + 3,
     overflow: "hidden",
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
   },
   trailerButton: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 15,
+    paddingHorizontal: spacing.screen,
     paddingVertical: spacing.sm + 2,
     gap: spacing.sm + 2,
   },
   trailerText: {
     color: "white",
-    fontWeight: "bold",
+    fontWeight: fontWeight.bold,
     flex: 1,
   },
   androidButtonBackground: {

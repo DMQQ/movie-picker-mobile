@@ -4,6 +4,7 @@ import { Text } from "react-native-paper";
 import Thumbnail from "../Thumbnail";
 import layout from "../../utils/layout";
 import FrostedGlass from "../FrostedGlass";
+import { fontSize, radius, spacing } from "../../constants/design";
 
 export default function Cast({ id, type, initialData }: { id: number; type: "movie" | "tv"; initialData?: any }) {
   const { data: fetchedData, isLoading } = useGetMovieKeyPeopleQuery(
@@ -24,7 +25,7 @@ export default function Cast({ id, type, initialData }: { id: number; type: "mov
     <View style={styles.container}>
       <View style={styles.actorsRow}>
         {data?.actors?.map((item, index) => (
-          <FrostedGlass key={item.id.toString() + index} style={styles.card} container={{ marginBottom: 12, width: CARD_WIDTH }}>
+          <FrostedGlass key={item.id.toString() + index} style={styles.card} container={{ marginBottom: spacing.md, width: CARD_WIDTH }}>
             <Thumbnail priority="low" size={200} path={item.profile_path || ""} container={styles.image} />
 
             <View style={styles.textWrap}>
@@ -39,12 +40,12 @@ export default function Cast({ id, type, initialData }: { id: number; type: "mov
         ))}
       </View>
 
-      <ScrollView horizontal style={{ marginTop: 30 }} showsHorizontalScrollIndicator={false} overScrollMode="never">
+      <ScrollView horizontal style={{ marginTop: spacing.xxl + 6 }} showsHorizontalScrollIndicator={false} overScrollMode="never">
         {data?.directors?.map((item) => (
-          <FrostedGlass key={item.id.toString()} style={styles.directorContainer} container={{ marginRight: 15 }}>
+          <FrostedGlass key={item.id.toString()} style={styles.directorContainer} container={{ marginRight: spacing.screen }}>
             {item.profile_path && <Thumbnail priority="low" path={item.profile_path} container={styles.directorImage} />}
 
-            <View style={{ gap: 5, flex: 1 }}>
+            <View style={{ gap: spacing.xs + 1, flex: 1 }}>
               <Text style={{ color: "#fff", fontSize: 22.5, fontFamily: "Bebas" }}>{item.name}</Text>
 
               <Text
@@ -78,15 +79,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 0,
   },
   card: {
-    padding: 12,
-    borderRadius: 20,
+    padding: spacing.md,
+    borderRadius: radius.modal,
     flex: 0,
   },
   image: {
     width: "100%",
     height: CARD_WIDTH * 1.15,
     borderRadius: radius.sm + 2,
-    marginBottom: 10,
+    marginBottom: spacing.sm + 2,
   },
   textWrap: {
     paddingTop: 0,
@@ -102,10 +103,10 @@ const styles = StyleSheet.create({
   },
 
   directorContainer: {
-    padding: 15,
+    padding: spacing.screen,
     flexDirection: "row",
-    gap: 15,
-    borderRadius: 100,
+    gap: spacing.screen,
+    borderRadius: radius.pill,
     alignItems: "center",
     flex: 0,
   },

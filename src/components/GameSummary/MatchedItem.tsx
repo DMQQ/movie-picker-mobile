@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontSize, fontWeight, spacing } from "../../constants/design";
 import { Movie } from "../../../types";
 import MatchTile from "../Overview/MatchTile";
 import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
@@ -46,7 +46,7 @@ export default function MatchedItem({ summary, badge = false, ...item }: Props) 
           </Text>
           <Button
             style={{
-              marginTop: 8,
+              marginTop: spacing.sm,
               borderColor: isInGroup1 ? colors.error : colors.primary,
             }}
             mode="outlined"
@@ -62,6 +62,6 @@ export default function MatchedItem({ summary, badge = false, ...item }: Props) 
 }
 
 const styles = StyleSheet.create({
-  footer: { flex: 1, justifyContent: "space-between", marginTop: 5 },
-  title: { fontSize: fontSize.sm, fontWeight: "bold" },
+  footer: { flex: 1, justifyContent: "space-between", marginTop: spacing.xs + 1 },
+  title: { fontSize: fontSize.sm, fontWeight: fontWeight.bold },
 });

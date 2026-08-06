@@ -4,7 +4,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Dimensions, Platform, Pressable } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Portal } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, radius } from "../../constants/design";
 import Animated, { FadeIn, FadeOut, withSpring, withTiming } from "react-native-reanimated";
 import { FancySpinner } from "../../components/FancySpinner";
 import ScratchCard from "../../components/ScratchCard";
@@ -131,7 +131,7 @@ export default function Modal({ match, onClose, styles }: any) {
           style={{
             borderWidth: 5,
             borderColor: colors.primary,
-            borderRadius: 15,
+            borderRadius: radius.md + 3,
             marginTop: Platform.OS === "ios" ? 85 : 150,
             position: "relative",
             zIndex: 1000,
@@ -149,7 +149,7 @@ export default function Modal({ match, onClose, styles }: any) {
                 alignItems: "center",
                 backgroundColor: "rgba(0,0,0,0.7)",
                 zIndex: 10,
-                borderRadius: 13,
+                borderRadius: radius.md + 1,
               }}
             >
               <FancySpinner />

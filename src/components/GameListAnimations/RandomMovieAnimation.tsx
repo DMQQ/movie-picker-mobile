@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { colors } from "../../constants/design";
+import { colors, radius } from "../../constants/design";
 import { View, StyleSheet, Animated, Easing } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 

@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { fontWeight } from "../../constants/design";
+import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
@@ -271,11 +271,11 @@ export default function GameList() {
           ref={scrollRef}
           style={[
             styles.container,
-            Platform.OS === "android" && { marginTop: 30 },
+            Platform.OS === "android" && { marginTop: spacing.xxl + 6 },
           ]}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingTop: 60,
+            paddingTop: spacing.xl * 3,
             paddingBottom: insets.bottom,
           }}
         >
@@ -307,23 +307,23 @@ export default function GameList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 15,
-    paddingTop: 15,
+    paddingHorizontal: spacing.screen,
+    paddingTop: spacing.screen,
   },
   header: {
-    paddingBottom: 15,
+    paddingBottom: spacing.screen,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
   },
   headerTop: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
-    paddingHorizontal: 8,
+    marginBottom: spacing.lg,
+    paddingHorizontal: spacing.sm,
     position: "relative",
   },
   backButton: {
-    marginRight: 8,
+    marginRight: spacing.sm,
     position: "absolute",
     left: 8,
     zIndex: 1,
@@ -334,18 +334,18 @@ const styles = StyleSheet.create({
     color: "#fff",
     flex: 1,
     textAlign: "center",
-    marginLeft: 40,
-    marginRight: 40,
+    marginLeft: spacing.xxl + 16,
+    marginRight: spacing.xxl + 16,
   },
   categoriesContainer: {
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   categoryChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.modal,
     backgroundColor: "rgba(255,255,255,0.1)",
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   categoryChipActive: {
     backgroundColor: "#fff",
@@ -359,12 +359,12 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   cardContainer: {
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
   },
   card: {
     height: CARD_HEIGHT,
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
     backgroundColor: "#1a1a1a",
   },
@@ -380,8 +380,8 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   cardContent: {
-    paddingHorizontal: 15,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.screen,
+    paddingVertical: spacing.md,
   },
   cardTitle: {
     fontFamily: "Bebas",
@@ -390,20 +390,20 @@ const styles = StyleSheet.create({
   },
   cardDescription: {
     color: "rgba(255,255,255,0.7)",
-    fontSize: 13,
+    fontSize: fontSize.md - 1,
     lineHeight: 18,
-    marginTop: 2,
+    marginTop: spacing.xs - 2,
   },
   cardMeta: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm - 2,
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   metaItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: spacing.xs,
   },
   metaText: {
     color: "rgba(255,255,255,0.45)",
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
   },
   qrButtonContainer: {
-    borderRadius: 100,
+    borderRadius: radius.pill,
     overflow: "hidden",
   },
   qrButton: {
@@ -425,6 +425,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
-    paddingRight: 10,
+    paddingRight: spacing.sm + 2,
   },
 });
