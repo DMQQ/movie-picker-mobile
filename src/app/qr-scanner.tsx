@@ -130,18 +130,29 @@ export default function QRScanner() {
 
     setIsJoining(true);
 
-    joinRoom(code)
-      .then(() => {
-        setManualCode("");
-        setManualError("");
-        setIsManual(false);
-      })
-      .catch(() => {
-        setManualError(t("scanner.error-room-not-found") as string);
-      })
-      .finally(() => {
-        setIsJoining(false);
+    try {
+      const response = await fetch(`${url}/room/verify/${code}`, {
+        headers: { authorization: `Bearer ${envs.server_auth_token}` },
       });
+      const data = await response.json();
+
+      if (!data.exists) {
+        setManualError(t("scanner.error-room-not-found") as string);
+        return;
+      }
+
+      // Navigate directly — router.replace unmounts this screen so the modal
+      // disappears without a dismiss animation, same as the QR scan path.
+      if (code[0] === "V") {
+        router.replace({ pathname: "/voter", params: { sessionId: code } });
+      } else {
+        router.replace(`/room/${code}`);
+      }
+    } catch {
+      setManualError(t("scanner.error-room-not-found") as string);
+    } finally {
+      setIsJoining(false);
+    }
   };
 
   const onScanErrorDismiss = () => {

@@ -8,7 +8,7 @@ import useTranslation from "../../service/useTranslation";
 import Modal from "./Modal";
 
 export default function MatchesScreen() {
-  const matches = useAppSelector((state) => state.room.room.matches);
+  const matches = useAppSelector((state) => state.room.matches);
 
   const [match, setMatch] = useState<Movie | undefined>(undefined);
 

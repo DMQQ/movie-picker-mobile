@@ -11,7 +11,8 @@ export default function prepareHeaders(headers: Headers, { getState }: Pick<Base
   const regionalization = state.room.regionalization || {};
   const userLanguage = appLanguage === "pl" ? "pl-PL" : "en-US";
 
-  headers.set("authorization", `Bearer ${envs.server_auth_token}`);
+  const userToken = (state as RootState).auth.token;
+  headers.set("authorization", `Bearer ${userToken ?? envs.server_auth_token}`);
   headers.set("x-platform", Platform.OS);
   headers.set("x-app-language", appLanguage);
 

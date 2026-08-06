@@ -1,6 +1,7 @@
 import { Button } from "react-native-paper";
 import type { ReactNode } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
+import { common, fontSize, fontWeight } from "../constants/design";
 
 interface Props {
   onPress?: () => void;
@@ -32,9 +33,9 @@ export default function PrimaryButton({
       buttonColor={buttonColor}
       textColor={textColor}
       icon={icon}
-      style={[style, { borderRadius: 100 }]}
-      contentStyle={{ height: 50, borderRadius: 100 }}
-      labelStyle={{ fontSize: 14, fontWeight: "600", letterSpacing: 0.8 }}
+      style={[style, common.pillButton]}
+      contentStyle={common.pillButton}
+      labelStyle={{ fontSize: fontSize.md, fontWeight: fontWeight.semibold, letterSpacing: 0.8 }}
     >
       {children}
     </Button>

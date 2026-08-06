@@ -141,7 +141,20 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function RoomLoader({ label }: { label: string }) {
+import { useAppSelector } from "../redux/store";
+import useTranslation from "../service/useTranslation";
+
+function useRoomLoaderLabel(): string {
+  const gameEnded = useAppSelector((state) => state.room.gameEnded);
+  const isJoining = useAppSelector((state) => state.room.isJoining);
+  const t = useTranslation();
+  if (gameEnded) return t("room.finished") as string;
+  if (isJoining) return t("room.joining") as string;
+  return t("room.awaiting-start") as string;
+}
+
+export default function RoomLoader() {
+  const label = useRoomLoaderLabel();
   return (
     <View style={styles.container}>
       <View style={styles.cardStack}>

@@ -12,6 +12,7 @@ import MigrationModal from "../../components/MigrationModal";
 import { createGroup, loadFavorites } from "../../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { useMigrationPrompt } from "../../hooks/useMigrationPrompt";
+import { listsApi } from "../../redux/lists/listsApi";
 import useTranslation from "../../service/useTranslation";
 
 export default function Favourites() {
@@ -19,6 +20,7 @@ export default function Favourites() {
   const dispatch = useAppDispatch();
   const t = useTranslation();
   const token = useAppSelector((s) => s.auth.token);
+  const prevToken = useRef(token);
   const migration = useMigrationPrompt();
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -28,6 +30,13 @@ export default function Favourites() {
   useEffect(() => {
     dispatch(loadFavorites());
   }, []);
+
+  useEffect(() => {
+    if (token && !prevToken.current) {
+      dispatch(listsApi.util.invalidateTags([{ type: "List", id: "ALL" }]));
+    }
+    prevToken.current = token;
+  }, [token, dispatch]);
 
   useEffect(() => {
     if (params.scrollsToBottom) {

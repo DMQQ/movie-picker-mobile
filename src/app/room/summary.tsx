@@ -48,7 +48,7 @@ export default function GameSummary() {
   const dispatch = useAppDispatch();
   const t = useTranslation();
   const insets = useSafeAreaInsets();
-  const likes = useAppSelector((st) => st.room.room.likes);
+  const likes = useAppSelector((st) => st.room.likes);
   const [shareVisible, setShareVisible] = useState(false);
   const { summary, loading, error, shouldShowRatingPill, userId } =
     useGameSummary(roomId);

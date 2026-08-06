@@ -25,13 +25,17 @@ const initialState: AuthState = {
 export const restoreSession = createAsyncThunk(
   "auth/restoreSession",
   async (token: string) => {
-    const res = await fetch(`${baseUrl}/api/auth/me`, {
+    const url = `${baseUrl}/api/auth/me`;
+    console.log(`[restoreSession] calling ${url}, token prefix: ${token.substring(0, 20)}...`);
+    const res = await fetch(url, {
       headers: { authorization: `Bearer ${token}` },
     });
     if (res.ok) {
       const { user } = await res.json();
       return { token, user };
     }
+    const body = await res.text();
+    console.log(`[restoreSession] ${url} → ${res.status}, body: ${body}, deleting token`);
     await SecureStore.deleteItemAsync("user_auth_token");
     throw new Error("Session expired");
   },
@@ -41,7 +45,10 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setCredentials(state, action: PayloadAction<{ token: string; user: AuthUser }>) {
+    setCredentials(
+      state,
+      action: PayloadAction<{ token: string; user: AuthUser }>,
+    ) {
       state.token = action.payload.token;
       state.user = action.payload.user;
       state.sessionExpired = false;

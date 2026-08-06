@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ReactNode, useCallback, useState } from "react";
+import { useFocusEffect } from "expo-router";
 import { ImageBackground } from "expo-image";
 import {
   Dimensions,
@@ -227,7 +228,9 @@ type Props = {
 export default function RemoteFavouritesList({ listHeader, listRef }: Props) {
   const [page, setPage] = useState(1);
 
-  const { data, isFetching } = useGetListsQuery({ page });
+  const { data, isFetching, refetch } = useGetListsQuery({ page });
+
+  useFocusEffect(useCallback(() => { refetch(); }, [refetch]));
 
   const groups = (data?.lists ?? []).filter(
     (l) => !INTERACTION_LIST_TYPES.has(l.type),

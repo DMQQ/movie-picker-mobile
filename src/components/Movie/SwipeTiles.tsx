@@ -11,6 +11,7 @@ import {
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Text } from "react-native-paper";
 import Animated, {
+  Easing,
   Extrapolation,
   interpolate,
   runOnJS,
@@ -18,6 +19,7 @@ import Animated, {
   useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
+  withSequence,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
@@ -25,7 +27,6 @@ import { Movie } from "../../../types";
 import RatingIcons from "../RatingIcons";
 import Poster from "./Poster";
 import GenresView from "../GenresView";
-import Touch from "../Touch";
 import { Link } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
@@ -136,7 +137,10 @@ const SwipeTile = ({
       posY.value = visualY;
       posScale.value = visualS;
 
-      if (Math.abs(visualY - targetY) > 0.5 || Math.abs(visualS - targetS) > 0.01) {
+      if (
+        Math.abs(visualY - targetY) > 0.5 ||
+        Math.abs(visualS - targetS) > 0.01
+      ) {
         const cfg = { mass: 0.3, damping: 10, stiffness: 200 };
         posY.value = withSpring(targetY, cfg);
         posScale.value = withSpring(targetS, cfg);
@@ -157,14 +161,33 @@ const SwipeTile = ({
   useAnimatedReaction(
     () => buttonSwipe?.value ?? 0,
     (current, previous) => {
-      if (index !== 0 || current === 0 || previous === null || current === previous)
+      if (
+        index !== 0 ||
+        current === 0 ||
+        previous === null ||
+        current === previous
+      )
         return;
+      const nudgeCfg = { duration: 80, easing: Easing.out(Easing.quad) };
+      const exitCfg = { duration: 420, easing: Easing.out(Easing.cubic) };
       if (current === 1 || current === 2) {
-        posX.value = withSpring(width + 100);
-        posY.value = withSpring(100);
+        posX.value = withSequence(
+          withTiming(60, nudgeCfg),
+          withTiming(width + 200, exitCfg),
+        );
+        posY.value = withSequence(
+          withTiming(0, nudgeCfg),
+          withTiming(80, exitCfg),
+        );
       } else {
-        posX.value = withSpring(-width - 100);
-        posY.value = withSpring(100);
+        posX.value = withSequence(
+          withTiming(-60, nudgeCfg),
+          withTiming(-width - 200, exitCfg),
+        );
+        posY.value = withSequence(
+          withTiming(0, nudgeCfg),
+          withTiming(80, exitCfg),
+        );
       }
       if (buttonSwipe) buttonSwipe.value = 0;
     },
@@ -193,16 +216,19 @@ const SwipeTile = ({
       if (isRightVisible.value !== nextRight) isRightVisible.value = nextRight;
     })
     .onEnd(() => {
+      const exitCfg = { duration: 420, easing: Easing.out(Easing.cubic) };
       if (posX.value > width * 0.15) {
-        posX.value = withSpring(width + 100);
-        posY.value = withSpring(100);
+        posX.value = withTiming(width + 200, exitCfg, (finished) => {
+          if (finished) runOnJS(actions.likeCard)();
+        });
+        posY.value = withTiming(80, exitCfg);
         if (dragProgress) dragProgress.value = 1;
-        runOnJS(actions.likeCard)();
       } else if (posX.value < -width * 0.15) {
-        posX.value = withSpring(-width - 100);
-        posY.value = withSpring(100);
+        posX.value = withTiming(-width - 200, exitCfg, (finished) => {
+          if (finished) runOnJS(actions.removeCard)();
+        });
+        posY.value = withTiming(80, exitCfg);
         if (dragProgress) dragProgress.value = 1;
-        runOnJS(actions.removeCard)();
       } else {
         posX.value = withSpring(0, { damping: 50, stiffness: 500 });
         posY.value = withSpring(0, { damping: 50, stiffness: 500 });
@@ -240,7 +266,10 @@ const SwipeTile = ({
 
   return (
     <GestureDetector gesture={moveGesture}>
-      <Animated.View style={[animatedStyle, { zIndex: 1000 - index }]}>
+      <Animated.View
+        style={[animatedStyle, { zIndex: 1000 - index }]}
+        pointerEvents={index === 0 ? "auto" : "none"}
+      >
         <Link asChild href={href}>
           <Pressable
             style={StyleSheet.flatten([styles.container, styles.card])}

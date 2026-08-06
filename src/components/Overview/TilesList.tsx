@@ -27,7 +27,7 @@ interface TileListProps
 }
 
 export default function TilesList<T>({ data, label, onLongItemPress, useMovieType, renderItemFooter, subheader, ...rest }: TileListProps) {
-  const type = useAppSelector((state) => state.room.room.type);
+  const type = useAppSelector((state) => state.room.type);
   const t = useTranslation();
 
   return (

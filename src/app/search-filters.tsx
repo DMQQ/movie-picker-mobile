@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { Dimensions, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Divider, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
 import PrimaryButton from "../components/PrimaryButton";
+import GenreChip from "../components/GenreChip";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TransparentModalScreen from "../components/TransparentModalBackGesture";
 import { useGetAllProvidersQuery, useGetGenresQuery } from "../redux/movie/movieApi";
@@ -159,20 +160,12 @@ export default function SearchFilters({ route }: any) {
 
               <View style={styles.genreChipsContainer}>
                 {genreData.map((item) => (
-                  <TouchableOpacity
+                  <GenreChip
                     key={item.id}
+                    genre={item.name}
+                    selected={genres.includes(item.id)}
                     onPress={() => toggleGenre(item.id)}
-                    style={[
-                      styles.genreChipWrapper,
-                      styles.genreChip,
-                      genres.includes(item.id) && {
-                        borderColor: "rgba(255, 255, 255, 0.3)",
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
-                      },
-                    ]}
-                  >
-                    <Text style={[styles.genreChipText, genres.includes(item.id) && styles.genreChipTextActive]}>{item.name}</Text>
-                  </TouchableOpacity>
+                  />
                 ))}
               </View>
             </Section>
@@ -306,29 +299,7 @@ const styles = StyleSheet.create({
   genreChipsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginHorizontal: -4,
-  },
-  genreChipWrapper: {
-    margin: 4,
-    borderRadius: 100,
-    overflow: "hidden",
-    borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-  },
-  genreChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    alignItems: "center",
-  },
-  genreChipText: {
-    color: "rgba(255, 255, 255, 0.8)",
-    fontSize: 13,
-    fontWeight: "500",
-  },
-  genreChipTextActive: {
-    color: "#fff",
-    fontWeight: "600",
+    gap: 8,
   },
   bottomBar: {
     flexDirection: "row",

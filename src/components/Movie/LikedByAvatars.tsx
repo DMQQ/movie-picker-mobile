@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { AVATAR_COLORS } from "../Home/ActiveUsers";
+import { getUserAvatarColor } from "../../utils/avatar";
 
 const styles = StyleSheet.create({
   row: {
@@ -65,7 +65,7 @@ export default function LikedByAvatars({
           <View
             style={[
               styles.avatar,
-              { backgroundColor: AVATAR_COLORS[i % AVATAR_COLORS.length] },
+              { backgroundColor: getUserAvatarColor(user.username) },
             ]}
           >
             <Text style={styles.initial}>

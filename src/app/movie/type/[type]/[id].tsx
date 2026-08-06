@@ -145,7 +145,7 @@ export default function MovieDetailsScreen() {
             />
           </Link.AppleZoomTarget>
         </Animated.View>
-        <View style={{ zIndex: 10, position: "relative" }}>
+        <View style={{ zIndex: 10, position: "relative", width }}>
           {loading || !movie?.id ? (
             <MovieDetailsSkeleton />
           ) : (

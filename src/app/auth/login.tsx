@@ -20,6 +20,7 @@ export default function LoginScreen() {
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [login, { isLoading }] = useLoginMutation();
 
@@ -92,8 +93,9 @@ export default function LoginScreen() {
                   <TextInput
                     mode="outlined" label={t("auth.passwordLabel")} value={password}
                     onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, form: undefined })); }}
-                    secureTextEntry returnKeyType="done" onSubmitEditing={handleLogin}
+                    secureTextEntry={!showPassword} returnKeyType="done" onSubmitEditing={handleLogin}
                     outlineStyle={styles.inputOutline} error={!!errors.password}
+                    right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword((v) => !v)} />}
                   />
                   {errors.password && <Text style={styles.fieldError}>{errors.password}</Text>}
                 </View>

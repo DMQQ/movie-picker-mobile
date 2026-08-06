@@ -3,6 +3,7 @@ import { View, StyleSheet, Dimensions } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import { Image } from "expo-image";
 import QRCode from "react-native-qrcode-svg";
+import GenresView from "./GenresView";
 import RatingIcons from "./RatingIcons";
 import useTranslation from "../service/useTranslation";
 
@@ -166,11 +167,7 @@ const CinemaTicket = forwardRef<View, CinemaTicketProps>(
                 <>
                   <View style={styles.metaDot} />
                   <View style={styles.genresContainer}>
-                    {genreNames.map((genre, index) => (
-                      <View key={index} style={styles.genrePill}>
-                        <Text style={styles.genrePillText}>{genre}</Text>
-                      </View>
-                    ))}
+                    <GenresView genres={genreNames} light />
                   </View>
                 </>
               )}
@@ -351,18 +348,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     overflow: "hidden",
     gap: 6,
-  },
-  genrePill: {
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 100,
-    backgroundColor: "#d0d0d0",
-  },
-  genrePillText: {
-    fontFamily: "Bebas",
-    fontSize: 11,
-    letterSpacing: 1,
-    color: "#444",
   },
   ratingRow: {
     alignItems: "center",

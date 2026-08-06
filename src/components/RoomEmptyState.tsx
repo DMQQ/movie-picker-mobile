@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
+import { useAppSelector } from "../redux/store";
 import { Text } from "react-native-paper";
 import Animated, {
   FadeIn,
@@ -35,15 +36,9 @@ function PulseRing({ color, delay }: { color: string; delay: number }) {
   return <Animated.View style={[styles.ring, { borderColor: color }, style]} />;
 }
 
-interface RoomEmptyStateProps {
-  gameEnded: boolean;
-  hasUserPlayed: boolean;
-}
-
-export default function RoomEmptyState({
-  gameEnded,
-  hasUserPlayed,
-}: RoomEmptyStateProps) {
+export default function RoomEmptyState() {
+  const gameEnded = useAppSelector((state) => state.room.gameEnded);
+  const hasUserPlayed = useAppSelector((state) => state.room.hasUserPlayed);
   const t = useTranslation();
 
   const waiting = !gameEnded && hasUserPlayed;

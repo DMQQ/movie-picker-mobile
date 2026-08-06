@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Chip, IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import GenreChip from "../GenreChip";
 import PrimaryButton from "../PrimaryButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -93,16 +94,12 @@ function GenresSection() {
           {genres.map((genre) => {
             const isSelected = selectedGenres.some((g) => g.id === genre.id);
             return (
-              <Chip
+              <GenreChip
                 key={genre.id}
+                genre={genre.name}
                 selected={isSelected}
                 onPress={() => handleToggle({ id: genre.id, name: genre.name })}
-                style={[styles.genreChip, isSelected && styles.selectedGenreChip]}
-                textStyle={[styles.genreChipText, isSelected && styles.selectedGenreChipText]}
-                showSelectedCheck={false}
-              >
-                {genre.name}
-              </Chip>
+              />
             );
           })}
         </View>
@@ -129,9 +126,11 @@ function CategoriesSection({ onSelect }: { onSelect: (category: string) => void 
       ) : (
         <View style={styles.genresContainer}>
           {validCategories.map((category) => (
-            <Chip key={category.name} onPress={() => onSelect(category.name)} style={styles.genreChip} textStyle={styles.genreChipText}>
-              {category.name}
-            </Chip>
+            <GenreChip
+              key={category.name}
+              genre={category.name}
+              onPress={() => onSelect(category.name)}
+            />
           ))}
         </View>
       )}
@@ -315,24 +314,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
-  },
-  genreChip: {
-    backgroundColor: "#1a1a1a",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#333",
-  },
-  selectedGenreChip: {
-    backgroundColor: MD2DarkTheme.colors.primary,
-    borderColor: MD2DarkTheme.colors.primary,
-  },
-  genreChipText: {
-    color: "#999",
-    fontSize: 13,
-  },
-  selectedGenreChipText: {
-    color: "#fff",
-    fontWeight: "600",
   },
   genreLoading: {
     height: 100,

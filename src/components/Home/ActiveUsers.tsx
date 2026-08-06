@@ -3,8 +3,7 @@ import { Pressable, View } from "react-native";
 import { Avatar, MD2DarkTheme } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
-
-export const AVATAR_COLORS = ["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5", "#2196f3"];
+import { getUserAvatarColor } from "../../utils/avatar";
 
 function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () => void }) {
   const isVisible = props.showAll ? true : props.data.length > 1;
@@ -37,7 +36,7 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
                 style={{
                   borderWidth: 0.5,
                   borderColor: "#fff",
-                  backgroundColor: AVATAR_COLORS[n % AVATAR_COLORS.length],
+                  backgroundColor: getUserAvatarColor(nick),
                 }}
               />
               {n === 0 && (
@@ -66,7 +65,7 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
             style={{
               borderWidth: 0.5,
               borderColor: "#fff",
-              backgroundColor: AVATAR_COLORS[0 % AVATAR_COLORS.length],
+              backgroundColor: getUserAvatarColor(""),
             }}
           />
         )}

@@ -24,7 +24,7 @@ export default function Cast({ id, type, initialData }: { id: number; type: "mov
     <View style={styles.container}>
       <View style={styles.actorsRow}>
         {data?.actors?.map((item, index) => (
-          <FrostedGlass key={item.id.toString() + index} style={styles.card} container={{ marginBottom: 12 }}>
+          <FrostedGlass key={item.id.toString() + index} style={styles.card} container={{ marginBottom: 12, width: CARD_WIDTH }}>
             <Thumbnail priority="low" size={200} path={item.profile_path || ""} container={styles.image} />
 
             <View style={styles.textWrap}>
@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 0,
   },
   card: {
-    width: CARD_WIDTH,
     padding: 12,
     borderRadius: 20,
     flex: 0,

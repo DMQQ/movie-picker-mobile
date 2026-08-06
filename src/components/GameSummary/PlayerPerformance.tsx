@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { Avatar, Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { AVATAR_COLORS } from "../Home/ActiveUsers";
+import { getUserAvatarColor } from "../../utils/avatar";
 import useTranslation from "../../service/useTranslation";
 import { IGameSummary } from "./types";
 
@@ -25,7 +25,7 @@ export default function PlayerPerformance({
                 style={{
                   borderWidth: 1.5,
                   borderColor: "rgba(255,255,255,0.4)",
-                  backgroundColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
+                  backgroundColor: getUserAvatarColor(user.username),
                 }}
               />
               <View

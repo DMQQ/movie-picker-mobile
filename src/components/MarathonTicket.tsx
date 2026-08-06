@@ -3,6 +3,7 @@ import { View, StyleSheet, Dimensions } from "react-native";
 import { Text } from "react-native-paper";
 import { Image } from "expo-image";
 import QRCode from "react-native-qrcode-svg";
+import GenresView from "./GenresView";
 import RatingIcons from "./RatingIcons";
 import useTranslation from "../service/useTranslation";
 
@@ -82,10 +83,6 @@ const TicketHoles = memo(() => (
   </View>
 ));
 
-const getGenreName = (genre: string | Genre): string => {
-  return typeof genre === "string" ? genre : genre.name;
-};
-
 const MovieRow = memo(({ movie, isLast, unknownText }: { movie: MarathonMovie; isLast: boolean; unknownText: string }) => {
   const title = movie.title || movie.name || unknownText;
   const runtime = formatRuntime(movie.runtime);
@@ -108,11 +105,7 @@ const MovieRow = memo(({ movie, isLast, unknownText }: { movie: MarathonMovie; i
         <View style={styles.metaRow}>
           {runtime ? <Text style={styles.runtimeText}>{runtime}</Text> : null}
           {runtime && genres.length > 0 ? <View style={styles.metaDot} /> : null}
-          {genres.map((genre, index) => (
-            <View key={index} style={styles.genrePill}>
-              <Text style={styles.genreText}>{getGenreName(genre)}</Text>
-            </View>
-          ))}
+          <GenresView genres={genres} light />
         </View>
 
         {/* Rating */}
@@ -382,18 +375,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     letterSpacing: 1,
     color: "#666",
-  },
-  genrePill: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 100,
-    backgroundColor: "#d0d0d0",
-  },
-  genreText: {
-    fontFamily: "Bebas",
-    fontSize: 10,
-    letterSpacing: 0.5,
-    color: "#444",
   },
   ratingRow: {
     marginTop: 2,

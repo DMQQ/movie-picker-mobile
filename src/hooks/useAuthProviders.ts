@@ -1,5 +1,5 @@
 import * as AppleAuthentication from "expo-apple-authentication";
-import { router } from "expo-router";
+import { useNavigation } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import {
   GoogleOneTapSignIn,
@@ -14,8 +14,14 @@ const AUTH_TOKEN_KEY = "user_auth_token";
 
 export function useAuthProviders(onError: (msg: string) => void) {
   const t = useTranslation();
+  const navigation = useNavigation();
   const [googleAuth, { isLoading: isGoogleLoading }] = useGoogleAuthMutation();
   const [appleAuth, { isLoading: isAppleLoading }] = useAppleAuthMutation();
+
+  function dismissAuthSheet() {
+    // auth Stack is nested inside root Stack; goBack on root pops the formSheet
+    navigation.getParent()?.goBack();
+  }
 
   async function handleAppleSignIn() {
     try {
@@ -34,7 +40,7 @@ export function useAuthProviders(onError: (msg: string) => void) {
           : null,
       }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.dismissAll();
+      dismissAuthSheet();
     } catch (err: any) {
       if (err.code === "ERR_REQUEST_CANCELED") return;
       onError(err?.data?.message ?? t("auth.appleSignInFailed"));
@@ -81,7 +87,7 @@ export function useAuthProviders(onError: (msg: string) => void) {
 
       const result = await googleAuth({ idToken }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.dismissAll();
+      dismissAuthSheet();
     } catch (err: any) {
       if (isCancelledResponse(err)) return;
       onError(err?.data?.message ?? t("auth.googleSignInFailed"));

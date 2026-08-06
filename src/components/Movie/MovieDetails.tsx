@@ -4,6 +4,8 @@ import { Text } from "react-native-paper";
 import { Movie, MovieDetails as MovieDetailsType } from "../../../types";
 import useTranslation from "../../service/useTranslation";
 import CustomFavourite from "../Favourite";
+import GenreChip from "../GenreChip";
+import GenresView from "../GenresView";
 import QuickActions from "../QuickActions";
 import RatingIcons from "../RatingIcons";
 import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
@@ -52,21 +54,22 @@ function MovieDetails({
     return (trailersData && trailersData.length > 0) ?? false;
   }, [trailersData]);
 
-  const data = useMemo(
+  const releaseYear = useMemo(
     () =>
-      [
-        movie?.release_date || movie?.first_air_date,
-        (movie?.title || movie?.name) ===
-        (movie?.original_title || movie?.original_name)
-          ? null
-          : movie?.original_title || movie?.original_name,
-        ...(movie?.genres || [])?.map((g: any) => g.name),
-      ].filter(
-        (v) =>
-          v !== undefined && v !== "" && v !== null && typeof v === "string",
-      ) as string[],
+      (movie?.release_date || movie?.first_air_date || "")?.split("-")[0] || null,
     [movie],
   );
+
+  const originalTitle = useMemo(
+    () =>
+      (movie?.title || movie?.name) !==
+      (movie?.original_title || movie?.original_name)
+        ? movie?.original_title || movie?.original_name
+        : null,
+    [movie],
+  );
+
+  const genres = useMemo(() => (movie?.genres || []).slice(0, 3), [movie]);
 
   const isTVShow = type === "tv";
 
@@ -127,7 +130,16 @@ function MovieDetails({
           <RatingIcons size={20} vote={movie?.vote_average} />
         </View>
 
-        <Text style={styles.categories}>{data.join(" | ")}</Text>
+        {(releaseYear || genres.length > 0) && (
+          <View style={styles.chipsRow}>
+            {releaseYear && <GenreChip genre={releaseYear} />}
+            <GenresView genres={genres} />
+          </View>
+        )}
+
+        {originalTitle && (
+          <Text style={styles.categories}>{originalTitle}</Text>
+        )}
 
         <View style={{ paddingVertical: 15 }}>
           <PlatformBlurView style={styles.quickActions}>
@@ -197,6 +209,7 @@ const styles = StyleSheet.create({
   },
 
   categories: { color: "rgba(255,255,255,0.7)", fontSize: 15 },
+  chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 8 },
 
   rating: { flexDirection: "row", marginBottom: 10 },
 

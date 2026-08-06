@@ -6,13 +6,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Text, Chip } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Movie, MovieDetails } from "../../../types";
 import { ThumbnailSizes } from "../Thumbnail";
 import { IconShareButton } from "../ShareTicketButton";
+import GenresView from "../GenresView";
 import useTranslation from "../../service/useTranslation";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
@@ -86,16 +87,7 @@ export default function MovieResultCard({
             {details?.genres && details.genres.length > 0 && (
               <>
                 <Text style={styles.dotSeparator}>•</Text>
-                {details.genres.slice(0, 3).map((genre) => (
-                  <Chip
-                    key={genre.id}
-                    style={styles.genreChip}
-                    textStyle={styles.genreText}
-                    compact
-                  >
-                    {genre.name}
-                  </Chip>
-                ))}
+                <GenresView genres={details.genres.slice(0, 3)} />
               </>
             )}
           </View>
@@ -199,17 +191,6 @@ const styles = StyleSheet.create({
   dotSeparator: {
     color: "#64748b",
     fontSize: 14,
-  },
-  genreChip: {
-    backgroundColor: "rgba(255,255,255,0.3)",
-    height: 26,
-  },
-  genreText: {
-    color: "#fff",
-    fontSize: 11,
-    fontWeight: "600",
-    marginVertical: 0,
-    marginHorizontal: 2,
   },
   overview: {
     color: "rgba(255,255,255,0.85)",

@@ -9,6 +9,7 @@ import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
 import { useGetGameQuery } from "../../redux/lists/listsApi";
 import type { GameMember, ListItem } from "../../redux/lists/listsApi";
 import { formatGameType } from "../../utils/formatGameType";
+import { getUserAvatarColor } from "../../utils/avatar";
 
 const { width: SW } = Dimensions.get("window");
 const COLUMNS = 3;
@@ -35,7 +36,7 @@ function formatDuration(start: number, end: number | null) {
 function MemberChip({ member }: { member: GameMember }) {
   return (
     <View style={styles.memberChip}>
-      <View style={styles.memberAvatar}>
+      <View style={[styles.memberAvatar, { backgroundColor: getUserAvatarColor(member.name) }]}>
         {member.avatarUrl ? (
           <Image
             style={styles.memberAvatarImg}
@@ -65,10 +66,11 @@ function Pill({ icon, label }: { icon: string; label: string }) {
 }
 
 export default function GameDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, poster: posterParam } = useLocalSearchParams<{ id: string; poster?: string }>();
   const { data, isLoading, isError } = useGetGameQuery(id);
   const session = data?.session ?? null;
   const items = data?.items ?? [];
+  const posterPath = data?.list.posterPath ?? posterParam ?? null;
   const members = data?.members ?? [];
   const bannerHeight = Dimensions.get("window").height / 2;
   const duration = session
@@ -95,9 +97,9 @@ export default function GameDetailScreen() {
             {/* Banner */}
             <View style={[styles.bannerWrap, { height: bannerHeight }]}>
               <Link.AppleZoomTarget>
-                {data?.list.posterPath ? (
+                {posterPath ? (
                   <Thumbnail
-                    path={data.list.posterPath}
+                    path={posterPath}
                     size={ThumbnailSizes.poster.xlarge}
                     container={StyleSheet.absoluteFill}
                     showsPlaceholder={false}
@@ -265,7 +267,6 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: "#333",
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",

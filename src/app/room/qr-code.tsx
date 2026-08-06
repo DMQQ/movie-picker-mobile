@@ -21,7 +21,7 @@ import { Avatar, Text, useTheme } from "react-native-paper";
 import PrimaryButton from "../../components/PrimaryButton";
 import StyledQRCode from "../../components/StyledQRCode";
 import { Movie } from "../../../types";
-import { AVATAR_COLORS } from "../../components/Home/ActiveUsers";
+import { getUserAvatarColor } from "../../utils/avatar";
 import PageHeading from "../../components/PageHeading";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -81,9 +81,9 @@ export default function QRCodePage() {
   const hashOptionsRef = useRef<string>("");
   const [isPending, startTransition] = useTransition();
   const { qrCode, nickname } = useAppSelector((state) => state.room);
-  const users = useAppSelector((state) => state.room.room.users);
-  const roomId = useAppSelector((state) => state.room.room.roomId);
-  const existingMovies = useAppSelector((state) => state.room.room.movies);
+  const users = useAppSelector((state) => state.room.users);
+  const roomId = useAppSelector((state) => state.room.roomId);
+  const existingMovies = useAppSelector((state) => state.room.movies);
 
   const { preferences } = useFilterPreferences();
   const movieCategoriesQuery = useGetMovieCategoriesWithThumbnailsQuery();
@@ -378,7 +378,7 @@ export default function QRCodePage() {
                 <Avatar.Text
                   size={25}
                   label={nick[0].toUpperCase()}
-                  style={{ backgroundColor: AVATAR_COLORS[index % 5] }}
+                  style={{ backgroundColor: getUserAvatarColor(nick) }}
                 />
               </View>
             ))}

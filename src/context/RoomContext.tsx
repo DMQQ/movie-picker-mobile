@@ -1,12 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
-import useRoom from "../service/useRoom";
+import { Platform } from "react-native";
+import type { Movie } from "../../types";
+import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
+import { useDatabase, useMatches } from "./DatabaseContext";
+import { SocketContext } from "./SocketContext";
 import { useBlockedMovies } from "../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
-import type { Movie } from "../../types";
-import { useDatabase, useMatches } from "./DatabaseContext";
-import { useAppDispatch, useAppSelector } from "../redux/store";
 import { roomActions } from "../redux/room/roomSlice";
-import { Platform } from "react-native";
+import { useAppDispatch, useAppSelector } from "../redux/store";
 import ReviewManager from "../utils/rate";
 import * as StoreReview from "expo-store-review";
 
@@ -15,7 +16,6 @@ type RoomActions = {
   dislikeCard: (card: Movie, index: number) => void;
   blockAndDislikeCard: (card: Movie, index: number) => Promise<void>;
   superLikeAndLikeCard: (card: Movie, index: number) => Promise<void>;
-  joinGame: (code: string, blockedMovies?: { id: number; type: "movie" | "tv" }[], superLikedMovies?: { id: number; type: "movie" | "tv" }[]) => Promise<any>;
 };
 
 const noop = () => {};
@@ -26,7 +26,6 @@ const RoomContext = createContext<RoomActions>({
   dislikeCard: noop,
   blockAndDislikeCard: noopAsync,
   superLikeAndLikeCard: noopAsync,
-  joinGame: async () => null,
 });
 
 export default function useRoomContext() {
@@ -34,70 +33,230 @@ export default function useRoomContext() {
 }
 
 export function RoomContextProvider({ children }: { children: React.ReactNode }) {
-  const room = useRoom();
   const dispatch = useAppDispatch();
-  const { blockMovie, getBlockedIds, isReady: blockedReady } = useBlockedMovies();
+  const { socket, emitter, userId } = useContext(SocketContext);
+  const userIdRef = useRef(userId);
+  userIdRef.current = userId;
+
+  const { blockMovie, addDislikedMovie, getBlockedIds, isReady: blockedReady } = useBlockedMovies();
   const { superLikeMovie, getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
   const { matches: matchesRepo } = useMatches();
-  const usersCount = useAppSelector((state) => state.room.room.usersCount);
+  const { movieInteractions, isReady } = useDatabase();
+
+  const roomId = useAppSelector((state) => state.room.roomId);
+  const nickname = useAppSelector((state) => state.room.nickname);
+  const joined = useAppSelector((state) => state.room.joined);
+  const cards = useAppSelector((state) => state.room.movies);
+  const isFinished = useAppSelector((state) => state.room.isFinished);
+  const isPlaying = useAppSelector((state) => state.room.isPlaying);
+  const movieIndex = useAppSelector((state) => state.room.index);
+  const usersCount = useAppSelector((state) => state.room.usersCount);
+
+  const isPlayingRef = useRef(isPlaying);
+  isPlayingRef.current = isPlaying;
+  const movieIndexRef = useRef(movieIndex);
+  movieIndexRef.current = movieIndex;
+
   const hasJoined = useRef(false);
   const lastJoinedRoomId = useRef<string | null>(null);
+  const joinCancelToken = useRef(0);
+  const attemptTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasSentFinish = useRef(false);
 
-  useEffect(() => {
-    if (room.roomId !== lastJoinedRoomId.current) {
-      hasJoined.current = false;
-    }
-
-    if (room.roomId && room.socket?.connected && blockedReady && superLikedReady && !hasJoined.current) {
-      hasJoined.current = true;
-      lastJoinedRoomId.current = room.roomId;
-
-      (async () => {
-        dispatch(roomActions.setIsJoining(true));
-        dispatch(roomActions.setJoinError(false));
-        try {
-          const [blockedMovies, superLikedMovies] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
-          const response = await room.joinGame(room.roomId, blockedMovies, superLikedMovies);
-
-          if (!response?.joined) {
-            dispatch(roomActions.setJoinError(true));
-            hasJoined.current = false;
-          }
-        } catch {
+  const attemptJoin = useCallback(
+    async (code: string) => {
+      const token = ++joinCancelToken.current;
+      try {
+        const [blocked, superLiked] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
+        if (joinCancelToken.current !== token) return;
+        const mappedBlocked = blocked.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
+        const mappedSuperLiked = superLiked.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
+        const response = await socket!.timeout(10000).emitWithAck("join-room", code, nickname, mappedBlocked, mappedSuperLiked);
+        if (joinCancelToken.current !== token) return;
+        if (!response?.joined) {
           dispatch(roomActions.setJoinError(true));
           hasJoined.current = false;
-        } finally {
-          dispatch(roomActions.setIsJoining(false));
         }
-      })();
-    }
-  }, [room.roomId, room.socket?.connected, blockedReady, superLikedReady, room.joinGame, dispatch, getBlockedIds, getSuperLikedIds]);
-
-  const blockAndDislikeCard = useCallback(
-    async (card: Movie, index: number) => {
-      await blockMovie(card);
-      room.dislikeCard(card, index);
+      } catch {
+        if (joinCancelToken.current !== token) return;
+        dispatch(roomActions.setJoinError(true));
+        hasJoined.current = false;
+      }
     },
-    [blockMovie, room.dislikeCard],
+    [socket, nickname, getBlockedIds, getSuperLikedIds, dispatch],
   );
 
-  const { movieInteractions, isReady } = useDatabase();
+  // Initial join
+  useEffect(() => {
+    if (roomId !== lastJoinedRoomId.current) {
+      hasJoined.current = false;
+    }
+    if (!roomId || !socket?.connected || !blockedReady || !superLikedReady || !joined || hasJoined.current) return;
+
+    hasJoined.current = true;
+    lastJoinedRoomId.current = roomId;
+    dispatch(roomActions.setIsJoining(true));
+    dispatch(roomActions.setJoinError(false));
+    attemptJoin(roomId).finally(() => dispatch(roomActions.setIsJoining(false)));
+  }, [roomId, socket?.connected, blockedReady, superLikedReady, joined, attemptJoin, dispatch]);
+
+  // Reconnect join
+  useEffect(() => {
+    if (!roomId || !joined || !blockedReady || !superLikedReady || !socket) return;
+
+    const onReconnected = async (_: unknown, attempt = 0) => {
+      if (attemptTimeout.current) clearTimeout(attemptTimeout.current);
+      if (attempt > 5) return;
+
+      await new Promise<void>((resolve) => setTimeout(resolve, 300));
+
+      ++joinCancelToken.current;
+      hasJoined.current = false;
+
+      try {
+        const [blocked, superLiked] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
+        const mappedBlocked = blocked.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
+        const mappedSuperLiked = superLiked.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
+        await socket.timeout(10000).emitWithAck("join-room", roomId, nickname, mappedBlocked, mappedSuperLiked);
+        hasJoined.current = true;
+      } catch {
+        attemptTimeout.current = setTimeout(() => onReconnected(_, attempt + 1), 100 * attempt);
+      }
+    };
+
+    emitter.on("reconnected", onReconnected);
+    return () => {
+      emitter.off("reconnected", onReconnected);
+      if (attemptTimeout.current) clearTimeout(attemptTimeout.current);
+    };
+  }, [roomId, joined, blockedReady, superLikedReady, socket, nickname, emitter, getBlockedIds, getSuperLikedIds]);
+
+  // Socket event listeners
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleMovies = async (_cards: { movies: Movie[]; index?: number }) => {
+      hasSentFinish.current = false;
+      dispatch(roomActions.addMovies({ movies: _cards.movies, index: _cards.index }));
+
+      Promise.allSettled(
+        _cards.movies.flatMap((card: Movie) => [
+          prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge),
+          prefetchThumbnail(card.poster_path || "", ThumbnailSizes.logo.tiny),
+        ]),
+      ).catch(console.error);
+    };
+
+    const handleRoomState = (data: any) => {
+      if (!data) return;
+      dispatch(roomActions.setRoom(data));
+      dispatch(roomActions.setPlaying(data.isStarted));
+    };
+
+    const handleActive = (users: any) => {
+      dispatch(roomActions.setActiveUsers(users));
+    };
+
+    const handleBlockedUpdate = (_cards: { movies: Movie[]; index?: number }) => {
+      hasSentFinish.current = false;
+      dispatch(roomActions.addMovies({ movies: _cards.movies, index: _cards.index }));
+    };
+
+    const handleHostChanged = (data: { host: string }) => {
+      dispatch(roomActions.setHost(data.host === userIdRef.current));
+    };
+
+    socket.on("movies", handleMovies);
+    socket.on("room:state", handleRoomState);
+    socket.on("active", handleActive);
+    socket.on("movies:blocked-update", handleBlockedUpdate);
+    socket.on("room:host:changed", handleHostChanged);
+
+    return () => {
+      socket.off("movies", handleMovies);
+      socket.off("room:state", handleRoomState);
+      socket.off("active", handleActive);
+      socket.off("movies:blocked-update", handleBlockedUpdate);
+      socket.off("room:host:changed", handleHostChanged);
+    };
+  }, [socket, dispatch]);
+
+  // Finish effect
+  useEffect(() => {
+    if (isFinished && socket && roomId && isPlaying && !hasSentFinish.current) {
+      hasSentFinish.current = true;
+      socket.emit("finish", roomId, movieIndexRef.current);
+      socket.emit("get-buddy-status", roomId);
+    }
+  }, [isFinished, roomId, socket, isPlaying]);
+
+  // Get next page when cards run low
+  useEffect(() => {
+    if (cards.length === 5 && isPlaying) {
+      socket
+        ?.timeout(8000)
+        .emitWithAck("get-next-page", roomId, movieIndexRef.current)
+        .then((response) => {
+          if (response?.movies && response.movies.length > 0) {
+            hasSentFinish.current = false;
+            dispatch(roomActions.appendMovies({ movies: response.movies, index: response.index }));
+          } else {
+            dispatch(roomActions.setFinished());
+          }
+        })
+        .catch(() => {
+          dispatch(roomActions.setFinished());
+        });
+    }
+  }, [cards.length, socket, roomId, dispatch, isPlaying]);
 
   const likeCard = useCallback(
     async (card: Movie, index: number) => {
-      await room.likeCard(card, index);
+      if (isPlayingRef.current) {
+        socket?.emit("pick-movie", {
+          roomId,
+          index,
+          swipe: { type: "like", movie: card.id },
+        });
+      }
+      dispatch(roomActions.removeMovie(card.id));
+      dispatch(roomActions.likeMovie(card));
 
-      if (usersCount <= 1 && matchesRepo && room.roomId) {
+      if (usersCount <= 1 && matchesRepo && roomId) {
         matchesRepo.add({
           movie_id: card.id,
           movie_type: card.type || "movie",
           title: card.title || card.name || null,
           poster_path: card.poster_path || null,
-          session_id: room.roomId,
+          session_id: roomId,
         });
       }
     },
-    [room.likeCard, usersCount, matchesRepo, room.roomId],
+    [socket, roomId, usersCount, matchesRepo, dispatch],
+  );
+
+  const dislikeCard = useCallback(
+    (card: Movie, index: number) => {
+      if (isPlayingRef.current) {
+        socket?.emit("pick-movie", {
+          roomId,
+          index,
+          swipe: { type: "dislike", movie: card.id },
+        });
+      }
+      dispatch(roomActions.dislikeMovie(card));
+      addDislikedMovie(card);
+      dispatch(roomActions.removeMovie(card.id));
+    },
+    [socket, roomId, addDislikedMovie, dispatch],
+  );
+
+  const blockAndDislikeCard = useCallback(
+    async (card: Movie, index: number) => {
+      await blockMovie(card);
+      dislikeCard(card, index);
+    },
+    [blockMovie, dislikeCard],
   );
 
   const superLikeAndLikeCard = useCallback(
@@ -120,14 +279,8 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
   );
 
   const value = useMemo<RoomActions>(
-    () => ({
-      likeCard,
-      blockAndDislikeCard,
-      superLikeAndLikeCard,
-      dislikeCard: room.dislikeCard,
-      joinGame: room.joinGame,
-    }),
-    [likeCard, blockAndDislikeCard, superLikeAndLikeCard, room.dislikeCard, room.joinGame],
+    () => ({ likeCard, dislikeCard, blockAndDislikeCard, superLikeAndLikeCard }),
+    [likeCard, dislikeCard, blockAndDislikeCard, superLikeAndLikeCard],
   );
 
   return <RoomContext.Provider value={value}>{children}</RoomContext.Provider>;

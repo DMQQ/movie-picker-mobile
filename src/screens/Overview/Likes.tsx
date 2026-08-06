@@ -8,7 +8,7 @@ import useTranslation from "../../service/useTranslation";
 import Modal from "./Modal";
 
 export default function LikesScreen() {
-  const likes = useAppSelector((state) => state.room.room.likes);
+  const likes = useAppSelector((state) => state.room.likes);
 
   const [match, setMatch] = useState<Movie | undefined>(undefined);
 

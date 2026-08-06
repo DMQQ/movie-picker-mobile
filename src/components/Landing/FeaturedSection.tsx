@@ -13,6 +13,7 @@ import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
 import { Movie } from "../../../types";
 import useTranslation from "../../service/useTranslation";
 import { useGetFeaturedQuery } from "../../redux/movie/movieApi";
+import GenresView from "../GenresView";
 import Touch from "../Touch";
 
 const { width, height } = Dimensions.get("screen");
@@ -336,13 +337,7 @@ const FeaturedSection = memo(({ categoryId }: FeaturedSectionProps) => {
                       </View>
 
                       <View style={styles.genreContainer}>
-                        {genres.map((genre) => {
-                          return (
-                            <View key={genre} style={styles.genreChip}>
-                              <Text style={styles.genreText}>{genre}</Text>
-                            </View>
-                          );
-                        })}
+                        <GenresView genres={genres} />
                       </View>
                     </View>
                   </View>
@@ -471,19 +466,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 6,
-  },
-  genreChip: {
-    backgroundColor: "rgba(255,255,255,0.15)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.05)",
-  },
-  genreText: {
-    color: "rgba(255,255,255,0.9)",
-    fontSize: 11,
-    fontWeight: "600",
   },
   overview: {
     fontSize: 14,

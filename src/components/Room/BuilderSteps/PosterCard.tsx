@@ -3,6 +3,7 @@ import { View, StyleSheet, Pressable, Image } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
+import { colors, radius, spacing, typography } from "../../../constants/design";
 
 interface PosterCardProps {
   posterUrl: string;
@@ -94,23 +95,23 @@ const PosterCard: React.FC<PosterCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginRight: 12,
+    marginRight: spacing.md,
   },
   card: {
     width: 150,
     height: 225,
-    borderRadius: 12,
+    borderRadius: radius.card,
     overflow: "hidden",
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.surface,
     borderWidth: 2,
     borderColor: "transparent",
   },
   cardLarge: {
     width: 200,
     height: 300,
-    borderRadius: 12,
+    borderRadius: radius.card,
     overflow: "hidden",
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.surface,
     borderWidth: 2,
     borderColor: "transparent",
   },
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     height: "100%",
-    borderRadius: 12,
+    borderRadius: radius.card,
   },
   gradient: {
     position: "absolute",
@@ -137,19 +138,19 @@ const styles = StyleSheet.create({
     right: -2,
     justifyContent: "flex-end",
     padding: 10,
-    borderBottomLeftRadius: 12,
-    borderBottomRightRadius: 12,
+    borderBottomLeftRadius: radius.card,
+    borderBottomRightRadius: radius.card,
   },
   label: {
-    color: "#fff",
+    color: colors.text,
     fontSize: 28,
-    fontFamily: "Bebas",
-    letterSpacing: 0.5,
+    fontFamily: typography.bebas,
+    letterSpacing: typography.bebasLetterSpacing,
   },
   checkmark: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: spacing.sm,
+    right: spacing.sm,
     width: 28,
     height: 28,
     borderRadius: 14,
@@ -157,9 +158,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   checkmarkText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "700",
   },
 });
 

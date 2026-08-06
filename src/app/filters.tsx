@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import { Chip, MD2DarkTheme, Text } from "react-native-paper";
+import { MD2DarkTheme, Text } from "react-native-paper";
+import GenreChip from "../components/GenreChip";
 import PrimaryButton from "../components/PrimaryButton";
 import { router, useLocalSearchParams } from "expo-router";
 import { useAppDispatch, useAppSelector } from "../redux/store";
@@ -101,19 +102,12 @@ function GenresSection() {
           {genres.map((genre) => {
             const isSelected = selectedGenres.some((g) => g.id === genre.id);
             return (
-              <Chip
+              <GenreChip
                 key={genre.id}
+                genre={genre.name}
                 selected={isSelected}
                 onPress={() => handleToggle({ id: genre.id, name: genre.name })}
-                style={[styles.chip, isSelected && styles.chipSelected]}
-                textStyle={[
-                  styles.chipText,
-                  isSelected && styles.chipTextSelected,
-                ]}
-                showSelectedCheck={false}
-              >
-                {genre.name}
-              </Chip>
+              />
             );
           })}
         </View>
@@ -142,14 +136,11 @@ function CategoriesSection({ onSelect }: { onSelect: (name: string) => void }) {
       ) : (
         <View style={styles.chipsContainer}>
           {validCategories.map((category) => (
-            <Chip
+            <GenreChip
               key={category.name}
+              genre={category.name}
               onPress={() => onSelect(category.name)}
-              style={styles.chip}
-              textStyle={styles.chipText}
-            >
-              {category.name}
-            </Chip>
+            />
           ))}
         </View>
       )}
@@ -282,24 +273,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
-  },
-  chip: {
-    backgroundColor: "#1a1a1a",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#333",
-  },
-  chipSelected: {
-    backgroundColor: MD2DarkTheme.colors.primary,
-    borderColor: MD2DarkTheme.colors.primary,
-  },
-  chipText: {
-    color: "#999",
-    fontSize: 13,
-  },
-  chipTextSelected: {
-    color: "#fff",
-    fontWeight: "600",
   },
   loadingContainer: {
     height: 80,

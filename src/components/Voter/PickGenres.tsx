@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { FlatList, View } from "react-native";
-import { Button } from "react-native-paper";
 import { useGetGenresQuery } from "../../redux/movie/movieApi";
+import GenreChip from "../GenreChip";
 
 export default function PickGenres({
   genres,
@@ -49,7 +49,9 @@ export default function PickGenres({
         data={combined}
         keyExtractor={(i) => i.id.toString()}
         renderItem={({ item }) => (
-          <Button
+          <GenreChip
+            genre={item.name}
+            selected={genres.includes(item.id)}
             onPress={() => {
               setGenres((p: number[]) =>
                 p.includes(item.id)
@@ -57,12 +59,9 @@ export default function PickGenres({
                   : [...p, item.id],
               );
             }}
-            mode={genres.includes(item.id) ? "contained" : "outlined"}
-            style={{ borderRadius: 10, marginRight: 15, height: 35 }}
-          >
-            {item.name}
-          </Button>
+          />
         )}
+        contentContainerStyle={{ gap: 12 }}
       />
     </View>
   );

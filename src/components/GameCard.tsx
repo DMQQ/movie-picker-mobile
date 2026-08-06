@@ -7,6 +7,8 @@ import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import Touch from "./Touch";
 import { type GameMember, type UserGame } from "../redux/lists/listsApi";
 import { formatGameType } from "../utils/formatGameType";
+import { getUserAvatarColor } from "../utils/avatar";
+import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 
 const AVATAR_SIZE = 20;
 const AVATAR_OVERLAP = 8;
@@ -26,7 +28,7 @@ function AvatarStack({ members }: { members: GameMember[] }) {
   return (
     <View style={av.row}>
       {visible.map((m, i) => (
-        <View key={m.id} style={[av.circle, { marginLeft: i === 0 ? 0 : -AVATAR_OVERLAP }]}>
+        <View key={m.id} style={[av.circle, { marginLeft: i === 0 ? 0 : -AVATAR_OVERLAP, backgroundColor: getUserAvatarColor(m.name) }]}>
           {m.avatarUrl ? (
             <Image style={av.img} source={{ uri: m.avatarUrl }} cachePolicy="memory-disk" />
           ) : (
@@ -51,14 +53,14 @@ interface GameCardProps {
 
 export default function GameCard({ game, width, height }: GameCardProps) {
   return (
-    <Link href={`/games/${game.id}` as any} asChild>
+    <Link href={`/games/${game.id}?poster=${encodeURIComponent(game.posterPath ?? '')}` as any} asChild>
       <Touch style={StyleSheet.flatten([styles.card, { width, height }])}>
         <View style={{ flex: 1 }}>
           <Link.AppleZoom>
             {game.posterPath ? (
               <Thumbnail
                 path={game.posterPath}
-                size={ThumbnailSizes.poster.large}
+                size={ThumbnailSizes.poster.xlarge}
                 container={{ width, height }}
                 showsPlaceholder={false}
                 priority="normal"
@@ -77,10 +79,6 @@ export default function GameCard({ game, width, height }: GameCardProps) {
           />
 
           <View style={styles.meta}>
-            <View style={styles.topRow}>
-              <AvatarStack members={game.members ?? []} />
-            </View>
-
             <Text style={styles.title} numberOfLines={1}>
               {formatGameType(game.session?.gameType ?? null)}
             </Text>
@@ -102,6 +100,8 @@ export default function GameCard({ game, width, height }: GameCardProps) {
                 </View>
               )}
             </View>
+
+            <AvatarStack members={game.members ?? []} />
           </View>
         </View>
       </Touch>
@@ -111,35 +111,34 @@ export default function GameCard({ game, width, height }: GameCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 16,
+    borderRadius: radius.card,
     overflow: "hidden",
     backgroundColor: "rgba(255,255,255,0.05)",
   },
   placeholder: { alignItems: "center", justifyContent: "center" },
 
-  meta: { position: "absolute", bottom: 12, left: 14, right: 14, gap: 2 },
-  topRow: { flexDirection: "row", justifyContent: "flex-end", marginBottom: 6 },
+  meta: { position: "absolute", bottom: spacing.md, left: 14, right: 14, gap: spacing.xs },
 
-  title: { fontSize: 16, fontWeight: "700", color: "#fff", marginBottom: 2 },
-  date: { fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 6 },
+  title: { fontSize: fontSize.lg, fontWeight: fontWeight.bold, color: colors.text },
+  date: { fontSize: fontSize.xs, color: "rgba(255,255,255,0.45)" },
 
-  chips: { flexDirection: "row", gap: 6, flexWrap: "wrap" },
+  chips: { flexDirection: "row", gap: spacing.sm - 2, flexWrap: "wrap" },
   chip: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: spacing.xs,
     backgroundColor: "rgba(0,0,0,0.5)",
-    borderRadius: 20,
+    borderRadius: radius.modal,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: "rgba(255,255,255,0.12)",
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.sm,
     paddingVertical: 3,
   },
   chipAccent: {
     backgroundColor: "rgba(187,134,252,0.12)",
     borderColor: "rgba(187,134,252,0.25)",
   },
-  chipLabel: { fontSize: 11, fontWeight: "500", color: "rgba(255,255,255,0.65)" },
+  chipLabel: { fontSize: fontSize.xs, fontWeight: fontWeight.medium, color: "rgba(255,255,255,0.65)" },
   chipLabelAccent: { color: "#BB86FC" },
 });
 
@@ -149,7 +148,6 @@ const av = StyleSheet.create({
     width: AVATAR_SIZE,
     height: AVATAR_SIZE,
     borderRadius: AVATAR_SIZE / 2,
-    backgroundColor: "#333",
     borderWidth: 1.5,
     borderColor: "rgba(0,0,0,0.6)",
     alignItems: "center",
@@ -157,7 +155,7 @@ const av = StyleSheet.create({
     overflow: "hidden",
   },
   img: { width: AVATAR_SIZE, height: AVATAR_SIZE },
-  letter: { fontSize: 9, fontWeight: "700", color: "#fff" },
-  extra: { backgroundColor: "#444" },
-  extraText: { fontSize: 8, fontWeight: "700", color: "rgba(255,255,255,0.7)" },
+  letter: { fontSize: 9, fontWeight: fontWeight.bold, color: colors.text },
+  extra: { backgroundColor: colors.overlay },
+  extraText: { fontSize: 8, fontWeight: fontWeight.bold, color: "rgba(255,255,255,0.7)" },
 });

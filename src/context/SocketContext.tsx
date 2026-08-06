@@ -2,7 +2,7 @@ import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as Updates from "expo-updates";
 import React, { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
-import { useSelector } from "react-redux";
+import { shallowEqual, useSelector } from "react-redux";
 import socketIOClient, {
   ManagerOptions,
   Socket,
@@ -12,7 +12,7 @@ import envs from "../constants/envs";
 import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 
-const isDev = true; // envs.mode !== "production";
+const isDev = true; //envs.mode !== "production";
 
 export const baseUrl = isDev
   ? Platform.OS === "ios"
@@ -21,16 +21,20 @@ export const baseUrl = isDev
   : "https://flickmate.app";
 export const url = baseUrl + "/api";
 
+export type ConnectionStatus = "idle" | "connected" | "reconnecting" | "disconnected";
+
 export const SocketContext = React.createContext<{
   socket: Socket | null;
   reconnect: () => void;
   emitter: EventEmitter<{ reconnected: () => void }>;
   userId: string | null;
+  connectionStatus: ConnectionStatus;
 }>({
   socket: null,
   reconnect: () => {},
   userId: "",
   emitter: new EventEmitter<{ reconnected: any }>(),
+  connectionStatus: "idle",
 });
 
 const connectionConfig = {
@@ -87,10 +91,11 @@ export const SocketProvider = ({
 }) => {
   const language = useSelector((st: RootState) => st.room.language);
   const regionalization =
-    useSelector((st: RootState) => st.room.regionalization) || {};
+    useSelector((st: RootState) => st.room.regionalization, shallowEqual) || {};
   const authToken = useSelector((st: RootState) => st.auth.token);
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("idle");
   const appState = useRef(AppState.currentState);
   const wasConnected = useRef(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -120,7 +125,8 @@ export const SocketProvider = ({
       });
 
       newSocket.on("connect", () => {
-        console.log("✅ Socket connected successfully");
+        console.log("✅ Socket connected successfully", { id: newSocket.id, namespace });
+        setConnectionStatus("connected");
 
         // Emit before updating refs so listeners registered against the previous
         // socket object are still alive when onReconnected runs.
@@ -136,14 +142,23 @@ export const SocketProvider = ({
 
       newSocket.on("disconnect", (reason) => {
         console.log("❌ Socket disconnected, reason:", reason);
-        // Do NOT null socket state or socketRef here — socket.io reconnects the
-        // same object internally (reconnectionAttempts: 25). Nulling would tear
-        // down all onAny listeners and create a gap where events are missed.
+        // Only flag reconnecting after we've had a successful connection.
+        // Do NOT null socket state or socketRef — socket.io reconnects the same
+        // object internally (reconnectionAttempts: 25). Nulling would tear down
+        // all onAny listeners and create a gap where events are missed.
+        if (wasConnected.current) {
+          setConnectionStatus("reconnecting");
+        }
       });
 
       newSocket.on("connect_error", (error) => {
         console.log("🚨 Socket connection error:", error);
         // socket.io's internal reconnect handles retries.
+      });
+
+      newSocket.io.on("reconnect_failed", () => {
+        console.log("🔴 Socket reconnect failed — all attempts exhausted");
+        setConnectionStatus("disconnected");
       });
 
       socketRef.current = newSocket;
@@ -202,8 +217,8 @@ export const SocketProvider = ({
   };
 
   const memoizedValue = React.useMemo(
-    () => ({ socket, reconnect, emitter, userId }),
-    [socket, userId],
+    () => ({ socket, reconnect, emitter, userId, connectionStatus }),
+    [socket, userId, connectionStatus],
   );
 
   return (

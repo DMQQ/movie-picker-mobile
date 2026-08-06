@@ -21,6 +21,7 @@ export default function RegisterScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [register, { isLoading }] = useRegisterMutation();
 
@@ -107,8 +108,9 @@ export default function RegisterScreen() {
                   <TextInput
                     mode="outlined" label={t("auth.passwordLabel")} value={password}
                     onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, form: undefined })); }}
-                    secureTextEntry returnKeyType="done" onSubmitEditing={handleRegister}
+                    secureTextEntry={!showPassword} returnKeyType="done" onSubmitEditing={handleRegister}
                     outlineStyle={styles.inputOutline} error={!!errors.password}
+                    right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword((v) => !v)} />}
                   />
                   {errors.password && <Text style={styles.fieldError}>{errors.password}</Text>}
                 </View>

@@ -1,58 +1,162 @@
-import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Icon, Text } from "react-native-paper";
+import { router } from "expo-router";
 import { useGetGamesQuery } from "../redux/lists/listsApi";
-import GameCard from "./GameCard";
+import { formatGameType } from "../utils/formatGameType";
+import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
+import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 
-const CARD_WIDTH = Dimensions.get("window").width * 0.72;
-const CARD_HEIGHT = 190;
-const PREVIEW_LIMIT = 3;
+const mutedText = "rgba(255,255,255,0.45)";
+
+const FAN_COUNT = 3;
+const POSTER_W = 42;
+const POSTER_H = 62;
+const FAN_OFFSET = 16;
+
+function formatDate(unix: number) {
+  return new Date(unix * 1000).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+}
 
 export default function RecentGames() {
   const { data, isLoading } = useGetGamesQuery();
   const allGames = data?.games ?? [];
-  const games = [...allGames].reverse().slice(0, PREVIEW_LIMIT);
+  const recent = [...allGames].reverse().slice(0, FAN_COUNT);
+  const posterGames = recent.filter((g): g is typeof g & { posterPath: string } => !!g.posterPath);
 
   if (isLoading) {
     return (
       <View style={styles.placeholder}>
-        <Icon source="loading" size={16} color="rgba(255,255,255,0.3)" />
-        <Text style={styles.placeholderText}>Loading games…</Text>
+        <Icon source="loading" size={14} color={colors.textSecondary} />
+        <Text style={styles.placeholderText}>Loading…</Text>
       </View>
     );
   }
 
-  if (games.length === 0) {
+  if (recent.length === 0) {
     return (
       <View style={styles.placeholder}>
-        <Icon source="controller-classic-outline" size={22} color="rgba(255,255,255,0.15)" />
-        <Text style={styles.placeholderText}>No games yet — start swiping!</Text>
+        <Text style={styles.placeholderText}>No games yet</Text>
       </View>
     );
   }
 
+  const totalMatches = recent.reduce((s, g) => s + g.matchCount, 0);
+
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      decelerationRate="fast"
-      snapToInterval={CARD_WIDTH + 12}
-      snapToAlignment="start"
-      contentContainerStyle={styles.list}
+    <Pressable
+      style={styles.card}
+      onPress={() => router.push("/games" as any)}
     >
-      {games.map((g) => (
-        <GameCard key={g.id} game={g} width={CARD_WIDTH} height={CARD_HEIGHT} />
-      ))}
-    </ScrollView>
+      <View style={styles.fanWrap}>
+        {posterGames.map((g, i) => (
+          <View
+            key={g.id}
+            style={[
+              styles.fanCard,
+              { left: i * FAN_OFFSET, zIndex: FAN_COUNT - i },
+            ]}
+          >
+            <Thumbnail
+              path={g.posterPath}
+              size={ThumbnailSizes.poster.small}
+              container={{
+                width: POSTER_W,
+                height: POSTER_H,
+                borderRadius: radius.xs + 2,
+              }}
+              showsPlaceholder={false}
+              priority="low"
+            />
+          </View>
+        ))}
+        {posterGames.length === 0 && (
+          <View style={[styles.fanCard, { left: 0, zIndex: 1 }]}>
+            <View style={styles.noPoster}>
+              <Icon source="movie-open-outline" size={18} color={colors.textSecondary} />
+            </View>
+          </View>
+        )}
+      </View>
+
+      <View style={styles.info}>
+        <Text style={styles.title}>
+          {recent.length} recent {recent.length === 1 ? "game" : "games"}
+        </Text>
+        <View style={styles.meta}>
+          {totalMatches > 0 && (
+            <View style={styles.stat}>
+              <Icon source="heart" size={10} color={colors.primary} />
+              <Text style={styles.statValue}>{totalMatches}</Text>
+            </View>
+          )}
+          <View style={styles.latestRow}>
+            <Icon source="clock-outline" size={10} color={colors.textSecondary} />
+            <Text style={styles.latest}>
+              {formatGameType(recent[0].session?.gameType ?? null)} •{" "}
+              {formatDate(recent[0].createdAt)}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      <Icon source="chevron-right" size={16} color={colors.textSecondary} />
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  list: { gap: 12, paddingVertical: 2, paddingRight: 4 },
   placeholder: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    paddingVertical: 18,
+    gap: spacing.sm,
+    paddingVertical: spacing.md + 2,
   },
-  placeholderText: { fontSize: 13, color: "rgba(255,255,255,0.3)" },
+  placeholderText: { fontSize: fontSize.sm + 1, color: mutedText },
+
+  card: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.md + 2,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.lg,
+  },
+
+  fanWrap: {
+    width: POSTER_W + (FAN_COUNT - 1) * FAN_OFFSET,
+    height: POSTER_H,
+    position: "relative",
+  },
+  fanCard: {
+    position: "absolute",
+    top: 0,
+    borderRadius: radius.xs + 2,
+    overflow: "hidden",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  noPoster: {
+    width: POSTER_W,
+    height: POSTER_H,
+    borderRadius: radius.xs + 2,
+    backgroundColor: colors.overlay,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  info: { flex: 1, gap: spacing.xs },
+  title: { fontSize: fontSize.lg - 1, fontWeight: fontWeight.bold, color: colors.text },
+  meta: { gap: 2 },
+  stat: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  statValue: { fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: colors.primary },
+  latestRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  latest: { fontSize: fontSize.xs + 1, color: mutedText },
 });

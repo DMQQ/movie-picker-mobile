@@ -110,8 +110,8 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "flex-start",
-    gap: 15,
+    justifyContent: "space-between",
+    rowGap: 15,
   },
   itemWrapper: {
     width: imageWidth,
