@@ -1,4 +1,5 @@
 import { StyleSheet, TouchableOpacity, Platform } from "react-native";
+import { fontWeight } from "../constants/design";
 import { Text } from "react-native-paper";
 import Animated, { FadeInUp, FadeOutUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
   text: {
     color: "#fff",
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
   closeButton: {
     marginLeft: 4,

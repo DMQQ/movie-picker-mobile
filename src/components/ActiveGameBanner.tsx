@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet } from "react-native";
+import { fontWeight } from "../constants/design";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -58,11 +59,11 @@ const styles = StyleSheet.create({
     flex: 1,
     color: "#fff",
     fontSize: 13,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
   },
   code: {
     color: "#a78bfa",
-    fontWeight: "700",
+    fontWeight: fontWeight.bold,
     letterSpacing: 1,
   },
 });

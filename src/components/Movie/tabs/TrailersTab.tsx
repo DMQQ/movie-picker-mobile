@@ -1,7 +1,7 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, AppState, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { colors } from "../../../constants/design";
+import { colors, fontWeight } from "../../../constants/design";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { hexToRgba } from "../../../utils/hexToRgb";
 import { BlurViewWrapper } from "../../PlatformBlurView";
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   videoTitle: {
     color: "white",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     padding: 10,
   },
   playerWrapper: {

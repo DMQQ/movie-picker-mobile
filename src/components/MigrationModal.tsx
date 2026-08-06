@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { fontWeight } from "../constants/design";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import PrimaryButton from "./PrimaryButton";
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
   },
   highlight: {
     color: "#BB86FC",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
   syncBtn: {
     borderRadius: 25,

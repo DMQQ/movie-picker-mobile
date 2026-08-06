@@ -1,4 +1,5 @@
 import { memo, useCallback, useMemo } from "react";
+import { fontWeight } from "../../constants/design";
 import {
   RefreshControl,
   StyleSheet,
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
   noMoreText: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     textAlign: "center",
     marginTop: 12,
     marginBottom: 4,

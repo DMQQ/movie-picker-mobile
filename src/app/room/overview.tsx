@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { IconButton, Text, useTheme } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontWeight } from "../../constants/design";
 import PagerView from "react-native-pager-view";
 import Animated, {
   useAnimatedStyle,
@@ -151,13 +151,13 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     fontSize: 13,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
     color: "rgba(255,255,255,0.45)",
     letterSpacing: 0.3,
   },
   tabLabelActive: {
     color: "#000",
-    fontWeight: "700",
+    fontWeight: fontWeight.bold,
   },
   headerSpacer: {
     width: 48,

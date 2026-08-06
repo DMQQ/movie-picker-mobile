@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { fontWeight } from "../../constants/design";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { getUserAvatarColor } from "../../utils/avatar";
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
   },
   initial: {
     color: "#fff",
-    fontWeight: "700",
+    fontWeight: fontWeight.bold,
     fontSize: 15,
   },
   thumbBadge: {

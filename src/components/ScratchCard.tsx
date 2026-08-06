@@ -1,4 +1,5 @@
 import { Canvas, Group, Image, Mask, Path, Rect, Skia, SkPath, useImage } from "@shopify/react-native-skia";
+import { fontWeight } from "../constants/design";
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, Vibration, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     textAlign: "center",
   },
 });

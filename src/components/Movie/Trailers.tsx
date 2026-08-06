@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 import { Text } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontWeight } from "../../constants/design";
 import Animated, {
   FadeInDown,
   FadeInLeft,
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
   },
   videoTitle: {
     color: "white",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     padding: 10,
   },
   playerWrapper: {

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { SegmentedButtons } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontWeight } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 
 type MediaType = "movie" | "tv" | "both";
@@ -71,6 +71,6 @@ const styles = StyleSheet.create({
   selectedLabel: {
     color: "#fff",
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
 });

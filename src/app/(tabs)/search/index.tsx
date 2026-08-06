@@ -21,7 +21,7 @@ import {
   Searchbar,
   Text,
 } from "react-native-paper";
-import { colors } from "../../../constants/design";
+import { colors, fontWeight } from "../../../constants/design";
 import {
   useLazySearchQuery,
   useLazyGetSimilarQuery,
@@ -563,11 +563,11 @@ const styles = StyleSheet.create({
   chipText: {
     color: "rgba(255, 255, 255, 0.8)",
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
   },
   chipTextActive: {
     color: "#fff",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
   categoriesContainer: {
     paddingHorizontal: 15,

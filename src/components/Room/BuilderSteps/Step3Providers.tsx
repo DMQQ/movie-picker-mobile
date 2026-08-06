@@ -5,7 +5,7 @@ import {
   Button,
   TouchableRipple,
 } from "react-native-paper";
-import { colors } from "../../../constants/design";
+import { colors, fontWeight } from "../../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetAllProvidersQuery } from "../../../redux/movie/movieApi";
 import ProviderList from "../ProviderList";
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   rememberLabel: {
     color: "#fff",
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
   },
   rememberSubtext: {
     color: "#888",
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   pillText: {
     color: "#888",
     fontSize: 11,
-    fontWeight: "700",
+    fontWeight: fontWeight.bold,
     letterSpacing: 0.5,
   },
   pillTextActive: {

@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Chip } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontWeight } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 import { DecadeFilter } from "../../redux/mediaFilters/mediaFiltersSlice";
 
@@ -70,6 +70,6 @@ const styles = StyleSheet.create({
   },
   selectedChipText: {
     color: "#fff",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
 });

@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { fontWeight } from "../constants/design";
 import { View, StyleSheet, TouchableOpacity, Platform, TextInput } from "react-native";
 import { Text } from "react-native-paper";
 import { withSpring, withSequence, useSharedValue } from "react-native-reanimated";
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 12,
     color: "rgba(255, 255, 255, 0.9)",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
   feedbackContainer: {
     width: "100%",

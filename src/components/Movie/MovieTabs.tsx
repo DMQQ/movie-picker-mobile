@@ -1,6 +1,6 @@
 import { StyleSheet, View, TouchableOpacity, ScrollView, Platform } from "react-native";
 import { Text } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontWeight } from "../../constants/design";
 import { memo, useState } from "react";
 import PlatformBlurView from "../PlatformBlurView";
 import DetailsTab from "./tabs/DetailsTab";
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     color: "rgba(255,255,255,0.7)",
     textTransform: "capitalize",
   },

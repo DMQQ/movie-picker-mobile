@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontWeight } from "../../constants/design";
 import GenreChip from "../GenreChip";
 import PrimaryButton from "../PrimaryButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#fff",
-    fontWeight: "700",
+    fontWeight: fontWeight.bold,
     flex: 1,
     textAlign: "center",
   },
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   },
   selectedCount: {
     color: colors.primary,
-    fontWeight: "400",
+    fontWeight: fontWeight.normal,
   },
   genresContainer: {
     flexDirection: "row",
@@ -346,6 +346,6 @@ const styles = StyleSheet.create({
   },
   applyButtonLabel: {
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
 });

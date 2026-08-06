@@ -1,7 +1,7 @@
 import { memo, useCallback, useMemo } from "react";
 import { Platform, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Text } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontWeight } from "../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
 import FrostedGlass from "../FrostedGlass";
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   legendText: {
     fontSize: 10,
     color: "rgba(255,255,255,0.8)",
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
   },
 });
 

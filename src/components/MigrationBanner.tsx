@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { fontWeight } from "../constants/design";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     color: "#BB86FC",
   },
   sub: {

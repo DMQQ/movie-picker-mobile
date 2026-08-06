@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { fontWeight } from "../../constants/design";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     color: "#e2e8f0",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     fontSize: 14,
   },
   dotSeparator: {
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.85)",
     fontSize: 13,
     lineHeight: 18,
-    fontWeight: "400",
+    fontWeight: fontWeight.normal,
   },
   bottomRow: {
     flexDirection: "row",
@@ -211,7 +212,7 @@ const styles = StyleSheet.create({
   hintText: {
     color: "rgba(255,255,255,0.5)",
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
   },
   actionIcons: {
     flexDirection: "row",

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { fontWeight } from "../../constants/design";
 import { IconButton, Text } from "react-native-paper";
 import PrimaryButton from "../../components/PrimaryButton";
 import { ImageBackground } from "react-native";
@@ -145,7 +146,7 @@ export default function Results() {
               marginTop: 10,
               color: "rgba(255,255,255,0.9)",
               fontSize: 15,
-              fontWeight: "500",
+              fontWeight: fontWeight.medium,
             }}
           >
             {card?.overview}

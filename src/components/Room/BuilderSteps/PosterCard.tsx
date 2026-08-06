@@ -3,7 +3,7 @@ import { View, StyleSheet, Pressable, Image } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { colors, radius, spacing, typography } from "../../../constants/design";
+import { fontWeight, colors, radius, spacing, typography } from "../../../constants/design";
 
 interface PosterCardProps {
   posterUrl: string;
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   checkmarkText: {
     color: colors.text,
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: fontWeight.bold,
   },
 });
 

@@ -1,4 +1,5 @@
 import { Platform, Pressable, View, useWindowDimensions } from "react-native";
+import { fontWeight } from "../../constants/design";
 import { Icon, Text } from "react-native-paper";
 import Touch from "../Touch";
 
@@ -95,7 +96,7 @@ const AnimatedButton = ({
               color: isAccent ? "#fff" : color,
               fontSize: 15,
               textAlign: "center",
-              fontWeight: "600",
+              fontWeight: fontWeight.semibold,
             }}
           >
             {text}
@@ -108,7 +109,7 @@ const AnimatedButton = ({
             color: "rgba(255,255,255,0.6)",
             fontSize: 10,
             textAlign: "center",
-            fontWeight: "500",
+            fontWeight: fontWeight.medium,
           }}
         >
           {label}

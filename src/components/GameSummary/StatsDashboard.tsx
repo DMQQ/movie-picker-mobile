@@ -1,4 +1,5 @@
 import { StyleSheet, View } from "react-native";
+import { fontWeight } from "../../constants/design";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 10,
     flexWrap: "nowrap",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     color: "rgba(255,255,255,0.8)",
     textTransform: "uppercase",
     letterSpacing: 0.5,

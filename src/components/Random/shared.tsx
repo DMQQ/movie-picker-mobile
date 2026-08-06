@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, View } from "react-native";
+import { fontWeight } from "../../constants/design";
 import { Icon, Text } from "react-native-paper";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -138,6 +139,6 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
 });

@@ -1,4 +1,5 @@
 import { Link } from "expo-router";
+import { fontWeight } from "../../constants/design";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useMemo } from "react";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
@@ -460,7 +461,7 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.7)",
     fontSize: 13,
     marginLeft: 6,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
   genreContainer: {
     flexDirection: "row",

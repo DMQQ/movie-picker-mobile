@@ -6,7 +6,7 @@ import {
   View,
 } from "react-native";
 import { Text, Chip } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontWeight } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Animated, {
   FadeIn,
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
   frontText: {
     color: "#fff",
     fontSize: 22,
-    fontWeight: "700",
+    fontWeight: fontWeight.bold,
     opacity: 0.9,
     letterSpacing: 0.5,
     textAlign: "center",
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     color: "#e2e8f0",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     fontSize: 14,
   },
   dotSeparator: {
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.85)",
     fontSize: 13,
     lineHeight: 18,
-    fontWeight: "400",
+    fontWeight: fontWeight.normal,
   },
   bottomBar: {
     flexDirection: "row",
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     letterSpacing: 0.5,
   },
   shareButtonWrapper: {
@@ -443,6 +443,6 @@ const styles = StyleSheet.create({
   hintText: {
     color: "rgba(255,255,255,0.5)",
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
   },
 });

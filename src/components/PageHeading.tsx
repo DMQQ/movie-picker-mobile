@@ -1,4 +1,5 @@
 import { useNavigation } from "expo-router";
+import { fontWeight } from "../constants/design";
 import * as Haptic from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { PropsWithChildren } from "react";
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
   rightText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     paddingRight: 10,
   },
   buttonContainer: {

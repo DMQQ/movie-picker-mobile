@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontWeight } from "../constants/design";
 import GenreChip from "../components/GenreChip";
 import PrimaryButton from "../components/PrimaryButton";
 import { router, useLocalSearchParams } from "expo-router";
@@ -296,6 +296,6 @@ const styles = StyleSheet.create({
   },
   applyButtonLabel: {
     fontSize: 15,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
 });

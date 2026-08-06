@@ -15,7 +15,7 @@ import {
   Text,
   useTheme,
 } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontWeight } from "../../constants/design";
 import Animated, {
   FadeIn,
   useAnimatedProps,
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 11,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
     includeFontPadding: false,
   },
 
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
     bottom: -10,
     fontSize: 8,
     color: "rgba(255,255,255,0.4)",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
   connectionChip: {
     marginTop: 4,
@@ -438,6 +438,6 @@ const styles = StyleSheet.create({
   },
   connectionChipText: {
     fontSize: 9,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
 });

@@ -1,7 +1,7 @@
 import { memo, useMemo } from "react";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import { IconButton, Text } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontWeight } from "../constants/design";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   },
   movieTitle: {
     color: "white",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     marginBottom: 4,
   },
   metadataRow: {
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
   ratingText: {
     color: "white",
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
     marginLeft: 3,
   },
   metadataText: {

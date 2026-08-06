@@ -2,7 +2,7 @@ import { BlurView } from "expo-blur";
 import React, { useMemo, useState } from "react";
 import { Dimensions, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Button, Divider, IconButton, Text, TouchableRipple } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontWeight } from "../constants/design";
 import PrimaryButton from "../components/PrimaryButton";
 import GenreChip from "../components/GenreChip";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
     color: "#fff",
   },
   closeButton: {
@@ -291,11 +291,11 @@ const styles = StyleSheet.create({
   chipText: {
     color: "rgba(255, 255, 255, 0.8)",
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
   },
   chipTextActive: {
     color: "#fff",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
   genreChipsContainer: {
     flexDirection: "row",

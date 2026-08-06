@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { fontWeight } from "../../constants/design";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
@@ -352,7 +353,7 @@ const styles = StyleSheet.create({
   categoryText: {
     color: "#fff",
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
   categoryTextActive: {
     color: "#000",
@@ -423,7 +424,7 @@ const styles = StyleSheet.create({
   qrButtonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     paddingRight: 10,
   },
 });

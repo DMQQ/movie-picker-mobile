@@ -1,4 +1,5 @@
 import LottieView from "lottie-react-native";
+import { fontWeight } from "../../constants/design";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     color: "rgba(255,255,255,0.7)",
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
     textAlign: "center",
     letterSpacing: 0.3,
   },

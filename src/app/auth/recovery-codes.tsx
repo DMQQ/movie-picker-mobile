@@ -1,4 +1,5 @@
 import * as Clipboard from "expo-clipboard";
+import { fontWeight } from "../../constants/design";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Platform, ScrollView, Share, StyleSheet, View } from "react-native";
@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace",
     color: "#fff",
     letterSpacing: 1,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
 
   actions: {

@@ -1,32 +1,40 @@
+import { Dimensions } from "react-native";
+
+const { width: screenWidth } = Dimensions.get("window");
+const scale = screenWidth / 390;
+const s = (v: number) => Math.round(v * scale);
+
 // ── Spacing (4px base grid) ──────────────────────────────────────────────
+// Values scale with screen width so an SE doesn't feel cramped and a Pro Max
+// doesn't feel airy. Base reference: 390dp (iPhone 14/15).
 // Most common screen paddingHorizontal: 15. Use 16 going forward;
 // 15 is kept as a migration alias so existing screens don't shift.
 export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
-  xxl: 24,
+  xs: s(4),
+  sm: s(8),
+  md: s(12),
+  lg: s(16),
+  xl: s(20),
+  xxl: s(24),
   /** Legacy — migrate to lg (16). */
-  screen: 15,
-} as const;
+  screen: s(15),
+};
 
 // ── Border Radius ─────────────────────────────────────────────────────────
 // Card consensus: 16 (GameCard, CinemaTicket, MarathonTicket, SelectionCard,
 // SwipeableGenreCard, SkeletonCard all use it).
 // Pill consensus: 100 (GenreChip, PrimaryButton, ScoreRing, Cast director).
 export const radius = {
-  xs: 4,
-  sm: 8,
-  md: 12,
+  xs: s(4),
+  sm: s(8),
+  md: s(12),
   /** Default card corner. */
-  card: 16,
+  card: s(16),
   /** Modal / sheet corner. */
-  modal: 20,
-  /** Full pill / circle. */
+  modal: s(20),
+  /** Full pill / circle — clamped to 100 (unlimited rounding looks bad). */
   pill: 100,
-} as const;
+};
 
 // ── Font Sizes ────────────────────────────────────────────────────────────
 export const fontSize = {

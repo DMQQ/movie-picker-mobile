@@ -1,4 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
+import { fontWeight } from "../constants/design";
 import { Text } from "react-native-paper";
 import Svg, { Path } from "react-native-svg";
 import useTranslation from "../service/useTranslation";
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
   label: {
     color: "#3c4043",
     fontSize: 15,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
     letterSpacing: 0.2,
   },
 });

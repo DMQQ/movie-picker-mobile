@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { fontWeight } from "../../constants/design";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback, useMemo } from "react"; // useCallback kept for handleGamePress/handleSecondaryPress
@@ -91,7 +92,7 @@ const gameInviteStyles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
   buttonRow: {
     flexDirection: "row",

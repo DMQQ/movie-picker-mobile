@@ -2,7 +2,7 @@
 import React from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import { Text, useTheme } from "react-native-paper";
-import { colors } from "../../constants/design";
+import { colors, fontWeight } from "../../constants/design";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -227,13 +227,13 @@ const styles = StyleSheet.create({
   labelText: {
     marginLeft: 10,
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: fontWeight.bold,
     fontFamily: "Bebas",
     flex: 1,
   },
   labelTextVertical: {
     fontSize: 38,
-    fontWeight: "700",
+    fontWeight: fontWeight.bold,
     fontFamily: "Bebas",
     textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: 0, height: 2 },

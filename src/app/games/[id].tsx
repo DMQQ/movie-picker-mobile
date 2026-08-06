@@ -1,4 +1,5 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
+import { fontWeight } from "../../constants/design";
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import { Icon, Text } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
@@ -247,7 +248,7 @@ const styles = StyleSheet.create({
   membersSection: { marginTop: 20, gap: 10 },
   membersSectionTitle: {
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     color: "rgba(255,255,255,0.5)",
     textTransform: "uppercase",
     letterSpacing: 0.8,
@@ -272,7 +273,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   memberAvatarImg: { width: 28, height: 28 },
-  memberAvatarLetter: { fontSize: 12, fontWeight: "700", color: "#fff" },
+  memberAvatarLetter: { fontSize: 12, fontWeight: fontWeight.bold, color: "#fff" },
   memberName: { fontSize: 13, color: "rgba(255,255,255,0.8)", maxWidth: 100 },
   sectionHeader: {
     flexDirection: "row",
@@ -293,7 +294,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
   },
-  sectionBadgeText: { fontSize: 12, color: "#BB86FC", fontWeight: "600" },
+  sectionBadgeText: { fontSize: 12, color: "#BB86FC", fontWeight: fontWeight.semibold },
 
   empty: {
     alignItems: "center",

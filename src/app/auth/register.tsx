@@ -1,4 +1,5 @@
 import * as AppleAuthentication from "expo-apple-authentication";
+import { fontWeight } from "../../constants/design";
 import { Link, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
@@ -181,5 +182,5 @@ const styles = StyleSheet.create({
   primaryBtnContent: { paddingVertical: 6 },
   footer: { flexDirection: "row", justifyContent: "center", marginTop: 8 },
   footerText: { color: "#666", fontSize: 14 },
-  footerLink: { color: "#BB86FC", fontSize: 14, fontWeight: "600" },
+  footerLink: { color: "#BB86FC", fontSize: 14, fontWeight: fontWeight.semibold },
 });

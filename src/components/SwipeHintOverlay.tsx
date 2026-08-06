@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { fontWeight } from "../constants/design";
 import { useState } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
   },
   rowLabel: {
     fontSize: 13,
-    fontWeight: "700",
+    fontWeight: fontWeight.bold,
     marginBottom: 2,
   },
   rowDesc: {

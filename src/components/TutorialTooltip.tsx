@@ -1,6 +1,6 @@
 import { Platform, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
-import { colors } from "../constants/design";
+import { colors, fontWeight } from "../constants/design";
 import PrimaryButton from "./PrimaryButton";
 import type { TourStepRenderProps } from "./Tour/TourContext";
 import PlatformBlurView from "./PlatformBlurView";
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   },
   nextLabel: {
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: fontWeight.bold,
     letterSpacing: 0.3,
   },
 });

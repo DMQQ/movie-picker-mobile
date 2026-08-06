@@ -1,4 +1,5 @@
 import * as Haptics from "expo-haptics";
+import { fontWeight } from "../constants/design";
 import { useCallback, useMemo, useState } from "react";
 import {
   Dimensions,
@@ -319,7 +320,7 @@ const styles = StyleSheet.create({
   searchButtonText: {
     color: "white",
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
   trailersContainer: {
     position: "absolute",

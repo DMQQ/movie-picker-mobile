@@ -1,4 +1,5 @@
 import { memo, useEffect, useState } from "react";
+import { fontWeight } from "../../../constants/design";
 import {
   Dimensions,
   StyleSheet,
@@ -138,6 +139,6 @@ const styles = StyleSheet.create({
   },
   loadMoreText: {
     color: "#fff",
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
 });

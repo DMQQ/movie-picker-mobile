@@ -1,4 +1,5 @@
 import { StyleSheet, View } from "react-native";
+import { fontWeight } from "../../constants/design";
 import { Avatar, Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { getUserAvatarColor } from "../../utils/avatar";
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
   inProgress: { backgroundColor: "#FF9800" },
   name: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
     color: "#FFFFFF",
     letterSpacing: 0.2,
   },
@@ -124,5 +125,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 6,
   },
-  count: { fontSize: 12, fontWeight: "600", color: "#FFFFFF" },
+  count: { fontSize: 12, fontWeight: fontWeight.semibold, color: "#FFFFFF" },
 });

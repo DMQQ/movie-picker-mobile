@@ -1,4 +1,5 @@
 import * as AppleAuthentication from "expo-apple-authentication";
+import { fontWeight } from "../constants/design";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
 import { Icon, Text } from "react-native-paper";
 import GoogleSignInButton from "./GoogleSignInButton";
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
   emailBtnPressed: { backgroundColor: "rgba(255,255,255,0.13)" },
   emailBtnText: {
     fontSize: 15,
-    fontWeight: "500",
+    fontWeight: fontWeight.medium,
     color: "rgba(255,255,255,0.85)",
     letterSpacing: 0.2,
   },
