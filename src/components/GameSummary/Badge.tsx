@@ -1,6 +1,6 @@
 import { memo } from "react";
+import { colors } from "../../constants/design";
 import { Platform, View } from "react-native";
-import { MD2DarkTheme } from "react-native-paper";
 import { LiquidGlassView } from "@callstack/liquid-glass";
 import ThumbsUp from "../../assets/ThumbsUp";
 
@@ -17,16 +17,16 @@ const Badge = memo(() => (
   >
     <LiquidGlassView
       effect="regular"
-      tintColor={MD2DarkTheme.colors.primary + "aa"}
+      tintColor={colors.primary + "aa"}
       style={[
         {
           borderRadius: 100,
           padding: 5,
           borderWidth: 1,
-          borderColor: MD2DarkTheme.colors.primary,
+          borderColor: colors.primary,
         },
         Platform.OS === "android" && {
-          backgroundColor: MD2DarkTheme.colors.primary + "cc",
+          backgroundColor: colors.primary + "cc",
         },
       ]}
     >

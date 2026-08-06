@@ -6,7 +6,8 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { MD2DarkTheme, TouchableRipple, Text } from "react-native-paper";
+import { TouchableRipple, Text } from "react-native-paper";
+import { colors } from "../../constants/design";
 import SkeletonCard from "./SkeletonCard";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -69,7 +70,7 @@ const ProviderIcon = memo(
               <View
                 style={[
                   styles.checkmark,
-                  { backgroundColor: MD2DarkTheme.colors.primary },
+                  { backgroundColor: colors.primary },
                   vertical
                     ? styles.checkmarkVertical
                     : styles.checkmarkHorizontal,
@@ -290,7 +291,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   selectedProvider: {
-    borderColor: MD2DarkTheme.colors.primary,
+    borderColor: colors.primary,
   },
   providerLogo: {
     width: 50,

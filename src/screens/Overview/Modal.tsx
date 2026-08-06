@@ -3,7 +3,8 @@ import LottieView from "lottie-react-native";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Dimensions, Platform, Pressable } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { MD2DarkTheme, Portal } from "react-native-paper";
+import { Portal } from "react-native-paper";
+import { colors } from "../../constants/design";
 import Animated, { FadeIn, FadeOut, withSpring, withTiming } from "react-native-reanimated";
 import { FancySpinner } from "../../components/FancySpinner";
 import ScratchCard from "../../components/ScratchCard";
@@ -129,7 +130,7 @@ export default function Modal({ match, onClose, styles }: any) {
           exiting={ModalExitingTransition}
           style={{
             borderWidth: 5,
-            borderColor: MD2DarkTheme.colors.primary,
+            borderColor: colors.primary,
             borderRadius: 15,
             marginTop: Platform.OS === "ios" ? 85 : 150,
             position: "relative",

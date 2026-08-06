@@ -12,10 +12,10 @@ import { Platform, Pressable, StyleSheet, View } from "react-native";
 import {
   Appbar,
   Button,
-  MD2DarkTheme,
   Text,
   useTheme,
 } from "react-native-paper";
+import { colors } from "../../constants/design";
 import Animated, {
   FadeIn,
   useAnimatedProps,
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   imageWrapper: {
     width: 24,
     height: 36,
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 4,
     justifyContent: "center",
     alignItems: "center",
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   placeholderCard: {
     width: 24,
     height: 36,
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 8,
     bottom: 8,
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 8,
     paddingHorizontal: 4,
     paddingVertical: 1,

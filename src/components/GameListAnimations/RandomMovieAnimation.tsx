@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
+import { colors } from "../../constants/design";
 import { View, StyleSheet, Animated, Easing } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { MD2DarkTheme } from "react-native-paper";
 
 const RandomMovieAnimation = () => {
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -127,14 +127,14 @@ const styles = StyleSheet.create({
     width: 180,
     height: 180,
     borderRadius: 90,
-    backgroundColor: MD2DarkTheme.colors.primary,
+    backgroundColor: colors.primary,
   },
   card: {
     width: 120,
     height: 160,
     borderRadius: 12,
-    backgroundColor: MD2DarkTheme.colors.primary,
-    shadowColor: MD2DarkTheme.colors.primary,
+    backgroundColor: colors.primary,
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 20,

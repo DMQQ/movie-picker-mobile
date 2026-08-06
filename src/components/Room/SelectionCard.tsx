@@ -2,6 +2,7 @@
 import React from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import { Text, useTheme } from "react-native-paper";
+import { colors } from "../../constants/design";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";

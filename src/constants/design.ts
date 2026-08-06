@@ -50,67 +50,38 @@ export const fontWeight = {
 };
 
 // ── Colors ────────────────────────────────────────────────────────────────
-// All values hardcoded — no dependency on react-native-paper.
+// Exact MD2DarkTheme values, hardcoded so we can drop the paper dependency.
 //
 // Migrate with find-replace:
 //   MD2DarkTheme.colors.primary     → colors.primary
-//   MD2DarkTheme.colors.accent      → colors.accent
-//   MD2DarkTheme.colors.error       → colors.error
-//   MD2DarkTheme.colors.text        → colors.text
-//   MD2DarkTheme.colors.onSurface   → colors.onSurface
-//   MD2DarkTheme.colors.placeholder → colors.placeholder
-//   MD2DarkTheme.colors.disabled    → colors.disabled
-//   MD2DarkTheme.colors.backdrop    → colors.backdrop
-//   MD2DarkTheme.colors.notification→ colors.notification
-//   MD2DarkTheme.colors.tooltip     → colors.tooltip
-//   MD2DarkTheme.colors.surface     → colors.paperSurface  (or colors.surface)
-//   theme.colors.primary            → colors.primary  (same values)
-//
-// App surface (#1a1a1a) is lighter than paper surface (#121212).
-// When migrating a paper component, use colors.paperSurface to preserve
-// the existing look; when building new UI, prefer colors.surface.
+//   MD2DarkTheme.colors.surface     → colors.surface
+//   MD2DarkTheme.colors.background  → colors.background
+//   …etc (every key matches 1:1)
 export const colors = {
-  // ── From MD2DarkTheme — exact values for drop-in replacement ──
-
-  /** Primary brand color (purple). Buttons, selected states, accent elements. */
+  // ── MD2DarkTheme (1:1) ──
   primary: "#BB86FC",
-  /** Secondary accent (teal). Rarely used — mostly paper FAB. */
   accent: "#03dac6",
-  /** Error / destructive action color (pink-red). */
   error: "#CF6679",
-  /** Primary text on dark backgrounds. */
   text: "#FFFFFF",
-  /** Text/icons painted on surface color. Same as text on dark theme. */
   onSurface: "#FFFFFF",
-  /** Muted / placeholder text. ~54% white. */
   placeholder: "rgba(255,255,255,0.54)",
-  /** Disabled element text/icons. ~38% white. */
   disabled: "rgba(255,255,255,0.38)",
-  /** Scrim / modal backdrop. 50% black. */
   backdrop: "rgba(0,0,0,0.5)",
-  /** Badge / notification dot (pink A100). */
   notification: "#ff80ab",
-  /** Tooltip background. */
   tooltip: "rgba(230,225,229,1)",
+  surface: "#121212",
+  background: "#121212",
 
-  // ── App-specific (override paper defaults) ──
-
-  /** App background — pure black, intentionally darker than paper's #121212. */
-  background: "#000",
-  /** Card / elevated surface. Lighter than paper's #121212 for visual layering. */
-  surface: "#1a1a1a",
-  /** Slightly lighter surface variant (skeleton placeholder, hover states). */
+  // ── App-specific (not in MD2) ──
+  /** Pure black — app screens use #000, paper uses #121212. */
+  appBackground: "#000",
+  /** Slightly lighter surface for elevated cards (skeleton, hover). */
   surfaceElevated: "#2a2a2a",
-  /** Paper's surface (#121212). Use when migrating paper components that need
-   *  the original darker value; prefer colors.surface for new UI. */
-  paperSurface: "#121212",
-  /** Paper's background (#121212). Same as paperSurface on dark theme. */
-  paperBackground: "#121212",
-  /** Secondary gray text — app convention, lighter than placeholder. */
+  /** Secondary gray text — lighter than placeholder, common in the app. */
   textSecondary: "#999",
-  /** Standard hairline border on dark surfaces (~10% white). */
+  /** Hairline border on dark surfaces (~10% white). */
   border: "rgba(255,255,255,0.1)",
-  /** Subtle transparent pressable overlay (~8% white). */
+  /** Subtle pressable overlay (~8% white). */
   overlay: "rgba(255,255,255,0.08)",
 } as const;
 

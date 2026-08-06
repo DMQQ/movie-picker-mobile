@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
+import { colors } from "../../constants/design";
 import { useIsPreview, router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import GroupScreenLayout from "../../components/Group/GroupScreenLayout";
@@ -52,7 +53,7 @@ export default function Group() {
           <View style={styles.footerRow}>
             <IconButton
               icon="trash-can-outline"
-              iconColor={MD2DarkTheme.colors.error}
+              iconColor={colors.error}
               size={18}
               onPress={() => handleRemoveItem(item.id)}
               style={styles.trashButton}

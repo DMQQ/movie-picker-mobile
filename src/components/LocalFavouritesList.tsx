@@ -7,7 +7,8 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import { colors } from "../constants/design";
 import { Link, router } from "expo-router";
 import { useAppSelector } from "../redux/store";
 import { useBlockedMovies } from "../hooks/useBlockedMovies";
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
     paddingBottom: 25,
   },
   overlay: {

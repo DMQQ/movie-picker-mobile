@@ -1,6 +1,7 @@
 import { memo, useMemo } from "react";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
-import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
+import { colors } from "../constants/design";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -204,7 +205,7 @@ function FloatingMovieHeader({
               styles.buttonContainer,
               Platform.OS === "android" && styles.androidButtonBackground,
             ]}
-            tintColor={MD2DarkTheme.colors.primary}
+            tintColor={colors.primary}
           >
             {movie && <IconShareButton movie={movie} />}
           </PlatformBlurView>

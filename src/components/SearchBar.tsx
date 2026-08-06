@@ -1,7 +1,8 @@
 import { useNavigation } from "expo-router";
 import { BlurView } from "expo-blur";
 import { StyleSheet, TextInput, View } from "react-native";
-import { IconButton, MD2DarkTheme } from "react-native-paper";
+import { IconButton } from "react-native-paper";
+import { colors } from "../constants/design";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import PlatformBlurView from "./PlatformBlurView";
 
@@ -26,7 +27,7 @@ const CustomSearchBar = ({ value, onChangeText, placeholder = "Search movies and
             value={value}
             onChangeText={onChangeText}
             style={styles.input}
-            selectionColor={MD2DarkTheme.colors.primary}
+            selectionColor={colors.primary}
           />
 
           {value.length > 0 && (

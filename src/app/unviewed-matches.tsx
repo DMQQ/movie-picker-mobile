@@ -7,7 +7,8 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
+import { colors } from "../constants/design";
 import PrimaryButton from "../components/PrimaryButton";
 import { router } from "expo-router";
 import { useMatches } from "../context/DatabaseContext";
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor:
-      Platform.OS === "android" ? MD2DarkTheme.colors.surface : "transparent",
+      Platform.OS === "android" ? colors.surface : "transparent",
     padding: GRID_PADDING,
     paddingBottom: 15,
   },

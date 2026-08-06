@@ -1,9 +1,9 @@
 import { useEffect } from "react";
+import { colors } from "../../constants/design";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import useTranslation from "../../service/useTranslation";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Platform } from "react-native";
-import { MD2DarkTheme } from "react-native-paper";
 
 import { Tabs } from "expo-router/tabs";
 import { isLiquidGlassSupported } from "@callstack/liquid-glass";
@@ -45,7 +45,7 @@ export default function Layout() {
 
 function Pre26IosLayout() {
   const t = useTranslation();
-  const primaryColor = MD2DarkTheme.colors.primary;
+  const primaryColor = colors.primary;
 
   return (
     <Tabs
@@ -121,16 +121,16 @@ function Pre26IosLayout() {
 function TabLayout() {
   const t = useTranslation();
   const selectedColor =
-    Platform.OS === "ios" ? MD2DarkTheme.colors.primary : "#000";
+    Platform.OS === "ios" ? colors.primary : "#000";
   return (
     <NativeTabs
       backgroundColor={"#000"}
       blurEffect="dark"
       backBehavior="none"
       shadowColor={"rgba(0,0,0,0.25)"}
-      iconColor={MD2DarkTheme.colors.primary}
-      indicatorColor={MD2DarkTheme.colors.primary}
-      tintColor={MD2DarkTheme.colors.primary}
+      iconColor={colors.primary}
+      indicatorColor={colors.primary}
+      tintColor={colors.primary}
     >
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Icon

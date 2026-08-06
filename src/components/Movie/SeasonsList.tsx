@@ -1,5 +1,6 @@
 import { FlatList, Image, Pressable, View } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import { colors } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 import Thumbnail from "../Thumbnail";
 import FrostedGlass from "../FrostedGlass";
@@ -70,7 +71,7 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
               }}
               container={{
                 marginRight: 15,
-                ...(item.season_number === selectedSeason ? { borderColor: MD2DarkTheme.colors.primary } : {}),
+                ...(item.season_number === selectedSeason ? { borderColor: colors.primary } : {}),
               }}
             >
               {item.poster_path?.length > 0 && (

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import { colors } from "../constants/design";
 import GenreChip from "../components/GenreChip";
 import PrimaryButton from "../components/PrimaryButton";
 import { router, useLocalSearchParams } from "expo-router";
@@ -238,7 +239,7 @@ export default function FiltersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
     ...Platform.select({
       ios: { paddingTop: 25 },
     }),
@@ -288,7 +289,7 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === "android" ? 24 : 20,
     borderTopWidth: 1,
     borderTopColor: "#333",
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
   },
   applyButton: {
     borderRadius: 24,

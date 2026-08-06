@@ -1,5 +1,6 @@
 import { TouchableOpacity, useWindowDimensions, View } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import { colors } from "../../constants/design";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { ImageBackground } from "react-native";
 import * as Haptics from "expo-haptics";
@@ -239,11 +240,11 @@ export default function RatingState({
                           gap: 4,
                           borderRadius: 12,
                           backgroundColor: isSelected
-                            ? MD2DarkTheme.colors.primary
+                            ? colors.primary
                             : "rgba(0,0,0,0.5)",
                           borderWidth: 1,
                           borderColor: isSelected
-                            ? MD2DarkTheme.colors.primary
+                            ? colors.primary
                             : "rgba(255,255,255,0.12)",
                         }}
                       >

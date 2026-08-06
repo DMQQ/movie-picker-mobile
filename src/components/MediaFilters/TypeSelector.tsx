@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { MD2DarkTheme, SegmentedButtons } from "react-native-paper";
+import { SegmentedButtons } from "react-native-paper";
+import { colors } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 
 type MediaType = "movie" | "tv" | "both";
@@ -60,8 +61,8 @@ const styles = StyleSheet.create({
     borderColor: "#333",
   },
   selectedButton: {
-    backgroundColor: MD2DarkTheme.colors.primary,
-    borderColor: MD2DarkTheme.colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   label: {
     color: "#999",

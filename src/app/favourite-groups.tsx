@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors } from "../constants/design";
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
@@ -11,7 +12,6 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { MD2DarkTheme } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
@@ -77,13 +77,13 @@ export default function FavouriteGroupsScreen() {
         <MaterialCommunityIcons
           name="magnify"
           size={20}
-          color={MD2DarkTheme.colors.placeholder}
+          color={colors.placeholder}
           style={styles.searchIcon}
         />
         <TextInput
           style={styles.searchInput}
           placeholder="Search lists…"
-          placeholderTextColor={MD2DarkTheme.colors.placeholder}
+          placeholderTextColor={colors.placeholder}
           value={query}
           onChangeText={setQuery}
           autoCorrect={false}
@@ -93,7 +93,7 @@ export default function FavouriteGroupsScreen() {
             <MaterialCommunityIcons
               name="close-circle"
               size={18}
-              color={MD2DarkTheme.colors.placeholder}
+              color={colors.placeholder}
             />
           </Pressable>
         )}
@@ -110,7 +110,7 @@ export default function FavouriteGroupsScreen() {
             <Pressable
               style={[
                 styles.item,
-                inGroup && { backgroundColor: MD2DarkTheme.colors.primary },
+                inGroup && { backgroundColor: colors.primary },
               ]}
               onPress={() => onPress(group)}
               android_ripple={{ color: "rgba(255,255,255,0.1)" }}
@@ -118,7 +118,7 @@ export default function FavouriteGroupsScreen() {
               <MaterialCommunityIcons
                 name={inGroup ? "bookmark-check" : "bookmark-outline"}
                 size={22}
-                color={inGroup ? "#fff" : MD2DarkTheme.colors.placeholder}
+                color={inGroup ? "#fff" : colors.placeholder}
                 style={styles.itemIcon}
               />
               <Text style={styles.itemText}>{group.name}</Text>
@@ -149,31 +149,31 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   title: {
-    color: MD2DarkTheme.colors.text,
+    color: colors.text,
     fontSize: 26,
     fontFamily: "Bebas",
     marginBottom: 18,
   },
   movieTitle: {
-    color: MD2DarkTheme.colors.primary,
+    color: colors.primary,
   },
   searchRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     paddingHorizontal: 12,
     marginBottom: 16,
     height: 46,
     borderWidth: 1,
-    borderColor: MD2DarkTheme.colors.disabled,
+    borderColor: colors.disabled,
   },
   searchIcon: {
     marginRight: 8,
   },
   searchInput: {
     flex: 1,
-    color: MD2DarkTheme.colors.text,
+    color: colors.text,
     fontSize: 15,
   },
   clearBtn: {
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 16,
@@ -196,6 +196,6 @@ const styles = StyleSheet.create({
   itemText: {
     flex: 1,
     fontSize: 16,
-    color: MD2DarkTheme.colors.text,
+    color: colors.text,
   },
 });

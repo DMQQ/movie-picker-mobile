@@ -1,6 +1,6 @@
 import { useNavigation } from "expo-router";
+import { colors } from "../constants/design";
 import { Platform, StyleProp, View, ViewStyle } from "react-native";
-import { MD2DarkTheme } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PrimaryButton from "./PrimaryButton";
 import useTranslation from "../service/useTranslation";
@@ -64,7 +64,7 @@ export default function MoviesActionButtons({
         disabled={fortuneWheelMovies.length === 0}
         style={{ flex: 1 }}
         icon={({ color }) => <MaterialCommunityIcons name="dice-5" size={16} color={color} />}
-        buttonColor={MD2DarkTheme.colors.accent}
+        buttonColor={colors.accent}
         onPress={() => {
           router.navigate({
             pathname: "/fortune",

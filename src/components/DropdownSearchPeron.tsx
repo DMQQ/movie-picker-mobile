@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, FlatList, Image, ListRenderItem, StyleSheet, TouchableOpacity, View } from "react-native";
-import { ActivityIndicator, Avatar, MD2DarkTheme, Surface, Text, TextInput, TouchableRipple } from "react-native-paper";
+import { ActivityIndicator, Avatar, Surface, Text, TextInput, TouchableRipple } from "react-native-paper";
+import { colors } from "../constants/design";
 import { useLazySearchPeopleQuery } from "../redux/person/personApi";
 import useTranslation from "../service/useTranslation";
 
@@ -211,14 +212,14 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   input: {
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
   },
   dropdown: {
     position: "absolute",
     top: "100%",
     left: 0,
     right: 0,
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 8,
     marginTop: 4,
     elevation: 5,
@@ -307,7 +308,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 3,
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
   },
   selectedPersonInner: {
     flexDirection: "row",

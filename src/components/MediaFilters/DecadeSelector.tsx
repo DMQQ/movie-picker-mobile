@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Chip, MD2DarkTheme } from "react-native-paper";
+import { Chip } from "react-native-paper";
+import { colors } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 import { DecadeFilter } from "../../redux/mediaFilters/mediaFiltersSlice";
 
@@ -60,8 +61,8 @@ const styles = StyleSheet.create({
     borderColor: "#333",
   },
   selectedChip: {
-    backgroundColor: MD2DarkTheme.colors.primary,
-    borderColor: MD2DarkTheme.colors.primary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   chipText: {
     color: "#999",

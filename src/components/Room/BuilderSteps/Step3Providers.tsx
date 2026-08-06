@@ -3,9 +3,9 @@ import { View, StyleSheet, TextInput } from "react-native";
 import {
   Text,
   Button,
-  MD2DarkTheme,
   TouchableRipple,
 } from "react-native-paper";
+import { colors } from "../../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetAllProvidersQuery } from "../../../redux/movie/movieApi";
 import ProviderList from "../ProviderList";
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   rememberIconWrapActive: {
-    backgroundColor: MD2DarkTheme.colors.primary,
+    backgroundColor: colors.primary,
   },
   rememberContent: {
     flex: 1,
@@ -256,8 +256,8 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.12)",
   },
   pillActive: {
-    backgroundColor: MD2DarkTheme.colors.primary + "33",
-    borderColor: MD2DarkTheme.colors.primary,
+    backgroundColor: colors.primary + "33",
+    borderColor: colors.primary,
   },
   pillText: {
     color: "#888",
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   pillTextActive: {
-    color: MD2DarkTheme.colors.primary,
+    color: colors.primary,
   },
   clearButton: {
     alignSelf: "flex-start",

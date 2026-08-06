@@ -18,10 +18,10 @@ import {
 } from "react-native";
 import {
   ActivityIndicator,
-  MD2DarkTheme,
   Searchbar,
   Text,
 } from "react-native-paper";
+import { colors } from "../../../constants/design";
 import {
   useLazySearchQuery,
   useLazyGetSimilarQuery,
@@ -317,7 +317,7 @@ const SearchScreen = () => {
         <ActivityIndicator
           style={[styles.loader, { marginTop: 50 }]}
           animating={true}
-          color={MD2DarkTheme.colors.primary}
+          color={colors.primary}
         />
       );
 
@@ -465,7 +465,7 @@ const SearchScreen = () => {
             <ActivityIndicator
               style={styles.loader}
               animating={true}
-              color={MD2DarkTheme.colors.primary}
+              color={colors.primary}
             />
           ) : null
         }

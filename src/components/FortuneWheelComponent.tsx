@@ -13,10 +13,10 @@ import {
   vec,
 } from "@shopify/react-native-skia";
 import * as Haptics from "expo-haptics";
+import { colors } from "../constants/design";
 import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from "react";
 import { Dimensions, Image, Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { MD2DarkTheme } from "react-native-paper";
 import Animated, {
   cancelAnimation,
   clamp,
@@ -133,7 +133,7 @@ const WheelOverlay = ({ size }: { size: number }) => {
       {/* 5. THE PREMIUM GOLD-SILVER HUB */}
       <Group>
         {Platform.OS === "ios" && (
-          <Circle cx={center.x} cy={center.y} r={hubRadius + 25} color={MD2DarkTheme.colors.surface} opacity={0.7}>
+          <Circle cx={center.x} cy={center.y} r={hubRadius + 25} color={colors.surface} opacity={0.7}>
             <BlurMask blur={12} style="normal" />
           </Circle>
         )}

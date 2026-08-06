@@ -18,6 +18,7 @@ import {
   Share,
 } from "react-native";
 import { Avatar, Text, useTheme } from "react-native-paper";
+import { colors } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import StyledQRCode from "../../components/StyledQRCode";
 import { Movie } from "../../../types";

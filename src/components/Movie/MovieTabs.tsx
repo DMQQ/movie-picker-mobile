@@ -1,5 +1,6 @@
 import { StyleSheet, View, TouchableOpacity, ScrollView, Platform } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import { colors } from "../../constants/design";
 import { memo, useState } from "react";
 import PlatformBlurView from "../PlatformBlurView";
 import DetailsTab from "./tabs/DetailsTab";
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     ...Platform.select({
       android: {
-        backgroundColor: MD2DarkTheme.colors.surface + "cc",
+        backgroundColor: colors.surface + "cc",
         borderRadius: 20,
         borderWidth: 2,
         borderColor: "#343434ff",
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   activeTabButton: {
-    backgroundColor: MD2DarkTheme.colors.primary + "aa",
+    backgroundColor: colors.primary + "aa",
   },
   tabLabel: {
     fontSize: 15,

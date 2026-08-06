@@ -1,6 +1,7 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, AppState, Dimensions, Pressable, StyleSheet, View } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import { colors } from "../../../constants/design";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { hexToRgba } from "../../../utils/hexToRgb";
 import { BlurViewWrapper } from "../../PlatformBlurView";
@@ -63,7 +64,7 @@ const PlayerItem = memo(({ name, videoKey, index, canPlay }: { name: string; vid
         <Pressable onPress={() => setIsPlaying((p) => !p)} style={styles.playerWrapper}>
           {!isReady && (
             <View style={styles.placeholder}>
-              <ActivityIndicator size="large" color={MD2DarkTheme.colors.primary} />
+              <ActivityIndicator size="large" color={colors.primary} />
               <Text variant="bodySmall" style={styles.loadingText}>
                 Loading...
               </Text>

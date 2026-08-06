@@ -1,12 +1,12 @@
 import { Stack } from "expo-router";
-import { MD2DarkTheme } from "react-native-paper";
+import { colors } from "../../constants/design";
 
 export default function AuthLayout() {
   return (
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: MD2DarkTheme.colors.surface },
+        contentStyle: { backgroundColor: colors.surface },
         animation: "none",
       }}
     >

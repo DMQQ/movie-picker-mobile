@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Image, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
+import { colors } from "../../constants/design";
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

@@ -1,5 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
+import { colors } from "../constants/design";
 import QRCode from "react-native-qrcode-svg";
 
 interface StyledQRCodeProps {

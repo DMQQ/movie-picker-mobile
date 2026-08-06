@@ -5,7 +5,8 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Text, Chip, MD2DarkTheme } from "react-native-paper";
+import { Text, Chip } from "react-native-paper";
+import { colors } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Animated, {
   FadeIn,
@@ -40,7 +41,7 @@ import PlatformBlurView from "../../components/PlatformBlurView";
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CARD_WIDTH = screenWidth * 0.9;
 const CARD_HEIGHT = screenHeight * 0.65;
-const PRIMARY_COLOR = MD2DarkTheme.colors.primary;
+const PRIMARY_COLOR = colors.primary;
 
 export default function RandomMovie() {
   const t = useTranslation();

@@ -1,5 +1,6 @@
 import { Dimensions, View } from "react-native";
-import { Chip, MD2DarkTheme, Text } from "react-native-paper";
+import { Chip, Text } from "react-native-paper";
+import { colors } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import PageHeading from "../../components/PageHeading";
@@ -114,7 +115,7 @@ export default function WaitingState({
             loading={loadingInitialContent}
             onPress={actions.startSession}
             style={{ marginTop: 15 }}
-            buttonColor={MD2DarkTheme.colors.accent}
+            buttonColor={colors.accent}
           >
             {t("voter.home.start")}
           </PrimaryButton>

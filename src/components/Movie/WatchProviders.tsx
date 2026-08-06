@@ -1,6 +1,7 @@
 import { memo, useCallback, useMemo } from "react";
 import { Platform, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import { colors } from "../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
 import FrostedGlass from "../FrostedGlass";
@@ -182,7 +183,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     ...Platform.select({
       android: {
-        backgroundColor: MD2DarkTheme.colors.surface + "cc",
+        backgroundColor: colors.surface + "cc",
         borderWidth: 2,
         borderColor: "#343434ff",
         borderRadius: 15,

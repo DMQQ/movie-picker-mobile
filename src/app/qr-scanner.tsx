@@ -1,7 +1,8 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, ToastAndroid, Vibration, View } from "react-native";
-import { MD2DarkTheme, Text, TextInput, useTheme } from "react-native-paper";
+import { Text, TextInput, useTheme } from "react-native-paper";
+import { colors } from "../constants/design";
 import PrimaryButton from "../components/PrimaryButton";
 import PageHeading from "../components/PageHeading";
 import useTranslation from "../service/useTranslation";
@@ -194,7 +195,7 @@ export default function QRScanner() {
         onRightIconPress={() => setIsManual(true)}
         rightIconTitle={t("scanner.code")}
         rightIconName="keyboard-outline"
-        tintColor={MD2DarkTheme.colors.primary}
+        tintColor={colors.primary}
       ></PageHeading>
 
       {hasPermission.granted && isFocused && (

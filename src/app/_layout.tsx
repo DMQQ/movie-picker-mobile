@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD2DarkTheme, PaperProvider } from "react-native-paper";
+import { colors } from "../constants/design";
 import {
   SafeAreaProvider,
   initialWindowMetrics,
@@ -226,7 +227,7 @@ const RootNavigator = ({
             contentStyle: {
               backgroundColor:
                 Platform.OS === "android"
-                  ? MD2DarkTheme.colors.surface
+                  ? colors.surface
                   : "transparent",
             },
             sheetAllowedDetents: [0.7], // 70%

@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Pressable, View } from "react-native";
-import { Avatar, MD2DarkTheme } from "react-native-paper";
+import { Avatar } from "react-native-paper";
+import { colors } from "../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { getUserAvatarColor } from "../../utils/avatar";
@@ -77,7 +78,7 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
             zIndex: (props.data?.length || 0) + 1,
             borderWidth: 0.5,
             borderColor: "#fff",
-            backgroundColor: MD2DarkTheme.colors.surface,
+            backgroundColor: colors.surface,
           }}
         />
       </Pressable>

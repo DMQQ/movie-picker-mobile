@@ -1,7 +1,8 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Image, ImageProps } from "expo-image";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import { colors } from "../constants/design";
 
 type Shared = {
   path: string;
@@ -56,11 +57,11 @@ export const ThumbnailSizes = {
 const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path">) => (
   <View style={[styles.container, container]}>
     <View
-      style={[styles.image, rest.style, { justifyContent: "center", alignItems: "center", backgroundColor: MD2DarkTheme.colors.surface }]}
+      style={[styles.image, rest.style, { justifyContent: "center", alignItems: "center", backgroundColor: colors.surface }]}
     >
-      <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={MD2DarkTheme.colors.placeholder} />
+      <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={colors.placeholder} />
 
-      <Text style={{ color: MD2DarkTheme.colors.placeholder, marginTop: 8, textAlign: "center" }} variant="bodyMedium">
+      <Text style={{ color: colors.placeholder, marginTop: 8, textAlign: "center" }} variant="bodyMedium">
         {rest.alt || "No Image Available"}
       </Text>
     </View>

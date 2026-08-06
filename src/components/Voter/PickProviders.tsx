@@ -1,5 +1,6 @@
 import { Dimensions, FlatList, Image } from "react-native";
-import { MD2DarkTheme, TouchableRipple } from "react-native-paper";
+import { TouchableRipple } from "react-native-paper";
+import { colors } from "../../constants/design";
 import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
 
 const MARGIN = 8;
@@ -40,7 +41,7 @@ export default function PickProviders({
           style={{
             borderWidth: 2,
             borderColor: providers.includes(item.provider_id)
-              ? MD2DarkTheme.colors.primary
+              ? colors.primary
               : "transparent",
             borderRadius: 10,
             margin: MARGIN / 2,

@@ -1,5 +1,6 @@
 import { Platform, StyleSheet, View } from "react-native";
-import { Button, MD2DarkTheme, Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
+import { colors } from "../constants/design";
 import PrimaryButton from "./PrimaryButton";
 import type { TourStepRenderProps } from "./Tour/TourContext";
 import PlatformBlurView from "./PlatformBlurView";
@@ -10,7 +11,7 @@ interface Props extends TourStepRenderProps {
   total?: number;
 }
 
-const PRIMARY = MD2DarkTheme.colors.primary;
+const PRIMARY = colors.primary;
 
 export default function TutorialTooltip({
   title,

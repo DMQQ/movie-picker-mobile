@@ -250,7 +250,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.appBackground,
     ...Platform.select({ ios: { paddingBottom: 50 } }),
   },
   scrollView: { flex: 1, paddingTop: 80 },

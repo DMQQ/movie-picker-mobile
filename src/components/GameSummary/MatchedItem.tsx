@@ -1,5 +1,6 @@
 import { StyleSheet, View } from "react-native";
-import { Button, MD2DarkTheme, Text } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
+import { colors } from "../../constants/design";
 import { Movie } from "../../../types";
 import MatchTile from "../Overview/MatchTile";
 import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
@@ -46,11 +47,11 @@ export default function MatchedItem({ summary, badge = false, ...item }: Props) 
           <Button
             style={{
               marginTop: 8,
-              borderColor: isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary,
+              borderColor: isInGroup1 ? colors.error : colors.primary,
             }}
             mode="outlined"
             onPress={onFavouritePress}
-            textColor={isInGroup1 ? MD2DarkTheme.colors.error : MD2DarkTheme.colors.primary}
+            textColor={isInGroup1 ? colors.error : colors.primary}
           >
             {isInGroup1 ? t("game-summary.remove-from-favourites") : t("game-summary.add-to-favourites")}
           </Button>

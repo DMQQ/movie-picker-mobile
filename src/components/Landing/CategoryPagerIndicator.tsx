@@ -6,7 +6,8 @@ import {
   FlatList,
   Platform,
 } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import { colors } from "../../constants/design";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -53,7 +54,7 @@ function CategoryPagerIndicator({
         style={[
           { borderRadius: 12 },
           Platform.OS === "android" && {
-            backgroundColor: MD2DarkTheme.colors.surface,
+            backgroundColor: colors.surface,
           },
         ]}
       >
@@ -83,8 +84,8 @@ function CategoryPagerIndicator({
               size={32}
               color={
                 selectedChip === category.id
-                  ? MD2DarkTheme.colors.primary
-                  : MD2DarkTheme.colors.onSurface
+                  ? colors.primary
+                  : colors.onSurface
               }
             />
           ) : (
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
   },
   selectedChip: {
     borderWidth: 2,
-    borderColor: MD2DarkTheme.colors.primary,
+    borderColor: colors.primary,
   },
   chipImage: {
     width: "100%",

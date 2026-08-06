@@ -1,5 +1,5 @@
 import { BlurMask, Canvas, Path, Skia } from "@shopify/react-native-skia";
-import { MD2DarkTheme } from "react-native-paper";
+import { colors } from "../../constants/design";
 import {
   forwardRef,
   ReactNode,
@@ -22,7 +22,7 @@ import { TourContext, TourRef, TourStep, TourStableContext } from "./TourContext
 const { width: W, height: H } = Dimensions.get("screen");
 const SPOTLIGHT_PADDING = 10;
 const OVERLAY_OPACITY = 0.92;
-const ACCENT = MD2DarkTheme.colors.primary;
+const ACCENT = colors.primary;
 const FADE_IN_MS = 220;
 const FADE_OUT_MS = 180;
 

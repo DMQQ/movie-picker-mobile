@@ -1,7 +1,8 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { Keyboard, Pressable, View } from "react-native";
-import { MD2DarkTheme, Text, TextInput } from "react-native-paper";
+import { Text, TextInput } from "react-native-paper";
+import { colors } from "../constants/design";
 import { createGroupFromArray } from "../redux/favourites/favourites";
 import { useAppDispatch } from "../redux/store";
 import useTranslation from "../service/useTranslation";
@@ -55,17 +56,17 @@ export default function CreateCollectionFromLiked({
             borderRadius: 100,
             borderWidth: 1,
             gap: 5,
-            borderColor: MD2DarkTheme.colors.primary,
+            borderColor: colors.primary,
           }}
         >
           <MaterialCommunityIcons
             name="bookmark"
-            color={MD2DarkTheme.colors.primary}
+            color={colors.primary}
             size={16}
           />
           <Text
             style={{
-              color: MD2DarkTheme.colors.primary,
+              color: colors.primary,
               fontWeight: "bold",
               fontSize: 14,
             }}

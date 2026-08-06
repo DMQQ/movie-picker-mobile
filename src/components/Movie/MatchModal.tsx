@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { Text, useTheme } from "react-native-paper";
+import { colors } from "../../constants/design";
 import Animated, {
   FadeIn,
   FadeOut,

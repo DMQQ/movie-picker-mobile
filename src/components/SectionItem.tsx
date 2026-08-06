@@ -1,5 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import { colors } from "../constants/design";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import { Link } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -166,7 +167,7 @@ const sectionStyles = StyleSheet.create({
     overflow: "hidden",
     width: SECTION_ITEM_WIDTH,
     height: SECTION_ITEM_HEIGHT,
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
     borderRadius: 5,
   },
 
@@ -180,7 +181,7 @@ const sectionStyles = StyleSheet.create({
     position: "absolute",
     right: 5,
     top: 5,
-    backgroundColor: MD2DarkTheme.colors.surface,
+    backgroundColor: colors.surface,
     paddingHorizontal: 5,
     paddingVertical: 3,
     borderRadius: 5,

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { IconButton, MD2DarkTheme, Text } from "react-native-paper";
+import { IconButton, Text } from "react-native-paper";
+import { colors } from "../../constants/design";
 import GenreChip from "../GenreChip";
 import PrimaryButton from "../PrimaryButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -307,7 +308,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   selectedCount: {
-    color: MD2DarkTheme.colors.primary,
+    color: colors.primary,
     fontWeight: "400",
   },
   genresContainer: {

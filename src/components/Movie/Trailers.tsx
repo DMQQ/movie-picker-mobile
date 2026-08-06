@@ -10,7 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { MD2DarkTheme, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
+import { colors } from "../../constants/design";
 import Animated, {
   FadeInDown,
   FadeInLeft,
@@ -218,7 +219,7 @@ const PlayerItem = memo(
               <View style={styles.placeholder}>
                 <ActivityIndicator
                   size="large"
-                  color={MD2DarkTheme.colors.primary}
+                  color={colors.primary}
                 />
                 <Text variant="bodySmall" style={styles.loadingText}>
                   Loading...

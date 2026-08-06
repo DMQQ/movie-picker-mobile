@@ -1,7 +1,8 @@
 import { BlurView } from "expo-blur";
 import React, { useMemo, useState } from "react";
 import { Dimensions, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Button, Divider, IconButton, MD2DarkTheme, Text, TouchableRipple } from "react-native-paper";
+import { Button, Divider, IconButton, Text, TouchableRipple } from "react-native-paper";
+import { colors } from "../constants/design";
 import PrimaryButton from "../components/PrimaryButton";
 import GenreChip from "../components/GenreChip";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -80,7 +81,7 @@ export default function SearchFilters({ route }: any) {
             <View style={styles.headerContent}>
               <IconButton icon="chevron-left" iconColor="#fff" onPress={() => router.back()} size={24} style={styles.closeButton} />
 
-              <Button mode="text" onPress={resetFilters} textColor={MD2DarkTheme.colors.primary} style={styles.resetButton}>
+              <Button mode="text" onPress={resetFilters} textColor={colors.primary} style={styles.resetButton}>
                 Reset
               </Button>
             </View>
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   selectedProvider: {
-    borderColor: MD2DarkTheme.colors.primary,
+    borderColor: colors.primary,
     backgroundColor: "rgba(128, 0, 128, 0.15)",
   },
   providerLogo: {
@@ -325,7 +326,7 @@ const styles = StyleSheet.create({
   applyButton: {
     borderRadius: 24,
     width: "100%",
-    backgroundColor: MD2DarkTheme.colors.primary,
+    backgroundColor: colors.primary,
   },
   buttonContent: {
     padding: 7.5,

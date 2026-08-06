@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { IconButton, Text, useTheme } from "react-native-paper";
+import { colors } from "../../constants/design";
 import PagerView from "react-native-pager-view";
 import Animated, {
   useAnimatedStyle,

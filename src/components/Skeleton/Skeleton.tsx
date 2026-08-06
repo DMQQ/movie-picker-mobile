@@ -1,6 +1,7 @@
 import * as React from "react";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
+import { colors } from "../../constants/design";
 
 interface SkeletonProps {
   children: React.ReactElement;
