@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     left: -2,
     right: -2,
     justifyContent: "flex-end",
-    padding: 10,
+    padding: spacing.sm + 2,
     borderBottomLeftRadius: radius.card,
     borderBottomRightRadius: radius.card,
   },
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   },
   checkmarkText: {
     color: colors.text,
-    fontSize: 16,
+    fontSize: fontSize.lg,
     fontWeight: fontWeight.bold,
   },
 });

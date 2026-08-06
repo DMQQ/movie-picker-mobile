@@ -14,7 +14,7 @@ const skeletonStyles = StyleSheet.create({
   },
   moviesList: {
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.sm + 2,
     marginTop: 15,
   },
   movieCard: {

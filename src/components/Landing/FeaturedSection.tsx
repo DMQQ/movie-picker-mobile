@@ -90,13 +90,13 @@ export const FeaturedSectionSkeleton = memo(() => {
                 style={{
                   width: 105,
                   height: 155,
-                  borderRadius: 12,
+                  borderRadius: radius.md,
                   backgroundColor: "#222",
                 }}
               />
             </Skeleton>
 
-            <View style={[styles.detailsContainer, { gap: 10 }]}>
+            <View style={[styles.detailsContainer, { gap: spacing.sm + 2 }]}>
               <Skeleton>
                 <View
                   style={{
@@ -153,7 +153,7 @@ export const FeaturedSectionSkeleton = memo(() => {
           </View>
 
           {/* Overview Block - This fills the gap between thumbnail and buttons */}
-          <View style={{ marginTop: 20, marginBottom: 20, gap: 10 }}>
+          <View style={{ marginTop: 20, marginBottom: 20, gap: spacing.sm + 2 }}>
             <Skeleton>
               <View
                 style={{
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 150,
     backgroundColor: "#333",
-    borderRadius: 12,
+    borderRadius: radius.md,
   },
   featuredContainer: {
     width,
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: 105,
     height: 155,
-    borderRadius: 12,
+    borderRadius: radius.md,
     backgroundColor: "rgba(255,255,255,0.1)",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.15)",
@@ -466,10 +466,10 @@ const styles = StyleSheet.create({
   genreContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 6,
+    gap: spacing.sm - 2,
   },
   overview: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "rgba(255,255,255,0.85)",
     lineHeight: 20,
     marginBottom: 20,
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   seeMoreLabel: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     fontWeight: "bold",
     letterSpacing: 0.5,
   },
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     backgroundColor: "rgba(0,0,0,0.4)",
-    padding: 10,
+    padding: spacing.sm + 2,
     borderRadius: 50,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.15)",

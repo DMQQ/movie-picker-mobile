@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.07)",
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingHorizontal: 12,
     marginBottom: 10,
     height: 46,
@@ -206,10 +206,10 @@ const styles = StyleSheet.create({
   },
   clearSearch: {
     padding: 4,
-    borderRadius: 12,
+    borderRadius: radius.md,
   },
   rememberContainer: {
-    borderRadius: 12,
+    borderRadius: radius.md,
     marginBottom: 8,
     overflow: "hidden",
   },
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",
     padding: 12,
-    borderRadius: 12,
+    borderRadius: radius.md,
     gap: 12,
   },
   rememberIconWrap: {
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
   },
   rememberLabel: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: fontSize.md,
     fontWeight: fontWeight.medium,
   },
   rememberSubtext: {
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   pill: {
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
     paddingVertical: 4,
     borderRadius: 20,
     backgroundColor: "rgba(255,255,255,0.08)",
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   },
   clearButtonLabel: {
     color: "#888",
-    fontSize: 12,
+    fontSize: fontSize.sm,
   },
 });
 

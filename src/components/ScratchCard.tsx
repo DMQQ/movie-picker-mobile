@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   canvas: {
     width: "100%",
     height: "100%",
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
   },
   buttonOverlay: {
     position: "absolute",
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
     textAlign: "center",
   },

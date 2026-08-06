@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: fontSize.md,
     fontWeight: fontWeight.semibold,
   },
   categoryTextActive: {
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
   cardMeta: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: spacing.sm - 2,
     marginTop: 8,
   },
   metaItem: {
@@ -407,11 +407,11 @@ const styles = StyleSheet.create({
   },
   metaText: {
     color: "rgba(255,255,255,0.45)",
-    fontSize: 12,
+    fontSize: fontSize.sm,
   },
   metaDot: {
     color: "rgba(255,255,255,0.25)",
-    fontSize: 12,
+    fontSize: fontSize.sm,
   },
   qrButtonContainer: {
     borderRadius: 100,
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
   },
   qrButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
     paddingRight: 10,
   },

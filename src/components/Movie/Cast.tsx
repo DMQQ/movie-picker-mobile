@@ -50,7 +50,7 @@ export default function Cast({ id, type, initialData }: { id: number; type: "mov
               <Text
                 style={{
                   color: "rgba(255,255,255,0.95)",
-                  fontSize: 16,
+                  fontSize: fontSize.lg,
                   fontFamily: "Bebas",
                 }}
               >
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: CARD_WIDTH * 1.15,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
     marginBottom: 10,
   },
   textWrap: {
@@ -93,11 +93,11 @@ const styles = StyleSheet.create({
   },
   character: {
     fontFamily: "Bebas",
-    fontSize: 18,
+    fontSize: fontSize.xl,
     color: "#fff",
   },
   actor: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "#ccc",
   },
 
@@ -113,6 +113,6 @@ const styles = StyleSheet.create({
   directorImage: {
     width: 60,
     height: 80,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
   },
 });

@@ -25,7 +25,7 @@ export default function PickCategory({
     <View
       style={{
         flexDirection: "row",
-        paddingVertical: 10,
+        paddingVertical: spacing.sm + 2,
         gap: 15,
         marginTop: 15,
       }}
@@ -35,7 +35,7 @@ export default function PickCategory({
           key={index}
           onPress={() => setCategory(item.value)}
           mode={category === item.value ? "contained" : "outlined"}
-          style={{ flex: 1, borderRadius: 10 }}
+          style={{ flex: 1, borderRadius: radius.sm + 2 }}
         >
           {item.label}
         </Button>

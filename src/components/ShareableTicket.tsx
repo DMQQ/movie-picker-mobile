@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   },
   shareButtonLabel: {
     fontFamily: "Bebas",
-    fontSize: 18,
+    fontSize: fontSize.xl,
     letterSpacing: 2,
   },
 });

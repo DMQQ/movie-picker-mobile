@@ -132,14 +132,14 @@ const styles = StyleSheet.create({
     marginTop: 16,
     color: "#fff",
     fontFamily: "Bebas",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     letterSpacing: 1,
   },
   errorText: {
     marginTop: 12,
     color: "#999",
     fontFamily: "Bebas",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     letterSpacing: 1,
   },
 });

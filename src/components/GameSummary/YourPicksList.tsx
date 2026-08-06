@@ -45,5 +45,5 @@ const styles = StyleSheet.create({
   container: { marginTop: 30 },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15 },
   title: { fontSize: 35, fontFamily: "Bebas" },
-  row: { gap: 10, marginBottom: 15 },
+  row: { gap: spacing.sm + 2, marginBottom: 15 },
 });

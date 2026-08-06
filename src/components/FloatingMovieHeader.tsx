@@ -293,13 +293,13 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     color: "white",
-    fontSize: 12,
+    fontSize: fontSize.sm,
     fontWeight: fontWeight.medium,
     marginLeft: 3,
   },
   metadataText: {
     color: "rgba(255,255,255,0.8)",
-    fontSize: 12,
+    fontSize: fontSize.sm,
   },
   genresContainer: {
     flexDirection: "row",

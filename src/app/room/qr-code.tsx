@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   activeUsersLabel: {
-    fontSize: 16,
+    fontSize: fontSize.lg,
   },
   avatarsContainer: {
     flexDirection: "row",
@@ -576,8 +576,8 @@ const styles = StyleSheet.create({
   },
   tutorialContainer: {
     marginTop: 15,
-    paddingHorizontal: 10,
-    gap: 10,
+    paddingHorizontal: spacing.sm + 2,
+    gap: spacing.sm + 2,
   },
   tipRow: {
     flexDirection: "row",
@@ -594,7 +594,7 @@ const styles = StyleSheet.create({
   },
   tipText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "#fff",
     opacity: 0.85,
   },
@@ -613,7 +613,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   codeChar: {
-    fontSize: 20,
+    fontSize: fontSize.xxl,
     fontWeight: "bold",
   },
   shareButtonText: {

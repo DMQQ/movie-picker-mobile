@@ -44,7 +44,7 @@ const ScoreRing = memo(({ score }: { score: number }) => {
         />
       </Svg>
       <View style={absoluteContainer}>
-        <Text style={{ color: "white", fontWeight: fontWeight.bold, fontSize: 10 }}>{(score * 10).toFixed(0)}%</Text>
+        <Text style={{ color: "white", fontWeight: fontWeight.bold, fontSize: fontSize.xs }}>{(score * 10).toFixed(0)}%</Text>
       </View>
     </FrostedGlass>
   );

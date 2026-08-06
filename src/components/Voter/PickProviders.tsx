@@ -43,7 +43,7 @@ export default function PickProviders({
             borderColor: providers.includes(item.provider_id)
               ? colors.primary
               : "transparent",
-            borderRadius: 10,
+            borderRadius: radius.sm + 2,
             margin: MARGIN / 2,
             width: size,
             height: size,

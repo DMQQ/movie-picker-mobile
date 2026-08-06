@@ -107,7 +107,7 @@ const AnimatedButton = ({
         <Text
           style={{
             color: "rgba(255,255,255,0.6)",
-            fontSize: 10,
+            fontSize: fontSize.xs,
             textAlign: "center",
             fontWeight: fontWeight.medium,
           }}

@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontFamily: "Bebas",
-    fontSize: 14,
+    fontSize: fontSize.md,
     letterSpacing: 3,
     color: "#888",
     marginBottom: 4,
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexWrap: "wrap",
     marginBottom: 12,
-    gap: 6,
+    gap: spacing.sm - 2,
   },
   metaDot: {
     width: 4,
@@ -340,14 +340,14 @@ const styles = StyleSheet.create({
   },
   yearText: {
     fontFamily: "Bebas",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     letterSpacing: 2,
     color: "#666",
   },
   genresContainer: {
     flexDirection: "row",
     overflow: "hidden",
-    gap: 6,
+    gap: spacing.sm - 2,
   },
   ratingRow: {
     alignItems: "center",
@@ -364,16 +364,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#d8d4d0",
-    borderRadius: 12,
+    borderRadius: radius.md,
     padding: 12,
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   inviteEmoji: {
-    fontSize: 18,
+    fontSize: fontSize.xl,
   },
   inviteText: {
     fontFamily: "Bebas",
-    fontSize: 14,
+    fontSize: fontSize.md,
     letterSpacing: 1,
     color: "#444",
     textAlign: "center",
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   notch: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: radius.md,
     position: "absolute",
     zIndex: 5,
   },
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   notchInner: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: radius.md,
   },
   dashedLineContainer: {
     flex: 1,
@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
   },
   stubLabel: {
     fontFamily: "Bebas",
-    fontSize: 10,
+    fontSize: fontSize.xs,
     letterSpacing: 2,
     marginBottom: 8,
     color: "#999",
@@ -467,12 +467,12 @@ const styles = StyleSheet.create({
   logoRow: {
     flexDirection: "row",
     alignItems: "flex-end",
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   appLogo: {
     width: 40,
     height: 40,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
   },
   logoTextContainer: {
     justifyContent: "flex-end",
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
   },
   stubSubtitle: {
     fontFamily: "Bebas",
-    fontSize: 12,
+    fontSize: fontSize.sm,
     letterSpacing: 0.5,
     color: "#666",
   },

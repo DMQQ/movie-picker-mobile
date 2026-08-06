@@ -109,15 +109,15 @@ const styles = StyleSheet.create({
 
   iconWrap: { alignItems: "center", marginBottom: 16 },
   title: { fontSize: 34, fontFamily: "Bebas", color: "#fff", letterSpacing: 1, marginBottom: 6 },
-  subtitle: { fontSize: 14, color: "#666", marginBottom: 16, lineHeight: 20 },
+  subtitle: { fontSize: fontSize.md, color: "#666", marginBottom: 16, lineHeight: 20 },
 
   warningRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
     backgroundColor: "rgba(245,158,11,0.1)",
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderRadius: radius.sm + 2,
+    paddingVertical: spacing.sm + 2,
     paddingHorizontal: 14,
     marginBottom: 24,
   },
@@ -136,10 +136,10 @@ const styles = StyleSheet.create({
     gap: 8,
     width: "100%",
     backgroundColor: "rgba(255,255,255,0.06)",
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",
-    paddingVertical: 10,
+    paddingVertical: spacing.sm + 2,
     paddingHorizontal: 12,
   },
   codeIndex: {
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   codeText: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace",
     color: "#fff",
     letterSpacing: 1,
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
 
   actions: {
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.sm + 2,
     marginBottom: 20,
   },
   actionBtn: { flex: 1, borderRadius: 25 },

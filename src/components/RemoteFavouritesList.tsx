@@ -59,7 +59,7 @@ function GroupCard({ item }: { item: UserList }) {
     >
       <Link.Trigger>
         <View
-          style={{ borderRadius: 10, overflow: "hidden", position: "relative" }}
+          style={{ borderRadius: radius.sm + 2, overflow: "hidden", position: "relative" }}
         >
           <ImageBackground
             blurRadius={20}
@@ -112,7 +112,7 @@ function SpecialCardsFooter() {
     <View style={{ gap: 15, marginTop: 15 }}>
       <Pressable onPress={() => router.push("/group/super-liked")}>
         <View
-          style={{ borderRadius: 10, overflow: "hidden", position: "relative" }}
+          style={{ borderRadius: radius.sm + 2, overflow: "hidden", position: "relative" }}
         >
           <ImageBackground
             blurRadius={20}
@@ -166,7 +166,7 @@ function SpecialCardsFooter() {
 
       <Pressable onPress={() => router.push("/group/blocked")}>
         <View
-          style={{ borderRadius: 10, overflow: "hidden", position: "relative" }}
+          style={{ borderRadius: radius.sm + 2, overflow: "hidden", position: "relative" }}
         >
           <ImageBackground
             blurRadius={20}
@@ -280,12 +280,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 10,
+    padding: spacing.sm + 2,
   },
   thumbnailGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   thumbnail: {
     width: (WINDOW_WIDTH / 2 - 25) * 0.45,

@@ -30,7 +30,7 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
     <Animated.View style={{ marginTop: 30, paddingBottom: 30 }} layout={LinearTransition}>
       <Text style={{ fontSize: 35, fontFamily: "Bebas", color: "#fff", marginBottom: 10 }}>
         {t("movie.details.season")} {season}{" "}
-        <Text style={{ fontSize: 20, fontFamily: "Bebas" }}>{data?.episodes.length ? `(${data?.episodes.length})` : ""}</Text>
+        <Text style={{ fontSize: fontSize.xxl, fontFamily: "Bebas" }}>{data?.episodes.length ? `(${data?.episodes.length})` : ""}</Text>
       </Text>
       {data?.episodes.slice(0, showAll ? data?.episodes.length : 5).map((item: Episode, index) => (
         <Animated.View key={item.id} entering={FadeIn.delay(index * 50)} style={{ marginBottom: 15 }}>
@@ -42,13 +42,13 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
             }}
           >
             <View style={{ padding: 15 }}>
-              <View style={{ flexDirection: "row", gap: 10 }}>
+              <View style={{ flexDirection: "row", gap: spacing.sm + 2 }}>
                 <Thumbnail
                   path={item.still_path || item.still_path}
                   style={{
                     height: 100,
                     width: 125,
-                    borderRadius: 10,
+                    borderRadius: radius.sm + 2,
                   }}
                   container={{
                     backgroundColor: "transparent",
@@ -56,10 +56,10 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
                   size={300}
                 />
                 <View style={{ flex: 1, justifyContent: "center", gap: 3 }}>
-                  <Text style={{ fontFamily: "Bebas", fontSize: 20 }}>{item.name || item.episode_type}</Text>
+                  <Text style={{ fontFamily: "Bebas", fontSize: fontSize.xxl }}>{item.name || item.episode_type}</Text>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <RatingIcons size={13} vote={item.vote_average} />
-                    <Text style={{ fontSize: 12, marginLeft: 10 }}>{item.vote_average.toFixed(2)}</Text>
+                    <Text style={{ fontSize: fontSize.sm, marginLeft: 10 }}>{item.vote_average.toFixed(2)}</Text>
                   </View>
                   <Text style={{ color: "gray" }}>{item.runtime} min</Text>
                 </View>

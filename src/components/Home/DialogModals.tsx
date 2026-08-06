@@ -89,7 +89,7 @@ export default function DialogModals({
               justifyContent: "center",
               borderWidth: 2,
               borderColor: theme.colors.primary,
-              borderRadius: 10,
+              borderRadius: radius.sm + 2,
               width: Dimensions.get("screen").width / 2 + 25,
               height: Dimensions.get("screen").width / 2 + 25,
             }}
@@ -106,7 +106,7 @@ export default function DialogModals({
               color: theme.colors.primary,
               textAlign: "center",
               marginTop: 15,
-              fontSize: 18,
+              fontSize: fontSize.xl,
               fontWeight: "bold",
               letterSpacing: 3,
             }}

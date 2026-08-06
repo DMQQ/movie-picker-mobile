@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: "rgba(255, 255, 255, 0.08)",
     minWidth: 80,
-    gap: 6,
+    gap: spacing.sm - 2,
   },
   ratingButtonSelected: {
     backgroundColor: "rgba(255, 255, 255, 0.2)",
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     fontSize: 45,
   },
   label: {
-    fontSize: 12,
+    fontSize: fontSize.sm,
     color: "rgba(255, 255, 255, 0.9)",
     fontWeight: fontWeight.semibold,
   },
@@ -237,10 +237,10 @@ const styles = StyleSheet.create({
   },
   feedbackInput: {
     backgroundColor: "rgba(255, 255, 255, 0.1)",
-    borderRadius: 12,
+    borderRadius: radius.md,
     padding: 16,
     color: "#fff",
-    fontSize: 14,
+    fontSize: fontSize.md,
     minHeight: 100,
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.2)",

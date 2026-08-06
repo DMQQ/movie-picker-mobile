@@ -51,24 +51,24 @@ const styles = StyleSheet.create({
   title: {
     color: "white",
     fontSize: 32,
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
     fontFamily: "Bebas",
   },
   overview: {
     color: "rgba(255,255,255,0.8)",
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
     marginTop: 5,
-    fontSize: 16,
+    fontSize: fontSize.lg,
   },
   release_date: {
     color: "rgba(255,255,255,0.6)",
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
   },
   meta: {
     flexDirection: "row",
     marginTop: 12,
     alignItems: "center",
-    gap: 6,
+    gap: spacing.sm - 2,
     flexWrap: "wrap",
     paddingLeft: 10,
   },
@@ -287,7 +287,7 @@ const SwipeTile = ({
               <View
                 style={{
                   flexDirection: "row",
-                  paddingHorizontal: 10,
+                  paddingHorizontal: spacing.sm + 2,
                 }}
               >
                 <RatingIcons size={15} vote={card?.vote_average} />

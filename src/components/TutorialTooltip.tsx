@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   },
   description: {
     color: "rgba(255,255,255,0.62)",
-    fontSize: 14,
+    fontSize: fontSize.md,
     lineHeight: 21,
     marginBottom: 20,
   },
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   dots: {
     flexDirection: "row",
-    gap: 6,
+    gap: spacing.sm - 2,
     alignItems: "center",
   },
   dot: {
@@ -132,11 +132,11 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   nextButtonContent: {
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
     paddingVertical: 2,
   },
   nextLabel: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     fontWeight: fontWeight.bold,
     letterSpacing: 0.3,
   },

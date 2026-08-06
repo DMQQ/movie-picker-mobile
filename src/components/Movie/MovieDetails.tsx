@@ -111,7 +111,7 @@ function MovieDetails({
             width: 60,
             height: 4,
             backgroundColor: "#fff",
-            borderRadius: 10,
+            borderRadius: radius.sm + 2,
           }}
         />
       </View>
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   },
 
   categories: { color: "rgba(255,255,255,0.7)", fontSize: 15 },
-  chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 8 },
+  chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm - 2, marginTop: 8 },
 
   rating: { flexDirection: "row", marginBottom: 10 },
 

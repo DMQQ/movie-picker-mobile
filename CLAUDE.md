@@ -348,12 +348,104 @@ src/
 | `src/utils/roomsConfig.ts` | `getMovieCategories`, `getSeriesCategories` |
 | `src/service/useTranslation.tsx` | i18n hook (`const t = useTranslation()`) + `getDeviceSettings()` |
 
-### Styling rules
-- **No Tailwind / NativeWind.** All styles via `StyleSheet.create({})` defined at module level in each file.
-- Background is always `#000` (pure black dark theme).
-- Accent color: `MD2DarkTheme.colors.primary` from `react-native-paper`.
-- Responsive sizing: `layout.pxToDp()` or `layout.responsivePxToDp()` from `src/utils/layout.ts`.
+### Design System (`src/constants/design.ts`)
+
+**All styles must use tokens from `src/constants/design.ts` — never hardcode magic numbers.**
+
+Never import `MD2DarkTheme.colors.*` — use `colors.*` from design constants instead (same values, no paper dependency).
+
+```ts
+import { colors, spacing, radius, fontSize, fontWeight, typography } from "../constants/design";
+```
+
+#### Spacing (`spacing.*`)
+4px base grid, responsive to screen width (base 390dp). Prefer these over ad-hoc values.
+
+| Token | Value (at 390dp) |
+|---|---|
+| `spacing.xs` | 4 |
+| `spacing.sm` | 8 |
+| `spacing.md` | 12 |
+| `spacing.lg` | 16 |
+| `spacing.xl` | 20 |
+| `spacing.xxl` | 24 |
+| `spacing.screen` | 15 (legacy — migrate to `lg`) |
+
+For intermediate values, derive from the grid: `spacing.sm + 2` (10), `spacing.sm - 2` (6).
+
+#### Border Radius (`radius.*`)
+
+| Token | Value | Usage |
+|---|---|---|
+| `radius.xs` | 4 | Tiny icons, badges |
+| `radius.sm` | 8 | Chips, small buttons |
+| `radius.md` | 12 | Cards (compact), inputs |
+| `radius.card` | 16 | Default card corner |
+| `radius.modal` | 20 | Modal/sheet corner |
+| `radius.pill` | 100 | Pill buttons, chips |
+
+#### Font Sizes (`fontSize.*`)
+
+| Token | Value | Usage |
+|---|---|---|
+| `fontSize.xs` | 10 | Badges, stat labels |
+| `fontSize.sm` | 12 | Section headers, captions |
+| `fontSize.md` | 14 | Body, helper text |
+| `fontSize.lg` | 16 | Card titles, buttons |
+| `fontSize.xl` | 18 | Subtitles |
+| `fontSize.xxl` | 20 | Profile names |
+| `fontSize.title` | 24 | Screen titles |
+| `fontSize.display` | 32 | Hero text |
+
+Bebas display font sizes use `typography.bebasSize`:
+- `typography.bebasSize.section` (35) — section headings
+- `typography.bebasSize.auth` (38) — auth screen titles
+- `typography.bebasSize.empty` (45) — empty state messages
+
+#### Font Weights (`fontWeight.*`)
+Always use numeric weights via tokens, never strings.
+
+| Token | Value |
+|---|---|
+| `fontWeight.normal` | `"400"` |
+| `fontWeight.medium` | `"500"` |
+| `fontWeight.semibold` | `"600"` |
+| `fontWeight.bold` | `"700"` |
+
+#### Colors (`colors.*`)
+Exact MD2DarkTheme values, hardcoded — no paper dependency.
+
+| Token | Value | Usage |
+|---|---|---|
+| `colors.text` | `#fff` | Primary text |
+| `colors.placeholder` | `rgba(255,255,255,0.54)` | Muted/secondary text |
+| `colors.primary` | `#BB86FC` | Accent, active states |
+| `colors.error` | `#CF6679` | Destructive actions |
+| `colors.surface` | `#121212` | Card backgrounds |
+| `colors.background` | `#121212` | Page background (paper default) |
+| `colors.appBackground` | `#000` | Pure black (app screens) |
+| `colors.border` | `rgba(255,255,255,0.1)` | Hairline dividers |
+| `colors.overlay` | `rgba(255,255,255,0.08)` | Pressable overlay |
+| `colors.surfaceElevated` | `#2a2a2a` | Skeleton, hover states |
+
+RULE: `colors.surface` for card backgrounds. `colors.appBackground` for full-screen backgrounds. `colors.text` for primary text. `colors.placeholder` for muted labels. `colors.border` for hairline separators.
+
+#### Common Shortcuts (`common.*`)
+Pre-built partial styles:
+- `common.card` — `{ borderRadius: radius.card, backgroundColor: colors.surface, overflow: "hidden" }`
+- `common.pillButton` — `{ borderRadius: radius.pill, height: 50 }`
+- `common.chip` — `{ borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 4 }`
+- `common.screenPadding` — `{ paddingHorizontal: spacing.screen }`
+
+#### Avatar Colors
+Use `getUserAvatarColor(name: string)` from `src/utils/avatar.ts` — returns a deterministic color from the user's name (FNV-1a hash → palette). Never use `index % AVATAR_COLORS.length` directly. Available for all avatar fallbacks (no profile photo).
+
+#### Styling Rules
+- **No Tailwind / NativeWind.** All styles via `StyleSheet.create({})` at module level.
+- Page background: `colors.appBackground` (`#000`) for screen containers, `colors.background` (`#121212`) for paper-compatible pages.
+- Responsive sizing: `layout.pxToDp()` or `layout.responsivePxToDp()` from `src/utils/layout.ts` for layout dimensions (width, height). Spacing/radius are already responsive.
 - Animations: `react-native-reanimated` v4 (`FadeInDown`, `withSpring`, `withTiming`); Skia for canvas effects; Lottie for JSON animations.
+- **Future: remaining hardcoded values** — `fontSize: 13/15/11` (body variants), `fontSize: 22/28/30/35/38/42/45` (display/Bebas), `borderRadius: 5/25/15/24/14` (non-grid radii) — still need design tokens or ad-hoc expressions. Add to `design.ts` if a pattern emerges.
 
 ### i18n
 `useTranslation()` — supported: `en`, `pl`, `de`, `es`, `pt`. Falls back to `en`. Keys in `src/translations/*.json`.

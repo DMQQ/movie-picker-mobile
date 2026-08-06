@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "#1c1c1c",
-    borderRadius: 12,
+    borderRadius: radius.md,
     elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   description: {
-    fontSize: 16,
+    fontSize: fontSize.lg,
     color: "#ccc",
     textAlign: "center",
     marginBottom: 32,

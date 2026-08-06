@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     elevation: 0,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
-    paddingVertical: 10,
+    paddingVertical: spacing.sm + 2,
   },
   headerContent: {
     flexDirection: "row",
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: fontSize.xxl,
     fontWeight: fontWeight.medium,
     color: "#fff",
   },
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 10,
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 2,
     borderColor: "transparent",
 
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   genreTabsContainer: {
     flexDirection: "row",
     marginBottom: 16,
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   chipWrapper: {
     flex: 1,
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   },
   chipText: {
     color: "rgba(255, 255, 255, 0.8)",
-    fontSize: 14,
+    fontSize: fontSize.md,
     fontWeight: fontWeight.medium,
   },
   chipTextActive: {

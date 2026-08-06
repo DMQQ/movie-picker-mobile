@@ -112,7 +112,7 @@ export const SectionListItem = ({
               <View
                 style={{
                   marginTop: 10,
-                  paddingHorizontal: 10,
+                  paddingHorizontal: spacing.sm + 2,
                   maxWidth: sizes?.image.width || sectionStyles.image.width,
                 }}
               >
@@ -121,7 +121,7 @@ export const SectionListItem = ({
                   numberOfLines={1}
                   style={{
                     maxWidth: sectionStyles.image.width,
-                    fontSize: 16,
+                    fontSize: fontSize.lg,
                     fontFamily: "Bebas",
                   }}
                 >
@@ -130,7 +130,7 @@ export const SectionListItem = ({
 
                 <Text
                   numberOfLines={2}
-                  style={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}
+                  style={{ fontSize: fontSize.sm, color: "rgba(255,255,255,0.7)" }}
                 >
                   {genreNames.join(", ")}
                 </Text>
@@ -188,7 +188,7 @@ const sectionStyles = StyleSheet.create({
   },
 
   badgeItem: {
-    fontSize: 10,
+    fontSize: fontSize.xs,
     transform: [{ skewX: "10deg" }],
     color: "rgba(255,255,255,0.8)",
     fontWeight: "800",

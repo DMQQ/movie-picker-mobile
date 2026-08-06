@@ -47,7 +47,7 @@ const MatchTile = ({
                 <Thumbnail
                   size={posterSize}
                   path={match.poster_path}
-                  style={{ width: "100%", aspectRatio: 2 / 3, borderRadius: 10 }}
+                  style={{ width: "100%", aspectRatio: 2 / 3, borderRadius: radius.sm + 2 }}
                 />
               </Link.AppleZoom>
             </View>

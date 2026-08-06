@@ -50,7 +50,7 @@ export default function TypeSelector({ value, onChange }: TypeSelectorProps) {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 0,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
     overflow: "hidden",
   },
   segmentedButtons: {
@@ -66,11 +66,11 @@ const styles = StyleSheet.create({
   },
   label: {
     color: "#999",
-    fontSize: 14,
+    fontSize: fontSize.md,
   },
   selectedLabel: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: fontSize.md,
     fontWeight: fontWeight.semibold,
   },
 });

@@ -54,7 +54,7 @@ export default function TilesList<T>({ data, label, onLongItemPress, useMovieTyp
         ListEmptyComponent={
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center", minHeight: 400, paddingHorizontal: 30 }}>
             <Text style={{ fontSize: 28, fontFamily: "Bebas", marginBottom: 15, textAlign: "center" }}>{t("overview.empty-title")}</Text>
-            <Text style={{ fontSize: 14, opacity: 0.7, marginBottom: 25, textAlign: "center", lineHeight: 20 }}>{t("overview.empty")}</Text>
+            <Text style={{ fontSize: fontSize.md, opacity: 0.7, marginBottom: 25, textAlign: "center", lineHeight: 20 }}>{t("overview.empty")}</Text>
             <Button mode="text" onPress={() => router.back()} compact>
               {t("overview.back-to-game")}
             </Button>

@@ -52,7 +52,7 @@ function CategoryPagerIndicator({
       <PlatformBlurView
         interactive
         style={[
-          { borderRadius: 12 },
+          { borderRadius: radius.md },
           Platform.OS === "android" && {
             backgroundColor: colors.surface,
           },
@@ -89,7 +89,7 @@ function CategoryPagerIndicator({
               }
             />
           ) : (
-            <Text style={{ fontSize: 10 }}>{category.label}</Text>
+            <Text style={{ fontSize: fontSize.xs }}>{category.label}</Text>
           )}
         </TouchableOpacity>
       </PlatformBlurView>
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   scrollContainer: {
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
     paddingVertical: 4,
   },
   chipButton: {
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 50,
     height: 50,
-    borderRadius: 12,
+    borderRadius: radius.md,
   },
   selectedChip: {
     borderWidth: 2,

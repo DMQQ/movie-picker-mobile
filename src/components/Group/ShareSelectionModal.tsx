@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "rgba(255,255,255,0.75)",
     textAlign: "center",
     marginBottom: 20,
@@ -218,20 +218,20 @@ const styles = StyleSheet.create({
   listContent: { paddingBottom: 10 },
   columnWrapper: { justifyContent: "space-between", marginBottom: 10 },
   shareButton: { marginTop: 20, borderRadius: 100, width: "100%" },
-  shareButtonContent: { paddingVertical: 10, paddingHorizontal: 20 },
+  shareButtonContent: { paddingVertical: spacing.sm + 2, paddingHorizontal: 20 },
   centeredBox: { alignItems: "center", justifyContent: "center", padding: 40 },
   loadingText: {
     marginTop: 16,
     color: "#fff",
     fontFamily: "Bebas",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     letterSpacing: 1,
   },
   errorText: {
     marginTop: 12,
     color: "#999",
     fontFamily: "Bebas",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     letterSpacing: 1,
   },
 });

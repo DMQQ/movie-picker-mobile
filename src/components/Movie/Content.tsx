@@ -22,7 +22,7 @@ export default function Content(card: ContentProps) {
       <Text style={styles.title}>{card.title ? card.title : card.name}</Text>
 
       <View style={styles.row}>
-        <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+        <Text style={{ fontSize: fontSize.xl, fontWeight: "bold" }}>
           {card.release_date || card.first_air_date}
         </Text>
         <Text
@@ -44,7 +44,7 @@ export default function Content(card: ContentProps) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    padding: spacing.sm + 2,
   },
   title: { fontSize: 25, fontWeight: "bold" },
   row: {
@@ -57,10 +57,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     fontWeight: "bold",
     marginLeft: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
     borderRadius: 100,
     color: "#000",
     lineHeight: 25,
   },
-  overview: { fontSize: 18, fontWeight: "bold", marginTop: 10 },
+  overview: { fontSize: fontSize.xl, fontWeight: "bold", marginTop: 10 },
 });

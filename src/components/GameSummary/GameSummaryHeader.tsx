@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   iconRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: spacing.sm + 2,
     marginBottom: 8,
   },
   title: {
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "rgba(255,255,255,0.7)",
     fontWeight: fontWeight.medium,
     textAlign: "center",

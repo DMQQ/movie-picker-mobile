@@ -122,7 +122,7 @@ export default function RatingState({
             <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>
               {t("voter.home.rate")} 🎬
             </Text>
-            <Text style={{ fontFamily: "Bebas", fontSize: 20 }}>
+            <Text style={{ fontFamily: "Bebas", fontSize: fontSize.xxl }}>
               {currentMovies.length} {t("voter.home.left")}
             </Text>
           </View>
@@ -142,7 +142,7 @@ export default function RatingState({
                   },
                 })
               }
-              style={{ width: posterWidth, height: posterHeight, borderRadius: 12, overflow: "hidden" }}
+              style={{ width: posterWidth, height: posterHeight, borderRadius: radius.md, overflow: "hidden" }}
             >
               <Animated.Image
                 entering={FadeIn.duration(300)}
@@ -150,7 +150,7 @@ export default function RatingState({
                 source={{
                   uri: "https://image.tmdb.org/t/p/w342" + card?.poster_path,
                 }}
-                style={{ width: "100%", height: "100%", borderRadius: 12 }}
+                style={{ width: "100%", height: "100%", borderRadius: radius.md }}
                 resizeMode="cover"
               />
             </TouchableOpacity>
@@ -170,14 +170,14 @@ export default function RatingState({
               style={{
                 flexDirection: "row",
                 alignItems: "center",
-                gap: 6,
+                gap: spacing.sm - 2,
                 marginTop: 3,
                 flexWrap: "wrap",
                 justifyContent: "center",
               }}
             >
               <RatingIcons vote={card.vote_average} size={11} />
-              <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>
+              <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: fontSize.sm }}>
                 {[
                   card?.release_date?.slice(0, 4),
                   card?.original_language?.toUpperCase(),
@@ -207,14 +207,14 @@ export default function RatingState({
               paddingHorizontal: 15,
               paddingTop: 10,
               paddingBottom: insets.bottom + 10,
-              gap: 10,
+              gap: spacing.sm + 2,
             }}
           >
             {ratingRows.map(({ key, label, options }) => (
               <View key={key} style={{ gap: 5 }}>
                 <Text
                   style={{
-                    fontSize: 14,
+                    fontSize: fontSize.md,
                     fontFamily: "Bebas",
                     color: "rgba(255,255,255,0.7)",
                   }}
@@ -238,7 +238,7 @@ export default function RatingState({
                           alignItems: "center",
                           justifyContent: "center",
                           gap: 4,
-                          borderRadius: 12,
+                          borderRadius: radius.md,
                           backgroundColor: isSelected
                             ? colors.primary
                             : "rgba(0,0,0,0.5)",
@@ -248,7 +248,7 @@ export default function RatingState({
                             : "rgba(255,255,255,0.12)",
                         }}
                       >
-                        <Text style={{ fontSize: 20 }}>{option.icon}</Text>
+                        <Text style={{ fontSize: fontSize.xxl }}>{option.icon}</Text>
                         <Text
                           style={{
                             fontSize: 11,

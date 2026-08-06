@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
   container: { marginBottom: 30 },
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 15 },
   title: { fontSize: 35, fontFamily: "Bebas" },
-  row: { gap: 10, marginBottom: 15 },
+  row: { gap: spacing.sm + 2, marginBottom: 15 },
   empty: { flex: 1, justifyContent: "center", alignItems: "center", marginTop: 30 },
   emptyTitle: { color: "#fff", fontSize: 45, fontFamily: "Bebas" },
-  emptyDesc: { color: "#fff", fontSize: 16, textAlign: "center", marginVertical: 15, maxWidth: 300 },
+  emptyDesc: { color: "#fff", fontSize: fontSize.lg, textAlign: "center", marginVertical: 15, maxWidth: 300 },
 });

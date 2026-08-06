@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   body: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "rgba(255,255,255,0.65)",
     textAlign: "center",
     lineHeight: 20,

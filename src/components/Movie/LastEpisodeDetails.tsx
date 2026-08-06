@@ -20,14 +20,14 @@ const LastEpisodeToAir = ({ lastEpisode }: { lastEpisode: any }) => {
             container={{
               width: "100%",
               height: 220,
-              borderRadius: 10,
+              borderRadius: radius.sm + 2,
               overflow: "hidden",
             }}
             size={500}
             path={lastEpisode.still_path}
           />
 
-          <View style={{ paddingHorizontal: 10, paddingBottom: 5, marginTop: 15 }}>
+          <View style={{ paddingHorizontal: spacing.sm + 2, paddingBottom: 5, marginTop: 15 }}>
             <Text
               style={{
                 fontSize: 25,

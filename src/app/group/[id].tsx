@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   note: {
-    fontSize: 10,
+    fontSize: fontSize.xs,
     color: "#888",
     marginTop: 4,
     marginLeft: 2,

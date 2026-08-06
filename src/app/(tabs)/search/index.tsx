@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
     minHeight: 100,
   },
   cardImage: {
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
     height: 230,
     width: 170,
     borderColor: "rgba(255,255,255,0.1)",
@@ -531,13 +531,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 40,
     color: "#ff6b6b",
-    fontSize: 16,
+    fontSize: fontSize.lg,
   },
   modal: {
     backgroundColor: "#1e1e1e",
     margin: 20,
     padding: 20,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
   },
   modalTitle: {
     marginBottom: 10,
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
   },
   chipText: {
     color: "rgba(255, 255, 255, 0.8)",
-    fontSize: 14,
+    fontSize: fontSize.md,
     fontWeight: fontWeight.medium,
   },
   chipTextActive: {

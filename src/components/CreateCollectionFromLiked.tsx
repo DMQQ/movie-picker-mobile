@@ -52,7 +52,7 @@ export default function CreateCollectionFromLiked({
             flexDirection: "row",
             alignItems: "center",
             paddingHorizontal: 15,
-            paddingVertical: 10,
+            paddingVertical: spacing.sm + 2,
             borderRadius: 100,
             borderWidth: 1,
             gap: 5,
@@ -68,7 +68,7 @@ export default function CreateCollectionFromLiked({
             style={{
               color: colors.primary,
               fontWeight: "bold",
-              fontSize: 14,
+              fontSize: fontSize.md,
             }}
           >
             {t("overview.save-list")}

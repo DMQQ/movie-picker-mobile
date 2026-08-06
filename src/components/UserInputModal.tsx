@@ -151,12 +151,12 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
   },
   modalSubtitle: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "rgba(255, 255, 255, 0.75)",
     textAlign: "center",
     marginBottom: 20,
     lineHeight: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
   },
   contentContainer: {
     width: "100%",
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   },
   actionsContainer: {
     width: "100%",
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   actionsContainerHorizontal: {
     flexDirection: "row",
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   actionButtonContent: {
-    paddingVertical: 10,
+    paddingVertical: spacing.sm + 2,
     paddingHorizontal: 20,
   },
 });

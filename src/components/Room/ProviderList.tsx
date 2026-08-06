@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   providerWrapperVertical: {
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 2,
     borderColor: "transparent",
     backgroundColor: "#1a1a1a",
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 8,
     paddingHorizontal: 4,
-    gap: 6,
+    gap: spacing.sm - 2,
   },
   selectedProvider: {
     borderColor: colors.primary,
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
   },
   checkmark: {
     position: "absolute",
-    borderRadius: 12,
+    borderRadius: radius.md,
     justifyContent: "center",
     alignItems: "center",
   },

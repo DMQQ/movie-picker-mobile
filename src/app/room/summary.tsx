@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   centered: { justifyContent: "center", alignItems: "center" },
   list: { flex: 1 },
   loadingText: {
-    fontSize: 18,
+    fontSize: fontSize.xl,
     marginTop: 15,
     opacity: 0.7,
     fontWeight: "bold",
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   sectionTitle: { fontSize: 35, fontFamily: "Bebas" },
-  movieRow: { flexDirection: "row", gap: 10, marginBottom: 15 },
+  movieRow: { flexDirection: "row", gap: spacing.sm + 2, marginBottom: 15 },
   movieCell: { flex: 1 },
   emptyState: {
     flex: 1,
@@ -275,14 +275,14 @@ const styles = StyleSheet.create({
   emptyTitle: { color: "#fff", fontSize: 45, fontFamily: "Bebas" },
   emptyDesc: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     textAlign: "center",
     marginVertical: 15,
     maxWidth: 300,
   },
   buttonRow: {
     padding: 15,
-    gap: 10,
+    gap: spacing.sm + 2,
     flexDirection: "row",
     backgroundColor: "#000",
   },

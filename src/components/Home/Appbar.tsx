@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
     borderWidth: 1,
   },
   connectionChipText: {

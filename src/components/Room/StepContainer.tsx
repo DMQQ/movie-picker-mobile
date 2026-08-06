@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     }),
   },
   footerSubtitle: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "#999",
     textAlign: "center",
     marginBottom: 8,

@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
   noMoreText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: fontSize.xl,
     fontWeight: fontWeight.semibold,
     textAlign: "center",
     marginTop: 12,
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   },
   noMoreSubtitle: {
     color: "rgba(255, 255, 255, 0.6)",
-    fontSize: 14,
+    fontSize: fontSize.md,
     textAlign: "center",
   },
   flex: {

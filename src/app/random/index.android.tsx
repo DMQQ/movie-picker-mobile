@@ -380,23 +380,23 @@ const styles = StyleSheet.create({
   ratingRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: spacing.sm - 2,
     marginBottom: 10,
     flexWrap: "wrap",
   },
   ratingText: {
     color: "#e2e8f0",
     fontWeight: fontWeight.semibold,
-    fontSize: 14,
+    fontSize: fontSize.md,
   },
   dotSeparator: {
     color: "#64748b",
-    fontSize: 14,
+    fontSize: fontSize.md,
   },
   genresRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 6,
+    gap: spacing.sm - 2,
   },
 
   overview: {
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   buttonLabel: {
-    fontSize: 16,
+    fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
     letterSpacing: 0.5,
   },
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
   },
   hintText: {
     color: "rgba(255,255,255,0.5)",
-    fontSize: 12,
+    fontSize: fontSize.sm,
     fontWeight: fontWeight.medium,
   },
 });

@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingHorizontal: 12,
     marginBottom: 16,
     height: 46,
@@ -180,13 +180,13 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   list: {
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   item: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: colors.surface,
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingVertical: 14,
     paddingHorizontal: 16,
   },
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: fontSize.lg,
     color: colors.text,
   },
 });

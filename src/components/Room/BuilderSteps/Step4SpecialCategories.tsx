@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
-    fontSize: 16,
+    fontSize: fontSize.lg,
     opacity: 0.7,
   },
 });

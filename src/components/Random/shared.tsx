@@ -125,20 +125,20 @@ export const ActionButtons = ({ onSuperLike, onBlock, superLikeLabel, blockLabel
 const styles = StyleSheet.create({
   actionButtons: {
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.sm + 2,
     marginTop: 12,
   },
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: spacing.sm - 2,
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 20,
     borderWidth: 1,
   },
   actionButtonText: {
-    fontSize: 12,
+    fontSize: fontSize.sm,
     fontWeight: fontWeight.semibold,
   },
 });

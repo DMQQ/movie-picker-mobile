@@ -251,11 +251,11 @@ const styles = StyleSheet.create({
     borderBottomColor: "#333",
   },
   resultsHeader: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "#888",
   },
   closeText: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "#007AFF",
   },
   personItem: {
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: fontSize.xl,
     fontWeight: "bold",
   },
   personInfo: {
@@ -289,11 +289,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   personName: {
-    fontSize: 16,
+    fontSize: fontSize.lg,
     color: "#fff",
   },
   department: {
-    fontSize: 12,
+    fontSize: fontSize.sm,
     color: "#aaa",
   },
   selectedContainer: {
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 6,
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
   },
   selectedPersonImage: {
     width: 36,
@@ -327,10 +327,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#007AFF",
   },
   selectedPersonAvatarLabel: {
-    fontSize: 16,
+    fontSize: fontSize.lg,
   },
   selectedPersonName: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "#fff",
     marginRight: 6,
     maxWidth: 120,
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   removeButton: {
     width: 20,
     height: 20,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
     backgroundColor: "rgba(0,0,0,0.3)",
     justifyContent: "center",
     alignItems: "center",
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   },
   removeButtonText: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: fontSize.md,
     lineHeight: 18,
   },
 });

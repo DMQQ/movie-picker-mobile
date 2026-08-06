@@ -63,5 +63,5 @@ export default function MatchedItem({ summary, badge = false, ...item }: Props) 
 
 const styles = StyleSheet.create({
   footer: { flex: 1, justifyContent: "space-between", marginTop: 5 },
-  title: { fontSize: 12, fontWeight: "bold" },
+  title: { fontSize: fontSize.sm, fontWeight: "bold" },
 });

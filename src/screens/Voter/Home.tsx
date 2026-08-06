@@ -166,7 +166,7 @@ export default function Home() {
         <Dialog
           dismissable={false}
           visible={showError}
-          style={{ backgroundColor: theme.colors.surface, borderRadius: 10 }}
+          style={{ backgroundColor: theme.colors.surface, borderRadius: radius.sm + 2 }}
         >
           <Dialog.Title>{t("dialogs.qr.error")}</Dialog.Title>
           <Dialog.Content>

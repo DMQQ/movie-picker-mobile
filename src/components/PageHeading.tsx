@@ -140,7 +140,7 @@ export default function PageHeading({
                         styles.rightText,
                         !rightIconName && {
                           paddingHorizontal: 15,
-                          paddingVertical: 10,
+                          paddingVertical: spacing.sm + 2,
                         },
                       ]}
                     >
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   },
   rightText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
     paddingRight: 10,
   },

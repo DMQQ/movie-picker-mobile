@@ -92,15 +92,15 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   playerItem: {
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   videoTitle: {
     color: "white",
     fontWeight: fontWeight.semibold,
-    padding: 10,
+    padding: spacing.sm + 2,
   },
   playerWrapper: {
-    borderRadius: 12,
+    borderRadius: radius.md,
     overflow: "hidden",
     backgroundColor: hexToRgba("#000", 0.2),
     position: "relative",
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: hexToRgba("#000", 0.8),
     zIndex: 1,
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   loadingText: {
     color: hexToRgba("#FFF", 0.7),
@@ -128,6 +128,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: "rgba(255,255,255,0.6)",
-    fontSize: 16,
+    fontSize: fontSize.lg,
   },
 });

@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFD700",
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12,
+    borderRadius: radius.md,
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   superLikeText: {
     fontFamily: "Bebas",
     color: "#000",
-    fontSize: 16,
+    fontSize: fontSize.lg,
   },
 });
 

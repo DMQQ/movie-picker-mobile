@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   closeButtonBlur: {
-    borderRadius: 12,
+    borderRadius: radius.md,
     overflow: "hidden",
   },
   videosContainer: {
@@ -288,15 +288,15 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   playerItem: {
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   videoTitle: {
     color: "white",
     fontWeight: fontWeight.semibold,
-    padding: 10,
+    padding: spacing.sm + 2,
   },
   playerWrapper: {
-    borderRadius: 12,
+    borderRadius: radius.md,
     overflow: "hidden",
     backgroundColor: hexToRgba("#000", 0.2),
     position: "relative",
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: hexToRgba("#000", 0.8),
     zIndex: 1,
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   loadingText: {
     color: hexToRgba("#FFF", 0.7),
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: spacing.sm + 2,
     position: "absolute",
     bottom: 10,
     left: 15,

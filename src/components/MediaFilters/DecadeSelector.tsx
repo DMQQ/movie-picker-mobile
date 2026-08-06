@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   },
   chipText: {
     color: "#999",
-    fontSize: 14,
+    fontSize: fontSize.md,
   },
   selectedChipText: {
     color: "#fff",

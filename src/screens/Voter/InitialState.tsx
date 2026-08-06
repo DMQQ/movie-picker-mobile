@@ -43,7 +43,7 @@ export default function InitialState({
       >
         <View style={{ flex: 1 }}>
           <View style={{ marginTop: 15 }}>
-            <Text style={{ fontSize: 18 }}>{t("voter.home.howto")}</Text>
+            <Text style={{ fontSize: fontSize.xl }}>{t("voter.home.howto")}</Text>
           </View>
           <PickCategory
             category={sessionSettings.category}

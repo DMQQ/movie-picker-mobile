@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     color: "#999",
-    fontSize: 16,
+    fontSize: fontSize.lg,
   },
   scrollContent: {
     alignItems: "center",

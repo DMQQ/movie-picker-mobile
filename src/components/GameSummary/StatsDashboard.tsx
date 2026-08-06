@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   label: {
-    fontSize: 10,
+    fontSize: fontSize.xs,
     flexWrap: "nowrap",
     fontWeight: fontWeight.semibold,
     color: "rgba(255,255,255,0.8)",

@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   featuredPoster: {
     height: 80,
     backgroundColor: "#2a2a2a",
-    borderRadius: 12,
+    borderRadius: radius.md,
     overflow: "hidden",
     flexDirection: "row",
   },
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
-    gap: 6,
+    gap: spacing.sm - 2,
   },
   categoryText: {
     height: 12,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
   },
   moviesRow: {
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   movieCard: {
     width: 60,
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   navItem: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: radius.md,
     backgroundColor: "#333",
   },
   navItemActive: {

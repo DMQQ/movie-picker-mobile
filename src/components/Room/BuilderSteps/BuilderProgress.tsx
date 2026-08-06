@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 6,
+    gap: spacing.sm - 2,
   },
   dot: {
     width: 4,

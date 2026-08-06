@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderRadius: 20,
-    fontSize: 20,
+    fontSize: fontSize.xxl,
     letterSpacing: 1,
   },
   errorText: {

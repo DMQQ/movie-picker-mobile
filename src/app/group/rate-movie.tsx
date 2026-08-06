@@ -115,15 +115,15 @@ const styles = StyleSheet.create({
   },
   stars: {
     flexDirection: "row",
-    gap: 6,
+    gap: spacing.sm - 2,
     marginBottom: 24,
   },
   noteInput: {
     backgroundColor: "#242424",
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
     padding: 12,
     color: "#fff",
-    fontSize: 14,
+    fontSize: fontSize.md,
     minHeight: 90,
     textAlignVertical: "top",
     marginBottom: 24,

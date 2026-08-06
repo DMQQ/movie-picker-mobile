@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
   handle: {
     width: 60,
     height: 4,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
     alignSelf: "center",
     marginBottom: 20,
   },
@@ -59,18 +59,18 @@ const styles = StyleSheet.create({
   overview: {
     width: CONTENT_WIDTH,
     height: 140,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
     marginBottom: 20,
   },
   castRow: {
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.sm + 2,
     marginBottom: 20,
   },
   castItem: {
     width: 80,
     height: 50,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
   },
   sectionTitle: {
     width: CONTENT_WIDTH * 0.4,

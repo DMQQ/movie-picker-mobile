@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   },
   frostedGlass: {
     marginTop: 15,
-    padding: 10,
+    padding: spacing.sm + 2,
     paddingHorizontal: 15,
     borderRadius: 15,
     ...Platform.select({
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   legendText: {
-    fontSize: 10,
+    fontSize: fontSize.xs,
     color: "rgba(255,255,255,0.8)",
     fontWeight: fontWeight.medium,
   },

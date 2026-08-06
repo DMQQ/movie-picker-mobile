@@ -55,13 +55,13 @@ export default function CustomFavourite({
 const styles = StyleSheet.create({
   iconText: {
     fontFamily: "Bebas",
-    fontSize: 20,
+    fontSize: fontSize.xxl,
     color: "#fff",
   },
   iconButton: {
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
+    gap: spacing.sm + 2,
     overflow: "hidden",
   },
 });

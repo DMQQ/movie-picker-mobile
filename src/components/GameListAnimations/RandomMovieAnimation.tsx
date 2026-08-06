@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   card: {
     width: 120,
     height: 160,
-    borderRadius: 12,
+    borderRadius: radius.md,
     backgroundColor: colors.primary,
     shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 0 },
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 3,
     borderColor: "rgba(255,255,255,0.3)",
   },

@@ -70,14 +70,14 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#fff",
-    fontSize: 12,
+    fontSize: fontSize.sm,
     fontWeight: fontWeight.semibold,
   },
   closeButton: {
     marginLeft: 4,
     padding: 6,
     backgroundColor: "rgba(30, 30, 30, 0.95)",
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.15)",
   },

@@ -62,7 +62,7 @@ const gameInviteStyles = StyleSheet.create({
     textShadowRadius: 3,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: fontSize.lg,
     color: "rgba(255,255,255,0.95)",
     textAlign: "center",
     marginBottom: 20,
@@ -91,12 +91,12 @@ const gameInviteStyles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
   },
   buttonRow: {
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   buttonHalf: {
     minWidth: 140,

@@ -56,11 +56,11 @@ export default function Results() {
     >
       <View
         style={{
-          padding: 10,
+          padding: spacing.sm + 2,
           height: 80,
           flexDirection: "row",
           alignItems: "center",
-          paddingVertical: 10,
+          paddingVertical: spacing.sm + 2,
           backgroundColor: "rgba(0,0,0,0.2)",
         }}
       >
@@ -113,14 +113,14 @@ export default function Results() {
                 style={{
                   width: (Dimensions.get("window").width - 30) / 2 - 60,
                   height: 215,
-                  borderRadius: 10,
+                  borderRadius: radius.sm + 2,
                 }}
               />
             </Pressable>
             <View
               style={{
                 flex: 1,
-                gap: 10,
+                gap: spacing.sm + 2,
                 justifyContent: "space-between",
                 paddingVertical: 15,
               }}

@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
   },
 
-  empty: { alignItems: "center", gap: 10, paddingTop: 72 },
+  empty: { alignItems: "center", gap: spacing.sm + 2, paddingTop: 72 },
   emptyText: { fontSize: 15, fontWeight: fontWeight.semibold, color: "rgba(255,255,255,0.25)" },
   emptyHint: {
     fontSize: 13,

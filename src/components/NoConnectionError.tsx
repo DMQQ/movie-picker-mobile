@@ -52,5 +52,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 9999,
   },
-  text: { color: "#fff", fontSize: 16, marginTop: 10 },
+  text: { color: "#fff", fontSize: fontSize.lg, marginTop: 10 },
 });

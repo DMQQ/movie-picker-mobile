@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 130,
     height: 180,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: {
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   star: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: radius.md,
     marginHorizontal: 4,
   },
   starFilled: {

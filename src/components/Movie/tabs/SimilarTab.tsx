@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: "rgba(255,255,255,0.6)",
-    fontSize: 16,
+    fontSize: fontSize.lg,
   },
   footer: {
     paddingVertical: 20,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   loadMoreButton: {
-    paddingVertical: 10,
+    paddingVertical: spacing.sm + 2,
     paddingHorizontal: 20,
     backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 8,

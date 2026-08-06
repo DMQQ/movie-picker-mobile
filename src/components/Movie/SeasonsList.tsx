@@ -79,7 +79,7 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
                   container={{
                     width: 70,
                     height: 100,
-                    borderRadius: 10,
+                    borderRadius: radius.sm + 2,
                   }}
                   path={item.poster_path}
                 />
@@ -89,20 +89,20 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
                 style={{
                   flex: 1,
                   alignItems: "flex-start",
-                  padding: 10,
+                  padding: spacing.sm + 2,
                   paddingRight: 20,
                   justifyContent: "space-between",
                 }}
               >
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 20, fontFamily: "Bebas" }}>{item.name}</Text>
-                  <Text style={{ color: "#9E9E9E", marginTop: 2.5, fontSize: 12 }}>
+                  <Text style={{ fontSize: fontSize.xxl, fontFamily: "Bebas" }}>{item.name}</Text>
+                  <Text style={{ color: "#9E9E9E", marginTop: 2.5, fontSize: fontSize.sm }}>
                     {t("movie.details.episode")} ({item.episode_count})
                   </Text>
                   <Text
                     style={{
                       color: "#9E9E9E",
-                      fontSize: 12,
+                      fontSize: fontSize.sm,
                       marginTop: 2.5,
                     }}
                   >

@@ -145,7 +145,7 @@ const SelectionCard = React.memo(
               styles.innerContainer,
               {
                 borderColor: isSelected ? `${theme.colors.primary}40` : theme.colors.surface,
-                borderRadius: 10,
+                borderRadius: radius.sm + 2,
                 borderWidth: 1,
                 backgroundColor: isSelected ? `${theme.colors.primary}20` : "transparent",
               },
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     padding: 7.5,
     paddingHorizontal: 15,
     height: 60,
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   cardVertical: {
     borderRadius: 16,
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   },
   labelText: {
     marginLeft: 10,
-    fontSize: 16,
+    fontSize: fontSize.lg,
     fontWeight: fontWeight.bold,
     fontFamily: "Bebas",
     flex: 1,

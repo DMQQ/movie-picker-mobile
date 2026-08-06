@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   },
   headerLabel: {
     fontFamily: "Bebas",
-    fontSize: 10,
+    fontSize: fontSize.xs,
     letterSpacing: 3,
     color: "#999",
     marginBottom: 4,
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   },
   countText: {
     fontFamily: "Bebas",
-    fontSize: 12,
+    fontSize: fontSize.sm,
     letterSpacing: 2,
     color: "#666",
   },
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   },
   movieTitle: {
     fontFamily: "Bebas",
-    fontSize: 18,
+    fontSize: fontSize.xl,
     letterSpacing: 1,
     color: "#1a1a1a",
     lineHeight: 20,
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     flexWrap: "wrap",
-    gap: 6,
+    gap: spacing.sm - 2,
   },
   metaDot: {
     width: 3,
@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
   },
   runtimeText: {
     fontFamily: "Bebas",
-    fontSize: 12,
+    fontSize: fontSize.sm,
     letterSpacing: 1,
     color: "#666",
   },
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   },
   bonusHeading: {
     fontFamily: "Bebas",
-    fontSize: 14,
+    fontSize: fontSize.md,
     letterSpacing: 2,
     color: "#888",
     textAlign: "center",
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   },
   bonusTitle: {
     fontFamily: "Bebas",
-    fontSize: 10,
+    fontSize: fontSize.xs,
     letterSpacing: 0.5,
     color: "#666",
     textAlign: "center",
@@ -428,16 +428,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#d8d4d0",
-    borderRadius: 12,
+    borderRadius: radius.md,
     padding: 12,
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   inviteEmoji: {
-    fontSize: 18,
+    fontSize: fontSize.xl,
   },
   inviteText: {
     fontFamily: "Bebas",
-    fontSize: 14,
+    fontSize: fontSize.md,
     letterSpacing: 1,
     color: "#444",
     textAlign: "center",
@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
   notch: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: radius.md,
     position: "absolute",
     zIndex: 5,
   },
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
   notchInner: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: radius.md,
   },
   dashedLineContainer: {
     flex: 1,
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
   },
   stubLabel: {
     fontFamily: "Bebas",
-    fontSize: 10,
+    fontSize: fontSize.xs,
     letterSpacing: 2,
     marginBottom: 8,
     color: "#999",
@@ -501,12 +501,12 @@ const styles = StyleSheet.create({
   logoRow: {
     flexDirection: "row",
     alignItems: "flex-end",
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   appLogo: {
     width: 40,
     height: 40,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
   },
   logoTextContainer: {
     justifyContent: "flex-end",
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
   },
   stubSubtitle: {
     fontFamily: "Bebas",
-    fontSize: 12,
+    fontSize: fontSize.sm,
     letterSpacing: 0.5,
     color: "#666",
   },

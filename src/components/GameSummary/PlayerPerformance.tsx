@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   finished: { backgroundColor: "#4CAF50" },
   inProgress: { backgroundColor: "#FF9800" },
   name: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     fontWeight: fontWeight.semibold,
     color: "#FFFFFF",
     letterSpacing: 0.2,
@@ -121,9 +121,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
     backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 12,
+    borderRadius: radius.md,
     paddingHorizontal: 8,
     paddingVertical: 6,
   },
-  count: { fontSize: 12, fontWeight: fontWeight.semibold, color: "#FFFFFF" },
+  count: { fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: "#FFFFFF" },
 });

@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 44,
     height: 44,
-    borderRadius: 12,
+    borderRadius: radius.md,
     borderWidth: 1,
     backgroundColor: "rgba(255,255,255,0.05)",
     justifyContent: "center",
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   dots: {
     flexDirection: "row",
-    gap: 6,
+    gap: spacing.sm - 2,
   },
   dot: {
     height: 6,
@@ -206,10 +206,10 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   nextButtonContent: {
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
     paddingVertical: 2,
   },
   nextButtonLabel: {
-    fontSize: 14,
+    fontSize: fontSize.md,
   },
 });

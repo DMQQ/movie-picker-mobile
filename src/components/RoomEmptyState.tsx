@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: fontSize.md,
     color: "rgba(255,255,255,0.45)",
     textAlign: "center",
     lineHeight: 21,

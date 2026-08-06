@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   bannerDate: {
-    fontSize: 12,
+    fontSize: fontSize.sm,
     color: "rgba(255,255,255,0.45)",
     letterSpacing: 0.5,
   },
@@ -228,14 +228,14 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     lineHeight: 44,
   },
-  pills: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
+  pills: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm - 2 },
   pill: {
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
     backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
     paddingVertical: 5,
   },
   pillText: { fontSize: 11, color: "rgba(255,255,255,0.75)" },
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
 
   listHeader: { marginBottom: 20 },
 
-  membersSection: { marginTop: 20, gap: 10 },
+  membersSection: { marginTop: 20, gap: spacing.sm + 2 },
   membersSectionTitle: {
     fontSize: 13,
     fontWeight: fontWeight.semibold,
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   memberAvatarImg: { width: 28, height: 28 },
-  memberAvatarLetter: { fontSize: 12, fontWeight: fontWeight.bold, color: "#fff" },
+  memberAvatarLetter: { fontSize: fontSize.sm, fontWeight: fontWeight.bold, color: "#fff" },
   memberName: { fontSize: 13, color: "rgba(255,255,255,0.8)", maxWidth: 100 },
   sectionHeader: {
     flexDirection: "row",
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: fontSize.xl,
     fontFamily: "Bebas",
     color: "#fff",
     letterSpacing: 0.5,
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
   },
-  sectionBadgeText: { fontSize: 12, color: "#BB86FC", fontWeight: fontWeight.semibold },
+  sectionBadgeText: { fontSize: fontSize.sm, color: "#BB86FC", fontWeight: fontWeight.semibold },
 
   empty: {
     alignItems: "center",
@@ -302,5 +302,5 @@ const styles = StyleSheet.create({
     paddingTop: 48,
     gap: 12,
   },
-  emptyText: { fontSize: 14, color: "rgba(255,255,255,0.3)" },
+  emptyText: { fontSize: fontSize.md, color: "rgba(255,255,255,0.3)" },
 });

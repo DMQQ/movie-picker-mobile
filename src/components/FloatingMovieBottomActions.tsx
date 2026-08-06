@@ -289,8 +289,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingVertical: spacing.sm + 2,
+    paddingHorizontal: spacing.sm + 2,
     gap: 15,
   },
   buttonGroup: {
@@ -337,8 +337,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 15,
-    paddingVertical: 10,
-    gap: 10,
+    paddingVertical: spacing.sm + 2,
+    gap: spacing.sm + 2,
   },
   trailerText: {
     color: "white",

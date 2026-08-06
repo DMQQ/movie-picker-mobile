@@ -211,18 +211,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F0E1",
     paddingVertical: 12,
     paddingHorizontal: 20,
-    gap: 6,
+    gap: spacing.sm - 2,
     position: "relative",
   },
   ticketButtonPressed: {
     opacity: 0.95,
   },
   ticketButtonIcon: {
-    fontSize: 16,
+    fontSize: fontSize.lg,
   },
   ticketButtonText: {
     fontFamily: "Bebas",
-    fontSize: 16,
+    fontSize: fontSize.lg,
     letterSpacing: 1,
     color: "#1a1a1a",
   },
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: 11,
     height: 11,
-    borderRadius: 10,
+    borderRadius: radius.sm + 2,
   },
   cornerTopLeft: {
     top: -5,
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     fontFamily: "Bebas",
-    fontSize: 18,
+    fontSize: fontSize.xl,
     letterSpacing: 2,
     color: "#1a1a1a",
   },

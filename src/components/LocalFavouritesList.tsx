@@ -43,7 +43,7 @@ export default function LocalFavouritesList({ listRef }: Props) {
           >
             <View
               style={{
-                borderRadius: 10,
+                borderRadius: radius.sm + 2,
                 overflow: "hidden",
                 position: "relative",
               }}
@@ -106,7 +106,7 @@ export default function LocalFavouritesList({ listRef }: Props) {
           >
             <View
               style={{
-                borderRadius: 10,
+                borderRadius: radius.sm + 2,
                 overflow: "hidden",
                 position: "relative",
               }}
@@ -174,7 +174,7 @@ export default function LocalFavouritesList({ listRef }: Props) {
           <Link.Trigger>
             <View
               style={{
-                borderRadius: 10,
+                borderRadius: radius.sm + 2,
                 overflow: "hidden",
                 position: "relative",
               }}
@@ -254,12 +254,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 10,
+    padding: spacing.sm + 2,
   },
   thumbnailGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
+    gap: spacing.sm + 2,
   },
   thumbnail: {
     width: (WINDOW_WIDTH / 2 - 25) * 0.45,

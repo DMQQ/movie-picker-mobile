@@ -62,13 +62,13 @@ const styles = StyleSheet.create({
   },
   release_date: {
     color: "rgba(255,255,255,1)",
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
     marginTop: 5,
   },
   title: {
     color: "white",
     fontSize: 40,
-    paddingHorizontal: 10,
+    paddingHorizontal: spacing.sm + 2,
     fontFamily: "Bebas",
     lineHeight: 40,
   },
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 5,
     alignItems: "center",
-    gap: 6,
+    gap: spacing.sm - 2,
     flexWrap: "wrap",
     paddingLeft: 10,
   },
@@ -195,7 +195,7 @@ export default function MatchModal({
               <View
                 style={{
                   flexDirection: "row",
-                  paddingHorizontal: 10,
+                  paddingHorizontal: spacing.sm + 2,
                   marginBottom: 5,
                 }}
               >
