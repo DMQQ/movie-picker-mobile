@@ -51,6 +51,11 @@
     "title": "É um match!",
     "view-matches": "Ver coincidências"
   },
+  "partial-match": {
+    "title": "Quase um match!",
+    "liked-by": "{names} gostou disso",
+    "reconsider": "Reconsiderar? 👀"
+  },
   "matches": {
     "unviewed-title": "Você tem coincidências!",
     "unviewed-subtitle": "Você tem {count} coincidências da sua última sessão",
@@ -104,6 +109,8 @@
     "continuing-game": "Continuando jogo com os mesmos jogadores",
     "play-again-prompt": "Gostaria de jogar mais uma rodada com os mesmos jogadores?",
     "waiting-for-host-decision": "Aguardando decisão do anfitrião...",
+    "reconnecting": "Reconectando...",
+    "disconnected": "Desconectado",
     "genres": {
       "all_movies": "Todos os filmes",
       "now_playing": "Em cartaz",

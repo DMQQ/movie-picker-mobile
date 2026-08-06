@@ -51,6 +51,11 @@
     "title": "Mamy pare!",
     "view-matches": "Wyświetl Dopasowania"
   },
+  "partial-match": {
+    "title": "Prawie match!",
+    "liked-by": "{names} polubił(a) to",
+    "reconsider": "Przemyśl to? 👀"
+  },
   "matches": {
     "unviewed-title": "Masz dopasowania!",
     "unviewed-subtitle": "Masz {count} dopasowań z ostatniej sesji",
@@ -104,6 +109,8 @@
     "continuing-game": "Kontynuacja gry z tymi samymi graczami",
     "play-again-prompt": "Czy chcesz zagrać kolejną rundę z tymi samymi graczami?",
     "waiting-for-host-decision": "Oczekiwanie na decyzję gospodarza...",
+    "reconnecting": "Ponowne łączenie...",
+    "disconnected": "Brak połączenia",
     "genres": {
       "all_movies": "Wszystkie filmy",
       "now_playing": "Aktualnie w kinach",

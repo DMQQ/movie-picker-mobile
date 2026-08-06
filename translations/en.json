@@ -51,6 +51,11 @@
     "title": "It's a match!",
     "view-matches": "View Matches"
   },
+  "partial-match": {
+    "title": "Almost a match!",
+    "liked-by": "{names} liked this",
+    "reconsider": "Reconsider? 👀"
+  },
   "matches": {
     "unviewed-title": "You have matches!",
     "unviewed-subtitle": "You have {count} matches from your last session",
@@ -104,6 +109,8 @@
     "continuing-game": "Continuing game with same players",
     "play-again-prompt": "Would you like to play another round with the same players?",
     "waiting-for-host-decision": "Waiting for host to decide to play next game...",
+    "reconnecting": "Reconnecting...",
+    "disconnected": "Disconnected",
     "genres": {
       "all_movies": "All movies",
       "now_playing": "Now playing",

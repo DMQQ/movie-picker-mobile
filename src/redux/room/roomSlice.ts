@@ -1,52 +1,60 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Movie } from "../../../types";
 import { removeDuplicateResults } from "../../utils/deduplicates";
+import { IGameSummary } from "../../components/GameSummary/types";
 
 const initialState = {
+  // Settings — survive resets
+  nickname: "",
+  language: "en",
+  regionalization: {} as Record<string, string>,
+
+  // Join / setup
   isHost: false,
   isCreated: false,
   joined: false,
   qrCode: "",
-  nickname: "",
-  language: "en",
-  regionalization: {} as Record<string, string>,
-  isPlaying: false,
-  joinError: false,
   isJoining: false,
+  joinError: false,
+  roomNotFound: false,
   beenFired: false,
 
-  room: {
-    roomId: "",
-    users: [] as string[],
+  // Room data
+  roomId: "",
+  users: [] as string[],
+  usersCount: 0,
+  type: "",
+  page: 1,
+  name: "",
+  maxRounds: 0,
 
-    usersCount: 0,
+  // Game lifecycle
+  isPlaying: false,
+  isRunning: false,
+  isFinished: false,
+  isGameFinished: false,
+  gameEnded: false,
+  canContinue: false,
+  hasUserPlayed: false,
 
-    type: "",
-    page: 1,
-    name: "",
+  // Card deck
+  movies: [] as Movie[],
+  index: 0,
 
-    isGameFinished: false,
-    gameEnded: false,
-    canContinue: false,
-
-    hasUserPlayed: false,
-
-    isFinished: false,
-
-    index: 0,
-
-    match: undefined as Movie | undefined,
-
-    pendingMatches: [] as Movie[],
-    movies: [] as Movie[],
-    matches: [] as Movie[],
-    likes: [] as Movie[],
-    dislikes: [] as Movie[],
-
-    isRunning: false,
-
-    maxRounds: 0,
-  },
+  // Matches / interactions
+  match: undefined as Movie | undefined,
+  partialMatch: undefined as
+    | {
+        movie: Movie;
+        likedBy: { userId: string; username: string }[];
+        totalUsers: number;
+      }
+    | undefined,
+  pendingMatches: [] as Movie[],
+  matches: [] as Movie[],
+  likes: [] as Movie[],
+  dislikes: [] as Movie[],
+  gameSummary: null as IGameSummary | null,
 };
 
 type MovieMatch = Movie;
@@ -63,7 +71,7 @@ type SetRoomAction = {
     isGameFinished?: boolean;
     isRunning?: boolean;
     maxRounds?: number;
-    [key: string]: any; // Allow additional fields from backend
+    [key: string]: any;
   };
 };
 
@@ -76,41 +84,35 @@ const roomSlice = createSlice({
 
       const roomId = payload?.roomId || payload?.id;
       if (roomId) {
-        state.room.roomId = roomId;
+        state.roomId = roomId;
         state.qrCode = roomId;
       }
 
-      if (payload.maxRounds) state.room.maxRounds = payload.maxRounds;
+      if (payload.maxRounds) state.maxRounds = payload.maxRounds;
 
-      if (payload.type) state.room.type = payload.type;
-      if (payload.page !== undefined) state.room.page = payload.page;
-      if (payload.users) state.room.users = payload.users;
+      if (payload.type) state.type = payload.type;
+      if (payload.page !== undefined) state.page = payload.page;
+      if (payload.users) state.users = payload.users;
 
       if (payload.gameEnded !== undefined) {
-        if (payload.gameEnded === false && state.room.gameEnded === true) {
-          state.room.hasUserPlayed = false;
-          state.room.isFinished = false;
-          state.room.movies = [];
-          // state.room.index = 0; nie ustawaic
+        if (payload.gameEnded === false && state.gameEnded === true) {
+          state.hasUserPlayed = false;
+          state.isFinished = false;
+          state.movies = [];
         }
-        state.room.gameEnded = payload.gameEnded;
+        state.gameEnded = payload.gameEnded;
       }
-      if (payload.canContinue !== undefined) state.room.canContinue = payload.canContinue;
-      if (payload.isStarted !== undefined) state.room.isRunning = payload.isStarted;
-      if (payload.isGameFinished !== undefined) state.room.isGameFinished = payload.isGameFinished;
-      if (payload.isRunning !== undefined) state.room.isRunning = payload.isRunning;
-    },
-
-    start(state) {
-      state.room.isRunning = true;
-    },
-
-    setGameFinished(state) {
-      state.room.isGameFinished = true;
+      if (payload.canContinue !== undefined) state.canContinue = payload.canContinue;
+      if (payload.isStarted !== undefined) state.isRunning = payload.isStarted;
+      if (payload.isGameFinished !== undefined) state.isGameFinished = payload.isGameFinished;
+      if (payload.isRunning !== undefined) state.isRunning = payload.isRunning;
     },
 
     setPlaying(state, action) {
       state.isPlaying = action.payload;
+      if (action.payload) {
+        state.joinError = false;
+      }
     },
 
     setLanguage(state, action) {
@@ -133,6 +135,7 @@ const roomSlice = createSlice({
       state.language = payload.language || state.language;
       state.regionalization = payload.regionalization || state.regionalization;
     },
+
     setQRCode(state, action) {
       state.qrCode = action.payload;
       state.isCreated = true;
@@ -151,10 +154,6 @@ const roomSlice = createSlice({
       state.joined = action.payload;
     },
 
-    setUsers(state, action) {
-      state.room.users = action.payload;
-    },
-
     addMatch(
       state,
       {
@@ -163,22 +162,42 @@ const roomSlice = createSlice({
         payload: MovieMatch;
       },
     ) {
-      if (!state.room.matches.find((m) => m.id === payload.id)) state.room.matches.push(payload);
+      if (!state.matches.find((m) => m.id === payload.id)) state.matches.push(payload);
     },
 
     setMatch(state, { payload }) {
-      state.room.pendingMatches = [...state.room.pendingMatches, payload];
+      state.partialMatch = undefined;
+      state.pendingMatches = [...state.pendingMatches, payload];
 
-      if (state.room.match === undefined) {
-        state.room.match = state.room.pendingMatches.shift() as Movie;
+      if (state.match === undefined) {
+        state.match = state.pendingMatches.shift() as Movie;
       }
     },
 
-    removeCurrentMatch(state) {
-      state.room.match = undefined;
+    setPartialMatch(
+      state,
+      {
+        payload,
+      }: {
+        payload: {
+          movie: Movie;
+          likedBy: { userId: string; username: string }[];
+          totalUsers: number;
+        };
+      },
+    ) {
+      state.partialMatch = payload;
+    },
 
-      if (state.room.pendingMatches.length !== 0) {
-        state.room.match = state.room.pendingMatches.shift() as Movie;
+    clearPartialMatch(state) {
+      state.partialMatch = undefined;
+    },
+
+    removeCurrentMatch(state) {
+      state.match = undefined;
+
+      if (state.pendingMatches.length !== 0) {
+        state.match = state.pendingMatches.shift() as Movie;
       }
     },
 
@@ -191,25 +210,26 @@ const roomSlice = createSlice({
       },
     ) {
       if (payload.movies.length > 0) {
-        state.room.movies = payload.movies;
-        state.room.isFinished = false;
+        state.movies = payload.movies;
+        state.isFinished = false;
         state.beenFired = true;
         if (typeof payload.index === "number") {
-          state.room.index = payload.index;
+          state.index = payload.index;
         }
       }
     },
 
     appendMovies(state, { payload }: { payload: { movies: Movie[]; index?: number } }) {
       if (payload.movies.length !== 0) {
-        const likedIds = new Set(state.room.likes.map((m) => m.id));
-        const dislikedIds = new Set(state.room.dislikes.map((m) => m.id));
+        const likedIds = new Set(state.likes.map((m) => m.id));
+        const dislikedIds = new Set(state.dislikes.map((m) => m.id));
 
         const filteredMovies = payload.movies.filter((m) => !likedIds.has(m.id) && !dislikedIds.has(m.id));
 
-        state.room.movies = removeDuplicateResults([...state.room.movies, ...filteredMovies], "id");
+        state.movies = removeDuplicateResults([...state.movies, ...filteredMovies], "id");
+        state.isFinished = false;
         if (typeof payload.index === "number") {
-          state.room.index = payload.index;
+          state.index = payload.index;
         }
       }
     },
@@ -222,35 +242,26 @@ const roomSlice = createSlice({
         payload: number;
       },
     ) {
-      state.room.movies = state.room.movies.filter((movie) => movie.id !== payload);
+      state.movies = state.movies.filter((movie) => movie.id !== payload);
 
-      if (state.room.movies.length === 0) {
-        state.room.isFinished = true;
+      if (state.movies.length === 0) {
+        state.isFinished = true;
       }
     },
 
     likeMovie(state, { payload }) {
-      state.room.hasUserPlayed = true;
-
-      state.room.likes.push(payload);
+      state.hasUserPlayed = true;
+      state.likes.push(payload);
     },
 
     dislikeMovie(state, { payload }) {
-      state.room.hasUserPlayed = true;
-      state.room.dislikes.push(payload);
+      state.hasUserPlayed = true;
+      state.dislikes.push(payload);
     },
 
     setActiveUsers(state, { payload }) {
-      state.room.usersCount = payload.length;
-      state.room.users = payload;
-    },
-
-    setRoomState(state, { payload }) {
-      state.room.isFinished = false;
-      state.room = payload.room;
-      state.room.movies = payload.movies;
-      state.room.users = payload.room.users;
-      state.room.isRunning = payload.isRunning;
+      state.usersCount = payload.length;
+      state.users = payload;
     },
 
     reset(state) {
@@ -264,17 +275,39 @@ const roomSlice = createSlice({
     },
 
     setRoomId(state, { payload }) {
-      state.room.roomId = payload;
+      if (state.roomId === payload) {
+        return;
+      }
+      const language = state.language;
+      const nickname = state.nickname;
+      const regionalization = { ...state.regionalization };
+      Object.assign(state, initialState);
+      state.language = language;
+      state.nickname = nickname;
+      state.regionalization = regionalization;
+      state.roomId = payload;
       state.qrCode = payload;
       state.joined = true;
+    },
+
+    setFinished(state) {
+      state.isFinished = true;
     },
 
     setJoinError(state, { payload }: { payload: boolean }) {
       state.joinError = payload;
     },
 
+    setRoomNotFound(state, { payload }: { payload: boolean }) {
+      state.roomNotFound = payload;
+    },
+
     setIsJoining(state, { payload }: { payload: boolean }) {
       state.isJoining = payload;
+    },
+
+    setGameSummary(state, { payload }: { payload: IGameSummary }) {
+      state.gameSummary = payload;
     },
   },
 });

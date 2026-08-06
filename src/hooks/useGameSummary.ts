@@ -6,7 +6,7 @@ import { SocketContext } from "../context/SocketContext";
 import useTranslation from "../service/useTranslation";
 import { roomActions } from "../redux/room/roomSlice";
 import { reset } from "../redux/roomBuilder/roomBuilderSlice";
-import { useAppDispatch } from "../redux/store";
+import { useAppDispatch, useAppSelector } from "../redux/store";
 import ReviewManager from "../utils/rate";
 import { useMatches } from "../context/DatabaseContext";
 import { IGameSummary } from "../components/GameSummary/types";
@@ -17,8 +17,10 @@ export function useGameSummary(roomId: string) {
   const dispatch = useAppDispatch();
   const { matches: matchesRepo } = useMatches();
 
-  const [summary, setSummary] = useState<IGameSummary | null>(null);
-  const [loading, setLoading] = useState(true);
+  const preloaded = useAppSelector((st) => st.room.gameSummary);
+
+  const [summary, setSummary] = useState<IGameSummary | null>(preloaded);
+  const [loading, setLoading] = useState(!preloaded);
   const [error, setError] = useState<string | null>(null);
   const [shouldShowRatingPill, setShouldShowRatingPill] = useState(false);
 
@@ -27,6 +29,7 @@ export function useGameSummary(roomId: string) {
   }, [matchesRepo, roomId]);
 
   useEffect(() => {
+    if (preloaded) return;
     const fetch = async () => {
       if (!socket || !roomId) return;
       setLoading(true);
@@ -47,7 +50,7 @@ export function useGameSummary(roomId: string) {
       }
     };
     fetch();
-  }, [socket, roomId]);
+  }, [socket, roomId, preloaded]);
 
   useEffect(() => {
     return () => {

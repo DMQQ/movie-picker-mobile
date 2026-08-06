@@ -29,13 +29,18 @@ export default function DialogModals({
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
 
-  const handleLeaveRoom = () => {
-    router.replace("/");
-    socket?.emit("leave-room", roomId);
+  const isPlaying = useAppSelector((state) => state.room.isPlaying);
 
-    dispatch(roomActions.reset());
-    dispatch(reset());
-    ReviewManager.onGameComplete(true);
+  const handleLeaveRoom = () => {
+    socket?.emit("leave-room", roomId);
+    // If game is running the server pushes game:summary → useRoomScreen listener handles navigation.
+    // If game already ended, go home and clean up.
+    if (!isPlaying) {
+      router.replace("/");
+      dispatch(roomActions.reset());
+      dispatch(reset());
+      ReviewManager.onGameComplete(true);
+    }
   };
 
   const t = useTranslation();

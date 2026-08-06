@@ -51,6 +51,11 @@
     "title": "Ein Match!",
     "view-matches": "Übereinstimmungen ansehen"
   },
+  "partial-match": {
+    "title": "Fast ein Match!",
+    "liked-by": "{names} mag das",
+    "reconsider": "Nochmal überlegen? 👀"
+  },
   "matches": {
     "unviewed-title": "Du hast Übereinstimmungen!",
     "unviewed-subtitle": "Du hast {count} Übereinstimmungen aus deiner letzten Sitzung",
@@ -104,6 +109,8 @@
     "continuing-game": "Spiel mit denselben Spielern fortsetzen",
     "play-again-prompt": "Möchtest du eine weitere Runde mit denselben Spielern spielen?",
     "waiting-for-host-decision": "Warte auf die Entscheidung des Gastgebers...",
+    "reconnecting": "Verbinde...",
+    "disconnected": "Getrennt",
     "genres": {
       "all_movies": "Alle Filme",
       "now_playing": "Aktuell im Kino",

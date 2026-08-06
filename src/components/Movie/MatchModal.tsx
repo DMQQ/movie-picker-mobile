@@ -11,13 +11,10 @@ import {
 } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import Animated, {
-  Easing,
   FadeIn,
   FadeOut,
   SlideInUp,
   SlideOutUp,
-  withSpring,
-  withTiming,
 } from "react-native-reanimated";
 import useTranslation from "../../service/useTranslation";
 import Card from "./Card";
@@ -26,13 +23,21 @@ import RatingIcons from "../RatingIcons";
 import { Movie } from "../../../types";
 import ShareTicketButton from "../ShareTicketButton";
 import GenresView from "../GenresView";
+import LikedByAvatars from "./LikedByAvatars";
+import {
+  ModalEnteringTransition,
+  ModalExitingTransition,
+} from "./matchTransitions";
+
+export { ModalEnteringTransition, ModalExitingTransition };
+
+const AUTO_DISMISS_MS = 5000;
 
 const styles = StyleSheet.create({
   matchModal: {
     padding: 20,
     borderRadius: 20,
     backgroundColor: "rgba(0,0,0,0.75)",
-
     ...StyleSheet.absoluteFill,
     height: Dimensions.get("screen").height,
     zIndex: 1000,
@@ -42,18 +47,6 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     color: "#fff",
     marginTop: Platform.OS === "ios" ? 0 : 30,
-  },
-  matchCard: {
-    justifyContent: "flex-start",
-    position: "relative",
-    height: "auto",
-    marginTop: 15,
-    minHeight: Dimensions.get("screen").height / 1.5,
-  },
-  matchClose: {
-    marginVertical: 10,
-    borderRadius: 20,
-    marginHorizontal: 10,
   },
   gradient: {
     overflow: "hidden",
@@ -66,18 +59,11 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 19,
     borderBottomLeftRadius: 19,
   },
-  details: {
-    color: "#fff",
-    paddingHorizontal: 10,
-    marginTop: 5,
-  },
-
   release_date: {
     color: "rgba(255,255,255,1)",
     paddingHorizontal: 10,
     marginTop: 5,
   },
-
   title: {
     color: "white",
     fontSize: 40,
@@ -85,7 +71,6 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     lineHeight: 40,
   },
-
   lottie: {
     position: "absolute",
     width: Dimensions.get("window").width,
@@ -95,7 +80,6 @@ const styles = StyleSheet.create({
     zIndex: 100,
     pointerEvents: "none",
   },
-
   meta: {
     flexDirection: "row",
     marginTop: 5,
@@ -104,7 +88,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     paddingLeft: 10,
   },
-
   share: {
     position: "absolute",
     bottom: -75,
@@ -116,119 +99,41 @@ const styles = StyleSheet.create({
   },
 });
 
-const { width } = Dimensions.get("window");
-
-export const ModalEnteringTransition = () => {
-  "worklet";
-  return {
-    initialValues: {
-      opacity: 0,
-      transform: [
-        { translateX: width + 150 },
-        { translateY: 250 },
-        { rotate: "20deg" },
-        { scale: 0.8 },
-      ],
-    },
-
-    animations: {
-      opacity: withTiming(1, { duration: 250 }),
-      transform: [
-        {
-          translateX: withTiming(0, {
-            duration: 400,
-            easing: Easing.out(Easing.cubic),
-          }),
-        },
-        {
-          translateY: withTiming(0, {
-            duration: 400,
-            easing: Easing.out(Easing.cubic),
-          }),
-        },
-        {
-          rotate: withSpring("0deg", {
-            damping: 50,
-            stiffness: 400,
-            overshootClamping: false,
-          }),
-        },
-        {
-          scale: withSpring(1, {
-            damping: 15,
-            stiffness: 150,
-          }),
-        },
-      ],
-    },
-  };
-};
-
-export const ModalExitingTransition = () => {
-  "worklet";
-  return {
-    initialValues: {
-      opacity: 1,
-      transform: [
-        { translateX: 0 },
-        { translateY: 0 },
-        { rotate: "0deg" },
-        { scale: 1 },
-      ],
-    },
-
-    animations: {
-      opacity: withTiming(0, { duration: 150 }),
-      transform: [
-        {
-          translateX: withTiming(0, { duration: 200 }),
-        },
-        {
-          translateY: withTiming(80, {
-            duration: 200,
-            easing: Easing.in(Easing.quad),
-          }),
-        },
-        {
-          rotate: withTiming("8deg", {
-            duration: 200,
-            easing: Easing.in(Easing.quad),
-          }),
-        },
-        {
-          scale: withTiming(0.5, {
-            duration: 200,
-            easing: Easing.in(Easing.back(1.2)),
-          }),
-        },
-      ],
-    },
-  };
-};
-
 export default function MatchModal({
   match,
   hideMatchModal,
+  likedBy,
+  totalUsers,
+  didLike,
 }: {
   match: Movie | undefined;
   hideMatchModal: VoidFunction;
+  likedBy?: { userId: string; username: string }[];
+  totalUsers?: number;
+  didLike?: boolean;
 }) {
   const theme = useTheme();
   const t = useTranslation();
   const animation = useRef<LottieView>(null);
+  const isPartial = !!likedBy;
 
   useEffect(() => {
     if (!match) return;
 
-    let timeout = setTimeout(() => {
+    if (isPartial) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      const timer = setTimeout(hideMatchModal, AUTO_DISMISS_MS);
+      return () => clearTimeout(timer);
+    }
+
+    const timeout = setTimeout(() => {
       animation.current?.play();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }, 100);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [match]);
+    return () => clearTimeout(timeout);
+    // hideMatchModal intentionally omitted — stable dispatch reference, timer depends on match id
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [match?.id, isPartial]);
 
   if (!match) return null;
 
@@ -240,23 +145,35 @@ export default function MatchModal({
     >
       <Pressable onPress={hideMatchModal}>
         <Animated.Text
-          style={[styles.matchText]}
+          style={[styles.matchText, isPartial && { color: theme.colors.accent }]}
           entering={SlideInUp.delay(100)}
           exiting={SlideOutUp}
         >
-          {t("match.title")} 🎉
+          {isPartial ? (t("partial-match.title") as string) : `${t("match.title")} 🎉`}
         </Animated.Text>
 
-        <LottieView
-          key={match.id}
-          ref={animation}
-          style={styles.lottie}
-          autoPlay={!!match}
-          loop={false}
-          speed={1}
-          resizeMode="cover"
-          source={require("../../assets/confetti.json")}
-        />
+        {isPartial && didLike === false && (
+          <Animated.Text
+            style={[styles.matchText, { color: theme.colors.primary, fontSize: 36, marginTop: 2 }]}
+            entering={SlideInUp.delay(150)}
+            exiting={SlideOutUp}
+          >
+            {t("partial-match.reconsider") as string}
+          </Animated.Text>
+        )}
+
+        {!isPartial && (
+          <LottieView
+            key={match.id}
+            ref={animation}
+            style={styles.lottie}
+            autoPlay={!!match}
+            loop={false}
+            speed={1}
+            resizeMode="cover"
+            source={require("../../assets/confetti.json")}
+          />
+        )}
 
         <Animated.View
           entering={ModalEnteringTransition}
@@ -266,6 +183,8 @@ export default function MatchModal({
           }}
         >
           <Card>
+            {isPartial && likedBy && <LikedByAvatars likedBy={likedBy} />}
+
             <LinearGradient
               colors={["transparent", "transparent", theme.colors.surface]}
               style={styles.gradient}
@@ -302,9 +221,12 @@ export default function MatchModal({
             />
           </Card>
         </Animated.View>
-        <Animated.View exiting={FadeOut} style={styles.share}>
-          <ShareTicketButton movie={match} />
-        </Animated.View>
+
+        {!isPartial && (
+          <Animated.View exiting={FadeOut} style={styles.share}>
+            <ShareTicketButton movie={match} />
+          </Animated.View>
+        )}
       </Pressable>
     </Animated.View>
   );

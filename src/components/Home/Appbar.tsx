@@ -24,7 +24,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Movie } from "../../../types";
 import { useAppSelector } from "../../redux/store";
-import { SocketContext } from "../../context/SocketContext";
+import { ConnectionStatus, SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { ThumbnailSizes } from "../Thumbnail";
 import ActiveUsers from "./ActiveUsers";
@@ -38,19 +38,16 @@ import Svg, { Circle } from "react-native-svg";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-interface HomeAppbarProps {
-  roomId: string;
-  hasCards: boolean;
-}
-
-function HomeAppbar({ roomId, hasCards }: HomeAppbarProps) {
+function HomeAppbar() {
+  const roomId = useAppSelector((state) => state.room.roomId);
+  const hasCards = useAppSelector((state) => state.room.movies.length > 0);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
   const [showRatePill, setShowRatePill] = useState(false);
   const wasPillShown = useRef(false);
 
-  const matches = useAppSelector((state) => state.room.room.matches);
-  const likes = useAppSelector((state) => state.room.room.likes);
+  const matches = useAppSelector((state) => state.room.matches);
+  const likes = useAppSelector((state) => state.room.likes);
 
   useEffect(() => {
     if (wasPillShown.current) return;
@@ -71,13 +68,9 @@ function HomeAppbar({ roomId, hasCards }: HomeAppbarProps) {
     setShowLeaveModal((p) => !p);
   };
   const theme = useTheme();
-  const { socket } = useContext(SocketContext);
+  const { socket, connectionStatus } = useContext(SocketContext);
 
-  const {
-    room: { isFinished, users },
-    isPlaying,
-    isHost,
-  } = useAppSelector((state) => state.room);
+  const { isFinished, users, isPlaying, isHost } = useAppSelector((state) => state.room);
 
   const t = useTranslation();
 
@@ -136,6 +129,7 @@ function HomeAppbar({ roomId, hasCards }: HomeAppbarProps) {
 
         <View style={[styles.midSection, showRatePill && { width: "75%" }]}>
           <ActiveUsers data={users} onPress={onActiveUsersPress} />
+          <ConnectionChip status={connectionStatus} />
         </View>
 
         {!hasCards && !isFinished && isPlaying && (
@@ -171,9 +165,7 @@ const RADIUS = (CIRCLE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 const LikedMoviesPreview = memo(() => {
-  const { likes, dislikes, maxRounds } = useAppSelector(
-    (state) => state.room.room,
-  );
+  const { likes, dislikes, maxRounds } = useAppSelector((state) => state.room);
   const isPlaying = useAppSelector((state) => state.room.isPlaying);
   const itemsToDisplay = useMemo(
     () => likes.slice().reverse().slice(0, 4),
@@ -283,6 +275,24 @@ const LikedMovieImage = memo(({ movie }: { movie: Movie }) => {
         source={{ uri, width: 24, height: 36 }}
       />
     </View>
+  );
+});
+
+const ConnectionChip = memo(({ status }: { status: ConnectionStatus }) => {
+  const t = useTranslation();
+  if (status === "idle" || status === "connected") return null;
+
+  const isReconnecting = status === "reconnecting";
+  const color = isReconnecting ? "#FFA500" : "#FF4444";
+  const bg = isReconnecting ? "rgba(255,160,0,0.12)" : "rgba(255,60,60,0.12)";
+  const border = isReconnecting ? "rgba(255,160,0,0.3)" : "rgba(255,60,60,0.3)";
+
+  return (
+    <Animated.View entering={FadeIn} style={[styles.connectionChip, { backgroundColor: bg, borderColor: border }]}>
+      <Text style={[styles.connectionChipText, { color }]}>
+        {isReconnecting ? t("room.reconnecting") : t("room.disconnected")}
+      </Text>
+    </Animated.View>
   );
 });
 
@@ -417,6 +427,17 @@ const styles = StyleSheet.create({
     bottom: -10,
     fontSize: 8,
     color: "rgba(255,255,255,0.4)",
+    fontWeight: "600",
+  },
+  connectionChip: {
+    marginTop: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  connectionChipText: {
+    fontSize: 9,
     fontWeight: "600",
   },
 });
