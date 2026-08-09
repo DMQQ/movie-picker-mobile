@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
+import Text from "../Text";
 import { FlatList, FlatListProps, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+
+import Button from "../Button";
 import { Movie } from "../../../types";
 import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";

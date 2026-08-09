@@ -1,7 +1,9 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { fontWeight, fontSize, radius, spacing } from "../constants/design";
+import Text from "./Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+
+import Button from "./Button";
 import PrimaryButton from "./PrimaryButton";
 
 type Props = {
@@ -27,7 +29,7 @@ export default function MigrationModal({ visible, counts, isMigrating, onSync, o
           <MaterialCommunityIcons
             name="cloud-upload-outline"
             size={36}
-            color="#BB86FC"
+            color={colors.primary}
             style={{ marginBottom: spacing.md }}
           />
           <Text style={styles.title}>Sync your collection</Text>
@@ -83,12 +85,12 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
+    borderColor: colors.overlay,
   },
   title: {
     fontSize: 22,
     fontFamily: "Bebas",
-    color: "#fff",
+    color: colors.text,
     letterSpacing: 0.8,
     marginBottom: spacing.sm + 2,
   },
@@ -100,7 +102,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xxl,
   },
   highlight: {
-    color: "#BB86FC",
+    color: colors.primary,
     fontWeight: fontWeight.semibold,
   },
   syncBtn: {

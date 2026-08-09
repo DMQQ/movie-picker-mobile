@@ -2,6 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, runOnJS } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { colors } from "../constants/design";
 
 interface StepSliderProps {
   steps?: number;
@@ -94,7 +95,7 @@ function StepSlider({
                 width: handleSize,
                 height: handleSize,
                 borderRadius: handleSize / 2,
-                backgroundColor: "white",
+                backgroundColor: colors.text,
                 position: "absolute",
                 top: -((handleSize - barHeight) / 2),
                 shadowColor: "#000",

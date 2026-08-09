@@ -5,7 +5,9 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Text, Chip } from "react-native-paper";
+import Text from "../../components/Text";
+import Chip from "../../components/Chip";
+
 import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Animated, {
@@ -189,7 +191,7 @@ export default function RandomMovie() {
                       "transparent",
                       "rgba(0,0,0,0.6)",
                       "rgba(0,0,0,0.95)",
-                      "#000",
+                      colors.appBackground,
                     ]}
                     locations={[0, 0.4, 0.75, 1]}
                     style={styles.infoOverlay}
@@ -294,7 +296,7 @@ export default function RandomMovie() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   filterButtonWrapper: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -347,7 +349,7 @@ const styles = StyleSheet.create({
     gap: spacing.xxl,
   },
   frontText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: 22,
     fontWeight: fontWeight.bold,
     opacity: 0.9,
@@ -370,7 +372,7 @@ const styles = StyleSheet.create({
   },
   movieTitle: {
     fontSize: 32,
-    color: "#fff",
+    color: colors.text,
     marginBottom: spacing.sm,
     fontFamily: "Bebas",
     textShadowColor: "rgba(0,0,0,0.5)",
@@ -411,7 +413,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     backgroundColor: "rgba(0,0,0,0.4)",
     borderTopWidth: 1,
-    borderTopColor: "rgba(255,255,255,0.1)",
+    borderTopColor: colors.border,
   },
   primaryButton: {
     flex: 1,

@@ -1,4 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AvatarText from "../../components/AvatarText";
+import Text from "../../components/Text";
+import { useTheme } from "../../hooks/useTheme";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import {
@@ -17,7 +20,7 @@ import {
   Pressable,
   Share,
 } from "react-native";
-import { Avatar, Text, useTheme } from "react-native-paper";
+
 import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import StyledQRCode from "../../components/StyledQRCode";
@@ -376,7 +379,7 @@ export default function QRCodePage() {
           <View style={styles.avatarsContainer}>
             {users.map((nick, index) => (
               <View key={nick + index} style={styles.avatarWrapper}>
-                <Avatar.Text
+                <AvatarText
                   size={25}
                   label={nick[0].toUpperCase()}
                   style={{ backgroundColor: getUserAvatarColor(nick) }}
@@ -495,7 +498,7 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
                 ))}
               </>
             ) : (
-              <Text style={{ color: "#fff" }}>Loading</Text>
+              <Text style={{ color: colors.text }}>Loading</Text>
             )}
           </View>
           <Text style={styles.shareButtonText}>
@@ -517,7 +520,7 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   contentContainer: {
     flex: 1,
@@ -529,7 +532,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   loadingText: {
-    color: "#fff",
+    color: colors.text,
     marginTop: spacing.xl,
   },
   qrCodeContainer: {
@@ -555,7 +558,7 @@ const styles = StyleSheet.create({
   },
   avatarWrapper: {
     flexDirection: "row",
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
     gap: spacing.xs + 1,
     borderRadius: radius.pill,
     alignItems: "center",
@@ -595,7 +598,7 @@ const styles = StyleSheet.create({
   tipText: {
     flex: 1,
     fontSize: fontSize.md,
-    color: "#fff",
+    color: colors.text,
     opacity: 0.85,
   },
   qrBoxContainer: {

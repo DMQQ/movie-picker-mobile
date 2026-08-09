@@ -1,7 +1,8 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Text from "./Text";
 import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Image, ImageProps } from "expo-image";
-import { Text } from "react-native-paper";
+
 import { colors, spacing } from "../constants/design";
 
 type Shared = {
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
   },
 
   altText: {
-    color: "white",
+    color: colors.text,
     fontFamily: "Bebas",
     textAlign: "center",
     position: "absolute",

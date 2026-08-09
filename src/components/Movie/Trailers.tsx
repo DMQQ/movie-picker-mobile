@@ -1,4 +1,5 @@
 import { memo, useEffect, useMemo, useState } from "react";
+import Text from "../Text";
 import {
   ActivityIndicator,
   AppState,
@@ -10,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Text } from "react-native-paper";
+
 import { colors, fontWeight, radius, spacing } from "../../constants/design";
 import Animated, {
   FadeInDown,
@@ -103,9 +104,9 @@ function Trailers({
           style={[
             styles.blurContainer,
             Platform.OS === "android" && {
-              backgroundColor: "#000",
+              backgroundColor: colors.appBackground,
               borderWidth: 1,
-              borderColor: hexToRgba("#FFFFFF", 0.1),
+              borderColor: hexToRgba(colors.text, 0.1),
             },
           ]}
         >
@@ -291,14 +292,14 @@ const styles = StyleSheet.create({
     gap: spacing.sm + 2,
   },
   videoTitle: {
-    color: "white",
+    color: colors.text,
     fontWeight: fontWeight.semibold,
     padding: spacing.sm + 2,
   },
   playerWrapper: {
     borderRadius: radius.md,
     overflow: "hidden",
-    backgroundColor: hexToRgba("#000", 0.2),
+    backgroundColor: hexToRgba(colors.appBackground, 0.2),
     position: "relative",
   },
   placeholder: {
@@ -309,12 +310,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: hexToRgba("#000", 0.8),
+    backgroundColor: hexToRgba(colors.appBackground, 0.8),
     zIndex: 1,
     gap: spacing.sm + 2,
   },
   loadingText: {
-    color: hexToRgba("#FFF", 0.7),
+    color: hexToRgba(colors.text, 0.7),
   },
   buttonsContainer: {
     flexDirection: "row",
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
-    color: "white",
+    color: colors.text,
     fontWeight: fontWeight.bold,
   },
 });

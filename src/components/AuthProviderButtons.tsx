@@ -1,7 +1,9 @@
 import * as AppleAuthentication from "expo-apple-authentication";
-import { fontWeight, fontSize, radius, spacing } from "../constants/design";
+import Icon from "./Icon";
+import Text from "./Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
-import { Icon, Text } from "react-native-paper";
+
 import GoogleSignInButton from "./GoogleSignInButton";
 import useTranslation from "../service/useTranslation";
 
@@ -65,9 +67,9 @@ const styles = StyleSheet.create({
     gap: spacing.sm + 2,
     height: 50,
     borderRadius: radius.lg + 1,
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: colors.overlay,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.12)",
+    borderColor: colors.border,
   },
   emailBtnPressed: { backgroundColor: "rgba(255,255,255,0.13)" },
   emailBtnText: {

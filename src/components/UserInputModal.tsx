@@ -1,16 +1,18 @@
 import { ReactNode } from "react";
+import Text from "./Text";
 import { ActivityIndicator, View, StyleSheet, Modal, Dimensions, Platform } from "react-native";
-import { Text, Button } from "react-native-paper";
+
+import Button from "./Button";
 import PrimaryButton from "./PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import PlatformBlurView from "./PlatformBlurView";
-import { fontSize, radius, spacing } from "../constants/design";
+import { colors, fontSize, radius, spacing} from "../constants/design";
 
 export interface UserInputModalAction {
   label: string;
   onPress: () => void;
-  mode?: "text" | "outlined" | "contained" | "elevated" | "contained-tonal";
+  mode?: "text" | "outlined" | "contained";
   loading?: boolean;
   disabled?: boolean;
   textColor?: string;
@@ -133,7 +135,7 @@ const styles = StyleSheet.create({
     flex: 0,
     ...Platform.select({
       android: {
-        backgroundColor: "#000",
+        backgroundColor: colors.appBackground,
         borderWidth: 1,
         borderColor: "rgba(255, 255, 255, 0.18)",
       },
@@ -146,7 +148,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 32,
     fontFamily: "Bebas",
-    color: "#fff",
+    color: colors.text,
     textAlign: "center",
     marginBottom: spacing.sm,
     letterSpacing: 1.2,

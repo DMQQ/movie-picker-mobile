@@ -1,5 +1,6 @@
 import { Dimensions, FlatList, Image } from "react-native";
-import { TouchableRipple } from "react-native-paper";
+import TouchableRipple from "../TouchableRipple";
+
 import { colors, radius, spacing } from "../../constants/design";
 import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
 

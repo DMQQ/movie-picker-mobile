@@ -8,6 +8,7 @@ import { roomActions } from "../../redux/room/roomSlice";
 import { View } from "react-native";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import { Image } from "expo-image";
+import { colors } from "../../constants/design";
 
 export default function RootLayout() {
   const dispatch = useAppDispatch();
@@ -28,7 +29,7 @@ export default function RootLayout() {
     <View
       style={{
         flex: 1,
-        backgroundColor: "#000",
+        backgroundColor: colors.appBackground,
         paddingTop: insets.top,
         paddingBottom: insets.bottom,
       }}

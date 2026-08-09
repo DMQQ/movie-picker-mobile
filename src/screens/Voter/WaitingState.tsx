@@ -1,5 +1,7 @@
 import { Dimensions, View } from "react-native";
-import { Chip, Text } from "react-native-paper";
+import Chip from "../../components/Chip";
+import Text from "../../components/Text";
+
 import { colors, spacing } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
@@ -36,7 +38,7 @@ export default function WaitingState({
 
   return (
     <Animated.View
-      style={{ flex: 1, backgroundColor: "#000" }}
+      style={{ flex: 1, backgroundColor: colors.appBackground }}
       entering={FadeIn.duration(300)}
       exiting={FadeOut.duration(300)}
     >

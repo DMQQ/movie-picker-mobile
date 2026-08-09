@@ -1,6 +1,9 @@
 import React, { useState, useRef } from "react";
+import IconButton from "../../components/IconButton";
+import Text from "../../components/Text";
+import { useTheme } from "../../hooks/useTheme";
 import { Pressable, StyleSheet, View } from "react-native";
-import { IconButton, Text, useTheme } from "react-native-paper";
+
 import { colors, fontWeight, fontSize, spacing } from "../../constants/design";
 import PagerView from "react-native-pager-view";
 import Animated, {
@@ -61,7 +64,7 @@ export default function RoomOverview() {
           icon="chevron-left"
           onPress={() => router.back()}
           size={28}
-          iconColor="#fff"
+          iconColor={colors.text}
         />
 
         <View
@@ -120,7 +123,7 @@ export default function RoomOverview() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   header: {
     flexDirection: "row",
@@ -156,7 +159,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   tabLabelActive: {
-    color: "#000",
+    color: colors.appBackground,
     fontWeight: fontWeight.bold,
   },
   headerSpacer: {

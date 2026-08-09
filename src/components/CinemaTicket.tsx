@@ -1,12 +1,14 @@
 import { forwardRef, memo, useMemo } from "react";
+import Text from "./Text";
+import { useTheme } from "../hooks/useTheme";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+
 import { Image } from "expo-image";
 import QRCode from "react-native-qrcode-svg";
 import GenresView from "./GenresView";
 import RatingIcons from "./RatingIcons";
 import useTranslation from "../service/useTranslation";
-import { fontSize, radius, spacing } from "../constants/design";
+import { colors, fontSize, radius, spacing} from "../constants/design";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const TICKET_WIDTH = SCREEN_WIDTH - 48;
@@ -69,7 +71,7 @@ interface CinemaTicketProps {
 const getRandomItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
 const TicketNotch = memo(({ side, color }: { side: "left" | "right"; color: string }) => (
-  <View style={[styles.notch, side === "left" ? styles.notchLeft : styles.notchRight, { backgroundColor: "#000" }]}>
+  <View style={[styles.notch, side === "left" ? styles.notchLeft : styles.notchRight, { backgroundColor: colors.appBackground }]}>
     <View style={[styles.notchInner, { backgroundColor: color }]} />
   </View>
 ));
@@ -213,9 +215,9 @@ const CinemaTicket = forwardRef<View, CinemaTicketProps>(
 
           {/* Tear Line with Notches */}
           <View style={styles.tearLineSection}>
-            <TicketNotch side="left" color={"#000"} />
-            <DashedLine color="#1a1a1a" />
-            <TicketNotch side="right" color={"#000"} />
+            <TicketNotch side="left" color={colors.appBackground} />
+            <DashedLine color={colors.input} />
+            <TicketNotch side="right" color={colors.appBackground} />
           </View>
 
           {/* Stub Section */}
@@ -232,7 +234,7 @@ const CinemaTicket = forwardRef<View, CinemaTicketProps>(
             </View>
 
             <View style={styles.qrContainer}>
-              <QRCode value={APP_URL} size={70} backgroundColor={ticketColor} color="#1a1a1a" />
+              <QRCode value={APP_URL} size={70} backgroundColor={ticketColor} color={colors.input} />
             </View>
           </View>
 
@@ -255,7 +257,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     padding: spacing.lg,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   ticketBody: {
     width: TICKET_WIDTH,
@@ -275,7 +277,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: radius.pill,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   backdropContainer: {
     width: "100%",
@@ -316,7 +318,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     letterSpacing: 2,
     lineHeight: 34,
-    color: "#1a1a1a",
+    color: colors.input,
   },
   tagline: {
     fontStyle: "italic",
@@ -483,7 +485,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     letterSpacing: 2,
     lineHeight: 22,
-    color: "#1a1a1a",
+    color: colors.input,
   },
   stubSubtitle: {
     fontFamily: "Bebas",
@@ -493,7 +495,7 @@ const styles = StyleSheet.create({
   },
   qrContainer: {
     padding: spacing.sm,
-    backgroundColor: "#fff",
+    backgroundColor: colors.text,
     borderRadius: radius.sm,
   },
   watermark: {
@@ -506,7 +508,7 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     fontSize: 65,
     letterSpacing: 8,
-    color: "#000",
+    color: colors.appBackground,
   },
 });
 

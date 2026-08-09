@@ -1,5 +1,6 @@
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import Text from "../../Text";
+
 import { Movie } from "../../../../types";
 import useTranslation from "../../../service/useTranslation";
 import WatchProviders from "../WatchProviders";

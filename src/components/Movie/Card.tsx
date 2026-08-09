@@ -1,5 +1,6 @@
 import { StyleProp, ViewStyle } from "react-native";
-import { Card as CardComponent } from "react-native-paper";
+import CardComponent from "../Card";
+
 import { radius } from "../../constants/design";
 
 export default function Card({

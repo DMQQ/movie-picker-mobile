@@ -1,11 +1,13 @@
 import React from "react";
+import Text from "./Text";
 import { View, StyleSheet, Alert, Image, Linking } from "react-native";
-import { Button, Text } from "react-native-paper";
+
+import Button from "./Button";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PrimaryButton from "./PrimaryButton";
 import * as Updates from "expo-updates";
 import * as Sentry from "@sentry/react-native";
-import { fontSize, fontWeight, radius, spacing } from "../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing} from "../constants/design";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -61,7 +63,7 @@ export default class ErrorBoundary extends React.Component<
     try {
       await Updates.reloadAsync({
         reloadScreenOptions: {
-          backgroundColor: "#000",
+          backgroundColor: colors.appBackground,
           fade: true,
           image: require("../../assets/images/adaptive-icon.png"),
         },
@@ -116,7 +118,7 @@ export default class ErrorBoundary extends React.Component<
                 onPress={this.restartApp}
                 style={styles.restartButton}
                 icon="restart"
-                textColor="#fff"
+                textColor={colors.text}
               >
                 Restart App
               </Button>
@@ -133,7 +135,7 @@ export default class ErrorBoundary extends React.Component<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
     justifyContent: "center",
     alignItems: "center",
     padding: spacing.xl,
@@ -166,7 +168,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: fontWeight.bold,
-    color: "#fff",
+    color: colors.text,
     textAlign: "center",
     marginBottom: spacing.lg,
   },

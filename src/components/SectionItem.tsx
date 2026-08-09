@@ -1,5 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import Text from "./Text";
+
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import { Link } from "expo-router";
@@ -103,7 +104,7 @@ export const SectionListItem = ({
                     },
                   ]}
                 >
-                  <MaterialCommunityIcons name="star" size={9} color="#000" />{" "}
+                  <MaterialCommunityIcons name="star" size={9} color={colors.appBackground} />{" "}
                   {vote_average.toFixed(1)}
                 </Text>
               </View>

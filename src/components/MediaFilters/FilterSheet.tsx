@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import IconButton from "../IconButton";
+import Text from "../Text";
 import { Modal, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+
+import Button from "../Button";
 import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import GenreChip from "../GenreChip";
 import PrimaryButton from "../PrimaryButton";
@@ -207,7 +210,7 @@ export default function FilterSheet({ visible, onClose, onCategorySelect, showCa
               <Text variant="headlineSmall" style={styles.title}>
                 {t("filters.title")}
               </Text>
-              <IconButton icon="close" iconColor="#fff" size={24} onPress={onClose} style={styles.closeButton} />
+              <IconButton icon="close" iconColor={colors.text} size={24} onPress={onClose} style={styles.closeButton} />
             </View>
           </View>
 
@@ -268,7 +271,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.6)",
   },
   sheet: {
-    backgroundColor: "#121212",
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     maxHeight: "75%",
@@ -285,7 +288,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   title: {
-    color: "#fff",
+    color: colors.text,
     fontWeight: fontWeight.bold,
     flex: 1,
     textAlign: "center",
@@ -302,7 +305,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xxl,
   },
   sectionTitle: {
-    color: "#fff",
+    color: colors.text,
     fontFamily: "Bebas",
     fontSize: 22,
     marginBottom: spacing.sm,

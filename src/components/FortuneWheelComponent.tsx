@@ -35,7 +35,7 @@ const { width } = Dimensions.get("window");
 
 // --- CONFIGURATION ---
 const BORDER_WIDTH = 14;
-const COLORS = new Array(4).fill(["#151515", "#2a2a2a"]).flat();
+const COLORS = new Array(4).fill(["#151515", colors.surfaceElevated]).flat();
 
 interface SegmentProps {
   item: {
@@ -88,7 +88,7 @@ const Segment = memo(({ item, segmentAngle, wheelSize, startAngle }: SegmentProp
           width: imageSize,
           height: imageSize * 1.5,
           borderRadius: radius.xs,
-          backgroundColor: "#000",
+          backgroundColor: colors.appBackground,
         }}
       />
     </View>
@@ -108,7 +108,7 @@ const WheelOverlay = ({ size }: { size: number }) => {
         <RadialGradient
           c={center}
           r={ringRadius}
-          colors={["rgba(255,255,255,0.1)", "rgba(0,0,0,0.1)", "transparent"]}
+          colors={[colors.border, "rgba(0,0,0,0.1)", "transparent"]}
           positions={[0.6, 0.8, 1]}
         />
       </Rect>
@@ -155,7 +155,7 @@ const WheelOverlay = ({ size }: { size: number }) => {
           <RadialGradient
             c={vec(center.x - hubRadius * 0.3, center.y - hubRadius * 0.3)}
             r={hubRadius * 1.75}
-            colors={["#FFFFFF", "#E5E4E2", "#D4AF37", "#8B7E66", "#1a1a1a"]}
+            colors={[colors.text, "#E5E4E2", "#D4AF37", "#8B7E66", colors.input]}
             positions={[0, 0.2, 0.5, 0.8, 1]}
           />
         </Circle>
@@ -387,7 +387,7 @@ const Wheel = forwardRef<{ spin: () => void; stop: () => void }, WheelProps>(
                 <Circle cx={50} cy={10} r={6} color="#111" />
 
                 {/* 2. Drop Shadow */}
-                <Path path="M 25 10 L 75 10 L 50 70 Z" color="#000" opacity={0.5}>
+                <Path path="M 25 10 L 75 10 L 50 70 Z" color={colors.appBackground} opacity={0.5}>
                   <BlurMask blur={6} style="normal" />
                   <CornerPathEffect r={8} />
                 </Path>
@@ -400,7 +400,7 @@ const Wheel = forwardRef<{ spin: () => void; stop: () => void }, WheelProps>(
 
                 {/* 4. Left Highlight (Bevel) */}
                 {/* We draw the left half only. CornerPathEffect will round the outer edge. */}
-                <Path path="M 25 10 L 50 10 L 50 70 Z" color="#FFF" opacity={0.35}>
+                <Path path="M 25 10 L 50 10 L 50 70 Z" color={colors.text} opacity={0.35}>
                   <CornerPathEffect r={8} />
                 </Path>
 
@@ -490,7 +490,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ctaText: {
-    color: "#fff",
+    color: colors.text,
     fontFamily: "Bebas",
     fontSize: 24,
     textShadowColor: "rgba(0,0,0,0.8)",

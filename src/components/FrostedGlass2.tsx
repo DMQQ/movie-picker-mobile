@@ -1,6 +1,7 @@
 import { BlurView } from "expo-blur";
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { colors } from "../constants/design";
 
 interface FrostedGlassProps {
   children?: React.ReactNode;
@@ -25,7 +26,7 @@ const FrostedGlass2: React.FC<FrostedGlassProps> = ({ children, style, blurAmoun
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: colors.border,
   },
 
   content: {

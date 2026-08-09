@@ -1,11 +1,13 @@
 import { memo, useCallback, useRef, useState } from "react";
+import IconButton from "./IconButton";
+import Text from "./Text";
 import { Dimensions, Modal, Pressable, StyleSheet, View } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
 import CinemaTicket from "./CinemaTicket";
-import { fontSize, radius, spacing } from "../constants/design";
+import { colors, fontSize, radius, spacing} from "../constants/design";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -59,7 +61,7 @@ interface ShareTicketButtonProps {
   holeColor?: string;
 }
 
-function ShareTicketButton({ movie, providers, headerText, pickupLine, holeColor = "#000" }: ShareTicketButtonProps) {
+function ShareTicketButton({ movie, providers, headerText, pickupLine, holeColor = colors.appBackground }: ShareTicketButtonProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const viewShotRef = useRef<ViewShot>(null);
 
@@ -113,7 +115,7 @@ function ShareTicketButton({ movie, providers, headerText, pickupLine, holeColor
           <Pressable style={styles.modalBackdrop} onPress={closeModal} />
 
           <View style={styles.modalContent}>
-            <IconButton icon="close" size={24} onPress={closeModal} style={styles.closeButton} iconColor="#fff" />
+            <IconButton icon="close" size={24} onPress={closeModal} style={styles.closeButton} iconColor={colors.text} />
 
             <ViewShot
               ref={viewShotRef}
@@ -171,14 +173,14 @@ export function IconShareButton({ movie }: { movie: Movie | null | undefined }) 
 
   return (
     <>
-      <IconButton icon="share-variant" size={24} onPress={openModal} iconColor="#fff" />
+      <IconButton icon="share-variant" size={24} onPress={openModal} iconColor={colors.text} />
 
       <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={closeModal}>
         <View style={styles.modalOverlay}>
           <Pressable style={styles.modalBackdrop} onPress={closeModal} />
 
           <View style={styles.modalContent}>
-            <IconButton icon="close" size={24} onPress={closeModal} style={styles.closeButton} iconColor="#fff" />
+            <IconButton icon="close" size={24} onPress={closeModal} style={styles.closeButton} iconColor={colors.text} />
 
             <ViewShot
               ref={viewShotRef}
@@ -225,7 +227,7 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     fontSize: fontSize.lg,
     letterSpacing: 1,
-    color: "#1a1a1a",
+    color: colors.input,
   },
   cornerHole: {
     position: "absolute",
@@ -269,16 +271,16 @@ const styles = StyleSheet.create({
     top: 25,
     right: 25,
     zIndex: 10,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
   },
   viewShot: {
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
     borderRadius: radius.card,
     overflow: "hidden",
   },
   shareButton: {
     marginTop: spacing.lg,
-    backgroundColor: "#fff",
+    backgroundColor: colors.text,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xxl + 16,
     borderRadius: radius.pill,
@@ -290,7 +292,7 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     fontSize: fontSize.xl,
     letterSpacing: 2,
-    color: "#1a1a1a",
+    color: colors.input,
   },
 });
 

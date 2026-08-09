@@ -1,6 +1,8 @@
 import { memo, useMemo } from "react";
+import IconButton from "./IconButton";
+import Text from "./Text";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+
 import { colors, fontWeight, fontSize, radius, spacing } from "../constants/design";
 import Animated, {
   useAnimatedStyle,
@@ -115,7 +117,7 @@ function FloatingMovieHeader({
             icon={backButtonIcon}
             size={25}
             onPress={onBack}
-            iconColor="white"
+            iconColor={colors.text}
           />
         </PlatformBlurView>
 
@@ -250,7 +252,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: radius.pill,
     overflow: "hidden",
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   androidButtonBackground: {
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -267,7 +269,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: radius.xs + 2,
     overflow: "hidden",
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
   },
   posterThumbnail: {
     width: 40,
@@ -277,7 +279,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   movieTitle: {
-    color: "white",
+    color: colors.text,
     fontWeight: fontWeight.semibold,
     marginBottom: spacing.xs,
   },
@@ -292,7 +294,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   ratingText: {
-    color: "white",
+    color: colors.text,
     fontSize: fontSize.sm,
     fontWeight: fontWeight.medium,
     marginLeft: spacing.xs - 1,

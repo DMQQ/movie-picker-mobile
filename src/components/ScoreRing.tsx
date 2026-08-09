@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { fontWeight, fontSize, radius } from "../constants/design";
+import { colors, fontWeight, fontSize, radius} from "../constants/design";
 import { Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import FrostedGlass from "./FrostedGlass";
@@ -44,7 +44,7 @@ const ScoreRing = memo(({ score }: { score: number }) => {
         />
       </Svg>
       <View style={absoluteContainer}>
-        <Text style={{ color: "white", fontWeight: fontWeight.bold, fontSize: fontSize.xs }}>{(score * 10).toFixed(0)}%</Text>
+        <Text style={{ color: colors.text, fontWeight: fontWeight.bold, fontSize: fontSize.xs }}>{(score * 10).toFixed(0)}%</Text>
       </View>
     </FrostedGlass>
   );

@@ -5,7 +5,7 @@ import { ThemeProvider, DarkTheme } from "expo-router/react-navigation";
 import { useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { MD2DarkTheme, PaperProvider } from "react-native-paper";
+import { PortalProvider } from "../components/Portal";
 import { colors } from "../constants/design";
 import {
   SafeAreaProvider,
@@ -54,8 +54,6 @@ if (!__DEV__)
     // spotlight: __DEV__,
   });
 
-const theme = MD2DarkTheme;
-
 function RootLayout() {
   const { isLoaded, isUpdating } = useInit();
 
@@ -63,21 +61,21 @@ function RootLayout() {
     <AppErrorBoundary>
       <SafeAreaProvider
         initialMetrics={initialWindowMetrics}
-        style={{ flex: 1, backgroundColor: "#000" }}
+        style={{ flex: 1, backgroundColor: colors.appBackground }}
       >
         <ThemeProvider
           value={{
             ...DarkTheme,
-            colors: { ...DarkTheme.colors, background: "#000" },
+            colors: { ...DarkTheme.colors, background: colors.appBackground },
           }}
         >
-          <PaperProvider theme={theme}>
+          <PortalProvider>
             <Provider store={store}>
               <DatabaseProvider>
                 <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
               </DatabaseProvider>
             </Provider>
-          </PaperProvider>
+          </PortalProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </AppErrorBoundary>
@@ -148,14 +146,14 @@ const RootNavigator = ({
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#000" }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.appBackground }}>
       <MaintenanceWatcher />
       <Stack
         initialRouteName="(tabs)"
         screenOptions={{
           headerShown: false,
           contentStyle: {
-            backgroundColor: "#000",
+            backgroundColor: colors.appBackground,
           },
         }}
       >
@@ -185,7 +183,7 @@ const RootNavigator = ({
             sheetGrabberVisible: true,
             contentStyle: {
               backgroundColor:
-                Platform.OS === "android" ? "#121212" : "transparent",
+                Platform.OS === "android" ? colors.surface : "transparent",
             },
             sheetAllowedDetents: [0.5, 0.85],
             sheetInitialDetentIndex: 0,
@@ -201,7 +199,7 @@ const RootNavigator = ({
             sheetGrabberVisible: true,
             contentStyle: {
               backgroundColor:
-                Platform.OS === "android" ? "#121212" : "transparent",
+                Platform.OS === "android" ? colors.surface : "transparent",
             },
             sheetAllowedDetents: [0.85, 1.0],
             sheetInitialDetentIndex: 0,

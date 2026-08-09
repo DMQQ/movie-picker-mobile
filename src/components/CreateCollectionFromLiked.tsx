@@ -1,7 +1,9 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Text from "./Text";
+import TextInput from "./TextInput";
 import { useState } from "react";
 import { Keyboard, Pressable, View } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import { createGroupFromArray } from "../redux/favourites/favourites";
 import { useAppDispatch } from "../redux/store";
@@ -100,7 +102,6 @@ export default function CreateCollectionFromLiked({
           value={text}
           onChangeText={setText}
           label={t("create-collection.input-label")}
-          mode="outlined"
           style={{ backgroundColor: "transparent" }}
         />
       </UserInputModal>

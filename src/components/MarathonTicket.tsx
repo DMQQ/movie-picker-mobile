@@ -1,12 +1,13 @@
 import { forwardRef, memo, useMemo } from "react";
+import Text from "./Text";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { Text } from "react-native-paper";
+
 import { Image } from "expo-image";
 import QRCode from "react-native-qrcode-svg";
 import GenresView from "./GenresView";
 import RatingIcons from "./RatingIcons";
 import useTranslation from "../service/useTranslation";
-import { fontSize, radius, spacing } from "../constants/design";
+import { colors, fontSize, radius, spacing} from "../constants/design";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const TICKET_WIDTH = SCREEN_WIDTH - 48;
@@ -63,7 +64,7 @@ const formatTotalRuntime = (movies: MarathonMovie[]): string => {
 };
 
 const TicketNotch = memo(({ side, color }: { side: "left" | "right"; color: string }) => (
-  <View style={[styles.notch, side === "left" ? styles.notchLeft : styles.notchRight, { backgroundColor: "#000" }]}>
+  <View style={[styles.notch, side === "left" ? styles.notchLeft : styles.notchRight, { backgroundColor: colors.appBackground }]}>
     <View style={[styles.notchInner, { backgroundColor: color }]} />
   </View>
 ));
@@ -230,9 +231,9 @@ const MarathonTicket = forwardRef<View, MarathonTicketProps>(({ movies, headerTe
 
         {/* Tear Line with Notches */}
         <View style={styles.tearLineSection}>
-          <TicketNotch side="left" color={"#000"} />
-          <DashedLine color="#1a1a1a" />
-          <TicketNotch side="right" color={"#000"} />
+          <TicketNotch side="left" color={colors.appBackground} />
+          <DashedLine color={colors.input} />
+          <TicketNotch side="right" color={colors.appBackground} />
         </View>
 
         {/* Stub Section */}
@@ -249,7 +250,7 @@ const MarathonTicket = forwardRef<View, MarathonTicketProps>(({ movies, headerTe
           </View>
 
           <View style={styles.qrContainer}>
-            <QRCode value={APP_URL} size={70} backgroundColor={ticketColor} color="#1a1a1a" />
+            <QRCode value={APP_URL} size={70} backgroundColor={ticketColor} color={colors.input} />
           </View>
         </View>
 
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     padding: spacing.lg,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   ticketBody: {
     width: TICKET_WIDTH,
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: radius.pill,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   headerSection: {
     alignItems: "center",
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     fontSize: 32,
     letterSpacing: 3,
-    color: "#1a1a1a",
+    color: colors.input,
     textAlign: "center",
   },
   countBadge: {
@@ -356,7 +357,7 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     fontSize: fontSize.xl,
     letterSpacing: 1,
-    color: "#1a1a1a",
+    color: colors.input,
     lineHeight: 20,
   },
   metaRow: {
@@ -517,7 +518,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     letterSpacing: 2,
     lineHeight: 22,
-    color: "#1a1a1a",
+    color: colors.input,
   },
   stubSubtitle: {
     fontFamily: "Bebas",
@@ -527,7 +528,7 @@ const styles = StyleSheet.create({
   },
   qrContainer: {
     padding: spacing.sm,
-    backgroundColor: "#fff",
+    backgroundColor: colors.text,
     borderRadius: radius.sm,
   },
   watermark: {
@@ -540,7 +541,7 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     fontSize: 65,
     letterSpacing: 8,
-    color: "#000",
+    color: colors.appBackground,
   },
 });
 

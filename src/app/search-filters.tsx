@@ -1,7 +1,12 @@
 import { BlurView } from "expo-blur";
+import Divider from "../components/Divider";
+import IconButton from "../components/IconButton";
+import Text from "../components/Text";
+import TouchableRipple from "../components/TouchableRipple";
 import React, { useMemo, useState } from "react";
 import { Dimensions, FlatList, Image, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Button, Divider, IconButton, Text, TouchableRipple } from "react-native-paper";
+
+import Button from "../components/Button";
 import { colors, fontWeight, fontSize, radius, spacing } from "../constants/design";
 import PrimaryButton from "../components/PrimaryButton";
 import GenreChip from "../components/GenreChip";
@@ -79,7 +84,7 @@ export default function SearchFilters({ route }: any) {
         <View style={styles.container}>
           <View style={styles.header}>
             <View style={styles.headerContent}>
-              <IconButton icon="chevron-left" iconColor="#fff" onPress={() => router.back()} size={24} style={styles.closeButton} />
+              <IconButton icon="chevron-left" iconColor={colors.text} onPress={() => router.back()} size={24} style={styles.closeButton} />
 
               <Button mode="text" onPress={resetFilters} textColor={colors.primary} style={styles.resetButton}>
                 Reset
@@ -137,7 +142,7 @@ export default function SearchFilters({ route }: any) {
                     styles.chip,
                     activeTab === "movie" && {
                       borderColor: "rgba(255, 255, 255, 0.3)",
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      backgroundColor: colors.border,
                     },
                   ]}
                 >
@@ -149,7 +154,7 @@ export default function SearchFilters({ route }: any) {
                     styles.chipWrapper,
                     activeTab === "tv" && {
                       borderColor: "rgba(255, 255, 255, 0.3)",
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      backgroundColor: colors.border,
                     },
                   ]}
                 >
@@ -200,7 +205,7 @@ const styles = StyleSheet.create({
   header: {
     elevation: 0,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.1)",
+    borderBottomColor: colors.border,
     paddingVertical: spacing.sm + 2,
   },
   headerContent: {
@@ -213,7 +218,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: fontSize.xxl,
     fontWeight: fontWeight.medium,
-    color: "#fff",
+    color: colors.text,
   },
   closeButton: {
     margin: 0,
@@ -230,7 +235,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl * 5,
   },
   divider: {
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: colors.overlay,
     height: 1,
     marginVertical: spacing.md,
   },
@@ -242,7 +247,7 @@ const styles = StyleSheet.create({
     lineHeight: 30,
     fontFamily: "Bebas",
     marginBottom: spacing.sm + 2,
-    color: "#fff",
+    color: colors.text,
   },
   providersGrid: {
     paddingVertical: spacing.sm,
@@ -280,7 +285,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     overflow: "hidden",
     borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: colors.border,
   },
   chip: {
     paddingHorizontal: spacing.lg,
@@ -294,7 +299,7 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.medium,
   },
   chipTextActive: {
-    color: "#fff",
+    color: colors.text,
     fontWeight: fontWeight.semibold,
   },
   genreChipsContainer: {
@@ -309,7 +314,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.screen,
     paddingVertical: spacing.screen,
     borderTopWidth: 1,
-    borderTopColor: "rgba(255,255,255,0.08)",
+    borderTopColor: colors.overlay,
     elevation: 8,
     position: "absolute",
     bottom: 0,

@@ -1,6 +1,7 @@
 import { Image, View } from "react-native";
-import { Text } from "react-native-paper";
-import { spacing } from "../constants/design";
+import Text from "../components/Text";
+
+import { colors, spacing} from "../constants/design";
 
 export default function LoadingScreen() {
   return (
@@ -9,7 +10,7 @@ export default function LoadingScreen() {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#000",
+        backgroundColor: colors.appBackground,
       }}
     >
       <Image

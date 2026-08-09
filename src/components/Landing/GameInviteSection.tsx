@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
+import Text from "../Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useCallback, useMemo } from "react"; // useCallback kept for handleGamePress/handleSecondaryPress
@@ -10,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Text } from "react-native-paper";
+
 import useTranslation from "../../service/useTranslation";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
 import PlatformBlurView from "../PlatformBlurView";
@@ -54,7 +55,7 @@ const gameInviteStyles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: "Bebas",
-    color: "#fff",
+    color: colors.text,
     textAlign: "center",
     marginBottom: spacing.sm,
     textShadowColor: "rgba(0,0,0,0.8)",
@@ -90,7 +91,7 @@ const gameInviteStyles = StyleSheet.create({
     gap: spacing.sm,
   },
   buttonText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
   },
@@ -271,7 +272,7 @@ const GameInviteSection = memo(
                 <MaterialCommunityIcons
                   name={config.icon as any}
                   size={18}
-                  color="#fff"
+                  color={colors.text}
                 />
                 <Text numberOfLines={1} style={gameInviteStyles.buttonText}>
                   {config.buttonText}
@@ -290,7 +291,7 @@ const GameInviteSection = memo(
                 activeOpacity={0.8}
               >
                 <View style={gameInviteStyles.secondaryButtonInner}>
-                  <MaterialCommunityIcons name="slide" size={18} color="#fff" />
+                  <MaterialCommunityIcons name="slide" size={18} color={colors.text} />
                   <Text numberOfLines={1} style={gameInviteStyles.buttonText}>
                     {config.secondaryButtonText}
                   </Text>

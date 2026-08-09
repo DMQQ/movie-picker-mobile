@@ -1,5 +1,6 @@
 import { TouchableOpacity, useWindowDimensions, View } from "react-native";
-import { Text } from "react-native-paper";
+import Text from "../../components/Text";
+
 import { colors, fontSize, radius, spacing } from "../../constants/design";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { ImageBackground } from "react-native";
@@ -245,14 +246,14 @@ export default function RatingState({
                           borderWidth: 1,
                           borderColor: isSelected
                             ? colors.primary
-                            : "rgba(255,255,255,0.12)",
+                            : colors.border,
                         }}
                       >
                         <Text style={{ fontSize: fontSize.xxl }}>{option.icon}</Text>
                         <Text
                           style={{
                             fontSize: fontSize.sm - 1,
-                            color: "#fff",
+                            color: colors.text,
                             textAlign: "center",
                             paddingHorizontal: spacing.xs,
                           }}

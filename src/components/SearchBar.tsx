@@ -1,7 +1,8 @@
 import { useNavigation } from "expo-router";
+import IconButton from "./IconButton";
 import { BlurView } from "expo-blur";
 import { StyleSheet, TextInput, View } from "react-native";
-import { IconButton } from "react-native-paper";
+
 import { colors, fontSize, radius, spacing } from "../constants/design";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import PlatformBlurView from "./PlatformBlurView";
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.lg,
     paddingHorizontal: spacing.sm,
     height: "100%",

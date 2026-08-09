@@ -53,9 +53,9 @@ function Pre26IosLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: primaryColor,
-        tabBarInactiveTintColor: "#ffffffc2",
+        tabBarInactiveTintColor: "rgba(255,255,255,0.76)",
         tabBarStyle: {
-          backgroundColor: "#000",
+          backgroundColor: colors.appBackground,
           borderTopColor: "rgba(0,0,0,0.25)",
         },
         tabBarHideOnKeyboard: true,
@@ -121,10 +121,10 @@ function Pre26IosLayout() {
 function TabLayout() {
   const t = useTranslation();
   const selectedColor =
-    Platform.OS === "ios" ? colors.primary : "#000";
+    Platform.OS === "ios" ? colors.primary : colors.appBackground;
   return (
     <NativeTabs
-      backgroundColor={"#000"}
+      backgroundColor={colors.appBackground}
       blurEffect="dark"
       backBehavior="none"
       shadowColor={"rgba(0,0,0,0.25)"}

@@ -1,4 +1,6 @@
 import { Link, router, Stack, useLocalSearchParams } from "expo-router";
+import SearchField from "../../../components/SearchField";
+import Text from "../../../components/Text";
 import React, {
   useCallback,
   useEffect,
@@ -14,13 +16,8 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  View,
-} from "react-native";
-import {
-  ActivityIndicator,
-  Searchbar,
-  Text,
-} from "react-native-paper";
+  View, ActivityIndicator} from "react-native";
+
 import { colors, fontWeight, fontSize, radius, spacing } from "../../../constants/design";
 import {
   useLazySearchQuery,
@@ -59,7 +56,7 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
         borderRadius: radius.md + 3,
         marginTop: spacing.screen,
         borderWidth: 2,
-        borderColor: "rgba(255,255,255,0.1)",
+        borderColor: colors.border,
       }}
       asChild
     >
@@ -355,10 +352,10 @@ const SearchScreen = () => {
           ios: {
             headertitle: t("search.title", { query: searchQuery }) as string,
             headerStyle: {
-              backgroundColor: "#000",
+              backgroundColor: colors.appBackground,
             },
             headerTitleStyle: {
-              color: "#fff",
+              color: colors.text,
             },
             headerSearchBarOptions: {
               placeholder: t("search.search-placeholder") as string,
@@ -382,7 +379,7 @@ const SearchScreen = () => {
 
       {Platform.OS !== "ios" && (
         <View style={styles.searchContainer}>
-          <Searchbar
+          <SearchField
             placeholder={t("search.search-placeholder") as string}
             onChangeText={setSearchQuery}
             value={searchQuery}
@@ -420,7 +417,7 @@ const SearchScreen = () => {
                   styles.chip,
                   filters.type === category.id && {
                     borderColor: "rgba(255, 255, 255, 0.3)",
-                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    backgroundColor: colors.border,
                   },
                 ]}
               >
@@ -478,7 +475,7 @@ const SearchScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   searchContainer: {
     paddingHorizontal: spacing.screen,
@@ -486,17 +483,17 @@ const styles = StyleSheet.create({
     paddingTop: spacing.screen,
   },
   searchbar: {
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    backgroundColor: colors.overlay,
     borderRadius: radius.pill,
     borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: colors.border,
   },
   searchInput: {
-    color: "#fff",
+    color: colors.text,
   },
   chipContainer: {
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.1)",
+    borderBottomColor: colors.border,
     paddingBottom: spacing.screen,
     flexDirection: "row",
     paddingRight: spacing.screen,
@@ -510,7 +507,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm + 2,
     height: 230,
     width: 170,
-    borderColor: "rgba(255,255,255,0.1)",
+    borderColor: colors.border,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -553,7 +550,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     overflow: "hidden",
     borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: colors.border,
   },
   chip: {
     paddingHorizontal: spacing.lg,
@@ -566,7 +563,7 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.medium,
   },
   chipTextActive: {
-    color: "#fff",
+    color: colors.text,
     fontWeight: fontWeight.semibold,
   },
   categoriesContainer: {

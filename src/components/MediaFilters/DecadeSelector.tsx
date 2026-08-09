@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
+import Chip from "../Chip";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Chip } from "react-native-paper";
+
 import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 import { DecadeFilter } from "../../redux/mediaFilters/mediaFiltersSlice";
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
     paddingRight: spacing.lg,
   },
   chip: {
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.input,
     borderRadius: radius.modal,
     borderWidth: 1,
     borderColor: "#333",
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize.md,
   },
   selectedChipText: {
-    color: "#fff",
+    color: colors.text,
     fontWeight: fontWeight.semibold,
   },
 });

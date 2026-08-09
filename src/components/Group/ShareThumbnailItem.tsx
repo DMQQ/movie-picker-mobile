@@ -1,7 +1,8 @@
 import { Dimensions, Pressable, StyleSheet, View } from "react-native";
-import { Checkbox } from "react-native-paper";
+import Checkbox from "../Checkbox";
+
 import Thumbnail from "../Thumbnail";
-import { radius } from "../../constants/design";
+import { colors, radius} from "../../constants/design";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -29,7 +30,7 @@ export default function ShareThumbnailItem({
       <View style={[styles.checkboxOverlay, isSelected && styles.checkboxSelected]}>
         <Checkbox
           status={isSelected ? "checked" : "unchecked"}
-          color="#fff"
+          color={colors.text}
           uncheckedColor="rgba(255,255,255,0.7)"
         />
       </View>

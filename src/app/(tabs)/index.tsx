@@ -1,5 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
+import IconButton from "../../components/IconButton";
+import Text from "../../components/Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
@@ -9,7 +11,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import { Link, router } from "expo-router";
@@ -245,7 +247,7 @@ export default function GameList() {
   return (
     <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
       <SafeIOSContainer
-        style={{ flex: 1, backgroundColor: "#000", paddingBottom: 0 }}
+        style={{ flex: 1, backgroundColor: colors.appBackground, paddingBottom: 0 }}
       >
         <PageHeading
           title={t("voter.games") as string}
@@ -260,7 +262,7 @@ export default function GameList() {
                 onPress={() => router.push("/qr-scanner")}
                 style={styles.qrButton}
               >
-                <IconButton icon="camera" size={20} iconColor="white" />
+                <IconButton icon="camera" size={20} iconColor={colors.text} />
                 <Text style={styles.qrButtonText}>{t("scanner.button")}</Text>
               </Pressable>
             </PlatformBlurView>
@@ -313,7 +315,7 @@ const styles = StyleSheet.create({
   header: {
     paddingBottom: spacing.screen,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.1)",
+    borderBottomColor: colors.border,
   },
   headerTop: {
     flexDirection: "row",
@@ -331,7 +333,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontFamily: "Bebas",
     fontSize: 32,
-    color: "#fff",
+    color: colors.text,
     flex: 1,
     textAlign: "center",
     marginLeft: spacing.xxl + 16,
@@ -344,19 +346,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: radius.modal,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
     marginRight: spacing.sm,
   },
   categoryChipActive: {
-    backgroundColor: "#fff",
+    backgroundColor: colors.text,
   },
   categoryText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.md,
     fontWeight: fontWeight.semibold,
   },
   categoryTextActive: {
-    color: "#000",
+    color: colors.appBackground,
   },
   cardContainer: {
     borderRadius: radius.card,
@@ -366,7 +368,7 @@ const styles = StyleSheet.create({
     height: CARD_HEIGHT,
     borderRadius: radius.card,
     overflow: "hidden",
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.input,
   },
   cardImage: {
     width: "100%",
@@ -386,7 +388,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontFamily: "Bebas",
     fontSize: 28,
-    color: "#fff",
+    color: colors.text,
   },
   cardDescription: {
     color: "rgba(255,255,255,0.7)",
@@ -422,7 +424,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   qrButtonText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
     paddingRight: spacing.sm + 2,

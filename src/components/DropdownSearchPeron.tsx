@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, FlatList, Image, ListRenderItem, StyleSheet, TouchableOpacity, View } from "react-native";
-import { ActivityIndicator, Avatar, Surface, Text, TextInput, TouchableRipple } from "react-native-paper";
+import AvatarText from "./AvatarText";
+import Surface from "./Surface";
+import Text from "./Text";
+import TextInput from "./TextInput";
+import TouchableRipple from "./TouchableRipple";
+import { Animated, FlatList, Image, ListRenderItem, StyleSheet, TouchableOpacity, View, ActivityIndicator} from "react-native";
+
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import { useLazySearchPeopleQuery } from "../redux/person/personApi";
 import useTranslation from "../service/useTranslation";
@@ -117,7 +122,7 @@ const DropdownPersonSearch: React.FC<DropdownPersonSearchProps> = ({
         {item.profile_path ? (
           <Image source={{ uri: `https://image.tmdb.org/t/p/w92${item.profile_path}` }} style={styles.selectedPersonImage} />
         ) : (
-          <Avatar.Text
+          <AvatarText
             size={36}
             label={item.name.charAt(0).toUpperCase()}
             style={styles.selectedPersonAvatar}
@@ -143,7 +148,6 @@ const DropdownPersonSearch: React.FC<DropdownPersonSearchProps> = ({
           value={query}
           onChangeText={setQuery}
           style={styles.input}
-          mode="outlined"
           label={label}
           placeholder={placeholder}
           right={<TextInput.Icon icon={query ? "close" : "magnify"} onPress={query ? handleClearSearch : undefined} />}
@@ -280,7 +284,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   placeholderText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.xl,
     fontWeight: fontWeight.bold,
   },
@@ -290,7 +294,7 @@ const styles = StyleSheet.create({
   },
   personName: {
     fontSize: fontSize.lg,
-    color: "#fff",
+    color: colors.text,
   },
   department: {
     fontSize: fontSize.sm,
@@ -331,7 +335,7 @@ const styles = StyleSheet.create({
   },
   selectedPersonName: {
     fontSize: fontSize.md,
-    color: "#fff",
+    color: colors.text,
     marginRight: spacing.xs + 2,
     maxWidth: 120,
   },
@@ -345,7 +349,7 @@ const styles = StyleSheet.create({
     marginLeft: spacing.xs - 2,
   },
   removeButtonText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.md,
     lineHeight: 18,
   },

@@ -1,5 +1,6 @@
 import { memo, useEffect, useState } from "react";
-import { fontWeight, fontSize, radius, spacing } from "../../../constants/design";
+import Text from "../../Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../../../constants/design";
 import {
   Dimensions,
   StyleSheet,
@@ -10,7 +11,7 @@ import {
 import { Movie } from "../../../../types";
 import { useLazyGetSimilarQuery } from "../../../redux/movie/movieApi";
 import SectionListItem from "../../SectionItem";
-import { Text } from "react-native-paper";
+
 import useTranslation from "../../../service/useTranslation";
 import uniqueBy from "../../../utils/unique";
 
@@ -83,7 +84,7 @@ function SimilarTab({ id, type, initialData }: SimilarTabProps) {
       {hasMore && (
         <View style={styles.footer}>
           {state.isLoading ? (
-            <ActivityIndicator size="small" color="#fff" />
+            <ActivityIndicator size="small" color={colors.text} />
           ) : (
             <TouchableOpacity
               style={styles.loadMoreButton}
@@ -134,11 +135,11 @@ const styles = StyleSheet.create({
   loadMoreButton: {
     paddingVertical: spacing.sm + 2,
     paddingHorizontal: spacing.xl,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
     borderRadius: radius.sm,
   },
   loadMoreText: {
-    color: "#fff",
+    color: colors.text,
     fontWeight: fontWeight.semibold,
   },
 });

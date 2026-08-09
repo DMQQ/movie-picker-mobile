@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated, { FadeOut, ZoomOut } from "react-native-reanimated";
-import { spacing } from "../constants/design";
+import { colors, spacing} from "../constants/design";
 
 const AppLoadingOverlay = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
     zIndex: 9999,
   },
   loaderContainer: {

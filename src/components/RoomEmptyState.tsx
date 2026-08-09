@@ -1,7 +1,8 @@
 import { useEffect } from "react";
+import Text from "./Text";
 import { StyleSheet, View } from "react-native";
 import { useAppSelector } from "../redux/store";
-import { Text } from "react-native-paper";
+
 import Animated, {
   FadeIn,
   useAnimatedStyle,
@@ -12,7 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../service/useTranslation";
-import { fontSize, spacing } from "../constants/design";
+import { colors, fontSize, spacing} from "../constants/design";
 
 function PulseRing({ color, delay }: { color: string; delay: number }) {
   const scale = useSharedValue(1);
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Bebas",
     fontSize: 32,
-    color: "#fff",
+    color: colors.text,
     letterSpacing: 1.5,
     textAlign: "center",
     marginBottom: spacing.sm + 2,

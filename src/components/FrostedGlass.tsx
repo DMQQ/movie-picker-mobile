@@ -1,6 +1,7 @@
 import { BlurView } from "expo-blur";
 import React from "react";
 import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { colors } from "../constants/design";
 
 interface FrostedGlassProps {
   children?: React.ReactNode;
@@ -38,7 +39,7 @@ const styles = StyleSheet.create({
   container: {
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: colors.border,
   },
   overlay: {
     ...StyleSheet.absoluteFill,

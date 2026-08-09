@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import Text from "./Text";
 import { StyleSheet } from "react-native";
-import { Text } from "react-native-paper";
+
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import useTranslation from "../service/useTranslation";
+import { colors } from "../constants/design";
 
 interface FateTextProps {
   intervalMs?: number;
@@ -38,6 +40,6 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontFamily: "Bebas",
     textAlign: "center",
-    color: "#fff",
+    color: colors.text,
   },
 });

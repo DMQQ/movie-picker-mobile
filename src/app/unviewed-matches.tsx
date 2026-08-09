@@ -1,4 +1,6 @@
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import IconButton from "../components/IconButton";
+import Text from "../components/Text";
 import {
   Dimensions,
   FlatList,
@@ -7,7 +9,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+
 import { colors, fontSize, radius, spacing } from "../constants/design";
 import PrimaryButton from "../components/PrimaryButton";
 import { router } from "expo-router";
@@ -109,7 +111,7 @@ function UnviewedMatchesScreen() {
         size={24}
         onPress={handleDismiss}
         style={styles.closeButton}
-        iconColor="#fff"
+        iconColor={colors.text}
       />
 
       <View style={styles.headerRow}>
@@ -181,7 +183,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Bebas",
     fontSize: 32,
-    color: "#fff",
+    color: colors.text,
     textAlign: "left",
   },
   subtitle: {

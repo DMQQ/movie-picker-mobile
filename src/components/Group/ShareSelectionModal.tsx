@@ -1,4 +1,6 @@
 import { useCallback } from "react";
+import IconButton from "../IconButton";
+import Text from "../Text";
 import {
   Dimensions,
   FlatList,
@@ -8,7 +10,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+
 import PrimaryButton from "../PrimaryButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ViewShot from "react-native-view-shot";
@@ -17,7 +19,7 @@ import MarathonTicket from "../MarathonTicket";
 import PlatformBlurView from "../PlatformBlurView";
 import useTranslation from "../../service/useTranslation";
 import ShareThumbnailItem from "./ShareThumbnailItem";
-import { fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing} from "../../constants/design";
 import {
   useShareSelection,
   MAX_SELECTION,
@@ -80,7 +82,7 @@ export default function ShareSelectionModal({
               size={24}
               onPress={onClose}
               style={styles.ticketCloseButton}
-              iconColor="#000"
+              iconColor={colors.appBackground}
             />
             <ViewShot
               ref={viewShotRef}
@@ -116,7 +118,7 @@ export default function ShareSelectionModal({
               size={24}
               onPress={onClose}
               style={styles.closeButton}
-              iconColor="#fff"
+              iconColor={colors.text}
             />
             {isLoading || isSharing ? (
               <View style={styles.centeredBox}>
@@ -183,9 +185,9 @@ const styles = StyleSheet.create({
     top: 25,
     right: 25,
     zIndex: 10,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
   },
-  viewShot: { backgroundColor: "#000", borderRadius: radius.card },
+  viewShot: { backgroundColor: colors.appBackground, borderRadius: radius.card },
   content: {
     width: SCREEN_WIDTH - 30,
     maxHeight: SCREEN_HEIGHT * 0.85,
@@ -193,7 +195,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     ...Platform.select({
       android: {
-        backgroundColor: "#000",
+        backgroundColor: colors.appBackground,
         borderWidth: 1,
         borderColor: "rgba(255,255,255,0.18)",
       },
@@ -204,7 +206,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontFamily: "Bebas",
-    color: "#fff",
+    color: colors.text,
     textAlign: "center",
     marginBottom: spacing.sm,
     letterSpacing: 1.2,
@@ -223,7 +225,7 @@ const styles = StyleSheet.create({
   centeredBox: { alignItems: "center", justifyContent: "center", padding: spacing.xxl + 16 },
   loadingText: {
     marginTop: spacing.lg,
-    color: "#fff",
+    color: colors.text,
     fontFamily: "Bebas",
     fontSize: fontSize.lg,
     letterSpacing: 1,

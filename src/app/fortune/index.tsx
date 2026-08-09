@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import Text from "../../components/Text";
 import {
   Dimensions,
   Platform,
@@ -6,7 +7,8 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { Button, Text } from "react-native-paper";
+
+import Button from "../../components/Button";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { Movie, MovieDetails } from "../../../types";
 import FateText from "../../components/FateText";
@@ -32,7 +34,7 @@ import MovieResultCard, {
 } from "../../components/Random/MovieResultCard";
 import PlatformBlurView from "../../components/PlatformBlurView";
 import { Image } from "expo-image";
-import { radius } from "../../constants/design";
+import { colors, radius} from "../../constants/design";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -273,7 +275,7 @@ export default function FortuneWheel() {
   const t = useTranslation();
 
   return (
-    <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: "#000" }}>
+    <SafeIOSContainer style={{ overflow: "hidden", backgroundColor: colors.appBackground }}>
       <PageHeading
         showGradientBackground
         showBackButton
@@ -341,7 +343,7 @@ export default function FortuneWheel() {
                   : t("fortune-wheel.pick-a-movie")}
               </Text>
               <Button
-                rippleColor={"#fff"}
+                rippleColor={colors.text}
                 icon="refresh"
                 onPress={throttle(() => handleThrowDice(), 200)}
               >

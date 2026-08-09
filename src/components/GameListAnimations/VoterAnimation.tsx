@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated, Easing } from "react-native";
-import { radius, spacing } from "../../constants/design";
+import { colors, radius, spacing} from "../../constants/design";
 
 const VoterAnimation = () => {
   // Create animated values for each card
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#1A1A1A",
+    backgroundColor: colors.input,
   },
   movieCard: {
     position: "absolute",

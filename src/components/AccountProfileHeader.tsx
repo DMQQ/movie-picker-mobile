@@ -1,6 +1,9 @@
 import { useState } from "react";
+import Icon from "./Icon";
+import Text from "./Text";
+import TextInput from "./TextInput";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
-import { Icon, Text, TextInput } from "react-native-paper";
+
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import type { AuthUser } from "../redux/auth/authSlice";
@@ -100,7 +103,6 @@ export default function AccountProfileHeader({ user }: Props) {
             <TextInput
               value={name}
               onChangeText={setName}
-              mode="outlined"
               autoFocus
               onBlur={handleSaveName}
               onSubmitEditing={handleSaveName}

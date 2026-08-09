@@ -1,5 +1,6 @@
 import { Platform } from "react-native";
 import { Stack } from "expo-router";
+import { colors } from "../../constants/design";
 
 export default function FavouritesLayout() {
   return (
@@ -15,7 +16,7 @@ export default function FavouritesLayout() {
           presentation: "formSheet",
           sheetGrabberVisible: true,
           contentStyle: {
-            backgroundColor: Platform.OS === "android" ? "#121212" : "transparent",
+            backgroundColor: Platform.OS === "android" ? colors.surface : "transparent",
           },
           sheetAllowedDetents: [0.5],
           sheetInitialDetentIndex: 0,

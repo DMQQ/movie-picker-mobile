@@ -1,10 +1,12 @@
 import { FlatList, StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import Text from "../Text";
+
+import Button from "../Button";
 import CreateCollectionFromLiked from "../CreateCollectionFromLiked";
 import MatchedItem from "./MatchedItem";
 import useTranslation from "../../service/useTranslation";
 import { IGameSummary } from "./types";
-import { fontSize, spacing, typography } from "../../constants/design";
+import { colors, fontSize, spacing, typography} from "../../constants/design";
 
 interface Props {
   summary: IGameSummary;
@@ -50,6 +52,6 @@ const styles = StyleSheet.create({
   title: { fontSize: typography.bebasSize.section, fontFamily: "Bebas" },
   row: { gap: spacing.sm + 2, marginBottom: spacing.screen },
   empty: { flex: 1, justifyContent: "center", alignItems: "center", marginTop: spacing.xxl + 6 },
-  emptyTitle: { color: "#fff", fontSize: typography.bebasSize.empty, fontFamily: "Bebas" },
-  emptyDesc: { color: "#fff", fontSize: fontSize.lg, textAlign: "center", marginVertical: spacing.screen, maxWidth: 300 },
+  emptyTitle: { color: colors.text, fontSize: typography.bebasSize.empty, fontFamily: "Bebas" },
+  emptyDesc: { color: colors.text, fontSize: fontSize.lg, textAlign: "center", marginVertical: spacing.screen, maxWidth: 300 },
 });

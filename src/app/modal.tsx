@@ -1,5 +1,7 @@
 import { BackHandler, Linking, Platform, StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import Text from "../components/Text";
+
+import Button from "../components/Button";
 import PrimaryButton from "../components/PrimaryButton";
 import { useLocalSearchParams, router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -8,7 +10,7 @@ import useTranslation from "../service/useTranslation";
 import { useAppSelector } from "../redux/store";
 import { useEffect } from "react";
 import useMaintenance from "../service/useMaintanance";
-import { fontSize, radius, spacing } from "../constants/design";
+import { colors, fontSize, radius, spacing} from "../constants/design";
 
 type ModalType = "no-internet" | "server-error" | "maintenance" | "update";
 type IconName = "wifi-off" | "server-off" | "wrench" | "cellphone-arrow-down";
@@ -21,7 +23,7 @@ function getLocalizedValue(messages: { language: "pl" | "en"; value: string }[] 
 function ModalIcon({ name }: { name: IconName }) {
   return (
     <View style={styles.iconContainer}>
-      <MaterialCommunityIcons name={name} size={48} color="#fff" />
+      <MaterialCommunityIcons name={name} size={48} color={colors.text} />
     </View>
   );
 }
@@ -147,7 +149,7 @@ export default function Modal() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.input,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: spacing.xxl,
@@ -156,7 +158,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: spacing.xl,
@@ -164,7 +166,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: "Bebas",
-    color: "#fff",
+    color: colors.text,
     textAlign: "center",
     marginBottom: spacing.md,
   },

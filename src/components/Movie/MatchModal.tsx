@@ -1,4 +1,6 @@
 import * as Haptics from "expo-haptics";
+import Text from "../Text";
+import { useTheme } from "../../hooks/useTheme";
 import { LinearGradient } from "expo-linear-gradient";
 import LottieView from "lottie-react-native";
 import { useEffect, useRef } from "react";
@@ -9,7 +11,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+
 import { colors, radius, spacing } from "../../constants/design";
 import Animated, {
   FadeIn,
@@ -46,7 +48,7 @@ const styles = StyleSheet.create({
   matchText: {
     fontSize: 55,
     fontFamily: "Bebas",
-    color: "#fff",
+    color: colors.text,
     marginTop: Platform.OS === "ios" ? 0 : 30,
   },
   gradient: {
@@ -66,7 +68,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs + 1,
   },
   title: {
-    color: "white",
+    color: colors.text,
     fontSize: 40,
     paddingHorizontal: spacing.sm + 2,
     fontFamily: "Bebas",

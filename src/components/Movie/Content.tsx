@@ -1,7 +1,9 @@
 import { StyleSheet, View } from "react-native";
-import { MD3Theme, Text } from "react-native-paper";
+import type { Theme } from "../../hooks/useTheme";
+import Text from "../Text";
+
 import { Movie, TVShow } from "../../../types";
-import { fontSize, fontWeight, radius, spacing } from "../../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing} from "../../constants/design";
 
 const reviewRange = (rating: number) => {
   if (rating >= 7.5) {
@@ -15,7 +17,7 @@ const reviewRange = (rating: number) => {
   }
 };
 
-type ContentProps = { theme: MD3Theme } & Movie;
+type ContentProps = { theme: Theme } & Movie;
 
 export default function Content(card: ContentProps) {
   return (
@@ -60,7 +62,7 @@ const styles = StyleSheet.create({
     marginLeft: spacing.sm + 2,
     paddingHorizontal: spacing.sm + 2,
     borderRadius: radius.pill,
-    color: "#000",
+    color: colors.appBackground,
     lineHeight: 25,
   },
   overview: { fontSize: fontSize.xl, fontWeight: fontWeight.bold, marginTop: spacing.sm + 2 },

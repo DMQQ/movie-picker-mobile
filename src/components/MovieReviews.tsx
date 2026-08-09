@@ -1,7 +1,8 @@
 import { Dimensions, FlatList, View } from "react-native";
+import Text from "./Text";
 import { useGetReviewsQuery } from "../redux/movie/movieApi";
-import { Text } from "react-native-paper";
-import { radius, spacing } from "../constants/design";
+
+import { colors, radius, spacing} from "../constants/design";
 
 interface Review {
   id: string;
@@ -30,7 +31,7 @@ export default function MovieReviews(props: { movieId: number; type: "movie" | "
         data={data}
         keyExtractor={(item: Review) => item.id}
         renderItem={({ item }) => (
-          <View style={{ padding: spacing.sm + 2, width: Dimensions.get("screen").width - 30, backgroundColor: "#000", borderRadius: radius.md + 3 }}>
+          <View style={{ padding: spacing.sm + 2, width: Dimensions.get("screen").width - 30, backgroundColor: colors.appBackground, borderRadius: radius.md + 3 }}>
             <View
               style={{
                 flexDirection: "row",

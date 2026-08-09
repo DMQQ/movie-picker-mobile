@@ -1,6 +1,8 @@
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
-import { fontWeight, fontSize, spacing } from "../../constants/design";
-import { Icon, Text } from "react-native-paper";
+import Icon from "../../components/Icon";
+import Text from "../../components/Text";
+import { colors, fontWeight, fontSize, spacing} from "../../constants/design";
+
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PageHeading from "../../components/PageHeading";
 import GameCard from "../../components/GameCard";
@@ -58,7 +60,7 @@ export default function AllGamesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000" },
+  container: { flex: 1, backgroundColor: colors.appBackground },
 
   countLabel: {
     fontSize: fontSize.sm - 1,

@@ -2,7 +2,7 @@ import { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import Animated from "react-native-reanimated";
 import PlatformBlurView from "../PlatformBlurView";
-import { radius, spacing } from "../../constants/design";
+import { colors, radius, spacing} from "../../constants/design";
 
 interface PageIndicatorProps {
   categories: any[];
@@ -51,7 +51,7 @@ const PageIndicator = memo(({ categories, currentPage }: PageIndicatorProps) => 
               style={[
                 pageIndicatorStyles.dot,
                 {
-                  backgroundColor: currentPage === index ? "#fff" : "rgba(255, 255, 255, 0.3)",
+                  backgroundColor: currentPage === index ? colors.text : "rgba(255, 255, 255, 0.3)",
                   transform: [{ scale: currentPage === index ? 1.2 : 1 }],
                 },
               ]}

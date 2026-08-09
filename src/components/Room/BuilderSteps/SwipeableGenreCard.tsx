@@ -1,6 +1,8 @@
 import React from "react";
+import Text from "../../Text";
+import { useTheme } from "../../../hooks/useTheme";
 import { View, StyleSheet, Pressable, Dimensions } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+
 import { colors, radius, spacing, typography } from "../../../constants/design";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
@@ -75,7 +77,7 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
                 <Text style={vertical ? styles.genreNameVertical : styles.genreName}>{genreName}</Text>
                 {isSelected && (
                   <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
-                    <MaterialCommunityIcons name="check" size={24} color="#fff" />
+                    <MaterialCommunityIcons name="check" size={24} color={colors.text} />
                   </View>
                 )}
               </LinearGradient>
@@ -86,7 +88,7 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
                 <Text style={vertical ? styles.genreNameVertical : styles.genreName}>{genreName}</Text>
                 {isSelected && (
                   <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
-                    <MaterialCommunityIcons name="check" size={24} color="#fff" />
+                    <MaterialCommunityIcons name="check" size={24} color={colors.text} />
                   </View>
                 )}
               </LinearGradient>
@@ -111,7 +113,7 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height * 0.65,
     borderRadius: radius.card,
     overflow: "hidden",
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.input,
     borderWidth: 3,
     borderColor: "transparent",
   },
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: radius.card,
     overflow: "hidden",
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.input,
     borderWidth: 3,
     borderColor: "transparent",
   },
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.card,
   },
   placeholder: {
-    backgroundColor: "#2a2a2a",
+    backgroundColor: colors.surfaceElevated,
   },
   gradient: {
     position: "absolute",
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.card,
   },
   genreName: {
-    color: "#fff",
+    color: colors.text,
     fontSize: typography.bebasSize.auth,
     fontFamily: "Bebas",
     textShadowColor: "rgba(0, 0, 0, 0.75)",
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 4,
   },
   genreNameVertical: {
-    color: "#fff",
+    color: colors.text,
     fontSize: 32,
     fontFamily: "Bebas",
     textShadowColor: "rgba(0, 0, 0, 0.75)",

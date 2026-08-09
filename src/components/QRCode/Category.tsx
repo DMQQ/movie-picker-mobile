@@ -1,5 +1,7 @@
 import { View } from "react-native";
-import { Text, TextInput } from "react-native-paper";
+import Text from "../Text";
+import TextInput from "../TextInput";
+
 import PrimaryButton from "../PrimaryButton";
 import useTranslation from "../../service/useTranslation";
 import { fontWeight, spacing } from "../../constants/design";
@@ -37,7 +39,6 @@ export default function Category({
         <Text style={{ fontSize: 25, fontWeight: fontWeight.bold, marginTop: spacing.xs + 1 }}>{t("room.choose-category")}</Text>
         <TextInput
           keyboardType="numeric"
-          mode="outlined"
           label={"Page Range"}
           value={pageRange.toString()}
           onChangeText={(text) => {

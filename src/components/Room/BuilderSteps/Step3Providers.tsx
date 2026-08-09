@@ -1,10 +1,9 @@
 import { useEffect, useState, useRef, useMemo } from "react";
+import Text from "../../Text";
+import TouchableRipple from "../../TouchableRipple";
 import { View, StyleSheet, TextInput } from "react-native";
-import {
-  Text,
-  Button,
-  TouchableRipple,
-} from "react-native-paper";
+
+import Button from "../../Button";
 import { colors, fontWeight, fontSize, radius, spacing } from "../../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetAllProvidersQuery } from "../../../redux/movie/movieApi";
@@ -128,7 +127,7 @@ const Step3Providers = () => {
             <MaterialCommunityIcons
               name={rememberProviders ? "bookmark" : "bookmark-outline"}
               size={18}
-              color={rememberProviders ? "#fff" : "#888"}
+              color={rememberProviders ? colors.text : "#888"}
             />
           </View>
           <View style={styles.rememberContent}>
@@ -193,14 +192,14 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm + 2,
     height: 46,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
+    borderColor: colors.overlay,
   },
   searchIcon: {
     marginRight: spacing.sm,
   },
   searchInput: {
     flex: 1,
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.md + 1,
     height: "100%",
   },
@@ -218,7 +217,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.05)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
+    borderColor: colors.overlay,
     padding: spacing.md,
     borderRadius: radius.md,
     gap: spacing.md,
@@ -227,7 +226,7 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: radius.sm,
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: colors.overlay,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -238,7 +237,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   rememberLabel: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.md,
     fontWeight: fontWeight.medium,
   },
@@ -251,9 +250,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm + 2,
     paddingVertical: spacing.xs,
     borderRadius: radius.modal,
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: colors.overlay,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.12)",
+    borderColor: colors.border,
   },
   pillActive: {
     backgroundColor: colors.primary + "33",

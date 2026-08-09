@@ -1,7 +1,9 @@
 import { router, useLocalSearchParams } from "expo-router";
+import Text from "../../components/Text";
 import { useCallback, useMemo, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+
+import Button from "../../components/Button";
 import { FlashList } from "@shopify/flash-list";
 import PrimaryButton from "../../components/PrimaryButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -22,7 +24,7 @@ import ShareModal from "../../components/GameSummary/ShareModal";
 import { useGameSummary } from "../../hooks/useGameSummary";
 import useTranslation from "../../service/useTranslation";
 import { FlatList } from "react-native";
-import { fontSize, fontWeight, radius, spacing, typography } from "../../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing, typography} from "../../constants/design";
 
 type MovieLike = { id?: number; title?: string; poster_path?: string };
 
@@ -248,7 +250,7 @@ export default function GameSummary() {
 }
 
 const styles = StyleSheet.create({
-  fill: { flex: 1, backgroundColor: "#000" },
+  fill: { flex: 1, backgroundColor: colors.appBackground },
   centered: { justifyContent: "center", alignItems: "center" },
   list: { flex: 1 },
   loadingText: {
@@ -273,9 +275,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: spacing.xxl + 6,
   },
-  emptyTitle: { color: "#fff", fontSize: typography.bebasSize.empty, fontFamily: "Bebas" },
+  emptyTitle: { color: colors.text, fontSize: typography.bebasSize.empty, fontFamily: "Bebas" },
   emptyDesc: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.lg,
     textAlign: "center",
     marginVertical: spacing.screen,
@@ -285,7 +287,7 @@ const styles = StyleSheet.create({
     padding: spacing.screen,
     gap: spacing.sm + 2,
     flexDirection: "row",
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   backBtn: { borderRadius: radius.pill, flex: 1 },
   btnContent: { paddingVertical: spacing.xs + 3.5 },

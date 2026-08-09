@@ -1,6 +1,8 @@
 import { useState } from "react";
+import IconButton from "../../components/IconButton";
+import Text from "../../components/Text";
 import { StyleSheet, View } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+
 import { colors, fontSize, spacing } from "../../constants/design";
 import { useIsPreview, router } from "expo-router";
 import * as Haptics from "expo-haptics";

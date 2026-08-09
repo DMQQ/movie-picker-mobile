@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated, Easing } from "react-native";
 import Svg, { Path, G, Circle } from "react-native-svg";
-import { radius } from "../../constants/design";
+import { colors, radius} from "../../constants/design";
 
 // Wheel segment colors
 const COLORS = [
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#1A1A1A",
+    backgroundColor: colors.input,
   },
   wheel: {
     width: 200,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 20,
     borderLeftColor: "transparent",
     borderRightColor: "transparent",
-    borderBottomColor: "#FFFFFF",
+    borderBottomColor: colors.text,
   },
 });
 

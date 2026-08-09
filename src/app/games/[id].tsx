@@ -1,7 +1,9 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
-import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
+import Icon from "../../components/Icon";
+import Text from "../../components/Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
-import { Icon, Text } from "react-native-paper";
+
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import PageHeading from "../../components/PageHeading";
@@ -60,7 +62,7 @@ function MemberChip({ member }: { member: GameMember }) {
 function Pill({ icon, label }: { icon: string; label: string }) {
   return (
     <View style={styles.pill}>
-      <Icon source={icon} size={12} color="#BB86FC" />
+      <Icon source={icon} size={12} color={colors.primary} />
       <Text style={styles.pillText}>{label}</Text>
     </View>
   );
@@ -114,7 +116,7 @@ export default function GameDetailScreen() {
               </Link.AppleZoomTarget>
 
               <LinearGradient
-                colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.55)", "#000"]}
+                colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.55)", colors.appBackground]}
                 locations={[0, 0.55, 1]}
                 style={StyleSheet.absoluteFill}
               />
@@ -177,7 +179,7 @@ export default function GameDetailScreen() {
                 <Icon
                   source="movie-open-outline"
                   size={44}
-                  color="rgba(255,255,255,0.08)"
+                  color={colors.overlay}
                 />
                 <Text style={styles.emptyText}>No matches recorded</Text>
               </>
@@ -202,7 +204,7 @@ export default function GameDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000" },
+  container: { flex: 1, backgroundColor: colors.appBackground },
 
   bannerWrap: {
     overflow: "hidden",
@@ -224,7 +226,7 @@ const styles = StyleSheet.create({
   bannerTitle: {
     fontFamily: "Bebas",
     fontSize: 42,
-    color: "#fff",
+    color: colors.text,
     letterSpacing: 1,
     lineHeight: 44,
   },
@@ -233,7 +235,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs + 1,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
     borderRadius: radius.modal,
     paddingHorizontal: spacing.sm + 2,
     paddingVertical: spacing.xs + 1,
@@ -273,7 +275,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   memberAvatarImg: { width: 28, height: 28 },
-  memberAvatarLetter: { fontSize: fontSize.sm, fontWeight: fontWeight.bold, color: "#fff" },
+  memberAvatarLetter: { fontSize: fontSize.sm, fontWeight: fontWeight.bold, color: colors.text },
   memberName: { fontSize: fontSize.md - 1, color: "rgba(255,255,255,0.8)", maxWidth: 100 },
   sectionHeader: {
     flexDirection: "row",
@@ -285,7 +287,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: fontSize.xl,
     fontFamily: "Bebas",
-    color: "#fff",
+    color: colors.text,
     letterSpacing: 0.5,
   },
   sectionBadge: {
@@ -294,7 +296,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs - 2,
   },
-  sectionBadgeText: { fontSize: fontSize.sm, color: "#BB86FC", fontWeight: fontWeight.semibold },
+  sectionBadgeText: { fontSize: fontSize.sm, color: colors.primary, fontWeight: fontWeight.semibold },
 
   empty: {
     alignItems: "center",

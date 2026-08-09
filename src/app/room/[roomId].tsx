@@ -9,6 +9,7 @@ import GameEndFlow from "../../components/Room/GameEndFlow";
 import SwipeContent from "../../components/Room/SwipeContent";
 import RoomMatches from "../../components/Room/RoomMatches";
 import useRoomScreen from "../../hooks/useRoomScreen";
+import { colors } from "../../constants/design";
 
 function RoomScreenListener() {
   useRoomScreen();
@@ -20,7 +21,7 @@ export default function RoomScreen() {
   const hasCards = useAppSelector((state) => state.room.movies.length > 0);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
+    <View style={{ flex: 1, backgroundColor: colors.appBackground }}>
       <RoomScreenListener />
       <HomeAppbar />
 

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
+import Text from "../components/Text";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+
 import { colors, fontWeight, fontSize, radius, spacing } from "../constants/design";
 import GenreChip from "../components/GenreChip";
 import PrimaryButton from "../components/PrimaryButton";
@@ -265,7 +266,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xxl,
   },
   sectionTitle: {
-    color: "#fff",
+    color: colors.text,
     fontFamily: "Bebas",
     fontSize: 22,
     marginBottom: spacing.sm,

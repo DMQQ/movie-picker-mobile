@@ -1,8 +1,10 @@
 import { LinearGradient } from "expo-linear-gradient";
+import Icon from "./Icon";
+import Text from "./Text";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { StyleSheet, View } from "react-native";
-import { Icon, Text } from "react-native-paper";
+
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import Touch from "./Touch";
 import { type GameMember, type UserGame } from "../redux/lists/listsApi";
@@ -67,7 +69,7 @@ export default function GameCard({ game, width, height }: GameCardProps) {
               />
             ) : (
               <View style={[{ width, height }, styles.placeholder]}>
-                <Icon source="movie-open-outline" size={44} color="rgba(255,255,255,0.08)" />
+                <Icon source="movie-open-outline" size={44} color={colors.overlay} />
               </View>
             )}
           </Link.AppleZoom>
@@ -87,7 +89,7 @@ export default function GameCard({ game, width, height }: GameCardProps) {
             <View style={styles.chips}>
               {game.matchCount > 0 && (
                 <View style={[styles.chip, styles.chipAccent]}>
-                  <Icon source="heart" size={10} color="#BB86FC" />
+                  <Icon source="heart" size={10} color={colors.primary} />
                   <Text style={[styles.chipLabel, styles.chipLabelAccent]}>
                     {game.matchCount} {game.matchCount !== 1 ? "matches" : "match"}
                   </Text>
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
     borderRadius: radius.modal,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "rgba(255,255,255,0.12)",
+    borderColor: colors.border,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs - 1,
   },
@@ -139,7 +141,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(187,134,252,0.25)",
   },
   chipLabel: { fontSize: fontSize.xs, fontWeight: fontWeight.medium, color: "rgba(255,255,255,0.65)" },
-  chipLabelAccent: { color: "#BB86FC" },
+  chipLabelAccent: { color: colors.primary },
 });
 
 const av = StyleSheet.create({

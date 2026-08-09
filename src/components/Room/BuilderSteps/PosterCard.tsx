@@ -1,6 +1,8 @@
 import React from "react";
+import Text from "../../Text";
+import { useTheme } from "../../../hooks/useTheme";
 import { View, StyleSheet, Pressable, Image } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { fontWeight, colors, radius, spacing, typography, fontSize } from "../../../constants/design";

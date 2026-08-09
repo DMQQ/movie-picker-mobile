@@ -1,7 +1,8 @@
 import LottieView from "lottie-react-native";
-import { fontWeight, fontSize, spacing } from "../../constants/design";
+import Text from "../Text";
+import { colors, fontWeight, fontSize, spacing} from "../../constants/design";
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
 
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 55,
     fontFamily: "Bebas",
-    color: "#FFFFFF",
+    color: colors.text,
     letterSpacing: 1,
   },
   subtitle: {

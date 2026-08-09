@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
+import SegmentedButtons from "../SegmentedButtons";
 import { StyleSheet, View } from "react-native";
-import { SegmentedButtons } from "react-native-paper";
+
 import { colors, fontWeight, fontSize, radius } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 
@@ -54,10 +55,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   segmentedButtons: {
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.input,
   },
   button: {
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.input,
     borderColor: "#333",
   },
   selectedButton: {
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize.md,
   },
   selectedLabel: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.md,
     fontWeight: fontWeight.semibold,
   },

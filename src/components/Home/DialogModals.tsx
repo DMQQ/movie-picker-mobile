@@ -1,7 +1,9 @@
 import { router } from "expo-router";
+import Text from "../Text";
+import { useTheme } from "../../hooks/useTheme";
 import { useContext } from "react";
 import { Dimensions, View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+
 import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
 import QRCode from "react-native-qrcode-svg";
 import { roomActions } from "../../redux/room/roomSlice";

@@ -1,6 +1,7 @@
 import { memo } from "react";
+import Text from "../Text";
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+
 import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
 import { Movie } from "../../../types";
 import SectionListItem, {
@@ -9,7 +10,7 @@ import SectionListItem, {
 } from "../SectionItem";
 import Skeleton from "../Skeleton/Skeleton";
 import { useInfiniteSectionMovies } from "../../hooks/useInfiniteSectionMovies";
-import { radius, spacing, typography } from "../../constants/design";
+import { colors, radius, spacing, typography} from "../../constants/design";
 
 interface SectionProps {
   group: { name: string; results: Movie[] };
@@ -23,7 +24,7 @@ const sectionStyles = StyleSheet.create({
     height: SECTION_HEIGHT,
   },
   title: {
-    color: "#fff",
+    color: colors.text,
     fontSize: typography.bebasSize.section,
     fontFamily: "Bebas",
     marginBottom: spacing.sm + 2,

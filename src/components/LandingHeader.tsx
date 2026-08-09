@@ -1,9 +1,10 @@
 import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "../constants/design";
 
 const LandingHeader = () => {
   return (
     <LinearGradient
-      colors={["#000", "rgba(0,0,0,0.6)", "transparent"]}
+      colors={[colors.appBackground, "rgba(0,0,0,0.6)", "transparent"]}
       style={{
         position: "absolute",
         top: 0,

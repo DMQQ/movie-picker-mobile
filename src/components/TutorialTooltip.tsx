@@ -1,5 +1,7 @@
 import { Platform, StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import Text from "./Text";
+
+import Button from "./Button";
 import { colors, fontWeight, fontSize, radius, spacing } from "../constants/design";
 import PrimaryButton from "./PrimaryButton";
 import type { TourStepRenderProps } from "./Tour/TourContext";
@@ -73,12 +75,12 @@ const styles = StyleSheet.create({
     borderColor: `${PRIMARY}33`,
     ...Platform.select({
       android: {
-        borderColor: "rgba(255,255,255,0.1)",
+        borderColor: colors.border,
       },
     }),
   },
   androidBg: {
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.input,
   },
   darkOverlay: {
     backgroundColor: "rgba(8,8,8,0.88)",
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Bebas",
     fontSize: 28,
-    color: "#fff",
+    color: colors.text,
     letterSpacing: 1,
     marginBottom: spacing.sm,
   },

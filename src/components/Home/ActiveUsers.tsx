@@ -1,6 +1,8 @@
 import { memo } from "react";
+import AvatarIcon from "../AvatarIcon";
+import AvatarText from "../AvatarText";
 import { Pressable, View } from "react-native";
-import { Avatar } from "react-native-paper";
+
 import { colors } from "../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
@@ -30,13 +32,13 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
                 position: "relative",
               }}
             >
-              <Avatar.Text
+              <AvatarText
                 size={24}
                 label={nick?.[0]?.toUpperCase()}
-                color="white"
+                color={colors.text}
                 style={{
                   borderWidth: 0.5,
-                  borderColor: "#fff",
+                  borderColor: colors.text,
                   backgroundColor: getUserAvatarColor(nick),
                 }}
               />
@@ -59,25 +61,25 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
             </View>
           ))
         ) : (
-          <Avatar.Icon
+          <AvatarIcon
             size={24}
             icon="account"
-            color="white"
+            color={colors.text}
             style={{
               borderWidth: 0.5,
-              borderColor: "#fff",
+              borderColor: colors.text,
               backgroundColor: getUserAvatarColor(""),
             }}
           />
         )}
-        <Avatar.Icon
+        <AvatarIcon
           size={24}
           icon="plus"
           style={{
             transform: [{ translateX: -props.data.length * 6.5 }],
             zIndex: (props.data?.length || 0) + 1,
             borderWidth: 0.5,
-            borderColor: "#fff",
+            borderColor: colors.text,
             backgroundColor: colors.surface,
           }}
         />

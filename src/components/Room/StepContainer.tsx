@@ -1,6 +1,8 @@
 import React, { useCallback } from "react";
+import IconButton from "../IconButton";
+import Text from "../Text";
 import { View, StyleSheet, Platform } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+
 import PrimaryButton from "../PrimaryButton";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
@@ -13,7 +15,7 @@ import {
   setQuickStartMode,
 } from "../../redux/roomBuilder/roomBuilderSlice";
 import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
-import { fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing} from "../../constants/design";
 
 interface StepContainerProps {
   currentStep: number;
@@ -160,7 +162,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   scrollView: {
     flex: 1,

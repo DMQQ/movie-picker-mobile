@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
-import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
-import { Text } from "react-native-paper";
+import Text from "../Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
 import { IGameSummary } from "./types";
@@ -65,11 +66,11 @@ export default function StatsDashboard({ summary, userId }: Props) {
 const styles = StyleSheet.create({
   container: { marginBottom: spacing.xxl },
   card: {
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: colors.overlay,
     borderRadius: radius.lg + 1,
     padding: spacing.screen,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.12)",
+    borderColor: colors.border,
   },
   row: { flexDirection: "row", alignItems: "center" },
   block: { flex: 1, alignItems: "center" },

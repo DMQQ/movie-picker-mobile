@@ -1,6 +1,8 @@
 import { useCallback } from "react";
+import Icon from "./Icon";
+import Text from "./Text";
 import { StyleSheet, View } from "react-native";
-import { Icon, Text } from "react-native-paper";
+
 import { Image } from "expo-image";
 import { useFocusEffect } from "expo-router";
 import { useGetGameMembersQuery } from "../redux/lists/listsApi";

@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import { Icon, Text } from "react-native-paper";
+import Icon from "./Icon";
+import Text from "./Text";
+
 import { router } from "expo-router";
 import { useGetGamesQuery } from "../redux/lists/listsApi";
 import { formatGameType } from "../utils/formatGameType";

@@ -1,4 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AppbarAction from "../AppbarAction";
+import Text from "../Text";
+import { useTheme } from "../../hooks/useTheme";
 import {
   memo,
   useCallback,
@@ -9,12 +12,8 @@ import {
   useState,
 } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
-import {
-  Appbar,
-  Button,
-  Text,
-  useTheme,
-} from "react-native-paper";
+
+import Button from "../Button";
 import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import Animated, {
   FadeIn,
@@ -113,14 +112,14 @@ function HomeAppbar() {
             <Button
               onPress={handleEndGame}
               buttonColor={Platform.OS === "ios" ? "transparent" : "#ff4444"}
-              textColor="#fff"
+              textColor={colors.text}
             >
               {t("dialogs.scan-code.endGame")}
             </Button>
           ) : (
             <Button
               onPress={toggleLeaveModal}
-              textColor={Platform.OS === "ios" ? "#fff" : theme.colors.error}
+              textColor={Platform.OS === "ios" ? colors.text : theme.colors.error}
             >
               {t("dialogs.scan-code.leave")}
             </Button>
@@ -133,7 +132,7 @@ function HomeAppbar() {
         </View>
 
         {!hasCards && !isFinished && isPlaying && (
-          <Appbar.Action
+          <AppbarAction
             color={theme.colors.primary}
             size={22}
             icon="refresh"
@@ -207,7 +206,7 @@ const LikedMoviesPreview = memo(() => {
                 cx={CIRCLE_SIZE / 2}
                 cy={CIRCLE_SIZE / 2}
                 r={RADIUS}
-                stroke="rgba(255,255,255,0.08)"
+                stroke={colors.overlay}
                 strokeWidth={STROKE_WIDTH}
                 fill="transparent"
               />
@@ -379,7 +378,7 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: radius.xs,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
+    borderColor: colors.border,
   },
   placeholderCard: {
     width: 24,
@@ -388,7 +387,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
+    borderColor: colors.overlay,
   },
   moreIndicator: {
     position: "absolute",
@@ -403,7 +402,7 @@ const styles = StyleSheet.create({
   moreText: {
     fontSize: fontSize.xs - 2,
     fontWeight: fontWeight.bold,
-    color: "#fff",
+    color: colors.text,
   },
   midSection: {
     position: "absolute",

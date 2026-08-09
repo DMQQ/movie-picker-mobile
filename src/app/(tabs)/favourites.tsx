@@ -1,5 +1,6 @@
 import { Platform, FlatList, View } from "react-native";
-import { TextInput } from "react-native-paper";
+import TextInput from "../../components/TextInput";
+
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import PageHeading from "../../components/PageHeading";
@@ -123,7 +124,6 @@ export default function Favourites() {
           value={text}
           onChangeText={setText}
           label={t("favourites.create.name")}
-          mode="outlined"
         />
       </UserInputModal>
 

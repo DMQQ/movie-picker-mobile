@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { View } from "react-native";
-import { Button } from "react-native-paper";
+import Button from "../Button";
 import useTranslation from "../../service/useTranslation";
 import { radius, spacing } from "../../constants/design";
 

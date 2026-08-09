@@ -1,4 +1,6 @@
 import React, { memo, useCallback, useMemo } from "react";
+import TouchableRipple from "../TouchableRipple";
+import Text from "../Text";
 import {
   FlatList,
   Image,
@@ -6,7 +8,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { TouchableRipple, Text } from "react-native-paper";
+
 import { colors, fontSize, radius, spacing } from "../../constants/design";
 import SkeletonCard from "./SkeletonCard";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -79,7 +81,7 @@ const ProviderIcon = memo(
                 <MaterialCommunityIcons
                   name="check"
                   size={vertical ? 20 : 15}
-                  color="#fff"
+                  color={colors.text}
                 />
               </View>
             )}
@@ -271,7 +273,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
     borderWidth: 2,
     borderColor: "transparent",
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.input,
     width: 54,
     height: 54,
     justifyContent: "center",
@@ -281,7 +283,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     borderWidth: 2,
     borderColor: "transparent",
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.input,
     width: "100%",
     height: 100,
     justifyContent: "center",
@@ -304,7 +306,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
   },
   providerName: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.sm - 1,
     textAlign: "center",
     maxWidth: "100%",

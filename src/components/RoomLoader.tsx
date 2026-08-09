@@ -1,6 +1,7 @@
 import { useEffect } from "react";
+import Text from "./Text";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -8,7 +9,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { radius, spacing } from "../constants/design";
+import { colors, radius, spacing} from "../constants/design";
 
 const { width, height } = Dimensions.get("window");
 
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg + 1,
     backgroundColor: "#111",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
+    borderColor: colors.overlay,
     overflow: "hidden",
     justifyContent: "flex-end",
   },

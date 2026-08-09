@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet } from "react-native";
-import { fontWeight, fontSize, radius, spacing } from "../constants/design";
-import { Text } from "react-native-paper";
+import Text from "./Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useGetActiveRoomQuery } from "../redux/room/roomApi";
@@ -26,7 +27,7 @@ export default function ActiveGameBanner() {
       <MaterialCommunityIcons
         name="play-circle-outline"
         size={18}
-        color="#fff"
+        color={colors.text}
       />
       <Text style={styles.text}>
         {t("room.active-game-banner") as string}
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.md - 1,
     fontWeight: fontWeight.medium,
   },

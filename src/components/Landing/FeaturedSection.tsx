@@ -1,9 +1,11 @@
 import { Link } from "expo-router";
-import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
+import Text from "../Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useMemo } from "react";
 import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+
+import Button from "../Button";
 import RatingIcons from "../RatingIcons";
 import Skeleton from "../Skeleton/Skeleton";
 import { Image, ImageBackground } from "expo-image";
@@ -59,7 +61,7 @@ const FeaturedQuickActions = ({ movie }: { movie: Movie }) => {
         <MaterialCommunityIcons
           name={isInGroup("2") ? "clock" : "clock-check-outline"}
           size={22}
-          color="#fff"
+          color={colors.text}
         />
       </TouchableOpacity>
 
@@ -70,7 +72,7 @@ const FeaturedQuickActions = ({ movie }: { movie: Movie }) => {
         <MaterialCommunityIcons
           name={isInGroup("1") ? "heart" : "heart-broken"}
           size={20}
-          color="#fff"
+          color={colors.text}
         />
       </TouchableOpacity>
     </View>
@@ -235,7 +237,7 @@ const gradient = [
   "rgba(0,0,0,0.1)",
   "rgba(0,0,0,0.5)",
   "rgba(0,0,0,0.8)",
-  "#000000",
+  colors.appBackground,
 ];
 
 interface FeaturedSectionProps {
@@ -364,7 +366,7 @@ const FeaturedSection = memo(({ categoryId }: FeaturedSectionProps) => {
                 >
                   <Button
                     mode="outlined"
-                    textColor="#fff"
+                    textColor={colors.text}
                     style={styles.seeMoreButton}
                     labelStyle={styles.seeMoreLabel}
                     contentStyle={{ height: 42 }}
@@ -387,7 +389,7 @@ const FeaturedSection = memo(({ categoryId }: FeaturedSectionProps) => {
 const styles = StyleSheet.create({
   skeletonContainer: {
     width,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   skeletonThumbnail: {
     width: 100,
@@ -420,7 +422,7 @@ const styles = StyleSheet.create({
     width: 105,
     height: 155,
     borderRadius: radius.md,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.15)",
     shadowColor: "#000",
@@ -439,7 +441,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontFamily: "Bebas",
     lineHeight: 32,
-    color: "#fff",
+    color: colors.text,
     textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
@@ -488,7 +490,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     borderColor: "rgba(255,255,255,0.5)",
     borderWidth: 1,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
     flex: 1,
     marginRight: spacing.xl,
   },

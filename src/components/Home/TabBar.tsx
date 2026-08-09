@@ -1,6 +1,8 @@
 import { Platform, Pressable, View, useWindowDimensions } from "react-native";
+import Icon from "../Icon";
+import Text from "../Text";
 import { fontWeight, colors, fontSize, radius, spacing } from "../../constants/design";
-import { Icon, Text } from "react-native-paper";
+
 import Touch from "../Touch";
 
 type ButtonVariant = "default" | "like" | "dislike" | "block" | "superLike";
@@ -31,7 +33,7 @@ const BUTTON_COLORS: Record<
 const AnimatedButton = ({
   onPress,
   icon,
-  color = "#fff",
+  color = colors.text,
   size = 25,
   variant = "default",
   text,
@@ -49,7 +51,7 @@ const AnimatedButton = ({
   small?: boolean;
   disabled?: boolean;
 }) => {
-  const colors = BUTTON_COLORS[variant];
+  const buttonColors = BUTTON_COLORS[variant];
   const isAccent = variant !== "default";
 
   return (
@@ -63,15 +65,15 @@ const AnimatedButton = ({
             borderRadius: radius.pill,
             padding: small ? 10 : 15,
             paddingHorizontal: small ? 15 : 25,
-            backgroundColor: colors.bg,
+            backgroundColor: buttonColors.bg,
             borderWidth: isAccent ? 2 : 1,
-            borderColor: colors.border,
+            borderColor: buttonColors.border,
             alignItems: "center",
             justifyContent: "center",
 
             ...(isAccent
               ? {
-                  shadowColor: colors.shadow,
+                  shadowColor: buttonColors.shadow,
                   shadowOffset: {
                     width: 0,
                     height: 0,
@@ -87,13 +89,13 @@ const AnimatedButton = ({
           <Icon
             source={icon}
             size={small ? 18 : size}
-            color={isAccent ? "#fff" : color}
+            color={isAccent ? colors.text : color}
           />
         )}
         {text && (
           <Text
             style={{
-              color: isAccent ? "#fff" : color,
+              color: isAccent ? colors.text : color,
               fontSize: fontSize.md + 1,
               textAlign: "center",
               fontWeight: fontWeight.semibold,
@@ -170,7 +172,7 @@ export default function TabBar(props: TabBarProps) {
       <AnimatedButton
         onPress={props.removeCard}
         icon="close"
-        color="#fff"
+        color={colors.text}
         size={25}
         variant="dislike"
         disabled={props.disabled}
@@ -180,7 +182,7 @@ export default function TabBar(props: TabBarProps) {
       <AnimatedButton
         onPress={props.likeCard}
         icon="heart"
-        color="#fff"
+        color={colors.text}
         size={25}
         variant="like"
         disabled={props.disabled}

@@ -87,6 +87,8 @@ export const colors = {
   appBackground: "#000",
   /** Slightly lighter surface for elevated cards (skeleton, hover). */
   surfaceElevated: "#2a2a2a",
+  /** Input field / chip background — between background and surfaceElevated. */
+  input: "#1a1a1a",
   /** Secondary gray text — lighter than placeholder, common in the app. */
   textSecondary: "#999",
   /** Hairline border on dark surfaces (~10% white). */

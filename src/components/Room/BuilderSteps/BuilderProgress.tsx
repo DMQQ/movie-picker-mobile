@@ -1,6 +1,7 @@
 import React from "react";
+import { useTheme } from "../../../hooks/useTheme";
 import { View, StyleSheet } from "react-native";
-import { useTheme } from "react-native-paper";
+
 import { colors, radius, spacing } from "../../../constants/design";
 
 interface BuilderProgressProps {

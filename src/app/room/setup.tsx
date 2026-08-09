@@ -15,6 +15,7 @@ import {
   goToStep,
   reset,
 } from "../../redux/roomBuilder/roomBuilderSlice";
+import { colors } from "../../constants/design";
 
 export default function RoomSetup() {
   const t = useTranslation();
@@ -73,7 +74,7 @@ export default function RoomSetup() {
   }, [currentStep, dispatch]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
+    <View style={{ flex: 1, backgroundColor: colors.appBackground }}>
       <PageHeading
         onPress={handleBackPress}
         showBackButton

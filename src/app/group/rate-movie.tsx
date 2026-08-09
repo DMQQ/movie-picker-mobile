@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Text from "../../components/Text";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -7,14 +8,15 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Button, Text } from "react-native-paper";
+
+import Button from "../../components/Button";
 import PrimaryButton from "../../components/PrimaryButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useAppDispatch } from "../../redux/store";
 import { usePatchItemMutation } from "../../redux/lists/listsApi";
 import { rateInGroup } from "../../redux/favourites/favourites";
-import { fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing} from "../../constants/design";
 
 export default function RateMovieScreen() {
   const params = useLocalSearchParams<{
@@ -123,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#242424",
     borderRadius: radius.sm + 2,
     padding: spacing.md,
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.md,
     minHeight: 90,
     textAlignVertical: "top",

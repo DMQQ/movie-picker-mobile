@@ -1,6 +1,7 @@
 import Svg, { Path } from "react-native-svg";
+import { colors } from "../constants/design";
 
-export default function ThumbsUp({ width = 24, height = 24, color = "#fff" }: { width?: number; height?: number; color?: string }) {
+export default function ThumbsUp({ width = 24, height = 24, color = colors.text }: { width?: number; height?: number; color?: string }) {
   return (
     <Svg viewBox="0 0 24 24" width={width} height={height} fill="none" role="img">
       <Path

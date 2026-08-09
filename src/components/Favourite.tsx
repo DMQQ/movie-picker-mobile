@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Movie } from "../../types";
 import { useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
-import { fontSize, spacing } from "../constants/design";
+import { colors, fontSize, spacing} from "../constants/design";
 
 export default function CustomFavourite({
   movie,
@@ -42,7 +42,7 @@ export default function CustomFavourite({
           <MaterialCommunityIcons
             name={isFavorite ? "bookmark-check" : "bookmark"}
             size={35}
-            color="#fff"
+            color={colors.text}
           />
           {showLabel && (
             <Text style={styles.iconText}>{t("quick-actions.my-lists")}</Text>
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   iconText: {
     fontFamily: "Bebas",
     fontSize: fontSize.xxl,
-    color: "#fff",
+    color: colors.text,
   },
   iconButton: {
     justifyContent: "center",

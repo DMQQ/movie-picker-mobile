@@ -1,5 +1,5 @@
 import { Canvas, Group, Image, Mask, Path, Rect, Skia, SkPath, useImage } from "@shopify/react-native-skia";
-import { fontWeight, fontSize, radius, spacing } from "../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Dimensions, LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, Vibration, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -142,7 +142,7 @@ export const ScratchCard = ({
                 mode="luminance"
                 mask={
                   <Group>
-                    <Rect x={0} y={0} width={width} height={height} color="#fff" />
+                    <Rect x={0} y={0} width={width} height={height} color={colors.text} />
                     {paths.map((p, index) => (
                       <Path
                         key={p?.toSVGString() || index}
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   container: {
     width: Dimensions.get("screen").width - 30,
     height: 350,
-    backgroundColor: "#fff",
+    backgroundColor: colors.text,
     borderRadius: radius.md + 3,
     overflow: "hidden",
   },
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
   buttonText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
     textAlign: "center",

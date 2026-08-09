@@ -1,6 +1,7 @@
 import React from "react";
+import { useTheme } from "../../../hooks/useTheme";
 import { View, StyleSheet } from "react-native";
-import { useTheme } from "react-native-paper";
+
 import { colors } from "../../../constants/design";
 import Svg, { Circle, G } from "react-native-svg";
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from "react-native-reanimated";

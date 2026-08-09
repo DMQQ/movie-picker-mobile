@@ -1,9 +1,12 @@
 import * as Clipboard from "expo-clipboard";
-import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
+import Icon from "../../components/Icon";
+import Text from "../../components/Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Platform, ScrollView, Share, StyleSheet, View } from "react-native";
-import { Button, Icon, Text } from "react-native-paper";
+
+import Button from "../../components/Button";
 import PrimaryButton from "../../components/PrimaryButton";
 import FadeSlide from "../../components/FadeSlide";
 
@@ -108,7 +111,7 @@ const styles = StyleSheet.create({
   },
 
   iconWrap: { alignItems: "center", marginBottom: spacing.lg },
-  title: { fontSize: 34, fontFamily: "Bebas", color: "#fff", letterSpacing: 1, marginBottom: spacing.xs + 2 },
+  title: { fontSize: 34, fontFamily: "Bebas", color: colors.text, letterSpacing: 1, marginBottom: spacing.xs + 2 },
   subtitle: { fontSize: fontSize.md, color: "#666", marginBottom: spacing.lg, lineHeight: 20 },
 
   warningRow: {
@@ -138,7 +141,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.06)",
     borderRadius: radius.sm + 2,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
+    borderColor: colors.overlay,
     paddingVertical: spacing.sm + 2,
     paddingHorizontal: spacing.md,
   },
@@ -151,7 +154,7 @@ const styles = StyleSheet.create({
   codeText: {
     fontSize: fontSize.md,
     fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace",
-    color: "#fff",
+    color: colors.text,
     letterSpacing: 1,
     fontWeight: fontWeight.semibold,
   },

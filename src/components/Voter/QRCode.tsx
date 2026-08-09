@@ -1,5 +1,8 @@
 import { Share, View } from "react-native";
-import { Button, Text, useTheme } from "react-native-paper";
+import Text from "../Text";
+import { useTheme } from "../../hooks/useTheme";
+
+import Button from "../Button";
 import { colors, spacing } from "../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import StyledQRCode from "../StyledQRCode";

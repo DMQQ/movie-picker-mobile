@@ -1,5 +1,7 @@
 import * as Haptics from "expo-haptics";
-import { fontWeight, fontSize, radius, spacing } from "../constants/design";
+import IconButton from "./IconButton";
+import Text from "./Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
 import { useCallback, useMemo, useState } from "react";
 import {
   Dimensions,
@@ -10,7 +12,7 @@ import {
   Linking,
   TouchableOpacity,
 } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -192,7 +194,7 @@ export default function FloatingMovieBottomActions({
               <MaterialCommunityIcons
                 name="search-web"
                 size={20}
-                color="white"
+                color={colors.text}
               />
               <Text style={styles.searchButtonText} variant="bodySmall">
                 Smart Search
@@ -216,7 +218,7 @@ export default function FloatingMovieBottomActions({
             icon="share-variant"
             size={30}
             onPress={handleShare}
-            iconColor="white"
+            iconColor={colors.text}
           />
         </PlatformBlurView>
       </View>
@@ -318,7 +320,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   searchButtonText: {
-    color: "white",
+    color: colors.text,
     fontSize: fontSize.md - 1,
     fontWeight: fontWeight.semibold,
   },
@@ -341,11 +343,11 @@ const styles = StyleSheet.create({
     gap: spacing.sm + 2,
   },
   trailerText: {
-    color: "white",
+    color: colors.text,
     fontWeight: fontWeight.bold,
     flex: 1,
   },
   androidButtonBackground: {
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
   },
 });

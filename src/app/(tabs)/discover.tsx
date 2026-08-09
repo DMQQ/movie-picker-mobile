@@ -8,10 +8,11 @@ import LoadingSkeleton from "../../components/Landing/LoadingSkeleton";
 import useIsMounted from "../../hooks/useIsMounted";
 import { FeaturedSectionSkeleton } from "../../components/Landing/FeaturedSection";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
+import { colors } from "../../constants/design";
 
 export default function Landing() {
   return (
-    <View style={{ flex: 1, backgroundColor: "#000" }}>
+    <View style={{ flex: 1, backgroundColor: colors.appBackground }}>
       <PagerCategoryScreen />
       <LandingHeader />
     </View>

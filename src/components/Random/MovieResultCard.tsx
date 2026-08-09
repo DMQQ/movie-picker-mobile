@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
-import { Text } from "react-native-paper";
+import Text from "../Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -60,7 +61,7 @@ export default function MovieResultCard({
             "transparent",
             "rgba(0,0,0,0.6)",
             "rgba(0,0,0,0.95)",
-            "#000",
+            colors.appBackground,
           ]}
           locations={[0, 0.4, 0.75, 1]}
           style={styles.infoOverlay}
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
   },
   movieTitle: {
     fontSize: 32,
-    color: "#fff",
+    color: colors.text,
     fontFamily: "Bebas",
     textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 0, height: 1 },

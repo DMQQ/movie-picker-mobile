@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Animated, Easing } from "react-native";
-import { radius, spacing } from "../../constants/design";
+import { colors, radius, spacing} from "../../constants/design";
 
 const BrowseAnimation = () => {
   const scrollAnim = useRef(new Animated.Value(0)).current;
@@ -118,7 +118,7 @@ const BrowseAnimation = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1A1A1A",
+    backgroundColor: colors.input,
     padding: spacing.screen,
     justifyContent: "center",
   },
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   featuredPoster: {
     height: 80,
-    backgroundColor: "#2a2a2a",
+    backgroundColor: colors.surfaceElevated,
     borderRadius: radius.md,
     overflow: "hidden",
     flexDirection: "row",

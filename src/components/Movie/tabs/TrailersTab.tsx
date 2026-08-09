@@ -1,6 +1,7 @@
 import { memo, useEffect, useMemo, useState } from "react";
+import Text from "../../Text";
 import { ActivityIndicator, AppState, Dimensions, Pressable, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+
 import { colors, fontWeight, fontSize, radius, spacing } from "../../../constants/design";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { hexToRgba } from "../../../utils/hexToRgb";
@@ -95,14 +96,14 @@ const styles = StyleSheet.create({
     gap: spacing.sm + 2,
   },
   videoTitle: {
-    color: "white",
+    color: colors.text,
     fontWeight: fontWeight.semibold,
     padding: spacing.sm + 2,
   },
   playerWrapper: {
     borderRadius: radius.md,
     overflow: "hidden",
-    backgroundColor: hexToRgba("#000", 0.2),
+    backgroundColor: hexToRgba(colors.appBackground, 0.2),
     position: "relative",
   },
   placeholder: {
@@ -113,12 +114,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: hexToRgba("#000", 0.8),
+    backgroundColor: hexToRgba(colors.appBackground, 0.8),
     zIndex: 1,
     gap: spacing.sm + 2,
   },
   loadingText: {
-    color: hexToRgba("#FFF", 0.7),
+    color: hexToRgba(colors.text, 0.7),
   },
   emptyContainer: {
     flex: 1,

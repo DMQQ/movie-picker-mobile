@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import Skeleton from "../Skeleton/Skeleton";
-import { radius, spacing } from "../../constants/design";
+import { colors, radius, spacing} from "../../constants/design";
 
 const { width } = Dimensions.get("screen");
 const CONTENT_WIDTH = width - 40;
@@ -8,7 +8,7 @@ const CONTENT_WIDTH = width - 40;
 const styles = StyleSheet.create({
   container: {
     width,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
     borderTopEndRadius: 25,
     borderTopStartRadius: 25,
     padding: spacing.xl,

@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
+import { colors } from "../constants/design";
 
 export default function Unmatched() {
   const params = useLocalSearchParams();
@@ -41,5 +42,5 @@ export default function Unmatched() {
     router.replace("/");
   }, [params]);
 
-  return <View style={{ flex: 1, backgroundColor: "#000" }} />;
+  return <View style={{ flex: 1, backgroundColor: colors.appBackground }} />;
 }

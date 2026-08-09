@@ -1,6 +1,6 @@
-import { Button } from "react-native-paper";
 import type { ReactNode } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
+import Button from "./Button";
 import { common, fontSize, fontWeight } from "../constants/design";
 
 interface Props {

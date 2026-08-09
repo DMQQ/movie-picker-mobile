@@ -1,10 +1,11 @@
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import Text from "./Text";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { useEffect, useState } from "react";
 import { url } from "../context/SocketContext";
-import { fontSize, spacing } from "../constants/design";
+import { colors, fontSize, spacing} from "../constants/design";
 
 export default function NoConnectionError() {
   const isConnected = useNetInfo().isConnected;
@@ -34,7 +35,7 @@ export default function NoConnectionError() {
 
   return (
     <View style={styles.container}>
-      <MaterialCommunityIcons name="wifi-off" size={45} color="#fff" />
+      <MaterialCommunityIcons name="wifi-off" size={45} color={colors.text} />
       <Text style={styles.text}>No connection available.</Text>
     </View>
   );
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
     position: "absolute",
     top: 0,
     left: 0,
@@ -53,5 +54,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 9999,
   },
-  text: { color: "#fff", fontSize: fontSize.lg, marginTop: spacing.sm + 2 },
+  text: { color: colors.text, fontSize: fontSize.lg, marginTop: spacing.sm + 2 },
 });

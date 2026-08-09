@@ -1,6 +1,7 @@
 import { memo, useCallback, useMemo } from "react";
+import Text from "../Text";
 import { Platform, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-import { Text } from "react-native-paper";
+
 import { colors, fontWeight, fontSize, radius, spacing, typography } from "../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
@@ -96,7 +97,7 @@ const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvi
     return uniqueIcons.slice(0, 4).map((item, index) => (
       <View key={item.type} style={[styles.iconBadge, { backgroundColor: item.iconInfo.color }, index > 0 && styles.iconMargin]}>
         {/* @ts-ignore */}
-        <MaterialCommunityIcons name={item.iconInfo.name as any} size={10} color="white" />
+        <MaterialCommunityIcons name={item.iconInfo.name as any} size={10} color={colors.text} />
       </View>
     ));
   }, []);
@@ -134,28 +135,28 @@ const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvi
           <View style={styles.legendItem}>
             <View style={[styles.legendIcon, { backgroundColor: "#2E7D32" }]}>
               {/* @ts-ignore */}
-              <MaterialCommunityIcons name="television-play" size={10} color="white" />
+              <MaterialCommunityIcons name="television-play" size={10} color={colors.text} />
             </View>
             <Text style={styles.legendText}>{t("global.provider_legend.subscription")}</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendIcon, { backgroundColor: "#E65100" }]}>
               {/* @ts-ignore */}
-              <MaterialCommunityIcons name="cart" size={10} color="white" />
+              <MaterialCommunityIcons name="cart" size={10} color={colors.text} />
             </View>
             <Text style={styles.legendText}>{t("global.provider_legend.rent_buy")}</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendIcon, { backgroundColor: "#F57F17" }]}>
               {/* @ts-ignore */}
-              <MaterialCommunityIcons name="star" size={10} color="white" />
+              <MaterialCommunityIcons name="star" size={10} color={colors.text} />
             </View>
             <Text style={styles.legendText}>{t("global.provider_legend.free")}</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendIcon, { backgroundColor: "#6A1B9A" }]}>
               {/* @ts-ignore */}
-              <MaterialCommunityIcons name="television" size={10} color="white" />
+              <MaterialCommunityIcons name="television" size={10} color={colors.text} />
             </View>
             <Text style={styles.legendText}>{t("global.provider_legend.ads")}</Text>
           </View>
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#666",
   },
   overflowText: {
-    color: "white",
+    color: colors.text,
     fontSize: fontSize.xs - 2,
     fontWeight: fontWeight.bold,
   },

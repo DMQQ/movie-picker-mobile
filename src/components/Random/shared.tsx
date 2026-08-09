@@ -1,6 +1,8 @@
 import { Pressable, StyleSheet, View } from "react-native";
+import Icon from "../Icon";
+import Text from "../Text";
 import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
-import { Icon, Text } from "react-native-paper";
+
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 

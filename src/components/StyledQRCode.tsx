@@ -1,5 +1,6 @@
 import { StyleSheet, View } from "react-native";
-import { useTheme } from "react-native-paper";
+import { useTheme } from "../hooks/useTheme";
+
 import { colors, radius, spacing } from "../constants/design";
 import QRCode from "react-native-qrcode-svg";
 
@@ -34,7 +35,7 @@ export default function StyledQRCode({
         {...(showLogo && {
           logo: require("../../assets/images/icon-light.png"),
           logoSize: 50,
-          logoBackgroundColor: "#000",
+          logoBackgroundColor: colors.appBackground,
           logoMargin: 5,
           ecl: "H" as const,
         })}

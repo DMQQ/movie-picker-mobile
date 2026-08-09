@@ -1,6 +1,8 @@
 import { memo, useCallback, useEffect, useRef } from "react";
+import IconButton from "../IconButton";
+import Text from "../Text";
 import { Dimensions, Modal, Pressable, StyleSheet, View } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
@@ -9,7 +11,7 @@ import { FancySpinner } from "../FancySpinner";
 import MarathonTicket from "../MarathonTicket";
 import { useLazyGetSummaryShareQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
-import { fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing} from "../../constants/design";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -70,7 +72,7 @@ export default memo(function ShareModal({ visible, onClose, roomId }: Props) {
             size={24}
             onPress={onClose}
             style={styles.closeBtn}
-            iconColor="#000"
+            iconColor={colors.appBackground}
           />
           {isLoading ? (
             <View style={styles.centered}>
@@ -125,13 +127,13 @@ const styles = StyleSheet.create({
     top: 25,
     right: 25,
     zIndex: 10,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
   },
-  viewShot: { backgroundColor: "#000", borderRadius: radius.card, overflow: "hidden" },
+  viewShot: { backgroundColor: colors.appBackground, borderRadius: radius.card, overflow: "hidden" },
   centered: { alignItems: "center", justifyContent: "center", padding: spacing.xxl + 16 },
   loadingText: {
     marginTop: spacing.lg,
-    color: "#fff",
+    color: colors.text,
     fontFamily: "Bebas",
     fontSize: fontSize.lg,
     letterSpacing: 1,

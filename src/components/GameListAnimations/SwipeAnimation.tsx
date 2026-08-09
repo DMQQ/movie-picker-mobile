@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, Easing, interpolateColor } from "react-native-reanimated";
-import { radius } from "../../constants/design";
+import { colors, radius} from "../../constants/design";
 
 const SwiperAnimation = () => {
   // Create 5 cards
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#1A1A1A",
+    backgroundColor: colors.input,
   },
   card: {
     position: "absolute",

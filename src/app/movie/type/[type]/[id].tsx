@@ -11,6 +11,7 @@ import MovieDetails from "../../../../components/Movie/MovieDetails";
 import MovieDetailsSkeleton from "../../../../components/Movie/MovieDetailsSkeleton";
 import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
 import { useGetCombinedMovieDetailsQuery } from "../../../../redux/movie/movieApi";
+import { colors } from "../../../../constants/design";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -105,7 +106,7 @@ export default function MovieDetailsScreen() {
   const providers = combined?.providers ?? undefined;
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000", width, height }}>
+    <View style={{ flex: 1, backgroundColor: colors.appBackground, width, height }}>
       <Animated.ScrollView
         onScroll={scrollhandler}
         contentContainerStyle={{

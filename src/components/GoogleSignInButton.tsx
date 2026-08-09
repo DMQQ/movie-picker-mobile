@@ -1,6 +1,7 @@
 import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
-import { fontWeight, fontSize, radius, spacing } from "../constants/design";
-import { Text } from "react-native-paper";
+import Text from "./Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
+
 import Svg, { Path } from "react-native-svg";
 import useTranslation from "../service/useTranslation";
 
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm + 2,
     height: 50,
     borderRadius: radius.lg + 1,
-    backgroundColor: "#fff",
+    backgroundColor: colors.text,
     borderWidth: 1,
     borderColor: "#dadce0",
     shadowColor: "#000",

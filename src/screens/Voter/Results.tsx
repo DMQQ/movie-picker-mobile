@@ -6,8 +6,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import IconButton from "../../components/IconButton";
+import Text from "../../components/Text";
 import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
-import { IconButton, Text } from "react-native-paper";
+
 import PrimaryButton from "../../components/PrimaryButton";
 import { ImageBackground } from "react-native";
 import { router } from "expo-router";

@@ -1,9 +1,10 @@
 import { router } from "expo-router";
+import Portal from "../../components/Portal";
 import LottieView from "lottie-react-native";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { Dimensions, Platform, Pressable } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Portal } from "react-native-paper";
+
 import { colors, radius } from "../../constants/design";
 import Animated, { FadeIn, FadeOut, withSpring, withTiming } from "react-native-reanimated";
 import { FancySpinner } from "../../components/FancySpinner";

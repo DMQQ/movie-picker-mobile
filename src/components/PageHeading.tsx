@@ -1,5 +1,7 @@
 import { useNavigation } from "expo-router";
-import { fontWeight, fontSize, radius, spacing } from "../constants/design";
+import IconButton from "./IconButton";
+import Text from "./Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
 import * as Haptic from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { PropsWithChildren } from "react";
@@ -11,7 +13,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { IconButton, Text } from "react-native-paper";
+
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PlatformBlurView from "./PlatformBlurView";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -62,7 +64,7 @@ export default function PageHeading({
     <>
       {showGradientBackground && (
         <LinearGradient
-          colors={["#000", "rgba(0,0,0,0.6)", "transparent"]}
+          colors={[colors.appBackground, "rgba(0,0,0,0.6)", "transparent"]}
           style={{
             position: "absolute",
             top: 0,
@@ -94,7 +96,7 @@ export default function PageHeading({
                     Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
                   }
                 }}
-                iconColor="white"
+                iconColor={colors.text}
               />
             </PlatformBlurView>
           )}
@@ -132,7 +134,7 @@ export default function PageHeading({
                       <IconButton
                         icon={rightIconName as any}
                         size={20}
-                        iconColor="white"
+                        iconColor={colors.text}
                       />
                     )}
                     <Text
@@ -163,7 +165,7 @@ export default function PageHeading({
                         Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
                       }
                     }}
-                    iconColor={rightIconColor ?? "white"}
+                    iconColor={rightIconColor ?? colors.text}
                   />
                 </PlatformBlurView>
               ))}
@@ -207,7 +209,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontFamily: "Bebas",
     fontSize: 26,
-    color: "#fff",
+    color: colors.text,
     textAlign: "center",
   },
   rightButtonWithText: {
@@ -215,7 +217,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   rightText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
     paddingRight: spacing.sm + 2,

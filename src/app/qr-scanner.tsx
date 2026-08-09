@@ -1,7 +1,10 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
+import Text from "../components/Text";
+import TextInput from "../components/TextInput";
+import { useTheme } from "../hooks/useTheme";
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, ToastAndroid, Vibration, View } from "react-native";
-import { Text, TextInput, useTheme } from "react-native-paper";
+
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import PrimaryButton from "../components/PrimaryButton";
 import PageHeading from "../components/PageHeading";
@@ -174,7 +177,7 @@ export default function QRScanner() {
 
   if (hasPermission === null) {
     return (
-      <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
+      <SafeIOSContainer style={{ flex: 1, backgroundColor: colors.appBackground, justifyContent: "center", alignItems: "center" }}>
         <Text style={{ marginTop: spacing.xxl + 1, fontWeight: fontWeight.bold, fontSize: 25 }}>Requesting camera permission</Text>
 
         <PrimaryButton onPress={() => request()}>
@@ -185,7 +188,7 @@ export default function QRScanner() {
   }
 
   return (
-    <SafeIOSContainer style={{ flex: 1, backgroundColor: "#000" }}>
+    <SafeIOSContainer style={{ flex: 1, backgroundColor: colors.appBackground }}>
       <PageHeading
         title={t("scanner.heading")}
         useSafeArea={Platform.OS === "android"}
@@ -257,7 +260,6 @@ export default function QRScanner() {
         ]}
       >
         <TextInput
-          mode="outlined"
           label="Enter code"
           value={manualCode}
           maxLength={7}

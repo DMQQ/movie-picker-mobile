@@ -1,5 +1,7 @@
 import { View, StyleSheet } from "react-native";
-import { Icon, Text } from "react-native-paper";
+import Icon from "./Icon";
+import Text from "./Text";
+
 import PrimaryButton from "./PrimaryButton";
 import { router } from "expo-router";
 import useTranslation from "../service/useTranslation";

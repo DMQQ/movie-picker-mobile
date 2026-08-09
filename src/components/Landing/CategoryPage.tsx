@@ -1,12 +1,13 @@
 import { memo, useCallback, useMemo } from "react";
-import { fontWeight, fontSize, spacing } from "../../constants/design";
+import Text from "../Text";
+import { colors, fontWeight, fontSize, spacing} from "../../constants/design";
 import {
   RefreshControl,
   StyleSheet,
   View,
   VirtualizedList,
 } from "react-native";
-import { Text } from "react-native-paper";
+
 import { useInfiniteLandingPageMovies } from "../../hooks/useInfiniteLandingPageMovies";
 import useTranslation from "../../service/useTranslation";
 import FeaturedSection from "./FeaturedSection";
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
   },
   noMoreText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.xl,
     fontWeight: fontWeight.semibold,
     textAlign: "center",

@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Text from "../Text";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
-import { Text } from "react-native-paper";
+
 import Animated, {
   Easing,
   SharedValue,
@@ -14,7 +15,7 @@ import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
 import { Fragment, memo, useMemo } from "react";
 import { Movie } from "../../../types";
 import { Link } from "expo-router";
-import { fontSize, radius, spacing, typography } from "../../constants/design";
+import { colors, fontSize, radius, spacing, typography} from "../../constants/design";
 
 const SwipeText = memo(
   (props: {
@@ -145,7 +146,7 @@ function Poster(props: {
               <MaterialCommunityIcons
                 name="thumb-down"
                 size={32}
-                color="#fff"
+                color={colors.text}
               />
             }
             isVisible={props.isRightVisible}
@@ -160,7 +161,7 @@ function Poster(props: {
               <MaterialCommunityIcons
                 name="thumb-up"
                 size={32}
-                color="#fff"
+                color={colors.text}
                 style={{ transform: [{ translateY: 2 }] }}
               />
             }
@@ -195,7 +196,7 @@ function Poster(props: {
 
       {props.card.isSuperLiked && (
         <View style={styles.superLikeBadge}>
-          <MaterialCommunityIcons name="star" size={15} color="#000" />
+          <MaterialCommunityIcons name="star" size={15} color={colors.appBackground} />
           <Text style={styles.superLikeText}>SUPER LIKE</Text>
         </View>
       )}
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
   swipeText: {
     fontFamily: "Bebas",
     fontSize: typography.bebasSize.section,
-    color: "#fff",
+    color: colors.text,
     letterSpacing: 1.5,
     textShadowColor: "rgba(0, 0, 0, 0.25)",
     textShadowOffset: { width: 1, height: 1 },
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
   },
   superLikeText: {
     fontFamily: "Bebas",
-    color: "#000",
+    color: colors.appBackground,
     fontSize: fontSize.lg,
   },
 });

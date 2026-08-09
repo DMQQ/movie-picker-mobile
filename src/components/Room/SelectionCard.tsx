@@ -1,7 +1,9 @@
 // src/screens/Room/RoomSetup/components/SelectionCard.tsx
 import React from "react";
+import Text from "../Text";
+import { useTheme } from "../../hooks/useTheme";
 import { StyleSheet, View, Pressable } from "react-native";
-import { Text, useTheme } from "react-native-paper";
+
 import { colors, fontWeight, fontSize, radius, spacing, typography } from "../../constants/design";
 import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -110,10 +112,10 @@ const SelectionCard = React.memo(
                   </Animated.View>
                   <LinearGradient colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]} style={styles.gradient}>
                     <IconComponent name={iconData.name} size={40} color={color} />
-                    <Text style={[styles.labelTextVertical, { color: isSelected ? theme.colors.primary : "#fff" }]}>{label}</Text>
+                    <Text style={[styles.labelTextVertical, { color: isSelected ? theme.colors.primary : colors.text }]}>{label}</Text>
                     {isSelected && (
                       <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
-                        <MaterialCommunityIcons name="check" size={24} color="#fff" />
+                        <MaterialCommunityIcons name="check" size={24} color={colors.text} />
                       </View>
                     )}
                   </LinearGradient>
@@ -122,10 +124,10 @@ const SelectionCard = React.memo(
                 <View style={styles.placeholderContainer}>
                   <LinearGradient colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]} style={styles.placeholderGradient}>
                     <IconComponent name={iconData.name} size={40} color={color} />
-                    <Text style={[styles.labelTextVertical, { color: isSelected ? theme.colors.primary : "#fff" }]}>{label}</Text>
+                    <Text style={[styles.labelTextVertical, { color: isSelected ? theme.colors.primary : colors.text }]}>{label}</Text>
                     {isSelected && (
                       <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
-                        <MaterialCommunityIcons name="check" size={24} color="#fff" />
+                        <MaterialCommunityIcons name="check" size={24} color={colors.text} />
                       </View>
                     )}
                   </LinearGradient>
@@ -183,7 +185,7 @@ const styles = StyleSheet.create({
   cardVertical: {
     borderRadius: radius.card,
     overflow: "hidden",
-    backgroundColor: "#1a1a1a",
+    backgroundColor: colors.input,
     borderWidth: 3,
     borderColor: "transparent",
   },
@@ -207,13 +209,13 @@ const styles = StyleSheet.create({
     borderRadius: radius.card,
   },
   placeholder: {
-    backgroundColor: "#2a2a2a",
+    backgroundColor: colors.surfaceElevated,
   },
   placeholderContainer: {
     position: "absolute",
     width: "100%",
     height: "100%",
-    backgroundColor: "#2a2a2a",
+    backgroundColor: colors.surfaceElevated,
     borderRadius: radius.card,
     overflow: "hidden",
   },

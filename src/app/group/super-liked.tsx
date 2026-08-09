@@ -1,6 +1,8 @@
 import { useMemo } from "react";
+import Text from "../../components/Text";
 import { StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+
+import Button from "../../components/Button";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import useTranslation from "../../service/useTranslation";

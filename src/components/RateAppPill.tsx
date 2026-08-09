@@ -1,6 +1,7 @@
 import { StyleSheet, TouchableOpacity, Platform } from "react-native";
-import { fontWeight, fontSize, radius, spacing } from "../constants/design";
-import { Text } from "react-native-paper";
+import Text from "./Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
+
 import Animated, { FadeInUp, FadeOutUp } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import * as StoreReview from "expo-store-review";
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255, 255, 255, 0.15)",
   },
   text: {
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.sm,
     fontWeight: fontWeight.semibold,
   },

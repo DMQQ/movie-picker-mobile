@@ -6,7 +6,8 @@ import {
   FlatList,
   Platform,
 } from "react-native";
-import { Text } from "react-native-paper";
+import Text from "../Text";
+
 import { colors, fontSize, radius, spacing } from "../../constants/design";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useRef } from "react";

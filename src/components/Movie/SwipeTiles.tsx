@@ -1,4 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
+import Text from "../Text";
 import { memo, useEffect, useRef } from "react";
 import {
   Dimensions,
@@ -9,8 +10,9 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { Text } from "react-native-paper";
+
 import Animated, {
+  cancelAnimation,
   Easing,
   Extrapolation,
   interpolate,
@@ -28,7 +30,7 @@ import RatingIcons from "../RatingIcons";
 import Poster from "./Poster";
 import GenresView from "../GenresView";
 import { Link } from "expo-router";
-import { fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing} from "../../constants/design";
 
 const { width, height } = Dimensions.get("window");
 
@@ -36,7 +38,7 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     left: width * 0.1 - 10,
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
     borderRadius: radius.lg + 1,
     overflow: "hidden",
   },
@@ -50,7 +52,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   title: {
-    color: "white",
+    color: colors.text,
     fontSize: 32,
     paddingHorizontal: spacing.sm + 2,
     fontFamily: "Bebas",
@@ -194,13 +196,14 @@ const SwipeTile = ({
     },
   );
 
+  const exitTimer = useSharedValue(0);
   const isLeftVisible = useSharedValue(false);
   const isRightVisible = useSharedValue(false);
 
   const moveGesture = Gesture.Pan()
     .onBegin(() => {
       posY.value = 0;
-      posScale.value = 1;
+      posScale.value = withTiming(0.98, { duration: 80 });
     })
     .onChange(({ translationX }) => {
       posX.value = translationX;
@@ -219,17 +222,20 @@ const SwipeTile = ({
     .onEnd(() => {
       const exitCfg = { duration: 420, easing: Easing.out(Easing.cubic) };
       if (posX.value > width * 0.15) {
-        posX.value = withTiming(width + 200, exitCfg, (finished) => {
+        posX.value = withTiming(width + 200, exitCfg);
+        posY.value = withTiming(80, exitCfg);
+        if (dragProgress) dragProgress.value = 1;
+        // Card is off-screen by ~180ms — fire early so next card is interactive
+        exitTimer.value = withTiming(1, { duration: 180 }, (finished) => {
           if (finished) runOnJS(actions.likeCard)();
         });
+      } else if (posX.value < -width * 0.15) {
+        posX.value = withTiming(-width - 200, exitCfg);
         posY.value = withTiming(80, exitCfg);
         if (dragProgress) dragProgress.value = 1;
-      } else if (posX.value < -width * 0.15) {
-        posX.value = withTiming(-width - 200, exitCfg, (finished) => {
+        exitTimer.value = withTiming(1, { duration: 180 }, (finished) => {
           if (finished) runOnJS(actions.removeCard)();
         });
-        posY.value = withTiming(80, exitCfg);
-        if (dragProgress) dragProgress.value = 1;
       } else {
         posX.value = withSpring(0, { damping: 50, stiffness: 500 });
         posY.value = withSpring(0, { damping: 50, stiffness: 500 });
@@ -237,10 +243,10 @@ const SwipeTile = ({
         if (dragProgress) dragProgress.value = withTiming(0, { duration: 200 });
         isLeftVisible.value = false;
         isRightVisible.value = false;
+        cancelAnimation(exitTimer);
+        exitTimer.value = 0;
       }
     })
-    .enabled(index === 0);
-
   const animatedStyle = useAnimatedStyle(() => {
     const rotate = interpolate(
       posX.value,
@@ -266,11 +272,11 @@ const SwipeTile = ({
   });
 
   return (
-    <GestureDetector gesture={moveGesture}>
-      <Animated.View
-        style={[animatedStyle, { zIndex: 1000 - index }]}
-        pointerEvents={index === 0 ? "auto" : "none"}
-      >
+    <Animated.View
+      style={[animatedStyle, { zIndex: 1000 - index }]}
+      pointerEvents={index === 0 ? "auto" : "none"}
+    >
+      <GestureDetector gesture={moveGesture}>
         <Link asChild href={href}>
           <Pressable
             style={StyleSheet.flatten([styles.container, styles.card])}
@@ -320,8 +326,8 @@ const SwipeTile = ({
             />
           </Pressable>
         </Link>
-      </Animated.View>
-    </GestureDetector>
+      </GestureDetector>
+    </Animated.View>
   );
 };
 

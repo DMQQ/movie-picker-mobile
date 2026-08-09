@@ -1,5 +1,6 @@
 import { View } from "react-native";
-import { Text } from "react-native-paper";
+import Text from "../../components/Text";
+
 import PrimaryButton from "../../components/PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import PickCategory from "../../components/Voter/PickCategory";

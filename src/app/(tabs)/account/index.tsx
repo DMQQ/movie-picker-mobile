@@ -1,5 +1,9 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
+import Icon from "../../../components/Icon";
+import Text from "../../../components/Text";
+import TextInput from "../../../components/TextInput";
 import * as Updates from "expo-updates";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -9,7 +13,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Icon, Text, TextInput } from "react-native-paper";
+
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -166,7 +170,6 @@ export default function SettingsScreen() {
               <TextInput
                 value={nickname}
                 onChangeText={setNickname}
-                mode="outlined"
                 label={t("settings.nickname-label")}
                 style={styles.textInput}
               />
@@ -239,6 +242,12 @@ export default function SettingsScreen() {
               }}
             >
               Reset tutorial
+            </Text>
+            <Text
+              style={[styles.devButton, styles.devButtonPrimary]}
+              onPress={() => router.push("/design-preview")}
+            >
+              Design preview
             </Text>
           </Animated.View>
         )}
@@ -329,5 +338,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.error,
     opacity: 0.7,
+  },
+  devButtonPrimary: {
+    borderColor: colors.primary,
+    color: colors.primary,
+    opacity: 1,
   },
 });

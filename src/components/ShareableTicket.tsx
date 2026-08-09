@@ -1,13 +1,14 @@
 import { useRef, useCallback } from "react";
+import { useTheme } from "../hooks/useTheme";
 import { View, StyleSheet } from "react-native";
-import { useTheme } from "react-native-paper";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PrimaryButton from "./PrimaryButton";
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
 import CinemaTicket from "./CinemaTicket";
-import { fontSize, radius, spacing } from "../constants/design";
+import { colors, fontSize, radius, spacing} from "../constants/design";
 
 interface Genre {
   id: number;
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   viewShot: {
-    backgroundColor: "#000",
+    backgroundColor: colors.appBackground,
   },
   shareButton: {
     marginTop: spacing.xl,

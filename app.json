@@ -72,7 +72,7 @@
         {
           "enforceContrast": false,
           "hidden": false,
-          "style": "light"
+          "style": "dark"
         }
       ],
       [
@@ -142,7 +142,7 @@
         "projectId": "ab2d7ea0-e25f-4063-a2e2-1a449547340b"
       }
     },
-    "runtimeVersion": "6.0.0",
+    "runtimeVersion": "7.0.0",
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
@@ -150,8 +150,8 @@
     "updates": {
       "url": "https://flickmate.app/api/manifest",
       "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 1500,
-      "runtimeVersion": "6.0.0"
+      "fallbackToCacheTimeout": 2000,
+      "runtimeVersion": "7.0.0"
     }
   }
 }

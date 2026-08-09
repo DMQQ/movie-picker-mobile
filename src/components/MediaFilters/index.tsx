@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import Badge from "../Badge";
+import IconButton from "../IconButton";
 import { StyleSheet, View } from "react-native";
-import { Badge, IconButton } from "react-native-paper";
+
 import { colors } from "../../constants/design";
 import { router, useFocusEffect } from "expo-router";
 import { useAppSelector } from "../../redux/store";
@@ -72,7 +74,7 @@ export const FilterButton = React.memo(function FilterButton({
     <View style={[styles.filterButtonContainer, style]}>
       <IconButton
         icon="tune-variant"
-        iconColor={isFilterActive ? colors.primary : "#fff"}
+        iconColor={isFilterActive ? colors.primary : colors.text}
         size={size}
         onPress={openFilters}
       />

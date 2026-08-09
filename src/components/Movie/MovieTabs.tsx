@@ -1,5 +1,6 @@
 import { StyleSheet, View, TouchableOpacity, ScrollView, Platform } from "react-native";
-import { Text } from "react-native-paper";
+import Text from "../Text";
+
 import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { memo, useState } from "react";
 import PlatformBlurView from "../PlatformBlurView";
@@ -105,6 +106,6 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
   },
   activeTabLabel: {
-    color: "#fff",
+    color: colors.text,
   },
 });

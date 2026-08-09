@@ -1,5 +1,7 @@
 import { StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import Text from "../Text";
+
+import Button from "../Button";
 import { colors, fontSize, fontWeight, spacing } from "../../constants/design";
 import { Movie } from "../../../types";
 import MatchTile from "../Overview/MatchTile";

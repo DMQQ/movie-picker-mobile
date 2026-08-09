@@ -1,10 +1,11 @@
 import { View, StyleSheet, ScrollView } from "react-native";
+import Text from "../Text";
 import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
-import { Text } from "react-native-paper";
+
 import Thumbnail from "../Thumbnail";
 import layout from "../../utils/layout";
 import FrostedGlass from "../FrostedGlass";
-import { fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing} from "../../constants/design";
 
 export default function Cast({ id, type, initialData }: { id: number; type: "movie" | "tv"; initialData?: any }) {
   const { data: fetchedData, isLoading } = useGetMovieKeyPeopleQuery(
@@ -46,7 +47,7 @@ export default function Cast({ id, type, initialData }: { id: number; type: "mov
             {item.profile_path && <Thumbnail priority="low" path={item.profile_path} container={styles.directorImage} />}
 
             <View style={{ gap: spacing.xs + 1, flex: 1 }}>
-              <Text style={{ color: "#fff", fontSize: 22.5, fontFamily: "Bebas" }}>{item.name}</Text>
+              <Text style={{ color: colors.text, fontSize: 22.5, fontFamily: "Bebas" }}>{item.name}</Text>
 
               <Text
                 style={{
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
   character: {
     fontFamily: "Bebas",
     fontSize: fontSize.xl,
-    color: "#fff",
+    color: colors.text,
   },
   actor: {
     fontSize: fontSize.md,

@@ -1,6 +1,7 @@
 import { Platform, StyleSheet, View } from "react-native";
+import Text from "../Text";
 import { Image } from "expo-image";
-import { Text } from "react-native-paper";
+
 import { Movie, MovieDetails as MovieDetailsType } from "../../../types";
 import useTranslation from "../../service/useTranslation";
 import CustomFavourite from "../Favourite";
@@ -16,7 +17,7 @@ import {
 import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
 import { memo, useMemo } from "react";
 import MovieTabs from "./MovieTabs";
-import { fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing} from "../../constants/design";
 
 interface MovieDetailsProps {
   movie: Movie & Record<string, string>;
@@ -111,7 +112,7 @@ function MovieDetails({
           style={{
             width: 60,
             height: 4,
-            backgroundColor: "#fff",
+            backgroundColor: colors.text,
             borderRadius: radius.sm + 2,
           }}
         />
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     ...Platform.select({
       android: {
-        backgroundColor: "#000",
+        backgroundColor: colors.appBackground,
         borderTopRightRadius: 0,
         borderTopLeftRadius: 0,
         borderWidth: 0,

@@ -113,17 +113,17 @@ export default function FavouriteGroupsScreen() {
                 inGroup && { backgroundColor: colors.primary },
               ]}
               onPress={() => onPress(group)}
-              android_ripple={{ color: "rgba(255,255,255,0.1)" }}
+              android_ripple={{ color: colors.border }}
             >
               <MaterialCommunityIcons
                 name={inGroup ? "bookmark-check" : "bookmark-outline"}
                 size={22}
-                color={inGroup ? "#fff" : colors.placeholder}
+                color={inGroup ? colors.text : colors.placeholder}
                 style={styles.itemIcon}
               />
               <Text style={styles.itemText}>{group.name}</Text>
               {inGroup && (
-                <MaterialCommunityIcons name="check" size={18} color="#fff" />
+                <MaterialCommunityIcons name="check" size={18} color={colors.text} />
               )}
             </Pressable>
           );
@@ -136,7 +136,7 @@ export default function FavouriteGroupsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#121212",
+    backgroundColor: colors.surface,
     paddingHorizontal: spacing.xl,
   },
   grabber: {

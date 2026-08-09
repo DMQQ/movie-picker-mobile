@@ -1,13 +1,14 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Text from "./Text";
 import * as Haptics from "expo-haptics";
 import { ReactNode } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
+
 import { Movie } from "../../types";
 import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
-import { fontSize, spacing } from "../constants/design";
+import { colors, fontSize, spacing} from "../constants/design";
 
 export function useQuickActions(props: { movie: Movie }) {
   const dispatch = useAppDispatch();
@@ -71,7 +72,7 @@ export default function QuickActions(props: {
           <MaterialCommunityIcons
             name={isInGroup("2") ? "clock" : "clock-outline"}
             size={35}
-            color="#fff"
+            color={colors.text}
           />
           {!props?.hideLabels && (
             <Text
@@ -92,7 +93,7 @@ export default function QuickActions(props: {
           <MaterialCommunityIcons
             name={isInGroup("1") ? "heart" : "heart-outline"}
             size={35}
-            color="#fff"
+            color={colors.text}
           />
           {!props?.hideLabels && (
             <Text
@@ -113,7 +114,7 @@ export default function QuickActions(props: {
           <MaterialCommunityIcons
             name={isInGroup("999") ? "eye" : "eye-outline"}
             size={35}
-            color="#fff"
+            color={colors.text}
           />
           {!props?.hideLabels && (
             <Text

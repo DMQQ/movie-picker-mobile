@@ -1,8 +1,9 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { fontWeight, fontSize, radius, spacing } from "../constants/design";
+import Text from "./Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
 import { useState } from "react";
 import { Platform, Pressable, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+
 import PrimaryButton from "./PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useTutorialSeen } from "../hooks/useTutorial";
@@ -30,10 +31,10 @@ const PAGE_ROWS: Record<PageKey, { icon: string; color: string; labelKey: string
   ],
   getting_a_match: [
     { icon: "fire", color: "#FF6B35", labelKey: "swipe_tutorial.getting_a_match.match_label", descKey: "swipe_tutorial.getting_a_match.match_desc" },
-    { icon: "bookmark-multiple", color: "#BB86FC", labelKey: "swipe_tutorial.getting_a_match.saved_label", descKey: "swipe_tutorial.getting_a_match.saved_desc" },
+    { icon: "bookmark-multiple", color: colors.primary, labelKey: "swipe_tutorial.getting_a_match.saved_label", descKey: "swipe_tutorial.getting_a_match.saved_desc" },
   ],
   track_session: [
-    { icon: "cards", color: "#BB86FC", labelKey: "swipe_tutorial.track_session.liked_label", descKey: "swipe_tutorial.track_session.liked_desc" },
+    { icon: "cards", color: colors.primary, labelKey: "swipe_tutorial.track_session.liked_label", descKey: "swipe_tutorial.track_session.liked_desc" },
     { icon: "chart-donut", color: "#42DCA3", labelKey: "swipe_tutorial.track_session.progress_label", descKey: "swipe_tutorial.track_session.progress_desc" },
   ],
 };
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
     ...Platform.select({
       android: {
         borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.12)",
+        borderColor: colors.border,
       },
     }),
   },
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Bebas",
     fontSize: 28,
-    color: "#fff",
+    color: colors.text,
     letterSpacing: 0.8,
     marginBottom: spacing.xl,
   },
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
   },
   dotActive: {
     width: 20,
-    backgroundColor: "#fff",
+    backgroundColor: colors.text,
   },
   dotInactive: {
     width: 6,

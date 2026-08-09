@@ -1,11 +1,14 @@
 import * as AppleAuthentication from "expo-apple-authentication";
-import { fontWeight, fontSize, radius, spacing, typography } from "../../constants/design";
+import Icon from "../../components/Icon";
+import Text from "../../components/Text";
+import TextInput from "../../components/TextInput";
+import { colors, fontWeight, fontSize, radius, spacing, typography} from "../../constants/design";
 import { Link, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
 import AsyncStorage from "expo-sqlite/kv-store";
 import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Button, Icon, Text, TextInput } from "react-native-paper";
+
 import PrimaryButton from "../../components/PrimaryButton";
 import { useLoginMutation } from "../../redux/auth/authApi";
 import { useAuthProviders } from "../../hooks/useAuthProviders";
@@ -83,16 +86,14 @@ export default function LoginScreen() {
                 )}
 
                 <View style={styles.fields}>
-                  <TextInput
-                    mode="outlined" label={t("auth.emailLabel")} value={email}
+                  <TextInput label={t("auth.emailLabel")} value={email}
                     onChangeText={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: undefined, form: undefined })); }}
                     autoCapitalize="none" keyboardType="email-address" autoCorrect={false}
                     returnKeyType="next" outlineStyle={styles.inputOutline} error={!!errors.email}
                   />
                   {errors.email && <Text style={styles.fieldError}>{errors.email}</Text>}
 
-                  <TextInput
-                    mode="outlined" label={t("auth.passwordLabel")} value={password}
+                  <TextInput label={t("auth.passwordLabel")} value={password}
                     onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, form: undefined })); }}
                     secureTextEntry={!showPassword} returnKeyType="done" onSubmitEditing={handleLogin}
                     outlineStyle={styles.inputOutline} error={!!errors.password}
@@ -161,18 +162,18 @@ const styles = StyleSheet.create({
   grabber: { width: 36, height: 4, borderRadius: radius.xs - 2, backgroundColor: "#555", alignSelf: "center", marginBottom: spacing.xxl + 4 },
   header: { flexDirection: "row", alignItems: "center", gap: spacing.md, marginBottom: spacing.xs },
   logo: { width: 44, height: 44 },
-  title: { fontSize: typography.bebasSize.auth, fontFamily: "Bebas", color: "#fff", letterSpacing: 1 },
+  title: { fontSize: typography.bebasSize.auth, fontFamily: "Bebas", color: colors.text, letterSpacing: 1 },
   subtitle: { fontSize: fontSize.md, color: "#666", marginTop: spacing.xs - 2, marginBottom: spacing.xxl + 4 },
   backBtn: { flexDirection: "row", alignItems: "center", gap: spacing.sm - 2, marginBottom: spacing.lg, alignSelf: "flex-start" },
   backText: { fontSize: fontSize.md, color: "rgba(255,255,255,0.6)" },
   formError: { backgroundColor: "rgba(207,102,121,0.12)", borderRadius: radius.sm + 2, paddingVertical: spacing.sm + 2, paddingHorizontal: spacing.md + 2, marginBottom: spacing.lg },
-  formErrorText: { color: "#CF6679", fontSize: fontSize.md - 1 },
+  formErrorText: { color: colors.error, fontSize: fontSize.md - 1 },
   fields: { gap: spacing.xs, marginBottom: spacing.lg },
   inputOutline: { borderRadius: radius.md },
-  fieldError: { color: "#CF6679", fontSize: fontSize.sm, paddingHorizontal: spacing.xs, marginBottom: spacing.sm },
+  fieldError: { color: colors.error, fontSize: fontSize.sm, paddingHorizontal: spacing.xs, marginBottom: spacing.sm },
   primaryBtn: { borderRadius: radius.lg + 1, marginBottom: spacing.xxl + 4 },
   primaryBtnContent: { paddingVertical: spacing.xs + 2 },
   footer: { flexDirection: "row", justifyContent: "center", marginTop: spacing.sm },
   footerText: { color: "#666", fontSize: fontSize.md },
-  footerLink: { color: "#BB86FC", fontSize: fontSize.md, fontWeight: fontWeight.semibold },
+  footerLink: { color: colors.primary, fontSize: fontSize.md, fontWeight: fontWeight.semibold },
 });

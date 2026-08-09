@@ -1,9 +1,10 @@
 import { StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import Text from "../Text";
+
 import PrimaryButton from "../PrimaryButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useTranslation from "../../service/useTranslation";
-import { fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing} from "../../constants/design";
 
 interface Props {
   error: string;
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.06)",
     borderRadius: radius.lg,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
+    borderColor: colors.border,
     padding: spacing.xxl + 8,
     marginHorizontal: spacing.lg,
     gap: spacing.md,
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 36,
     fontFamily: "Bebas",
-    color: "#FFFFFF",
+    color: colors.text,
     letterSpacing: 1,
     textAlign: "center",
   },

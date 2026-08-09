@@ -1,5 +1,6 @@
 import { FlatList, Image, Pressable, View } from "react-native";
-import { Text } from "react-native-paper";
+import Text from "../Text";
+
 import { colors, fontSize, radius, spacing, typography } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 import Thumbnail from "../Thumbnail";

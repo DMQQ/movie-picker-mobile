@@ -428,6 +428,7 @@ Exact MD2DarkTheme values, hardcoded — no paper dependency.
 | `colors.border` | `rgba(255,255,255,0.1)` | Hairline dividers |
 | `colors.overlay` | `rgba(255,255,255,0.08)` | Pressable overlay |
 | `colors.surfaceElevated` | `#2a2a2a` | Skeleton, hover states |
+| `colors.input` | `#1a1a1a` | Input field / chip backgrounds |
 
 RULE: `colors.surface` for card backgrounds. `colors.appBackground` for full-screen backgrounds. `colors.text` for primary text. `colors.placeholder` for muted labels. `colors.border` for hairline separators.
 

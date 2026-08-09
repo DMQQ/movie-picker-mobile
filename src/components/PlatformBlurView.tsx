@@ -6,6 +6,7 @@ import {
   LiquidGlassViewProps,
 } from "@callstack/liquid-glass";
 import { PropsWithChildren } from "react";
+import { colors } from "../constants/design";
 
 const isIOS26 = isLiquidGlassSupported;
 
@@ -41,7 +42,7 @@ export const BlurViewWrapper = ({
         {
           overflow: "hidden",
           borderWidth: 2,
-          borderColor: "rgba(255,255,255,0.1)",
+          borderColor: colors.border,
         },
         rest.style,
       ]}

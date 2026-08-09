@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import { Icon, Text } from "react-native-paper";
+import Icon from "./Icon";
+import Text from "./Text";
+
 import { router, useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import type { AuthUser } from "../redux/auth/authSlice";

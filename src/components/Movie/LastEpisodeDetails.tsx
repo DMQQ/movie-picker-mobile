@@ -1,5 +1,7 @@
 import { Image, View } from "react-native";
-import { Surface, Text } from "react-native-paper";
+import Surface from "../Surface";
+import Text from "../Text";
+
 import useTranslation from "../../service/useTranslation";
 import Thumbnail from "../Thumbnail";
 import FrostedGlass from "../FrostedGlass";

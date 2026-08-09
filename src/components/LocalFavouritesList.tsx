@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Text from "./Text";
 import { ImageBackground } from "expo-image";
 import {
   Dimensions,
@@ -7,7 +8,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Text } from "react-native-paper";
+
 import { colors, fontSize, radius, spacing } from "../constants/design";
 import { Link, router } from "expo-router";
 import { useAppSelector } from "../redux/store";
@@ -193,7 +194,7 @@ export default function LocalFavouritesList({ listRef }: Props) {
                     <MaterialCommunityIcons
                       name="plus"
                       size={50}
-                      color="white"
+                      color={colors.text}
                       style={{ opacity: 0.5 }}
                     />
                     <Text style={{ fontSize: fontSize.sm - 1, textAlign: "center" }}>
@@ -213,7 +214,7 @@ export default function LocalFavouritesList({ listRef }: Props) {
                 </View>
               </ImageBackground>
               <View style={styles.labelRow}>
-                <Text style={[styles.labelText, { color: "#fff" }]}>
+                <Text style={[styles.labelText, { color: colors.text }]}>
                   {item.name}
                 </Text>
                 <Text style={styles.countText}>({item.movies.length})</Text>

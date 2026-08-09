@@ -1,6 +1,7 @@
 import { useState } from "react";
+import Text from "../Text";
 import { ActivityIndicator, Dimensions, Pressable, View } from "react-native";
-import { Text } from "react-native-paper";
+
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
 import { Episode } from "../../../types";
 import { useGetSeasonEpisodesQuery } from "../../redux/movie/movieApi";
@@ -8,7 +9,7 @@ import useTranslation from "../../service/useTranslation";
 import FrostedGlass from "../FrostedGlass";
 import RatingIcons from "../RatingIcons";
 import Thumbnail from "../Thumbnail";
-import { fontSize, radius, spacing, typography } from "../../constants/design";
+import { colors, fontSize, radius, spacing, typography} from "../../constants/design";
 
 export default function SeasonEpisodes({ id, season }: { id: number; season: number }) {
   const { data, isLoading } = useGetSeasonEpisodesQuery({ id, season }, { refetchOnMountOrArgChange: true });
@@ -20,7 +21,7 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
   if (isLoading) {
     return (
       <View style={{ marginTop: spacing.xxl + 6, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#fff" />
+        <ActivityIndicator size="large" color={colors.text} />
       </View>
     );
   }
@@ -29,7 +30,7 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
 
   return (
     <Animated.View style={{ marginTop: spacing.xxl + 6, paddingBottom: spacing.xxl + 6 }} layout={LinearTransition}>
-      <Text style={{ fontSize: typography.bebasSize.section, fontFamily: "Bebas", color: "#fff", marginBottom: spacing.sm + 2 }}>
+      <Text style={{ fontSize: typography.bebasSize.section, fontFamily: "Bebas", color: colors.text, marginBottom: spacing.sm + 2 }}>
         {t("movie.details.season")} {season}{" "}
         <Text style={{ fontSize: fontSize.xxl, fontFamily: "Bebas" }}>{data?.episodes.length ? `(${data?.episodes.length})` : ""}</Text>
       </Text>

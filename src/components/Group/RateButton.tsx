@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import Text from "../Text";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { fontSize, radius, spacing } from "../../constants/design";
 

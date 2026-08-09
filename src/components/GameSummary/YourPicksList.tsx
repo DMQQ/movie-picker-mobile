@@ -1,5 +1,6 @@
 import { FlatList, StyleSheet, View } from "react-native";
-import { Text } from "react-native-paper";
+import Text from "../Text";
+
 import { Movie } from "../../../types";
 import CreateCollectionFromLiked from "../CreateCollectionFromLiked";
 import MatchedItem from "./MatchedItem";

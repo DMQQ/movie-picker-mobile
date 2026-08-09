@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from "react";
-import { fontWeight, fontSize, radius, spacing } from "../constants/design";
+import Text from "./Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
 import { View, StyleSheet, TouchableOpacity, Platform, TextInput } from "react-native";
-import { Text } from "react-native-paper";
+
 import { withSpring, withSequence, useSharedValue } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { SocketContext } from "../context/SocketContext";
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: spacing.md,
     borderRadius: radius.card,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    backgroundColor: colors.overlay,
     minWidth: 80,
     gap: spacing.sm - 2,
   },
@@ -236,10 +237,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   feedbackInput: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    backgroundColor: colors.border,
     borderRadius: radius.md,
     padding: spacing.lg,
-    color: "#fff",
+    color: colors.text,
     fontSize: fontSize.md,
     minHeight: 100,
     borderWidth: 1,

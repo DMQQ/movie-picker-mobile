@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
+import Dialog from "../../components/Dialog";
+import Portal from "../../components/Portal";
+import Text from "../../components/Text";
+import { useTheme } from "../../hooks/useTheme";
 import { Image, View } from "react-native";
-import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
+
+import Button from "../../components/Button";
 import { colors, radius, spacing } from "../../constants/design";
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";

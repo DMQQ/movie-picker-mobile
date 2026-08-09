@@ -1,6 +1,8 @@
 import { StyleSheet, View } from "react-native";
-import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
-import { Avatar, Text } from "react-native-paper";
+import AvatarText from "../AvatarText";
+import Text from "../Text";
+import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
+
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { getUserAvatarColor } from "../../utils/avatar";
 import useTranslation from "../../service/useTranslation";
@@ -19,10 +21,10 @@ export default function PlayerPerformance({
         {users.map((user, index) => (
           <View key={index} style={styles.chip}>
             <View style={styles.avatarWrap}>
-              <Avatar.Text
+              <AvatarText
                 size={28}
                 label={user.username?.[0].toUpperCase() || "U"}
-                color="white"
+                color={colors.text}
                 style={{
                   borderWidth: 1.5,
                   borderColor: "rgba(255,255,255,0.4)",
@@ -36,12 +38,12 @@ export default function PlayerPerformance({
                 ]}
               >
                 {user.finished ? (
-                  <MaterialCommunityIcons name="check" size={9} color="white" />
+                  <MaterialCommunityIcons name="check" size={9} color={colors.text} />
                 ) : (
                   <MaterialCommunityIcons
                     name="loading"
                     size={8}
-                    color="white"
+                    color={colors.text}
                   />
                 )}
               </View>
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontFamily: "Bebas",
     marginBottom: spacing.lg,
-    color: "#FFFFFF",
+    color: colors.text,
     letterSpacing: 1,
     textShadowColor: "rgba(0,0,0,0.3)",
     textShadowOffset: { width: 0, height: 1 },
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
   chip: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: colors.overlay,
     borderRadius: radius.lg + 1,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.sm,
@@ -104,7 +106,7 @@ const styles = StyleSheet.create({
     height: 14,
     borderRadius: radius.xs + 3,
     borderWidth: 1.5,
-    borderColor: "white",
+    borderColor: colors.text,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -113,17 +115,17 @@ const styles = StyleSheet.create({
   name: {
     fontSize: fontSize.md,
     fontWeight: fontWeight.semibold,
-    color: "#FFFFFF",
+    color: colors.text,
     letterSpacing: 0.2,
   },
   metrics: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: colors.border,
     borderRadius: radius.md,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs + 2,
   },
-  count: { fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: "#FFFFFF" },
+  count: { fontSize: fontSize.sm, fontWeight: fontWeight.semibold, color: colors.text },
 });
