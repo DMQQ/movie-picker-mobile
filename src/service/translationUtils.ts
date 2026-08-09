@@ -60,7 +60,14 @@ export function translate(
   key: string,
   args?: Record<string, number | string | boolean>,
 ): string {
-  const val = getNestedValue(translations[language] ?? translations.en, key);
+  const dict = translations[language] ?? translations.en;
+  let val = getNestedValue(dict, key);
+
+  if (val === key && language !== "en") {
+    // Missing key in the active language — fall back to English before
+    // surfacing the raw key.
+    val = getNestedValue(translations.en, key);
+  }
 
   if (Array.isArray(val)) {
     // @ts-ignore

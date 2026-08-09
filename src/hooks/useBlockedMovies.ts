@@ -122,6 +122,11 @@ export function useBlockedMovies() {
           (i) => i.contentId === movieId && i.contentType === movieType
         );
         if (item) await removeItem({ itemId: item.id, listType: "disliked" });
+        // Also clear the local entry — un-migrated items only exist locally,
+        // and the DELETE is a no-op for remote-only items.
+        if (movieInteractions) {
+          await dispatch(unblockAction({ repo: movieInteractions, movieId, movieType }));
+        }
         return;
       }
       if (!movieInteractions) return;

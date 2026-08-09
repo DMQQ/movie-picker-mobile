@@ -60,13 +60,11 @@ export function createMovieInteractionsRepo(db: SQLiteDatabase) {
     },
 
     async isSuperLiked(movieId: number, movieType: MovieType): Promise<boolean> {
-      return db
-        .runAsync("SELECT movie_id FROM movie_interactions WHERE movie_id = ? AND movie_type = ? AND interaction_type = ?", [
-          movieId,
-          movieType,
-          "super_liked",
-        ])
-        .then((result) => !!result);
+      const result = await db.getFirstAsync<{ movie_id: number }>(
+        "SELECT movie_id FROM movie_interactions WHERE movie_id = ? AND movie_type = ? AND interaction_type = ?",
+        [movieId, movieType, "super_liked"],
+      );
+      return !!result;
     },
 
     async canReview() {

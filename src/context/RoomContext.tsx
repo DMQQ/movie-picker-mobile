@@ -56,6 +56,8 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
   isPlayingRef.current = isPlaying;
   const movieIndexRef = useRef(movieIndex);
   movieIndexRef.current = movieIndex;
+  const cardsRef = useRef(cards);
+  cardsRef.current = cards;
 
   const hasJoined = useRef(false);
   const lastJoinedRoomId = useRef<string | null>(null);
@@ -213,6 +215,9 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
 
   const likeCard = useCallback(
     async (card: Movie, index: number) => {
+      // Guard against double-fire (drag exit timer + button tap racing) —
+      // a card already removed from the deck was already swiped.
+      if (!cardsRef.current.some((m) => m.id === card.id)) return;
       if (isPlayingRef.current) {
         socket?.emit("pick-movie", {
           roomId,
@@ -238,6 +243,8 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
 
   const dislikeCard = useCallback(
     (card: Movie, index: number) => {
+      // Guard against double-fire (drag exit timer + button tap racing).
+      if (!cardsRef.current.some((m) => m.id === card.id)) return;
       if (isPlayingRef.current) {
         socket?.emit("pick-movie", {
           roomId,
@@ -254,6 +261,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
 
   const blockAndDislikeCard = useCallback(
     async (card: Movie, index: number) => {
+      if (!cardsRef.current.some((m) => m.id === card.id)) return;
       await blockMovie(card);
       dislikeCard(card, index);
     },
@@ -262,6 +270,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
 
   const superLikeAndLikeCard = useCallback(
     async (card: Movie, index: number) => {
+      if (!cardsRef.current.some((m) => m.id === card.id)) return;
       await superLikeMovie(card);
       await likeCard(card, index);
 

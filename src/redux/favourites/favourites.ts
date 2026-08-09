@@ -42,6 +42,17 @@ const initialState: FavoritesState = {
 
 export const STORAGE_KEY = "favorites_groups";
 
+// Corrupted storage must never crash thunks or hide the migration prompt.
+export function parseStorage(raw: string | null): { groups: FavoriteGroup[] } {
+  if (!raw) return { groups: [] };
+  try {
+    const parsed = JSON.parse(raw);
+    return { groups: Array.isArray(parsed?.groups) ? parsed.groups : [] };
+  } catch {
+    return { groups: [] };
+  }
+}
+
 // System list type ↔ local group id mappings
 export const LOCAL_ID_TO_TYPE: Record<string, string> = {
   "1": "favourites",
@@ -118,8 +129,7 @@ export const loadFavorites = createAsyncThunk(
       });
 
       // Merge un-migrated local groups so they show before migration
-      const raw = await AsyncStorage.getItem(STORAGE_KEY);
-      const localGroups: FavoriteGroup[] = raw ? JSON.parse(raw).groups ?? [] : [];
+      const localGroups = parseStorage(await AsyncStorage.getItem(STORAGE_KEY)).groups;
 
       const remoteGroupNames = new Set(remoteGroups.map((g) => g.name));
 
@@ -147,7 +157,7 @@ export const loadFavorites = createAsyncThunk(
     const data = await AsyncStorage.getItem(STORAGE_KEY);
     const language = (getState() as RootState).room.language;
     const groups: FavoriteGroup[] = data
-      ? JSON.parse(data).groups ?? makeDefaultGroups(language)
+      ? parseStorage(data).groups
       : makeDefaultGroups(language);
 
     if (!data) {
@@ -176,8 +186,7 @@ export const createGroup = createAsyncThunk(
       } as FavoriteGroup;
     }
 
-    const data = await AsyncStorage.getItem(STORAGE_KEY);
-    const storage = data ? JSON.parse(data) : { groups: [] };
+    const storage = parseStorage(await AsyncStorage.getItem(STORAGE_KEY));
 
     const group: FavoriteGroup = {
       id: Date.now().toString(),
@@ -228,8 +237,7 @@ export const addToGroup = createAsyncThunk(
       });
     }
 
-    const data = await AsyncStorage.getItem(STORAGE_KEY);
-    const storage = data ? JSON.parse(data) : { groups: [] };
+    const storage = parseStorage(await AsyncStorage.getItem(STORAGE_KEY));
 
     const updated = {
       ...storage,
@@ -299,8 +307,7 @@ export const removeFromGroup = createAsyncThunk(
       });
     }
 
-    const data = await AsyncStorage.getItem(STORAGE_KEY);
-    const storage = data ? JSON.parse(data) : { groups: [] };
+    const storage = parseStorage(await AsyncStorage.getItem(STORAGE_KEY));
 
     const updated = {
       ...storage,
@@ -335,8 +342,7 @@ export const deleteGroup = createAsyncThunk(
       return groupId;
     }
 
-    const data = await AsyncStorage.getItem(STORAGE_KEY);
-    const storage = data ? JSON.parse(data) : { groups: [] };
+    const storage = parseStorage(await AsyncStorage.getItem(STORAGE_KEY));
 
     const updated = {
       ...storage,
@@ -432,9 +438,12 @@ export const rateInGroup = createAsyncThunk(
       };
     });
 
-    const raw = await AsyncStorage.getItem(STORAGE_KEY);
-    const storage = raw ? JSON.parse(raw) : { groups: [] };
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ ...storage, groups }));
+    // Ratings are local-only; while signed in, skip storage so remote-derived
+    // groups are never cached as local data.
+    if (!state.auth.token) {
+      const storage = parseStorage(await AsyncStorage.getItem(STORAGE_KEY));
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ ...storage, groups }));
+    }
 
     return groups;
   }

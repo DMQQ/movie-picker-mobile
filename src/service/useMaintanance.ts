@@ -113,7 +113,8 @@ export default function useMaintenance(initialCheck = true) {
         appState.current.match(/inactive|background/) &&
         nextAppState === "active"
       ) {
-        hasNavigated.current = false;
+        // Don't reset hasNavigated here — re-checking with the modal still up
+        // (or after it was dismissed mid-outage) would stack duplicate modals.
         checkSettings(false);
       }
       appState.current = nextAppState;

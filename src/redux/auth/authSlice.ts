@@ -24,20 +24,28 @@ const initialState: AuthState = {
 
 export const restoreSession = createAsyncThunk(
   "auth/restoreSession",
-  async (token: string) => {
+  async (token: string, { rejectWithValue }) => {
     const url = `${baseUrl}/api/auth/me`;
-    console.log(`[restoreSession] calling ${url}, token prefix: ${token.substring(0, 20)}...`);
-    const res = await fetch(url, {
-      headers: { authorization: `Bearer ${token}` },
-    });
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        headers: { authorization: `Bearer ${token}` },
+      });
+    } catch {
+      // Offline at boot — keep the stored token, retry next launch.
+      throw new Error("Network error");
+    }
     if (res.ok) {
       const { user } = await res.json();
       return { token, user };
     }
-    const body = await res.text();
-    console.log(`[restoreSession] ${url} → ${res.status}, body: ${body}, deleting token`);
-    await SecureStore.deleteItemAsync("user_auth_token");
-    throw new Error("Session expired");
+    if (res.status === 401) {
+      // Token revoked/expired — the only case that ends the session.
+      await SecureStore.deleteItemAsync("user_auth_token");
+      return rejectWithValue("expired");
+    }
+    // 5xx / maintenance — token is still valid, don't destroy it.
+    throw new Error(`Restore failed: ${res.status}`);
   },
 );
 
@@ -72,8 +80,8 @@ export const authSlice = createSlice({
         state.user = action.payload.user;
         state.sessionExpired = false;
       })
-      .addCase(restoreSession.rejected, (state) => {
-        state.sessionExpired = true;
+      .addCase(restoreSession.rejected, (state, action) => {
+        if (action.payload === "expired") state.sessionExpired = true;
       });
   },
 });

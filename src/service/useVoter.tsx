@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useCallback, useState, ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useCallback, useRef, useState, ReactNode } from "react";
 import { SocketContext } from "../context/SocketContext";
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import { Movie } from "../../types";
@@ -57,7 +57,7 @@ interface RatingCriteria {
 const MovieVoterContext = createContext<MovieVoterContextValue | null>(null);
 
 export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
-  const { socket } = useContext(SocketContext);
+  const { socket, emitter } = useContext(SocketContext);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentMovies, setCurrentMovies] = useState<Movie[]>([]);
   const [currentSetId, setCurrentSetId] = useState<"A" | "B" | null>(null);
@@ -76,6 +76,10 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const [sessionResults, setSessionResults] = useState<MovieVoterContextValue["sessionResults"]>(null);
+
+  // Guards the auto-join effect so a session is joined exactly once —
+  // previously joinSession + this effect emitted voter:session:join twice.
+  const lastJoinedSessionId = useRef<string | null>(null);
 
   const createSession = useCallback(async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -116,6 +120,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
 
+      lastJoinedSessionId.current = joinSessionId;
       return joinSessionInternal(joinSessionId);
     },
     [socket]
@@ -174,15 +179,19 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   const startSession = useCallback(async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    setLoadingInitialContent(true);
-
     if (!socket || !sessionId || !isHost) return;
 
-    const response = await socket.emitWithAck("voter:session:start", { sessionId });
+    setLoadingInitialContent(true);
 
-    if (response?.error) {
-      setError(response.error);
-    } else {
+    try {
+      const response = await socket.emitWithAck("voter:session:start", { sessionId });
+
+      if (response?.error) {
+        setError(response.error);
+      }
+    } catch {
+      // Ack timeout — the session:update event resolves the real state.
+    } finally {
       setLoadingInitialContent(false);
     }
   }, [socket, sessionId, isHost]);
@@ -209,10 +218,39 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
-    if (socket?.connected && sessionId && users.length === 0 && !isHost) {
+    if (
+      socket?.connected &&
+      sessionId &&
+      users.length === 0 &&
+      !isHost &&
+      lastJoinedSessionId.current !== sessionId
+    ) {
+      lastJoinedSessionId.current = sessionId;
       joinSessionInternal(sessionId).catch(console.error);
     }
   }, [socket, sessionId, users.length, isHost]);
+
+  // Rejoin on socket reconnect: the server marks participants disconnected on
+  // socket drop and only re-marks them connected via voter:session:join.
+  useEffect(() => {
+    if (!emitter || !socket || !sessionId) return;
+
+    const onReconnected = async () => {
+      try {
+        const response = await socket.emitWithAck("voter:session:join", { sessionId });
+        if (response?.error) {
+          setError(response.error);
+          return;
+        }
+        // isHost intentionally untouched — the join ack carries no host info.
+      } catch {
+        // Connection may still be settling — a later reconnect retries.
+      }
+    };
+
+    emitter.on("reconnected", onReconnected);
+    return () => emitter.off("reconnected", onReconnected);
+  }, [emitter, socket, sessionId]);
 
   useEffect(() => {
     if (!socket) return;

@@ -4,7 +4,7 @@ import {
   useMigrateListsMutation,
   type MigrateBody,
 } from "../redux/lists/listsApi";
-import { STORAGE_KEY } from "../redux/favourites/favourites";
+import { parseStorage, STORAGE_KEY } from "../redux/favourites/favourites";
 import { useMovieInteractions } from "../context/DatabaseContext";
 import {
   clearAllBlocked,
@@ -28,16 +28,18 @@ export function useMigrateLibrary() {
   const [migrate, result] = useMigrateListsMutation();
 
   async function migrateLibrary() {
-    const raw = await AsyncStorage.getItem(STORAGE_KEY);
     const localGroups: Array<{
       name: string;
+      type?: string;
       movies: Array<{ id: number; type: string; imageUrl: string }>;
-    }> = raw ? (JSON.parse(raw).groups ?? []) : [];
+    }> = parseStorage(await AsyncStorage.getItem(STORAGE_KEY)).groups;
 
     const body: MigrateBody = {
       groups: localGroups.map((g) => ({
         name: g.name,
-        type: GROUP_NAME_TO_TYPE[g.name] ?? toSlug(g.name),
+        // Prefer the persisted type — name-based mapping only matches English
+        // names, so non-English locales would slug into junk custom lists.
+        type: g.type ?? GROUP_NAME_TO_TYPE[g.name] ?? toSlug(g.name),
         movies: g.movies.map((m) => ({
           id: Number(m.id),
           type: m.type as "movie" | "tv",
@@ -80,10 +82,9 @@ export function useMigrateLibrary() {
     movies: number;
     interactions: number;
   }> {
-    const raw = await AsyncStorage.getItem(STORAGE_KEY);
-    const localGroups: Array<{ movies: any[] }> = raw
-      ? (JSON.parse(raw).groups ?? [])
-      : [];
+    const localGroups: Array<{ movies: any[] }> = parseStorage(
+      await AsyncStorage.getItem(STORAGE_KEY),
+    ).groups;
     const movies = localGroups.reduce(
       (sum, g) => sum + (g.movies?.length ?? 0),
       0,

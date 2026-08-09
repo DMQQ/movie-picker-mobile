@@ -76,7 +76,7 @@ export default function useRoomMatches(room: string) {
       socket.off("matched", handleMatched);
       socket.off("partial_match", handlePartialMatch);
     };
-  }, [socket]);
+  }, [socket, room]);
 
   return useMemo(
     () => ({ match, hideMatchModal, isFocused, partialMatch, hidePartialMatch }),
