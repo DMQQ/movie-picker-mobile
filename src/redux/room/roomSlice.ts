@@ -290,10 +290,6 @@ const roomSlice = createSlice({
       state.joined = true;
     },
 
-    setFinished(state) {
-      state.isFinished = true;
-    },
-
     setJoinError(state, { payload }: { payload: boolean }) {
       state.joinError = payload;
     },

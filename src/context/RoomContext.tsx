@@ -200,12 +200,13 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
           if (response?.movies && response.movies.length > 0) {
             hasSentFinish.current = false;
             dispatch(roomActions.appendMovies({ movies: response.movies, index: response.index }));
-          } else {
-            dispatch(roomActions.setFinished());
           }
+          // Empty page = end of the movie list — the cards still in the deck are
+          // the last ones. Swipe them out; removeMovie flips isFinished on empty.
         })
         .catch(() => {
-          dispatch(roomActions.setFinished());
+          // Failed prefetch must not end the game — deck still drains, and the
+          // finish path re-fetches from the server if the game continues.
         });
     }
   }, [cards.length, socket, roomId, dispatch, isPlaying]);
