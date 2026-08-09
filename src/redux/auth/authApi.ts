@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "../../context/SocketContext";
 import { AuthUser, authActions } from "./authSlice";
 import prepareHeaders from "../../service/prepareHeaders";
+import { createReportingBaseQuery } from "../baseQuery";
 
 interface AuthResponse {
   token: string;
@@ -22,10 +23,10 @@ interface RecoveryCodesResponse {
 
 export const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({
+  baseQuery: createReportingBaseQuery("auth", fetchBaseQuery({
     baseUrl: baseUrl + "/api/auth",
     prepareHeaders,
-  }),
+  })),
   endpoints: (build) => ({
     login: build.mutation<AuthResponse, { email: string; password: string; anonymousId?: string }>({
       query: (body) => ({ url: "/login", method: "POST", body }),

@@ -21,7 +21,7 @@ import AppErrorBoundary from "../components/ErrorBoundary";
 import { DatabaseProvider } from "../context/DatabaseContext";
 import * as SplashScreen from "expo-splash-screen";
 import useMaintenance from "../service/useMaintanance";
-import { getDeviceSettings } from "../service/useTranslation";
+import { getDeviceSettings } from "../service/translationUtils";
 
 import * as Sentry from "@sentry/react-native";
 import { GoogleOneTapSignIn } from "react-native-nitro-google-signin";
@@ -48,7 +48,11 @@ if (!__DEV__)
     // Configure Session Replay
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1,
-    integrations: [Sentry.mobileReplayIntegration()],
+    integrations: [
+      Sentry.mobileReplayIntegration(),
+      // console.error/warn/etc → Sentry Logs (error-level events for silent failures)
+      Sentry.consoleLoggingIntegration(),
+    ],
 
     // uncomment the line below to enable Spotlight (https://spotlightjs.com)
     // spotlight: __DEV__,

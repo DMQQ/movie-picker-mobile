@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "../../context/SocketContext";
-import { RootState } from "../store";
-import envs from "../../constants/envs";
+import prepareHeaders from "../../service/prepareHeaders";
+import { createReportingBaseQuery } from "../baseQuery";
 
 interface ActiveRoom {
   roomId: string;
@@ -16,23 +16,10 @@ interface ActiveRoomResponse {
 
 export const roomApi = createApi({
   reducerPath: "roomApi",
-  baseQuery: fetchBaseQuery({
+  baseQuery: createReportingBaseQuery("room", fetchBaseQuery({
     baseUrl: baseUrl + "/api",
-    prepareHeaders(headers, { getState }) {
-      const state = getState() as RootState;
-      const userToken = state.auth.token;
-
-      if (userToken) {
-        headers.set("authorization", `Bearer ${userToken}`);
-      } else {
-        headers.set("authorization", `Bearer ${envs.server_auth_token}`);
-        const userId = state.app.userId;
-        if (userId) headers.set("user-id", userId);
-      }
-
-      return headers;
-    },
-  }),
+    prepareHeaders,
+  })),
   endpoints: (build) => ({
     getActiveRoom: build.query<ActiveRoomResponse, void>({
       query: () => "/room/active",

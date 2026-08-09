@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "../../context/SocketContext";
-import { RootState } from "../store";
+import prepareHeaders from "../../service/prepareHeaders";
+import { createReportingBaseQuery } from "../baseQuery";
 
 export type SystemListType = "favourites" | "watchlist" | "watched" | "superliked" | "disliked";
 export type ContentType = "movie" | "tv";
@@ -140,14 +141,10 @@ export interface MigrateBody {
 
 export const listsApi = createApi({
   reducerPath: "listsApi",
-  baseQuery: fetchBaseQuery({
+  baseQuery: createReportingBaseQuery("lists", fetchBaseQuery({
     baseUrl: baseUrl + "/api/user",
-    prepareHeaders(headers, { getState }) {
-      const token = (getState() as RootState).auth.token;
-      if (token) headers.set("authorization", `Bearer ${token}`);
-      return headers;
-    },
-  }),
+    prepareHeaders,
+  })),
   tagTypes: ["List", "ListItems"],
   endpoints: (build) => ({
     getLists: build.query<GetListsResponse, { page?: number; limit?: number }>({

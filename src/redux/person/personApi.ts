@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { url as API_BASE_ENDPOINT } from "../../context/SocketContext";
 import prepareHeaders from "../../service/prepareHeaders";
+import { createReportingBaseQuery } from "../baseQuery";
 // Define interfaces
 interface Person {
   id: number;
@@ -80,10 +81,10 @@ interface CacheStats {
 // Create the API slice
 export const personApi = createApi({
   reducerPath: "personApi",
-  baseQuery: fetchBaseQuery({
+  baseQuery: createReportingBaseQuery("person", fetchBaseQuery({
     baseUrl: API_BASE_ENDPOINT + "/people",
     prepareHeaders: prepareHeaders,
-  }),
+  })),
   tagTypes: ["Person", "MovieCredits", "TVCredits", "CombinedCredits", "KeyPeople", "Cache"],
 
   endpoints: (builder) => ({

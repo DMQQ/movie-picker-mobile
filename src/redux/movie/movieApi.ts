@@ -3,6 +3,7 @@ import { SectionData } from "../../types";
 import { Episode, Movie, MovieDetails } from "../../../types";
 import { url as API_BASE_ENDPOINT } from "../../context/SocketContext";
 import prepareHeaders from "../../service/prepareHeaders";
+import { createReportingBaseQuery } from "../baseQuery";
 
 interface SearchParams {
   query?: string;
@@ -112,10 +113,10 @@ interface SummaryShareResponse {
 export const movieApi = createApi({
   reducerPath: "movieApi",
   tagTypes: ["Search", "SearchResults", "LandingPageInfinite"],
-  baseQuery: fetchBaseQuery({
+  baseQuery: createReportingBaseQuery("movie", fetchBaseQuery({
     baseUrl: API_BASE_ENDPOINT,
     prepareHeaders: prepareHeaders,
-  }),
+  })),
   keepUnusedDataFor: 60,
   refetchOnMountOrArgChange: 300,
   endpoints: (builder) => ({

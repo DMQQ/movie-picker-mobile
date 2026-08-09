@@ -4,7 +4,7 @@ import { Movie } from "../../../types";
 import { listsApi } from "../lists/listsApi";
 import type { RootState } from "../store";
 import { toSlug } from "../../utils/utilities";
-import { translate } from "../../service/useTranslation";
+import { translate } from "../../service/translationUtils";
 
 type MediaType = "movie" | "tv";
 
