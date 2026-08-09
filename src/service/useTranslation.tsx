@@ -56,24 +56,32 @@ const getNestedValue = <T extends string | string[]>(
   return path as T;
 };
 
+/** Non-hook translate for use outside React (slices, services). */
+export function translate(
+  language: string,
+  key: string,
+  args?: Record<string, number | string | boolean>,
+): string {
+  const val = getNestedValue(translations[language] ?? translations.en, key);
+
+  if (Array.isArray(val)) {
+    // @ts-ignore
+    return val;
+  }
+
+  if (!args) return val;
+
+  return val.replace(/\{(\w+)\}/g, (_, k) =>
+    k in args ? String(args[k]) : `{${k}}`,
+  );
+}
+
 export default function useTranslation() {
   const lang = useAppSelector((state) => state.room.language) || "en";
 
   return useCallback(
-    (key: string, args?: Record<string, number | string | boolean>): string => {
-      const val = getNestedValue(translations[lang], key);
-
-      if (Array.isArray(val)) {
-        // @ts-ignore
-        return val;
-      }
-
-      if (!args) return val;
-
-      return val.replace(/\{(\w+)\}/g, (_, k) =>
-        k in args ? String(args[k]) : `{${k}}`,
-      );
-    },
+    (key: string, args?: Record<string, number | string | boolean>): string =>
+      translate(lang, key, args),
     [lang],
   );
 }

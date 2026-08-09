@@ -263,6 +263,11 @@
       "dialog-title": "Share Collection"
     }
   },
+  "lists": {
+    "favourites": "Favorites",
+    "watchlist": "Watchlist",
+    "watched": "Watched"
+  },
   "create-collection": {
     "title": "Create Collection",
     "input-label": "Enter a name for your new collection",

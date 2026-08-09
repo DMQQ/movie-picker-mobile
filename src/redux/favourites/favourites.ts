@@ -4,6 +4,7 @@ import { Movie } from "../../../types";
 import { listsApi } from "../lists/listsApi";
 import type { RootState } from "../store";
 import { toSlug } from "../../utils/utilities";
+import { translate } from "../../service/useTranslation";
 
 type MediaType = "movie" | "tv";
 
@@ -57,11 +58,12 @@ export const TYPE_TO_LOCAL_ID: Record<string, string> = {
 // Types that have their own dedicated screens (not shown in the groups list)
 export const INTERACTION_LIST_TYPES = new Set(["superliked", "disliked"]);
 
-const makeDefaultGroups = () => {
+const makeDefaultGroups = (language?: string) => {
+  const lang = language || "en";
   return [
-    { id: "1", type: "favourites", name: "Favorites", movies: [], posterPath: undefined },
-    { id: "2", type: "watchlist", name: "Watchlist", movies: [], posterPath: undefined },
-    { id: "999", type: "watched", name: "Watched", movies: [], posterPath: undefined },
+    { id: "1", type: "favourites", name: translate(lang, "lists.favourites"), movies: [], posterPath: undefined },
+    { id: "2", type: "watchlist", name: translate(lang, "lists.watchlist"), movies: [], posterPath: undefined },
+    { id: "999", type: "watched", name: translate(lang, "lists.watched"), movies: [], posterPath: undefined },
   ] as FavoriteGroup[];
 };
 
@@ -143,9 +145,10 @@ export const loadFavorites = createAsyncThunk(
     }
 
     const data = await AsyncStorage.getItem(STORAGE_KEY);
+    const language = (getState() as RootState).room.language;
     const groups: FavoriteGroup[] = data
-      ? JSON.parse(data).groups ?? makeDefaultGroups()
-      : makeDefaultGroups();
+      ? JSON.parse(data).groups ?? makeDefaultGroups(language)
+      : makeDefaultGroups(language);
 
     if (!data) {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ groups }));

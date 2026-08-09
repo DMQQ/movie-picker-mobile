@@ -263,6 +263,11 @@
       "dialog-title": "Sammlung teilen"
     }
   },
+  "lists": {
+    "favourites": "Favoriten",
+    "watchlist": "Watchlist",
+    "watched": "Gesehen"
+  },
   "create-collection": {
     "title": "Sammlung erstellen",
     "input-label": "Namen für die neue Sammlung eingeben",

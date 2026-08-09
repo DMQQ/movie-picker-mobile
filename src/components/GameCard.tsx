@@ -10,7 +10,14 @@ import Touch from "./Touch";
 import { type GameMember, type UserGame } from "../redux/lists/listsApi";
 import { formatGameType } from "../utils/formatGameType";
 import { getUserAvatarColor } from "../utils/avatar";
-import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
+import {
+  colors,
+  fontSize,
+  fontWeight,
+  radius,
+  spacing,
+  withAlpha,
+} from "../constants/design";
 
 const AVATAR_SIZE = 20;
 const AVATAR_OVERLAP = 8;
@@ -137,8 +144,8 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs - 1,
   },
   chipAccent: {
-    backgroundColor: "rgba(187,134,252,0.12)",
-    borderColor: "rgba(187,134,252,0.25)",
+    backgroundColor: withAlpha(colors.primary, 0.12),
+    borderColor: withAlpha(colors.primary, 0.25),
   },
   chipLabel: { fontSize: fontSize.xs, fontWeight: fontWeight.medium, color: "rgba(255,255,255,0.65)" },
   chipLabelAccent: { color: colors.primary },

@@ -3,7 +3,7 @@ import IconButton from "./IconButton";
 import Text from "./Text";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
 
-import { colors, fontWeight, fontSize, radius, spacing } from "../constants/design";
+import { colors, common, fontWeight, fontSize, radius, spacing } from "../constants/design";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -115,7 +115,8 @@ function FloatingMovieHeader({
         <PlatformBlurView interactive style={[styles.buttonContainer]}>
           <IconButton
             icon={backButtonIcon}
-            size={25}
+            size={28}
+            style={common.iconButton}
             onPress={onBack}
             iconColor={colors.text}
           />

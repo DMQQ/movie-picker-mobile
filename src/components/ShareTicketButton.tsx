@@ -7,7 +7,7 @@ import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
 import CinemaTicket from "./CinemaTicket";
-import { colors, fontSize, radius, spacing} from "../constants/design";
+import { colors, common, fontSize, radius, spacing} from "../constants/design";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -173,7 +173,7 @@ export function IconShareButton({ movie }: { movie: Movie | null | undefined }) 
 
   return (
     <>
-      <IconButton icon="share-variant" size={24} onPress={openModal} iconColor={colors.text} />
+      <IconButton icon="share-variant" size={28} style={common.iconButton} onPress={openModal} iconColor={colors.text} />
 
       <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={closeModal}>
         <View style={styles.modalOverlay}>

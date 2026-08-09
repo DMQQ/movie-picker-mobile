@@ -1,6 +1,13 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Text from "./Text";
-import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
+import {
+  colors,
+  fontWeight,
+  fontSize,
+  radius,
+  spacing,
+  withAlpha,
+} from "../constants/design";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 
 import Button from "./Button";
@@ -58,7 +65,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm + 2,
-    backgroundColor: "rgba(187, 134, 252, 0.08)",
+    backgroundColor: withAlpha(colors.primary, 0.08),
     borderLeftWidth: 3,
     borderLeftColor: colors.primary,
     borderRadius: radius.sm + 2,

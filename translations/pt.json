@@ -263,6 +263,11 @@
       "dialog-title": "Compartilhar coleção"
     }
   },
+  "lists": {
+    "favourites": "Favoritos",
+    "watchlist": "Assistir depois",
+    "watched": "Assistidos"
+  },
   "create-collection": {
     "title": "Criar coleção",
     "input-label": "Digite um nome para sua nova coleção",

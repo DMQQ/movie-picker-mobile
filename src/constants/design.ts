@@ -60,7 +60,9 @@ export const fontWeight = {
 };
 
 // ── Colors ────────────────────────────────────────────────────────────────
-// Exact MD2DarkTheme values, hardcoded so we can drop the paper dependency.
+// Base values from MD2DarkTheme, hardcoded so we can drop the paper dependency.
+// primary/error are brand overrides — the whole palette lives here, so tinted
+// variants (see withAlpha) and docs stay in sync.
 //
 // Migrate with find-replace:
 //   MD2DarkTheme.colors.primary     → colors.primary
@@ -68,10 +70,14 @@ export const fontWeight = {
 //   MD2DarkTheme.colors.background  → colors.background
 //   …etc (every key matches 1:1)
 export const colors = {
+  // ── Brand overrides (not MD2) ──
+  /** Royal blue — active tabs, buttons, links, checkboxes. */
+  primary: "#4169E1",
+  /** Crimson — destructive actions, errors. */
+  error: "#E5484D",
+
   // ── MD2DarkTheme (1:1) ──
-  primary: "#BB86FC",
   accent: "#03dac6",
-  error: "#CF6679",
   text: "#FFFFFF",
   onSurface: "#FFFFFF",
   placeholder: "rgba(255,255,255,0.54)",
@@ -79,16 +85,16 @@ export const colors = {
   backdrop: "rgba(0,0,0,0.5)",
   notification: "#ff80ab",
   tooltip: "rgba(230,225,229,1)",
-  surface: "#121212",
-  background: "#121212",
+  surface: "#12121B",
+  background: "#12121B",
 
   // ── App-specific (not in MD2) ──
-  /** Pure black — app screens use #000, paper uses #121212. */
-  appBackground: "#000",
+  /** Near-black navy — app screens. Slight blue undertone lifts the royal blue accent off pure black. */
+  appBackground: "#0A0A0F",
   /** Slightly lighter surface for elevated cards (skeleton, hover). */
-  surfaceElevated: "#2a2a2a",
+  surfaceElevated: "#2A2A3F",
   /** Input field / chip background — between background and surfaceElevated. */
-  input: "#1a1a1a",
+  input: "#1A1A27",
   /** Secondary gray text — lighter than placeholder, common in the app. */
   textSecondary: "#999",
   /** Hairline border on dark surfaces (~10% white). */
@@ -96,6 +102,11 @@ export const colors = {
   /** Subtle pressable overlay (~8% white). */
   overlay: "rgba(255,255,255,0.08)",
 } as const;
+
+/** Build an rgba tint from a hex color — use for primary-derived tints so
+ *  palette changes can't orphan hardcoded rgba values. */
+export const withAlpha = (hex: string, alpha: number) =>
+  `rgba(${parseInt(hex.slice(1, 3), 16)},${parseInt(hex.slice(3, 5), 16)},${parseInt(hex.slice(5, 7), 16)},${alpha})`;
 
 // ── Typography ────────────────────────────────────────────────────────────
 export const typography = {
@@ -125,7 +136,7 @@ export const common = {
     paddingHorizontal: spacing.sm + 2, // 10 — matches GenreChip
     paddingVertical: spacing.xs, // 4
   } as const,
-  /** Standard dark card (radius 16, bg #1a1a1a, overflow hidden). */
+  /** Standard dark card (radius 16, bg surface, overflow hidden). */
   card: {
     borderRadius: radius.card,
     backgroundColor: colors.surface,
@@ -134,5 +145,10 @@ export const common = {
   /** Screen-level content horizontal padding. */
   screenPadding: {
     paddingHorizontal: spacing.screen,
+  } as const,
+  /** Header icon button pill — 44 base (scales with screen). */
+  iconButton: {
+    width: spacing.xxl * 2 - spacing.xs,
+    height: spacing.xxl * 2 - spacing.xs,
   } as const,
 } as const;

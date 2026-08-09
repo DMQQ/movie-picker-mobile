@@ -10,10 +10,17 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Touch from "./Touch";
-import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
+import {
+  colors,
+  fontSize,
+  fontWeight,
+  radius,
+  spacing,
+} from "../constants/design";
 
 type Mode = "text" | "outlined" | "contained";
-type IconProp = string | ((props: { color: string; size: number }) => ReactNode);
+type IconProp =
+  string | ((props: { color: string; size: number }) => ReactNode);
 
 interface ButtonProps {
   mode?: Mode;
@@ -85,26 +92,28 @@ export default function Button({
             : colors.text
           : colors.primary;
 
-  const isReverse = StyleSheet.flatten(contentStyle)?.flexDirection === "row-reverse";
+  const isReverse =
+    StyleSheet.flatten(contentStyle)?.flexDirection === "row-reverse";
   const iconStyle = isReverse ? styles.iconReverse : styles.icon;
 
-  const iconElement =
-    loading ? (
-      <ActivityIndicator
-        size={ICON_SIZE}
-        color={resolvedTextColor}
-        style={[iconStyle, styles.loadingIcon]}
-      />
-    ) : typeof icon === "string" ? (
-      <MaterialCommunityIcons
-        name={icon as ComponentProps<typeof MaterialCommunityIcons>["name"]}
-        size={ICON_SIZE}
-        color={resolvedTextColor}
-        style={iconStyle}
-      />
-    ) : typeof icon === "function" ? (
-      <View style={iconStyle}>{icon({ color: resolvedTextColor, size: ICON_SIZE })}</View>
-    ) : null;
+  const iconElement = loading ? (
+    <ActivityIndicator
+      size={ICON_SIZE}
+      color={resolvedTextColor}
+      style={[iconStyle, styles.loadingIcon]}
+    />
+  ) : typeof icon === "string" ? (
+    <MaterialCommunityIcons
+      name={icon as ComponentProps<typeof MaterialCommunityIcons>["name"]}
+      size={ICON_SIZE}
+      color={resolvedTextColor}
+      style={iconStyle}
+    />
+  ) : typeof icon === "function" ? (
+    <View style={iconStyle}>
+      {icon({ color: resolvedTextColor, size: ICON_SIZE })}
+    </View>
+  ) : null;
 
   return (
     <Touch
@@ -126,7 +135,16 @@ export default function Button({
         style,
       ]}
     >
-      <View style={[styles.content, compact && styles.compactContent, contentStyle]}>
+      <View
+        style={[
+          styles.content,
+          compact && styles.compactContent,
+          icon !== null && {
+            gap: spacing.md,
+          },
+          contentStyle,
+        ]}
+      >
         {iconElement}
         <Text
           numberOfLines={1}

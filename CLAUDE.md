@@ -414,21 +414,21 @@ Always use numeric weights via tokens, never strings.
 | `fontWeight.bold` | `"700"` |
 
 #### Colors (`colors.*`)
-Exact MD2DarkTheme values, hardcoded — no paper dependency.
+MD2DarkTheme base values, hardcoded — no paper dependency. `primary`/`error` are brand overrides. For primary-derived tints use `withAlpha(colors.primary, x)` — never hardcoded rgba.
 
 | Token | Value | Usage |
 |---|---|---|
 | `colors.text` | `#fff` | Primary text |
 | `colors.placeholder` | `rgba(255,255,255,0.54)` | Muted/secondary text |
-| `colors.primary` | `#BB86FC` | Accent, active states |
-| `colors.error` | `#CF6679` | Destructive actions |
-| `colors.surface` | `#121212` | Card backgrounds |
-| `colors.background` | `#121212` | Page background (paper default) |
-| `colors.appBackground` | `#000` | Pure black (app screens) |
+| `colors.primary` | `#4169E1` | Royal blue — accent, active states |
+| `colors.error` | `#E5484D` | Crimson — destructive actions |
+| `colors.surface` | `#12121B` | Card backgrounds (dark navy) |
+| `colors.background` | `#12121B` | Page background (paper default) |
+| `colors.appBackground` | `#0A0A0F` | Near-black navy (app screens) |
 | `colors.border` | `rgba(255,255,255,0.1)` | Hairline dividers |
 | `colors.overlay` | `rgba(255,255,255,0.08)` | Pressable overlay |
-| `colors.surfaceElevated` | `#2a2a2a` | Skeleton, hover states |
-| `colors.input` | `#1a1a1a` | Input field / chip backgrounds |
+| `colors.surfaceElevated` | `#2A2A3F` | Skeleton, hover states (slate-blue) |
+| `colors.input` | `#1A1A27` | Input field / chip backgrounds |
 
 RULE: `colors.surface` for card backgrounds. `colors.appBackground` for full-screen backgrounds. `colors.text` for primary text. `colors.placeholder` for muted labels. `colors.border` for hairline separators.
 

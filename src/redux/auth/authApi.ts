@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "../../context/SocketContext";
 import { AuthUser, authActions } from "./authSlice";
-import { RootState } from "../store";
+import prepareHeaders from "../../service/prepareHeaders";
 
 interface AuthResponse {
   token: string;
@@ -24,11 +24,7 @@ export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
     baseUrl: baseUrl + "/api/auth",
-    prepareHeaders(headers, { getState }) {
-      const token = (getState() as RootState).auth.token;
-      if (token) headers.set("authorization", `Bearer ${token}`);
-      return headers;
-    },
+    prepareHeaders,
   }),
   endpoints: (build) => ({
     login: build.mutation<AuthResponse, { email: string; password: string; anonymousId?: string }>({

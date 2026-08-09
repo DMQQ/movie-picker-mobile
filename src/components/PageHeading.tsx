@@ -1,7 +1,7 @@
 import { useNavigation } from "expo-router";
 import IconButton from "./IconButton";
 import Text from "./Text";
-import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
+import { colors, common, fontWeight, fontSize, radius, spacing} from "../constants/design";
 import * as Haptic from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { PropsWithChildren } from "react";
@@ -89,7 +89,8 @@ export default function PageHeading({
             <PlatformBlurView interactive style={styles.buttonContainer}>
               <IconButton
                 icon="chevron-left"
-                size={25}
+                size={28}
+                style={common.iconButton}
                 onPress={() => {
                   onPress ? onPress() : navigation.goBack();
                   if (Platform.OS === "ios") {
@@ -133,7 +134,7 @@ export default function PageHeading({
                     {rightIconName && (
                       <IconButton
                         icon={rightIconName as any}
-                        size={20}
+                        size={22}
                         iconColor={colors.text}
                       />
                     )}
@@ -158,7 +159,8 @@ export default function PageHeading({
                 >
                   <IconButton
                     icon={rightIconName as any}
-                    size={25}
+                    size={28}
+                    style={common.iconButton}
                     onPress={() => {
                       if (onRightIconPress) onRightIconPress();
                       if (Platform.OS === "ios") {
@@ -184,7 +186,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 60,
+    height: spacing.xxl * 2 + spacing.lg,
     paddingHorizontal: spacing.screen,
     zIndex: 10,
   },
@@ -208,7 +210,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontFamily: "Bebas",
-    fontSize: 26,
+    fontSize: 30,
     color: colors.text,
     textAlign: "center",
   },

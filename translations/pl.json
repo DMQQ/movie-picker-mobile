@@ -263,6 +263,11 @@
       "dialog-title": "Udostępnij kolekcję"
     }
   },
+  "lists": {
+    "favourites": "Ulubione",
+    "watchlist": "Do obejrzenia",
+    "watched": "Obejrzane"
+  },
   "create-collection": {
     "title": "Stwórz Kolekcję",
     "input-label": "Wprowadź nazwę dla nowej kolekcji",

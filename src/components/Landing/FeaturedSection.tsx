@@ -1,83 +1,24 @@
 import { Link } from "expo-router";
 import Text from "../Text";
-import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
+import {
+  colors,
+  fontWeight,
+  fontSize,
+  radius,
+  spacing,
+} from "../../constants/design";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useMemo } from "react";
-import { Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
-
-import Button from "../Button";
+import { Dimensions, StyleSheet, View } from "react-native";
 import RatingIcons from "../RatingIcons";
 import Skeleton from "../Skeleton/Skeleton";
 import { Image, ImageBackground } from "expo-image";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as Haptics from "expo-haptics";
-import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
-import { Movie } from "../../../types";
-import useTranslation from "../../service/useTranslation";
 import { useGetFeaturedQuery } from "../../redux/movie/movieApi";
 import GenresView from "../GenresView";
 import Touch from "../Touch";
 
 const { width, height } = Dimensions.get("screen");
 const HERO_HEIGHT = height * 0.72;
-
-const FeaturedQuickActions = ({ movie }: { movie: Movie }) => {
-  const dispatch = useAppDispatch();
-  const groups = useAppSelector((state) => state.favourite.groups);
-
-  const isInGroup = (groupId: "1" | "2" | "999") => {
-    const group = groups.find((g) => g?.id === groupId);
-    if (!group) return false;
-    return group.movies.some((m) => m?.id === movie?.id);
-  };
-
-  const handlePress = (groupId: "1" | "2" | "999") => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (!movie) return;
-
-    if (!isInGroup(groupId)) {
-      dispatch(
-        addToGroup({
-          groupId,
-          item: {
-            id: movie.id,
-            imageUrl: movie.poster_path,
-            type: movie.type || (movie.title ? "movie" : "tv"),
-          },
-        }),
-      );
-    } else {
-      dispatch(removeFromGroup({ groupId, movieId: movie.id }));
-    }
-  };
-
-  return (
-    <View style={styles.quickActionsRow}>
-      <TouchableOpacity
-        style={styles.iconButton}
-        onPress={() => handlePress("2")}
-      >
-        <MaterialCommunityIcons
-          name={isInGroup("2") ? "clock" : "clock-check-outline"}
-          size={22}
-          color={colors.text}
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.iconButton}
-        onPress={() => handlePress("1")}
-      >
-        <MaterialCommunityIcons
-          name={isInGroup("1") ? "heart" : "heart-broken"}
-          size={20}
-          color={colors.text}
-        />
-      </TouchableOpacity>
-    </View>
-  );
-};
 
 export const FeaturedSectionSkeleton = memo(() => {
   return (
@@ -190,42 +131,6 @@ export const FeaturedSectionSkeleton = memo(() => {
             </Skeleton>
           </View>
 
-          {/* Action Row */}
-          <View style={styles.actionRow}>
-            <Skeleton>
-              <View
-                style={{
-                  width: width * 0.5,
-                  height: 42,
-                  backgroundColor: "#222",
-                  borderRadius: radius.pill,
-                }}
-              />
-            </Skeleton>
-
-            <View style={styles.quickActionsRow}>
-              <Skeleton>
-                <View
-                  style={{
-                    width: 44,
-                    height: 44,
-                    backgroundColor: "#222",
-                    borderRadius: radius.modal + 2,
-                  }}
-                />
-              </Skeleton>
-              <Skeleton>
-                <View
-                  style={{
-                    width: 44,
-                    height: 44,
-                    backgroundColor: "#222",
-                    borderRadius: radius.modal + 2,
-                  }}
-                />
-              </Skeleton>
-            </View>
-          </View>
         </View>
       </View>
     </View>
@@ -245,7 +150,6 @@ interface FeaturedSectionProps {
 }
 
 const FeaturedSection = memo(({ categoryId }: FeaturedSectionProps) => {
-  const t = useTranslation();
   const { data: featured, isLoading } = useGetFeaturedQuery(
     useMemo(
       () => ({
@@ -350,34 +254,6 @@ const FeaturedSection = memo(({ categoryId }: FeaturedSectionProps) => {
                   </Text>
                 </Touch>
               </Link>
-
-              <View style={styles.actionRow}>
-                <Link
-                  href={{
-                    pathname: "/movie/type/[type]/[id]",
-                    params: {
-                      id: featured?.id,
-                      type:
-                        featured?.type || (featured?.title ? "movie" : "tv"),
-                      img: featured?.poster_path,
-                    },
-                  }}
-                  asChild
-                >
-                  <Button
-                    mode="outlined"
-                    textColor={colors.text}
-                    style={styles.seeMoreButton}
-                    labelStyle={styles.seeMoreLabel}
-                    contentStyle={{ height: 42 }}
-                    icon="arrow-right"
-                  >
-                    {t("movie.details.show_more")}
-                  </Button>
-                </Link>
-
-                <FeaturedQuickActions movie={featured as Movie} />
-              </View>
             </View>
           </LinearGradient>
         </View>
@@ -401,7 +277,7 @@ const styles = StyleSheet.create({
     width,
     height: HERO_HEIGHT,
     position: "relative",
-    marginBottom: spacing.xl,
+    marginBottom: spacing.sm,
     marginTop: -100,
   },
   gradientContainer: {
@@ -410,7 +286,7 @@ const styles = StyleSheet.create({
   },
   contentWrapper: {
     paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xxl + 11,
+    paddingBottom: spacing.xl,
     paddingTop: spacing.xl,
   },
   topContentContainer: {
@@ -479,37 +355,6 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 5,
-  },
-  actionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: spacing.xs + 1,
-  },
-  seeMoreButton: {
-    borderRadius: radius.pill,
-    borderColor: "rgba(255,255,255,0.5)",
-    borderWidth: 1,
-    backgroundColor: colors.border,
-    flex: 1,
-    marginRight: spacing.xl,
-  },
-  seeMoreLabel: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.bold,
-    letterSpacing: 0.5,
-  },
-  quickActionsRow: {
-    flexDirection: "row",
-    gap: spacing.md,
-    alignItems: "center",
-  },
-  iconButton: {
-    backgroundColor: "rgba(0,0,0,0.4)",
-    padding: spacing.sm + 2,
-    borderRadius: 50,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.15)",
   },
 });
 

@@ -1,7 +1,14 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import Icon from "../../components/Icon";
 import Text from "../../components/Text";
-import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
+import {
+  colors,
+  fontWeight,
+  fontSize,
+  radius,
+  spacing,
+  withAlpha,
+} from "../../constants/design";
 import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
@@ -291,7 +298,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   sectionBadge: {
-    backgroundColor: "rgba(187,134,252,0.2)",
+    backgroundColor: withAlpha(colors.primary, 0.2),
     borderRadius: radius.modal,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs - 2,

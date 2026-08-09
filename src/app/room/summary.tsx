@@ -2,9 +2,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import Text from "../../components/Text";
 import { useCallback, useMemo, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
-
 import Button from "../../components/Button";
-import { FlashList } from "@shopify/flash-list";
 import PrimaryButton from "../../components/PrimaryButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
@@ -24,7 +22,14 @@ import ShareModal from "../../components/GameSummary/ShareModal";
 import { useGameSummary } from "../../hooks/useGameSummary";
 import useTranslation from "../../service/useTranslation";
 import { FlatList } from "react-native";
-import { colors, fontSize, fontWeight, radius, spacing, typography} from "../../constants/design";
+import {
+  colors,
+  fontSize,
+  fontWeight,
+  radius,
+  spacing,
+  typography,
+} from "../../constants/design";
 
 type MovieLike = { id?: number; title?: string; poster_path?: string };
 
@@ -267,7 +272,11 @@ const styles = StyleSheet.create({
     marginTop: spacing.xxl + 6,
   },
   sectionTitle: { fontSize: typography.bebasSize.section, fontFamily: "Bebas" },
-  movieRow: { flexDirection: "row", gap: spacing.sm + 2, marginBottom: spacing.screen },
+  movieRow: {
+    flexDirection: "row",
+    gap: spacing.sm + 2,
+    marginBottom: spacing.screen,
+  },
   movieCell: { flex: 1 },
   emptyState: {
     flex: 1,
@@ -275,7 +284,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: spacing.xxl + 6,
   },
-  emptyTitle: { color: colors.text, fontSize: typography.bebasSize.empty, fontFamily: "Bebas" },
+  emptyTitle: {
+    color: colors.text,
+    fontSize: typography.bebasSize.empty,
+    fontFamily: "Bebas",
+  },
   emptyDesc: {
     color: colors.text,
     fontSize: fontSize.lg,
@@ -285,6 +298,7 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     padding: spacing.screen,
+    paddingBottom: 0,
     gap: spacing.sm + 2,
     flexDirection: "row",
     backgroundColor: colors.appBackground,

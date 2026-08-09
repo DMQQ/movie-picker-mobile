@@ -12,16 +12,15 @@ import {
   useState,
   useTransition,
 } from "react";
-import {
-  Dimensions,
-  Platform,
-  View,
-  StyleSheet,
-  Pressable,
-  Share,
-} from "react-native";
+import { Dimensions, View, StyleSheet, Pressable, Share } from "react-native";
 
-import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
+import {
+  colors,
+  fontSize,
+  fontWeight,
+  radius,
+  spacing,
+} from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import StyledQRCode from "../../components/StyledQRCode";
 import { Movie } from "../../../types";
@@ -42,6 +41,7 @@ import { useFilterPreferences } from "../../hooks/useFilterPreferences";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
+import { Platform } from "react-native";
 
 const SYNC_PHRASES = [
   "Calculating scores...",
@@ -330,7 +330,7 @@ export default function QRCodePage() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <PageHeading
         showGradientBackground={false}
         useSafeArea={false}
@@ -488,7 +488,13 @@ const QrCodeBox = memo(({ code }: { code: string }) => {
         style={styles.shareButton}
       >
         <View>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.xs + 1 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: spacing.xs + 1,
+            }}
+          >
             {!!code && code.length > 0 ? (
               <>
                 {code.split("").map((char, index) => (
@@ -540,8 +546,8 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     padding: spacing.screen,
-    paddingBottom: spacing.screen,
     gap: spacing.xs + 3.5,
+    paddingBottom: Platform.OS === "android" ? spacing.screen : 0,
   },
   activeUsersRow: {
     flexDirection: "row",

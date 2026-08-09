@@ -3,7 +3,13 @@ import { StyleSheet, type StyleProp, type TextStyle, type ViewStyle } from "reac
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Touch from "./Touch";
 import Text from "./Text";
-import { colors, fontSize, fontWeight, spacing } from "../constants/design";
+import {
+  colors,
+  fontSize,
+  fontWeight,
+  spacing,
+  withAlpha,
+} from "../constants/design";
 
 interface ChipProps {
   icon?: string;
@@ -60,7 +66,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   chipSelected: {
-    backgroundColor: "rgba(187,134,252,0.15)",
+    backgroundColor: withAlpha(colors.primary, 0.15),
     borderColor: colors.primary,
   },
   label: {
