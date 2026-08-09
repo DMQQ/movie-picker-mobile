@@ -25,6 +25,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import useTranslation from "../../../service/useTranslation";
 import AuthAccount from "../../../components/AuthAccount";
 import UnauthAccount from "../../../components/UnauthAccount";
+import ScoringPreferencesButton from "../../../components/ScoringPreferencesButton";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../../constants/design";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
@@ -213,6 +214,11 @@ export default function SettingsScreen() {
             </View>
           </Animated.View>
         )}
+
+        <Animated.View entering={FadeInDown.delay(180)} style={styles.section}>
+          <SectionLabel icon="tune-variant" title="PREFERENCES" />
+          <ScoringPreferencesButton />
+        </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(220)} style={styles.section}>
           <SectionLabel icon="information-outline" title="APP" />

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import Icon from "./Icon";
 import Text from "./Text";
@@ -23,7 +24,12 @@ function formatDate(unix: number) {
 }
 
 export default function RecentGames() {
-  const { data, isLoading } = useGetGamesQuery();
+  const { data, isLoading, error } = useGetGamesQuery();
+
+  useEffect(() => {
+    if (error) console.error("[RecentGames] fetch error:", JSON.stringify(error));
+  }, [error]);
+
   const allGames = data?.games ?? [];
   const recent = [...allGames].reverse().slice(0, FAN_COUNT);
   const posterGames = recent.filter((g): g is typeof g & { posterPath: string } => !!g.posterPath);

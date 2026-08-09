@@ -5,6 +5,7 @@ export default function SettingsLayout() {
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.appBackground } }}>
       <Stack.Screen name="index" />
+      <Stack.Screen name="scoring-preferences" />
     </Stack>
   );
 }

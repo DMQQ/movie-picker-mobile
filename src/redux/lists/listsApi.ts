@@ -164,11 +164,25 @@ export const listsApi = createApi({
         return currentArg?.page !== previousArg?.page;
       },
       providesTags: [{ type: "List", id: "ALL" }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          console.error("[listsApi.getLists] fetch error:", JSON.stringify(err));
+        }
+      },
     }),
 
     getList: build.query<GetListResponse, string>({
       query: (type) => `/lists/${type}?limit=200`,
       providesTags: (_result, _err, type) => [{ type: "ListItems", id: type }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          console.error("[listsApi.getList] fetch error:", JSON.stringify(err));
+        }
+      },
     }),
 
     addItem: build.mutation<OkResponse, { type: string } & AddItemBody>({
@@ -222,6 +236,13 @@ export const listsApi = createApi({
 
     getGames: build.query<GetGamesResponse, void>({
       query: () => "/games",
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          console.error("[listsApi.getGames] fetch error:", JSON.stringify(err));
+        }
+      },
     }),
 
     getGame: build.query<GameByIdResponse, string>({

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import Icon from "./Icon";
 import Text from "./Text";
@@ -45,7 +46,12 @@ function SectionHeader({ icon, title, badge, onSeeAll }: SectionHeaderProps) {
 }
 
 export default function AuthAccount({ user }: Props) {
-  const { data, refetch } = useGetGamesQuery();
+  const { data, refetch, error } = useGetGamesQuery();
+
+  useEffect(() => {
+    if (error) console.error("[AuthAccount] getGames error:", JSON.stringify(error));
+  }, [error]);
+
   const gameCount = data?.games.length ?? 0;
 
   useFocusEffect(useCallback(() => { refetch(); }, [refetch]));
