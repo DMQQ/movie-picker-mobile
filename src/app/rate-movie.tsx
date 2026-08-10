@@ -16,6 +16,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { rateInGroup } from "../redux/favourites/favourites";
 import { useUpsertRatingMutation, useGetMyRatingQuery } from "../redux/ratings/ratingsApi";
+import { usePatchItemMutation } from "../redux/lists/listsApi";
 import { spacing } from "../constants/design";
 
 export default function RateMovieScreen() {
@@ -24,12 +25,15 @@ export default function RateMovieScreen() {
     contentType: string;
     groupId?: string;
     rating?: string;
-    note?: string;
+    review?: string;
+    itemId?: string;
+    listType?: string;
   }>();
 
   const user = useAppSelector((s) => s.auth.user);
   const dispatch = useAppDispatch();
   const [upsertRating] = useUpsertRatingMutation();
+  const [patchItem] = usePatchItemMutation();
 
   const { data: existingRating } = useGetMyRatingQuery(
     { contentType: params.contentType, contentId: Number(params.movieId) },
@@ -39,13 +43,13 @@ export default function RateMovieScreen() {
   const [rating, setRating] = useState<number | null>(
     params.rating ? Number(params.rating) : null,
   );
-  const [note, setNote] = useState(params.note ?? "");
+  const [review, setReview] = useState(params.review ?? "");
   const [prefilled, setPrefilled] = useState(!!params.rating);
 
   useEffect(() => {
     if (existingRating && !prefilled) {
       setRating(existingRating.rating);
-      setNote(existingRating.review ?? "");
+      setReview(existingRating.review ?? "");
       setPrefilled(true);
     }
   }, [existingRating, prefilled]);
@@ -60,14 +64,22 @@ export default function RateMovieScreen() {
         contentType: params.contentType,
         contentId: Number(params.movieId),
         rating: rating!,
-        review: note.trim() || null,
+        review: review.trim() || null,
       });
+      if (params.itemId) {
+        await patchItem({
+          itemId: params.itemId,
+          listType: params.listType,
+          rating,
+          review: review.trim() || null,
+        });
+      }
     } else if (params.groupId) {
       dispatch(rateInGroup({
         groupId: params.groupId,
         movieId: Number(params.movieId),
         rating,
-        note: note.trim() || null,
+        review: review.trim() || null,
       }));
     }
 
@@ -98,9 +110,9 @@ export default function RateMovieScreen() {
       </View>
 
       <TextInput
-        placeholder="Add a note…"
-        value={note}
-        onChangeText={setNote}
+        placeholder="Add a review…"
+        value={review}
+        onChangeText={setReview}
         multiline
         maxLength={300}
         style={{ marginBottom: spacing.xxl }}

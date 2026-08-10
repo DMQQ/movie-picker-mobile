@@ -14,12 +14,14 @@ interface AuthState {
   token: string | null;
   user: AuthUser | null;
   sessionExpired: boolean;
+  anonymousBlocked: boolean;
 }
 
 const initialState: AuthState = {
   token: null,
   user: null,
   sessionExpired: false,
+  anonymousBlocked: false,
 };
 
 export const restoreSession = createAsyncThunk(
@@ -71,6 +73,12 @@ export const authSlice = createSlice({
     },
     setSessionExpired(state) {
       state.sessionExpired = true;
+    },
+    setAnonymousBlocked(state) {
+      state.anonymousBlocked = true;
+    },
+    clearAnonymousBlocked(state) {
+      state.anonymousBlocked = false;
     },
   },
   extraReducers: (builder) => {

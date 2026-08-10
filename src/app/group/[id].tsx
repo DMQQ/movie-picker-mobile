@@ -25,6 +25,7 @@ export default function Group() {
 
   const openRateSheet = (item: GroupMovie) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const remoteItemId = isRemote ? itemIdMap.get(item.id) : undefined;
     router.push({
       pathname: "/rate-movie",
       params: {
@@ -32,7 +33,8 @@ export default function Group() {
         contentType: item.type ?? "movie",
         groupId: data?.id ?? "",
         rating: item.rating != null ? String(item.rating) : "",
-        note: item.note ?? "",
+        review: item.review ?? "",
+        ...(remoteItemId ? { itemId: remoteItemId, listType: listType ?? "" } : {}),
       },
     });
   };
@@ -64,8 +66,8 @@ export default function Group() {
               onPress={() => openRateSheet(item)}
             />
           </View>
-          {!!item.note && (
-            <Text style={styles.note} numberOfLines={1}>{item.note}</Text>
+          {!!item.review && (
+            <Text style={styles.review} numberOfLines={1}>{item.review}</Text>
           )}
         </View>
       )}
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
   trashButton: {
     margin: 0,
   },
-  note: {
+  review: {
     fontSize: fontSize.xs,
     color: "#888",
     marginTop: spacing.xs,

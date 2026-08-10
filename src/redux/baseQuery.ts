@@ -6,6 +6,7 @@ import {
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
 import type { BaseQueryApi } from "@reduxjs/toolkit/query";
+import { authActions } from "./auth/authSlice";
 
 // At most one Sentry event per (url, status) per 60s — survives server flaps
 // and offline storms without flooding the dashboard.
@@ -66,6 +67,13 @@ export function createReportingBaseQuery(
     const result = await baseQuery(args, api, extraOptions);
     if (result.error) {
       reportNetworkError(endpointName, args, api, result.error);
+      if (
+        result.error.status === 403 &&
+        (result.error.data as { message?: string })?.message ===
+          "Full account required"
+      ) {
+        api.dispatch(authActions.setAnonymousBlocked());
+      }
     }
     return result;
   };

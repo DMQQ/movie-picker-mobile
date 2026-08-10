@@ -15,12 +15,12 @@ export interface GroupMovie {
   imageUrl: string;
   type: string;
   rating?: number | null;
-  note?: string | null;
+  review?: string | null;
 }
 
 export interface RatePayload {
   rating?: number | null;
-  note?: string | null;
+  review?: string | null;
 }
 
 export function useGroupData() {
@@ -64,7 +64,7 @@ export function useGroupData() {
               imageUrl: item.content?.poster_path ?? "",
               type: item.contentType,
               rating: item.rating,
-              note: item.note,
+              review: item.review,
             }))
           : [],
       };
@@ -78,7 +78,7 @@ export function useGroupData() {
         imageUrl: m.imageUrl,
         type: m.type,
         rating: m.rating,
-        note: m.note,
+        review: m.review,
       })),
     };
   }, [isRemote, remoteListData, remoteGroupMeta, groups, params.id]);

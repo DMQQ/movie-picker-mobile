@@ -10,6 +10,7 @@ import {
   Linking,
   Platform,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Switch,
@@ -23,7 +24,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import PageHeading from "../../../components/PageHeading";
 import { roomActions } from "../../../redux/room/roomSlice";
 import { authActions } from "../../../redux/auth/authSlice";
-import { useDeleteMeMutation, useUpdateDeviceMutation } from "../../../redux/auth/authApi";
+import { useDeleteMeMutation, useUpdateDeviceMutation, useMeQuery } from "../../../redux/auth/authApi";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import useTranslation from "../../../service/useTranslation";
 import AuthAccount from "../../../components/AuthAccount";
@@ -97,6 +98,8 @@ export default function SettingsScreen() {
   const [updateDevice] = useUpdateDeviceMutation();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [systemPermission, setSystemPermission] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const { refetch: refetchMe } = useMeQuery(undefined, { skip: !user });
 
   useEffect(() => {
     AsyncStorage.getItemAsync("notificationsEnabled").then((val) => {
@@ -192,6 +195,19 @@ export default function SettingsScreen() {
     dispatch(roomActions.setSettings({ nickname: user.name }));
   }, [user?.name]);
 
+  async function onRefresh() {
+    setRefreshing(true);
+    try {
+      if (user) await refetchMe();
+      const { status } = await Notifications.getPermissionsAsync();
+      setSystemPermission(status);
+      const enabled = await AsyncStorage.getItemAsync("notificationsEnabled");
+      if (enabled === "false") setNotificationsEnabled(false);
+      else setNotificationsEnabled(true);
+    } catch {}
+    setRefreshing(false);
+  }
+
   const appVersion = (Updates.manifest as any)?.version ?? "—";
   const updateId = Updates.manifest?.id?.split("-")[0] ?? "—";
   const createdAt =
@@ -213,6 +229,14 @@ export default function SettingsScreen() {
           styles.scrollContent,
           { paddingBottom: insets.bottom + 150 },
         ]}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.placeholder}
+            colors={[colors.primary]}
+          />
+        }
       >
         {!user && (
           <Animated.View entering={FadeInDown.delay(60)} style={styles.section}>

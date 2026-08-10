@@ -40,7 +40,7 @@ export interface ListItem {
   contentType: ContentType;
   content: { title: string; poster_path: string | null };
   rating?: number | null;
-  note?: string | null;
+  review?: string | null;
   createdAt: number;
 }
 
@@ -218,7 +218,7 @@ export const listsApi = createApi({
       invalidatesTags: [{ type: "List", id: "ALL" }],
     }),
 
-    patchItem: build.mutation<OkResponse, { itemId: string; listType?: string; rating?: number | null; note?: string | null }>({
+    patchItem: build.mutation<OkResponse, { itemId: string; listType?: string; rating?: number | null; review?: string | null }>({
       query: ({ itemId, listType: _listType, ...body }) => ({
         url: `/lists/items/${itemId}`,
         method: "PATCH",

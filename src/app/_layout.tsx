@@ -1,9 +1,9 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import * as SecureStore from "expo-secure-store";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import { ThemeProvider, DarkTheme } from "expo-router/react-navigation";
 import { useEffect, useRef, useState } from "react";
-import { Platform } from "react-native";
+import { Platform, Alert } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PortalProvider } from "../components/Portal";
 import { colors } from "../constants/design";
@@ -13,9 +13,9 @@ import {
 } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { roomActions } from "../redux/room/roomSlice";
-import { restoreSession } from "../redux/auth/authSlice";
+import { restoreSession, authActions } from "../redux/auth/authSlice";
 import { setUserId } from "../redux/app/appSlice";
-import { store, useAppDispatch } from "../redux/store";
+import { store, useAppDispatch, useAppSelector } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { DatabaseProvider } from "../context/DatabaseContext";
@@ -79,6 +79,7 @@ function RootLayout() {
             <Provider store={store}>
               <DatabaseProvider>
                 <PushTokenRegistrar />
+                <AnonymousBlockedWatcher />
                 <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
               </DatabaseProvider>
             </Provider>
@@ -93,6 +94,30 @@ SplashScreen.preventAutoHideAsync();
 
 function MaintenanceWatcher() {
   useMaintenance();
+  return null;
+}
+
+function AnonymousBlockedWatcher() {
+  const dispatch = useAppDispatch();
+  const anonymousBlocked = useAppSelector((state) => state.auth.anonymousBlocked);
+
+  useEffect(() => {
+    if (!anonymousBlocked) return;
+    Alert.alert(
+      "Account required",
+      "Create a free account to use this feature — it only takes a moment.",
+      [
+        { text: "Not now", style: "cancel" },
+        {
+          text: "Create account",
+          onPress: () =>
+            router.push({ pathname: "/auth/register", params: { presentation: "formSheet" } }),
+        },
+      ],
+    );
+    dispatch(authActions.clearAnonymousBlocked());
+  }, [anonymousBlocked]);
+
   return null;
 }
 

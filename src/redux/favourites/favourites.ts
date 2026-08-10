@@ -14,7 +14,7 @@ interface FavoriteItem {
   type: MediaType;
   remoteItemId?: string;
   rating?: number | null;
-  note?: string | null;
+  review?: string | null;
 }
 
 interface FavoriteGroup {
@@ -424,7 +424,7 @@ export const createGroupFromArray = createAsyncThunk(
 export const rateInGroup = createAsyncThunk(
   "favorites/rateInGroup",
   async (
-    { groupId, movieId, rating, note }: { groupId: string; movieId: number; rating?: number | null; note?: string | null },
+    { groupId, movieId, rating, review }: { groupId: string; movieId: number; rating?: number | null; review?: string | null },
     { getState }
   ) => {
     const state = getState() as RootState;
@@ -433,7 +433,7 @@ export const rateInGroup = createAsyncThunk(
       return {
         ...g,
         movies: g.movies.map((m) =>
-          m.id === movieId ? { ...m, rating: rating ?? null, note: note ?? null } : m
+          m.id === movieId ? { ...m, rating: rating ?? null, review: review ?? null } : m
         ),
       };
     });

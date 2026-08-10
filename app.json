@@ -55,7 +55,15 @@
         }
       ],
       "expo-secure-store",
-      "expo-notifications",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#4169E1",
+          "defaultChannel": "default",
+          "mode": "development"
+        }
+      ],
       "expo-localization",
       "expo-image",
       "expo-sharing",
