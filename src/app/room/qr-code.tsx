@@ -389,6 +389,25 @@ export default function QRCodePage() {
           </View>
         </View>
 
+        {qrCode ? (
+          <Pressable
+            style={styles.inviteButton}
+            onPress={() =>
+              router.push({
+                pathname: "/room/invite-players",
+                params: { roomId: qrCode, gameType: "swipe" },
+              })
+            }
+          >
+            <MaterialCommunityIcons
+              name="account-plus-outline"
+              size={18}
+              color={colors.primary}
+            />
+            <Text style={styles.inviteButtonText}>Invite Players</Text>
+          </Pressable>
+        ) : null}
+
         <PrimaryButton
           disabled={
             !qrCode ||
@@ -582,6 +601,21 @@ const styles = StyleSheet.create({
   },
   startButtonContent: {
     paddingVertical: spacing.sm,
+  },
+  inviteButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: radius.pill,
+    paddingVertical: spacing.md,
+  },
+  inviteButtonText: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.semibold,
+    color: colors.primary,
   },
   tutorialContainer: {
     marginTop: spacing.screen,

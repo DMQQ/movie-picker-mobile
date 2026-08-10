@@ -21,6 +21,12 @@ interface RecoveryCodesResponse {
   recoveryCodes: string[];
 }
 
+interface DeviceUpdate {
+  platform: string;
+  pushNotificationToken: string | null;
+  notificationsEnabled: boolean;
+}
+
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: createReportingBaseQuery("auth", fetchBaseQuery({
@@ -90,6 +96,10 @@ export const authApi = createApi({
       query: () => ({ url: "/me/recovery-codes", method: "POST" }),
     }),
 
+    updateDevice: build.mutation<{ ok: boolean }, DeviceUpdate>({
+      query: (body) => ({ url: "/me/device", method: "PATCH", body }),
+    }),
+
     deleteMe: build.mutation<{ ok: boolean }, void>({
       query: () => ({ url: "/me", method: "DELETE" }),
     }),
@@ -116,4 +126,5 @@ export const {
   useMeQuery,
   useDeleteMeMutation,
   useUpdateMeMutation,
+  useUpdateDeviceMutation,
 } = authApi;

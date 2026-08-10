@@ -52,6 +52,18 @@ export default function RootLayout() {
             <Stack.Screen name="overview" options={{ headerShown: false }} />
 
             <Stack.Screen name="qr-code" options={{ headerShown: false }} />
+
+            <Stack.Screen
+              name="invite-players"
+              options={{
+                headerShown: false,
+                gestureEnabled: true,
+                presentation: "formSheet",
+                sheetGrabberVisible: true,
+                sheetAllowedDetents: [0.5, 0.85],
+                sheetInitialDetentIndex: 0,
+              }}
+            />
           </Stack>
         </RoomContextProvider>
       </SocketProvider>

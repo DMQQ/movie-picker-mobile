@@ -2,6 +2,8 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
 import { colors } from "../constants/design";
+import { baseUrl } from "../context/SocketContext";
+import envs from "../constants/envs";
 
 export default function Unmatched() {
   const params = useLocalSearchParams();
@@ -11,7 +13,6 @@ export default function Unmatched() {
 
     console.log("Unmatched route detected:", { url, params });
 
-    // Handle custom deep links here
     if (url.startsWith("swipe/")) {
       const roomId = url.replace("swipe/", "");
       router.replace({
@@ -35,6 +36,36 @@ export default function Unmatched() {
         pathname: "/room/qr-code",
         params: { quickStart: "true" },
       });
+      return;
+    }
+
+    if (url.startsWith("invite/")) {
+      const inviteId = url.replace("invite/", "");
+      fetch(`${baseUrl}/api/invites/${inviteId}`, {
+        headers: { authorization: `Bearer ${envs.server_auth_token}` },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("invite fetch failed");
+          return res.json();
+        })
+        .then(({ invite }) => {
+          if (invite.status !== "pending") {
+            router.replace("/");
+            return;
+          }
+          if (invite.gameType === "voter") {
+            router.replace({
+              pathname: "/voter",
+              params: { sessionId: invite.roomId, inviteId: invite.id },
+            });
+          } else {
+            router.replace({
+              pathname: "/room/[roomId]",
+              params: { roomId: invite.roomId, inviteId: invite.id },
+            });
+          }
+        })
+        .catch(() => router.replace("/"));
       return;
     }
 

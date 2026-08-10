@@ -7,20 +7,23 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Alert,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
   StyleSheet,
+  Switch,
   View,
 } from "react-native";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
+import * as Notifications from "expo-notifications";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import PageHeading from "../../../components/PageHeading";
 import { roomActions } from "../../../redux/room/roomSlice";
 import { authActions } from "../../../redux/auth/authSlice";
-import { useDeleteMeMutation } from "../../../redux/auth/authApi";
+import { useDeleteMeMutation, useUpdateDeviceMutation } from "../../../redux/auth/authApi";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import useTranslation from "../../../service/useTranslation";
 import AuthAccount from "../../../components/AuthAccount";
@@ -91,8 +94,58 @@ export default function SettingsScreen() {
   const t = useTranslation();
   const insets = useSafeAreaInsets();
   const [deleteMe] = useDeleteMeMutation();
+  const [updateDevice] = useUpdateDeviceMutation();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [systemPermission, setSystemPermission] = useState<string | null>(null);
+
+  useEffect(() => {
+    AsyncStorage.getItemAsync("notificationsEnabled").then((val) => {
+      if (val === "false") setNotificationsEnabled(false);
+    });
+    Notifications.getPermissionsAsync().then(({ status }) => {
+      setSystemPermission(status);
+    });
+  }, []);
+
+  async function handleToggleNotifications(value: boolean) {
+    if (value) {
+      const { status } = await Notifications.requestPermissionsAsync();
+      setSystemPermission(status);
+      if (status !== "granted") {
+        setNotificationsEnabled(false);
+        Alert.alert(
+          "Notifications disabled",
+          "Enable notifications in system settings to receive game invites.",
+          [
+            { text: "Cancel", style: "cancel" },
+            { text: "Open Settings", onPress: () => Linking.openSettings() },
+          ],
+        );
+        return;
+      }
+      await AsyncStorage.setItem("notificationsEnabled", "true");
+      setNotificationsEnabled(true);
+      try {
+        const token = (await Notifications.getExpoPushTokenAsync()).data;
+        await updateDevice({
+          platform: Platform.OS,
+          pushNotificationToken: token,
+          notificationsEnabled: true,
+        }).unwrap();
+      } catch {}
+    } else {
+      await AsyncStorage.setItem("notificationsEnabled", "false");
+      setNotificationsEnabled(false);
+      try {
+        await updateDevice({ pushNotificationToken: null, platform: Platform.OS, notificationsEnabled: false }).unwrap();
+      } catch {}
+    }
+  }
 
   async function handleSignOut() {
+    try {
+      await updateDevice({ pushNotificationToken: null, platform: Platform.OS, notificationsEnabled: false }).unwrap();
+    } catch {}
     await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
     dispatch(authActions.clearAuth());
   }
@@ -218,6 +271,29 @@ export default function SettingsScreen() {
         <Animated.View entering={FadeInDown.delay(180)} style={styles.section}>
           <SectionLabel icon="tune-variant" title="PREFERENCES" />
           <ScoringPreferencesButton />
+          <Pressable
+            style={styles.notifCard}
+            onPress={() => handleToggleNotifications(!notificationsEnabled)}
+          >
+            <View style={styles.notifLeft}>
+              <Icon source="bell-outline" size={16} color={colors.placeholder} />
+              <Text style={styles.notifLabel}>Push notifications</Text>
+            </View>
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={handleToggleNotifications}
+              trackColor={{ false: colors.border, true: colors.primary }}
+              thumbColor={colors.text}
+            />
+          </Pressable>
+          {systemPermission === "denied" ? (
+            <Text style={styles.notifHint}>
+              Notifications are disabled in system settings.{" "}
+              <Text style={styles.notifHintLink} onPress={() => Linking.openSettings()}>
+                Open settings
+              </Text>
+            </Text>
+          ) : null}
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(220)} style={styles.section}>
@@ -331,6 +407,28 @@ const styles = StyleSheet.create({
   actionRowInner: { flexDirection: "row", alignItems: "center", gap: spacing.sm + 2 },
   actionRowText: { fontSize: fontSize.md, color: colors.text },
   actionRowTextDanger: { fontSize: fontSize.md, color: colors.error },
+
+  notifCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.md + 2,
+    paddingHorizontal: spacing.md + 2,
+    paddingVertical: spacing.sm,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  notifLeft: { flexDirection: "row", alignItems: "center", gap: spacing.sm + 2 },
+  notifLabel: { fontSize: fontSize.md, color: colors.text },
+  notifHint: {
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
+    lineHeight: fontSize.sm + 6,
+    paddingHorizontal: spacing.md + 2,
+  },
+  notifHintLink: {
+    color: colors.primary,
+    fontWeight: fontWeight.semibold,
+  },
 
   devButton: {
     color: colors.error,
