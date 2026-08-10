@@ -28,7 +28,7 @@ export default function MatchedItem({ summary, badge = false, ...item }: Props) 
       ? dispatch(removeFromGroup({ groupId: "1", movieId: item.id! }))
       : dispatch(
           addToGroup({
-            item: { id: item.id!, imageUrl: item.poster_path!, type: item.type as "movie" | "tv" },
+            item: { id: item.id!, imageUrl: item.poster_path!, type: item.type as "movie" | "tv", title: item.title || item.name },
             groupId: "1",
           }),
         );

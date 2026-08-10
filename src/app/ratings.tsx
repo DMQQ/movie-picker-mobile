@@ -26,7 +26,7 @@ function RatingRow({ item }: { item: UserRating }) {
       onPress={() =>
         router.push({
           pathname: "/movie/type/[type]/[id]",
-          params: { type: item.contentType, id: String(item.contentId) },
+          params: { type: item.contentType, id: String(item.contentId), img: item.content?.poster_path ?? "" },
         } as any)
       }
     >

@@ -1,13 +1,12 @@
-import { memo, useContext } from "react";
+import { memo } from "react";
 import useRoomMatches from "../../service/useRoomMatches";
 import MatchModal from "../Movie/MatchModal";
 import { useAppSelector } from "../../redux/store";
-import { SocketContext } from "../../context/SocketContext";
 
 const RoomMatches = memo(() => {
   const roomId = useAppSelector((state) => state.room.roomId);
   const authUserId = useAppSelector((state) => state.auth.user?.id);
-  const { userId } = useContext(SocketContext);
+  const userId = useAppSelector((state) => state.app.userId);
   const { isFocused, hideMatchModal, match, partialMatch, hidePartialMatch } = useRoomMatches(roomId);
 
   const isPartial = !match && !!partialMatch;

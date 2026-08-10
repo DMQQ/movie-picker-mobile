@@ -126,6 +126,10 @@ function MovieDetails({
           {movie?.title || movie?.name || "-"}
         </Text>
 
+        {originalTitle && (
+          <Text style={styles.categories}>{originalTitle}</Text>
+        )}
+
         {!!movie?.tagline && (
           <Text style={styles.tagline}>
             {movie?.tagline ? `"${movie?.tagline}"` : ""}
@@ -141,10 +145,6 @@ function MovieDetails({
             {releaseYear && <GenreChip genre={releaseYear} />}
             <GenresView genres={genres} />
           </View>
-        )}
-
-        {originalTitle && (
-          <Text style={styles.categories}>{originalTitle}</Text>
         )}
 
         <View style={{ paddingVertical: spacing.md, gap: spacing.md }}>
@@ -206,7 +206,6 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontFamily: "Bebas",
     lineHeight: 55,
-    marginTop: spacing.sm + 2,
   },
 
   tagline: {
@@ -215,12 +214,15 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm + 2,
   },
 
-  categories: { color: "rgba(255,255,255,0.7)", fontSize: fontSize.md + 1 },
+  categories: {
+    color: "rgba(255,255,255,0.7)",
+    fontSize: fontSize.md + 1,
+    marginBottom: spacing.sm + 2,
+  },
   chipsRow: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: spacing.sm - 2,
-    marginTop: spacing.sm,
   },
 
   rating: { flexDirection: "row", marginBottom: spacing.sm + 2 },

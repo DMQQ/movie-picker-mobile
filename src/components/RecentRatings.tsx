@@ -90,7 +90,14 @@ export default function RecentRatings() {
         </Text>
         <View style={styles.meta}>
           <View style={styles.stat}>
-            <Icon source="star" size={10} color="#FFD700" />
+            {Array.from({ length: 10 }, (_, i) => (
+              <Icon
+                key={i}
+                source={i < avgRating ? "star" : "star-outline"}
+                size={10}
+                color={i < avgRating ? "#FFD700" : colors.border}
+              />
+            ))}
             <Text style={styles.statValue}>{avgRating}/10 avg</Text>
           </View>
           <View style={styles.latestRow}>

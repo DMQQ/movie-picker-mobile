@@ -60,7 +60,11 @@ function GroupCard({ item }: { item: UserList }) {
     >
       <Link.Trigger>
         <View
-          style={{ borderRadius: radius.sm + 2, overflow: "hidden", position: "relative" }}
+          style={{
+            borderRadius: radius.sm + 2,
+            overflow: "hidden",
+            position: "relative",
+          }}
         >
           <ImageBackground
             blurRadius={20}
@@ -75,7 +79,9 @@ function GroupCard({ item }: { item: UserList }) {
                   color={colors.text}
                   style={{ opacity: 0.5 }}
                 />
-                <Text style={{ fontSize: fontSize.sm - 1, textAlign: "center" }}>
+                <Text
+                  style={{ fontSize: fontSize.sm - 1, textAlign: "center" }}
+                >
                   {t("favourites.empty")}
                 </Text>
               </View>
@@ -110,10 +116,14 @@ function SpecialCardsFooter() {
   const t = useTranslation();
 
   return (
-    <View style={{ gap: spacing.screen, marginTop: spacing.screen }}>
+    <View style={{ gap: spacing.screen }}>
       <Pressable onPress={() => router.push("/group/super-liked")}>
         <View
-          style={{ borderRadius: radius.sm + 2, overflow: "hidden", position: "relative" }}
+          style={{
+            borderRadius: radius.sm + 2,
+            overflow: "hidden",
+            position: "relative",
+          }}
         >
           <ImageBackground
             blurRadius={20}
@@ -167,7 +177,11 @@ function SpecialCardsFooter() {
 
       <Pressable onPress={() => router.push("/group/blocked")}>
         <View
-          style={{ borderRadius: radius.sm + 2, overflow: "hidden", position: "relative" }}
+          style={{
+            borderRadius: radius.sm + 2,
+            overflow: "hidden",
+            position: "relative",
+          }}
         >
           <ImageBackground
             blurRadius={20}
@@ -232,12 +246,15 @@ export default function RemoteFavouritesList({ listHeader, listRef }: Props) {
 
   const { data, isFetching, refetch } = useGetListsQuery({ page });
 
-  useFocusEffect(useCallback(() => { refetch(); }, [refetch]));
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   const groups = (data?.lists ?? []).filter(
     (l) => !INTERACTION_LIST_TYPES.has(l.type),
   );
-  // data.lists is the accumulated array across all pages; data.total is the server total
   const hasMore = data ? data.lists.length < data.total : false;
 
   const loadMore = useCallback(() => {
@@ -250,7 +267,10 @@ export default function RemoteFavouritesList({ listHeader, listRef }: Props) {
       showsVerticalScrollIndicator={false}
       data={groups}
       keyExtractor={(item) => item.id}
-      contentContainerStyle={{ paddingTop: spacing.xl * 4, paddingBottom: spacing.xl * 3 }}
+      contentContainerStyle={{
+        paddingTop: spacing.xl * 4,
+        paddingBottom: spacing.xl * 5,
+      }}
       onEndReached={loadMore}
       onEndReachedThreshold={0.5}
       ListHeaderComponent={listHeader ? <>{listHeader}</> : null}

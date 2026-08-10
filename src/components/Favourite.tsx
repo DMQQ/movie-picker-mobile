@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import Text from "./Text";
 import { Movie } from "../../types";
 import { useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
@@ -58,11 +59,15 @@ const styles = StyleSheet.create({
     fontFamily: "Bebas",
     fontSize: fontSize.xxl,
     color: colors.text,
+    textAlign: "center",
+    width: "100%",
+    overflow: "hidden",
   },
   iconButton: {
     justifyContent: "center",
     alignItems: "center",
     gap: spacing.sm + 2,
     overflow: "hidden",
+    flex: 1,
   },
 });

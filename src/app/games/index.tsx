@@ -1,15 +1,68 @@
-import { Dimensions, FlatList, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import Icon from "../../components/Icon";
 import Text from "../../components/Text";
-import { colors, fontWeight, fontSize, spacing} from "../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PageHeading from "../../components/PageHeading";
-import GameCard from "../../components/GameCard";
-import { useGetGamesQuery } from "../../redux/lists/listsApi";
+import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
+import { useGetGamesQuery, type UserGame } from "../../redux/lists/listsApi";
+import { formatGameType } from "../../utils/formatGameType";
+import { router } from "expo-router";
 
-const CARD_WIDTH = Dimensions.get("window").width - 32;
-const CARD_HEIGHT = 210;
+const POSTER_W = 42;
+const POSTER_H = 62;
+
+function formatDate(unix: number) {
+  return new Date(unix * 1000).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function GameRow({ item }: { item: UserGame }) {
+  return (
+    <Pressable
+      style={styles.row}
+      onPress={() =>
+        router.push({
+          pathname: "/games/[id]",
+          params: { id: item.id, poster: item.posterPath ?? "" },
+        } as any)
+      }
+    >
+      <Thumbnail
+        path={item.posterPath ?? ""}
+        size={ThumbnailSizes.poster.small}
+        container={{
+          width: POSTER_W,
+          height: POSTER_H,
+          borderRadius: radius.xs + 2,
+        }}
+        showsPlaceholder={false}
+        priority="low"
+      />
+      <View style={styles.rowInfo}>
+        <Text style={styles.rowTitle} numberOfLines={1}>
+          {formatGameType(item.session?.gameType ?? null)}
+        </Text>
+        <View style={styles.rowMeta}>
+          {item.matchCount > 0 && (
+            <View style={styles.chip}>
+              <Icon source="heart" size={10} color={colors.primary} />
+              <Text style={styles.chipText}>
+                {item.matchCount} {item.matchCount !== 1 ? "matches" : "match"}
+              </Text>
+            </View>
+          )}
+          <Text style={styles.dateText}>{formatDate(item.createdAt)}</Text>
+        </View>
+      </View>
+      <Icon source="chevron-right" size={14} color={colors.textSecondary} />
+    </Pressable>
+  );
+}
 
 export default function AllGamesScreen() {
   const { data, isLoading } = useGetGamesQuery();
@@ -22,17 +75,19 @@ export default function AllGamesScreen() {
 
       <FlatList
         data={games}
+        showsVerticalScrollIndicator={false}
         keyExtractor={(g) => g.id}
-        renderItem={({ item }) => <GameCard game={item} width={CARD_WIDTH} height={CARD_HEIGHT} />}
+        renderItem={({ item }) => <GameRow item={item} />}
         contentContainerStyle={{
-          paddingTop: spacing.xxl * 5,
           paddingBottom: insets.bottom + 24,
           paddingHorizontal: spacing.lg,
-          gap: spacing.md,
         }}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListHeaderComponent={
           games.length > 0 ? (
-            <Text style={styles.countLabel}>{games.length} sessions played</Text>
+            <Text style={styles.countLabel}>
+              {games.length} sessions played
+            </Text>
           ) : null
         }
         ListEmptyComponent={
@@ -65,9 +120,51 @@ const styles = StyleSheet.create({
   countLabel: {
     fontSize: fontSize.sm - 1,
     color: "rgba(255,255,255,0.25)",
+    paddingTop: spacing.xxl * 5,
     paddingBottom: spacing.xs,
     textTransform: "uppercase",
     letterSpacing: 0.8,
+  },
+
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    paddingVertical: spacing.md,
+  },
+  rowInfo: { flex: 1, gap: spacing.xs },
+  rowTitle: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
+  },
+  rowMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    backgroundColor: "rgba(65,105,225,0.12)",
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.xs + 2,
+    paddingVertical: spacing.xs - 2,
+  },
+  chipText: {
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.medium,
+    color: colors.primary,
+  },
+  dateText: {
+    fontSize: fontSize.xs,
+    color: "rgba(255,255,255,0.25)",
+  },
+
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.border,
   },
 
   empty: { alignItems: "center", gap: spacing.sm + 2, paddingTop: spacing.xxl * 3 },

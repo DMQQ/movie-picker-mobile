@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import Skeleton from "../Skeleton/Skeleton";
-import { colors, radius, spacing} from "../../constants/design";
+import { colors, radius, spacing } from "../../constants/design";
 
 const { width } = Dimensions.get("screen");
 const CONTENT_WIDTH = width - 40;
@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 25,
     borderTopStartRadius: 25,
     padding: spacing.xl,
+    gap: spacing.sm,
   },
   handle: {
     width: 60,
@@ -91,9 +92,17 @@ const styles = StyleSheet.create({
 export default function MovieDetailsSkeleton() {
   return (
     <View style={styles.container}>
-      <Skeleton>
-        <View style={styles.handle} />
-      </Skeleton>
+      <View
+        style={{
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Skeleton>
+          <View style={styles.handle} />
+        </Skeleton>
+      </View>
 
       <Skeleton>
         <View style={styles.title} />

@@ -12,6 +12,7 @@ interface FavoriteItem {
   id: number;
   imageUrl: string;
   type: MediaType;
+  title?: string;
   remoteItemId?: string;
   rating?: number | null;
   review?: string | null;
@@ -215,7 +216,7 @@ export const addToGroup = createAsyncThunk(
           type: listType,
           contentId: item.id,
           contentType: item.type,
-          content: { title: "", poster_path: item.imageUrl || null },
+          content: { title: item.title ?? "", poster_path: item.imageUrl || null },
         })
       ).unwrap();
 

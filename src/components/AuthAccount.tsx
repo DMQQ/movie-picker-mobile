@@ -11,6 +11,7 @@ import AccountProfileHeader from "./AccountProfileHeader";
 import RecentGames from "./RecentGames";
 import RecentRatings from "./RecentRatings";
 import PlayedWith from "./PlayedWith";
+import { useGetMyRatingsQuery } from "../redux/ratings/ratingsApi";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 
 interface Props {
@@ -48,12 +49,14 @@ function SectionHeader({ icon, title, badge, onSeeAll }: SectionHeaderProps) {
 
 export default function AuthAccount({ user }: Props) {
   const { data, refetch, error } = useGetGamesQuery();
+  const { data: ratingsData } = useGetMyRatingsQuery({ limit: 1 });
 
   useEffect(() => {
     if (error) console.error("[AuthAccount] getGames error:", JSON.stringify(error));
   }, [error]);
 
   const gameCount = data?.games.length ?? 0;
+  const ratingsCount = ratingsData?.total ?? 0;
 
   useFocusEffect(useCallback(() => { refetch(); }, [refetch]));
 
@@ -76,7 +79,14 @@ export default function AuthAccount({ user }: Props) {
       </View>
 
       <View style={styles.section}>
-        <SectionHeader icon="star-outline" title="My Ratings" />
+        <SectionHeader
+          icon="star-outline"
+          title="My Ratings"
+          badge={ratingsCount > 0 ? ratingsCount : undefined}
+          onSeeAll={
+            ratingsCount > 0 ? () => router.push("/ratings" as any) : undefined
+          }
+        />
         <RecentRatings />
       </View>
 

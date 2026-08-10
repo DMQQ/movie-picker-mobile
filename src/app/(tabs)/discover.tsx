@@ -1,5 +1,5 @@
 import { memo, useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { useGetChipCategoriesQuery } from "../../redux/movie/movieApi";
 import LandingHeader from "../../components/LandingHeader";
 import CategoryPage from "../../components/Landing/CategoryPage";
@@ -8,7 +8,9 @@ import LoadingSkeleton from "../../components/Landing/LoadingSkeleton";
 import useIsMounted from "../../hooks/useIsMounted";
 import { FeaturedSectionSkeleton } from "../../components/Landing/FeaturedSection";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
-import { colors } from "../../constants/design";
+import Text from "../../components/Text";
+import Icon from "../../components/Icon";
+import { colors, fontSize, fontWeight, spacing } from "../../constants/design";
 
 export default function Landing() {
   return (
@@ -22,8 +24,7 @@ export default function Landing() {
 const PagerCategoryScreen = memo(() => {
   const [selectedChip, setSelectedChip] = useState("all");
 
-  const { data: chipCategoriesData } = useGetChipCategoriesQuery();
-  const chipCategories = chipCategoriesData ?? [];
+  const { data: chipCategoriesData = [], error, isLoading, refetch } = useGetChipCategoriesQuery();
 
   const handleChipPress = useCallback((chip: string) => {
     setSelectedChip(chip);
@@ -40,20 +41,64 @@ const PagerCategoryScreen = memo(() => {
     );
   }
 
+  if (error && !chipCategoriesData?.length) {
+    return (
+      <SafeIOSContainer style={{ flex: 1, paddingBottom: 0 }}>
+        <View style={styles.error}>
+          <Icon source="cloud-off-outline" size={44} color="rgba(255,255,255,0.12)" />
+          <Text style={styles.errorText}>Failed to load categories</Text>
+          <Pressable style={styles.retryBtn} onPress={() => refetch()}>
+            <Text style={styles.retryText}>RETRY</Text>
+          </Pressable>
+        </View>
+      </SafeIOSContainer>
+    );
+  }
+
   return (
     <SafeIOSContainer style={{ flex: 1, paddingBottom: 0 }}>
-      {chipCategories.length === 0 && (
+      {isLoading || chipCategoriesData?.length === 0 ? (
         <View style={StyleSheet.absoluteFill}>
           <LoadingSkeleton />
         </View>
-      )}
-      <CategoryPage key={selectedChip} categoryId={selectedChip} />
+      ) : (
+        <>
+          <CategoryPage key={selectedChip} categoryId={selectedChip} />
 
-      <CategoryPagerIndicator
-        chipCategories={chipCategories}
-        selectedChip={selectedChip}
-        onChipPress={handleChipPress}
-      />
+          <CategoryPagerIndicator
+            chipCategories={chipCategoriesData ?? []}
+            selectedChip={selectedChip}
+            onChipPress={handleChipPress}
+          />
+        </>
+      )}
     </SafeIOSContainer>
   );
+});
+
+const styles = StyleSheet.create({
+  error: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm + 2,
+    paddingHorizontal: spacing.xxl + 16,
+  },
+  errorText: {
+    fontSize: fontSize.md + 1,
+    color: "rgba(255,255,255,0.25)",
+    fontWeight: fontWeight.semibold,
+  },
+  retryBtn: {
+    backgroundColor: colors.overlay,
+    borderRadius: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+  },
+  retryText: {
+    fontSize: fontSize.sm + 1,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
+    letterSpacing: 0.8,
+  },
 });

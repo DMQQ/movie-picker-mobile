@@ -27,12 +27,10 @@ export const SocketContext = React.createContext<{
   socket: Socket | null;
   reconnect: () => void;
   emitter: EventEmitter<{ reconnected: () => void }>;
-  userId: string | null;
   connectionStatus: ConnectionStatus;
 }>({
   socket: null,
   reconnect: () => {},
-  userId: "",
   emitter: new EventEmitter<{ reconnected: any }>(),
   connectionStatus: "idle",
 });
@@ -98,14 +96,12 @@ export const SocketProvider = ({
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("idle");
   const appState = useRef(AppState.currentState);
   const wasConnected = useRef(false);
-  const [userId, setUserId] = useState<string | null>(null);
 
   const emitter = useEventEmitter<{ reconnected: any }>();
 
   const initializeSocket = async () => {
     try {
       const userId = await AsyncStorage.getItem("userId");
-      setUserId(userId);
 
       const newSocket = socketIOClient(baseUrl + namespace, {
         ...connectionConfig,
@@ -213,8 +209,8 @@ export const SocketProvider = ({
   };
 
   const memoizedValue = React.useMemo(
-    () => ({ socket, reconnect, emitter, userId, connectionStatus }),
-    [socket, userId, connectionStatus],
+    () => ({ socket, reconnect, emitter, connectionStatus }),
+    [socket, connectionStatus],
   );
 
   return (

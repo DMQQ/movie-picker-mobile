@@ -119,11 +119,6 @@ export default function Button({
     <Touch
       onPress={onPress}
       disabled={disabled}
-      android_ripple={
-        rippleColor
-          ? { color: rippleColor }
-          : { color: toRippleColor(resolvedTextColor) ?? "transparent" }
-      }
       style={[
         styles.button,
         compact && styles.compact,

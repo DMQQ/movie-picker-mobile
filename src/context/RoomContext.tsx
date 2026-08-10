@@ -34,7 +34,8 @@ export default function useRoomContext() {
 
 export function RoomContextProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
-  const { socket, emitter, userId } = useContext(SocketContext);
+  const { socket, emitter } = useContext(SocketContext);
+  const userId = useAppSelector((state) => state.app.userId);
   const userIdRef = useRef(userId);
   userIdRef.current = userId;
 

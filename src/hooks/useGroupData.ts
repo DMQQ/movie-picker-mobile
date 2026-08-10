@@ -14,6 +14,7 @@ export interface GroupMovie {
   id: number;
   imageUrl: string;
   type: string;
+  title?: string;
   rating?: number | null;
   review?: string | null;
 }
@@ -63,6 +64,7 @@ export function useGroupData() {
               id: item.contentId,
               imageUrl: item.content?.poster_path ?? "",
               type: item.contentType,
+              title: item.content?.title,
               rating: item.rating,
               review: item.review,
             }))
@@ -77,6 +79,7 @@ export function useGroupData() {
         id: m.id,
         imageUrl: m.imageUrl,
         type: m.type,
+        title: undefined,
         rating: m.rating,
         review: m.review,
       })),

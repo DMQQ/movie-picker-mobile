@@ -3,7 +3,14 @@ import IconButton from "./IconButton";
 import Text from "./Text";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
 
-import { colors, common, fontWeight, fontSize, radius, spacing } from "../constants/design";
+import {
+  colors,
+  common,
+  fontWeight,
+  fontSize,
+  radius,
+  spacing,
+} from "../constants/design";
 import Animated, {
   useAnimatedStyle,
   withTiming,
@@ -253,7 +260,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     borderRadius: radius.pill,
     overflow: "hidden",
-    backgroundColor: colors.appBackground,
   },
   androidButtonBackground: {
     backgroundColor: "rgba(0,0,0,0.5)",

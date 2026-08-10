@@ -90,14 +90,15 @@ export default function MovieDetailsScreen() {
     !!movieId && movieId !== "undefined" && !isNaN(numericId) && numericId > 0;
   const isValidType = !!typeOfContent && typeof typeOfContent !== "undefined";
 
-  const { data: combined, isLoading: loading } = useGetCombinedMovieDetailsQuery(
-    { id: numericId, type: typeOfContent as "movie" | "tv" },
-    {
-      refetchOnReconnect: true,
-      refetchOnMountOrArgChange: true,
-      skip: !isValidId || !isValidType,
-    },
-  );
+  const { data: combined, isLoading: loading } =
+    useGetCombinedMovieDetailsQuery(
+      { id: numericId, type: typeOfContent as "movie" | "tv" },
+      {
+        refetchOnReconnect: true,
+        refetchOnMountOrArgChange: true,
+        skip: !isValidId || !isValidType,
+      },
+    );
 
   const movie = (combined?.movie ?? {}) as Movie;
   const similarData = combined?.similar ?? undefined;
@@ -106,7 +107,9 @@ export default function MovieDetailsScreen() {
   const providers = combined?.providers ?? undefined;
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.appBackground, width, height }}>
+    <View
+      style={{ flex: 1, backgroundColor: colors.appBackground, width, height }}
+    >
       <Animated.ScrollView
         onScroll={scrollhandler}
         contentContainerStyle={{
@@ -118,6 +121,7 @@ export default function MovieDetailsScreen() {
         bounces={false}
         stickyHeaderIndices={[0]}
         nestedScrollEnabled
+        showsVerticalScrollIndicator={false}
       >
         <Animated.View
           style={[

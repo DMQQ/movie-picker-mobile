@@ -12,7 +12,8 @@ import { useMatches } from "../context/DatabaseContext";
 import { IGameSummary } from "../components/GameSummary/types";
 
 export function useGameSummary(roomId: string) {
-  const { socket, userId } = useContext(SocketContext);
+  const { socket } = useContext(SocketContext);
+  const userId = useAppSelector((st) => st.app.userId);
   const t = useTranslation();
   const dispatch = useAppDispatch();
   const { matches: matchesRepo } = useMatches();

@@ -36,6 +36,7 @@ export function useQuickActions(props: { movie: Movie }) {
             type:
               props?.movie?.type ||
               (props.movie?.first_air_date ? "tv" : "movie"),
+            title: props?.movie?.title || props?.movie?.name,
           },
         }),
       );
