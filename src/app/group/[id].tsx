@@ -26,12 +26,11 @@ export default function Group() {
   const openRateSheet = (item: GroupMovie) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     router.push({
-      pathname: "/group/rate-movie",
+      pathname: "/rate-movie",
       params: {
         movieId: String(item.id),
+        contentType: item.type ?? "movie",
         groupId: data?.id ?? "",
-        remoteItemId: itemIdMap.get(item.id) ?? "",
-        listType: listType ?? "",
         rating: item.rating != null ? String(item.rating) : "",
         note: item.note ?? "",
       },

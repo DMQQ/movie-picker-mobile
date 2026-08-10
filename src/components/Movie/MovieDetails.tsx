@@ -5,6 +5,7 @@ import { Image } from "expo-image";
 import { Movie, MovieDetails as MovieDetailsType } from "../../../types";
 import useTranslation from "../../service/useTranslation";
 import CustomFavourite from "../Favourite";
+import RateMovieButton from "../RateMovieButton";
 import GenreChip from "../GenreChip";
 import GenresView from "../GenresView";
 import QuickActions from "../QuickActions";
@@ -17,7 +18,7 @@ import {
 import { useGetMovieKeyPeopleQuery } from "../../redux/person/personApi";
 import { memo, useMemo } from "react";
 import MovieTabs from "./MovieTabs";
-import { colors, fontSize, radius, spacing} from "../../constants/design";
+import { colors, fontSize, radius, spacing } from "../../constants/design";
 
 interface MovieDetailsProps {
   movie: Movie & Record<string, string>;
@@ -58,7 +59,8 @@ function MovieDetails({
 
   const releaseYear = useMemo(
     () =>
-      (movie?.release_date || movie?.first_air_date || "")?.split("-")[0] || null,
+      (movie?.release_date || movie?.first_air_date || "")?.split("-")[0] ||
+      null,
     [movie],
   );
 
@@ -107,7 +109,9 @@ function MovieDetails({
 
   return (
     <BlurViewWrapper style={styles.blurWrapper}>
-      <View style={{ width: "100%", alignItems: "center", padding: spacing.sm + 2 }}>
+      <View
+        style={{ width: "100%", alignItems: "center", padding: spacing.sm + 2 }}
+      >
         <View
           style={{
             width: 60,
@@ -117,7 +121,7 @@ function MovieDetails({
           }}
         />
       </View>
-      <View style={{ padding: spacing.screen }}>
+      <View style={{ padding: spacing.screen, paddingBottom: 0 }}>
         <Text numberOfLines={3} style={styles.heading}>
           {movie?.title || movie?.name || "-"}
         </Text>
@@ -143,7 +147,7 @@ function MovieDetails({
           <Text style={styles.categories}>{originalTitle}</Text>
         )}
 
-        <View style={{ paddingVertical: spacing.screen }}>
+        <View style={{ paddingVertical: spacing.md, gap: spacing.md }}>
           <PlatformBlurView style={styles.quickActions}>
             <QuickActions movie={movie}>
               <View style={{ flex: 1 }}>
@@ -151,6 +155,7 @@ function MovieDetails({
               </View>
             </QuickActions>
           </PlatformBlurView>
+          <RateMovieButton movie={movie} contentType={type} />
         </View>
       </View>
 
@@ -211,7 +216,12 @@ const styles = StyleSheet.create({
   },
 
   categories: { color: "rgba(255,255,255,0.7)", fontSize: fontSize.md + 1 },
-  chipsRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm - 2, marginTop: spacing.sm },
+  chipsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.sm - 2,
+    marginTop: spacing.sm,
+  },
 
   rating: { flexDirection: "row", marginBottom: spacing.sm + 2 },
 

@@ -250,6 +250,19 @@ const RootNavigator = ({
             sheetInitialDetentIndex: 0,
           }}
         />
+
+        <Stack.Screen
+          name="rate-movie"
+          options={{
+            headerShown: false,
+            gestureEnabled: true,
+            presentation: "formSheet",
+            sheetGrabberVisible: true,
+            contentStyle: { backgroundColor: colors.background },
+            sheetAllowedDetents: [0.5],
+            sheetInitialDetentIndex: 0,
+          }}
+        />
       </Stack>
     </GestureHandlerRootView>
   );

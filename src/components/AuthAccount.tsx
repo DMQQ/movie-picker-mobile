@@ -9,6 +9,7 @@ import type { AuthUser } from "../redux/auth/authSlice";
 import { useGetGamesQuery } from "../redux/lists/listsApi";
 import AccountProfileHeader from "./AccountProfileHeader";
 import RecentGames from "./RecentGames";
+import RecentRatings from "./RecentRatings";
 import PlayedWith from "./PlayedWith";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 
@@ -72,6 +73,11 @@ export default function AuthAccount({ user }: Props) {
           }
         />
         <RecentGames />
+      </View>
+
+      <View style={styles.section}>
+        <SectionHeader icon="star-outline" title="My Ratings" />
+        <RecentRatings />
       </View>
 
       <View style={styles.section}>

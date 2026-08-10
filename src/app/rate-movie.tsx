@@ -1,58 +1,73 @@
-import { useState } from "react";
-import Text from "../../components/Text";
+import { useEffect, useState } from "react";
+import Text from "../components/Text";
+import TextInput from "../components/TextInput";
 import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
   StyleSheet,
-  TextInput,
   View,
 } from "react-native";
 
-import Button from "../../components/Button";
-import PrimaryButton from "../../components/PrimaryButton";
+import Button from "../components/Button";
+import PrimaryButton from "../components/PrimaryButton";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useAppDispatch } from "../../redux/store";
-import { usePatchItemMutation } from "../../redux/lists/listsApi";
-import { rateInGroup } from "../../redux/favourites/favourites";
-import { colors, fontSize, radius, spacing} from "../../constants/design";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { rateInGroup } from "../redux/favourites/favourites";
+import { useUpsertRatingMutation, useGetMyRatingQuery } from "../redux/ratings/ratingsApi";
+import { spacing } from "../constants/design";
 
 export default function RateMovieScreen() {
   const params = useLocalSearchParams<{
     movieId: string;
-    groupId: string;
-    remoteItemId?: string;
-    listType?: string;
+    contentType: string;
+    groupId?: string;
     rating?: string;
     note?: string;
   }>();
 
+  const user = useAppSelector((s) => s.auth.user);
   const dispatch = useAppDispatch();
-  const [patchItem] = usePatchItemMutation();
+  const [upsertRating] = useUpsertRatingMutation();
+
+  const { data: existingRating } = useGetMyRatingQuery(
+    { contentType: params.contentType, contentId: Number(params.movieId) },
+    { skip: !user || !params.movieId },
+  );
 
   const [rating, setRating] = useState<number | null>(
-    params.rating ? Number(params.rating) : null
+    params.rating ? Number(params.rating) : null,
   );
   const [note, setNote] = useState(params.note ?? "");
+  const [prefilled, setPrefilled] = useState(!!params.rating);
+
+  useEffect(() => {
+    if (existingRating && !prefilled) {
+      setRating(existingRating.rating);
+      setNote(existingRating.review ?? "");
+      setPrefilled(true);
+    }
+  }, [existingRating, prefilled]);
+
+  const canSave = rating !== null && (!!user || !!params.groupId);
 
   const handleSave = async () => {
-    const payload = {
-      rating: rating,
-      note: note.trim() || null,
-    };
+    if (!canSave) return;
 
-    if (params.remoteItemId) {
-      await patchItem({
-        itemId: params.remoteItemId,
-        listType: params.listType,
-        ...payload,
+    if (user) {
+      await upsertRating({
+        contentType: params.contentType,
+        contentId: Number(params.movieId),
+        rating: rating!,
+        review: note.trim() || null,
       });
-    } else {
+    } else if (params.groupId) {
       dispatch(rateInGroup({
         groupId: params.groupId,
         movieId: Number(params.movieId),
-        ...payload,
+        rating,
+        note: note.trim() || null,
       }));
     }
 
@@ -83,20 +98,19 @@ export default function RateMovieScreen() {
       </View>
 
       <TextInput
-        style={styles.noteInput}
         placeholder="Add a note…"
-        placeholderTextColor="#555"
         value={note}
         onChangeText={setNote}
         multiline
         maxLength={300}
+        style={{ marginBottom: spacing.xxl }}
       />
 
       <View style={styles.actions}>
         <Button mode="text" onPress={() => router.back()} textColor="#888">
           Cancel
         </Button>
-        <PrimaryButton onPress={handleSave} disabled={rating === null}>
+        <PrimaryButton onPress={handleSave} disabled={!canSave}>
           Save
         </PrimaryButton>
       </View>
@@ -119,16 +133,6 @@ const styles = StyleSheet.create({
   stars: {
     flexDirection: "row",
     gap: spacing.sm - 2,
-    marginBottom: spacing.xxl,
-  },
-  noteInput: {
-    backgroundColor: "#242424",
-    borderRadius: radius.sm + 2,
-    padding: spacing.md,
-    color: colors.text,
-    fontSize: fontSize.md,
-    minHeight: 90,
-    textAlignVertical: "top",
     marginBottom: spacing.xxl,
   },
   actions: {
