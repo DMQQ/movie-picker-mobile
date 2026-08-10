@@ -19,9 +19,11 @@ import { store, useAppDispatch } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { DatabaseProvider } from "../context/DatabaseContext";
+import PushTokenRegistrar from "../components/PushTokenRegistrar";
 import * as SplashScreen from "expo-splash-screen";
 import useMaintenance from "../service/useMaintanance";
 import { getDeviceSettings } from "../service/translationUtils";
+import { url } from "../context/SocketContext";
 
 import * as Sentry from "@sentry/react-native";
 import { GoogleOneTapSignIn } from "react-native-nitro-google-signin";
@@ -76,6 +78,7 @@ function RootLayout() {
           <PortalProvider>
             <Provider store={store}>
               <DatabaseProvider>
+                <PushTokenRegistrar />
                 <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
               </DatabaseProvider>
             </Provider>
@@ -117,7 +120,17 @@ const RootNavigator = ({
           null,
         );
 
-        if (userId) dispatch(setUserId(userId));
+        const finalUserId =
+          userId ??
+          (await fetch(url + "/auth/anonymous", { method: "POST" })
+            .then((r) => r.json())
+            .then((data) => data.anonymousId)
+            .catch(() => null));
+
+        if (finalUserId) {
+          if (!userId) await AsyncStorage.setItemAsync("userId", finalUserId);
+          dispatch(setUserId(finalUserId));
+        }
         if (storedToken) dispatch(restoreSession(storedToken));
 
         const deviceSettings = getDeviceSettings();
@@ -263,6 +276,7 @@ const RootNavigator = ({
             sheetInitialDetentIndex: 0,
           }}
         />
+
       </Stack>
     </GestureHandlerRootView>
   );

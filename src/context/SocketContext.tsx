@@ -104,11 +104,7 @@ export const SocketProvider = ({
 
   const initializeSocket = async () => {
     try {
-      const userId =
-        (await AsyncStorage.getItem("userId")) ||
-        Math.random().toString(36).substring(7);
-      await AsyncStorage.setItem("userId", userId);
-
+      const userId = await AsyncStorage.getItem("userId");
       setUserId(userId);
 
       const newSocket = socketIOClient(baseUrl + namespace, {
@@ -119,7 +115,7 @@ export const SocketProvider = ({
             : `Bearer ${envs.server_auth_token}`,
         },
         extraHeaders: {
-          "user-id": userId,
+          ...(userId ? { "user-id": userId } : {}),
           ...makeHeaders(language, regionalization),
         },
       });
