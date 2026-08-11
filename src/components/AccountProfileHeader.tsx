@@ -14,12 +14,14 @@ import {
 import { useGetGamesQuery } from "../redux/lists/listsApi";
 import { getUserAvatarColor } from "../utils/avatar";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
+import useTranslation from "../service/useTranslation";
 
 interface Props {
   user: AuthUser;
 }
 
 export default function AccountProfileHeader({ user }: Props) {
+  const t = useTranslation();
   const [name, setName] = useState(user.name);
   const [nameEditing, setNameEditing] = useState(false);
   const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation();
@@ -44,7 +46,7 @@ export default function AccountProfileHeader({ user }: Props) {
     try {
       await updateMe({ name: trimmed }).unwrap();
     } catch {
-      Alert.alert("Update failed", "Could not update name. Please try again.");
+      Alert.alert(t("account.profile.updateFailed"), t("account.profile.updateFailedMessage"));
       setName(user.name);
     } finally {
       setNameEditing(false);
@@ -53,12 +55,12 @@ export default function AccountProfileHeader({ user }: Props) {
 
   function handleRegenerateCodes() {
     Alert.alert(
-      "Regenerate recovery codes",
-      "Your existing codes will be permanently invalidated and replaced with 8 new ones.",
+      t("account.profile.regenerateTitle"),
+      t("account.profile.regenerateMessage"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Regenerate",
+          text: t("account.profile.regenerate"),
           onPress: async () => {
             try {
               const result = await regenerateCodes().unwrap();
@@ -70,10 +72,7 @@ export default function AccountProfileHeader({ user }: Props) {
                 },
               });
             } catch {
-              Alert.alert(
-                "Error",
-                "Failed to regenerate codes. Please try again.",
-              );
+              Alert.alert(t("common.error"), t("account.profile.regenerateError"));
             }
           },
         },
@@ -127,7 +126,7 @@ export default function AccountProfileHeader({ user }: Props) {
           {user.provider === "email" && (
             <Pressable onPress={handleRegenerateCodes} disabled={isRegenerating}>
               <Text style={styles.linkText}>
-                {isRegenerating ? "Regenerating…" : "Recovery codes"}
+                {isRegenerating ? t("account.profile.regenerating") : t("account.profile.recoveryCodes")}
               </Text>
             </Pressable>
           )}
@@ -137,15 +136,15 @@ export default function AccountProfileHeader({ user }: Props) {
       <View style={styles.statsRow}>
         <View style={styles.stat}>
           <Text style={styles.statValue}>{totalGames}</Text>
-          <Text style={styles.statLabel}>Games</Text>
+          <Text style={styles.statLabel}>{t("account.stats.games")}</Text>
         </View>
         <View style={styles.stat}>
           <Text style={[styles.statValue, styles.statAccent]}>{totalMatches}</Text>
-          <Text style={styles.statLabel}>Matches</Text>
+          <Text style={styles.statLabel}>{t("account.stats.matches")}</Text>
         </View>
         <View style={styles.stat}>
           <Text style={styles.statValue}>{totalSwipes}</Text>
-          <Text style={styles.statLabel}>Swipes</Text>
+          <Text style={styles.statLabel}>{t("account.stats.swipes")}</Text>
         </View>
       </View>
     </View>

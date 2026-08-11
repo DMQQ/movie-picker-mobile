@@ -9,9 +9,16 @@ import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
 import { useGetGamesQuery, type UserGame } from "../../redux/lists/listsApi";
 import { formatGameType } from "../../utils/formatGameType";
 import { router } from "expo-router";
+import useTranslation from "../../service/useTranslation";
 
 const POSTER_W = 42;
 const POSTER_H = 62;
+
+function MatchCount({ count }: { count: number }) {
+  const t = useTranslation();
+  const key = count !== 1 ? "games.matchCountPlural" : "games.matchCountSingular";
+  return <Text style={styles.chipText}>{t(key).replace("{count}", String(count))}</Text>;
+}
 
 function formatDate(unix: number) {
   return new Date(unix * 1000).toLocaleDateString(undefined, {
@@ -51,9 +58,7 @@ function GameRow({ item }: { item: UserGame }) {
           {item.matchCount > 0 && (
             <View style={styles.chip}>
               <Icon source="heart" size={10} color={colors.primary} />
-              <Text style={styles.chipText}>
-                {item.matchCount} {item.matchCount !== 1 ? "matches" : "match"}
-              </Text>
+              <MatchCount count={item.matchCount} />
             </View>
           )}
           <Text style={styles.dateText}>{formatDate(item.createdAt)}</Text>
@@ -68,10 +73,11 @@ export default function AllGamesScreen() {
   const { data, isLoading } = useGetGamesQuery();
   const games = [...(data?.games ?? [])].reverse();
   const insets = useSafeAreaInsets();
+  const t = useTranslation();
 
   return (
     <View style={styles.container}>
-      <PageHeading title="All Games" />
+      <PageHeading title={t("games.categories.all")} />
 
       <FlatList
         data={games}
@@ -86,7 +92,7 @@ export default function AllGamesScreen() {
         ListHeaderComponent={
           games.length > 0 ? (
             <Text style={styles.countLabel}>
-              {games.length} sessions played
+              {t("games.sessionsPlayed").replace("{count}", String(games.length))}
             </Text>
           ) : null
         }
@@ -101,9 +107,9 @@ export default function AllGamesScreen() {
                   size={44}
                   color="rgba(255,255,255,0.07)"
                 />
-                <Text style={styles.emptyText}>No games yet</Text>
+                <Text style={styles.emptyText}>{t("games.empty") as string}</Text>
                 <Text style={styles.emptyHint}>
-                  Start a swipe session to see your history here
+                  {t("games.emptyHint")}
                 </Text>
               </>
             )}

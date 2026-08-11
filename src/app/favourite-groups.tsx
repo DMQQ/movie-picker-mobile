@@ -83,7 +83,7 @@ export default function FavouriteGroupsScreen() {
           />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search lists…"
+            placeholder={t("favourites.searchPlaceholder")}
             placeholderTextColor={colors.placeholder}
             value={query}
             onChangeText={setQuery}

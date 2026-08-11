@@ -13,6 +13,7 @@ import RecentRatings from "./RecentRatings";
 import PlayedWith from "./PlayedWith";
 import { useGetMyRatingsQuery } from "../redux/ratings/ratingsApi";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
+import useTranslation from "../service/useTranslation";
 
 interface Props {
   user: AuthUser;
@@ -26,6 +27,7 @@ interface SectionHeaderProps {
 }
 
 function SectionHeader({ icon, title, badge, onSeeAll }: SectionHeaderProps) {
+  const t = useTranslation();
   return (
     <View style={styles.sectionHeader}>
       <View style={styles.sectionLeft}>
@@ -39,7 +41,7 @@ function SectionHeader({ icon, title, badge, onSeeAll }: SectionHeaderProps) {
       </View>
       {onSeeAll && (
         <Pressable onPress={onSeeAll} style={styles.seeAllBtn} hitSlop={10}>
-          <Text style={styles.seeAllText}>See all</Text>
+          <Text style={styles.seeAllText}>{t("common.seeAll")}</Text>
           <Icon source="chevron-right" size={13} color={colors.primary} />
         </Pressable>
       )}
@@ -50,6 +52,7 @@ function SectionHeader({ icon, title, badge, onSeeAll }: SectionHeaderProps) {
 export default function AuthAccount({ user }: Props) {
   const { data, refetch, error } = useGetGamesQuery();
   const { data: ratingsData } = useGetMyRatingsQuery({ limit: 1 });
+  const t = useTranslation();
 
   useEffect(() => {
     if (error) console.error("[AuthAccount] getGames error:", JSON.stringify(error));
@@ -69,7 +72,7 @@ export default function AuthAccount({ user }: Props) {
       <View style={styles.section}>
         <SectionHeader
           icon="history"
-          title="Recent Games"
+          title={t("account.recentGames") as string}
           badge={gameCount > 0 ? gameCount : undefined}
           onSeeAll={
             gameCount > 0 ? () => router.push("/games" as any) : undefined
@@ -81,7 +84,7 @@ export default function AuthAccount({ user }: Props) {
       <View style={styles.section}>
         <SectionHeader
           icon="star-outline"
-          title="My Ratings"
+          title={t("ratings.myRatings") as string}
           badge={ratingsCount > 0 ? ratingsCount : undefined}
           onSeeAll={
             ratingsCount > 0 ? () => router.push("/ratings" as any) : undefined
@@ -91,7 +94,7 @@ export default function AuthAccount({ user }: Props) {
       </View>
 
       <View style={styles.section}>
-        <SectionHeader icon="account-group" title="Played With" />
+        <SectionHeader icon="account-group" title={t("account.playedWith") as string} />
         <PlayedWith />
       </View>
     </View>

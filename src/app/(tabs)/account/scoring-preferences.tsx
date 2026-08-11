@@ -13,12 +13,14 @@ import {
   type ScoringKeyword,
 } from "../../../redux/scoringPreferences/scoringPreferencesApi";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../../constants/design";
+import useTranslation from "../../../service/useTranslation";
 
 type ContentType = "movie" | "tv";
 type ViewTab = "genres" | "keywords";
 const KEYWORDS_LIMIT = 50;
 
 export default function ScoringPreferencesScreen() {
+  const t = useTranslation();
   const insets = useSafeAreaInsets();
   const [contentType, setContentType] = useState<ContentType>("movie");
   const [viewTab, setViewTab] = useState<ViewTab>("genres");
@@ -98,13 +100,14 @@ export default function ScoringPreferencesScreen() {
   };
 
   const handleReset = () => {
+    const typeLabel = contentType === "movie" ? t("account.scoringPreferences.movies") : t("account.scoringPreferences.tvShows");
     Alert.alert(
-      "Reset Taste Profile",
-      `Erase all learned ${contentType === "movie" ? "movie" : "TV"} preferences?`,
+      t("account.scoringPreferences.resetTitle"),
+      t("account.scoringPreferences.resetMessage").replace("{type}", typeLabel),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Reset",
+          text: t("account.scoringPreferences.resetConfirm"),
           style: "destructive",
           onPress: () => {
             resetAll(contentType);
@@ -153,12 +156,12 @@ export default function ScoringPreferencesScreen() {
     return (
       <View style={styles.footer}>
         {isFetching && viewTab === "keywords" && (
-          <Text style={styles.loadingText}>Loading...</Text>
+          <Text style={styles.loadingText}>{t("common.loading")}</Text>
         )}
         <Pressable style={styles.resetButton} onPress={handleReset}>
           <Icon source="delete-outline" size={16} color={colors.error} />
           <Text style={styles.resetText}>
-            Reset all {contentType === "movie" ? "movie" : "TV"} preferences
+            {t("account.scoringPreferences.resetButton").replace("{type}", contentType === "movie" ? t("account.scoringPreferences.movies") : t("account.scoringPreferences.tvShows"))}
           </Text>
         </Pressable>
       </View>
@@ -167,7 +170,7 @@ export default function ScoringPreferencesScreen() {
 
   return (
     <View style={styles.container}>
-      <PageHeading title="Taste Profile" gradientHeight={60} showGradientBackground />
+      <PageHeading title={t("account.scoringPreferences.title")} gradientHeight={60} showGradientBackground />
 
       {/* Fixed header */}
       <View style={[styles.fixedHeader, { paddingTop: headerTop }]}>
@@ -177,7 +180,9 @@ export default function ScoringPreferencesScreen() {
             style={styles.crumbPill}
             onPress={() => handleContentTypeChange(contentType === "movie" ? "tv" : "movie")}
           >
-            <Text style={styles.crumbText}>{contentType === "movie" ? "Movies" : "TV Shows"}</Text>
+            <Text style={styles.crumbText}>
+              {contentType === "movie" ? t("account.scoringPreferences.movies") : t("account.scoringPreferences.tvShows")}
+            </Text>
             <Icon source="chevron-down" size={10} color={colors.placeholder} />
           </Pressable>
           <Icon source="chevron-right" size={14} color={colors.placeholder} />
@@ -187,8 +192,10 @@ export default function ScoringPreferencesScreen() {
           >
             <Text style={styles.crumbText}>
               {viewTab === "genres"
-                ? "Genres"
-                : `Keywords${totalKeywords > 0 ? ` (${totalKeywords})` : ""}`}
+                ? t("account.scoringPreferences.genres")
+                : totalKeywords > 0
+                  ? t("account.scoringPreferences.keywordsWithCount").replace("{count}", String(totalKeywords))
+                  : t("account.scoringPreferences.keywords")}
             </Text>
             <Icon source="chevron-down" size={10} color={colors.placeholder} />
           </Pressable>
@@ -199,12 +206,12 @@ export default function ScoringPreferencesScreen() {
             <TextInput
               value={search}
               onChangeText={setSearch}
-              placeholder={`Search ${viewTab}...`}
+              placeholder={t("account.scoringPreferences.searchPlaceholder").replace("{tab}", viewTab === "genres" ? t("account.scoringPreferences.genres") : t("account.scoringPreferences.keywords"))}
               style={styles.searchInput}
             />
             <View style={styles.legend}>
               <Icon source="information-outline" size={12} color={colors.placeholder} />
-              <Text style={styles.legendText}>0 = weakest · 100 = strongest preference</Text>
+              <Text style={styles.legendText}>{t("account.scoringPreferences.legend")}</Text>
             </View>
           </>
         )}
@@ -218,12 +225,12 @@ export default function ScoringPreferencesScreen() {
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <Text style={styles.emptyTitle}>
-              {isEmpty ? "No preferences yet" : "No matches"}
+              {isEmpty ? t("account.scoringPreferences.noPreferences") : t("account.scoringPreferences.noMatches")}
             </Text>
             <Text style={styles.emptySubtext}>
               {isEmpty
-                ? "Play more games to build your taste profile."
-                : "Try a different search term."}
+                ? t("account.scoringPreferences.noPreferencesHint")
+                : t("account.scoringPreferences.noMatchesHint")}
             </Text>
           </View>
         }

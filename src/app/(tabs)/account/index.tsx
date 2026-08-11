@@ -117,11 +117,11 @@ export default function SettingsScreen() {
       if (status !== "granted") {
         setNotificationsEnabled(false);
         Alert.alert(
-          "Notifications disabled",
-          "Enable notifications in system settings to receive game invites.",
+          t("account.notifications.disabledTitle"),
+          t("account.notifications.disabledMessage"),
           [
-            { text: "Cancel", style: "cancel" },
-            { text: "Open Settings", onPress: () => Linking.openSettings() },
+            { text: t("common.cancel"), style: "cancel" },
+            { text: t("account.notifications.openSettings"), onPress: () => Linking.openSettings() },
           ],
         );
         return;
@@ -155,12 +155,12 @@ export default function SettingsScreen() {
 
   function handleDeleteAccount() {
     Alert.alert(
-      "Delete account",
-      "This will permanently delete your account and all associated data. This cannot be undone.",
+      t("account.deleteAccount"),
+      t("account.deleteDialog.message"),
       [
-        { text: "Cancel", style: "cancel" },
+        { text: t("common.cancel"), style: "cancel" },
         {
-          text: "Delete",
+          text: t("account.deleteDialog.confirm"),
           style: "destructive",
           onPress: async () => {
             try {
@@ -168,10 +168,7 @@ export default function SettingsScreen() {
               await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
               dispatch(authActions.clearAuth());
             } catch {
-              Alert.alert(
-                "Error",
-                "Failed to delete account. Please try again.",
-              );
+              Alert.alert(t("common.error"), t("account.deleteDialog.error"));
             }
           },
         },
@@ -271,12 +268,12 @@ export default function SettingsScreen() {
             entering={FadeInDown.delay(140)}
             style={styles.section}
           >
-            <SectionLabel icon="alert-circle-outline" title="ACCOUNT" />
+            <SectionLabel icon="alert-circle-outline" title={t("account.sections.account")} />
             <View style={styles.card}>
               <Pressable style={styles.actionRow} onPress={handleSignOut}>
                 <View style={styles.actionRowInner}>
                   <Icon source="logout" size={16} color={colors.placeholder} />
-                  <Text style={styles.actionRowText}>Sign out</Text>
+                  <Text style={styles.actionRowText}>{t("account.signOut")}</Text>
                 </View>
                 <Icon source="chevron-right" size={16} color={colors.placeholder} />
               </Pressable>
@@ -284,7 +281,7 @@ export default function SettingsScreen() {
               <Pressable style={styles.actionRow} onPress={handleDeleteAccount}>
                 <View style={styles.actionRowInner}>
                   <Icon source="delete-outline" size={16} color={colors.error} />
-                  <Text style={styles.actionRowTextDanger}>Delete account</Text>
+                  <Text style={styles.actionRowTextDanger}>{t("account.deleteAccount")}</Text>
                 </View>
                 <Icon source="chevron-right" size={16} color={colors.placeholder} />
               </Pressable>
@@ -293,7 +290,7 @@ export default function SettingsScreen() {
         )}
 
         <Animated.View entering={FadeInDown.delay(180)} style={styles.section}>
-          <SectionLabel icon="tune-variant" title="PREFERENCES" />
+          <SectionLabel icon="tune-variant" title={t("account.sections.preferences")} />
           <ScoringPreferencesButton />
           <Pressable
             style={styles.notifCard}
@@ -301,7 +298,7 @@ export default function SettingsScreen() {
           >
             <View style={styles.notifLeft}>
               <Icon source="bell-outline" size={16} color={colors.placeholder} />
-              <Text style={styles.notifLabel}>Push notifications</Text>
+              <Text style={styles.notifLabel}>{t("account.pushNotifications")}</Text>
             </View>
             <Switch
               value={notificationsEnabled}
@@ -312,16 +309,16 @@ export default function SettingsScreen() {
           </Pressable>
           {systemPermission === "denied" ? (
             <Text style={styles.notifHint}>
-              Notifications are disabled in system settings.{" "}
+              {t("account.notifications.systemDisabled")}{" "}
               <Text style={styles.notifHintLink} onPress={() => Linking.openSettings()}>
-                Open settings
+                {t("account.notifications.openSettings")}
               </Text>
             </Text>
           ) : null}
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(220)} style={styles.section}>
-          <SectionLabel icon="information-outline" title="APP" />
+          <SectionLabel icon="information-outline" title={t("account.sections.app")} />
           <View style={styles.card}>
             <InfoRow label={t("settings.version")} value={appVersion} />
             <InfoRow label={t("settings.update")} value={updateId} />

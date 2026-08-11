@@ -52,7 +52,13 @@ export default function RecoveryCodesScreen() {
       </FadeSlide>
 
       <FadeSlide delay={160}>
-        <View style={styles.warningRow}>
+        <View style={[styles.warningRow, { borderColor: "rgba(239,68,68,0.3)", marginBottom: spacing.sm }]}>
+          <Icon source="shield-alert-outline" size={15} color="#EF4444" />
+          <Text style={[styles.warningText, { color: "#EF4444" }]}>
+            Password reset via email is not available yet. These codes are the <Text style={{ fontWeight: "700", color: "#EF4444" }}>only way</Text> to recover your account if you forget your password. Save them now.
+          </Text>
+        </View>
+        <View style={[styles.warningRow]}>
           <Icon source="information-outline" size={14} color="#F59E0B" />
           <Text style={styles.warningText}>Each code is single-use. Store them in a password manager.</Text>
         </View>
@@ -90,7 +96,7 @@ export default function RecoveryCodesScreen() {
           </Button>
         </View>
 
-        <PrimaryButton onPress={() => router.dismissAll()} style={styles.doneBtn}>
+        <PrimaryButton onPress={() => router.dismiss()} style={styles.doneBtn}>
           I've saved my codes
         </PrimaryButton>
       </FadeSlide>
@@ -116,13 +122,15 @@ const styles = StyleSheet.create({
 
   warningRow: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: spacing.sm,
     backgroundColor: "rgba(245,158,11,0.1)",
     borderRadius: radius.sm + 2,
     paddingVertical: spacing.sm + 2,
     paddingHorizontal: spacing.md + 2,
     marginBottom: spacing.xxl,
+    borderWidth: 1,
+    borderColor: "rgba(245,158,11,0.3)",
   },
   warningText: { fontSize: fontSize.md - 1, color: "#F59E0B", flex: 1, lineHeight: 18 },
 

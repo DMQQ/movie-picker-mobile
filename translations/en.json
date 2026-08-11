@@ -23,6 +23,7 @@
   },
   "movie": {
     "details": {
+      "loadError": "Failed to load movie details",
       "lastEpisode": "Last Episode",
       "episode": "Episodes",
       "season": "Season",
@@ -87,6 +88,15 @@
     "page-range-desc": "Select the number of pages to search",
     "qr-title": "Scan to join!",
     "active": "Active users",
+    "invitePlayers": "Invite Players",
+    "invite": {
+      "searchPlaceholder": "Search players...",
+      "noPlayersFound": "No players found",
+      "noRecentPlayers": "No recent players",
+      "sending": "Sending...",
+      "invited": "Invited",
+      "invite": "Invite"
+    },
     "qr-subtitle": "Let your friends scan the code with the camera app or the in app scanner to join the room, or share the room code by holding down the code below. You can also start the game by yourself if you wish",
     "tutorial": {
       "native-camera": "Use your native camera app",
@@ -245,6 +255,7 @@
   },
   "favourites": {
     "title": "Favorites",
+    "searchPlaceholder": "Search lists…",
     "empty": "You haven't added any movies to your favorites yet",
     "create": {
       "title": "Create a new list",
@@ -263,10 +274,24 @@
       "dialog-title": "Share Collection"
     }
   },
+  "ratings": {
+    "title": "My Reviews",
+    "myRatings": "My Ratings",
+    "empty": "No reviews yet",
+    "loadError": "Failed to load reviews",
+    "rateTitle": "Rate this movie",
+    "reviewPlaceholder": "Add a review…",
+    "reviewCount": "{count} review{plural}",
+    "avgLabel": "{avg}/10 avg",
+    "noRatingsYet": "No ratings yet"
+  },
   "lists": {
     "favourites": "Favorites",
     "watchlist": "Watchlist",
-    "watched": "Watched"
+    "watched": "Watched",
+    "empty": "This list is empty",
+    "noReview": "No review",
+    "items": "{count} item{plural}"
   },
   "create-collection": {
     "title": "Create Collection",
@@ -278,7 +303,10 @@
     "confirmation": "Confirmation",
     "cancel": "Cancel",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "seeAll": "See all",
+    "loading": "Loading...",
+    "error": "Error"
   },
   "global": {
     "justwatch": "The movie availabilities are powered by JustWatch",
@@ -417,11 +445,16 @@
     "modal": "Choose a group to add"
   },
   "games": {
+    "sessionsPlayed": "{count} sessions played",
+    "emptyHint": "Start a swipe session to see your history here",
+    "matchCountPlural": "{count} matches",
+    "matchCountSingular": "{count} match",
     "categories": {
       "all": "All Games",
       "popular": "Popular",
       "new": "New Games"
     },
+    "empty": "No games yet",
     "voter": {
       "games": "Party Games",
       "title": "Group Voter",
@@ -461,6 +494,7 @@
     "heading": "Cast"
   },
   "landing": {
+    "loadError": "Failed to load categories",
     "error": "Something went wrong. Please try again.",
     "title": "Welcome to Movie Picker",
     "chips": {
@@ -785,6 +819,71 @@
     },
     "got_it": "Got it",
     "next": "Next"
+  },
+  "account": {
+    "sections": {
+      "account": "ACCOUNT",
+      "preferences": "PREFERENCES",
+      "app": "APP"
+    },
+    "signOut": "Sign out",
+    "deleteAccount": "Delete account",
+    "pushNotifications": "Push notifications",
+    "notifications": {
+      "disabledTitle": "Notifications disabled",
+      "disabledMessage": "Enable notifications in system settings to receive game invites.",
+      "openSettings": "Open Settings",
+      "systemDisabled": "Notifications are disabled in system settings."
+    },
+    "deleteDialog": {
+      "message": "This will permanently delete your account and all associated data. This cannot be undone.",
+      "confirm": "Delete",
+      "error": "Failed to delete account. Please try again."
+    },
+    "recentGames": "Recent Games",
+    "playedWith": "Played With",
+    "tasteProfile": "Taste Profile",
+    "tasteProfileEmpty": "No data yet",
+    "tasteProfileMovies": "Movies: {count}",
+    "tasteProfileTV": "TV: {count}",
+    "required": {
+      "title": "Account required",
+      "message": "Create a free account to use this feature — it only takes a moment.",
+      "notNow": "Not now"
+    },
+    "stats": {
+      "games": "Games",
+      "matches": "Matches",
+      "swipes": "Swipes"
+    },
+    "profile": {
+      "updateFailed": "Update failed",
+      "updateFailedMessage": "Could not update name. Please try again.",
+      "regenerateTitle": "Regenerate recovery codes",
+      "regenerateMessage": "Your existing codes will be permanently invalidated and replaced with 8 new ones.",
+      "regenerate": "Regenerate",
+      "regenerateError": "Failed to regenerate codes. Please try again.",
+      "regenerating": "Regenerating…",
+      "recoveryCodes": "Recovery codes"
+    },
+    "scoringPreferences": {
+      "title": "Taste Profile",
+      "movies": "Movies",
+      "tvShows": "TV Shows",
+      "genres": "Genres",
+      "keywords": "Keywords",
+      "keywordsWithCount": "Keywords ({count})",
+      "searchPlaceholder": "Search {tab}...",
+      "legend": "0 = weakest · 100 = strongest preference",
+      "noPreferences": "No preferences yet",
+      "noPreferencesHint": "Play more games to build your taste profile.",
+      "noMatches": "No matches",
+      "noMatchesHint": "Try a different search term.",
+      "resetTitle": "Reset Taste Profile",
+      "resetMessage": "Erase all learned {type} preferences?",
+      "resetConfirm": "Reset",
+      "resetButton": "Reset all {type} preferences"
+    }
   },
   "auth": {
   "welcomeBack": "Welcome back",

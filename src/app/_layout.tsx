@@ -20,9 +20,11 @@ import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { DatabaseProvider } from "../context/DatabaseContext";
 import PushTokenRegistrar from "../components/PushTokenRegistrar";
+import NotificationHandler from "../components/NotificationHandler";
 import * as SplashScreen from "expo-splash-screen";
 import useMaintenance from "../service/useMaintanance";
 import { getDeviceSettings } from "../service/translationUtils";
+import useTranslation from "../service/useTranslation";
 import { url } from "../context/SocketContext";
 
 import * as Sentry from "@sentry/react-native";
@@ -79,6 +81,7 @@ function RootLayout() {
             <Provider store={store}>
               <DatabaseProvider>
                 <PushTokenRegistrar />
+                <NotificationHandler />
                 <AnonymousBlockedWatcher />
                 <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
               </DatabaseProvider>
@@ -100,16 +103,17 @@ function MaintenanceWatcher() {
 function AnonymousBlockedWatcher() {
   const dispatch = useAppDispatch();
   const anonymousBlocked = useAppSelector((state) => state.auth.anonymousBlocked);
+  const t = useTranslation();
 
   useEffect(() => {
     if (!anonymousBlocked) return;
     Alert.alert(
-      "Account required",
-      "Create a free account to use this feature — it only takes a moment.",
+      t("account.required.title"),
+      t("account.required.message"),
       [
-        { text: "Not now", style: "cancel" },
+        { text: t("account.required.notNow"), style: "cancel" },
         {
-          text: "Create account",
+          text: t("auth.createAccount"),
           onPress: () =>
             router.push({ pathname: "/auth/register", params: { presentation: "formSheet" } }),
         },

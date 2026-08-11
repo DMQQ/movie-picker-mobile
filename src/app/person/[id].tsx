@@ -1,5 +1,5 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
-import { Dimensions, Linking, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, Linking, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState } from "react";
@@ -247,7 +247,14 @@ export default function PersonScreen() {
 
       {/* Floating back button */}
       <View style={[styles.backButton, { top: insets.top + spacing.sm }]}>
-        <PlatformBlurView interactive style={{ borderRadius: radius.pill, overflow: "hidden" }}>
+        <PlatformBlurView
+          interactive
+          style={{
+            borderRadius: radius.pill,
+            overflow: "hidden",
+            ...Platform.select({ android: { backgroundColor: "rgba(0,0,0,0.55)" } }),
+          }}
+        >
           <IconButton
             icon="chevron-left"
             size={28}
@@ -264,8 +271,8 @@ export default function PersonScreen() {
 const styles = StyleSheet.create({
   dragHandleRow: {
     alignItems: "center",
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.md,
   },
   dragHandle: {
     width: 60,
@@ -278,7 +285,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xxl,
   },
   sectionFull: {
-    marginBottom: spacing.xxl,
+    marginBottom: spacing.xxl + spacing.lg,
   },
   name: {
     fontFamily: typography.bebas,
