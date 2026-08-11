@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Text from "../Text";
-import { StyleSheet, View, useWindowDimensions } from "react-native";
+import { Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
 
 import Animated, {
   Easing,
@@ -12,7 +12,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
-import { Fragment, memo, useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Movie } from "../../../types";
 import { Link } from "expo-router";
 import { colors, fontSize, radius, spacing, typography} from "../../constants/design";
@@ -93,19 +93,15 @@ const SwipeText = memo(
 function Poster(props: {
   card: Movie & { isSuperLiked?: boolean };
   translateX?: SharedValue<number>;
-
   isLeftVisible?: SharedValue<boolean>;
-
   isRightVisible?: SharedValue<boolean>;
-
   imageDimensions?: {
     height: number;
     width: number;
   };
-
   isSwipeable?: boolean;
-
   link: boolean;
+  href?: any;
 }) {
   const { height, width } = useWindowDimensions();
 
@@ -135,7 +131,15 @@ function Poster(props: {
     [height, width, props?.imageDimensions],
   );
 
-  const LinkComponent = props.link ? Link.AppleZoom : Fragment;
+  const thumbnail = (
+    <Thumbnail
+      transition={0}
+      path={props.card.poster_path}
+      size={ThumbnailSizes.poster.xxlarge}
+      container={{ borderRadius: radius.modal - 1, ...imageDimensions }}
+      style={{ borderRadius: radius.modal - 1, ...imageDimensions }}
+    />
+  );
 
   return (
     <View style={{ position: "relative" }}>
@@ -155,7 +159,6 @@ function Poster(props: {
             rotate="30deg"
             right
           />
-
           <SwipeText
             icon={
               <MaterialCommunityIcons
@@ -177,22 +180,20 @@ function Poster(props: {
       <Animated.View
         style={[
           styles.overlay,
-          {
-            ...imageDimensions,
-          },
+          { ...imageDimensions },
           overlayAnimatedStyle,
         ]}
       />
 
-      <LinkComponent>
-        <Thumbnail
-          transition={0}
-          path={props.card.poster_path}
-          size={ThumbnailSizes.poster.xxlarge}
-          container={{ borderRadius: radius.modal - 1, ...imageDimensions }}
-          style={{ borderRadius: radius.modal - 1, ...imageDimensions }}
-        />
-      </LinkComponent>
+      {props.link && props.href ? (
+        <Link href={props.href} asChild>
+          <Pressable>
+            <Link.AppleZoom>{thumbnail}</Link.AppleZoom>
+          </Pressable>
+        </Link>
+      ) : (
+        thumbnail
+      )}
 
       {props.card.isSuperLiked && (
         <View style={styles.superLikeBadge}>
@@ -234,7 +235,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     zIndex: 10,
     position: "absolute",
-    overflow: "hidden", // Important for BlurView
+    overflow: "hidden",
+    opacity: 0,
   },
 
   blurContainer: {

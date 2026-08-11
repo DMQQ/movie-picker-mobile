@@ -1,81 +1,201 @@
-import { memo, useCallback, useEffect, useRef, useTransition } from "react";
-import { useSharedValue } from "react-native-reanimated";
+import { memo, useCallback, useRef } from "react";
+import { Dimensions, View } from "react-native";
+import Animated, {
+  Easing,
+  runOnJS,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { router, useLocalSearchParams } from "expo-router";
 import { useAppSelector } from "../../redux/store";
 import useRoomContext from "../../context/RoomContext";
-import SwipeTile from "../Movie/SwipeTiles";
+import SwipeCard from "../Movie/SwipeCard";
 import TabBar from "../Home/TabBar";
 import useTranslation from "../../service/useTranslation";
+
+const { width } = Dimensions.get("window");
+const SWIPE_THRESHOLD = width * 0.15;
 
 const SwipeContent = memo(() => {
   const { type } = useLocalSearchParams<{ type?: string }>();
   const mediaType = type || "movie";
   const cards = useAppSelector((state) => state.room.movies);
-  const { dislikeCard, likeCard, blockAndDislikeCard, superLikeAndLikeCard } = useRoomContext();
+  const { dislikeCard, likeCard, blockAndDislikeCard, superLikeAndLikeCard } =
+    useRoomContext();
 
   const t = useTranslation();
-  const originalLength = useRef(cards.length);
-  const dragProgress = useSharedValue(0);
-  const buttonSwipe = useSharedValue(0);
-  const [isPending] = useTransition();
   const busy = useRef(false);
-  const hrefCache = useRef(new Map<number, { pathname: string; params: object }>());
 
-  useEffect(() => {
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const dragProgress = useSharedValue(0);
+  const isSwipingOut = useSharedValue(false);
+  const isLikeBadge = useSharedValue(false);
+  const isNopeBadge = useSharedValue(false);
+
+  const cardsRef = useRef(cards);
+  cardsRef.current = cards;
+  const likeCardRef = useRef(likeCard);
+  likeCardRef.current = likeCard;
+  const dislikeCardRef = useRef(dislikeCard);
+  dislikeCardRef.current = dislikeCard;
+  const superLikeAndLikeCardRef = useRef(superLikeAndLikeCard);
+  superLikeAndLikeCardRef.current = superLikeAndLikeCard;
+  const blockAndDislikeCardRef = useRef(blockAndDislikeCard);
+  blockAndDislikeCardRef.current = blockAndDislikeCard;
+
+  const visibleCards = cards.slice(0, 3);
+
+  // Reset shared values after React commits the new tree (old card gone).
+  // busy ref is also reset here — never before, or the next button press
+  // races past isSwipingOut and gets swallowed by the reaction guard.
+  const finishSwipe = useCallback(() => {
+    translateX.value = 0;
+    translateY.value = 0;
+    dragProgress.value = 0;
+    isSwipingOut.value = false;
     busy.current = false;
-  }, [cards]);
+  }, [translateX, translateY, dragProgress, isSwipingOut]);
+
+  const completeSwipeLike = useCallback(() => {
+    const top = cardsRef.current[0];
+    if (top) likeCardRef.current(top, 0);
+    setTimeout(finishSwipe, 0);
+  }, [finishSwipe]);
+
+  const completeSwipeDislike = useCallback(() => {
+    const top = cardsRef.current[0];
+    if (top) dislikeCardRef.current(top, 0);
+    setTimeout(finishSwipe, 0);
+  }, [finishSwipe]);
+
+  const completeButtonSwipe = useCallback(
+    (dir: number) => {
+      const top = cardsRef.current[0];
+      if (!top) return;
+
+      if (dir === 1) likeCardRef.current(top, 0);
+      else if (dir === -1) dislikeCardRef.current(top, 0);
+      else if (dir === 2) superLikeAndLikeCardRef.current(top, 0);
+      else if (dir === -2) blockAndDislikeCardRef.current(top, 0);
+
+      setTimeout(finishSwipe, 0);
+    },
+    [finishSwipe],
+  );
+
+  const openDetail = useCallback(() => {
+    const top = cardsRef.current[0];
+    if (!top) return;
+    router.push({
+      pathname: "/movie/type/[type]/[id]",
+      params: { id: top.id, type: mediaType, img: top.poster_path },
+    });
+  }, [mediaType]);
 
   const swipe = useCallback(
     (dir: number) => {
-      if (busy.current || isPending || cards.length === 0) return;
+      if (busy.current || cards.length === 0 || isSwipingOut.value) return;
       busy.current = true;
-      buttonSwipe.value = dir;
+      isSwipingOut.value = true;
+      isLikeBadge.value = false;
+      isNopeBadge.value = false;
+
+      const targetX = dir > 0 ? width + 200 : -width - 200;
+      const exitCfg = { duration: 280, easing: Easing.out(Easing.cubic) };
+
+      dragProgress.value = withTiming(1, exitCfg);
+      translateX.value = withTiming(targetX, exitCfg, (finished) => {
+        if (finished) runOnJS(completeButtonSwipe)(dir);
+      });
     },
-    [isPending, cards.length, buttonSwipe],
+    [cards.length, completeButtonSwipe, dragProgress, isLikeBadge, isNopeBadge, isSwipingOut, translateX],
   );
 
-  const topCard = cards[0];
-  const visibleCards = cards.slice(0, 3);
+  const panGesture = Gesture.Pan()
+    .onBegin(() => {
+      if (isSwipingOut.value) return;
+    })
+    .onChange(({ translationX, translationY }) => {
+      if (isSwipingOut.value) return;
+      translateX.value = translationX;
+      translateY.value = translationY;
+      dragProgress.value = Math.min(
+        Math.abs(translationX) / SWIPE_THRESHOLD,
+        1,
+      );
+      isLikeBadge.value = translationX > 50;
+      isNopeBadge.value = translationX < -50;
+    })
+    .onEnd(({ translationX }) => {
+      if (isSwipingOut.value) return;
+
+      // Clear badges immediately so incoming top card never sees them
+      isLikeBadge.value = false;
+      isNopeBadge.value = false;
+
+      const exitCfg = { duration: 250, easing: Easing.out(Easing.cubic) };
+
+      if (translationX > SWIPE_THRESHOLD) {
+        isSwipingOut.value = true;
+        dragProgress.value = withTiming(1, exitCfg);
+        translateX.value = withTiming(width + 200, exitCfg, (finished) => {
+          if (finished) runOnJS(completeSwipeLike)();
+        });
+      } else if (translationX < -SWIPE_THRESHOLD) {
+        isSwipingOut.value = true;
+        dragProgress.value = withTiming(1, exitCfg);
+        translateX.value = withTiming(-width - 200, exitCfg, (finished) => {
+          if (finished) runOnJS(completeSwipeDislike)();
+        });
+      } else {
+        translateX.value = withSpring(0, { damping: 20, stiffness: 300 });
+        translateY.value = withSpring(0, { damping: 20, stiffness: 300 });
+        dragProgress.value = withTiming(0, { duration: 180 });
+      }
+    });
+
+  const tapGesture = Gesture.Tap().onEnd(() => {
+    if (!isSwipingOut.value) runOnJS(openDetail)();
+  });
+
+  const composedGesture = Gesture.Exclusive(panGesture, tapGesture);
 
   return (
     <>
-      {visibleCards.map((card, index) => {
-        let href = hrefCache.current.get(card.id);
-        if (!href || (href.params as any).type !== mediaType) {
-          href = {
-            pathname: "/movie/type/[type]/[id]" as const,
-            params: { id: card.id, type: mediaType, img: card.poster_path },
-          };
-          hrefCache.current.set(card.id, href);
-        }
-        return (
-          <SwipeTile
-            href={href}
-            length={originalLength.current}
-            key={card.id}
-            card={card}
-            index={index}
-            dragProgress={dragProgress}
-            buttonSwipe={index === 0 ? buttonSwipe : undefined}
-            likeCard={() => likeCard(card, index)}
-            removeCard={() => dislikeCard(card, index)}
-            blockCard={() => blockAndDislikeCard(card, index)}
-            superLikeCard={() => superLikeAndLikeCard(card, index)}
-          />
-        );
-      })}
-      {topCard && (
+      <GestureDetector gesture={composedGesture}>
+        <View style={{ flex: 1 }}>
+          {visibleCards
+            .slice()
+            .reverse()
+            .map((card) => {
+              const actualIndex = visibleCards.indexOf(card);
+              const isTop = actualIndex === 0;
+              return (
+                <SwipeCard
+                  key={card.id}
+                  card={card}
+                  index={actualIndex}
+                  translateX={translateX}
+                  translateY={translateY}
+                  dragProgress={dragProgress}
+                  isLeftVisible={isTop ? isLikeBadge : undefined}
+                  isRightVisible={isTop ? isNopeBadge : undefined}
+                />
+              );
+            })}
+        </View>
+      </GestureDetector>
+
+      {cards[0] && (
         <TabBar
           zIndex={0}
-          disabled={isPending}
+          disabled={false}
           likeCard={() => swipe(1)}
           removeCard={() => swipe(-1)}
-          openInfo={() =>
-            router.push({
-              pathname: "/movie/type/[type]/[id]",
-              params: { id: topCard.id, type: mediaType, img: topCard.poster_path },
-            })
-          }
+          openInfo={openDetail}
           blockCard={() => swipe(-2)}
           superLikeCard={() => swipe(2)}
           labels={{
