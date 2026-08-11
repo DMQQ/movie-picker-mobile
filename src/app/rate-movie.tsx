@@ -15,9 +15,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { rateInGroup } from "../redux/favourites/favourites";
-import { useUpsertRatingMutation, useGetMyRatingQuery } from "../redux/ratings/ratingsApi";
+import { useUpsertRatingMutation, useGetMyRatingQuery, useDeleteRatingMutation } from "../redux/ratings/ratingsApi";
 import { usePatchItemMutation } from "../redux/lists/listsApi";
-import { spacing } from "../constants/design";
+import { colors, spacing } from "../constants/design";
 import useTranslation from "../service/useTranslation";
 
 export default function RateMovieScreen() {
@@ -35,6 +35,7 @@ export default function RateMovieScreen() {
   const user = useAppSelector((s) => s.auth.user);
   const dispatch = useAppDispatch();
   const [upsertRating] = useUpsertRatingMutation();
+  const [deleteRating] = useDeleteRatingMutation();
   const [patchItem] = usePatchItemMutation();
 
   const { data: existingRating } = useGetMyRatingQuery(
@@ -57,6 +58,11 @@ export default function RateMovieScreen() {
   }, [existingRating, prefilled]);
 
   const canSave = rating !== null && (!!user || !!params.groupId);
+
+  const handleDelete = async () => {
+    await deleteRating({ contentType: params.contentType, contentId: Number(params.movieId) });
+    router.back();
+  };
 
   const handleSave = async () => {
     if (!canSave) return;
@@ -93,7 +99,12 @@ export default function RateMovieScreen() {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <Text style={styles.title}>{t("ratings.rateTitle") as string}</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>{t("ratings.rateTitle") as string}</Text>
+        <Pressable onPress={() => router.back()} hitSlop={10}>
+          <MaterialCommunityIcons name="close" size={20} color={colors.placeholder} />
+        </Pressable>
+      </View>
 
       <View style={styles.stars}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
@@ -121,9 +132,11 @@ export default function RateMovieScreen() {
       />
 
       <View style={styles.actions}>
-        <Button mode="text" onPress={() => router.back()} textColor="#888">
-          {t("common.cancel") as string}
-        </Button>
+        {existingRating && (
+          <Button mode="text" onPress={handleDelete} textColor="#E5484D">
+            {t("ratings.deleteRating") as string}
+          </Button>
+        )}
         <PrimaryButton onPress={handleSave} disabled={!canSave}>
           {t("overview.save-list") as string}
         </PrimaryButton>
@@ -138,10 +151,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xxl,
     paddingTop: spacing.xxl,
   },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: spacing.xxl,
+  },
   title: {
     fontSize: 22,
     fontFamily: "Bebas",
-    marginBottom: spacing.xxl,
     letterSpacing: 0.5,
   },
   stars: {

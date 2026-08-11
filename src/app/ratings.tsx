@@ -21,53 +21,68 @@ function formatRatingDate(unix: number) {
 }
 
 function RatingRow({ item }: { item: UserRating }) {
+  const openRateSheet = () =>
+    router.push({
+      pathname: "/rate-movie",
+      params: {
+        movieId: String(item.contentId),
+        contentType: item.contentType,
+        rating: item.rating != null ? String(item.rating) : "",
+        review: item.review ?? "",
+      },
+    } as any);
+
   return (
-    <Pressable
-      style={styles.row}
-      onPress={() =>
-        router.push({
-          pathname: "/movie/type/[type]/[id]",
-          params: { type: item.contentType, id: String(item.contentId), img: item.content?.poster_path ?? "" },
-        } as any)
-      }
-    >
-      <Thumbnail
-        path={item.content?.poster_path ?? ""}
-        size={ThumbnailSizes.poster.small}
-        container={{
-          width: POSTER_W,
-          height: POSTER_H,
-          borderRadius: radius.xs + 2,
-        }}
-        showsPlaceholder={false}
-        priority="low"
-      />
-      <View style={styles.rowInfo}>
-        <Text style={styles.rowTitle} numberOfLines={1}>
-          {item.content?.title ?? `#${item.contentId}`}
-        </Text>
-        <View style={styles.starRow}>
-          {Array.from({ length: 10 }, (_, i) => (
-            <Icon
-              key={i}
-              source={i < item.rating ? "star" : "star-outline"}
-              size={10}
-              color={i < item.rating ? "#FFD700" : colors.border}
-            />
-          ))}
-          <Text style={styles.ratingNum}>{item.rating}/10</Text>
-        </View>
-        {item.review ? (
-          <Text style={styles.reviewText} numberOfLines={2}>
-            {item.review}
+    <View style={styles.row}>
+      <Pressable
+        style={styles.rowMain}
+        onPress={() =>
+          router.push({
+            pathname: "/movie/type/[type]/[id]",
+            params: { type: item.contentType, id: String(item.contentId), img: item.content?.poster_path ?? "" },
+          } as any)
+        }
+      >
+        <Thumbnail
+          path={item.content?.poster_path ?? ""}
+          size={ThumbnailSizes.poster.small}
+          container={{
+            width: POSTER_W,
+            height: POSTER_H,
+            borderRadius: radius.xs + 2,
+          }}
+          showsPlaceholder={false}
+          priority="low"
+        />
+        <View style={styles.rowInfo}>
+          <Text style={styles.rowTitle} numberOfLines={1}>
+            {item.content?.title ?? `#${item.contentId}`}
           </Text>
-        ) : null}
-        <Text style={styles.dateText}>
-          {formatRatingDate(item.createdAt)}
-        </Text>
-      </View>
-      <Icon source="chevron-right" size={14} color={colors.textSecondary} />
-    </Pressable>
+          <View style={styles.starRow}>
+            {Array.from({ length: 10 }, (_, i) => (
+              <Icon
+                key={i}
+                source={i < item.rating ? "star" : "star-outline"}
+                size={10}
+                color={i < item.rating ? "#FFD700" : colors.border}
+              />
+            ))}
+            <Text style={styles.ratingNum}>{item.rating}/10</Text>
+          </View>
+          {item.review ? (
+            <Text style={styles.reviewText} numberOfLines={2}>
+              {item.review}
+            </Text>
+          ) : null}
+          <Text style={styles.dateText}>
+            {formatRatingDate(item.createdAt)}
+          </Text>
+        </View>
+      </Pressable>
+      <Pressable onPress={openRateSheet} hitSlop={10} style={styles.editBtn}>
+        <Icon source="pencil-outline" size={14} color={colors.textSecondary} />
+      </Pressable>
+    </View>
   );
 }
 
@@ -149,6 +164,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.md,
     paddingVertical: spacing.md,
+  },
+  rowMain: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+  },
+  editBtn: {
+    padding: spacing.xs,
   },
   rowInfo: { flex: 1, gap: spacing.xs },
   rowTitle: {

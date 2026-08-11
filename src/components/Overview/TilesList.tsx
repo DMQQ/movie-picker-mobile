@@ -37,6 +37,7 @@ export default function TilesList<T>({ data, label, onLongItemPress, useMovieTyp
     <>
       <FlatList
         {...rest}
+        showsVerticalScrollIndicator={false}
         style={[{ flex: 1 }, rest.style]}
         numColumns={3}
         contentContainerStyle={[rest.contentContainerStyle, { gap: spacing.screen, paddingBottom: spacing.xl * 3 }]}

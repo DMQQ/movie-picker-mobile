@@ -25,7 +25,7 @@ import PageHeading from "../../../components/PageHeading";
 import { roomActions } from "../../../redux/room/roomSlice";
 import { authActions } from "../../../redux/auth/authSlice";
 import { setUserId } from "../../../redux/app/appSlice";
-import { useDeleteMeMutation, useUpdateDeviceMutation, useMeQuery } from "../../../redux/auth/authApi";
+import { useDeleteMeMutation, useUpdateMeMutation, useUpdateDeviceMutation, useMeQuery } from "../../../redux/auth/authApi";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import useTranslation from "../../../service/useTranslation";
 import AuthAccount from "../../../components/AuthAccount";
@@ -97,6 +97,7 @@ export default function SettingsScreen() {
   const t = useTranslation();
   const insets = useSafeAreaInsets();
   const [deleteMe] = useDeleteMeMutation();
+  const [updateMe] = useUpdateMeMutation();
   const [updateDevice] = useUpdateDeviceMutation();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [systemPermission, setSystemPermission] = useState<string | null>(null);
@@ -185,6 +186,9 @@ export default function SettingsScreen() {
     const id = setTimeout(() => {
       AsyncStorage.setItem("nickname", nickname);
       dispatch(roomActions.setSettings({ nickname }));
+      if (user?.provider === "anonymous") {
+        updateMe({ name: nickname }).catch(() => {});
+      }
     }, 500);
     return () => clearTimeout(id);
   }, [nickname]);
@@ -220,7 +224,6 @@ export default function SettingsScreen() {
         title={t("settings.heading")}
         showBackButton={false}
         showRightIconButton={false}
-        gradientHeight={60}
         showGradientBackground
       />
 

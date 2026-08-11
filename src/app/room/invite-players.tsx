@@ -5,10 +5,19 @@ import { Image } from "expo-image";
 import Button from "../../components/Button";
 import Text from "../../components/Text";
 import { useAppSelector } from "../../redux/store";
-import { useGetGameMembersQuery, type GameMember } from "../../redux/lists/listsApi";
+import {
+  useGetGameMembersQuery,
+  type GameMember,
+} from "../../redux/lists/listsApi";
 import { useSendInviteMutation } from "../../redux/invite/inviteApi";
 import { getUserAvatarColor } from "../../utils/avatar";
-import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
+import {
+  colors,
+  fontSize,
+  fontWeight,
+  radius,
+  spacing,
+} from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
 
 interface PlayerRowProps {
@@ -18,75 +27,82 @@ interface PlayerRowProps {
   onInvite: (member: GameMember) => void;
 }
 
-const PlayerRow = memo(({ member, invited, loading, onInvite }: PlayerRowProps) => {
-  const t = useTranslation();
+const PlayerRow = memo(
+  ({ member, invited, loading, onInvite }: PlayerRowProps) => {
+    const t = useTranslation();
 
-  return (
-    <View style={styles.row}>
-      <View style={styles.playerInfo}>
-        <View
-          style={[
-            styles.avatar,
-            {
-              backgroundColor: member.avatarUrl
-                ? undefined
-                : getUserAvatarColor(member.name),
-            },
-          ]}
+    return (
+      <View style={styles.row}>
+        <View style={styles.playerInfo}>
+          <View
+            style={[
+              styles.avatar,
+              {
+                backgroundColor: member.avatarUrl
+                  ? undefined
+                  : getUserAvatarColor(member.name),
+              },
+            ]}
+          >
+            {member.avatarUrl ? (
+              <Image
+                style={styles.avatarImg}
+                source={{ uri: member.avatarUrl }}
+                cachePolicy="memory-disk"
+              />
+            ) : (
+              <Text style={styles.avatarLetter}>
+                {member.name.charAt(0).toUpperCase()}
+              </Text>
+            )}
+          </View>
+          <View style={styles.playerText}>
+            <Text style={styles.name} numberOfLines={1}>
+              {member.name}
+            </Text>
+            {!member.canReceiveNotification && (
+              <Text style={styles.notifWarning}>
+                {t("room.invite.noNotifications") as string}
+              </Text>
+            )}
+          </View>
+        </View>
+
+        <Button
+          mode={invited ? "contained" : "outlined"}
+          compact
+          disabled={invited || loading}
+          loading={loading}
+          icon={invited ? "check" : undefined}
+          buttonColor={invited ? "#42DCA3" : undefined}
+          style={styles.inviteButton}
+          onPress={() => onInvite(member)}
         >
-          {member.avatarUrl ? (
-            <Image
-              style={styles.avatarImg}
-              source={{ uri: member.avatarUrl }}
-              cachePolicy="memory-disk"
-            />
-          ) : (
-            <Text style={styles.avatarLetter}>
-              {member.name.charAt(0).toUpperCase()}
-            </Text>
-          )}
-        </View>
-        <View style={styles.playerText}>
-          <Text style={styles.name} numberOfLines={1}>
-            {member.name}
-          </Text>
-          {!member.canReceiveNotification && (
-            <Text style={styles.notifWarning}>
-              {t("room.invite.noNotifications") as string}
-            </Text>
-          )}
-        </View>
+          {loading
+            ? (t("room.invite.sending") as string)
+            : invited
+              ? (t("room.invite.invited") as string)
+              : (t("room.invite.invite") as string)}
+        </Button>
       </View>
-
-      <Button
-        mode={invited ? "contained" : "outlined"}
-        compact
-        disabled={invited || loading}
-        loading={loading}
-        icon={invited ? "check" : undefined}
-        buttonColor={invited ? "#42DCA3" : undefined}
-        style={styles.inviteButton}
-        onPress={() => onInvite(member)}
-      >
-        {loading
-          ? (t("room.invite.sending") as string)
-          : invited
-            ? (t("room.invite.invited") as string)
-            : (t("room.invite.invite") as string)}
-      </Button>
-    </View>
-  );
-});
+    );
+  },
+);
 
 const Separator = () => <View style={styles.separator} />;
 
 export default function InvitePlayersScreen() {
-  const { roomId, gameType } = useLocalSearchParams<{ roomId: string; gameType: string }>();
+  const { roomId, gameType } = useLocalSearchParams<{
+    roomId: string;
+    gameType: string;
+  }>();
   const user = useAppSelector((s) => s.auth.user);
   const isFullAccount = !!user && user.provider !== "anonymous";
-  const { data, isLoading } = useGetGameMembersQuery(undefined, { skip: !isFullAccount });
+  const { data, isLoading } = useGetGameMembersQuery(undefined, {
+    skip: !isFullAccount,
+  });
   const t = useTranslation();
-  const [sendInvite] = useSendInviteMutation();
+  const [sendInvite, { error }] = useSendInviteMutation();
   const [invitedIds, setInvitedIds] = useState<Set<string>>(new Set());
   const invitedIdsRef = useRef(invitedIds);
   invitedIdsRef.current = invitedIds;
@@ -101,19 +117,22 @@ export default function InvitePlayersScreen() {
     return allMembers.filter((m) => m.name.toLowerCase().includes(q));
   }, [allMembers, query]);
 
-  const handleInvite = useCallback(async (member: GameMember) => {
-    if (!roomId || invitedIdsRef.current.has(member.id)) return;
-    setLoadingId(member.id);
-    try {
-      await sendInvite({
-        receiverId: member.id,
-        gameType: gameType ?? "swipe",
-        roomId: roomId,
-      }).unwrap();
-      setInvitedIds((prev) => new Set(prev).add(member.id));
-    } catch {}
-    setLoadingId(null);
-  }, [roomId, gameType, sendInvite]);
+  const handleInvite = useCallback(
+    async (member: GameMember) => {
+      if (!roomId || invitedIdsRef.current.has(member.id)) return;
+      setLoadingId(member.id);
+      try {
+        await sendInvite({
+          receiverId: member.id,
+          gameType: gameType ?? "swipe",
+          roomId: roomId,
+        }).unwrap();
+        setInvitedIds((prev) => new Set(prev).add(member.id));
+      } catch {}
+      setLoadingId(null);
+    },
+    [roomId, gameType, sendInvite],
+  );
 
   return (
     <View style={styles.container} collapsable={false}>

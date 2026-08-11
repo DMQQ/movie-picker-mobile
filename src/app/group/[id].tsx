@@ -6,6 +6,7 @@ import * as Haptics from "expo-haptics";
 import Icon from "../../components/Icon";
 import IconButton from "../../components/IconButton";
 import Text from "../../components/Text";
+import AvatarText from "../../components/AvatarText";
 import PageHeading from "../../components/PageHeading";
 import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
@@ -16,6 +17,8 @@ import MoviesActionButtons from "../../components/MoviesActionButtons";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
 import { useGroupData, type GroupMovie } from "../../hooks/useGroupData";
 import useTranslation from "../../service/useTranslation";
+import { useAppSelector } from "../../redux/store";
+import { getUserAvatarColor } from "../../utils/avatar";
 
 const POSTER_W = 42;
 const POSTER_H = 62;
@@ -25,6 +28,7 @@ export default function Group() {
   const isPreview = useIsPreview();
   const insets = useSafeAreaInsets();
   const t = useTranslation();
+  const user = useAppSelector((s) => s.auth.user);
 
   const [match, setMatch] = useState<GroupMovie | undefined>(undefined);
   const [shareModalVisible, setShareModalVisible] = useState(false);
@@ -91,26 +95,34 @@ export default function Group() {
           <Text style={styles.rowTitle} numberOfLines={1}>
             {item.title ?? `#${item.id}`}
           </Text>
-          <View style={styles.starRow}>
-            {Array.from({ length: 10 }, (_, i) => (
-              <Icon
-                key={i}
-                source={item.rating != null && i < item.rating ? "star" : "star-outline"}
-                size={10}
-                color={item.rating != null && i < item.rating ? "#FFD700" : colors.border}
-              />
-            ))}
-            {item.rating != null && (
-              <Text style={styles.ratingNum}>{item.rating}/10</Text>
-            )}
-          </View>
-          {item.review ? (
-            <Text style={styles.reviewText} numberOfLines={2}>
-              {item.review}
-            </Text>
-          ) : (
-            <Text style={styles.noReviewText}>{t("lists.noReview") as string}</Text>
-          )}
+          <Pressable onPress={() => openRateSheet(item)} style={styles.reviewPressable}>
+            <AvatarText
+              label={(user?.name ?? "?").charAt(0).toUpperCase()}
+              size={22}
+              style={{ backgroundColor: getUserAvatarColor(user?.name ?? "") }}
+            />
+            <View style={styles.reviewContent}>
+              <View style={styles.starRow}>
+                {Array.from({ length: 10 }, (_, i) => (
+                  <Icon
+                    key={i}
+                    source={item.rating != null && i < item.rating ? "star" : "star-outline"}
+                    size={10}
+                    color={item.rating != null && i < item.rating ? "#FFD700" : colors.border}
+                  />
+                ))}
+                {item.rating != null && (
+                  <Text style={styles.ratingNum}>{item.rating}/10</Text>
+                )}
+              </View>
+              {item.review ? (
+                <Text style={styles.reviewText} numberOfLines={1}>{item.review}</Text>
+              ) : (
+                <Text style={styles.noReviewText}>{t("lists.noReview") as string}</Text>
+              )}
+            </View>
+            <Icon source="pencil-outline" size={10} color="rgba(255,255,255,0.2)" />
+          </Pressable>
         </View>
       </Pressable>
       <View style={styles.rowActions}>
@@ -282,16 +294,31 @@ const styles = StyleSheet.create({
     marginLeft: spacing.xs,
   },
 
+  reviewPressable: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs + 2,
+    backgroundColor: colors.overlay,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.xs + 2,
+    paddingVertical: spacing.xs,
+  },
+  reviewContent: {
+    flex: 1,
+    gap: spacing.xs - 2,
+  },
   reviewText: {
-    fontSize: fontSize.sm + 1,
+    flex: 1,
+    fontSize: fontSize.sm,
     color: "rgba(255,255,255,0.45)",
-    lineHeight: fontSize.sm + 6,
+    lineHeight: fontSize.sm + 4,
   },
   noReviewText: {
-    fontSize: fontSize.sm + 1,
+    flex: 1,
+    fontSize: fontSize.sm,
     color: "rgba(255,255,255,0.25)",
     fontStyle: "italic",
-    lineHeight: fontSize.sm + 6,
+    lineHeight: fontSize.sm + 4,
   },
 
   separator: {
