@@ -5,6 +5,7 @@ import { StyleSheet, View } from "react-native";
 
 import { Image } from "expo-image";
 import { useFocusEffect } from "expo-router";
+import { useAppSelector } from "../redux/store";
 import { useGetGameMembersQuery } from "../redux/lists/listsApi";
 import { getUserAvatarColor } from "../utils/avatar";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
@@ -15,7 +16,9 @@ const AVATAR_SIZE = 34;
 const OVERLAP = 10;
 
 export default function PlayedWith() {
-  const { data, isLoading, refetch } = useGetGameMembersQuery();
+  const user = useAppSelector((s) => s.auth.user);
+  const isFullAccount = !!user && user.provider !== "anonymous";
+  const { data, isLoading, refetch } = useGetGameMembersQuery(undefined, { skip: !isFullAccount });
 
   useFocusEffect(useCallback(() => { refetch(); }, [refetch]));
   const members = data?.members ?? [];

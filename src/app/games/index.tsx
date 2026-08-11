@@ -6,6 +6,7 @@ import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/de
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import PageHeading from "../../components/PageHeading";
 import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
+import { useAppSelector } from "../../redux/store";
 import { useGetGamesQuery, type UserGame } from "../../redux/lists/listsApi";
 import { formatGameType } from "../../utils/formatGameType";
 import { router } from "expo-router";
@@ -70,7 +71,9 @@ function GameRow({ item }: { item: UserGame }) {
 }
 
 export default function AllGamesScreen() {
-  const { data, isLoading } = useGetGamesQuery();
+  const user = useAppSelector((s) => s.auth.user);
+  const isFullAccount = !!user && user.provider !== "anonymous";
+  const { data, isLoading } = useGetGamesQuery(undefined, { skip: !isFullAccount });
   const games = [...(data?.games ?? [])].reverse();
   const insets = useSafeAreaInsets();
   const t = useTranslation();

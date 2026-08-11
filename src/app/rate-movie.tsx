@@ -39,7 +39,7 @@ export default function RateMovieScreen() {
 
   const { data: existingRating } = useGetMyRatingQuery(
     { contentType: params.contentType, contentId: Number(params.movieId) },
-    { skip: !user || !params.movieId },
+    { skip: !user || user.provider === "anonymous" || !params.movieId },
   );
 
   const [rating, setRating] = useState<number | null>(
@@ -61,7 +61,7 @@ export default function RateMovieScreen() {
   const handleSave = async () => {
     if (!canSave) return;
 
-    if (user) {
+    if (user && user.provider !== "anonymous") {
       await upsertRating({
         contentType: params.contentType,
         contentId: Number(params.movieId),

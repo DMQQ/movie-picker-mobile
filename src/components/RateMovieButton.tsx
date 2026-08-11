@@ -44,7 +44,7 @@ export default function RateMovieButton({ movie, contentType }: Props) {
 
   const { data: myRating } = useGetMyRatingQuery(
     { contentType, contentId: movie.id },
-    { skip: !user || !movie?.id },
+    { skip: !user || user.provider === "anonymous" || !movie?.id },
   );
 
   const handlePress = () => {

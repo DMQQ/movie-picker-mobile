@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Button from "../../components/Button";
 import AvatarText from "../../components/AvatarText";
 import Text from "../../components/Text";
 import { useTheme } from "../../hooks/useTheme";
@@ -24,8 +25,9 @@ import {
 import PrimaryButton from "../../components/PrimaryButton";
 import StyledQRCode from "../../components/StyledQRCode";
 import { Movie } from "../../../types";
-import { getUserAvatarColor } from "../../utils/avatar";
 import PageHeading from "../../components/PageHeading";
+import { getUserAvatarColor } from "../../utils/avatar";
+import RoleGuard from "../../components/RoleGuard";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../context/SocketContext";
@@ -372,58 +374,79 @@ export default function QRCodePage() {
             <Text style={styles.warningText}>
               {t("room.lower-results-count", { count: moviesCount })}
             </Text>
-          ) : users.length <= 1 ? (
-            <Text style={styles.infoText}>{t("room.waiting-for-players")}</Text>
           ) : null}
         </View>
 
-        <Pressable
-          style={[styles.inviteButton, !qrCode && styles.inviteButtonDisabled]}
-          disabled={!qrCode}
-          onPress={() =>
-            router.push({
-              pathname: "/room/invite-players",
-              params: { roomId: qrCode, gameType: "swipe" },
-            })
-          }
-        >
-          <Text style={[styles.inviteButtonText, !qrCode && styles.inviteButtonTextDisabled]}>
-            {t("room.invitePlayers") as string}
-          </Text>
-          <View style={styles.avatarsContainer}>
-            {users.map((nick, index) => (
-              <View key={nick + index} style={styles.avatarWrapper}>
-                <AvatarText
-                  size={22}
-                  label={nick[0].toUpperCase()}
-                  style={{ backgroundColor: getUserAvatarColor(nick) }}
-                />
-              </View>
-            ))}
+        {users.length > 0 && (
+          <View style={styles.playersRow}>
+            <View style={styles.avatarsStack}>
+              {users.map((nick, index) => (
+                <Animated.View
+                  key={nick}
+                  entering={FadeInDown.duration(300)}
+                  style={index > 0 && styles.avatarOverlap}
+                >
+                  <AvatarText
+                    size={32}
+                    label={nick[0].toUpperCase()}
+                    style={{
+                      backgroundColor: getUserAvatarColor(nick),
+                      borderWidth: 2,
+                      borderColor: colors.appBackground,
+                    }}
+                  />
+                </Animated.View>
+              ))}
+            </View>
+            <Text style={styles.playersCount}>
+              {users.length > 1
+                ? `${users.length} active`
+                : t("room.waiting-for-players")}
+            </Text>
           </View>
-        </Pressable>
+        )}
 
-        <Link
-          href={startGameHref}
-          asChild
-          disabled={isDisabled}
-          onPress={handleStartGame}
-        >
-          <PrimaryButton
+        <View style={styles.actionRow}>
+          <RoleGuard guard="authenticated">
+            <Button
+              mode="outlined"
+              disabled={!qrCode}
+              icon="account-multiple-plus"
+              compact
+              style={styles.inviteButton}
+              onPress={() =>
+                router.push({
+                  pathname: "/room/invite-players",
+                  params: { roomId: qrCode, gameType: "swipe" },
+                })
+              }
+            >
+              {""}
+            </Button>
+          </RoleGuard>
+
+          <Link
+            href={startGameHref}
+            asChild
             disabled={isDisabled}
-            style={styles.startButton}
+            onPress={handleStartGame}
           >
-            {isRefetching
-              ? SYNC_PHRASES[syncPhraseIndex]
-              : isLoadingMovies
-                ? "Loading..."
-                : moviesCount === 0
-                  ? t("room.too-restricted")
-                  : users.length === 1
-                    ? t("room.play-alone")
-                    : t("room.start")}
-          </PrimaryButton>
-        </Link>
+            <PrimaryButton
+              disabled={isDisabled}
+              style={styles.startButton}
+            >
+              {isRefetching
+                ? SYNC_PHRASES[syncPhraseIndex]
+                : isLoadingMovies
+                  ? "Loading..."
+                  : moviesCount === 0
+                    ? t("room.too-restricted")
+                    : users.length === 1
+                      ? t("room.play-alone")
+                      : t("room.start")}
+            </PrimaryButton>
+          </Link>
+        </View>
       </View>
     </View>
   );
@@ -561,17 +584,6 @@ const styles = StyleSheet.create({
     gap: spacing.xs + 3.5,
     paddingBottom: Platform.OS === "android" ? spacing.screen : 0,
   },
-  avatarsContainer: {
-    flexDirection: "row",
-    gap: spacing.xs + 1,
-  },
-  avatarWrapper: {
-    flexDirection: "row",
-    backgroundColor: colors.appBackground,
-    gap: spacing.xs + 1,
-    borderRadius: radius.pill,
-    alignItems: "center",
-  },
   warningText: {
     color: "#ff6b6b",
   },
@@ -581,36 +593,42 @@ const styles = StyleSheet.create({
   },
   startButton: {
     borderRadius: radius.pill,
-    marginTop: spacing.sm + 2,
+    flex: 3,
   },
   startButtonContent: {
     paddingVertical: spacing.sm,
   },
+  actionRow: {
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
   inviteButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderWidth: 1,
-    borderColor: colors.primary,
     borderRadius: radius.pill,
-    paddingVertical: spacing.sm + 2,
-    paddingHorizontal: spacing.lg,
+    width: 48,
+    height: 48,
   },
-  inviteButtonContent: {
+  playersRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.xs,
+    gap: spacing.sm,
+    marginBottom: spacing.md,
   },
-  inviteButtonText: {
-    fontSize: fontSize.md + 1,
-    fontWeight: fontWeight.semibold,
-    color: colors.primary,
+  avatarsStack: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  inviteButtonDisabled: {
-    borderColor: colors.border,
+  avatarOverlap: {
+    marginLeft: -12,
   },
-  inviteButtonTextDisabled: {
+  playersCount: {
     color: colors.placeholder,
+    fontSize: fontSize.sm,
+  },
+  avatarWrapper: {
+    borderRadius: radius.pill,
+    borderWidth: 2,
+    borderColor: colors.appBackground,
+    backgroundColor: colors.appBackground,
   },
   tutorialContainer: {
     marginTop: spacing.screen,

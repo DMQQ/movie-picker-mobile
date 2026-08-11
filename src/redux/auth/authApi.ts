@@ -6,6 +6,7 @@ import { createReportingBaseQuery } from "../baseQuery";
 
 interface AuthResponse {
   token: string;
+  refreshToken: string;
   user: AuthUser;
 }
 
@@ -48,7 +49,7 @@ export const authApi = createApi({
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(authActions.setCredentials({ token: data.token, user: data.user }));
+          dispatch(authActions.setCredentials({ token: data.token, refreshToken: data.refreshToken, user: data.user }));
         } catch {}
       },
     }),
@@ -100,6 +101,16 @@ export const authApi = createApi({
       query: (body) => ({ url: "/me/device", method: "PATCH", body }),
     }),
 
+    refresh: build.mutation<AuthResponse, { refreshToken: string }>({
+      query: (body) => ({ url: "/refresh", method: "POST", body }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(authActions.setCredentials(data));
+        } catch {}
+      },
+    }),
+
     deleteMe: build.mutation<{ ok: boolean }, void>({
       query: () => ({ url: "/me", method: "DELETE" }),
     }),
@@ -124,6 +135,7 @@ export const {
   useRecoverMutation,
   useRegenerateCodesMutation,
   useMeQuery,
+  useRefreshMutation,
   useDeleteMeMutation,
   useUpdateMeMutation,
   useUpdateDeviceMutation,

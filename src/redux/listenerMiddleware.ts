@@ -1,4 +1,5 @@
 import { createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
+import * as SecureStore from "expo-secure-store";
 import { setProviders, toggleProvider, clearAllFilters } from "./mediaFilters/mediaFiltersSlice";
 import { saveFilterPreferences, clearFilterPreferences } from "./filterPreferences/filterPreferencesSlice";
 import { authActions, type AuthUser } from "./auth/authSlice";
@@ -15,8 +16,6 @@ listenerMiddleware.startListening({
   effect: async (action, listenerApi) => {
     const state = listenerApi.getState() as { mediaFilters: { selectedProviders: number[] } };
     const providers = state.mediaFilters.selectedProviders;
-
-    // Save to storage via the async thunk
     listenerApi.dispatch(saveFilterPreferences({ providers }));
   },
 });
@@ -34,9 +33,26 @@ function setSentryUser(user: AuthUser) {
   Sentry.setUser({ id: user.id, email: user.email, username: user.name });
 }
 
+// Persist tokens to SecureStore on login / token refresh
 listenerMiddleware.startListening({
   actionCreator: authActions.setCredentials,
-  effect: (action) => setSentryUser(action.payload.user),
+  effect: async (action) => {
+    setSentryUser(action.payload.user);
+    await SecureStore.setItemAsync("user_auth_token", action.payload.token);
+    if (action.payload.refreshToken) {
+      await SecureStore.setItemAsync("user_refresh_token", action.payload.refreshToken);
+    }
+  },
+});
+
+listenerMiddleware.startListening({
+  actionCreator: authActions.setToken,
+  effect: async (action) => {
+    await SecureStore.setItemAsync("user_auth_token", action.payload.token);
+    if (action.payload.refreshToken) {
+      await SecureStore.setItemAsync("user_refresh_token", action.payload.refreshToken);
+    }
+  },
 });
 
 listenerMiddleware.startListening({
@@ -46,8 +62,10 @@ listenerMiddleware.startListening({
 
 listenerMiddleware.startListening({
   matcher: isAnyOf(authActions.clearAuth, authActions.setSessionExpired),
-  effect: () => {
+  effect: async () => {
     Sentry.setUser(null);
+    await SecureStore.deleteItemAsync("user_auth_token");
+    await SecureStore.deleteItemAsync("user_refresh_token");
   },
 });
 

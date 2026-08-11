@@ -57,6 +57,7 @@ export interface GameMember {
   id: string;
   name: string;
   avatarUrl: string | null;
+  canReceiveNotification: boolean;
 }
 
 export interface UserGame {

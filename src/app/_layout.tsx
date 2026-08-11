@@ -5,6 +5,7 @@ import { ThemeProvider, DarkTheme } from "expo-router/react-navigation";
 import { useEffect, useRef, useState } from "react";
 import { Platform, Alert } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import PendingInviteBanner from "../components/PendingInviteBanner";
 import { PortalProvider } from "../components/Portal";
 import { colors } from "../constants/design";
 import {
@@ -140,27 +141,46 @@ const RootNavigator = ({
       if (!isLoaded || isUpdating) return;
 
       try {
-        const [nickname, storedToken, userId] = await allSettled(
+        const [nickname, storedToken, storedRefreshToken, userId] = await allSettled(
           Promise.allSettled([
             AsyncStorage.getItemAsync("nickname"),
             SecureStore.getItemAsync("user_auth_token"),
+            SecureStore.getItemAsync("user_refresh_token"),
             AsyncStorage.getItemAsync("userId"),
           ]),
           null,
         );
 
-        const finalUserId =
-          userId ??
-          (await fetch(url + "/auth/anonymous", { method: "POST" })
-            .then((r) => r.json())
-            .then((data) => data.anonymousId)
-            .catch(() => null));
+        const anonymousData = userId
+          ? null
+          : await fetch(url + "/auth/anonymous", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: storedRefreshToken ? JSON.stringify({ refreshToken: storedRefreshToken }) : undefined,
+            })
+              .then((r) => r.json())
+              .catch(() => null);
+
+        const finalUserId = userId ?? anonymousData?.anonymousId;
 
         if (finalUserId) {
           if (!userId) await AsyncStorage.setItemAsync("userId", finalUserId);
           dispatch(setUserId(finalUserId));
         }
-        if (storedToken) dispatch(restoreSession(storedToken));
+
+        if (storedToken) {
+          dispatch(restoreSession({ token: storedToken, refreshToken: storedRefreshToken }));
+        } else if (anonymousData?.token) {
+          await SecureStore.setItemAsync("user_auth_token", anonymousData.token);
+          if (anonymousData.refreshToken) {
+            await SecureStore.setItemAsync("user_refresh_token", anonymousData.refreshToken);
+          }
+          dispatch(authActions.setCredentials({
+            token: anonymousData.token,
+            refreshToken: anonymousData.refreshToken,
+            user: anonymousData.user,
+          }));
+        }
 
         const deviceSettings = getDeviceSettings();
 
@@ -308,6 +328,7 @@ const RootNavigator = ({
         />
 
       </Stack>
+      <PendingInviteBanner />
     </GestureHandlerRootView>
   );
 };

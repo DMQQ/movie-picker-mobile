@@ -24,6 +24,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import PageHeading from "../../../components/PageHeading";
 import { roomActions } from "../../../redux/room/roomSlice";
 import { authActions } from "../../../redux/auth/authSlice";
+import { setUserId } from "../../../redux/app/appSlice";
 import { useDeleteMeMutation, useUpdateDeviceMutation, useMeQuery } from "../../../redux/auth/authApi";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import useTranslation from "../../../service/useTranslation";
@@ -90,6 +91,7 @@ export default function SettingsScreen() {
   const nk = useAppSelector((state) => state.room.nickname);
   const [nickname, setNickname] = useState<string>(nk);
   const user = useAppSelector((state) => state.auth.user);
+  const isFullAccount = !!user && user.provider !== "anonymous";
   const sessionExpired = useAppSelector((state) => state.auth.sessionExpired);
   const dispatch = useAppDispatch();
   const t = useTranslation();
@@ -99,7 +101,7 @@ export default function SettingsScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [systemPermission, setSystemPermission] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const { refetch: refetchMe } = useMeQuery(undefined, { skip: !user });
+  const { refetch: refetchMe } = useMeQuery(undefined, { skip: !isFullAccount });
 
   useEffect(() => {
     AsyncStorage.getItemAsync("notificationsEnabled").then((val) => {
@@ -150,6 +152,7 @@ export default function SettingsScreen() {
       await updateDevice({ pushNotificationToken: null, platform: Platform.OS, notificationsEnabled: false }).unwrap();
     } catch {}
     await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
+    await SecureStore.deleteItemAsync("user_refresh_token");
     dispatch(authActions.clearAuth());
   }
 
@@ -166,6 +169,7 @@ export default function SettingsScreen() {
             try {
               await deleteMe().unwrap();
               await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
+              await SecureStore.deleteItemAsync("user_refresh_token");
               dispatch(authActions.clearAuth());
             } catch {
               Alert.alert(t("common.error"), t("account.deleteDialog.error"));
@@ -195,7 +199,7 @@ export default function SettingsScreen() {
   async function onRefresh() {
     setRefreshing(true);
     try {
-      if (user) await refetchMe();
+      if (isFullAccount) await refetchMe();
       const { status } = await Notifications.getPermissionsAsync();
       setSystemPermission(status);
       const enabled = await AsyncStorage.getItemAsync("notificationsEnabled");
@@ -235,7 +239,7 @@ export default function SettingsScreen() {
           />
         }
       >
-        {!user && (
+        {!isFullAccount && (
           <Animated.View entering={FadeInDown.delay(60)} style={styles.section}>
             <SectionLabel
               icon="pencil-outline"
@@ -255,15 +259,15 @@ export default function SettingsScreen() {
           </Animated.View>
         )}
 
-        <Animated.View entering={FadeInDown.delay(user ? 60 : 140)}>
-          {user ? (
+        <Animated.View entering={FadeInDown.delay(isFullAccount ? 60 : 140)}>
+          {isFullAccount ? (
             <AuthAccount user={user} />
           ) : (
             <UnauthAccount expired={sessionExpired} />
           )}
         </Animated.View>
 
-        {user && (
+        {isFullAccount && (
           <Animated.View
             entering={FadeInDown.delay(140)}
             style={styles.section}
@@ -345,6 +349,19 @@ export default function SettingsScreen() {
               }}
             >
               Reset tutorial
+            </Text>
+            <Text
+              style={styles.devButton}
+              onPress={async () => {
+                await AsyncStorage.removeItem("userId");
+                await SecureStore.deleteItemAsync("user_auth_token");
+                await SecureStore.deleteItemAsync("user_refresh_token");
+                dispatch(setUserId(""));
+                dispatch(authActions.clearAuth());
+                Alert.alert("Done", "userId + tokens cleared — reload app to regenerate");
+              }}
+            >
+              Reset anonymous userId
             </Text>
             <Text
               style={[styles.devButton, styles.devButtonPrimary]}

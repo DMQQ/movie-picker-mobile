@@ -27,7 +27,7 @@ export interface RatePayload {
 export function useGroupData() {
   const params = useLocalSearchParams<{ id: string; group?: string }>();
   const groups = useAppSelector((st) => st.favourite.groups);
-  const token = useAppSelector((s) => s.auth.token);
+  const user = useAppSelector((s) => s.auth.user);
   const dispatch = useAppDispatch();
 
   const remoteGroupMeta = useMemo<RemoteGroupMeta | null>(() => {
@@ -39,7 +39,7 @@ export function useGroupData() {
     }
   }, [params.group]);
 
-  const isRemote = !!token && !!remoteGroupMeta;
+  const isRemote = !!user && user.provider !== "anonymous" && !!remoteGroupMeta;
   const listType = remoteGroupMeta?.type ?? null;
 
   const { data: remoteListData, isLoading: isListLoading } = useGetListQuery(

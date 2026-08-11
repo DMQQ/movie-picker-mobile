@@ -24,8 +24,8 @@ import {
 export function useSuperLikedMovies() {
   const dispatch = useAppDispatch();
   const { movieInteractions, isReady } = useMovieInteractions();
-  const token = useAppSelector((s) => s.auth.token);
-  const isAuthenticated = !!token;
+  const user = useAppSelector((s) => s.auth.user);
+  const isFullAccount = !!user && user.provider !== "anonymous";
 
   // Local selectors — always called to satisfy hook ordering rules
   const localSuperLikedMovies = useAppSelector(selectSuperLikedMovies);
@@ -34,20 +34,20 @@ export function useSuperLikedMovies() {
 
   // Remote path — skipped when not signed in
   const { data: remoteData, isLoading: remoteLoading } = useGetListQuery("superliked", {
-    skip: !isAuthenticated,
+    skip: !isFullAccount,
   });
   const [addItem] = useAddItemMutation();
   const [removeItem] = useRemoveItemMutation();
 
   // Hydrate from local DB only when not authenticated
   useEffect(() => {
-    if (!isAuthenticated && isReady && movieInteractions && !localHydrated) {
+    if (!isFullAccount && isReady && movieInteractions && !localHydrated) {
       dispatch(loadInteractions(movieInteractions));
     }
-  }, [isAuthenticated, isReady, movieInteractions, localHydrated, dispatch]);
+  }, [isFullAccount, isReady, movieInteractions, localHydrated, dispatch]);
 
   const superLikedMovies = useMemo(() => {
-    if (isAuthenticated) {
+    if (isFullAccount) {
       const remoteItems = (remoteData?.items ?? []).map((item) => ({
         id: 0 as number,
         movie_id: item.contentId,
@@ -65,13 +65,13 @@ export function useSuperLikedMovies() {
       return [...remoteItems, ...localOnly];
     }
     return localSuperLikedMovies;
-  }, [isAuthenticated, remoteData, localSuperLikedMovies]);
+  }, [isFullAccount, remoteData, localSuperLikedMovies]);
 
   const superLikeMovie = useCallback(
     async (movie: Movie) => {
       const movieType: MovieType = movie.type ?? (movie.first_air_date ? "tv" : "movie");
 
-      if (isAuthenticated) {
+      if (isFullAccount) {
         await addItem({
           type: "superliked",
           contentId: movie.id,
@@ -125,12 +125,12 @@ export function useSuperLikedMovies() {
         }
       }
     },
-    [isAuthenticated, movieInteractions, dispatch, addItem, remoteData]
+    [isFullAccount, movieInteractions, dispatch, addItem, remoteData]
   );
 
   const removeSuperLike = useCallback(
     async (movieId: number, movieType: MovieType) => {
-      if (isAuthenticated) {
+      if (isFullAccount) {
         const item = remoteData?.items.find(
           (i) => i.contentId === movieId && i.contentType === movieType
         );
@@ -145,12 +145,12 @@ export function useSuperLikedMovies() {
       if (!movieInteractions) return;
       await dispatch(removeSuperLikeAction({ repo: movieInteractions, movieId, movieType }));
     },
-    [isAuthenticated, remoteData, movieInteractions, dispatch, removeItem]
+    [isFullAccount, remoteData, movieInteractions, dispatch, removeItem]
   );
 
   const isSuperLiked = useCallback(
     (movieId: number, movieType: MovieType): boolean => {
-      if (isAuthenticated) {
+      if (isFullAccount) {
         const inRemote = (remoteData?.items ?? []).some(
           (i) => i.contentId === movieId && i.contentType === movieType
         );
@@ -164,11 +164,11 @@ export function useSuperLikedMovies() {
         (m) => m.movie_id === movieId && m.movie_type === movieType
       );
     },
-    [isAuthenticated, remoteData, localSuperLikedMovies]
+    [isFullAccount, remoteData, localSuperLikedMovies]
   );
 
   const getSuperLikedIds = useCallback((): { id: number; type: MovieType }[] => {
-    if (isAuthenticated) {
+    if (isFullAccount) {
       const remoteIds = (remoteData?.items ?? []).map((i) => ({
         id: i.contentId,
         type: i.contentType as MovieType,
@@ -180,10 +180,10 @@ export function useSuperLikedMovies() {
       return [...remoteIds, ...localOnly];
     }
     return localSuperLikedMovies.map((m) => ({ id: m.movie_id, type: m.movie_type }));
-  }, [isAuthenticated, remoteData, localSuperLikedMovies]);
+  }, [isFullAccount, remoteData, localSuperLikedMovies]);
 
   const clearAllSuperLiked = useCallback(async () => {
-    if (isAuthenticated) {
+    if (isFullAccount) {
       const items = remoteData?.items ?? [];
       await Promise.all(
         items.map((item) => removeItem({ itemId: item.id, listType: "superliked" }))
@@ -192,19 +192,19 @@ export function useSuperLikedMovies() {
     }
     if (!movieInteractions) return;
     await dispatch(clearAllSuperLikedAction(movieInteractions));
-  }, [isAuthenticated, remoteData, movieInteractions, dispatch, removeItem]);
+  }, [isFullAccount, remoteData, movieInteractions, dispatch, removeItem]);
 
   const refresh = useCallback(async () => {
-    if (isAuthenticated) return; // RTK Query refetches automatically on invalidation
+    if (isFullAccount) return; // RTK Query refetches automatically on invalidation
     if (!movieInteractions) return;
     await dispatch(loadInteractions(movieInteractions));
-  }, [isAuthenticated, movieInteractions, dispatch]);
+  }, [isFullAccount, movieInteractions, dispatch]);
 
   return useMemo(
     () => ({
       superLikedMovies,
-      loading: isAuthenticated ? remoteLoading : localLoading,
-      isReady: isAuthenticated ? !remoteLoading : localHydrated,
+      loading: isFullAccount ? remoteLoading : localLoading,
+      isReady: isFullAccount ? !remoteLoading : localHydrated,
       superLikeMovie,
       removeSuperLike,
       isSuperLiked,
@@ -214,7 +214,7 @@ export function useSuperLikedMovies() {
     }),
     [
       superLikedMovies,
-      isAuthenticated,
+      isFullAccount,
       remoteLoading,
       localLoading,
       localHydrated,

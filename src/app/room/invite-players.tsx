@@ -1,8 +1,10 @@
 import { useLocalSearchParams } from "expo-router";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
-import { FlatList, Platform, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { FlatList, Platform, StyleSheet, TextInput, View } from "react-native";
 import { Image } from "expo-image";
+import Button from "../../components/Button";
 import Text from "../../components/Text";
+import { useAppSelector } from "../../redux/store";
 import { useGetGameMembersQuery, type GameMember } from "../../redux/lists/listsApi";
 import { useSendInviteMutation } from "../../redux/invite/inviteApi";
 import { getUserAvatarColor } from "../../utils/avatar";
@@ -44,32 +46,34 @@ const PlayerRow = memo(({ member, invited, loading, onInvite }: PlayerRowProps) 
             </Text>
           )}
         </View>
-        <Text style={styles.name} numberOfLines={1}>
-          {member.name}
-        </Text>
+        <View style={styles.playerText}>
+          <Text style={styles.name} numberOfLines={1}>
+            {member.name}
+          </Text>
+          {!member.canReceiveNotification && (
+            <Text style={styles.notifWarning}>
+              {t("room.invite.noNotifications") as string}
+            </Text>
+          )}
+        </View>
       </View>
 
-      <Pressable
-        style={[
-          styles.inviteButton,
-          invited && styles.inviteButtonSent,
-        ]}
+      <Button
+        mode={invited ? "contained" : "outlined"}
+        compact
         disabled={invited || loading}
+        loading={loading}
+        icon={invited ? "check" : undefined}
+        buttonColor={invited ? "#42DCA3" : undefined}
+        style={styles.inviteButton}
         onPress={() => onInvite(member)}
       >
-        <Text
-          style={[
-            styles.inviteButtonText,
-            invited && styles.inviteButtonTextSent,
-          ]}
-        >
-          {loading
-            ? (t("room.invite.sending") as string)
-            : invited
-              ? (t("room.invite.invited") as string)
-              : (t("room.invite.invite") as string)}
-        </Text>
-      </Pressable>
+        {loading
+          ? (t("room.invite.sending") as string)
+          : invited
+            ? (t("room.invite.invited") as string)
+            : (t("room.invite.invite") as string)}
+      </Button>
     </View>
   );
 });
@@ -78,7 +82,9 @@ const Separator = () => <View style={styles.separator} />;
 
 export default function InvitePlayersScreen() {
   const { roomId, gameType } = useLocalSearchParams<{ roomId: string; gameType: string }>();
-  const { data, isLoading } = useGetGameMembersQuery();
+  const user = useAppSelector((s) => s.auth.user);
+  const isFullAccount = !!user && user.provider !== "anonymous";
+  const { data, isLoading } = useGetGameMembersQuery(undefined, { skip: !isFullAccount });
   const t = useTranslation();
   const [sendInvite] = useSendInviteMutation();
   const [invitedIds, setInvitedIds] = useState<Set<string>>(new Set());
@@ -221,31 +227,22 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.bold,
     color: colors.text,
   },
+  playerText: {
+    flex: 1,
+  },
   name: {
     fontSize: fontSize.lg,
     fontWeight: fontWeight.medium,
     color: colors.text,
-    flex: 1,
+  },
+  notifWarning: {
+    fontSize: fontSize.xs,
+    color: "#ff6b6b",
+    marginTop: 2,
   },
   inviteButton: {
-    borderWidth: 1,
-    borderColor: colors.primary,
     borderRadius: radius.pill,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    width: 100,
-    alignItems: "center",
-  },
-  inviteButtonSent: {
-    backgroundColor: colors.primary,
-  },
-  inviteButtonText: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.primary,
-  },
-  inviteButtonTextSent: {
-    color: colors.text,
+    minWidth: 100,
   },
   separator: {
     height: 1,

@@ -201,9 +201,15 @@
 			"noRecentPlayers": "Keine letzten Spieler",
 			"sending": "Senden...",
 			"invited": "Eingeladen",
-			"invite": "Einladen"
+			"invite": "Einladen",
+			"noNotifications": "Benachrichtigungen aus — Einladung ggf. nicht sichtbar",
+			"banner": {
+				"swipe": "Du wurdest zu einem Swipe-Spiel eingeladen!",
+				"voter": "Du wurdest zu einem Voting-Spiel eingeladen!",
+				"join": "Tippen zum Beitreten"
+			}
 		},
-		"invitePlayers": "Spieler einladen"
+		"inviteFriends": "Freunde einladen"
 	},
 	"fortune-wheel": {
 		"drag": "Nach oben ziehen zum Drehen",

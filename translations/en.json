@@ -88,14 +88,20 @@
     "page-range-desc": "Select the number of pages to search",
     "qr-title": "Scan to join!",
     "active": "Active users",
-    "invitePlayers": "Invite Players",
+    "inviteFriends": "Invite Friends",
     "invite": {
       "searchPlaceholder": "Search players...",
       "noPlayersFound": "No players found",
       "noRecentPlayers": "No recent players",
       "sending": "Sending...",
       "invited": "Invited",
-      "invite": "Invite"
+      "invite": "Invite",
+      "noNotifications": "Notifications off — may not see invite",
+      "banner": {
+        "swipe": "You've been invited to a swiping game!",
+        "voter": "You've been invited to a voting game!",
+        "join": "Tap to join"
+      }
     },
     "qr-subtitle": "Let your friends scan the code with the camera app or the in app scanner to join the room, or share the room code by holding down the code below. You can also start the game by yourself if you wish",
     "tutorial": {

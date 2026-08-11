@@ -16,6 +16,7 @@ import { Image } from "expo-image";
 import PageHeading from "../../components/PageHeading";
 import { SectionListItem } from "../../components/SectionItem";
 import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
+import { useAppSelector } from "../../redux/store";
 import { useGetGameQuery } from "../../redux/lists/listsApi";
 import type { GameMember, ListItem } from "../../redux/lists/listsApi";
 import { formatGameType } from "../../utils/formatGameType";
@@ -77,7 +78,9 @@ function Pill({ icon, label }: { icon: string; label: string }) {
 
 export default function GameDetailScreen() {
   const { id, poster: posterParam } = useLocalSearchParams<{ id: string; poster?: string }>();
-  const { data, isLoading, isError } = useGetGameQuery(id);
+  const user = useAppSelector((s) => s.auth.user);
+  const isFullAccount = !!user && user.provider !== "anonymous";
+  const { data, isLoading, isError } = useGetGameQuery(id, { skip: !isFullAccount });
   const session = data?.session ?? null;
   const items = data?.items ?? [];
   const posterPath = data?.list.posterPath ?? posterParam ?? null;

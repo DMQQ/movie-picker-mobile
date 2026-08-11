@@ -201,9 +201,15 @@
 			"noRecentPlayers": "Nenhum jogador recente",
 			"sending": "Enviando...",
 			"invited": "Convidado",
-			"invite": "Convidar"
+			"invite": "Convidar",
+			"noNotifications": "Notificações desligadas — pode não ver o convite",
+			"banner": {
+				"swipe": "Você foi convidado para um jogo de swipe!",
+				"voter": "Você foi convidado para um jogo de votação!",
+				"join": "Toque para entrar"
+			}
 		},
-		"invitePlayers": "Convidar jogadores"
+		"inviteFriends": "Convidar amigos"
 	},
 	"fortune-wheel": {
 		"drag": "Arraste para girar",

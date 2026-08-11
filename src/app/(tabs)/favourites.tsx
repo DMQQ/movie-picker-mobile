@@ -22,6 +22,8 @@ export default function Favourites() {
   const dispatch = useAppDispatch();
   const t = useTranslation();
   const token = useAppSelector((s) => s.auth.token);
+  const user = useAppSelector((s) => s.auth.user);
+  const isFullAccount = !!user && user.provider !== "anonymous";
   const prevToken = useRef(token);
   const migration = useMigrationPrompt();
 
@@ -34,7 +36,7 @@ export default function Favourites() {
   }, []);
 
   useEffect(() => {
-    if (token && !prevToken.current) {
+    if (isFullAccount && !prevToken.current) {
       dispatch(listsApi.util.invalidateTags([{ type: "List", id: "ALL" }]));
     }
     prevToken.current = token;
@@ -81,7 +83,7 @@ export default function Favourites() {
           flex: 1,
         }}
       >
-        {token ? (
+        {isFullAccount ? (
           <RemoteFavouritesList
             listRef={listRef}
             listHeader={
