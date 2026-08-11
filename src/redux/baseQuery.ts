@@ -1,5 +1,4 @@
 import * as Sentry from "@sentry/react-native";
-import * as SecureStore from "expo-secure-store";
 import {
   fetchBaseQuery,
   type BaseQueryFn,
@@ -69,8 +68,6 @@ async function tryRefresh(refreshToken: string): Promise<{ token: string; refres
     });
     if (!res.ok) return null;
     const data = await res.json();
-    await SecureStore.setItemAsync("user_auth_token", data.token);
-    if (data.refreshToken) await SecureStore.setItemAsync("user_refresh_token", data.refreshToken);
     return { token: data.token, refreshToken: data.refreshToken };
   } catch {
     return null;

@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { skipToken } from "@reduxjs/toolkit/query";
@@ -17,6 +17,7 @@ import {
   fontWeight,
   radius,
   spacing,
+  withAlpha,
 } from "../constants/design";
 import Text from "./Text";
 import useTranslation from "../service/useTranslation";
@@ -25,11 +26,9 @@ export default function PendingInviteBanner() {
   const token = useAppSelector((s) => s.auth.token);
   const insets = useSafeAreaInsets();
   const t = useTranslation();
-  const { data, error } = useGetPendingInvitesQuery(
+  const { data } = useGetPendingInvitesQuery(
     token ? undefined : skipToken,
-    {
-      pollingInterval: 30_000,
-    },
+    { pollingInterval: 30_000 },
   );
 
   const [acceptInvite] = useAcceptInviteMutation();
@@ -59,8 +58,6 @@ export default function PendingInviteBanner() {
     declineInvite(invite.id);
   };
 
-  console.log(pending, token, error);
-
   if (pending.length === 0) return null;
 
   const invite = pending[0];
@@ -73,28 +70,18 @@ export default function PendingInviteBanner() {
       style={[styles.container, { top: insets.top + spacing.sm }]}
     >
       <Pressable style={styles.banner} onPress={() => handleAccept(invite)}>
-        <View style={styles.iconBox}>
-          <MaterialCommunityIcons
-            name={isVoter ? "vote" : "cards-playing-heart-multiple"}
-            size={22}
-            color={colors.primary}
-          />
-        </View>
-
-        <View style={styles.textBox}>
-          <Text style={styles.title}>
-            {isVoter
-              ? (t("room.invite.banner.voter") as string)
-              : (t("room.invite.banner.swipe") as string)}
-          </Text>
-          <Text style={styles.subtitle}>
-            {t("room.invite.banner.join") as string}
-          </Text>
-        </View>
-
+        <MaterialCommunityIcons
+          name={isVoter ? "vote" : "cards-playing-heart-multiple"}
+          size={18}
+          color={colors.primary}
+        />
+        <Text style={styles.text} numberOfLines={2}>
+          {isVoter
+            ? (t("room.invite.banner.voter") as string)
+            : (t("room.invite.banner.swipe") as string)}
+        </Text>
         <Pressable
-          style={styles.dismissBtn}
-          hitSlop={8}
+          hitSlop={10}
           onPress={(e) => {
             e.stopPropagation();
             handleDecline(invite);
@@ -102,8 +89,8 @@ export default function PendingInviteBanner() {
         >
           <MaterialCommunityIcons
             name="close"
-            size={18}
-            color={colors.placeholder}
+            size={16}
+            color="rgba(255,255,255,0.4)"
           />
         </Pressable>
       </Pressable>
@@ -121,45 +108,24 @@ const styles = StyleSheet.create({
   banner: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.primary + "40",
-    padding: spacing.md,
-    gap: spacing.md,
+    gap: spacing.sm + 2,
+    backgroundColor: withAlpha(colors.primary, 0.08),
+    borderLeftWidth: 3,
+    borderLeftColor: colors.primary,
+    borderRadius: radius.sm + 2,
+    paddingVertical: spacing.sm + 2,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.xs,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  iconBox: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.sm,
-    backgroundColor: colors.primary + "18",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  textBox: {
+  text: {
     flex: 1,
-  },
-  title: {
-    color: colors.text,
-    fontSize: fontSize.md,
+    fontSize: fontSize.md - 1,
     fontWeight: fontWeight.semibold,
-  },
-  subtitle: {
-    color: colors.placeholder,
-    fontSize: fontSize.sm,
-    marginTop: 2,
-  },
-  dismissBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: "rgba(255,255,255,0.06)",
-    alignItems: "center",
-    justifyContent: "center",
+    color: colors.text,
   },
 });

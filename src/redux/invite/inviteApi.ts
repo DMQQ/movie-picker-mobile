@@ -25,6 +25,7 @@ export const inviteApi = createApi({
     baseUrl: baseUrl + "/api",
     prepareHeaders,
   })),
+  tagTypes: ["Invite"],
   endpoints: (build) => ({
     getInvite: build.query<{ invite: Invite }, string>({
       query: (id) => `/invites/${id}`,
@@ -50,10 +51,12 @@ export const inviteApi = createApi({
         method: "PATCH",
         body,
       }),
+      invalidatesTags: [{ type: "Invite", id: "PENDING" }],
     }),
 
     declineInvite: build.mutation<{ ok: boolean }, string>({
       query: (id) => ({ url: `/invites/${id}/decline`, method: "PATCH" }),
+      invalidatesTags: [{ type: "Invite", id: "PENDING" }],
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           await queryFulfilled;
@@ -66,6 +69,7 @@ export const inviteApi = createApi({
 
     getPendingInvites: build.query<{ invites: Invite[] }, void>({
       query: () => "/invites/me/pending",
+      providesTags: [{ type: "Invite" as const, id: "PENDING" }],
     }),
   }),
 });

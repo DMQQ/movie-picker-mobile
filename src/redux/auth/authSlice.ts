@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as SecureStore from "expo-secure-store";
+import { AsyncStorage } from "expo-sqlite/kv-store";
 import { baseUrl } from "../../context/SocketContext";
+import { setUserId } from "../app/appSlice";
 
 export interface AuthUser {
   id: string;
@@ -16,6 +18,7 @@ interface AuthState {
   user: AuthUser | null;
   sessionExpired: boolean;
   anonymousBlocked: boolean;
+  isRestored: boolean;
 }
 
 const initialState: AuthState = {
@@ -24,6 +27,7 @@ const initialState: AuthState = {
   user: null,
   sessionExpired: false,
   anonymousBlocked: false,
+  isRestored: false,
 };
 
 export const restoreSession = createAsyncThunk(
@@ -74,6 +78,48 @@ export const restoreSession = createAsyncThunk(
   },
 );
 
+export const ensureAnonymousSession = createAsyncThunk(
+  "auth/ensureAnonymousSession",
+  async (
+    { userId, refreshToken }: { userId: string | null; refreshToken: string | null },
+    { dispatch },
+  ) => {
+    const isLegacyId = typeof userId === "string" && userId.length < 30;
+
+    // Already have a UUID — just ensure it's in state
+    if (userId && !isLegacyId) {
+      dispatch(setUserId(userId));
+      return null;
+    }
+
+    const res = await fetch(`${baseUrl}/auth/anonymous`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...(refreshToken ? { refreshToken } : {}),
+        ...(isLegacyId ? { anonymousId: userId } : {}),
+      }),
+    });
+
+    if (!res.ok) throw new Error(`Anonymous auth failed: ${res.status}`);
+
+    const data = await res.json();
+    const finalUserId = userId ?? (data as { anonymousId?: string }).anonymousId;
+
+    if (finalUserId) {
+      if (!userId) await AsyncStorage.setItemAsync("userId", finalUserId);
+      dispatch(setUserId(finalUserId));
+    }
+
+    return data as {
+      token?: string;
+      refreshToken?: string;
+      user?: AuthUser;
+      anonymousId?: string;
+    };
+  },
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -109,6 +155,9 @@ export const authSlice = createSlice({
     clearAnonymousBlocked(state) {
       state.anonymousBlocked = false;
     },
+    setRestored(state) {
+      state.isRestored = true;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -117,9 +166,11 @@ export const authSlice = createSlice({
         state.refreshToken = action.payload.refreshToken ?? state.refreshToken;
         state.user = action.payload.user;
         state.sessionExpired = false;
+        state.isRestored = true;
       })
       .addCase(restoreSession.rejected, (state, action) => {
         if (action.payload === "expired") state.sessionExpired = true;
+        state.isRestored = true;
       });
   },
 });

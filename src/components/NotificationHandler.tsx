@@ -2,7 +2,7 @@ import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { baseUrl } from "../context/SocketContext";
-import envs from "../constants/envs";
+import { useAppSelector } from "../redux/store";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -13,10 +13,12 @@ Notifications.setNotificationHandler({
 });
 
 export default function NotificationHandler() {
+  const token = useAppSelector((s) => s.auth.token);
+  const isRestored = useAppSelector((s) => s.auth.isRestored);
   const lastResponse = Notifications.useLastNotificationResponse();
 
   useEffect(() => {
-    if (!lastResponse) return;
+    if (!isRestored || !lastResponse) return;
 
     const data = lastResponse.notification.request.content.data as Record<
       string,
@@ -29,7 +31,9 @@ export default function NotificationHandler() {
       if (!inviteId) return;
 
       fetch(`${baseUrl}/api/invites/${inviteId}`, {
-        headers: { authorization: `Bearer ${envs.server_auth_token}` },
+        headers: token
+          ? { authorization: `Bearer ${token}` }
+          : {},
       })
         .then((res) => {
           if (!res.ok) throw new Error("invite fetch failed");
@@ -54,7 +58,7 @@ export default function NotificationHandler() {
         })
         .catch(() => router.replace("/"));
     }
-  }, [lastResponse]);
+  }, [lastResponse, isRestored, token]);
 
   return null;
 }

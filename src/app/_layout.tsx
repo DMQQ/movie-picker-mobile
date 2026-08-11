@@ -14,8 +14,7 @@ import {
 } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { roomActions } from "../redux/room/roomSlice";
-import { restoreSession, authActions } from "../redux/auth/authSlice";
-import { setUserId } from "../redux/app/appSlice";
+import { restoreSession, authActions, ensureAnonymousSession } from "../redux/auth/authSlice";
 import { store, useAppDispatch, useAppSelector } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
@@ -26,7 +25,6 @@ import * as SplashScreen from "expo-splash-screen";
 import useMaintenance from "../service/useMaintanance";
 import { getDeviceSettings } from "../service/translationUtils";
 import useTranslation from "../service/useTranslation";
-import { url } from "../context/SocketContext";
 
 import * as Sentry from "@sentry/react-native";
 import { GoogleOneTapSignIn } from "react-native-nitro-google-signin";
@@ -151,34 +149,19 @@ const RootNavigator = ({
           null,
         );
 
-        const anonymousData = userId
-          ? null
-          : await fetch(url + "/auth/anonymous", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: storedRefreshToken ? JSON.stringify({ refreshToken: storedRefreshToken }) : undefined,
-            })
-              .then((r) => r.json())
-              .catch(() => null);
-
-        const finalUserId = userId ?? anonymousData?.anonymousId;
-
-        if (finalUserId) {
-          if (!userId) await AsyncStorage.setItemAsync("userId", finalUserId);
-          dispatch(setUserId(finalUserId));
-        }
+        const anonymousResult = await dispatch(
+          ensureAnonymousSession({ userId, refreshToken: storedRefreshToken }),
+        )
+          .unwrap()
+          .catch(() => null);
 
         if (storedToken) {
-          dispatch(restoreSession({ token: storedToken, refreshToken: storedRefreshToken }));
-        } else if (anonymousData?.token) {
-          await SecureStore.setItemAsync("user_auth_token", anonymousData.token);
-          if (anonymousData.refreshToken) {
-            await SecureStore.setItemAsync("user_refresh_token", anonymousData.refreshToken);
-          }
+          await dispatch(restoreSession({ token: storedToken, refreshToken: storedRefreshToken }));
+        } else if (anonymousResult?.token) {
           dispatch(authActions.setCredentials({
-            token: anonymousData.token,
-            refreshToken: anonymousData.refreshToken,
-            user: anonymousData.user,
+            token: anonymousResult.token,
+            refreshToken: anonymousResult.refreshToken,
+            user: anonymousResult.user,
           }));
         }
 
@@ -194,6 +177,7 @@ const RootNavigator = ({
       } catch (error) {
         console.error("[RootNavigator] Error:", error);
       } finally {
+        dispatch(authActions.setRestored());
         setSettingsLoaded(true);
       }
     };
