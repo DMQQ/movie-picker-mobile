@@ -92,7 +92,9 @@ export function createReportingBaseQuery(
 
       // Try token refresh on 401
       if (result.error.status === 401) {
-        const state = api.getState() as { auth: { refreshToken: string | null; token: string | null } };
+        const state = api.getState() as {
+          auth: { refreshToken: string | null; token: string | null; wasRealAccount: boolean };
+        };
         const storedRefreshToken = state.auth.refreshToken;
 
         if (storedRefreshToken) {
@@ -111,9 +113,11 @@ export function createReportingBaseQuery(
           }
         }
 
-        // Refresh failed — clear everything (listener middleware handles SecureStore cleanup)
+        // Only flag session expired for real accounts — anonymous users just need a fresh token
+        if (state.auth.wasRealAccount) {
+          api.dispatch(authActions.setSessionExpired());
+        }
         api.dispatch(authActions.clearAuth());
-        api.dispatch(authActions.setSessionExpired());
       }
     }
     return result;

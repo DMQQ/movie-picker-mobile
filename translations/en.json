@@ -370,14 +370,16 @@
     "library": "Library",
     "unauth": {
       "session-expired": "Your session expired - please sign in again.",
-      "title": "Unlock the full experience",
-      "subtitle": "Sign in to get access to exclusive features",
-      "benefit-cloud": "Cloud backup of your saved movie lists",
-      "benefit-history": "Full game history & session stats",
-      "benefit-friends": "(SOON) Friends list - one tap to start a game together",
-      "benefit-recommendations": "Personalized movie recommendations",
+      "title": "Get more out of Flickmate",
+      "subtitle": "Sync across devices, track history, invite friends, and more",
+      "benefit-cloud": "Sync your lists across all your devices",
+      "benefit-history": "Revisit every game, match, and session",
+      "benefit-friends": "Invite friends to join in one tap",
+      "benefit-recommendations": "Personalized picks based on your taste",
       "sign-in": "Sign in",
-      "create-account": "Create account"
+      "create-account": "Create account",
+      "benefit-ratings": "Rate and review everything you watch",
+      "benefit-scoring": "Fine-tune what genres and topics you prefer"
     }
   },
   "voter": {

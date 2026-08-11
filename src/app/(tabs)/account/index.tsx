@@ -99,18 +99,24 @@ export default function SettingsScreen() {
   const [deleteMe] = useDeleteMeMutation();
   const [updateMe] = useUpdateMeMutation();
   const [updateDevice] = useUpdateDeviceMutation();
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState<boolean | null>(null);
   const [systemPermission, setSystemPermission] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const { refetch: refetchMe } = useMeQuery(undefined, { skip: !isFullAccount });
 
   useEffect(() => {
-    AsyncStorage.getItemAsync("notificationsEnabled").then((val) => {
-      if (val === "false") setNotificationsEnabled(false);
-    });
-    Notifications.getPermissionsAsync().then(({ status }) => {
+    (async () => {
+      const [stored, { status }] = await Promise.all([
+        AsyncStorage.getItemAsync("notificationsEnabled"),
+        Notifications.getPermissionsAsync(),
+      ]);
       setSystemPermission(status);
-    });
+      if (stored !== null) {
+        setNotificationsEnabled(stored !== "false");
+      } else {
+        setNotificationsEnabled(status === "granted");
+      }
+    })();
   }, []);
 
   async function handleToggleNotifications(value: boolean) {
@@ -206,9 +212,12 @@ export default function SettingsScreen() {
       if (isFullAccount) await refetchMe();
       const { status } = await Notifications.getPermissionsAsync();
       setSystemPermission(status);
-      const enabled = await AsyncStorage.getItemAsync("notificationsEnabled");
-      if (enabled === "false") setNotificationsEnabled(false);
-      else setNotificationsEnabled(true);
+      const stored = await AsyncStorage.getItemAsync("notificationsEnabled");
+      if (stored !== null) {
+        setNotificationsEnabled(stored !== "false");
+      } else {
+        setNotificationsEnabled(status === "granted");
+      }
     } catch {}
     setRefreshing(false);
   }
@@ -301,6 +310,7 @@ export default function SettingsScreen() {
           <ScoringPreferencesButton />
           <Pressable
             style={styles.notifCard}
+            disabled={notificationsEnabled === null}
             onPress={() => handleToggleNotifications(!notificationsEnabled)}
           >
             <View style={styles.notifLeft}>
@@ -308,7 +318,8 @@ export default function SettingsScreen() {
               <Text style={styles.notifLabel}>{t("account.pushNotifications")}</Text>
             </View>
             <Switch
-              value={notificationsEnabled}
+              value={notificationsEnabled ?? false}
+              disabled={notificationsEnabled === null}
               onValueChange={handleToggleNotifications}
               trackColor={{ false: colors.border, true: colors.primary }}
               thumbColor={colors.text}

@@ -13,7 +13,7 @@ import envs from "../constants/envs";
 import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 
-const isDev = true; //envs.mode !== "production";
+const isDev = false; //envs.mode !== "production";
 
 export const baseUrl = isDev
   ? Platform.OS === "ios"
@@ -22,7 +22,8 @@ export const baseUrl = isDev
   : "https://flickmate.app";
 export const url = baseUrl + "/api";
 
-export type ConnectionStatus = "idle" | "connected" | "reconnecting" | "disconnected";
+export type ConnectionStatus =
+  "idle" | "connected" | "reconnecting" | "disconnected";
 
 export const SocketContext = React.createContext<{
   socket: Socket | null;
@@ -94,7 +95,8 @@ export const SocketProvider = ({
   const authToken = useSelector((st: RootState) => st.auth.token);
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>("idle");
+  const [connectionStatus, setConnectionStatus] =
+    useState<ConnectionStatus>("idle");
   const appState = useRef(AppState.currentState);
   const wasConnected = useRef(false);
 
@@ -118,7 +120,10 @@ export const SocketProvider = ({
       });
 
       newSocket.on("connect", () => {
-        console.log("✅ Socket connected successfully", { id: newSocket.id, namespace });
+        console.log("✅ Socket connected successfully", {
+          id: newSocket.id,
+          namespace,
+        });
         setConnectionStatus("connected");
 
         // Emit before updating refs so listeners registered against the previous

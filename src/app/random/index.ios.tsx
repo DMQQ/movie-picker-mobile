@@ -2,7 +2,7 @@ import { Dimensions, Platform, Pressable, StyleSheet, View } from "react-native"
 import Text from "../../components/Text";
 import Chip from "../../components/Chip";
 
-import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing, withAlpha } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Animated, {
   FadeIn,
@@ -94,7 +94,7 @@ export default function RandomMovie() {
               <View style={styles.solidFrontBackground}>
                 <Canvas style={StyleSheet.absoluteFill}>
                   <Rect x={0} y={0} width={CARD_WIDTH} height={CARD_HEIGHT}>
-                    <RadialGradient c={vec(CARD_WIDTH / 2, CARD_HEIGHT / 2)} r={CARD_WIDTH * 0.8} colors={["#9370DB", "#4B0082"]} />
+                    <RadialGradient c={vec(CARD_WIDTH / 2, CARD_HEIGHT / 2)} r={CARD_WIDTH * 0.8} colors={[colors.primary, withAlpha(colors.primary, 0.5)]} />
                   </Rect>
                 </Canvas>
 

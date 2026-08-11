@@ -40,8 +40,8 @@ export default function RatingState({
   setLocalRatings,
 }: Props) {
   const t = useTranslation();
-  const { height: screenHeight } = useWindowDimensions();
-  const posterHeight = screenHeight * 0.35;
+  const { height: screenHeight, width: screenWidth } = useWindowDimensions();
+  const posterHeight = Math.min(screenHeight * 0.35, screenWidth * 0.5);
   const posterWidth = posterHeight * (2 / 3);
 
   if (!card) {
@@ -149,7 +149,7 @@ export default function RatingState({
                 entering={FadeIn.duration(300)}
                 exiting={FadeOut.duration(300)}
                 source={{
-                  uri: "https://image.tmdb.org/t/p/w342" + card?.poster_path,
+                  uri: "https://image.tmdb.org/t/p/w500" + card?.poster_path,
                 }}
                 style={{ width: "100%", height: "100%", borderRadius: radius.md }}
                 resizeMode="cover"

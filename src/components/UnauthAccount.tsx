@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import Icon from "./Icon";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Text from "./Text";
 
 import PrimaryButton from "./PrimaryButton";
@@ -11,10 +11,12 @@ const bodyText = "rgba(255,255,255,0.65)";
 const mutedText = "rgba(255,255,255,0.45)";
 
 const BENEFITS = [
-  "benefit-cloud",
-  "benefit-history",
-  "benefit-friends",
-  "benefit-recommendations",
+  { key: "benefit-cloud", icon: "cloud-sync-outline" as const },
+  { key: "benefit-history", icon: "history" as const },
+  { key: "benefit-friends", icon: "account-group-outline" as const },
+  { key: "benefit-recommendations", icon: "lightbulb-outline" as const },
+  { key: "benefit-ratings", icon: "star-outline" as const },
+  { key: "benefit-scoring", icon: "tune" as const },
 ] as const;
 
 export default function UnauthAccount({ expired }: { expired: boolean }) {
@@ -24,7 +26,7 @@ export default function UnauthAccount({ expired }: { expired: boolean }) {
     <View style={styles.wrap}>
       {expired && (
         <View style={styles.expiredBanner}>
-          <Icon source="alert-circle-outline" size={16} color={colors.error} />
+          <MaterialCommunityIcons name="alert-circle-outline" size={16} color={colors.error} />
           <Text style={styles.expiredText}>
             {t("settings.unauth.session-expired")}
           </Text>
@@ -36,9 +38,9 @@ export default function UnauthAccount({ expired }: { expired: boolean }) {
         <Text style={styles.subtitle}>{t("settings.unauth.subtitle")}</Text>
 
         <View style={styles.list}>
-          {BENEFITS.map((key) => (
+          {BENEFITS.map(({ key, icon }) => (
             <View key={key} style={styles.listItem}>
-              <View style={styles.dot} />
+              <MaterialCommunityIcons name={icon} size={18} color={colors.primary} />
               <Text style={styles.listText}>
                 {t(`settings.unauth.${key}` as any)}
               </Text>
@@ -83,6 +85,8 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.md,
+    borderTopWidth: 3,
+    borderTopColor: colors.primary,
     padding: spacing.xl,
   },
 
@@ -100,17 +104,11 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
 
-  list: { gap: spacing.sm + 2, marginBottom: spacing.xxl },
+  list: { gap: spacing.md, marginBottom: spacing.xxl },
   listItem: { flexDirection: "row", alignItems: "center", gap: spacing.sm + 2 },
-  dot: {
-    width: spacing.xs,
-    height: spacing.xs,
-    borderRadius: spacing.xs / 2,
-    backgroundColor: mutedText,
-  },
-  listText: { fontSize: fontSize.sm + 1, color: bodyText },
+  listText: { flex: 1, fontSize: fontSize.sm + 1, color: bodyText, lineHeight: 20 },
 
-  buttons: { gap: spacing.sm },
-  btn: { borderRadius: radius.sm },
+  buttons: { flexDirection: "row", gap: spacing.sm },
+  btn: { flex: 1, borderRadius: radius.sm },
   btnSecondary: { backgroundColor: colors.overlay },
 });

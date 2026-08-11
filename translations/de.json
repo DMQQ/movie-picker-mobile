@@ -358,14 +358,16 @@
     "library": "Bibliothek",
     "unauth": {
       "session-expired": "Deine Sitzung ist abgelaufen - bitte melde dich erneut an.",
-      "title": "Erlebe das volle Erlebnis",
-      "subtitle": "Melde dich an, um exklusive Funktionen zu nutzen",
-      "benefit-cloud": "Cloud-Backup deiner gespeicherten Filmlisten",
-      "benefit-history": "Vollständige Spielhistorie & Sitzungsstatistiken",
-      "benefit-friends": "(BALD) Freundesliste - ein Tipp, um gemeinsam zu spielen",
-      "benefit-recommendations": "Personalisierte Filmempfehlungen",
+      "title": "Hol mehr aus Flickmate",
+      "subtitle": "Geräteübergreifend synchronisieren, Verlauf, Freunde einladen und mehr",
+      "benefit-cloud": "Synchronisiere deine Listen auf allen Geräten",
+      "benefit-history": "Alle Spiele, Matches und Sessions im Überblick",
+      "benefit-friends": "Freunde mit einem Tab einladen",
+      "benefit-recommendations": "Auf deinen Geschmack zugeschnittene Vorschläge",
       "sign-in": "Anmelden",
-      "create-account": "Konto erstellen"
+      "create-account": "Konto erstellen",
+      "benefit-ratings": "Bewerte alles, was du schaust",
+      "benefit-scoring": "Stimme Genres und Themen auf dich ab"
     }
   },
   "voter": {

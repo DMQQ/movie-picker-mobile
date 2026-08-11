@@ -102,7 +102,7 @@ export default function Home() {
     if (!currentMovies?.length) return;
     currentMovies.forEach((movie) => {
       if (movie.poster_path)
-        Image.prefetch("https://image.tmdb.org/t/p/w342" + movie.poster_path);
+        Image.prefetch("https://image.tmdb.org/t/p/w500" + movie.poster_path);
       if (movie.backdrop_path)
         Image.prefetch("https://image.tmdb.org/t/p/w500" + movie.backdrop_path);
     });

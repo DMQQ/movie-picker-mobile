@@ -19,6 +19,7 @@ interface AuthState {
   sessionExpired: boolean;
   anonymousBlocked: boolean;
   isRestored: boolean;
+  wasRealAccount: boolean;
 }
 
 const initialState: AuthState = {
@@ -28,6 +29,7 @@ const initialState: AuthState = {
   sessionExpired: false,
   anonymousBlocked: false,
   isRestored: false,
+  wasRealAccount: false,
 };
 
 export const restoreSession = createAsyncThunk(
@@ -132,6 +134,9 @@ export const authSlice = createSlice({
       if (action.payload.refreshToken) state.refreshToken = action.payload.refreshToken;
       state.user = action.payload.user;
       state.sessionExpired = false;
+      if (action.payload.user.provider !== "anonymous") {
+        state.wasRealAccount = true;
+      }
     },
     setUser(state, action: PayloadAction<AuthUser>) {
       state.user = action.payload;
@@ -170,9 +175,14 @@ export const authSlice = createSlice({
         state.user = action.payload.user;
         state.sessionExpired = false;
         state.isRestored = true;
+        if (action.payload.user.provider !== "anonymous") {
+          state.wasRealAccount = true;
+        }
       })
       .addCase(restoreSession.rejected, (state, action) => {
-        if (action.payload === "expired") state.sessionExpired = true;
+        if (action.payload === "expired" && state.wasRealAccount) {
+          state.sessionExpired = true;
+        }
         state.isRestored = true;
       });
   },

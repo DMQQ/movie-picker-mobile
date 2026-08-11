@@ -8,7 +8,7 @@ import {
 import Text from "../../components/Text";
 import Chip from "../../components/Chip";
 
-import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontWeight, fontSize, radius, spacing, withAlpha } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Animated, {
   FadeIn,
@@ -144,7 +144,7 @@ export default function RandomMovie() {
                     <RadialGradient
                       c={vec(CARD_WIDTH / 2, CARD_HEIGHT / 2)}
                       r={CARD_WIDTH * 0.8}
-                      colors={["#9370DB", "#4B0082"]}
+                      colors={[colors.primary, withAlpha(colors.primary, 0.5)]}
                     />
                   </Rect>
                 </Canvas>

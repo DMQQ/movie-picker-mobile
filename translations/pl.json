@@ -358,14 +358,16 @@
     "library": "Biblioteka",
     "unauth": {
       "session-expired": "Twoja sesja wygasła - zaloguj się ponownie.",
-      "title": "Odblokuj pełne doświadczenie",
-      "subtitle": "Zaloguj się, aby uzyskać dostęp do ekskluzywnych funkcji",
-      "benefit-cloud": "Kopia zapasowa Twoich list filmów w chmurze",
-      "benefit-history": "Pełna historia gier i statystyki sesji",
-      "benefit-friends": "(WKRÓTCE) Lista znajomych - jedno kliknięcie, by zagrać razem",
-      "benefit-recommendations": "Spersonalizowane rekomendacje filmów",
+      "title": "Wykorzystaj Flickmate w pełni",
+      "subtitle": "Synchronizacja, historia gier, zapraszanie znajomych i więcej",
+      "benefit-cloud": "Synchronizuj listy na wszystkich urządzeniach",
+      "benefit-history": "Przeglądaj historię gier, meczów i sesji",
+      "benefit-friends": "Zaproś znajomych jednym dotknięciem",
+      "benefit-recommendations": "Spersonalizowane propozycje dopasowane do Ciebie",
       "sign-in": "Zaloguj się",
-      "create-account": "Utwórz konto"
+      "create-account": "Utwórz konto",
+      "benefit-ratings": "Oceniaj i recenzuj wszystko, co obejrzysz",
+      "benefit-scoring": "Dostosuj preferencje gatunków i tematów"
     }
   },
   "voter": {
@@ -836,7 +838,7 @@
     },
     "recentGames": "Ostatnie gry",
     "playedWith": "Grano z",
-    "tasteProfile": "Profil smaku",
+    "tasteProfile": "Profil preferencji",
     "tasteProfileEmpty": "Brak danych",
     "tasteProfileMovies": "Filmy: {count}",
     "tasteProfileTV": "TV: {count}",
@@ -861,7 +863,7 @@
       "recoveryCodes": "Kody odzyskiwania"
     },
     "scoringPreferences": {
-      "title": "Profil smaku",
+      "title": "Profil preferencji",
       "movies": "Filmy",
       "tvShows": "Seriale",
       "genres": "Gatunki",
@@ -870,10 +872,10 @@
       "searchPlaceholder": "Szukaj {tab}...",
       "legend": "0 = najsłabsze · 100 = najsilniejsze preferencje",
       "noPreferences": "Brak preferencji",
-      "noPreferencesHint": "Graj więcej, aby zbudować swój profil smaku.",
+      "noPreferencesHint": "Graj więcej, aby zbudować swój profil preferencji.",
       "noMatches": "Brak wyników",
       "noMatchesHint": "Spróbuj innego słowa kluczowego.",
-      "resetTitle": "Zresetuj profil smaku",
+      "resetTitle": "Zresetuj profil preferencji",
       "resetMessage": "Usunąć wszystkie wyuczone preferencje {type}?",
       "resetConfirm": "Resetuj",
       "resetButton": "Resetuj wszystkie preferencje {type}"
