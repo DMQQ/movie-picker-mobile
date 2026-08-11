@@ -149,6 +149,9 @@ export const authSlice = createSlice({
     setSessionExpired(state) {
       state.sessionExpired = true;
     },
+    clearSessionExpired(state) {
+      state.sessionExpired = false;
+    },
     setAnonymousBlocked(state) {
       state.anonymousBlocked = true;
     },

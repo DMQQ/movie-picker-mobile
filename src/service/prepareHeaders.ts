@@ -14,7 +14,7 @@ export default function prepareHeaders(headers: Headers, { getState }: Pick<Base
   const userToken = (state as RootState).auth.token;
   headers.set("authorization", `Bearer ${userToken ?? envs.server_auth_token}`);
   const userId = state.app.userId;
-  if (userId) headers.set("user-id", userId);
+  if (userId && userToken) headers.set("user-id", userId);
   headers.set("x-platform", Platform.OS);
   headers.set("x-app-language", appLanguage);
 

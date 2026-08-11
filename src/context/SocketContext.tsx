@@ -112,7 +112,7 @@ export const SocketProvider = ({
             : `Bearer ${envs.server_auth_token}`,
         },
         extraHeaders: {
-          ...(userId ? { "user-id": userId } : {}),
+          ...(userId && authToken ? { "user-id": userId } : {}),
           ...makeHeaders(language, regionalization),
         },
       });

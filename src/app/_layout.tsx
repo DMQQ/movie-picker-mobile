@@ -5,8 +5,9 @@ import { ThemeProvider, DarkTheme } from "expo-router/react-navigation";
 import { useEffect, useRef, useState } from "react";
 import { Platform, Alert } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import PendingInviteBanner from "../components/PendingInviteBanner";
+import InviteToastWatcher from "../components/InviteToastWatcher";
 import { PortalProvider } from "../components/Portal";
+import { ToastContainer } from "../components/Toast";
 import { colors } from "../constants/design";
 import {
   SafeAreaProvider,
@@ -21,6 +22,7 @@ import AppErrorBoundary from "../components/ErrorBoundary";
 import { DatabaseProvider } from "../context/DatabaseContext";
 import PushTokenRegistrar from "../components/PushTokenRegistrar";
 import NotificationHandler from "../components/NotificationHandler";
+import SessionExpiredWatcher from "../components/SessionExpiredWatcher";
 import * as SplashScreen from "expo-splash-screen";
 import useMaintenance from "../service/useMaintanance";
 import { getDeviceSettings } from "../service/translationUtils";
@@ -30,9 +32,10 @@ import * as Sentry from "@sentry/react-native";
 import { GoogleOneTapSignIn } from "react-native-nitro-google-signin";
 import { enableFreeze } from "react-native-screens";
 import { allSettled } from "../utils/utilities";
+import envs from "../constants/envs";
 
 GoogleOneTapSignIn.configure({
-  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID!,
+  webClientId: envs.google_web_client_id!,
 });
 
 enableFreeze(true);
@@ -81,6 +84,9 @@ function RootLayout() {
               <DatabaseProvider>
                 <PushTokenRegistrar />
                 <NotificationHandler />
+                <InviteToastWatcher />
+                <SessionExpiredWatcher />
+                <ToastContainer />
                 <AnonymousBlockedWatcher />
                 <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
               </DatabaseProvider>
@@ -312,7 +318,6 @@ const RootNavigator = ({
         />
 
       </Stack>
-      <PendingInviteBanner />
     </GestureHandlerRootView>
   );
 };

@@ -230,7 +230,7 @@ export const listsApi = createApi({
       ],
     }),
 
-    migrateLists: build.mutation<{ imported: number }, MigrateBody>({
+    migrateLists: build.mutation<{ ok: boolean; queued: boolean }, MigrateBody>({
       query: (body) => ({ url: "/lists/migrate", method: "POST", body }),
       invalidatesTags: [{ type: "List", id: "ALL" }, { type: "ListItems" }],
     }),

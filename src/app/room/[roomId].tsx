@@ -10,9 +10,11 @@ import SwipeContent from "../../components/Room/SwipeContent";
 import RoomMatches from "../../components/Room/RoomMatches";
 import useRoomScreen from "../../hooks/useRoomScreen";
 import { colors } from "../../constants/design";
+import useRoomToasts from "../../hooks/useRoomToasts";
 
 function RoomScreenListener() {
   useRoomScreen();
+  useRoomToasts();
   return null;
 }
 

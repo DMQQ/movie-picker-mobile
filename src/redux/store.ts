@@ -17,6 +17,7 @@ import { roomApi } from "./room/roomApi";
 import { scoringPreferencesApi } from "./scoringPreferences/scoringPreferencesApi";
 import { ratingsApi } from "./ratings/ratingsApi";
 import { inviteApi } from "./invite/inviteApi";
+import toastSlice from "./toast/toastSlice";
 
 const store = configureStore({
   reducer: {
@@ -36,6 +37,7 @@ const store = configureStore({
     mediaFilters: mediaFiltersSlice.reducer,
     movieInteractions: movieInteractionsSlice.reducer,
     filterPreferences: filterPreferencesSlice.reducer,
+    toast: toastSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()

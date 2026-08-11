@@ -1,937 +1,943 @@
 {
-	"dialogs": {
-		"scan-code": {
-			"title": "Escanear código QR",
-			"message": "Escanea el código QR para ver los detalles de la película",
-			"close": "Cerrar",
-			"cancel": "Cancelar",
-			"leave": "Salir",
-			"endGame": "Terminar juego"
-		},
-		"leave-room": {
-			"message": "¿Estás seguro de que quieres salir de la sala?",
-			"title": "Salir de la sala",
-			"cancel": "Cancelar",
-			"leave": "Salir"
-		},
-		"qr": {
-			"error": "¡Algo salió mal!",
-			"error-desc": "Código QR inválido",
-			"close": "Cerrar",
-			"manual": "Unirse a la sala manualmente"
-		}
-	},
-	"movie": {
-		"details": {
-			"lastEpisode": "Último episodio",
-			"episode": "Episodios",
-			"season": "Temporada",
-			"runtime": "Duración",
-			"releaseDate": "Fecha de estreno",
-			"status": "Estado",
-			"minutes": "minutos",
-			"similar-movies": "Películas similares",
-			"similar-series": "Series similares",
-			"air_date": "Fecha de emisión",
-			"show_more": "Ver más",
-			"show_less": "Ver menos",
-			"loadError": "Error al cargar los detalles de la película"
-		},
-		"tabs": {
-			"details": "Detalles",
-			"cast": "Reparto",
-			"similar": "Similares",
-			"trailers": "Tráilers",
-			"seasons": "Temporadas"
-		},
-		"similar": {
-			"load_more": "Cargar más"
-		}
-	},
-	"match": {
-		"title": "¡Es un match!",
-		"view-matches": "Ver coincidencias"
-	},
-	"partial-match": {
-		"title": "¡Casi un match!",
-		"liked-by": "A {names} le gusta esto",
-		"reconsider": "¿Reconsideras? 👀"
-	},
-	"matches": {
-		"unviewed-title": "¡Tienes coincidencias!",
-		"unviewed-subtitle": "Tienes {count} coincidencias de tu última sesión",
-		"start-new-game": "Iniciar nuevo juego"
-	},
-	"room": {
-		"specialCategories": "Categorías especiales",
-		"loading": "Cargando sala...",
-		"joining": "Uniéndose a la sala...",
-		"waiting-for-players": "Esperando a que se unan los jugadores...",
-		"play-alone": "Jugar solo",
-		"start": "Iniciar",
-		"no-more-results": "No hay más resultados en esta categoría",
-		"awaiting-start": "Esperando a que el anfitrión inicie el juego",
-		"too-restricted": "Filtros muy restrictivos, inténtalo de nuevo",
-		"lower-results-count": "Solo se encontraron {count} resultados, el juego será menos divertido",
-		"providers": "Elige tus plataformas",
-		"join-game": "Unirse al juego",
-		"waiting": "Espera a que los demás jugadores terminen de elegir",
-		"choose-category": "Elegir categoría",
-		"movie": "Película",
-		"series": "Serie",
-		"randomize": "Aleatorio",
-		"genre": "Géneros",
-		"next": "Siguiente",
-		"active-game-banner": "Juego activo en la sala",
-		"finished": "Juego terminado, no hay más películas que mostrar",
-		"randomize-search": "Búsqueda aleatoria",
-		"page-range-desc": "Selecciona el número de páginas a buscar",
-		"qr-title": "¡Escanea para unirte!",
-		"active": "Usuarios activos",
-		"qr-subtitle": "Deja que tus amigos escaneen el código con la cámara o el escáner de la app para unirse, o comparte el código de sala manteniendo presionado el código de abajo. También puedes iniciar el juego solo si lo deseas",
-		"tutorial": {
-			"native-camera": "Usa la cámara nativa de tu teléfono",
-			"in-app-scanner": "O usa el escáner de la app",
-			"join-during-game": "Los jugadores pueden unirse durante el juego"
-		},
-		"share": {
-			"message": "¡Hola! Únete a mi sala en FlickMate: {code}",
-			"title": "¡Únete a mi sala en FlickMate!",
-			"button": "Compartir código"
-		},
-		"page-range": "¿Cansado de las mismas películas de siempre? Aumenta tus posibilidades de encontrar algo nuevo aleatorizando tu búsqueda.",
-		"provider_desc": "Selecciona las plataformas de streaming que deseas incluir en tu búsqueda. Puedes elegir varias o ninguna para ver todo.",
-		"genre_desc": "Selecciona los géneros de películas y series que quieres ver. Puedes elegir varios géneros o ninguno para ver todo.",
-		"game_time": "Duración del juego",
-		"game_time_desc": "Elige cuántas películas votará cada jugador",
-		"game_time_short": "Corto",
-		"game_time_medium": "Medio",
-		"game_time_long": "Largo",
-		"continuing-game": "Continuando juego con los mismos jugadores",
-		"play-again-prompt": "¿Te gustaría jugar otra ronda con los mismos jugadores?",
-		"waiting-for-host-decision": "Esperando a que el anfitrión decida el siguiente juego...",
-		"reconnecting": "Reconectando...",
-		"disconnected": "Desconectado",
-		"genres": {
-			"all_movies": "Todas las películas",
-			"now_playing": "En cartelera",
-			"popular": "Populares",
-			"top_rated": "Mejor valoradas",
-			"upcoming": "Próximas",
-			"all_tv": "Todas las series",
-			"top_rated_tv": "Series mejor valoradas",
-			"popular_tv": "Series populares",
-			"airing_today": "Emitiendo hoy",
-			"on_the_air": "En emisión"
-		},
-		"titles": {
-			"category": "Elegir categoría",
-			"genre": "Elegir género",
-			"page-range": "Elegir rango de páginas",
-			"qr-code": "Escanear código QR",
-			"randomize": "Búsqueda aleatoria",
-			"extra-settings": "Configuración adicional"
-		},
-		"builder": {
-			"next": "Siguiente",
-			"createRoom": "Crear sala",
-			"quickStart": "Inicio rápido",
-			"leaveStepConfirmation": "¿Estás seguro de que quieres volver? Tu progreso se perderá.",
-			"step1": {
-				"title": "¿Qué prefieres?",
-				"subtitle": "Elige una categoría para comenzar",
-				"movies": "Películas",
-				"tv": "Series"
-			},
-			"step2": {
-				"title": "Elige tus géneros",
-				"subtitle": "Selecciona uno o más géneros (o salta para elegir todos)",
-				"selected": "{count} género{plural} seleccionado{plural}"
-			},
-			"step3": {
-				"title": "¿Dónde ves películas?",
-				"subtitle": "Selecciona tus servicios de streaming (o salta para elegir todos)",
-				"search": "Buscar proveedores...",
-				"remember": "Recordar mis elecciones",
-				"saved": "Preferencias guardadas cargadas",
-				"clear": "Borrar preferencias guardadas",
-				"selected": "{count} plataforma{plural} seleccionada{plural}"
-			},
-			"step4": {
-				"title": "¿Alguna preferencia?",
-				"subtitle": "Selecciona filtros para reducir tus opciones (o salta)",
-				"selected": "{count} filtro{plural} aplicado{plural}"
-			},
-			"step5": {
-				"title": "Duración del juego",
-				"subtitle": "Selecciona el número de rondas",
-				"validating": "Verificando contenido disponible...",
-				"summary": "Resumen del juego",
-				"rounds": "{count} ronda{plural} ({label})",
-				"genresSelected": "{count} género{plural} seleccionado{plural}",
-				"providersSelected": "{count} servicio{plural} de streaming",
-				"filtersApplied": "{count} filtro{plural} aplicado{plural}",
-				"gameTime": {
-					"quick": {
-						"label": "Partida rápida",
-						"duration": "Unos 5 minutos",
-						"rounds": "3 rondas",
-						"bestFor": "Perfecto para una decisión rápida"
-					},
-					"standard": {
-						"label": "Partida estándar",
-						"duration": "Unos 10 minutos",
-						"rounds": "6 rondas",
-						"bestFor": "Genial con un amigo"
-					},
-					"extended": {
-						"label": "Sesión extendida",
-						"duration": "Unos 15 minutos",
-						"rounds": "10 rondas",
-						"bestFor": "Ideal para grupos más grandes"
-					}
-				}
-			},
-			"loading": "Cargando...",
-			"roomActive": "Sala lista"
-		},
-		"invite": {
-			"searchPlaceholder": "Buscar jugadores...",
-			"noPlayersFound": "No se encontraron jugadores",
-			"noRecentPlayers": "Sin jugadores recientes",
-			"sending": "Enviando...",
-			"invited": "Invitado",
-			"invite": "Invitar",
-			"noNotifications": "Notificaciones desactivadas — puede no ver la invitación",
-			"banner": {
-				"swipe": "Te invitaron a un juego de swipe.",
-				"voter": "Te invitaron a un juego de votación.",
-				"join": "Toca para unirte"
-			}
-		},
-		"inviteFriends": "Invitar amigos"
-	},
-	"fortune-wheel": {
-		"drag": "Arrastra para girar",
-		"roll": "Girar de nuevo",
-		"random-category": "Categoría aleatoria",
-		"pick-category": "Elegir categoría",
-		"pick-a-movie": "¡Gira la rueda!",
-		"spin-again": "Giro aleatorio",
-		"tap-for-details": "Toca para ver detalles",
-		"fate-messages": [
-			"Que el destino decida...",
-			"Las estrellas se alinean...",
-			"El destino aguarda...",
-			"Confía en el universo...",
-			"La magia está ocurriendo...",
-			"Encontrando tu película...",
-			"La rueda sabe mejor...",
-			"Algo especial está por llegar..."
-		]
-	},
-	"filters": {
-		"title": "Filtros",
-		"type": "Tipo",
-		"movie": "Películas",
-		"tv": "Series",
-		"both": "Ambas",
-		"providers": "Plataformas de streaming",
-		"genres": "Géneros",
-		"decade": "Década",
-		"all": "Todo",
-		"90s": "90s",
-		"2000s": "2000s",
-		"2010s": "2010s",
-		"2020s": "2020s",
-		"apply": "Aplicar filtros",
-		"clear": "Limpiar todo",
-		"active": "{count} filtro{plural} activo{plural}",
-		"categories": "Categorías"
-	},
-	"likes": {
-		"title": "Tus me gusta",
-		"empty": "Todavía no te ha gustado ninguna película",
-		"close": "Cerrar coincidencia",
-		"no-matches": "No se encontraron coincidencias",
-		"random": "Aleatorio"
-	},
-	"matched": {
-		"title": "Coincidencias"
-	},
-	"favourites": {
-		"title": "Favoritos",
-		"searchPlaceholder": "Buscar listas…",
-		"empty": "Todavía no has añadido ninguna película a tus favoritos",
-		"create": {
-			"title": "Crear nueva lista",
-			"name": "Nombre de la lista",
-			"create": "Crear",
-			"cancel": "Cancelar"
-		},
-		"wheel": "Girar la rueda",
-		"scratch-card": "Rasca y gana",
-		"share": {
-			"title": "Seleccionar películas para compartir",
-			"selected": "{count}/{max} seleccionadas",
-			"button": "Compartir ({count})",
-			"loading": "Creando tu entrada...",
-			"error": "Error al crear la entrada",
-			"dialog-title": "Compartir colección"
-		}
-	},
-	"lists": {
-		"favourites": "Favoritos",
-		"watchlist": "Para ver",
-		"watched": "Vistas",
-		"empty": "Esta lista está vacía",
-		"noReview": "Sin reseña",
-		"items": "{count} elemento{plural}"
-	},
-	"create-collection": {
-		"title": "Crear colección",
-		"input-label": "Ingresa un nombre para tu nueva colección",
-		"cancel": "Cancelar",
-		"create": "Crear"
-	},
-	"common": {
-		"confirmation": "Confirmación",
-		"cancel": "Cancelar",
-		"yes": "Sí",
-		"no": "No",
-		"seeAll": "Ver todo",
-		"loading": "Cargando...",
-		"error": "Error"
-	},
-	"global": {
-		"justwatch": "La disponibilidad de películas es proporcionada por JustWatch",
-		"attributions": "Este producto usa la API de TMDB pero no está respaldado ni certificado por TMDB.",
-		"provider_legend": {
-			"title": "Leyenda de iconos",
-			"subscription": "Suscripción",
-			"rental": "Alquiler",
-			"purchase": "Compra",
-			"rent_buy": "Alquilar/Comprar",
-			"free": "Gratis",
-			"ads": "Con anuncios"
-		},
-		"hello": "Hola"
-	},
-	"overview": {
-		"matches": "Coincidencias",
-		"likes": "Me gusta",
-		"empty-title": "Nada aquí todavía",
-		"empty": "Aún no se encontraron películas o series. ¡Empieza a jugar para ver tus coincidencias y me gusta aquí!",
-		"back-to-game": "Volver al juego",
-		"create-collection": "Guardar en favoritos",
-		"save-list": "Guardar"
-	},
-	"scanner": {
-		"request-permission": "Solicitar permiso",
-		"heading": "Escanear código QR",
-		"join": "Unirse al juego",
-		"button": "Unirse",
-		"hint": "Coloca el código QR en el área de escaneo o toca Unirse arriba para ingresar el código manualmente",
-		"code": "Código",
-		"error-empty": "Por favor ingresa un código",
-		"error-invalid-prefix": "El código debe comenzar con S o V",
-		"error-room-not-found": "Sala no encontrada"
-	},
-	"settings": {
-		"hello": "Hola",
-		"heading": "Cuenta",
-		"nickname": "Apodo",
-		"nickname-label": "Apodo",
-		"nickname-info": "Aquí puedes cambiar tu apodo. Se mostrará a otros usuarios en la sala.",
-		"application-language": "Idioma de la aplicación",
-		"language-info": "Cambiar este valor cambiará el idioma de destino para la sala creada, lo que significa que las películas estarán en el idioma elegido, pero no los controles y otros textos. Se añadirán más idiomas en el futuro.",
-		"about": " Esta es una aplicación sencilla que te permite crear una sala y elegir películas con tus amigos. Puedes crear una sala e invitar a tus amigos a unirse. También puedes unirte a una sala ingresando el código de sala. Luego puedes añadir películas a la sala y verlas juntos. La app usa la API de The Movie Database para obtener las películas y la API de JustWatch para obtener las disponibilidades.",
-		"security": " Ningún dato se almacena en el servidor. La sala se crea en memoria y se destruye cuando el último usuario la abandona. No se almacenan datos adicionales en el servidor. El código de sala se genera aleatoriamente y las películas favoritas se almacenan localmente. Actualmente el backend está alojado en Europa, por lo que puede haber tiempos de respuesta más lentos para usuarios fuera de Europa. La app sigue en desarrollo y se añadirán más funciones en el futuro. No obtengo ningún beneficio de esta app y está hecha con fines educativos.",
-		"apply": "Aplicar",
-		"update": "Actualizar",
-		"version": "Versión",
-		"created-at": "Creado el",
-		"region-language-settings": "Configuración de región e idioma",
-		"selected-region": "Región seleccionada",
-		"timezone": "Zona horaria",
-		"search-regions": "Buscar regiones...",
-		"library": "Biblioteca",
-		"unauth": {
-			"session-expired": "Tu sesión ha expirado — inicia sesión de nuevo.",
-			"title": "Desbloquea la experiencia completa",
-			"subtitle": "Inicia sesión para acceder a funciones exclusivas",
-			"benefit-cloud": "Copia de seguridad en la nube de tus listas de películas",
-			"benefit-history": "Historial completo de juegos y estadísticas de sesión",
-			"benefit-friends": "(PRONTO) Lista de amigos — un toque para jugar juntos",
-			"benefit-recommendations": "Recomendaciones de películas personalizadas",
-			"sign-in": "Iniciar sesión",
-			"create-account": "Crear cuenta"
-		}
-	},
-	"voter": {
-		"title": "Vota por las películas",
-		"swipe": "Desliza para votar",
-		"games": "Juegos",
-		"rate": "Tu calificación",
-		"types": {
-			"movie": "Películas",
-			"series": "Series",
-			"mixed": "Ambas"
-		},
-		"home": {
-			"title": "Votación de películas",
-			"description": "Inicia una nueva sesión o únete a una existente para votar por las películas que quieres ver.",
-			"howtotitle": "¿De qué se trata?",
-			"howto": "Uno de los jugadores crea una sesión e invita a otros a unirse. Los jugadores votan por las películas que quieren ver. Las películas con más votos se muestran a los jugadores. Los jugadores pueden calificar las películas y decidir cuál ver.",
-			"create": "Crear una nueva sesión",
-			"waiting": "Esperando a otros jugadores",
-			"waiting-initial": "Esperando a que el compañero se una...",
-			"ready": "Listo para comenzar",
-			"you": "Tú",
-			"user": "Compañero",
-			"ready-status": "Listo",
-			"ready-cancel": "Cancelar listo",
-			"start": "Comenzar votación",
-			"rate": "Calificar",
-			"left": "restantes en esta ronda",
-			"quit": "Salir",
-			"qrcode-scan": "Escanear para unirse",
-			"likes": "Deslizamientos"
-		},
-		"ratings": {
-			"interest": {
-				"label": "Interés",
-				"options": {
-					"0": "Meh",
-					"1": "Quizás",
-					"2": "La quiero"
-				}
-			},
-			"mood": {
-				"label": "Ambiente",
-				"options": {
-					"0": "No",
-					"1": "Podría ir",
-					"2": "Perfecto"
-				}
-			},
-			"novelty": {
-				"label": "Novedad",
-				"options": {
-					"0": "Ya la vi",
-					"1": "Vagamente",
-					"2": "Sin ver"
-				}
-			},
-			"submit": "Enviar calificación"
-		},
-		"overview": {
-			"title": "Mejores elecciones",
-			"h2": "Otras elecciones",
-			"loading": "Cargando resultados...",
-			"no-matches": "Ninguna película coincide con tus preferencias"
-		}
-	},
-	"quick-actions": {
-		"watch-later": "Ver después",
-		"watched": "Vista",
-		"favourite": "Favoritos",
-		"my-lists": "Mis listas",
-		"modal": "Elige un grupo para añadir"
-	},
-	"games": {
-		"sessionsPlayed": "{count} sesiones jugadas",
-		"emptyHint": "Inicia una sesión de swipe para ver tu historial aquí",
-		"matchCountPlural": "{count} matches",
-		"matchCountSingular": "{count} match",
-		"categories": {
-			"all": "Todos los juegos",
-			"popular": "Populares",
-			"new": "Juegos nuevos"
-		},
-		"voter": {
-			"games": "Juegos de grupo",
-			"title": "Votador grupal",
-			"swipe": "¡Desliza para coincidir!",
-			"swipeDescription": "Juego de grupo rápido y divertido donde los jugadores deslizan a la izquierda o derecha para votar por películas o series.",
-			"description": "¡Elegir películas fácil y divertido! Vota por películas o series en tres categorías para obtener tus mejores opciones."
-		},
-		"fortunewheel": {
-			"title": "Gira y mira",
-			"description": "Gira la rueda de la fortuna para hacer selecciones aleatorias. ¡Perfecto para los indecisos!"
-		},
-		"random": {
-			"title": "Elección aleatoria",
-			"description": "Un toque, una película. Recomendación aleatoria instantánea cuando no puedes decidir qué ver.",
-			"mystery": "???",
-			"reveal": "Revelar película",
-			"revealing": "Buscando...",
-			"try-again": "Intentar de nuevo",
-			"view-details": "Detalles",
-			"hint": "Toca para descubrir tu próxima película"
-		},
-		"empty": "Aún no hay juegos"
-	},
-	"search": {
-		"error": "Algo salió mal. Por favor inténtalo de nuevo.",
-		"no-results": "Sin resultados para: ",
-		"begin": "Empieza a escribir para buscar películas o series",
-		"search-placeholder": "Buscar películas y series",
-		"genres": "Géneros",
-		"query-for": "Resultados para",
-		"close": "Cerrar",
-		"apply": "Aplicar filtros",
-		"more": "Ver más",
-		"less": "Ver menos",
-		"title": "Buscando {query}"
-	},
-	"cast": {
-		"heading": "Reparto"
-	},
-	"landing": {
-		"error": "Algo salió mal. Por favor inténtalo de nuevo.",
-		"title": "Bienvenido a FlickMate",
-		"chips": {
-			"all": "Todo",
-			"trending": "Tendencias",
-			"new": "Nuevo"
-		},
-		"list_footer": "Cargando más",
-		"no_more_results": "Sin más resultados",
-		"reached_end": "Has llegado al final",
-		"loadError": "Error al cargar las categorías"
-	},
-	"tabBar": {
-		"account": "Cuenta",
-		"favourites": "Favoritos",
-		"join-game": "Unirse al juego",
-		"games": "Decidir",
-		"search": "Buscar",
-		"explore": "Explorar"
-	},
-	"game-summary": {
-		"loading": "Cargando resumen del juego...",
-		"error": "Error: ",
-		"back-to-home": "Volver al inicio",
-		"game-completed": "¡Juego completado!",
-		"game-finished": "¡Juego terminado!",
-		"rounds": "rondas",
-		"movies": "Películas",
-		"tv-shows": "Series",
-		"room": "Sala: ",
-		"players": "Jugadores",
-		"matches": "Coincidencias",
-		"total-picks": "Total de deslizamientos",
-		"player-performance": "Rendimiento de jugadores:",
-		"picks": "deslizamientos",
-		"matched-movies": "Películas coincidentes",
-		"failed-to-load": "Error al cargar el resumen del juego",
-		"add-to-favourites": "Favorito",
-		"remove-from-favourites": "Deshacer",
-		"no-matches": "Sin coincidencias",
-		"no-matches-desc": "Lamentablemente, no encontraron películas en común en este juego. Inténtalo de nuevo con diferentes categorías o configuraciones.",
-		"try-again": "Jugar de nuevo",
-		"your-picks": "Tus me gusta",
-		"play-again": "Seguir jugando",
-		"leave-room": "Salir de la sala",
-		"play-again-failed": "Error al reiniciar el juego. Por favor inténtalo de nuevo.",
-		"view-summary": "Salir del juego",
-		"share-marathon": "Compartir",
-		"share": {
-			"loading": "Cargando tu maratón...",
-			"error": "Error al cargar los datos del maratón",
-			"no-movies": "Sin películas para compartir",
-			"dialog-title": "Entrada de maratón de películas"
-		}
-	},
-	"game-rating": {
-		"title": "¿Cómo estuvo el juego?",
-		"subtitle": "¡Aprecio mucho todos los comentarios para mejorar esta app! 🙏",
-		"feedback-title": "¿Qué salió mal?",
-		"feedback-subtitle": "Ayúdanos a mejorar compartiendo tu opinión",
-		"feedback-placeholder": "Cuéntanos qué salió mal...",
-		"submit": "Enviar",
-		"back": "Volver"
-	},
-	"game-invite": {
-		"social-title": "🎯 Encuentra tu película perfecta",
-		"social-subtitle": "Desliza con amigos y descubre películas que a ambos les encantarán",
-		"social-button": "Jugar al juego de coincidencias",
-		"quick-title": "🎬 Elige una película ahora",
-		"quick-subtitle": "Empieza a deslizar al instante con películas aleatorias",
-		"quick-button": "Juego rápido",
-		"quick-custom-button": "Sala personalizada",
-		"voter-title": "🗳️ Vota juntos",
-		"voter-subtitle": "Califica películas con amigos y encuentra sus favoritas compartidas",
-		"voter-button": "Comenzar votación",
-		"fortune-title": "🎰 Gira para decidir",
-		"fortune-subtitle": "¿No puedes elegir? ¡Deja que la rueda de la fortuna elija por ti!",
-		"fortune-button": "Girar la rueda",
-		"random-title": "🎲 ¿Te sientes afortunado?",
-		"random-subtitle": "Un toque, una película. ¡Elección aleatoria instantánea!",
-		"random-button": "Película aleatoria",
-		"all-games-title": "🎮 Explorar todos los juegos",
-		"all-games-subtitle": "Descubre todos nuestros juegos de grupo y encuentra tu forma favorita de elegir películas",
-		"all-games-button": "Ver todos los juegos"
-	},
-	"onboarding": {
-		"welcome": {
-			"title": "Bienvenido a FlickMate",
-			"subtitle": "Configuremos tus preferencias"
-		},
-		"language": {
-			"title": "Elige tu idioma",
-			"description": "Selecciona tu idioma preferido para la app"
-		},
-		"nickname": {
-			"title": "¿Cómo te llamamos?",
-			"label": "Tu apodo",
-			"placeholder": "Invitado",
-			"description": "Así te verán los demás jugadores en las salas"
-		},
-		"region": {
-			"title": "Elige tu región",
-			"description": "Esto nos ayuda a mostrarte películas disponibles en tu área"
-		},
-		"navigation": {
-			"next": "Siguiente",
-			"back": "Volver",
-			"getStarted": "Comenzar",
-			"step": "Paso {current} de {total}"
-		},
-		"features": {
-			"header": "Descubre FlickMate",
-			"skip": "Saltar",
-			"next": "Siguiente",
-			"getStarted": "Comenzar",
-			"welcome": {
-				"title": "Elige películas juntos",
-				"description": "Sin más desplazamiento sin fin. Encuentra la película perfecta con amigos usando juegos divertidos y herramientas inteligentes."
-			},
-			"swiper": {
-				"title": "Desliza y coincide",
-				"description": "Desliza a la derecha las películas que te gustan. ¡Cuando todos coincidan, habrán encontrado la película de la noche!"
-			},
-			"voter": {
-				"title": "Voten juntos",
-				"description": "Califica películas con un amigo. Compara sus elecciones y descubran qué quieren ver ambos."
-			},
-			"fortune": {
-				"title": "Gira la rueda",
-				"description": "¿No puedes decidir? ¡Deja que el destino elija! Gira la rueda con tus favoritas o elecciones aleatorias."
-			},
-			"favorites": {
-				"title": "Organiza tus elecciones",
-				"description": "Guarda películas en grupos personalizados. Rastrea lo que has visto y lo que sigue en tu lista."
-			},
-			"browse": {
-				"title": "Explora y descubre",
-				"description": "Explora películas en tendencia, filtra por género o plataforma de streaming, y guarda tus favoritas en colecciones personalizadas."
-			},
-			"providers": {
-				"title": "Tus plataformas de streaming",
-				"description": "Selecciona las plataformas que usas para obtener recomendaciones personalizadas",
-				"selected": "seleccionadas"
-			}
-		}
-	},
-	"swipe": {
-		"block": "Bloquear",
-		"nope": "No",
-		"like": "Me gusta",
-		"super": "Super"
-	},
-	"blocked": {
-		"title": "Películas bloqueadas",
-		"empty": "Todavía no has bloqueado ninguna película. Bloquea películas durante el juego de deslizamiento para no volvería a verlas.",
-		"count": "{count} bloqueada{plural}",
-		"clear-all": "Limpiar todo",
-		"unblock": "Desbloquear",
-		"unblock-confirm": "¿Estás seguro de que quieres desbloquear {title}? Puede aparecer en tus juegos de nuevo.",
-		"clear-all-confirm": "¿Estás seguro de que quieres desbloquear todas las películas? Pueden aparecer en tus juegos de nuevo."
-	},
-	"super-liked": {
-		"title": "Super me gusta",
-		"empty": "Todavía no tienes películas con super me gusta. Dale super me gusta a películas durante el juego de deslizamiento para guardarlas aquí.",
-		"count": "{count} super me gusta",
-		"clear-all": "Limpiar todo",
-		"remove": "Eliminar",
-		"remove-confirm": "¿Estás seguro de que quieres eliminar {title} de tus super me gusta?",
-		"clear-all-confirm": "¿Estás seguro de que quieres eliminar todas las películas con super me gusta?"
-	},
-	"rate-app": {
-		"prompt": "¿Disfrutas la app? ¡Califícanos!"
-	},
-	"status-modal": {
-		"no-internet": {
-			"title": "Sin internet",
-			"message": "Por favor verifica tu conexión a internet e inténtalo de nuevo."
-		},
-		"maintenance": {
-			"title": "Mantenimiento",
-			"message": "Estamos realizando mantenimiento. Por favor inténtalo más tarde."
-		},
-		"update": {
-			"title": "Actualización disponible",
-			"message": "Hay una nueva versión disponible. Por favor actualiza la app para continuar."
-		},
-		"server": {
-			"title": "Problema con el servidor",
-			"message": "Estamos experimentando problemas. Por favor inténtalo más tarde."
-		},
-		"retry": "Reintentar",
-		"update-button": "Actualizar",
-		"dismiss": "Cerrar"
-	},
-	"errors": {
-		"VALIDATION_ERROR": "Por favor revisa la información ingresada e inténtalo de nuevo.",
-		"EMAIL_ALREADY_IN_USE": "Ya existe una cuenta con este correo electrónico.",
-		"INVALID_CREDENTIALS": "Correo electrónico o contraseña incorrectos.",
-		"INVALID_GOOGLE_TOKEN": "El inicio de sesión con Google falló. Por favor inténtalo de nuevo.",
-		"INVALID_APPLE_TOKEN": "El inicio de sesión con Apple falló. Por favor inténtalo de nuevo.",
-		"AVATAR_TOO_LARGE": "La imagen es demasiado grande. Por favor elige un archivo más pequeño.",
-		"AVATAR_INVALID_TYPE": "Formato de imagen no compatible. Por favor usa JPEG o PNG.",
-		"LIST_NOT_FOUND": "Lista no encontrada.",
-		"LIST_ALREADY_EXISTS": "Ya existe una lista con este nombre.",
-		"RESERVED_LIST_TYPE": "Este tipo de lista está reservado y no puede ser creado.",
-		"SYSTEM_LIST_PROTECTED": "Las listas del sistema no pueden eliminarse.",
-		"INTERNAL_ERROR": "Algo salió mal. Por favor inténtalo de nuevo más tarde."
-	},
-	"ticket": {
-		"unknown-movie": "Película desconocida",
-		"unknown": "Desconocido",
-		"watch-it-on": "Mírala en",
-		"scan-to-get-app": "ESCANEA PARA OBTENER LA APP",
-		"app-tagline": "Encuentra tu próxima película juntos",
-		"flickmate-presents": "FLICKMATE PRESENTA",
-		"films": "PELÍCULAS",
-		"and": "Y",
-		"series": "SERIES",
-		"cinema": {
-			"headers": [
-				"La elección de esta noche",
-				"El destino ha hablado.",
-				"El universo ha decidido.",
-				"No hay vuelta atrás.",
-				"Es hora de la película.",
-				"El destino aguarda.",
-				"La elección está hecha.",
-				"Esta es la indicada.",
-				"¿Palomitas listas?",
-				"Vamos a ello."
-			],
-			"pickups": [
-				"¡Te invito a ver conmigo!",
-				"Tú, yo y esta película.",
-				"¿Me guardas un lugar?",
-				"¡No olvides las palomitas!",
-				"La noche de cine llama...",
-				"Esta es para nosotros."
-			]
-		},
-		"marathon": {
-			"headers": [
-				"Modo maratón",
-				"Triple función",
-				"Maratón de películas",
-				"Binge aprobado",
-				"Vacía tu agenda",
-				"La alineación definitiva",
-				"Éxitos consecutivos",
-				"Cine sin parar"
-			],
-			"pickups": [
-				"¿Bocadillos para toda la noche?",
-				"¡Cancela todos tus planes!",
-				"Va a ser una noche larga...",
-				"¡Trae palomitas extra!",
-				"¿Listo para el maratón de películas?",
-				"El sofá te espera."
-			],
-			"bonus-headings": [
-				"Si todavía estás despierto...",
-				"Ronda extra",
-				"¿Sigues en pie?",
-				"Para los valientes",
-				"Créditos adicionales",
-				"Especiales nocturnos",
-				"El after"
-			]
-		}
-	},
-	"tutorial": {
-		"swipe": {
-			"title": "Desliza con amigos",
-			"description": "Crea una sala, comparte el código, y todos deslizan películas. Cuando a todos les guste la misma — ¡es un match!"
-		},
-		"fortune": {
-			"title": "Ruleta de la fortuna",
-			"description": "Gira la ruleta para obtener una película aleatoria basada en tus filtros de género y proveedor."
-		},
-		"random": {
-			"title": "Selección aleatoria",
-			"description": "¿Necesitas algo rápido? Toca para obtener una recomendación de película al instante en segundos."
-		},
-		"voter": {
-			"title": "Votación",
-			"description": "Dos jugadores califican la misma película en interés, estado de ánimo y originalidad. Compara y decide juntos."
-		},
-		"join": {
-			"title": "Unirse a una sala",
-			"description": "¿Ya tienes un código de sala? Toca aquí para escanear el código QR y unirte al juego de un amigo al instante."
-		}
-	},
-	"swipe_tutorial": {
-		"how_to_vote": {
-			"title": "Cómo votar",
-			"like_label": "Me gusta",
-			"like_desc": "Desliza a la derecha o toca ❤ — quieres verlo",
-			"pass_label": "Pasar",
-			"pass_desc": "Desliza a la izquierda o toca ✕ — no te apetece",
-			"details_label": "Detalles",
-			"details_desc": "Toca la tarjeta para ver el reparto, el tráiler e información"
-		},
-		"special_actions": {
-			"title": "Acciones especiales",
-			"super_like_label": "Super Like",
-			"super_like_desc": "Sí definitivo — también se guarda en tu lista de imprescindibles",
-			"block_label": "Bloquear",
-			"block_desc": "No mostrar este título nunca más en ningún juego"
-		},
-		"getting_a_match": {
-			"title": "Conseguir un match",
-			"match_label": "¡Match!",
-			"match_desc": "Cuando todos en la sala les gusta la misma película — es un match",
-			"saved_label": "Guardado",
-			"saved_desc": "Todos tus matches se guardan en el historial del juego"
-		},
-		"track_session": {
-			"title": "Sigue tu sesión",
-			"liked_label": "Películas que te gustaron",
-			"liked_desc": "Toca los pósters apilados en la esquina superior derecha para ver tus likes y matches",
-			"progress_label": "Anillo de progreso",
-			"progress_desc": "El círculo alrededor de los pósters muestra cuánto has avanzado en el mazo de películas"
-		},
-		"got_it": "Entendido",
-		"next": "Siguiente"
-	},
-	"account": {
-		"sections": {
-			"account": "CUENTA",
-			"preferences": "PREFERENCIAS",
-			"app": "APP"
-		},
-		"signOut": "Cerrar sesión",
-		"deleteAccount": "Eliminar cuenta",
-		"pushNotifications": "Notificaciones push",
-		"notifications": {
-			"disabledTitle": "Notificaciones desactivadas",
-			"disabledMessage": "Activa las notificaciones en la configuración del sistema para recibir invitaciones de juego.",
-			"openSettings": "Abrir configuración",
-			"systemDisabled": "Las notificaciones están desactivadas en la configuración del sistema."
-		},
-		"deleteDialog": {
-			"message": "Esto eliminará permanentemente tu cuenta y todos los datos asociados. Esta acción no se puede deshacer.",
-			"confirm": "Eliminar",
-			"error": "Error al eliminar la cuenta. Por favor, inténtalo de nuevo."
-		},
-		"recentGames": "Juegos recientes",
-		"playedWith": "Jugado con",
-		"tasteProfile": "Perfil de gustos",
-		"tasteProfileEmpty": "Sin datos aún",
-		"tasteProfileMovies": "Películas: {count}",
-		"tasteProfileTV": "TV: {count}",
-		"required": {
-			"title": "Cuenta requerida",
-			"message": "Crea una cuenta gratuita para usar esta función — solo toma un momento.",
-			"notNow": "Ahora no"
-		},
-		"stats": {
-			"games": "Juegos",
-			"matches": "Matches",
-			"swipes": "Swipes"
-		},
-		"profile": {
-			"updateFailed": "Error al actualizar",
-			"updateFailedMessage": "No se pudo actualizar el nombre. Por favor, inténtalo de nuevo.",
-			"regenerateTitle": "Regenerar códigos de recuperación",
-			"regenerateMessage": "Tus códigos existentes serán invalidados permanentemente y reemplazados por 8 nuevos.",
-			"regenerate": "Regenerar",
-			"regenerateError": "Error al regenerar los códigos. Por favor, inténtalo de nuevo.",
-			"regenerating": "Regenerando…",
-			"recoveryCodes": "Códigos de recuperación"
-		},
-		"scoringPreferences": {
-			"title": "Perfil de gustos",
-			"movies": "Películas",
-			"tvShows": "Series",
-			"genres": "Géneros",
-			"keywords": "Palabras clave",
-			"keywordsWithCount": "Palabras clave ({count})",
-			"searchPlaceholder": "Buscar {tab}...",
-			"legend": "0 = preferencia más débil · 100 = más fuerte",
-			"noPreferences": "Sin preferencias aún",
-			"noPreferencesHint": "Juega más partidas para construir tu perfil de gustos.",
-			"noMatches": "Sin resultados",
-			"noMatchesHint": "Intenta con otro término de búsqueda.",
-			"resetTitle": "Restablecer perfil de gustos",
-			"resetMessage": "¿Borrar todas las preferencias de {type} aprendidas?",
-			"resetConfirm": "Restablecer",
-			"resetButton": "Restablecer todas las preferencias de {type}"
-		}
-	},
-	"auth": {
-		"welcomeBack": "Bienvenido de nuevo",
-		"createAccount": "Crear cuenta",
-		"signInWithEmail": "Inicia sesión con tu correo",
-		"signUpWithEmail": "Regístrate con tu correo",
-		"signInSubtitle": "Inicia sesión en tu cuenta",
-		"signUpSubtitle": "Empieza a descubrir películas juntos",
-		"back": "Volver",
-		"emailLabel": "Correo electrónico",
-		"passwordLabel": "Contraseña",
-		"nameLabel": "Nombre",
-		"signIn": "Iniciar sesión",
-		"signUp": "Crear cuenta",
-		"continueWithEmail": "Continuar con correo",
-		"continueWithGoogle": "Continuar con Google",
-		"signInWithGoogle": "Iniciar sesión con Google",
-		"signUpWithGoogle": "Registrarse con Google",
-		"noAccount": "¿No tienes cuenta?",
-		"haveAccount": "¿Ya tienes cuenta?",
-		"signUpLink": "Registrarse",
-		"signInLink": "Iniciar sesión",
-		"lostAccess": "¿Perdiste el acceso?",
-		"recoveryCodeLink": "Usar código de recuperación",
-		"accountRecovery": "Recuperación de cuenta",
-		"recoverySubtitle": "Ingresa tu correo y uno de tus códigos de recuperación.",
-		"recoveryCodeLabel": "Código de recuperación",
-		"recoverAccount": "Recuperar cuenta",
-		"recoveryHint": "Los códigos no distinguen mayúsculas. Los guiones son opcionales.",
-		"emailRequired": "El correo es obligatorio",
-		"emailInvalid": "Ingresa un correo válido",
-		"passwordRequired": "La contraseña es obligatoria",
-		"passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
-		"nameRequired": "El nombre es obligatorio",
-		"nameMinLength": "El nombre debe tener al menos 2 caracteres",
-		"codeRequired": "El código de recuperación es obligatorio",
-		"codeLength": "El código debe tener 10 caracteres",
-		"loginFailed": "Inicio de sesión fallido. Inténtalo de nuevo.",
-		"registrationFailed": "Registro fallido. Inténtalo de nuevo.",
-		"recoveryFailed": "Recuperación fallida. Verifica el código e inténtalo de nuevo.",
-		"appleSignInFailed": "Inicio de sesión con Apple fallido. Inténtalo de nuevo.",
-		"googleSignInFailed": "Inicio de sesión con Google fallido. Inténtalo de nuevo.",
-		"googleNoAccounts": "No se encontraron cuentas de Google en este dispositivo. Añade una cuenta de Google en los ajustes del dispositivo e inténtalo de nuevo."
-	},
-	"ratings": {
-		"title": "Mis reseñas",
-		"myRatings": "Mis calificaciones",
-		"empty": "Aún no hay reseñas",
-		"loadError": "Error al cargar las reseñas",
-		"rateTitle": "Calificar película",
-		"reviewPlaceholder": "Añadir reseña…",
-		"reviewCount": "{count} reseña{plural}",
-		"avgLabel": "{avg}/10 media",
-		"noRatingsYet": "Aún no hay calificaciones"
-	}
+  "dialogs": {
+    "scan-code": {
+      "title": "Escanear código QR",
+      "message": "Escanea el código QR para ver los detalles de la película",
+      "close": "Cerrar",
+      "cancel": "Cancelar",
+      "leave": "Salir",
+      "endGame": "Terminar juego"
+    },
+    "leave-room": {
+      "message": "¿Estás seguro de que quieres salir de la sala?",
+      "title": "Salir de la sala",
+      "cancel": "Cancelar",
+      "leave": "Salir"
+    },
+    "qr": {
+      "error": "¡Algo salió mal!",
+      "error-desc": "Código QR inválido",
+      "close": "Cerrar",
+      "manual": "Unirse a la sala manualmente"
+    }
+  },
+  "movie": {
+    "details": {
+      "lastEpisode": "Último episodio",
+      "episode": "Episodios",
+      "season": "Temporada",
+      "runtime": "Duración",
+      "releaseDate": "Fecha de estreno",
+      "status": "Estado",
+      "minutes": "minutos",
+      "similar-movies": "Películas similares",
+      "similar-series": "Series similares",
+      "air_date": "Fecha de emisión",
+      "show_more": "Ver más",
+      "show_less": "Ver menos",
+      "loadError": "Error al cargar los detalles de la película"
+    },
+    "tabs": {
+      "details": "Detalles",
+      "cast": "Reparto",
+      "similar": "Similares",
+      "trailers": "Tráilers",
+      "seasons": "Temporadas"
+    },
+    "similar": {
+      "load_more": "Cargar más"
+    }
+  },
+  "match": {
+    "title": "¡Es un match!",
+    "view-matches": "Ver coincidencias"
+  },
+  "partial-match": {
+    "title": "¡Casi un match!",
+    "liked-by": "A {names} le gusta esto",
+    "reconsider": "¿Reconsideras? 👀"
+  },
+  "matches": {
+    "unviewed-title": "¡Tienes coincidencias!",
+    "unviewed-subtitle": "Tienes {count} coincidencias de tu última sesión",
+    "start-new-game": "Iniciar nuevo juego"
+  },
+  "room": {
+    "specialCategories": "Categorías especiales",
+    "loading": "Cargando sala...",
+    "joining": "Uniéndose a la sala...",
+    "waiting-for-players": "Esperando a que se unan los jugadores...",
+    "play-alone": "Jugar solo",
+    "start": "Iniciar",
+    "no-more-results": "No hay más resultados en esta categoría",
+    "awaiting-start": "Esperando a que el anfitrión inicie el juego",
+    "too-restricted": "Filtros muy restrictivos, inténtalo de nuevo",
+    "lower-results-count": "Solo se encontraron {count} resultados, el juego será menos divertido",
+    "providers": "Elige tus plataformas",
+    "join-game": "Unirse al juego",
+    "waiting": "Espera a que los demás jugadores terminen de elegir",
+    "choose-category": "Elegir categoría",
+    "movie": "Película",
+    "series": "Serie",
+    "randomize": "Aleatorio",
+    "genre": "Géneros",
+    "next": "Siguiente",
+    "active-game-banner": "Juego activo en la sala",
+    "finished": "Juego terminado, no hay más películas que mostrar",
+    "randomize-search": "Búsqueda aleatoria",
+    "page-range-desc": "Selecciona el número de páginas a buscar",
+    "qr-title": "¡Escanea para unirte!",
+    "active": "Usuarios activos",
+    "qr-subtitle": "Deja que tus amigos escaneen el código con la cámara o el escáner de la app para unirse, o comparte el código de sala manteniendo presionado el código de abajo. También puedes iniciar el juego solo si lo deseas",
+    "tutorial": {
+      "native-camera": "Usa la cámara nativa de tu teléfono",
+      "in-app-scanner": "O usa el escáner de la app",
+      "join-during-game": "Los jugadores pueden unirse durante el juego"
+    },
+    "share": {
+      "message": "¡Hola! Únete a mi sala en FlickMate: {code}",
+      "title": "¡Únete a mi sala en FlickMate!",
+      "button": "Compartir código"
+    },
+    "page-range": "¿Cansado de las mismas películas de siempre? Aumenta tus posibilidades de encontrar algo nuevo aleatorizando tu búsqueda.",
+    "provider_desc": "Selecciona las plataformas de streaming que deseas incluir en tu búsqueda. Puedes elegir varias o ninguna para ver todo.",
+    "genre_desc": "Selecciona los géneros de películas y series que quieres ver. Puedes elegir varios géneros o ninguno para ver todo.",
+    "game_time": "Duración del juego",
+    "game_time_desc": "Elige cuántas películas votará cada jugador",
+    "game_time_short": "Corto",
+    "game_time_medium": "Medio",
+    "game_time_long": "Largo",
+    "continuing-game": "Continuando juego con los mismos jugadores",
+    "play-again-prompt": "¿Te gustaría jugar otra ronda con los mismos jugadores?",
+    "waiting-for-host-decision": "Esperando a que el anfitrión decida el siguiente juego...",
+    "reconnecting": "Reconectando...",
+    "disconnected": "Desconectado",
+    "genres": {
+      "all_movies": "Todas las películas",
+      "now_playing": "En cartelera",
+      "popular": "Populares",
+      "top_rated": "Mejor valoradas",
+      "upcoming": "Próximas",
+      "all_tv": "Todas las series",
+      "top_rated_tv": "Series mejor valoradas",
+      "popular_tv": "Series populares",
+      "airing_today": "Emitiendo hoy",
+      "on_the_air": "En emisión"
+    },
+    "titles": {
+      "category": "Elegir categoría",
+      "genre": "Elegir género",
+      "page-range": "Elegir rango de páginas",
+      "qr-code": "Escanear código QR",
+      "randomize": "Búsqueda aleatoria",
+      "extra-settings": "Configuración adicional"
+    },
+    "builder": {
+      "next": "Siguiente",
+      "createRoom": "Crear sala",
+      "quickStart": "Inicio rápido",
+      "leaveStepConfirmation": "¿Estás seguro de que quieres volver? Tu progreso se perderá.",
+      "step1": {
+        "title": "¿Qué prefieres?",
+        "subtitle": "Elige una categoría para comenzar",
+        "movies": "Películas",
+        "tv": "Series"
+      },
+      "step2": {
+        "title": "Elige tus géneros",
+        "subtitle": "Selecciona uno o más géneros (o salta para elegir todos)",
+        "selected": "{count} género{plural} seleccionado{plural}"
+      },
+      "step3": {
+        "title": "¿Dónde ves películas?",
+        "subtitle": "Selecciona tus servicios de streaming (o salta para elegir todos)",
+        "search": "Buscar proveedores...",
+        "remember": "Recordar mis elecciones",
+        "saved": "Preferencias guardadas cargadas",
+        "clear": "Borrar preferencias guardadas",
+        "selected": "{count} plataforma{plural} seleccionada{plural}"
+      },
+      "step4": {
+        "title": "¿Alguna preferencia?",
+        "subtitle": "Selecciona filtros para reducir tus opciones (o salta)",
+        "selected": "{count} filtro{plural} aplicado{plural}"
+      },
+      "step5": {
+        "title": "Duración del juego",
+        "subtitle": "Selecciona el número de rondas",
+        "validating": "Verificando contenido disponible...",
+        "summary": "Resumen del juego",
+        "rounds": "{count} ronda{plural} ({label})",
+        "genresSelected": "{count} género{plural} seleccionado{plural}",
+        "providersSelected": "{count} servicio{plural} de streaming",
+        "filtersApplied": "{count} filtro{plural} aplicado{plural}",
+        "gameTime": {
+          "quick": {
+            "label": "Partida rápida",
+            "duration": "Unos 5 minutos",
+            "rounds": "3 rondas",
+            "bestFor": "Perfecto para una decisión rápida"
+          },
+          "standard": {
+            "label": "Partida estándar",
+            "duration": "Unos 10 minutos",
+            "rounds": "6 rondas",
+            "bestFor": "Genial con un amigo"
+          },
+          "extended": {
+            "label": "Sesión extendida",
+            "duration": "Unos 15 minutos",
+            "rounds": "10 rondas",
+            "bestFor": "Ideal para grupos más grandes"
+          }
+        }
+      },
+      "loading": "Cargando...",
+      "roomActive": "Sala lista"
+    },
+    "invite": {
+      "searchPlaceholder": "Buscar jugadores...",
+      "noPlayersFound": "No se encontraron jugadores",
+      "noRecentPlayers": "Sin jugadores recientes",
+      "sending": "Enviando...",
+      "invited": "Invitado",
+      "invite": "Invitar",
+      "noNotifications": "Notificaciones desactivadas - puede no ver la invitación",
+      "banner": {
+        "swipe": "Te invitaron a un juego de swipe.",
+        "voter": "Te invitaron a un juego de votación.",
+        "join": "Toca para unirte"
+      }
+    },
+    "inviteFriends": "Invitar amigos"
+  },
+  "fortune-wheel": {
+    "drag": "Arrastra para girar",
+    "roll": "Girar de nuevo",
+    "random-category": "Categoría aleatoria",
+    "pick-category": "Elegir categoría",
+    "pick-a-movie": "¡Gira la rueda!",
+    "spin-again": "Giro aleatorio",
+    "tap-for-details": "Toca para ver detalles",
+    "fate-messages": [
+      "Que el destino decida...",
+      "Las estrellas se alinean...",
+      "El destino aguarda...",
+      "Confía en el universo...",
+      "La magia está ocurriendo...",
+      "Encontrando tu película...",
+      "La rueda sabe mejor...",
+      "Algo especial está por llegar..."
+    ]
+  },
+  "filters": {
+    "title": "Filtros",
+    "type": "Tipo",
+    "movie": "Películas",
+    "tv": "Series",
+    "both": "Ambas",
+    "providers": "Plataformas de streaming",
+    "genres": "Géneros",
+    "decade": "Década",
+    "all": "Todo",
+    "90s": "90s",
+    "2000s": "2000s",
+    "2010s": "2010s",
+    "2020s": "2020s",
+    "apply": "Aplicar filtros",
+    "clear": "Limpiar todo",
+    "active": "{count} filtro{plural} activo{plural}",
+    "categories": "Categorías"
+  },
+  "likes": {
+    "title": "Tus me gusta",
+    "empty": "Todavía no te ha gustado ninguna película",
+    "close": "Cerrar coincidencia",
+    "no-matches": "No se encontraron coincidencias",
+    "random": "Aleatorio"
+  },
+  "matched": {
+    "title": "Coincidencias"
+  },
+  "favourites": {
+    "title": "Favoritos",
+    "searchPlaceholder": "Buscar listas…",
+    "empty": "Todavía no has añadido ninguna película a tus favoritos",
+    "create": {
+      "title": "Crear nueva lista",
+      "name": "Nombre de la lista",
+      "create": "Crear",
+      "cancel": "Cancelar"
+    },
+    "wheel": "Girar la rueda",
+    "scratch-card": "Rasca y gana",
+    "share": {
+      "title": "Seleccionar películas para compartir",
+      "selected": "{count}/{max} seleccionadas",
+      "button": "Compartir ({count})",
+      "loading": "Creando tu entrada...",
+      "error": "Error al crear la entrada",
+      "dialog-title": "Compartir colección"
+    }
+  },
+  "lists": {
+    "favourites": "Favoritos",
+    "watchlist": "Para ver",
+    "watched": "Vistas",
+    "empty": "Esta lista está vacía",
+    "noReview": "Sin reseña",
+    "items": "{count} elemento{plural}"
+  },
+  "create-collection": {
+    "title": "Crear colección",
+    "input-label": "Ingresa un nombre para tu nueva colección",
+    "cancel": "Cancelar",
+    "create": "Crear"
+  },
+  "common": {
+    "confirmation": "Confirmación",
+    "cancel": "Cancelar",
+    "yes": "Sí",
+    "no": "No",
+    "seeAll": "Ver todo",
+    "loading": "Cargando...",
+    "error": "Error"
+  },
+  "global": {
+    "justwatch": "La disponibilidad de películas es proporcionada por JustWatch",
+    "attributions": "Este producto usa la API de TMDB pero no está respaldado ni certificado por TMDB.",
+    "provider_legend": {
+      "title": "Leyenda de iconos",
+      "subscription": "Suscripción",
+      "rental": "Alquiler",
+      "purchase": "Compra",
+      "rent_buy": "Alquilar/Comprar",
+      "free": "Gratis",
+      "ads": "Con anuncios"
+    },
+    "hello": "Hola"
+  },
+  "overview": {
+    "matches": "Coincidencias",
+    "likes": "Me gusta",
+    "empty-title": "Nada aquí todavía",
+    "empty": "Aún no se encontraron películas o series. ¡Empieza a jugar para ver tus coincidencias y me gusta aquí!",
+    "back-to-game": "Volver al juego",
+    "create-collection": "Guardar en favoritos",
+    "save-list": "Guardar"
+  },
+  "scanner": {
+    "request-permission": "Solicitar permiso",
+    "heading": "Escanear código QR",
+    "join": "Unirse al juego",
+    "button": "Unirse",
+    "hint": "Coloca el código QR en el área de escaneo o toca Unirse arriba para ingresar el código manualmente",
+    "code": "Código",
+    "error-empty": "Por favor ingresa un código",
+    "error-invalid-prefix": "El código debe comenzar con S o V",
+    "error-room-not-found": "Sala no encontrada"
+  },
+  "settings": {
+    "hello": "Hola",
+    "heading": "Cuenta",
+    "nickname": "Apodo",
+    "nickname-label": "Apodo",
+    "nickname-info": "Aquí puedes cambiar tu apodo. Se mostrará a otros usuarios en la sala.",
+    "application-language": "Idioma de la aplicación",
+    "language-info": "Cambiar este valor cambiará el idioma de destino para la sala creada, lo que significa que las películas estarán en el idioma elegido, pero no los controles y otros textos. Se añadirán más idiomas en el futuro.",
+    "about": " Esta es una aplicación sencilla que te permite crear una sala y elegir películas con tus amigos. Puedes crear una sala e invitar a tus amigos a unirse. También puedes unirte a una sala ingresando el código de sala. Luego puedes añadir películas a la sala y verlas juntos. La app usa la API de The Movie Database para obtener las películas y la API de JustWatch para obtener las disponibilidades.",
+    "security": " Ningún dato se almacena en el servidor. La sala se crea en memoria y se destruye cuando el último usuario la abandona. No se almacenan datos adicionales en el servidor. El código de sala se genera aleatoriamente y las películas favoritas se almacenan localmente. Actualmente el backend está alojado en Europa, por lo que puede haber tiempos de respuesta más lentos para usuarios fuera de Europa. La app sigue en desarrollo y se añadirán más funciones en el futuro. No obtengo ningún beneficio de esta app y está hecha con fines educativos.",
+    "apply": "Aplicar",
+    "update": "Actualizar",
+    "version": "Versión",
+    "created-at": "Creado el",
+    "region-language-settings": "Configuración de región e idioma",
+    "selected-region": "Región seleccionada",
+    "timezone": "Zona horaria",
+    "search-regions": "Buscar regiones...",
+    "library": "Biblioteca",
+    "unauth": {
+      "session-expired": "Tu sesión ha expirado - inicia sesión de nuevo.",
+      "title": "Desbloquea la experiencia completa",
+      "subtitle": "Inicia sesión para acceder a funciones exclusivas",
+      "benefit-cloud": "Copia de seguridad en la nube de tus listas de películas",
+      "benefit-history": "Historial completo de juegos y estadísticas de sesión",
+      "benefit-friends": "(PRONTO) Lista de amigos - un toque para jugar juntos",
+      "benefit-recommendations": "Recomendaciones de películas personalizadas",
+      "sign-in": "Iniciar sesión",
+      "create-account": "Crear cuenta"
+    }
+  },
+  "voter": {
+    "title": "Vota por las películas",
+    "swipe": "Desliza para votar",
+    "games": "Juegos",
+    "rate": "Tu calificación",
+    "types": {
+      "movie": "Películas",
+      "series": "Series",
+      "mixed": "Ambas"
+    },
+    "home": {
+      "title": "Votación de películas",
+      "description": "Inicia una nueva sesión o únete a una existente para votar por las películas que quieres ver.",
+      "howtotitle": "¿De qué se trata?",
+      "howto": "Uno de los jugadores crea una sesión e invita a otros a unirse. Los jugadores votan por las películas que quieren ver. Las películas con más votos se muestran a los jugadores. Los jugadores pueden calificar las películas y decidir cuál ver.",
+      "create": "Crear una nueva sesión",
+      "waiting": "Esperando a otros jugadores",
+      "waiting-initial": "Esperando a que el compañero se una...",
+      "ready": "Listo para comenzar",
+      "you": "Tú",
+      "user": "Compañero",
+      "ready-status": "Listo",
+      "ready-cancel": "Cancelar listo",
+      "start": "Comenzar votación",
+      "rate": "Calificar",
+      "left": "restantes en esta ronda",
+      "quit": "Salir",
+      "qrcode-scan": "Escanear para unirse",
+      "likes": "Deslizamientos"
+    },
+    "ratings": {
+      "interest": {
+        "label": "Interés",
+        "options": {
+          "0": "Meh",
+          "1": "Quizás",
+          "2": "La quiero"
+        }
+      },
+      "mood": {
+        "label": "Ambiente",
+        "options": {
+          "0": "No",
+          "1": "Podría ir",
+          "2": "Perfecto"
+        }
+      },
+      "novelty": {
+        "label": "Novedad",
+        "options": {
+          "0": "Ya la vi",
+          "1": "Vagamente",
+          "2": "Sin ver"
+        }
+      },
+      "submit": "Enviar calificación"
+    },
+    "overview": {
+      "title": "Mejores elecciones",
+      "h2": "Otras elecciones",
+      "loading": "Cargando resultados...",
+      "no-matches": "Ninguna película coincide con tus preferencias"
+    }
+  },
+  "quick-actions": {
+    "watch-later": "Ver después",
+    "watched": "Vista",
+    "favourite": "Favoritos",
+    "my-lists": "Mis listas",
+    "modal": "Elige un grupo para añadir"
+  },
+  "games": {
+    "sessionsPlayed": "{count} sesiones jugadas",
+    "emptyHint": "Inicia una sesión de swipe para ver tu historial aquí",
+    "matchCountPlural": "{count} matches",
+    "matchCountSingular": "{count} match",
+    "categories": {
+      "all": "Todos los juegos",
+      "popular": "Populares",
+      "new": "Juegos nuevos"
+    },
+    "voter": {
+      "games": "Juegos de grupo",
+      "title": "Votador grupal",
+      "swipe": "¡Desliza para coincidir!",
+      "swipeDescription": "Juego de grupo rápido y divertido donde los jugadores deslizan a la izquierda o derecha para votar por películas o series.",
+      "description": "¡Elegir películas fácil y divertido! Vota por películas o series en tres categorías para obtener tus mejores opciones."
+    },
+    "fortunewheel": {
+      "title": "Gira y mira",
+      "description": "Gira la rueda de la fortuna para hacer selecciones aleatorias. ¡Perfecto para los indecisos!"
+    },
+    "random": {
+      "title": "Elección aleatoria",
+      "description": "Un toque, una película. Recomendación aleatoria instantánea cuando no puedes decidir qué ver.",
+      "mystery": "???",
+      "reveal": "Revelar película",
+      "revealing": "Buscando...",
+      "try-again": "Intentar de nuevo",
+      "view-details": "Detalles",
+      "hint": "Toca para descubrir tu próxima película"
+    },
+    "empty": "Aún no hay juegos"
+  },
+  "search": {
+    "error": "Algo salió mal. Por favor inténtalo de nuevo.",
+    "no-results": "Sin resultados para: ",
+    "begin": "Empieza a escribir para buscar películas o series",
+    "search-placeholder": "Buscar películas y series",
+    "genres": "Géneros",
+    "query-for": "Resultados para",
+    "close": "Cerrar",
+    "apply": "Aplicar filtros",
+    "more": "Ver más",
+    "less": "Ver menos",
+    "title": "Buscando {query}"
+  },
+  "cast": {
+    "heading": "Reparto"
+  },
+  "landing": {
+    "error": "Algo salió mal. Por favor inténtalo de nuevo.",
+    "title": "Bienvenido a FlickMate",
+    "chips": {
+      "all": "Todo",
+      "trending": "Tendencias",
+      "new": "Nuevo"
+    },
+    "list_footer": "Cargando más",
+    "no_more_results": "Sin más resultados",
+    "reached_end": "Has llegado al final",
+    "loadError": "Error al cargar las categorías"
+  },
+  "tabBar": {
+    "account": "Cuenta",
+    "favourites": "Favoritos",
+    "join-game": "Unirse al juego",
+    "games": "Decidir",
+    "search": "Buscar",
+    "explore": "Explorar"
+  },
+  "game-summary": {
+    "loading": "Cargando resumen del juego...",
+    "error": "Error: ",
+    "back-to-home": "Volver al inicio",
+    "game-completed": "¡Juego completado!",
+    "game-finished": "¡Juego terminado!",
+    "rounds": "rondas",
+    "movies": "Películas",
+    "tv-shows": "Series",
+    "room": "Sala: ",
+    "players": "Jugadores",
+    "matches": "Coincidencias",
+    "total-picks": "Total de deslizamientos",
+    "player-performance": "Rendimiento de jugadores:",
+    "picks": "deslizamientos",
+    "matched-movies": "Películas coincidentes",
+    "failed-to-load": "Error al cargar el resumen del juego",
+    "add-to-favourites": "Favorito",
+    "remove-from-favourites": "Deshacer",
+    "no-matches": "Sin coincidencias",
+    "no-matches-desc": "Lamentablemente, no encontraron películas en común en este juego. Inténtalo de nuevo con diferentes categorías o configuraciones.",
+    "try-again": "Jugar de nuevo",
+    "your-picks": "Tus me gusta",
+    "play-again": "Seguir jugando",
+    "leave-room": "Salir de la sala",
+    "play-again-failed": "Error al reiniciar el juego. Por favor inténtalo de nuevo.",
+    "view-summary": "Salir del juego",
+    "share-marathon": "Compartir",
+    "share": {
+      "loading": "Cargando tu maratón...",
+      "error": "Error al cargar los datos del maratón",
+      "no-movies": "Sin películas para compartir",
+      "dialog-title": "Entrada de maratón de películas"
+    }
+  },
+  "game-rating": {
+    "title": "¿Cómo estuvo el juego?",
+    "subtitle": "¡Aprecio mucho todos los comentarios para mejorar esta app! 🙏",
+    "feedback-title": "¿Qué salió mal?",
+    "feedback-subtitle": "Ayúdanos a mejorar compartiendo tu opinión",
+    "feedback-placeholder": "Cuéntanos qué salió mal...",
+    "submit": "Enviar",
+    "back": "Volver"
+  },
+  "game-invite": {
+    "social-title": "🎯 Encuentra tu película perfecta",
+    "social-subtitle": "Desliza con amigos y descubre películas que a ambos les encantarán",
+    "social-button": "Jugar al juego de coincidencias",
+    "quick-title": "🎬 Elige una película ahora",
+    "quick-subtitle": "Empieza a deslizar al instante con películas aleatorias",
+    "quick-button": "Juego rápido",
+    "quick-custom-button": "Sala personalizada",
+    "voter-title": "🗳️ Vota juntos",
+    "voter-subtitle": "Califica películas con amigos y encuentra sus favoritas compartidas",
+    "voter-button": "Comenzar votación",
+    "fortune-title": "🎰 Gira para decidir",
+    "fortune-subtitle": "¿No puedes elegir? ¡Deja que la rueda de la fortuna elija por ti!",
+    "fortune-button": "Girar la rueda",
+    "random-title": "🎲 ¿Te sientes afortunado?",
+    "random-subtitle": "Un toque, una película. ¡Elección aleatoria instantánea!",
+    "random-button": "Película aleatoria",
+    "all-games-title": "🎮 Explorar todos los juegos",
+    "all-games-subtitle": "Descubre todos nuestros juegos de grupo y encuentra tu forma favorita de elegir películas",
+    "all-games-button": "Ver todos los juegos"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Bienvenido a FlickMate",
+      "subtitle": "Configuremos tus preferencias"
+    },
+    "language": {
+      "title": "Elige tu idioma",
+      "description": "Selecciona tu idioma preferido para la app"
+    },
+    "nickname": {
+      "title": "¿Cómo te llamamos?",
+      "label": "Tu apodo",
+      "placeholder": "Invitado",
+      "description": "Así te verán los demás jugadores en las salas"
+    },
+    "region": {
+      "title": "Elige tu región",
+      "description": "Esto nos ayuda a mostrarte películas disponibles en tu área"
+    },
+    "navigation": {
+      "next": "Siguiente",
+      "back": "Volver",
+      "getStarted": "Comenzar",
+      "step": "Paso {current} de {total}"
+    },
+    "features": {
+      "header": "Descubre FlickMate",
+      "skip": "Saltar",
+      "next": "Siguiente",
+      "getStarted": "Comenzar",
+      "welcome": {
+        "title": "Elige películas juntos",
+        "description": "Sin más desplazamiento sin fin. Encuentra la película perfecta con amigos usando juegos divertidos y herramientas inteligentes."
+      },
+      "swiper": {
+        "title": "Desliza y coincide",
+        "description": "Desliza a la derecha las películas que te gustan. ¡Cuando todos coincidan, habrán encontrado la película de la noche!"
+      },
+      "voter": {
+        "title": "Voten juntos",
+        "description": "Califica películas con un amigo. Compara sus elecciones y descubran qué quieren ver ambos."
+      },
+      "fortune": {
+        "title": "Gira la rueda",
+        "description": "¿No puedes decidir? ¡Deja que el destino elija! Gira la rueda con tus favoritas o elecciones aleatorias."
+      },
+      "favorites": {
+        "title": "Organiza tus elecciones",
+        "description": "Guarda películas en grupos personalizados. Rastrea lo que has visto y lo que sigue en tu lista."
+      },
+      "browse": {
+        "title": "Explora y descubre",
+        "description": "Explora películas en tendencia, filtra por género o plataforma de streaming, y guarda tus favoritas en colecciones personalizadas."
+      },
+      "providers": {
+        "title": "Tus plataformas de streaming",
+        "description": "Selecciona las plataformas que usas para obtener recomendaciones personalizadas",
+        "selected": "seleccionadas"
+      }
+    }
+  },
+  "swipe": {
+    "block": "Bloquear",
+    "nope": "No",
+    "like": "Me gusta",
+    "super": "Super"
+  },
+  "blocked": {
+    "title": "Películas bloqueadas",
+    "empty": "Todavía no has bloqueado ninguna película. Bloquea películas durante el juego de deslizamiento para no volvería a verlas.",
+    "count": "{count} bloqueada{plural}",
+    "clear-all": "Limpiar todo",
+    "unblock": "Desbloquear",
+    "unblock-confirm": "¿Estás seguro de que quieres desbloquear {title}? Puede aparecer en tus juegos de nuevo.",
+    "clear-all-confirm": "¿Estás seguro de que quieres desbloquear todas las películas? Pueden aparecer en tus juegos de nuevo."
+  },
+  "super-liked": {
+    "title": "Super me gusta",
+    "empty": "Todavía no tienes películas con super me gusta. Dale super me gusta a películas durante el juego de deslizamiento para guardarlas aquí.",
+    "count": "{count} super me gusta",
+    "clear-all": "Limpiar todo",
+    "remove": "Eliminar",
+    "remove-confirm": "¿Estás seguro de que quieres eliminar {title} de tus super me gusta?",
+    "clear-all-confirm": "¿Estás seguro de que quieres eliminar todas las películas con super me gusta?"
+  },
+  "rate-app": {
+    "prompt": "¿Disfrutas la app? ¡Califícanos!"
+  },
+  "status-modal": {
+    "no-internet": {
+      "title": "Sin internet",
+      "message": "Por favor verifica tu conexión a internet e inténtalo de nuevo."
+    },
+    "maintenance": {
+      "title": "Mantenimiento",
+      "message": "Estamos realizando mantenimiento. Por favor inténtalo más tarde."
+    },
+    "update": {
+      "title": "Actualización disponible",
+      "message": "Hay una nueva versión disponible. Por favor actualiza la app para continuar."
+    },
+    "server": {
+      "title": "Problema con el servidor",
+      "message": "Estamos experimentando problemas. Por favor inténtalo más tarde."
+    },
+    "retry": "Reintentar",
+    "update-button": "Actualizar",
+    "dismiss": "Cerrar"
+  },
+  "errors": {
+    "VALIDATION_ERROR": "Por favor revisa la información ingresada e inténtalo de nuevo.",
+    "EMAIL_ALREADY_IN_USE": "Ya existe una cuenta con este correo electrónico.",
+    "INVALID_CREDENTIALS": "Correo electrónico o contraseña incorrectos.",
+    "INVALID_GOOGLE_TOKEN": "El inicio de sesión con Google falló. Por favor inténtalo de nuevo.",
+    "INVALID_APPLE_TOKEN": "El inicio de sesión con Apple falló. Por favor inténtalo de nuevo.",
+    "AVATAR_TOO_LARGE": "La imagen es demasiado grande. Por favor elige un archivo más pequeño.",
+    "AVATAR_INVALID_TYPE": "Formato de imagen no compatible. Por favor usa JPEG o PNG.",
+    "LIST_NOT_FOUND": "Lista no encontrada.",
+    "LIST_ALREADY_EXISTS": "Ya existe una lista con este nombre.",
+    "RESERVED_LIST_TYPE": "Este tipo de lista está reservado y no puede ser creado.",
+    "SYSTEM_LIST_PROTECTED": "Las listas del sistema no pueden eliminarse.",
+    "INTERNAL_ERROR": "Algo salió mal. Por favor inténtalo de nuevo más tarde."
+  },
+  "ticket": {
+    "unknown-movie": "Película desconocida",
+    "unknown": "Desconocido",
+    "watch-it-on": "Mírala en",
+    "scan-to-get-app": "ESCANEA PARA OBTENER LA APP",
+    "app-tagline": "Encuentra tu próxima película juntos",
+    "flickmate-presents": "FLICKMATE PRESENTA",
+    "films": "PELÍCULAS",
+    "and": "Y",
+    "series": "SERIES",
+    "cinema": {
+      "headers": [
+        "La elección de esta noche",
+        "El destino ha hablado.",
+        "El universo ha decidido.",
+        "No hay vuelta atrás.",
+        "Es hora de la película.",
+        "El destino aguarda.",
+        "La elección está hecha.",
+        "Esta es la indicada.",
+        "¿Palomitas listas?",
+        "Vamos a ello."
+      ],
+      "pickups": [
+        "¡Te invito a ver conmigo!",
+        "Tú, yo y esta película.",
+        "¿Me guardas un lugar?",
+        "¡No olvides las palomitas!",
+        "La noche de cine llama...",
+        "Esta es para nosotros."
+      ]
+    },
+    "marathon": {
+      "headers": [
+        "Modo maratón",
+        "Triple función",
+        "Maratón de películas",
+        "Binge aprobado",
+        "Vacía tu agenda",
+        "La alineación definitiva",
+        "Éxitos consecutivos",
+        "Cine sin parar"
+      ],
+      "pickups": [
+        "¿Bocadillos para toda la noche?",
+        "¡Cancela todos tus planes!",
+        "Va a ser una noche larga...",
+        "¡Trae palomitas extra!",
+        "¿Listo para el maratón de películas?",
+        "El sofá te espera."
+      ],
+      "bonus-headings": [
+        "Si todavía estás despierto...",
+        "Ronda extra",
+        "¿Sigues en pie?",
+        "Para los valientes",
+        "Créditos adicionales",
+        "Especiales nocturnos",
+        "El after"
+      ]
+    }
+  },
+  "tutorial": {
+    "swipe": {
+      "title": "Desliza con amigos",
+      "description": "Crea una sala, comparte el código, y todos deslizan películas. Cuando a todos les guste la misma - ¡es un match!"
+    },
+    "fortune": {
+      "title": "Ruleta de la fortuna",
+      "description": "Gira la ruleta para obtener una película aleatoria basada en tus filtros de género y proveedor."
+    },
+    "random": {
+      "title": "Selección aleatoria",
+      "description": "¿Necesitas algo rápido? Toca para obtener una recomendación de película al instante en segundos."
+    },
+    "voter": {
+      "title": "Votación",
+      "description": "Dos jugadores califican la misma película en interés, estado de ánimo y originalidad. Compara y decide juntos."
+    },
+    "join": {
+      "title": "Unirse a una sala",
+      "description": "¿Ya tienes un código de sala? Toca aquí para escanear el código QR y unirte al juego de un amigo al instante."
+    }
+  },
+  "swipe_tutorial": {
+    "how_to_vote": {
+      "title": "Cómo votar",
+      "like_label": "Me gusta",
+      "like_desc": "Desliza a la derecha o toca ❤ - quieres verlo",
+      "pass_label": "Pasar",
+      "pass_desc": "Desliza a la izquierda o toca ✕ - no te apetece",
+      "details_label": "Detalles",
+      "details_desc": "Toca la tarjeta para ver el reparto, el tráiler e información"
+    },
+    "special_actions": {
+      "title": "Acciones especiales",
+      "super_like_label": "Super Like",
+      "super_like_desc": "Sí definitivo - también se guarda en tu lista de imprescindibles",
+      "block_label": "Bloquear",
+      "block_desc": "No mostrar este título nunca más en ningún juego"
+    },
+    "getting_a_match": {
+      "title": "Conseguir un match",
+      "match_label": "¡Match!",
+      "match_desc": "Cuando todos en la sala les gusta la misma película - es un match",
+      "saved_label": "Guardado",
+      "saved_desc": "Todos tus matches se guardan en el historial del juego"
+    },
+    "track_session": {
+      "title": "Sigue tu sesión",
+      "liked_label": "Películas que te gustaron",
+      "liked_desc": "Toca los pósters apilados en la esquina superior derecha para ver tus likes y matches",
+      "progress_label": "Anillo de progreso",
+      "progress_desc": "El círculo alrededor de los pósters muestra cuánto has avanzado en el mazo de películas"
+    },
+    "got_it": "Entendido",
+    "next": "Siguiente"
+  },
+  "account": {
+    "sections": {
+      "account": "CUENTA",
+      "preferences": "PREFERENCIAS",
+      "app": "APP"
+    },
+    "signOut": "Cerrar sesión",
+    "deleteAccount": "Eliminar cuenta",
+    "pushNotifications": "Notificaciones push",
+    "notifications": {
+      "disabledTitle": "Notificaciones desactivadas",
+      "disabledMessage": "Activa las notificaciones en la configuración del sistema para recibir invitaciones de juego.",
+      "openSettings": "Abrir configuración",
+      "systemDisabled": "Las notificaciones están desactivadas en la configuración del sistema."
+    },
+    "deleteDialog": {
+      "message": "Esto eliminará permanentemente tu cuenta y todos los datos asociados. Esta acción no se puede deshacer.",
+      "confirm": "Eliminar",
+      "error": "Error al eliminar la cuenta. Por favor, inténtalo de nuevo."
+    },
+    "recentGames": "Juegos recientes",
+    "playedWith": "Jugado con",
+    "tasteProfile": "Perfil de gustos",
+    "tasteProfileEmpty": "Sin datos aún",
+    "tasteProfileMovies": "Películas: {count}",
+    "tasteProfileTV": "TV: {count}",
+    "required": {
+      "title": "Cuenta requerida",
+      "message": "Crea una cuenta gratuita para usar esta función - solo toma un momento.",
+      "notNow": "Ahora no"
+    },
+    "stats": {
+      "games": "Juegos",
+      "matches": "Matches",
+      "swipes": "Swipes"
+    },
+    "profile": {
+      "updateFailed": "Error al actualizar",
+      "updateFailedMessage": "No se pudo actualizar el nombre. Por favor, inténtalo de nuevo.",
+      "regenerateTitle": "Regenerar códigos de recuperación",
+      "regenerateMessage": "Tus códigos existentes serán invalidados permanentemente y reemplazados por 8 nuevos.",
+      "regenerate": "Regenerar",
+      "regenerateError": "Error al regenerar los códigos. Por favor, inténtalo de nuevo.",
+      "regenerating": "Regenerando…",
+      "recoveryCodes": "Códigos de recuperación"
+    },
+    "scoringPreferences": {
+      "title": "Perfil de gustos",
+      "movies": "Películas",
+      "tvShows": "Series",
+      "genres": "Géneros",
+      "keywords": "Palabras clave",
+      "keywordsWithCount": "Palabras clave ({count})",
+      "searchPlaceholder": "Buscar {tab}...",
+      "legend": "0 = preferencia más débil · 100 = más fuerte",
+      "noPreferences": "Sin preferencias aún",
+      "noPreferencesHint": "Juega más partidas para construir tu perfil de gustos.",
+      "noMatches": "Sin resultados",
+      "noMatchesHint": "Intenta con otro término de búsqueda.",
+      "resetTitle": "Restablecer perfil de gustos",
+      "resetMessage": "¿Borrar todas las preferencias de {type} aprendidas?",
+      "resetConfirm": "Restablecer",
+      "resetButton": "Restablecer todas las preferencias de {type}"
+    }
+  },
+  "auth": {
+    "welcomeBack": "Bienvenido de nuevo",
+    "createAccount": "Crear cuenta",
+    "signInWithEmail": "Inicia sesión con tu correo",
+    "signUpWithEmail": "Regístrate con tu correo",
+    "signInSubtitle": "Inicia sesión en tu cuenta",
+    "signUpSubtitle": "Empieza a descubrir películas juntos",
+    "back": "Volver",
+    "emailLabel": "Correo electrónico",
+    "passwordLabel": "Contraseña",
+    "nameLabel": "Nombre",
+    "signIn": "Iniciar sesión",
+    "signUp": "Crear cuenta",
+    "continueWithEmail": "Continuar con correo",
+    "continueWithGoogle": "Continuar con Google",
+    "signInWithGoogle": "Iniciar sesión con Google",
+    "signUpWithGoogle": "Registrarse con Google",
+    "noAccount": "¿No tienes cuenta?",
+    "haveAccount": "¿Ya tienes cuenta?",
+    "signUpLink": "Registrarse",
+    "signInLink": "Iniciar sesión",
+    "lostAccess": "¿Perdiste el acceso?",
+    "recoveryCodeLink": "Usar código de recuperación",
+    "accountRecovery": "Recuperación de cuenta",
+    "recoverySubtitle": "Ingresa tu correo y uno de tus códigos de recuperación.",
+    "recoveryCodeLabel": "Código de recuperación",
+    "recoverAccount": "Recuperar cuenta",
+    "recoveryHint": "Los códigos no distinguen mayúsculas. Los guiones son opcionales.",
+    "emailRequired": "El correo es obligatorio",
+    "emailInvalid": "Ingresa un correo válido",
+    "passwordRequired": "La contraseña es obligatoria",
+    "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+    "nameRequired": "El nombre es obligatorio",
+    "nameMinLength": "El nombre debe tener al menos 2 caracteres",
+    "codeRequired": "El código de recuperación es obligatorio",
+    "codeLength": "El código debe tener 10 caracteres",
+    "loginFailed": "Inicio de sesión fallido. Inténtalo de nuevo.",
+    "registrationFailed": "Registro fallido. Inténtalo de nuevo.",
+    "recoveryFailed": "Recuperación fallida. Verifica el código e inténtalo de nuevo.",
+    "appleSignInFailed": "Inicio de sesión con Apple fallido. Inténtalo de nuevo.",
+    "googleSignInFailed": "Inicio de sesión con Google fallido. Inténtalo de nuevo.",
+    "googleNoAccounts": "No se encontraron cuentas de Google en este dispositivo. Añade una cuenta de Google en los ajustes del dispositivo e inténtalo de nuevo.",
+    "sessionExpired": "Sesión expirada, toca para iniciar sesión."
+  },
+  "ratings": {
+    "title": "Mis reseñas",
+    "myRatings": "Mis calificaciones",
+    "empty": "Aún no hay reseñas",
+    "loadError": "Error al cargar las reseñas",
+    "rateTitle": "Calificar película",
+    "reviewPlaceholder": "Añadir reseña…",
+    "reviewCount": "{count} reseña{plural}",
+    "avgLabel": "{avg}/10 media",
+    "noRatingsYet": "Aún no hay calificaciones",
+    "deleteRating": "Eliminar reseña"
+  },
+  "migration": {
+    "success": "Tu colección se ha sincronizado con tu cuenta.",
+    "successLarge": "Tu colección se ha sincronizado. Las bibliotecas grandes tardan un momento en procesarse, los elementos aparecerán en breve."
+  }
 }
