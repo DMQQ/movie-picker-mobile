@@ -35,7 +35,10 @@ export default function LocalFavouritesList({ listRef }: Props) {
       showsVerticalScrollIndicator={false}
       data={groups}
       keyExtractor={(item, index) => item.id + "-" + index}
-      contentContainerStyle={{ paddingTop: spacing.xl * 4, paddingBottom: spacing.xl * 3 }}
+      contentContainerStyle={{
+        paddingTop: spacing.xl * 4,
+        paddingBottom: spacing.xl * 3,
+      }}
       ListFooterComponent={
         <View style={styles.footerContainer}>
           <Pressable
@@ -197,7 +200,9 @@ export default function LocalFavouritesList({ listRef }: Props) {
                       color={colors.text}
                       style={{ opacity: 0.5 }}
                     />
-                    <Text style={{ fontSize: fontSize.sm - 1, textAlign: "center" }}>
+                    <Text
+                      style={{ fontSize: fontSize.sm - 1, textAlign: "center" }}
+                    >
                       {t("favourites.empty")}
                     </Text>
                   </View>
@@ -230,11 +235,9 @@ export default function LocalFavouritesList({ listRef }: Props) {
 const styles = StyleSheet.create({
   footerContainer: {
     gap: spacing.screen,
-    marginTop: spacing.screen,
+    marginBottom: spacing.screen * 3,
   },
-  footerCard: {
-    marginBottom: 0,
-  },
+  footerCard: {},
   cardBg: {
     width: WINDOW_WIDTH - 30,
     height: WINDOW_WIDTH / 2 - 30,

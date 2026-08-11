@@ -1,7 +1,13 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import IconButton from "../../components/IconButton";
 import Text from "../../components/Text";
-import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
+import {
+  colors,
+  fontWeight,
+  fontSize,
+  radius,
+  spacing,
+} from "../../constants/design";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
@@ -71,7 +77,7 @@ const GameCard = ({
             {Animations[index]}
 
             <LinearGradient
-              colors={["transparent", "rgba(0,0,0,0.85)"]}
+              colors={["transparent", colors.appBackground]}
               style={styles.cardGradient}
             >
               <View style={styles.cardContent}>
@@ -247,7 +253,11 @@ export default function GameList() {
   return (
     <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
       <SafeIOSContainer
-        style={{ flex: 1, backgroundColor: colors.appBackground, paddingBottom: 0 }}
+        style={{
+          flex: 1,
+          backgroundColor: colors.appBackground,
+          paddingBottom: 0,
+        }}
       >
         <PageHeading
           title={t("voter.games") as string}
@@ -368,7 +378,6 @@ const styles = StyleSheet.create({
     height: CARD_HEIGHT,
     borderRadius: radius.card,
     overflow: "hidden",
-    backgroundColor: colors.input,
   },
   cardImage: {
     width: "100%",
@@ -387,12 +396,12 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontFamily: "Bebas",
-    fontSize: 28,
+    fontSize: fontSize.display,
     color: colors.text,
   },
   cardDescription: {
     color: "rgba(255,255,255,0.7)",
-    fontSize: fontSize.md - 1,
+    fontSize: fontSize.md,
     lineHeight: 18,
     marginTop: spacing.xs - 2,
   },

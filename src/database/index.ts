@@ -5,6 +5,7 @@ import { migrateDatabase } from "./schema";
 const DATABASE_NAME = "flickmate.db";
 
 let dbInstance: SQLite.SQLiteDatabase | null = null;
+let reopenPromise: Promise<void> | null = null;
 
 function ensureSQLiteDirectory(): void {
   const sqlitePath = `${Paths.document.uri}/SQLite`;
@@ -24,15 +25,92 @@ function ensureSQLiteDirectory(): void {
   }
 }
 
+async function openAndMigrate(): Promise<SQLite.SQLiteDatabase> {
+  ensureSQLiteDirectory();
+  const db = await SQLite.openDatabaseAsync(DATABASE_NAME);
+  await migrateDatabase(db);
+  return db;
+}
+
+function isReleasedError(e: unknown): boolean {
+  const msg = (e as Error)?.message ?? "";
+  const cause = (e as any)?.cause?.message ?? "";
+  return (
+    msg.includes("released") ||
+    cause.includes("released") ||
+    msg.includes("Cannot use shared object")
+  );
+}
+
+// Wrapped async methods that hit the native db and may fail after Android activity teardown.
+const WRAPPED_METHODS = [
+  "runAsync",
+  "getAllAsync",
+  "getFirstAsync",
+  "execAsync",
+  "prepareAsync",
+];
+
+function createResilientDatabase(
+  initialDb: SQLite.SQLiteDatabase,
+): SQLite.SQLiteDatabase {
+  let currentDb = initialDb;
+
+  async function reopen(): Promise<void> {
+    if (reopenPromise) return reopenPromise;
+
+    reopenPromise = (async () => {
+      console.log("[DB] Native object released, reconnecting…");
+      try {
+        await currentDb.closeAsync();
+      } catch {}
+      currentDb = await openAndMigrate();
+      dbInstance = currentDb;
+    })()
+      .finally(() => {
+        reopenPromise = null;
+      });
+
+    return reopenPromise;
+  }
+
+  return new Proxy(currentDb, {
+    get(_, prop) {
+      const value = Reflect.get(currentDb, prop);
+
+      if (
+        typeof value === "function" &&
+        WRAPPED_METHODS.includes(prop as string)
+      ) {
+        return async (...args: any[]) => {
+          try {
+            return await (value as Function).apply(currentDb, args);
+          } catch (e: unknown) {
+            if (isReleasedError(e)) {
+              await reopen();
+              const newFn = Reflect.get(
+                currentDb,
+                prop,
+              ) as Function;
+              return await newFn.apply(currentDb, args);
+            }
+            throw e;
+          }
+        };
+      }
+
+      return value;
+    },
+  }) as SQLite.SQLiteDatabase;
+}
+
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
   if (dbInstance) {
     return dbInstance;
   }
 
-  ensureSQLiteDirectory();
-
-  dbInstance = await SQLite.openDatabaseAsync(DATABASE_NAME);
-  await migrateDatabase(dbInstance);
+  const db = await openAndMigrate();
+  dbInstance = createResilientDatabase(db);
 
   return dbInstance;
 }

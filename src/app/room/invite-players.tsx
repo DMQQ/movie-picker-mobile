@@ -1,18 +1,89 @@
 import { useLocalSearchParams } from "expo-router";
-import { useMemo, useState } from "react";
-import { FlatList, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { memo, useCallback, useMemo, useRef, useState } from "react";
+import { FlatList, Platform, Pressable, StyleSheet, TextInput, View } from "react-native";
 import { Image } from "expo-image";
 import Text from "../../components/Text";
 import { useGetGameMembersQuery, type GameMember } from "../../redux/lists/listsApi";
 import { useSendInviteMutation } from "../../redux/invite/inviteApi";
 import { getUserAvatarColor } from "../../utils/avatar";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
+import useTranslation from "../../service/useTranslation";
+
+interface PlayerRowProps {
+  member: GameMember;
+  invited: boolean;
+  loading: boolean;
+  onInvite: (member: GameMember) => void;
+}
+
+const PlayerRow = memo(({ member, invited, loading, onInvite }: PlayerRowProps) => {
+  const t = useTranslation();
+
+  return (
+    <View style={styles.row}>
+      <View style={styles.playerInfo}>
+        <View
+          style={[
+            styles.avatar,
+            {
+              backgroundColor: member.avatarUrl
+                ? undefined
+                : getUserAvatarColor(member.name),
+            },
+          ]}
+        >
+          {member.avatarUrl ? (
+            <Image
+              style={styles.avatarImg}
+              source={{ uri: member.avatarUrl }}
+              cachePolicy="memory-disk"
+            />
+          ) : (
+            <Text style={styles.avatarLetter}>
+              {member.name.charAt(0).toUpperCase()}
+            </Text>
+          )}
+        </View>
+        <Text style={styles.name} numberOfLines={1}>
+          {member.name}
+        </Text>
+      </View>
+
+      <Pressable
+        style={[
+          styles.inviteButton,
+          invited && styles.inviteButtonSent,
+        ]}
+        disabled={invited || loading}
+        onPress={() => onInvite(member)}
+      >
+        <Text
+          style={[
+            styles.inviteButtonText,
+            invited && styles.inviteButtonTextSent,
+          ]}
+        >
+          {loading
+            ? (t("room.invite.sending") as string)
+            : invited
+              ? (t("room.invite.invited") as string)
+              : (t("room.invite.invite") as string)}
+        </Text>
+      </Pressable>
+    </View>
+  );
+});
+
+const Separator = () => <View style={styles.separator} />;
 
 export default function InvitePlayersScreen() {
   const { roomId, gameType } = useLocalSearchParams<{ roomId: string; gameType: string }>();
   const { data, isLoading } = useGetGameMembersQuery();
+  const t = useTranslation();
   const [sendInvite] = useSendInviteMutation();
   const [invitedIds, setInvitedIds] = useState<Set<string>>(new Set());
+  const invitedIdsRef = useRef(invitedIds);
+  invitedIdsRef.current = invitedIds;
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
 
@@ -24,8 +95,8 @@ export default function InvitePlayersScreen() {
     return allMembers.filter((m) => m.name.toLowerCase().includes(q));
   }, [allMembers, query]);
 
-  const handleInvite = async (member: GameMember) => {
-    if (!roomId || invitedIds.has(member.id)) return;
+  const handleInvite = useCallback(async (member: GameMember) => {
+    if (!roomId || invitedIdsRef.current.has(member.id)) return;
     setLoadingId(member.id);
     try {
       await sendInvite({
@@ -36,14 +107,15 @@ export default function InvitePlayersScreen() {
       setInvitedIds((prev) => new Set(prev).add(member.id));
     } catch {}
     setLoadingId(null);
-  };
+  }, [roomId, gameType, sendInvite]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
+    <View style={styles.container} collapsable={false}>
+      {Platform.OS === "android" && <View style={styles.grabber} />}
+      <View style={styles.searchContainer} collapsable={false}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Search players..."
+          placeholder={t("room.invite.searchPlaceholder") as string}
           placeholderTextColor={colors.placeholder}
           value={query}
           onChangeText={setQuery}
@@ -54,70 +126,29 @@ export default function InvitePlayersScreen() {
       <FlatList
         data={members}
         keyExtractor={(m) => m.id}
+        style={styles.listContainer}
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ItemSeparatorComponent={Separator}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyText}>
-              {isLoading ? "Loading..." : query ? "No players found" : "No recent players"}
+              {isLoading
+                ? (t("room.builder.loading") as string)
+                : query
+                  ? (t("room.invite.noPlayersFound") as string)
+                  : (t("room.invite.noRecentPlayers") as string)}
             </Text>
           </View>
         }
-        renderItem={({ item }) => {
-          const invited = invitedIds.has(item.id);
-          const loading = loadingId === item.id;
-
-          return (
-            <View style={styles.row}>
-              <View style={styles.playerInfo}>
-                <View
-                  style={[
-                    styles.avatar,
-                    {
-                      backgroundColor: item.avatarUrl
-                        ? undefined
-                        : getUserAvatarColor(item.name),
-                    },
-                  ]}
-                >
-                  {item.avatarUrl ? (
-                    <Image
-                      style={styles.avatarImg}
-                      source={{ uri: item.avatarUrl }}
-                      cachePolicy="memory-disk"
-                    />
-                  ) : (
-                    <Text style={styles.avatarLetter}>
-                      {item.name.charAt(0).toUpperCase()}
-                    </Text>
-                  )}
-                </View>
-                <Text style={styles.name} numberOfLines={1}>
-                  {item.name}
-                </Text>
-              </View>
-
-              <Pressable
-                style={[
-                  styles.inviteButton,
-                  invited && styles.inviteButtonSent,
-                ]}
-                disabled={invited || loading}
-                onPress={() => handleInvite(item)}
-              >
-                <Text
-                  style={[
-                    styles.inviteButtonText,
-                    invited && styles.inviteButtonTextSent,
-                  ]}
-                >
-                  {loading ? "Sending..." : invited ? "Invited" : "Invite"}
-                </Text>
-              </Pressable>
-            </View>
-          );
-        }}
+        renderItem={({ item }) => (
+          <PlayerRow
+            member={item}
+            invited={invitedIds.has(item.id)}
+            loading={loadingId === item.id}
+            onInvite={handleInvite}
+          />
+        )}
       />
     </View>
   );
@@ -126,7 +157,19 @@ export default function InvitePlayersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.appBackground,
+    backgroundColor: colors.surface,
+    ...Platform.select({
+      ios: { paddingTop: spacing.xxl + 1 },
+    }),
+  },
+  grabber: {
+    width: 36,
+    height: 4,
+    borderRadius: radius.xs - 2,
+    backgroundColor: "#555",
+    alignSelf: "center",
+    marginTop: spacing.md,
+    marginBottom: spacing.screen,
   },
   searchContainer: {
     paddingHorizontal: spacing.lg,
@@ -140,6 +183,10 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     fontSize: fontSize.lg,
     color: colors.text,
+  },
+  listContainer: {
+    flex: 1,
+    overflow: "hidden",
   },
   list: {
     paddingHorizontal: spacing.lg,
@@ -186,7 +233,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
-    minWidth: 90,
+    width: 100,
     alignItems: "center",
   },
   inviteButtonSent: {

@@ -161,6 +161,10 @@ const SwipeTile = ({
     posScale.value = withSpring(1 - index * 0.05, cfg);
   }, [index, dragSnapshot]);
 
+  const exitTimer = useSharedValue(0);
+  const isLeftVisible = useSharedValue(false);
+  const isRightVisible = useSharedValue(false);
+  const isSwipingOut = useSharedValue(false);
   useAnimatedReaction(
     () => buttonSwipe?.value ?? 0,
     (current, previous) => {
@@ -168,9 +172,11 @@ const SwipeTile = ({
         index !== 0 ||
         current === 0 ||
         previous === null ||
-        current === previous
+        current === previous ||
+        isSwipingOut.value
       )
         return;
+      isSwipingOut.value = true;
       const nudgeCfg = { duration: 80, easing: Easing.out(Easing.quad) };
       const exitCfg = { duration: 420, easing: Easing.out(Easing.cubic) };
       if (current === 1 || current === 2) {
@@ -196,16 +202,15 @@ const SwipeTile = ({
     },
   );
 
-  const exitTimer = useSharedValue(0);
-  const isLeftVisible = useSharedValue(false);
-  const isRightVisible = useSharedValue(false);
 
   const moveGesture = Gesture.Pan()
     .onBegin(() => {
+      if (isSwipingOut.value) return;
       posY.value = 0;
       posScale.value = withTiming(0.98, { duration: 80 });
     })
     .onChange(({ translationX }) => {
+      if (isSwipingOut.value) return;
       posX.value = translationX;
       if (dragProgress) {
         dragProgress.value = Math.min(
@@ -220,8 +225,10 @@ const SwipeTile = ({
       if (isRightVisible.value !== nextRight) isRightVisible.value = nextRight;
     })
     .onEnd(({ translationX }) => {
+      if (isSwipingOut.value) return;
       const exitCfg = { duration: 420, easing: Easing.out(Easing.cubic) };
       if (translationX > width * 0.15) {
+        isSwipingOut.value = true;
         posX.value = withTiming(width + 200, exitCfg);
         posY.value = withTiming(80, exitCfg);
         if (dragProgress) dragProgress.value = 1;
@@ -230,6 +237,7 @@ const SwipeTile = ({
           if (finished) runOnJS(actions.likeCard)();
         });
       } else if (translationX < -width * 0.15) {
+        isSwipingOut.value = true;
         posX.value = withTiming(-width - 200, exitCfg);
         posY.value = withTiming(80, exitCfg);
         if (dragProgress) dragProgress.value = 1;

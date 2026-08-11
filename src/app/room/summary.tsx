@@ -225,7 +225,14 @@ export default function GameSummary() {
 
       <GameRatingPill shouldShow={shouldShowRatingPill} roomId={roomId} />
 
-      <View style={styles.buttonRow}>
+      <View
+        style={[
+          styles.buttonRow,
+          {
+            paddingBottom: Platform.OS === "android" ? spacing.screen : 0,
+          },
+        ]}
+      >
         <PrimaryButton onPress={handleBackToHome} style={styles.backBtn}>
           {t("game-summary.back-to-home")}
         </PrimaryButton>

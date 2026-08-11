@@ -1,6 +1,6 @@
 import { Link, router, useIsPreview, useLocalSearchParams } from "expo-router";
 import { memo, useCallback, useMemo, useState } from "react";
-import { Dimensions, View } from "react-native";
+import { Dimensions, Pressable, View } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -10,8 +10,11 @@ import FloatingMovieHeader from "../../../../components/FloatingMovieHeader";
 import MovieDetails from "../../../../components/Movie/MovieDetails";
 import MovieDetailsSkeleton from "../../../../components/Movie/MovieDetailsSkeleton";
 import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
+import Icon from "../../../../components/Icon";
+import Text from "../../../../components/Text";
 import { useGetCombinedMovieDetailsQuery } from "../../../../redux/movie/movieApi";
 import { colors } from "../../../../constants/design";
+import useTranslation from "../../../../service/useTranslation";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -65,6 +68,7 @@ export default function MovieDetailsScreen() {
   }>();
 
   const isPreview = useIsPreview();
+  const t = useTranslation();
 
   const IMG_HEIGHT = useMemo(
     () => height * (isPreview ? 0.5 : 0.75),
@@ -90,7 +94,7 @@ export default function MovieDetailsScreen() {
     !!movieId && movieId !== "undefined" && !isNaN(numericId) && numericId > 0;
   const isValidType = !!typeOfContent && typeof typeOfContent !== "undefined";
 
-  const { data: combined, isLoading: loading } =
+  const { data: combined, isLoading: loading, isError, refetch } =
     useGetCombinedMovieDetailsQuery(
       { id: numericId, type: typeOfContent as "movie" | "tv" },
       {
@@ -151,8 +155,21 @@ export default function MovieDetailsScreen() {
           </Link.AppleZoomTarget>
         </Animated.View>
         <View style={{ zIndex: 10, position: "relative", width }}>
-          {loading || !movie?.id ? (
+          {loading ? (
             <MovieDetailsSkeleton />
+          ) : isError && !movie?.id ? (
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingTop: 200, gap: 16, paddingHorizontal: 24 }}>
+              <Icon source="cloud-off-outline" size={44} color="rgba(255,255,255,0.12)" />
+              <Text style={{ fontSize: 14, fontWeight: "600", color: "rgba(255,255,255,0.25)", textAlign: "center" }}>
+                {t("movie.details.loadError") as string}
+              </Text>
+              <Pressable
+                onPress={() => refetch()}
+                style={{ backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 8, paddingHorizontal: 16, paddingVertical: 8 }}
+              >
+                <Text style={{ fontSize: 13, fontWeight: "700", color: "#fff", letterSpacing: 0.8 }}>{t("status-modal.retry") as string}</Text>
+              </Pressable>
+            </View>
           ) : (
             <MovieDetails
               castData={castData}

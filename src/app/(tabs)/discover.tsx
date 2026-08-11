@@ -11,6 +11,7 @@ import SafeIOSContainer from "../../components/SafeIOSContainer";
 import Text from "../../components/Text";
 import Icon from "../../components/Icon";
 import { colors, fontSize, fontWeight, spacing } from "../../constants/design";
+import useTranslation from "../../service/useTranslation";
 
 export default function Landing() {
   return (
@@ -23,6 +24,7 @@ export default function Landing() {
 
 const PagerCategoryScreen = memo(() => {
   const [selectedChip, setSelectedChip] = useState("all");
+  const t = useTranslation();
 
   const { data: chipCategoriesData = [], error, isLoading, refetch } = useGetChipCategoriesQuery();
 
@@ -46,9 +48,9 @@ const PagerCategoryScreen = memo(() => {
       <SafeIOSContainer style={{ flex: 1, paddingBottom: 0 }}>
         <View style={styles.error}>
           <Icon source="cloud-off-outline" size={44} color="rgba(255,255,255,0.12)" />
-          <Text style={styles.errorText}>Failed to load categories</Text>
+          <Text style={styles.errorText}>{t("landing.loadError") as string}</Text>
           <Pressable style={styles.retryBtn} onPress={() => refetch()}>
-            <Text style={styles.retryText}>RETRY</Text>
+            <Text style={styles.retryText}>{t("status-modal.retry") as string}</Text>
           </Pressable>
         </View>
       </SafeIOSContainer>

@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AvatarText from "../../components/AvatarText";
 import Text from "../../components/Text";
 import { useTheme } from "../../hooks/useTheme";
-import { router } from "expo-router";
+import { router, Link } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import {
   memo,
@@ -307,27 +307,30 @@ export default function QRCodePage() {
     return () => clearInterval(id);
   }, [isRefetching]);
 
-  const onJoinOwnRoom = (code: string) => {
+  const startGameHref = (() => {
+    if (!qrCode) return "#";
+    const gameType = roomConfig?.type?.includes("/tv") ? "tv" : "movie";
+    return {
+      pathname: "/room/[roomId]",
+      params: { roomId: qrCode.toUpperCase(), type: gameType },
+    } as const;
+  })();
+
+  const handleStartGame = () => {
+    if (!qrCode) return;
     startTransition(() => {
       socket?.emit("room:start", roomId);
       dispatch(roomActions.setPlaying(true));
-
-      let gameType = "movie";
-      if (roomConfig) {
-        gameType = roomConfig.type?.includes("/tv") ? "tv" : "movie";
-      }
-
-      router.replace({
-        pathname: "/room/[roomId]",
-        params: {
-          roomId: code.toUpperCase(),
-          type: gameType,
-        },
-      });
-
       dispatch(reset());
     });
   };
+
+  const isDisabled =
+    !qrCode ||
+    isLoadingMovies ||
+    (moviesCount != null && moviesCount < 5) ||
+    createRoomLoading ||
+    isPending;
 
   return (
     <View style={[styles.container]}>
@@ -374,63 +377,53 @@ export default function QRCodePage() {
           ) : null}
         </View>
 
-        <View style={styles.activeUsersRow}>
-          <Text style={styles.activeUsersLabel}>{t("room.active")}:</Text>
+        <Pressable
+          style={[styles.inviteButton, !qrCode && styles.inviteButtonDisabled]}
+          disabled={!qrCode}
+          onPress={() =>
+            router.push({
+              pathname: "/room/invite-players",
+              params: { roomId: qrCode, gameType: "swipe" },
+            })
+          }
+        >
+          <Text style={[styles.inviteButtonText, !qrCode && styles.inviteButtonTextDisabled]}>
+            {t("room.invitePlayers") as string}
+          </Text>
           <View style={styles.avatarsContainer}>
             {users.map((nick, index) => (
               <View key={nick + index} style={styles.avatarWrapper}>
                 <AvatarText
-                  size={25}
+                  size={22}
                   label={nick[0].toUpperCase()}
                   style={{ backgroundColor: getUserAvatarColor(nick) }}
                 />
               </View>
             ))}
           </View>
-        </View>
+        </Pressable>
 
-        {qrCode ? (
-          <Pressable
-            style={styles.inviteButton}
-            onPress={() =>
-              router.push({
-                pathname: "/room/invite-players",
-                params: { roomId: qrCode, gameType: "swipe" },
-              })
-            }
-          >
-            <MaterialCommunityIcons
-              name="account-plus-outline"
-              size={18}
-              color={colors.primary}
-            />
-            <Text style={styles.inviteButtonText}>Invite Players</Text>
-          </Pressable>
-        ) : null}
-
-        <PrimaryButton
-          disabled={
-            !qrCode ||
-            isLoadingMovies ||
-            (moviesCount != null && moviesCount < 5) ||
-            createRoomLoading ||
-            isPending
-          }
-          style={styles.startButton}
-          onPress={() => {
-            onJoinOwnRoom(qrCode);
-          }}
+        <Link
+          href={startGameHref}
+          asChild
+          disabled={isDisabled}
+          onPress={handleStartGame}
         >
-          {isRefetching
-            ? SYNC_PHRASES[syncPhraseIndex]
-            : isLoadingMovies
-              ? "Loading..."
-              : moviesCount === 0
-                ? t("room.too-restricted")
-                : users.length === 1
-                  ? t("room.play-alone")
-                  : t("room.start")}
-        </PrimaryButton>
+          <PrimaryButton
+            disabled={isDisabled}
+            style={styles.startButton}
+          >
+            {isRefetching
+              ? SYNC_PHRASES[syncPhraseIndex]
+              : isLoadingMovies
+                ? "Loading..."
+                : moviesCount === 0
+                  ? t("room.too-restricted")
+                  : users.length === 1
+                    ? t("room.play-alone")
+                    : t("room.start")}
+          </PrimaryButton>
+        </Link>
       </View>
     </View>
   );
@@ -568,15 +561,6 @@ const styles = StyleSheet.create({
     gap: spacing.xs + 3.5,
     paddingBottom: Platform.OS === "android" ? spacing.screen : 0,
   },
-  activeUsersRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    height: 25,
-    alignItems: "center",
-  },
-  activeUsersLabel: {
-    fontSize: fontSize.lg,
-  },
   avatarsContainer: {
     flexDirection: "row",
     gap: spacing.xs + 1,
@@ -605,17 +589,28 @@ const styles = StyleSheet.create({
   inviteButton: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.sm,
+    justifyContent: "space-between",
     borderWidth: 1,
     borderColor: colors.primary,
     borderRadius: radius.pill,
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.sm + 2,
+    paddingHorizontal: spacing.lg,
+  },
+  inviteButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
   },
   inviteButtonText: {
-    fontSize: fontSize.lg,
+    fontSize: fontSize.md + 1,
     fontWeight: fontWeight.semibold,
     color: colors.primary,
+  },
+  inviteButtonDisabled: {
+    borderColor: colors.border,
+  },
+  inviteButtonTextDisabled: {
+    color: colors.placeholder,
   },
   tutorialContainer: {
     marginTop: spacing.screen,

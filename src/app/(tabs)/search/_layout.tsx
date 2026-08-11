@@ -15,8 +15,9 @@ export default function SearchLayout() {
         name="index"
         options={{
           headerShown: Platform.OS === "ios",
-          headerStyle: { backgroundColor: colors.appBackground },
+          headerStyle: { backgroundColor: "transparent" },
           headerTitle: t("search.title", { query: "" }) as string,
+          headerTransparent: true,
         }}
       />
     </Stack>

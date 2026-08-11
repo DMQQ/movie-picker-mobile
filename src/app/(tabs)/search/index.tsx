@@ -15,7 +15,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
+
   View, ActivityIndicator} from "react-native";
 
 import { colors, fontWeight, fontSize, radius, spacing } from "../../../constants/design";
@@ -23,6 +23,8 @@ import {
   useLazySearchQuery,
   useLazyGetSimilarQuery,
 } from "../../../redux/movie/movieApi";
+import { useAppDispatch, useAppSelector } from "../../../redux/store";
+import { setMediaType } from "../../../redux/mediaFilters/mediaFiltersSlice";
 import { FlashList } from "@shopify/flash-list";
 import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -36,6 +38,7 @@ import useTranslation from "../../../service/useTranslation";
 import { isLiquidGlassSupported } from "@callstack/liquid-glass";
 import Touch from "../../../components/Touch";
 import RatingIcons from "../../../components/RatingIcons";
+import Chip from "../../../components/Chip";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -121,12 +124,8 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
 
 const SearchScreen = () => {
   const searchParams = useLocalSearchParams();
+  const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState("");
-  const [filters, setFilters] = useState({
-    type: "both" as "movie" | "tv" | "both",
-    genres: [] as number[],
-    minRating: undefined as number | undefined,
-  });
 
   const [allResults, setAllResults] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -143,6 +142,7 @@ const SearchScreen = () => {
     { isLoading: isLoadingSimilar, isFetching: isFetchingSimilar },
   ] = useLazyGetSimilarQuery();
   const t = useTranslation();
+  const mediaFilters = useAppSelector((s) => s.mediaFilters);
 
   useEffect(() => {
     if (searchParams?.initialQuery && !searchQuery) {
@@ -172,33 +172,37 @@ const SearchScreen = () => {
     };
   }, [searchQuery]);
 
+  const prevFiltersRef = useRef("");
   useEffect(() => {
-    // More robust comparison by checking individual properties
-    const currentParams = searchParams || {};
-    const prevParams = routeParamsRef.current || {};
-
-    const hasParamsChanged =
-      JSON.stringify(currentParams.genres) !==
-        JSON.stringify(prevParams.genres) ||
-      JSON.stringify(currentParams.providers) !==
-        JSON.stringify(prevParams.providers) ||
-      JSON.stringify(currentParams.people) !==
-        JSON.stringify(prevParams.people);
-
-    if (hasParamsChanged) {
-      routeParamsRef.current = searchParams;
-
-      // Reset search state
+    const key = `${mediaFilters.mediaType}|${mediaFilters.selectedGenres.map(g => g.id).join(",")}|${mediaFilters.selectedProviders.join(",")}`;
+    if (key !== prevFiltersRef.current) {
+      prevFiltersRef.current = key;
       setCurrentPage(1);
       setAllResults([]);
       setHasNextPage(false);
       lastReceivedApiPage.current = 0;
       isLoadingNextPage.current = false;
-
-      // Force immediate search
       performSearch(1);
     }
-  }, [searchParams, filters.type]);
+  }, [mediaFilters, searchParams?.people]);
+
+  useEffect(() => {
+    const currentParams = searchParams || {};
+    const prevParams = routeParamsRef.current || {};
+    const hasParamsChanged =
+      JSON.stringify(currentParams.people) !==
+        JSON.stringify(prevParams.people);
+
+    if (hasParamsChanged) {
+      routeParamsRef.current = searchParams;
+      setCurrentPage(1);
+      setAllResults([]);
+      setHasNextPage(false);
+      lastReceivedApiPage.current = 0;
+      isLoadingNextPage.current = false;
+      performSearch(1);
+    }
+  }, [searchParams, mediaFilters.mediaType]);
 
   useEffect(() => {
     if (lastReceivedApiPage.current > 0) {
@@ -210,7 +214,7 @@ const SearchScreen = () => {
 
       performSearch(1);
     }
-  }, [filters.type]);
+  }, [mediaFilters.mediaType]);
 
   // Main search function
   const performSearch = async (page: number) => {
@@ -242,9 +246,13 @@ const SearchScreen = () => {
 
       const params = {
         page: page,
-        type: filters.type,
-        with_genres: searchParams?.genres,
-        with_watch_providers: searchParams?.providers,
+        type: mediaFilters.mediaType,
+        with_genres: mediaFilters.selectedGenres.length > 0
+          ? mediaFilters.selectedGenres.map((g) => g.id)
+          : undefined,
+        with_watch_providers: mediaFilters.selectedProviders.length > 0
+          ? mediaFilters.selectedProviders
+          : undefined,
         with_people: searchParams?.people,
       } as any;
 
@@ -305,8 +313,8 @@ const SearchScreen = () => {
   }, [isFetching, isFetchingSimilar, hasNextPage, currentPage]);
 
   const handleFilterChange = useCallback((type: "movie" | "tv" | "both") => {
-    setFilters((f) => ({ ...f, type }));
-  }, []);
+    dispatch(setMediaType(type));
+  }, [dispatch]);
 
   const renderEmptyComponent = useCallback(() => {
     if ((isLoading || isLoadingSimilar) && currentPage === 1)
@@ -403,47 +411,34 @@ const SearchScreen = () => {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={styles.categoriesContainer}
+          contentContainerStyle={styles.categoriesContainer}
         >
           {categories.map((category, index) => (
             <Animated.View
               key={category.id}
               entering={FadeInUp.delay(50 * (index + 1))}
             >
-              <TouchableOpacity
+              <Chip
+                selected={mediaFilters.mediaType === category.id}
                 onPress={() => handleFilterChange(category.id)}
-                style={[
-                  styles.chipWrapper,
-                  styles.chip,
-                  filters.type === category.id && {
-                    borderColor: "rgba(255, 255, 255, 0.3)",
-                    backgroundColor: colors.border,
-                  },
-                ]}
+                showSelectedCheck={false}
+                style={{ marginRight: spacing.xs }}
               >
-                <Text
-                  style={[
-                    styles.chipText,
-                    filters.type === category.id && styles.chipTextActive,
-                  ]}
-                >
-                  {category.label}
-                </Text>
-              </TouchableOpacity>
+                {category.label}
+              </Chip>
             </Animated.View>
           ))}
         </ScrollView>
-        <TouchableOpacity
-          onPress={() => {
+        <Chip
+          onPress={() =>
             router.push({
-              pathname: "/search-filters",
-              params: { ...searchParams, type: filters.type },
-            });
-          }}
-          style={[styles.chipWrapper, styles.chip]}
+              pathname: "/filters",
+              params: { presentation: "formSheet" },
+            })
+          }
         >
-          <Text style={[styles.chipText]}>Filters</Text>
-        </TouchableOpacity>
+          Filters
+        </Chip>
       </View>
 
       <FlashList
@@ -451,7 +446,7 @@ const SearchScreen = () => {
         data={allResults}
         renderItem={({ item }) => <MovieCard item={item} />}
         keyExtractor={(item) => {
-          const mediaType = item.media_type || filters.type;
+          const mediaType = item.media_type || mediaFilters.mediaType;
           const uniqueId = `${item.id}-${mediaType}`;
           return uniqueId;
         }}
@@ -492,11 +487,10 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   chipContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    paddingBottom: spacing.screen,
     flexDirection: "row",
-    paddingRight: spacing.screen,
+    alignItems: "center",
+    paddingRight: spacing.sm,
+    paddingBottom: spacing.sm,
   },
   listContent: {
     paddingHorizontal: spacing.screen,
@@ -545,29 +539,9 @@ const styles = StyleSheet.create({
   applyButton: {
     marginTop: spacing.xl,
   },
-  chipWrapper: {
-    marginRight: spacing.sm + 2,
-    borderRadius: radius.pill,
-    overflow: "hidden",
-    borderWidth: 2,
-    borderColor: colors.border,
-  },
-  chip: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.modal,
-  },
-  chipText: {
-    color: "rgba(255, 255, 255, 0.8)",
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.medium,
-  },
-  chipTextActive: {
-    color: colors.text,
-    fontWeight: fontWeight.semibold,
-  },
   categoriesContainer: {
     paddingHorizontal: spacing.screen,
+    gap: spacing.xs,
   },
 });
 

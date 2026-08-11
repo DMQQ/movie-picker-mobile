@@ -5,7 +5,7 @@ import { RoomContextProvider } from "../../context/RoomContext";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { roomActions } from "../../redux/room/roomSlice";
-import { View } from "react-native";
+import { View, Platform } from "react-native";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import { Image } from "expo-image";
 import { colors } from "../../constants/design";
@@ -60,6 +60,10 @@ export default function RootLayout() {
                 gestureEnabled: true,
                 presentation: "formSheet",
                 sheetGrabberVisible: true,
+                contentStyle: {
+                  backgroundColor:
+                    Platform.OS === "android" ? colors.surface : "transparent",
+                },
                 sheetAllowedDetents: [0.5, 0.85],
                 sheetInitialDetentIndex: 0,
               }}

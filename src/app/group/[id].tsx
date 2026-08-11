@@ -15,6 +15,7 @@ import ShareSelectionModal from "../../components/Group/ShareSelectionModal";
 import MoviesActionButtons from "../../components/MoviesActionButtons";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
 import { useGroupData, type GroupMovie } from "../../hooks/useGroupData";
+import useTranslation from "../../service/useTranslation";
 
 const POSTER_W = 42;
 const POSTER_H = 62;
@@ -23,6 +24,7 @@ export default function Group() {
   const { data, isListLoading, isRemote, handleRemoveItem, itemIdMap, listType } = useGroupData();
   const isPreview = useIsPreview();
   const insets = useSafeAreaInsets();
+  const t = useTranslation();
 
   const [match, setMatch] = useState<GroupMovie | undefined>(undefined);
   const [shareModalVisible, setShareModalVisible] = useState(false);
@@ -107,7 +109,7 @@ export default function Group() {
               {item.review}
             </Text>
           ) : (
-            <Text style={styles.noReviewText}>No review</Text>
+            <Text style={styles.noReviewText}>{t("lists.noReview") as string}</Text>
           )}
         </View>
       </Pressable>
@@ -155,7 +157,10 @@ export default function Group() {
             ListHeaderComponent={
               movies.length > 0 ? (
                 <Text style={styles.countLabel}>
-                  {movies.length} {movies.length === 1 ? "item" : "items"}
+                  {t("lists.items", {
+                    count: movies.length,
+                    plural: movies.length === 1 ? "" : "s",
+                  }) as string}
                 </Text>
               ) : null
             }
@@ -164,7 +169,12 @@ export default function Group() {
                 <View style={styles.empty}>
                   <Icon source="loading" size={28} color="rgba(255,255,255,0.2)" />
                 </View>
-              ) : null
+              ) : (
+                <View style={styles.empty}>
+                  <Icon source="movie-open-outline" size={44} color="rgba(255,255,255,0.07)" />
+                  <Text style={styles.emptyText}>{t("lists.empty") as string}</Text>
+                </View>
+              )
             }
           />
         </SafeIOSContainer>
@@ -290,4 +300,10 @@ const styles = StyleSheet.create({
   },
 
   empty: { alignItems: "center", paddingTop: spacing.xxl * 3 },
+  emptyText: {
+    fontSize: fontSize.md + 1,
+    fontWeight: fontWeight.semibold,
+    color: "rgba(255,255,255,0.25)",
+    marginTop: spacing.sm + 2,
+  },
 });

@@ -18,8 +18,10 @@ import { rateInGroup } from "../redux/favourites/favourites";
 import { useUpsertRatingMutation, useGetMyRatingQuery } from "../redux/ratings/ratingsApi";
 import { usePatchItemMutation } from "../redux/lists/listsApi";
 import { spacing } from "../constants/design";
+import useTranslation from "../service/useTranslation";
 
 export default function RateMovieScreen() {
+  const t = useTranslation();
   const params = useLocalSearchParams<{
     movieId: string;
     contentType: string;
@@ -91,7 +93,7 @@ export default function RateMovieScreen() {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <Text style={styles.title}>Rate this movie</Text>
+      <Text style={styles.title}>{t("ratings.rateTitle") as string}</Text>
 
       <View style={styles.stars}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
@@ -110,7 +112,7 @@ export default function RateMovieScreen() {
       </View>
 
       <TextInput
-        placeholder="Add a review…"
+        placeholder={t("ratings.reviewPlaceholder") as string}
         value={review}
         onChangeText={setReview}
         multiline
@@ -120,10 +122,10 @@ export default function RateMovieScreen() {
 
       <View style={styles.actions}>
         <Button mode="text" onPress={() => router.back()} textColor="#888">
-          Cancel
+          {t("common.cancel") as string}
         </Button>
         <PrimaryButton onPress={handleSave} disabled={!canSave}>
-          Save
+          {t("overview.save-list") as string}
         </PrimaryButton>
       </View>
     </KeyboardAvoidingView>

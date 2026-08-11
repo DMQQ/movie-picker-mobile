@@ -2,7 +2,13 @@ import { useCallback, useEffect, useRef } from "react";
 import Text from "../components/Text";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 
-import { colors, fontWeight, fontSize, radius, spacing } from "../constants/design";
+import {
+  colors,
+  fontWeight,
+  fontSize,
+  radius,
+  spacing,
+} from "../constants/design";
 import GenreChip from "../components/GenreChip";
 import PrimaryButton from "../components/PrimaryButton";
 import { router, useLocalSearchParams } from "expo-router";
@@ -242,7 +248,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.surface,
     ...Platform.select({
-      ios: { paddingTop: spacing.xxl + 1 },
+      ios: { paddingTop: spacing.xxl * 2 },
     }),
   },
   grabber: {

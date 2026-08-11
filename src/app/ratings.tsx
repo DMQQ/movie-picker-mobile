@@ -1,4 +1,4 @@
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "../components/Icon";
@@ -7,6 +7,7 @@ import PageHeading from "../components/PageHeading";
 import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
 import { useGetMyRatingsQuery, type UserRating } from "../redux/ratings/ratingsApi";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
+import useTranslation from "../service/useTranslation";
 
 const POSTER_W = 42;
 const POSTER_H = 62;
@@ -71,51 +72,62 @@ function RatingRow({ item }: { item: UserRating }) {
 }
 
 export default function AllRatingsScreen() {
-  const { data, isLoading } = useGetMyRatingsQuery({ limit: 100 });
+  const { data, isLoading, isError, refetch } = useGetMyRatingsQuery({ limit: 100 });
   const ratings = [...(data?.ratings ?? [])].reverse();
   const insets = useSafeAreaInsets();
+  const t = useTranslation();
 
   return (
     <View style={styles.container}>
-      <PageHeading title="My Reviews" />
+      <PageHeading title={t("ratings.title") as string} />
 
-      <FlatList
-        data={ratings}
-        showsVerticalScrollIndicator={false}
-        keyExtractor={(r) => r.id}
-        renderItem={({ item }) => <RatingRow item={item} />}
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + 24,
-          paddingHorizontal: spacing.lg,
-        }}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        ListHeaderComponent={
-          ratings.length > 0 ? (
-            <Text style={styles.countLabel}>
-              {data?.total ?? ratings.length} reviews
-            </Text>
-          ) : null
-        }
-        ListEmptyComponent={
-          <View style={styles.empty}>
-            {isLoading ? (
-              <Icon source="loading" size={28} color="rgba(255,255,255,0.2)" />
+      {isError && ratings.length === 0 ? (
+        <View style={styles.error}>
+          <Icon source="cloud-off-outline" size={44} color="rgba(255,255,255,0.12)" />
+          <Text style={styles.errorText}>{t("ratings.loadError") as string}</Text>
+          <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
+            <Text style={styles.retryText}>{t("status-modal.retry") as string}</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <FlatList
+          data={ratings}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(r) => r.id}
+          renderItem={({ item }) => <RatingRow item={item} />}
+          contentContainerStyle={{
+            paddingBottom: insets.bottom + 24,
+            paddingHorizontal: spacing.lg,
+          }}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          ListHeaderComponent={
+            ratings.length > 0 ? (
+              <Text style={styles.countLabel}>
+                {data?.total ?? ratings.length} reviews
+              </Text>
+            ) : null
+          }
+          ListEmptyComponent={
+            isLoading ? (
+              <View style={styles.empty}>
+                <Icon source="loading" size={28} color="rgba(255,255,255,0.2)" />
+              </View>
             ) : (
-              <>
+              <View style={styles.empty}>
                 <Icon
                   source="star-outline"
                   size={44}
                   color="rgba(255,255,255,0.07)"
                 />
-                <Text style={styles.emptyText}>No reviews yet</Text>
+                <Text style={styles.emptyText}>{t("ratings.empty") as string}</Text>
                 <Text style={styles.emptyHint}>
                   Rate movies you've watched to see them here
                 </Text>
-              </>
-            )}
-          </View>
-        }
-      />
+              </View>
+            )
+          }
+        />
+      )}
     </View>
   );
 }
@@ -179,5 +191,30 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.15)",
     textAlign: "center",
     paddingHorizontal: spacing.xxl + 16,
+  },
+
+  error: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm + 2,
+    paddingHorizontal: spacing.xxl + 16,
+  },
+  errorText: {
+    fontSize: fontSize.md + 1,
+    color: "rgba(255,255,255,0.25)",
+    fontWeight: fontWeight.semibold,
+  },
+  retryBtn: {
+    backgroundColor: colors.overlay,
+    borderRadius: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+  },
+  retryText: {
+    fontSize: fontSize.sm + 1,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
+    letterSpacing: 0.8,
   },
 });

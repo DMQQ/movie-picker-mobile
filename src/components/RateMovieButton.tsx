@@ -47,8 +47,6 @@ export default function RateMovieButton({ movie, contentType }: Props) {
     { skip: !user || !movie?.id },
   );
 
-  if (!user || user.provider === "anonymous") return null;
-
   const handlePress = () => {
     router.push({
       pathname: "/rate-movie",

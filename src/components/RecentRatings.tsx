@@ -5,6 +5,7 @@ import Text from "./Text";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import { useGetMyRatingsQuery } from "../redux/ratings/ratingsApi";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
+import useTranslation from "../service/useTranslation";
 
 const mutedText = "rgba(255,255,255,0.45)";
 
@@ -22,6 +23,7 @@ function formatDate(unix: number) {
 
 export default function RecentRatings() {
   const { data, isLoading } = useGetMyRatingsQuery({ limit: 20 });
+  const t = useTranslation();
 
   const ratings = data?.ratings ?? [];
   const recent = [...ratings].reverse().slice(0, FAN_COUNT);
@@ -31,7 +33,7 @@ export default function RecentRatings() {
     return (
       <View style={styles.placeholder}>
         <Icon source="loading" size={14} color={colors.textSecondary} />
-        <Text style={styles.placeholderText}>Loading…</Text>
+        <Text style={styles.placeholderText}>{t("room.builder.loading") as string}</Text>
       </View>
     );
   }
@@ -39,7 +41,7 @@ export default function RecentRatings() {
   if (ratings.length === 0) {
     return (
       <View style={styles.placeholder}>
-        <Text style={styles.placeholderText}>No ratings yet</Text>
+        <Text style={styles.placeholderText}>{t("ratings.noRatingsYet") as string}</Text>
       </View>
     );
   }
@@ -86,7 +88,10 @@ export default function RecentRatings() {
 
       <View style={styles.info}>
         <Text style={styles.title}>
-          {ratings.length} {ratings.length === 1 ? "review" : "reviews"}
+          {t("ratings.reviewCount", {
+            count: ratings.length,
+            plural: ratings.length === 1 ? "" : "s",
+          }) as string}
         </Text>
         <View style={styles.meta}>
           <View style={styles.stat}>
@@ -98,7 +103,7 @@ export default function RecentRatings() {
                 color={i < avgRating ? "#FFD700" : colors.border}
               />
             ))}
-            <Text style={styles.statValue}>{avgRating}/10 avg</Text>
+            <Text style={styles.statValue}>{t("ratings.avgLabel", { avg: avgRating }) as string}</Text>
           </View>
           <View style={styles.latestRow}>
             <Icon source="clock-outline" size={10} color={colors.textSecondary} />

@@ -140,7 +140,7 @@ function UnviewedMatchesScreen() {
 
       <View style={{ flex: 1 }} />
 
-      <View style={[styles.actions, { paddingBottom: insets.bottom + 15 }]}>
+      <View style={[styles.actions, { paddingBottom: insets.bottom + (Platform.OS === "android" ? 30 : 15) }]}>
         <PrimaryButton onPress={handlePlay} style={styles.button}>
           {t("matches.start-new-game")}
         </PrimaryButton>
