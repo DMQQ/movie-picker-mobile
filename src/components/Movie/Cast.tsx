@@ -52,15 +52,30 @@ export default function Cast({ id, type, initialData }: { id: number; type: "mov
 
       <ScrollView horizontal style={{ marginTop: spacing.xxl + 6 }} showsHorizontalScrollIndicator={false} overScrollMode="never">
         {data?.directors?.map((item) => (
-          <FrostedGlass key={item.id.toString()} style={styles.directorContainer} container={{ marginRight: spacing.screen }}>
-            {item.profile_path && <Thumbnail priority="low" path={item.profile_path} container={styles.directorImage} />}
-            <View style={{ gap: spacing.xs + 1, flex: 1 }}>
-              <Text style={{ color: colors.text, fontSize: 22.5, fontFamily: "Bebas" }}>{item.name}</Text>
-              <Text style={{ color: "rgba(255,255,255,0.95)", fontSize: fontSize.lg, fontFamily: "Bebas" }}>
-                {item.job}
-              </Text>
-            </View>
-          </FrostedGlass>
+          <Link
+            key={item.id.toString()}
+            href={{ pathname: "/person/[id]", params: { id: item.id, img: item.profile_path || "" } }}
+            asChild
+          >
+            <Touch>
+              <Link.Trigger>
+                <FrostedGlass style={styles.directorContainer} container={{ marginRight: spacing.screen }}>
+                  {item.profile_path && (
+                    <Link.AppleZoom>
+                      <Thumbnail priority="low" path={item.profile_path} container={styles.directorImage} />
+                    </Link.AppleZoom>
+                  )}
+                  <View style={{ gap: spacing.xs + 1, flex: 1 }}>
+                    <Text style={{ color: colors.text, fontSize: 22.5, fontFamily: "Bebas" }}>{item.name}</Text>
+                    <Text style={{ color: "rgba(255,255,255,0.95)", fontSize: fontSize.lg, fontFamily: "Bebas" }}>
+                      {item.job}
+                    </Text>
+                  </View>
+                </FrostedGlass>
+              </Link.Trigger>
+              <Link.Preview />
+            </Touch>
+          </Link>
         ))}
       </ScrollView>
     </View>

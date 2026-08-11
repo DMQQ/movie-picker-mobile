@@ -107,6 +107,7 @@ export interface PersonScreenData {
       character?: string;
       popularity: number;
       genres: string[];
+      episode_count?: number;
     }>;
     crew: Array<{
       id: number;

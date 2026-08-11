@@ -13,6 +13,8 @@ import IconButton from "../../components/IconButton";
 import PlatformBlurView from "../../components/PlatformBlurView";
 import { SectionListItem, SECTION_ITEM_HEIGHT, SECTION_ITEM_WIDTH } from "../../components/SectionItem";
 import { colors, common, fontSize, fontWeight, radius, spacing, typography } from "../../constants/design";
+import Chip from "../../components/Chip";
+import RatingIcons from "../../components/RatingIcons";
 
 const { width, height } = Dimensions.get("screen");
 const IMG_HEIGHT = height * 0.58;
@@ -52,9 +54,19 @@ export default function PersonScreen() {
   });
 
   const profilePath = img || data?.profile_path || "";
-  const castCredits = (data?.credits?.cast ?? []).filter((c) => c.poster_path).slice(0, 20);
+  const allCast = data?.credits?.cast ?? [];
+  const castCredits = allCast.filter((c) => c.poster_path).slice(0, 20);
   const photos = (data?.images?.profiles ?? []).slice(1, 13);
   const longBio = (data?.biography?.length ?? 0) > 250;
+
+  const movieCount = allCast.filter((c) => c.media_type === "movie").length;
+  const tvEpisodes = allCast
+    .filter((c) => c.media_type === "tv")
+    .reduce((sum, c) => sum + (c.episode_count ?? 0), 0);
+  const rated = allCast.filter((c) => (c.vote_average ?? 0) > 0);
+  const avgRating = rated.length
+    ? rated.reduce((sum, c) => sum + c.vote_average, 0) / rated.length
+    : null;
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.appBackground, width, height }}>
@@ -96,7 +108,7 @@ export default function PersonScreen() {
         </Animated.View>
 
         {/* Index 1 — scrollable content */}
-        <View style={{ zIndex: 10, position: "relative", width, backgroundColor: colors.appBackground }}>
+        <View style={{ zIndex: 10, position: "relative", width, backgroundColor: colors.appBackground, borderTopLeftRadius: radius.modal, borderTopRightRadius: radius.modal, overflow: "hidden" }}>
           {/* Drag handle */}
           <View style={styles.dragHandleRow}>
             <View style={styles.dragHandle} />
@@ -105,11 +117,22 @@ export default function PersonScreen() {
           {/* Name + department */}
           <View style={styles.section}>
             <Text style={styles.name}>{data?.name ?? " "}</Text>
-            {!!data?.known_for_department && (
-              <View style={styles.departmentBadge}>
-                <Text style={styles.departmentText}>{data.known_for_department}</Text>
+            {avgRating !== null && (
+              <View style={styles.ratingRow}>
+                <RatingIcons size={18} vote={avgRating} showText />
               </View>
             )}
+            <View style={styles.badgeRow}>
+              {!!data?.known_for_department && (
+                <Chip>{data.known_for_department}</Chip>
+              )}
+              {movieCount > 0 && (
+                <Chip icon="movie-outline">{movieCount} movie{movieCount !== 1 ? "s" : ""}</Chip>
+              )}
+              {tvEpisodes > 0 && (
+                <Chip icon="television-play">{tvEpisodes} episode{tvEpisodes !== 1 ? "s" : ""}</Chip>
+              )}
+            </View>
           </View>
 
           {/* Birthday + place of birth */}
@@ -136,21 +159,20 @@ export default function PersonScreen() {
           {(!!data?.external_ids?.imdb_id || !!data?.external_ids?.instagram_id) && (
             <View style={[styles.section, styles.linksRow]}>
               {!!data.external_ids.imdb_id && (
-                <Pressable
+                <Chip
+                  icon="open-in-new"
                   onPress={() => Linking.openURL(`https://www.imdb.com/name/${data.external_ids.imdb_id}`)}
-                  style={styles.linkChip}
                 >
-                  <Text style={styles.linkText}>IMDb</Text>
-                </Pressable>
+                  IMDb
+                </Chip>
               )}
               {!!data.external_ids.instagram_id && (
-                <Pressable
+                <Chip
+                  icon="instagram"
                   onPress={() => Linking.openURL(`https://instagram.com/${data.external_ids.instagram_id}`)}
-                  style={styles.linkChip}
                 >
-                  <MaterialCommunityIcons name="instagram" size={13} color={colors.text} />
-                  <Text style={styles.linkText}>@{data.external_ids.instagram_id}</Text>
-                </Pressable>
+                  @{data.external_ids.instagram_id}
+                </Chip>
               )}
             </View>
           )}
@@ -158,7 +180,7 @@ export default function PersonScreen() {
           {/* Biography */}
           {!!data?.biography && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Biography</Text>
+              <Text style={[styles.sectionTitle, { paddingHorizontal: 0 }]}>Biography</Text>
               <Text style={styles.biography} numberOfLines={bioExpanded ? undefined : 4}>
                 {data.biography}
               </Text>
@@ -172,8 +194,8 @@ export default function PersonScreen() {
 
           {/* Known For */}
           {castCredits.length > 0 && (
-            <View style={{ marginBottom: spacing.xxl, height: SECTION_ITEM_HEIGHT + spacing.xl + spacing.md }}>
-              <Text style={[styles.sectionTitle, { paddingHorizontal: spacing.screen }]}>Known For</Text>
+            <View style={[styles.sectionFull, { height: SECTION_ITEM_HEIGHT + spacing.xl + spacing.md }]}>
+              <Text style={styles.sectionTitle}>Known For</Text>
               <FlashList
                 data={castCredits}
                 keyExtractor={(c) => `${c.id}-${c.character ?? "crew"}`}
@@ -198,8 +220,8 @@ export default function PersonScreen() {
 
           {/* Photo gallery */}
           {photos.length > 0 && (
-            <View style={{ marginBottom: spacing.xxl }}>
-              <Text style={[styles.sectionTitle, { paddingHorizontal: spacing.screen }]}>Photos</Text>
+            <View style={styles.sectionFull}>
+              <Text style={styles.sectionTitle}>Photos</Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -246,14 +268,17 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.sm,
   },
   dragHandle: {
-    width: 40,
+    width: 60,
     height: 4,
     borderRadius: radius.pill,
-    backgroundColor: colors.border,
+    backgroundColor: colors.text,
   },
   section: {
     paddingHorizontal: spacing.screen,
-    marginBottom: spacing.xl,
+    marginBottom: spacing.xxl,
+  },
+  sectionFull: {
+    marginBottom: spacing.xxl,
   },
   name: {
     fontFamily: typography.bebas,
@@ -262,19 +287,15 @@ const styles = StyleSheet.create({
     letterSpacing: typography.bebasLetterSpacing,
     marginBottom: spacing.sm,
   },
-  departmentBadge: {
-    alignSelf: "flex-start",
-    backgroundColor: colors.input,
-    borderRadius: radius.pill,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderWidth: 1,
-    borderColor: colors.border,
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: spacing.sm,
   },
-  departmentText: {
-    fontSize: fontSize.sm,
-    color: colors.placeholder,
-    fontWeight: fontWeight.medium,
+  badgeRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.sm,
   },
   metaRow: {
     gap: spacing.sm,
@@ -294,27 +315,12 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: spacing.sm,
   },
-  linkChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    backgroundColor: colors.input,
-    borderRadius: radius.pill,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs + 1,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  linkText: {
-    fontSize: fontSize.sm,
-    color: colors.text,
-    fontWeight: fontWeight.medium,
-  },
   sectionTitle: {
     fontFamily: typography.bebas,
     fontSize: typography.bebasSize.section,
     color: colors.text,
     letterSpacing: typography.bebasLetterSpacing,
+    paddingHorizontal: spacing.screen,
     marginBottom: spacing.md,
   },
   biography: {

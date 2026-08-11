@@ -6,8 +6,8 @@ import { Movie, MovieDetails as MovieDetailsType } from "../../../types";
 import useTranslation from "../../service/useTranslation";
 import CustomFavourite from "../Favourite";
 import RateMovieButton from "../RateMovieButton";
-import GenreChip from "../GenreChip";
-import GenresView from "../GenresView";
+import RoleGuard from "../RoleGuard";
+import Chip from "../Chip";
 import QuickActions from "../QuickActions";
 import RatingIcons from "../RatingIcons";
 import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
@@ -108,7 +108,9 @@ function MovieDetails({
   }, [isTVShow, t, hasSimilar, hasTrailers]);
 
   return (
-    <BlurViewWrapper style={styles.blurWrapper}>
+    <View
+      style={[styles.blurWrapper, { backgroundColor: colors.appBackground }]}
+    >
       <View
         style={{ width: "100%", alignItems: "center", padding: spacing.sm + 2 }}
       >
@@ -142,8 +144,10 @@ function MovieDetails({
 
         {(releaseYear || genres.length > 0) && (
           <View style={styles.chipsRow}>
-            {releaseYear && <GenreChip genre={releaseYear} />}
-            <GenresView genres={genres} />
+            {releaseYear && <Chip>{releaseYear}</Chip>}
+            {genres.map((g) => (
+              <Chip key={g.id}>{g.name}</Chip>
+            ))}
           </View>
         )}
 
@@ -155,7 +159,9 @@ function MovieDetails({
               </View>
             </QuickActions>
           </PlatformBlurView>
-          <RateMovieButton movie={movie} contentType={type} />
+          <RoleGuard guard="fullAccount">
+            <RateMovieButton movie={movie} contentType={type} />
+          </RoleGuard>
         </View>
       </View>
 
@@ -182,7 +188,7 @@ function MovieDetails({
           {t("global.attributions")}
         </Text>
       </View>
-    </BlurViewWrapper>
+    </View>
   );
 }
 

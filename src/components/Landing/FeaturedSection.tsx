@@ -14,7 +14,7 @@ import RatingIcons from "../RatingIcons";
 import Skeleton from "../Skeleton/Skeleton";
 import { Image, ImageBackground } from "expo-image";
 import { useGetFeaturedQuery } from "../../redux/movie/movieApi";
-import GenresView from "../GenresView";
+import Chip from "../Chip";
 import Touch from "../Touch";
 
 const { width, height } = Dimensions.get("screen");
@@ -244,7 +244,9 @@ const FeaturedSection = memo(({ categoryId }: FeaturedSectionProps) => {
                       </View>
 
                       <View style={styles.genreContainer}>
-                        <GenresView genres={genres} />
+                        {genres.map((g) => (
+                          <Chip key={g}>{g}</Chip>
+                        ))}
                       </View>
                     </View>
                   </View>
