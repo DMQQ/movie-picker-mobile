@@ -73,6 +73,55 @@ interface MovieKeyPeopleResponse {
   }>;
 }
 
+export interface PersonScreenData {
+  id: number;
+  name: string;
+  biography: string;
+  birthday: string | null;
+  place_of_birth: string | null;
+  profile_path: string | null;
+  known_for_department: string;
+  images: {
+    profiles: Array<{
+      file_path: string;
+      width: number;
+      height: number;
+      aspect_ratio: number;
+      vote_average: number;
+    }>;
+  };
+  external_ids: {
+    imdb_id: string | null;
+    instagram_id: string | null;
+    facebook_id: string | null;
+    twitter_id: string | null;
+  };
+  credits: {
+    cast: Array<{
+      id: number;
+      title?: string;
+      name?: string;
+      poster_path: string | null;
+      vote_average: number;
+      media_type: string;
+      character?: string;
+      popularity: number;
+      genres: string[];
+    }>;
+    crew: Array<{
+      id: number;
+      title?: string;
+      name?: string;
+      poster_path: string | null;
+      vote_average: number;
+      media_type: string;
+      job?: string;
+      popularity: number;
+      genres: string[];
+    }>;
+  };
+}
+
 interface CacheStats {
   size: number;
   methods: Record<string, number>;
@@ -187,6 +236,11 @@ export const personApi = createApi({
       providesTags: (result, error, arg) => [{ type: "KeyPeople", id: arg.id }],
     }),
 
+    getPersonScreen: builder.query<PersonScreenData, { id: number }>({
+      query: ({ id }) => `/${id}/screen`,
+      providesTags: (result, error, arg) => [{ type: "Person", id: arg.id }],
+    }),
+
     // Get cache stats
     getCacheStats: builder.query<CacheStats, void>({
       query: () => "/cache/stats",
@@ -223,6 +277,7 @@ export const {
   useGetPersonCombinedCreditsQuery,
   useGetCollaboratorsQuery,
   useGetMovieKeyPeopleQuery,
+  useGetPersonScreenQuery,
   useGetCacheStatsQuery,
   useClearCacheMutation,
 

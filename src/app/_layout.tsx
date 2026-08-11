@@ -214,7 +214,8 @@ const RootNavigator = ({
 
         <Stack.Screen name="games" options={{ headerShown: false }} />
 
-        <Stack.Screen name="search-filters" options={{ headerShown: false }} />
+        <Stack.Screen name="person" options={{ headerShown: false }} />
+
 
         <Stack.Screen
           name="favourite-groups"

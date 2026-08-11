@@ -219,9 +219,9 @@ const SwipeTile = ({
       if (isLeftVisible.value !== nextLeft) isLeftVisible.value = nextLeft;
       if (isRightVisible.value !== nextRight) isRightVisible.value = nextRight;
     })
-    .onEnd(() => {
+    .onEnd(({ translationX }) => {
       const exitCfg = { duration: 420, easing: Easing.out(Easing.cubic) };
-      if (posX.value > width * 0.15) {
+      if (translationX > width * 0.15) {
         posX.value = withTiming(width + 200, exitCfg);
         posY.value = withTiming(80, exitCfg);
         if (dragProgress) dragProgress.value = 1;
@@ -229,7 +229,7 @@ const SwipeTile = ({
         exitTimer.value = withTiming(1, { duration: 180 }, (finished) => {
           if (finished) runOnJS(actions.likeCard)();
         });
-      } else if (posX.value < -width * 0.15) {
+      } else if (translationX < -width * 0.15) {
         posX.value = withTiming(-width - 200, exitCfg);
         posY.value = withTiming(80, exitCfg);
         if (dragProgress) dragProgress.value = 1;

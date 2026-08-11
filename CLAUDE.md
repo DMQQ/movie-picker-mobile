@@ -420,10 +420,10 @@ MD2DarkTheme base values, hardcoded — no paper dependency. `primary`/`error` a
 |---|---|---|
 | `colors.text` | `#fff` | Primary text |
 | `colors.placeholder` | `rgba(255,255,255,0.54)` | Muted/secondary text |
-| `colors.primary` | `#4169E1` | Royal blue — accent, active states |
+| `colors.primary` | `#5578E8` | Royal blue — accent, active states |
 | `colors.error` | `#E5484D` | Crimson — destructive actions |
-| `colors.surface` | `#12121B` | Card backgrounds (dark navy) |
-| `colors.background` | `#12121B` | Page background (paper default) |
+| `colors.surface` | `#16161F` | Card backgrounds (dark navy) |
+| `colors.background` | `#1C1C28` | Page background (paper default) |
 | `colors.appBackground` | `#0A0A0F` | Near-black navy (app screens) |
 | `colors.border` | `rgba(255,255,255,0.1)` | Hairline dividers |
 | `colors.overlay` | `rgba(255,255,255,0.08)` | Pressable overlay |

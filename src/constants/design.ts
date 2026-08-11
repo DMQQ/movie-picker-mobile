@@ -72,7 +72,7 @@ export const fontWeight = {
 export const colors = {
   // ── Brand overrides (not MD2) ──
   /** Royal blue — active tabs, buttons, links, checkboxes. */
-  primary: "#4169E1",
+  primary: "#5578E8",
   /** Crimson — destructive actions, errors. */
   error: "#E5484D",
 
@@ -85,8 +85,8 @@ export const colors = {
   backdrop: "rgba(0,0,0,0.5)",
   notification: "#ff80ab",
   tooltip: "rgba(230,225,229,1)",
-  surface: "#12121B",
-  background: "#12121B",
+  surface: "#16161F",
+  background: "#1C1C28",
 
   // ── App-specific (not in MD2) ──
   /** Near-black navy — app screens. Slight blue undertone lifts the royal blue accent off pure black. */
