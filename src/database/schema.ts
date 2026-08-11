@@ -1,4 +1,5 @@
 import type { SQLiteDatabase } from "expo-sqlite";
+import * as Sentry from "@sentry/react-native";
 
 const CURRENT_SCHEMA_VERSION = 2;
 
@@ -46,7 +47,8 @@ async function getSchemaVersion(db: SQLiteDatabase): Promise<number> {
       "SELECT MAX(version) as version FROM schema_version",
     );
     return result?.version ?? 0;
-  } catch {
+  } catch (error) {
+    Sentry.captureException(error, { tags: { context: "db_getSchemaVersion" } });
     return 0;
   }
 }
@@ -80,6 +82,9 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
         try {
           await db.execAsync(statement);
         } catch (error) {
+          Sentry.captureException(error, {
+            tags: { context: "db_migration", version: String(version) },
+          });
           throw error;
         }
       }
@@ -101,6 +106,9 @@ async function ensureTablesExist(db: SQLiteDatabase): Promise<void> {
           await db.execAsync(statement);
         } catch (error) {
           console.error(`[DB Migration] Failed to ensure table exists:`, error);
+          Sentry.captureException(error, {
+            tags: { context: "db_ensure_tables" },
+          });
         }
       }
     }

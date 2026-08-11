@@ -9,6 +9,7 @@ import {
   Platform,
   Pressable,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -42,7 +43,6 @@ const styles = StyleSheet.create({
     borderRadius: radius.modal,
     backgroundColor: "rgba(0,0,0,0.75)",
     ...StyleSheet.absoluteFill,
-    height: Dimensions.get("screen").height,
     zIndex: 1000,
   },
   matchText: {
@@ -53,8 +53,6 @@ const styles = StyleSheet.create({
   },
   gradient: {
     overflow: "hidden",
-    width: Dimensions.get("screen").width * 0.95 - 20,
-    height: Dimensions.get("screen").height * 0.7,
     justifyContent: "flex-end",
     position: "absolute",
     zIndex: 10,
@@ -115,6 +113,9 @@ export default function MatchModal({
   totalUsers?: number;
   didLike?: boolean;
 }) {
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const cardWidth = windowWidth * 0.95 - 20;
+  const cardHeight = windowHeight * 0.68;
   const theme = useTheme();
   const t = useTranslation();
   const animation = useRef<LottieView>(null);
@@ -190,7 +191,7 @@ export default function MatchModal({
 
             <LinearGradient
               colors={["transparent", "transparent", theme.colors.surface]}
-              style={styles.gradient}
+              style={[styles.gradient, { width: cardWidth, height: cardHeight }]}
             >
               <Text style={styles.title}>{match.title || match.name}</Text>
 
@@ -216,10 +217,7 @@ export default function MatchModal({
 
             <Poster
               link={false}
-              imageDimensions={{
-                width: Dimensions.get("screen").width * 0.95 - 20,
-                height: Dimensions.get("screen").height * 0.7,
-              }}
+              imageDimensions={{ width: cardWidth, height: cardHeight }}
               card={match}
             />
           </Card>

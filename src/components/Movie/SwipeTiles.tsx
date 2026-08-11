@@ -1,27 +1,24 @@
 import { LinearGradient } from "expo-linear-gradient";
 import Text from "../Text";
-import { memo, useEffect, useRef } from "react";
+import { memo, useEffect } from "react";
 import {
   Dimensions,
   Platform,
   Pressable,
   StyleSheet,
   View,
-  useWindowDimensions,
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
+import { scheduleOnRN } from "react-native-worklets";
 import Animated, {
-  cancelAnimation,
   Easing,
   Extrapolation,
   interpolate,
-  runOnJS,
   type SharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
-  withSequence,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
@@ -30,7 +27,7 @@ import RatingIcons from "../RatingIcons";
 import Poster from "./Poster";
 import GenresView from "../GenresView";
 import { Link } from "expo-router";
-import { colors, fontSize, radius, spacing} from "../../constants/design";
+import { colors, fontSize, radius, spacing } from "../../constants/design";
 
 const { width, height } = Dimensions.get("window");
 
@@ -75,7 +72,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     paddingLeft: spacing.sm + 2,
   },
-
   card: {
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.15)",
@@ -96,7 +92,6 @@ const SwipeTile = ({
   href,
   dragProgress,
   buttonSwipe,
-
   ...actions
 }: {
   card: Movie;
@@ -114,7 +109,7 @@ const SwipeTile = ({
   const posY = useSharedValue(index * -7.5);
   const posScale = useSharedValue(1 - index * 0.05);
   const opacity = useSharedValue(index > 0 ? 0 : 1);
-  const prevIndex = useRef(index);
+  const animIndex = useSharedValue(index);
 
   useEffect(() => {
     if (index > 0) {
@@ -122,49 +117,33 @@ const SwipeTile = ({
     }
   }, []);
 
-  const dragSnapshot = dragProgress?.value ?? 0;
+  const isLeftVisible = useSharedValue(false);
+  const isRightVisible = useSharedValue(false);
+  const isSwipingOut = useSharedValue(false);
 
-  useEffect(() => {
-    const oldIndex = prevIndex.current;
-    prevIndex.current = index;
+  // Synchronizes index and prevents positions from leaking when cards shift or re-render
+  useAnimatedReaction(
+    () => `${index}-${card?.id || card?.title || card?.name || ""}`,
+    (current, previous) => {
+      if (previous === null || current === previous) return;
 
-    if (dragSnapshot > 0 && oldIndex !== index) {
-      const oldDragY = oldIndex > 0 ? Math.min(dragSnapshot, 1) * 7.5 : 0;
-      const oldDragS = oldIndex > 0 ? Math.min(dragSnapshot, 1) * 0.05 : 0;
-      const visualY = posY.value + oldDragY;
-      const visualS = posScale.value + oldDragS;
+      animIndex.value = index;
+      isSwipingOut.value = false;
+
       const targetY = index * -7.5;
       const targetS = 1 - index * 0.05;
 
       posX.value = 0;
-      posY.value = visualY;
-      posScale.value = visualS;
+      posY.value = targetY;
+      posScale.value = targetS;
 
-      if (
-        Math.abs(visualY - targetY) > 0.5 ||
-        Math.abs(visualS - targetS) > 0.01
-      ) {
-        const cfg = { mass: 0.3, damping: 10, stiffness: 200 };
-        posY.value = withSpring(targetY, cfg);
-        posScale.value = withSpring(targetS, cfg);
-      }
-
-      if (dragProgress && index === 0) {
+      if (index === 0 && dragProgress) {
         dragProgress.value = 0;
       }
-      return;
-    }
+    },
+  );
 
-    const cfg = { mass: 0.3, damping: 10, stiffness: 200 };
-    posX.value = withSpring(0, cfg);
-    posY.value = withSpring(index * -7.5, cfg);
-    posScale.value = withSpring(1 - index * 0.05, cfg);
-  }, [index, dragSnapshot]);
-
-  const exitTimer = useSharedValue(0);
-  const isLeftVisible = useSharedValue(false);
-  const isRightVisible = useSharedValue(false);
-  const isSwipingOut = useSharedValue(false);
+  // Programmatic swipe buttons handler
   useAnimatedReaction(
     () => buttonSwipe?.value ?? 0,
     (current, previous) => {
@@ -176,32 +155,45 @@ const SwipeTile = ({
         isSwipingOut.value
       )
         return;
+
       isSwipingOut.value = true;
       const nudgeCfg = { duration: 80, easing: Easing.out(Easing.quad) };
-      const exitCfg = { duration: 420, easing: Easing.out(Easing.cubic) };
-      if (current === 1 || current === 2) {
-        posX.value = withSequence(
-          withTiming(60, nudgeCfg),
-          withTiming(width + 200, exitCfg),
-        );
-        posY.value = withSequence(
-          withTiming(0, nudgeCfg),
-          withTiming(80, exitCfg),
-        );
-      } else {
-        posX.value = withSequence(
-          withTiming(-60, nudgeCfg),
-          withTiming(-width - 200, exitCfg),
-        );
-        posY.value = withSequence(
-          withTiming(0, nudgeCfg),
-          withTiming(80, exitCfg),
-        );
+      const exitCfg = { duration: 300, easing: Easing.out(Easing.cubic) };
+
+      if (dragProgress) {
+        dragProgress.value = withTiming(1, {
+          duration: 380,
+          easing: Easing.out(Easing.cubic),
+        });
       }
-      if (buttonSwipe) buttonSwipe.value = 0;
+
+      if (current === 1 || current === 2) {
+        const action =
+          (current === 2 ? actions.superLikeCard : actions.likeCard) ??
+          actions.likeCard;
+        posX.value = withTiming(60, nudgeCfg, () => {
+          posX.value = withTiming(width + 200, exitCfg, (finished) => {
+            if (finished) {
+              if (buttonSwipe) buttonSwipe.value = 0;
+              scheduleOnRN(action);
+            }
+          });
+        });
+      } else {
+        const action =
+          (current === -2 ? actions.blockCard : actions.removeCard) ??
+          actions.removeCard;
+        posX.value = withTiming(-60, nudgeCfg, () => {
+          posX.value = withTiming(-width - 200, exitCfg, (finished) => {
+            if (finished) {
+              if (buttonSwipe) buttonSwipe.value = 0;
+              scheduleOnRN(action);
+            }
+          });
+        });
+      }
     },
   );
-
 
   const moveGesture = Gesture.Pan()
     .onBegin(() => {
@@ -226,36 +218,50 @@ const SwipeTile = ({
     })
     .onEnd(({ translationX }) => {
       if (isSwipingOut.value) return;
-      const exitCfg = { duration: 420, easing: Easing.out(Easing.cubic) };
+      const exitCfg = { duration: 300, easing: Easing.out(Easing.cubic) };
+
       if (translationX > width * 0.15) {
         isSwipingOut.value = true;
-        posX.value = withTiming(width + 200, exitCfg);
+        if (dragProgress) {
+          dragProgress.value = withTiming(1, exitCfg);
+        }
+        posX.value = withTiming(
+          translationX + width + 200,
+          exitCfg,
+          (finished) => {
+            if (finished) {
+              scheduleOnRN(actions.likeCard);
+            }
+          },
+        );
         posY.value = withTiming(80, exitCfg);
-        if (dragProgress) dragProgress.value = 1;
-        // Card is off-screen by ~180ms — fire early so next card is interactive
-        exitTimer.value = withTiming(1, { duration: 180 }, (finished) => {
-          if (finished) runOnJS(actions.likeCard)();
-        });
       } else if (translationX < -width * 0.15) {
         isSwipingOut.value = true;
-        posX.value = withTiming(-width - 200, exitCfg);
+        if (dragProgress) {
+          dragProgress.value = withTiming(1, exitCfg);
+        }
+        posX.value = withTiming(
+          translationX - width - 200,
+          exitCfg,
+          (finished) => {
+            if (finished) {
+              scheduleOnRN(actions.removeCard);
+            }
+          },
+        );
         posY.value = withTiming(80, exitCfg);
-        if (dragProgress) dragProgress.value = 1;
-        exitTimer.value = withTiming(1, { duration: 180 }, (finished) => {
-          if (finished) runOnJS(actions.removeCard)();
-        });
       } else {
-        posX.value = withSpring(0, { damping: 50, stiffness: 500 });
-        posY.value = withSpring(0, { damping: 50, stiffness: 500 });
-        posScale.value = withSpring(1, { damping: 50, stiffness: 500 });
+        posX.value = withSpring(0, { damping: 20, stiffness: 300 });
+        posY.value = withSpring(0, { damping: 20, stiffness: 300 });
+        posScale.value = withSpring(1, { damping: 20, stiffness: 300 });
         if (dragProgress) dragProgress.value = withTiming(0, { duration: 200 });
         isLeftVisible.value = false;
         isRightVisible.value = false;
-        cancelAnimation(exitTimer);
-        exitTimer.value = 0;
       }
-    })
+    });
+
   const animatedStyle = useAnimatedStyle(() => {
+    const idx = animIndex.value;
     const rotate = interpolate(
       posX.value,
       [-width * 0.35, width * 0.35],
@@ -264,15 +270,20 @@ const SwipeTile = ({
     );
 
     const progress = dragProgress?.value ?? 0;
-    const dragAdjustY = index > 0 ? Math.min(progress, 1) * 7.5 : 0;
-    const dragAdjustScale = index > 0 ? Math.min(progress, 1) * 0.05 : 0;
+    const isTop = idx === 0;
+
+    const dragAdjustY = isTop ? 0 : Math.min(progress, 1) * 7.5;
+    const dragAdjustScale = isTop ? 0 : Math.min(progress, 1) * 0.05;
+
+    const currentPosY = isTop ? posY.value : idx * -7.5;
+    const currentScale = isTop ? posScale.value : 1 - idx * 0.05;
 
     return {
       transform: [
         { translateX: posX.value },
-        { translateY: posY.value + dragAdjustY },
+        { translateY: currentPosY + dragAdjustY },
         { rotate: `${rotate}deg` },
-        { scale: posScale.value + dragAdjustScale },
+        { scale: currentScale + dragAdjustScale },
       ],
       top: CARD_TOP,
       opacity: opacity.value,

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { Platform } from "react-native";
+import * as Sentry from "@sentry/react-native";
 import type { Movie } from "../../types";
 import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import { useDatabase, useMatches } from "./DatabaseContext";
@@ -80,7 +81,8 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
           dispatch(roomActions.setJoinError(true));
           hasJoined.current = false;
         }
-      } catch {
+      } catch (error) {
+        Sentry.captureException(error, { tags: { context: "room_join" } });
         if (joinCancelToken.current !== token) return;
         dispatch(roomActions.setJoinError(true));
         hasJoined.current = false;
@@ -122,7 +124,8 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
         const mappedSuperLiked = superLiked.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
         await socket.timeout(10000).emitWithAck("join-room", roomId, nickname, mappedBlocked, mappedSuperLiked);
         hasJoined.current = true;
-      } catch {
+      } catch (error) {
+        Sentry.captureException(error, { tags: { context: "room_reconnect_join" } });
         attemptTimeout.current = setTimeout(() => onReconnected(_, attempt + 1), 100 * attempt);
       }
     };
@@ -147,7 +150,10 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
           prefetchThumbnail(card.poster_path || card.backdrop_path || "", ThumbnailSizes.poster.xxlarge),
           prefetchThumbnail(card.poster_path || "", ThumbnailSizes.logo.tiny),
         ]),
-      ).catch(console.error);
+      ).catch((error) => {
+        console.error(error);
+        Sentry.captureException(error, { tags: { context: "room_prefetch" } });
+      });
     };
 
     const handleRoomState = (data: any) => {
@@ -207,9 +213,8 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
           // Empty page = end of the movie list — the cards still in the deck are
           // the last ones. Swipe them out; removeMovie flips isFinished on empty.
         })
-        .catch(() => {
-          // Failed prefetch must not end the game — deck still drains, and the
-          // finish path re-fetches from the server if the game continues.
+        .catch((error) => {
+          Sentry.captureException(error, { tags: { context: "room_next_page" } });
         });
     }
   }, [cards.length, socket, roomId, dispatch, isPlaying]);

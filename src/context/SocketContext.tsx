@@ -3,6 +3,7 @@ import * as Updates from "expo-updates";
 import React, { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
 import { shallowEqual, useSelector } from "react-redux";
+import * as Sentry from "@sentry/react-native";
 import socketIOClient, {
   ManagerOptions,
   Socket,
@@ -145,6 +146,7 @@ export const SocketProvider = ({
 
       newSocket.on("connect_error", (error) => {
         console.log("🚨 Socket connection error:", error);
+        Sentry.captureException(error, { tags: { namespace } });
         // socket.io's internal reconnect handles retries.
       });
 
@@ -154,7 +156,9 @@ export const SocketProvider = ({
       });
 
       socketRef.current = newSocket;
-    } catch (error) {}
+    } catch (error) {
+      Sentry.captureException(error, { tags: { namespace } });
+    }
   };
 
   const handleAppStateChange = async (nextAppState: AppStateStatus) => {
@@ -187,7 +191,9 @@ export const SocketProvider = ({
             s.emit("client_cleanup");
           }
           s.disconnect();
-        } catch {}
+        } catch (error) {
+          Sentry.captureException(error, { tags: { namespace } });
+        }
         s.removeAllListeners();
         socketRef.current = null;
       }

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useCallback, useRef, useState, ReactNode } from "react";
+import * as Sentry from "@sentry/react-native";
 import { SocketContext } from "../context/SocketContext";
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import { Movie } from "../../types";
@@ -144,6 +145,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
         const userIsHost = response?.isHost || false;
         setIsHost(userIsHost);
       } catch (error) {
+        Sentry.captureException(error, { tags: { context: "voter_join" } });
         throw error;
       }
     },
@@ -189,8 +191,8 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       if (response?.error) {
         setError(response.error);
       }
-    } catch {
-      // Ack timeout — the session:update event resolves the real state.
+    } catch (error) {
+      Sentry.captureException(error, { tags: { context: "voter_start" } });
     } finally {
       setLoadingInitialContent(false);
     }
@@ -226,7 +228,10 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       lastJoinedSessionId.current !== sessionId
     ) {
       lastJoinedSessionId.current = sessionId;
-      joinSessionInternal(sessionId).catch(console.error);
+      joinSessionInternal(sessionId).catch((error) => {
+        console.error(error);
+        Sentry.captureException(error, { tags: { context: "voter_auto_join" } });
+      });
     }
   }, [socket, sessionId, users.length, isHost]);
 
@@ -243,8 +248,8 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
         // isHost intentionally untouched — the join ack carries no host info.
-      } catch {
-        // Connection may still be settling — a later reconnect retries.
+      } catch (error) {
+        Sentry.captureException(error, { tags: { context: "voter_reconnect" } });
       }
     };
 

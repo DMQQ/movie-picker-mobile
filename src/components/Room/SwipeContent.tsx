@@ -17,59 +17,67 @@ const SwipeContent = memo(() => {
   const originalLength = useRef(cards.length);
   const dragProgress = useSharedValue(0);
   const buttonSwipe = useSharedValue(0);
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
   const busy = useRef(false);
+  const hrefCache = useRef(new Map<number, { pathname: string; params: object }>());
 
   useEffect(() => {
     busy.current = false;
   }, [cards]);
 
   const swipe = useCallback(
-    (dir: number, fn: () => void) => {
+    (dir: number) => {
       if (busy.current || isPending || cards.length === 0) return;
       busy.current = true;
       buttonSwipe.value = dir;
-      startTransition(() => { fn(); });
     },
     [isPending, cards.length, buttonSwipe],
   );
 
   const topCard = cards[0];
+  const visibleCards = cards.slice(0, 3);
 
   return (
     <>
-      {cards.slice(0, 3).map((card, index) => (
-        <SwipeTile
-          href={{
-            pathname: "/movie/type/[type]/[id]",
+      {visibleCards.map((card, index) => {
+        let href = hrefCache.current.get(card.id);
+        if (!href || (href.params as any).type !== mediaType) {
+          href = {
+            pathname: "/movie/type/[type]/[id]" as const,
             params: { id: card.id, type: mediaType, img: card.poster_path },
-          }}
-          length={originalLength.current}
-          key={card.id}
-          card={card}
-          index={index}
-          dragProgress={dragProgress}
-          buttonSwipe={index === 0 ? buttonSwipe : undefined}
-          likeCard={() => likeCard(card, index)}
-          removeCard={() => dislikeCard(card, index)}
-          blockCard={() => blockAndDislikeCard(card, index)}
-          superLikeCard={() => superLikeAndLikeCard(card, index)}
-        />
-      ))}
+          };
+          hrefCache.current.set(card.id, href);
+        }
+        return (
+          <SwipeTile
+            href={href}
+            length={originalLength.current}
+            key={card.id}
+            card={card}
+            index={index}
+            dragProgress={dragProgress}
+            buttonSwipe={index === 0 ? buttonSwipe : undefined}
+            likeCard={() => likeCard(card, index)}
+            removeCard={() => dislikeCard(card, index)}
+            blockCard={() => blockAndDislikeCard(card, index)}
+            superLikeCard={() => superLikeAndLikeCard(card, index)}
+          />
+        );
+      })}
       {topCard && (
         <TabBar
           zIndex={0}
           disabled={isPending}
-          likeCard={() => swipe(1, () => likeCard(topCard, 0))}
-          removeCard={() => swipe(-1, () => dislikeCard(topCard, 0))}
+          likeCard={() => swipe(1)}
+          removeCard={() => swipe(-1)}
           openInfo={() =>
             router.push({
               pathname: "/movie/type/[type]/[id]",
               params: { id: topCard.id, type: mediaType, img: topCard.poster_path },
             })
           }
-          blockCard={() => swipe(-2, () => blockAndDislikeCard(topCard, 0))}
-          superLikeCard={() => swipe(2, () => superLikeAndLikeCard(topCard, 0))}
+          blockCard={() => swipe(-2)}
+          superLikeCard={() => swipe(2)}
           labels={{
             block: t("swipe.block") as string,
             dislike: t("swipe.nope") as string,
