@@ -132,9 +132,11 @@ export default function RandomMovie() {
     };
   });
 
+  const COOLDOWN_MS = 1500;
   const hapticMilestoneRef = useRef(0);
   const prevShakingRef = useRef(false);
   const reshakeActiveRef = useRef(false);
+  const lastRevealTimeRef = useRef(0);
   const isRevealedRef = useRef(isRevealed);
   isRevealedRef.current = isRevealed;
   const revealMovieRef = useRef(revealMovie);
@@ -149,8 +151,10 @@ export default function RandomMovie() {
     if (reshakeActiveRef.current) {
       reshakeActiveRef.current = false;
       revealMovieRef.current();
+      lastRevealTimeRef.current = Date.now();
     } else if (!isRevealedRef.current) {
       revealMovieRef.current();
+      lastRevealTimeRef.current = Date.now();
     }
   }, [scale]);
 
@@ -173,6 +177,7 @@ export default function RandomMovie() {
 
   useEffect(() => {
     if (isShaking && !prevShakingRef.current && isRevealed && !isLoading) {
+      if (Date.now() - lastRevealTimeRef.current < COOLDOWN_MS) return;
       shakeIntensity.value = 0;
       reshakeActiveRef.current = true;
       resetCard();
