@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -8,6 +8,8 @@ import { useLazyGetMovieQuery, useLazyGetRandomSectionQuery } from "../redux/mov
 import { useMediaFilters } from "../components/MediaFilters";
 import { useBlockedMovies } from "./useBlockedMovies";
 import { useSuperLikedMovies } from "./useSuperLikedMovies";
+
+type QueuedMovie = { movie: Movie; details: MovieDetails | null };
 
 interface UseRandomMovieOptions {
   diceRotate: SharedValue<number>;
@@ -29,6 +31,9 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
   const [isRevealed, setIsRevealed] = useState(false);
   const superLikeIconScale = useSharedValue(1);
 
+  const queueRef = useRef<QueuedMovie[]>([]);
+  const prefetchingRef = useRef(false);
+
   const triggerHaptic = useCallback((type: "impact" | "notification") => {
     if (type === "impact") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -48,6 +53,72 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
     triggerHaptic("notification");
   }, [onReveal, triggerHaptic]);
 
+  const searchMovie = useCallback(async (): Promise<QueuedMovie | null> => {
+    try {
+      const filterParams = getFilterParams();
+      const blockedIds = getBlockedIds().map((m) => `${m.type === "tv" ? "t" : "m"}${m.id}`);
+      const excludeIds = [...seenMovies, ...blockedIds];
+      const response = await getRandomSection({ ...filterParams, notMovies: excludeIds.join(",") });
+
+      if (response.data?.results?.length > 0) {
+        const randomIndex = Math.floor(Math.random() * response.data.results.length);
+        const selectedMovie = response.data.results[randomIndex];
+        const type = selectedMovie.type === "tv" ? "tv" : "movie";
+
+        const detailsResponse = await getMovieDetails({ id: selectedMovie.id, type });
+
+        if (selectedMovie.poster_path) {
+          Image.prefetch(`https://image.tmdb.org/t/p/w780${selectedMovie.poster_path}`).catch(() => {});
+        }
+
+        return { movie: selectedMovie, details: detailsResponse.data ?? null };
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }, [getRandomSection, getMovieDetails, getFilterParams, seenMovies, getBlockedIds]);
+
+  const movieRef = useRef(movie);
+  movieRef.current = movie;
+
+  const fillQueue = useCallback(async () => {
+    if (prefetchingRef.current) return;
+    if (queueRef.current.length >= 2) return;
+
+    prefetchingRef.current = true;
+
+    while (queueRef.current.length < 2) {
+      const result = await searchMovie();
+      if (!result) break;
+      const seenId = `${result.movie.type === "tv" ? "t" : "m"}${result.movie.id}`;
+      setSeenMovies((prev) => [...prev, seenId]);
+
+      if (!movieRef.current) {
+        setMovie(result.movie);
+        setDetails(result.details);
+      } else {
+        queueRef.current.push(result);
+      }
+    }
+
+    prefetchingRef.current = false;
+  }, [searchMovie]);
+
+  const revealNext = useCallback(() => {
+    if (queueRef.current.length === 0) return;
+    const next = queueRef.current.shift()!;
+    setMovie(next.movie);
+    setDetails(next.details);
+    revealCard();
+    fillQueue();
+  }, [revealCard, fillQueue]);
+
+  // Prefetch on mount
+  useEffect(() => {
+    fillQueue();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const fetchRandomMovie = useCallback(async () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -56,70 +127,53 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
     if (isRevealed) {
       resetCard();
       setTimeout(async () => {
-        startSearch();
-      }, 400);
-    } else {
-      startSearch();
-    }
-
-    async function startSearch() {
-      setMovie(null);
-      setDetails(null);
-      triggerHaptic("impact");
-
-      diceRotate.value = withRepeat(withTiming(360, { duration: 800, easing: Easing.linear }), -1, false);
-
-      try {
-        const filterParams = getFilterParams();
-        const blockedIds = getBlockedIds().map((m) => `${m.type === "tv" ? "t" : "m"}${m.id}`);
-        const excludeIds = [...seenMovies, ...blockedIds];
-        const response = await getRandomSection({ ...filterParams, notMovies: excludeIds.join(",") });
-
-        if (response.data?.results?.length > 0) {
-          const randomIndex = Math.floor(Math.random() * response.data.results.length);
-          const selectedMovie = response.data.results[randomIndex];
-          const type = selectedMovie.type === "tv" ? "tv" : "movie";
-
-          const detailsResponse = await getMovieDetails({ id: selectedMovie.id, type });
-
-          if (selectedMovie.poster_path) {
-            Image.prefetch(`https://image.tmdb.org/t/p/w780${selectedMovie.poster_path}`).catch(() => {});
-          }
-
+        diceRotate.value = withRepeat(withTiming(360, { duration: 800, easing: Easing.linear }), -1, false);
+        const result = await searchMovie();
+        if (result) {
+          const seenId = `${result.movie.type === "tv" ? "t" : "m"}${result.movie.id}`;
+          setSeenMovies((prev) => [...prev, seenId]);
           setTimeout(() => {
-            setMovie(selectedMovie);
-            if (detailsResponse.data) {
-              setDetails(detailsResponse.data);
-            }
-            const seenId = `${type === "tv" ? "t" : "m"}${selectedMovie.id}`;
-            setSeenMovies((prev) => [...prev, seenId]);
+            setMovie(result.movie);
+            setDetails(result.details);
             diceRotate.value = 0;
             setIsLoading(false);
             revealCard();
+            fillQueue();
           }, 600);
         } else {
           setIsLoading(false);
           diceRotate.value = 0;
         }
-      } catch (error) {
+      }, 400);
+    } else {
+      diceRotate.value = withRepeat(withTiming(360, { duration: 800, easing: Easing.linear }), -1, false);
+      const result = await searchMovie();
+      if (result) {
+        const seenId = `${result.movie.type === "tv" ? "t" : "m"}${result.movie.id}`;
+        setSeenMovies((prev) => [...prev, seenId]);
+        setTimeout(() => {
+          setMovie(result.movie);
+          setDetails(result.details);
+          diceRotate.value = 0;
+          setIsLoading(false);
+          revealCard();
+          fillQueue();
+        }, 600);
+      } else {
         setIsLoading(false);
         diceRotate.value = 0;
       }
     }
-  }, [
-    isLoading,
-    isRevealed,
-    getRandomSection,
-    getMovieDetails,
-    resetCard,
-    revealCard,
-    triggerHaptic,
-    diceRotate,
-    getFilterParams,
-    seenMovies,
-    getBlockedIds,
-    superLikeIconScale,
-  ]);
+  }, [isLoading, isRevealed, resetCard, searchMovie, revealCard, diceRotate, superLikeIconScale, fillQueue]);
+
+  const revealMovie = useCallback(() => {
+    if (isLoading) return;
+    if (isRevealed) {
+      fetchRandomMovie();
+    } else {
+      revealNext();
+    }
+  }, [isLoading, isRevealed, revealNext, fetchRandomMovie]);
 
   const handleViewDetails = useCallback(() => {
     if (!movie) return;
@@ -158,6 +212,8 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
     isRevealed,
     superLikeIconScale,
     fetchRandomMovie,
+    revealMovie,
+    resetCard,
     handleViewDetails,
     handleSuperLike,
     handleBlock,
