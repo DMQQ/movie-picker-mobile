@@ -1,8 +1,10 @@
+import { useIsFocused } from "expo-router";
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import { useCallback, useEffect, useState } from "react";
 
 export function useTutorialSeen(key: string) {
   const [seen, setSeen] = useState<boolean | null>(null);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     AsyncStorage.getItem(key).then(val => setSeen(val === "1"));
@@ -13,5 +15,5 @@ export function useTutorialSeen(key: string) {
     setSeen(true);
   }, [key]);
 
-  return { seen, markSeen };
+  return { seen: isFocused ? seen : null, markSeen };
 }
