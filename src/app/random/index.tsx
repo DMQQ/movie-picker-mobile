@@ -34,6 +34,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const CARD_WIDTH = screenWidth * 0.85;
 const CARD_HEIGHT = screenHeight * 0.6;
 const PRIMARY_COLOR = colors.primary;
+const COOLDOWN_MS = 1000;
 
 export default function RandomMovie() {
   const t = useTranslation();
@@ -49,13 +50,17 @@ export default function RandomMovie() {
     useRandomMovie({
       diceRotate,
       onReveal: () => {
+        isAnimatingSV.value = true;
         shakeIntensity.value = withSequence(
           withTiming(1, { duration: 200 }),
           withTiming(0, { duration: 300, easing: Easing.out(Easing.cubic) }),
         );
         rotateY.value = withSequence(
           withTiming(0, { duration: 0 }),
-          withTiming(180, { duration: 500, easing: Easing.out(Easing.back(1.5)) }),
+          withTiming(180, { duration: 500, easing: Easing.out(Easing.back(1.5)) }, (finished) => {
+            "worklet";
+            if (finished) isAnimatingSV.value = false;
+          }),
         );
         scale.value = withSequence(
           withTiming(0.9, { duration: 100 }),
@@ -63,8 +68,12 @@ export default function RandomMovie() {
         );
       },
       onReset: () => {
+        isAnimatingSV.value = true;
         shakeIntensity.value = withTiming(0, { duration: 200 });
-        rotateY.value = withTiming(0, { duration: 350, easing: Easing.out(Easing.cubic) });
+        rotateY.value = withTiming(0, { duration: 350, easing: Easing.out(Easing.cubic) }, (finished) => {
+          "worklet";
+          if (finished) isAnimatingSV.value = false;
+        });
       },
     });
 
@@ -132,17 +141,18 @@ export default function RandomMovie() {
     };
   });
 
-  const COOLDOWN_MS = 1500;
   const hapticMilestoneRef = useRef(0);
   const prevShakingRef = useRef(false);
   const reshakeActiveRef = useRef(false);
   const lastRevealTimeRef = useRef(0);
+  const isAnimatingSV = useSharedValue(false);
   const isRevealedRef = useRef(isRevealed);
   isRevealedRef.current = isRevealed;
   const revealMovieRef = useRef(revealMovie);
   revealMovieRef.current = revealMovie;
 
   const handleShakeComplete = useCallback(() => {
+    if (isAnimatingSV.value) return;
     scale.value = withSequence(
       withTiming(1.05, { duration: 80 }),
       withSpring(1, { damping: 10, stiffness: 200 }),
@@ -161,6 +171,8 @@ export default function RandomMovie() {
   const { isShaking } = useShakeDetector({
     onShake: handleShakeComplete,
     onShakeProgress: (progress: number) => {
+      if (isAnimatingSV.value) return;
+      if (isRevealedRef.current && Date.now() - lastRevealTimeRef.current < COOLDOWN_MS) return;
       shakeIntensity.value = progress;
       const milestone = Math.floor(progress * 10);
       if (milestone > hapticMilestoneRef.current) {
