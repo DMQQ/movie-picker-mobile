@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { View } from "react-native";
-import Button from "../Button";
+import Chip from "../Chip";
 import useTranslation from "../../service/useTranslation";
-import { radius, spacing } from "../../constants/design";
+import { spacing } from "../../constants/design";
 
 export default function PickCategory({
   setCategory,
@@ -26,20 +26,18 @@ export default function PickCategory({
     <View
       style={{
         flexDirection: "row",
-        paddingVertical: spacing.sm + 2,
-        gap: spacing.screen,
-        marginTop: spacing.screen,
+        flexWrap: "wrap",
+        gap: spacing.sm,
       }}
     >
-      {categories.map((item, index) => (
-        <Button
-          key={index}
+      {categories.map((item) => (
+        <Chip
+          key={item.value}
+          selected={category === item.value}
           onPress={() => setCategory(item.value)}
-          mode={category === item.value ? "contained" : "outlined"}
-          style={{ flex: 1, borderRadius: radius.sm + 2 }}
         >
           {item.label}
-        </Button>
+        </Chip>
       ))}
     </View>
   );

@@ -8,7 +8,8 @@ import {
 } from "react-native";
 import IconButton from "../../components/IconButton";
 import Text from "../../components/Text";
-import { fontWeight, fontSize, radius, spacing } from "../../constants/design";
+import { common, fontWeight, fontSize, radius, spacing } from "../../constants/design";
+import PlatformBlurView from "../../components/PlatformBlurView";
 
 import PrimaryButton from "../../components/PrimaryButton";
 import { ImageBackground } from "react-native";
@@ -66,12 +67,24 @@ export default function Results() {
           backgroundColor: "rgba(0,0,0,0.2)",
         }}
       >
-        <IconButton
-          style={{ position: "absolute", left: 10, top: 10, zIndex: 100 }}
-          icon="chevron-left"
-          onPress={() => router.dismissAll()}
-          size={28}
-        />
+        <PlatformBlurView
+          interactive
+          style={{
+            position: "absolute",
+            left: spacing.sm + 2,
+            top: spacing.sm + 2,
+            zIndex: 100,
+            borderRadius: radius.pill,
+            overflow: "hidden",
+          }}
+        >
+          <IconButton
+            icon="chevron-left"
+            onPress={() => router.dismissAll()}
+            size={28}
+            style={common.iconButton}
+          />
+        </PlatformBlurView>
         <Text
           style={{
             fontSize: 30,

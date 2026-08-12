@@ -377,38 +377,43 @@ export default function SettingsScreen() {
         )}
 
         <Animated.View entering={FadeInDown.delay(180)} style={styles.section}>
-          <SectionLabel icon="tune-variant" title={t("account.sections.preferences")} />
-          <TourAttachStep index={1} fill>
-            <ScoringPreferencesButton />
-          </TourAttachStep>
-          <TourAttachStep index={2} fill>
-          <Pressable
-            style={styles.notifCard}
-            disabled={notificationsEnabled === null}
-            onPress={() => handleToggleNotifications(!notificationsEnabled)}
-          >
-            <View style={styles.notifLeft}>
-              <Icon source="bell-outline" size={16} color={colors.placeholder} />
-              <Text style={styles.notifLabel}>{t("account.pushNotifications")}</Text>
-            </View>
-            <Switch
-              value={notificationsEnabled ?? false}
-              disabled={notificationsEnabled === null}
-              onValueChange={handleToggleNotifications}
-              trackColor={{ false: colors.border, true: colors.primary }}
-              thumbColor={colors.text}
-            />
-          </Pressable>
-          </TourAttachStep>
-          {systemPermission === "denied" ? (
-            <Text style={styles.notifHint}>
-              {t("account.notifications.systemDisabled")}{" "}
-              <Text style={styles.notifHintLink} onPress={() => Linking.openSettings()}>
-                {t("account.notifications.openSettings")}
-              </Text>
-            </Text>
-          ) : null}
-        </Animated.View>
+
+              <SectionLabel icon="tune-variant" title={t("account.sections.preferences")} />
+              <View style={[styles.card,{gap: 10}]}>
+                <TourAttachStep index={1} fill>
+                <ScoringPreferencesButton />
+              </TourAttachStep>
+                <View style={styles.infoRowDivider} />
+              <TourAttachStep index={2} fill>
+              <Pressable
+                style={styles.notifCard}
+                disabled={notificationsEnabled === null}
+                onPress={() => handleToggleNotifications(!notificationsEnabled)}
+              >
+                <View style={styles.notifLeft}>
+                  <Icon source="bell-outline" size={16} color={colors.placeholder} />
+                  <Text style={styles.notifLabel}>{t("account.pushNotifications")}</Text>
+                </View>
+                <Switch
+                  value={notificationsEnabled ?? false}
+                  disabled={notificationsEnabled === null}
+                  onValueChange={handleToggleNotifications}
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.text}
+                />
+              </Pressable>
+              </TourAttachStep>
+              {systemPermission === "denied" ? (
+                <Text style={styles.notifHint}>
+                  {t("account.notifications.systemDisabled")}{" "}
+                  <Text style={styles.notifHintLink} onPress={() => Linking.openSettings()}>
+                    {t("account.notifications.openSettings")}
+                  </Text>
+                </Text>
+              ) : null}
+          </View>
+          </Animated.View>
+
 
         <Animated.View entering={FadeInDown.delay(220)} style={styles.section}>
           <SectionLabel icon="information-outline" title={t("account.sections.app")} />
@@ -546,8 +551,6 @@ const styles = StyleSheet.create({
   notifCard: {
     backgroundColor: colors.surface,
     borderRadius: radius.md + 2,
-    paddingHorizontal: spacing.md + 2,
-    paddingVertical: spacing.sm,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

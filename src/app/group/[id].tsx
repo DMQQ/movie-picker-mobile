@@ -54,15 +54,6 @@ export default function Group() {
 
   const renderFooter = (item: GroupMovie) => (
     <View style={styles.footer}>
-      <View style={styles.footerRow}>
-        <IconButton
-          icon="trash-can-outline"
-          iconColor={colors.error}
-          size={18}
-          onPress={() => handleRemoveItem(item.id)}
-          style={styles.trashButton}
-        />
-      </View>
       {!!item.review && (
         <Text style={styles.footerReview} numberOfLines={1}>{item.review}</Text>
       )}
@@ -79,6 +70,7 @@ export default function Group() {
             params: { type: item.type ?? "movie", id: String(item.id), img: item.imageUrl },
           } as any)
         }
+        onLongPress={() => handleRemoveItem(item.id)}
       >
         <Thumbnail
           path={item.imageUrl}
@@ -131,12 +123,6 @@ export default function Group() {
           iconColor={item.rating != null ? "#FFD700" : colors.placeholder}
           size={16}
           onPress={() => openRateSheet(item)}
-        />
-        <IconButton
-          icon="trash-can-outline"
-          iconColor={colors.error}
-          size={16}
-          onPress={() => handleRemoveItem(item.id)}
         />
       </View>
     </View>
@@ -203,6 +189,7 @@ export default function Group() {
             setShareModalVisible(true);
           }}
           renderItemFooter={(item) => renderFooter(item as GroupMovie)}
+          onLongItemPress={(item) => handleRemoveItem(item.id)}
         />
       )}
 
@@ -246,13 +233,6 @@ const styles = StyleSheet.create({
 
   footer: {
     marginTop: spacing.sm,
-  },
-  footerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  trashButton: {
-    margin: 0,
   },
   footerReview: {
     fontSize: fontSize.xs,

@@ -11,6 +11,7 @@ interface GroupScreenLayoutProps {
   title: string;
   data: any[];
   renderItemFooter?: (item: any) => ReactNode;
+  onLongItemPress?: (item: any) => void;
   subheader?: ReactNode;
   useMovieType?: boolean;
   isLoading?: boolean;
@@ -25,6 +26,7 @@ export default function GroupScreenLayout({
   title,
   data,
   renderItemFooter,
+  onLongItemPress,
   subheader,
   useMovieType,
   isLoading,
@@ -58,6 +60,7 @@ export default function GroupScreenLayout({
             useMovieType={useMovieType}
             subheader={subheader}
             renderItemFooter={renderItemFooter}
+            onLongItemPress={onLongItemPress}
           />
         )}
       </View>

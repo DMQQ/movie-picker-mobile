@@ -1,16 +1,17 @@
 import { Dimensions, FlatList, Image } from "react-native";
 import TouchableRipple from "../TouchableRipple";
 
-import { colors, radius, spacing } from "../../constants/design";
+import { colors, radius } from "../../constants/design";
 import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
 
 const MARGIN = 8;
 const CONTAINER_PADDING = 16;
-const NUM_COLUMNS = 5;
+const NUM_COLUMNS = 6;
 const totalHorizontalPadding = CONTAINER_PADDING * 2;
-const totalMargins = MARGIN * (NUM_COLUMNS - 1);
 const size = Math.floor(
-  (Dimensions.get("screen").width - totalHorizontalPadding - totalMargins) /
+  (Dimensions.get("screen").width -
+    totalHorizontalPadding -
+    MARGIN * NUM_COLUMNS) /
     NUM_COLUMNS,
 );
 
@@ -25,7 +26,7 @@ export default function PickProviders({
 
   return (
     <FlatList
-      style={{ marginTop: spacing.screen, paddingHorizontal: CONTAINER_PADDING }}
+      style={{ flex: 1, paddingHorizontal: CONTAINER_PADDING }}
       contentContainerStyle={{ alignItems: "center" }}
       numColumns={NUM_COLUMNS}
       keyExtractor={(i) => i.provider_id.toString()}

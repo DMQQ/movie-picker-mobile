@@ -43,7 +43,7 @@ export default function PickGenres({
   if (!combined.length) return null;
 
   return (
-    <View style={{ marginVertical: spacing.screen }}>
+    <View>
       <FlatList
         showsHorizontalScrollIndicator={false}
         horizontal

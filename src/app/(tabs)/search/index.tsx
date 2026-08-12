@@ -18,18 +18,16 @@ import {
 
   View, ActivityIndicator} from "react-native";
 
-import { colors, fontWeight, fontSize, radius, spacing } from "../../../constants/design";
+import { colors, fontSize, radius, spacing, typography } from "../../../constants/design";
 import {
   useLazySearchQuery,
   useLazyGetSimilarQuery,
 } from "../../../redux/movie/movieApi";
-import { useAppDispatch, useAppSelector } from "../../../redux/store";
-import { setMediaType } from "../../../redux/mediaFilters/mediaFiltersSlice";
+import { useAppSelector } from "../../../redux/store";
 import { FlashList } from "@shopify/flash-list";
-import Animated, { FadeIn, FadeInUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../../types";
-import FrostedGlass from "../../../components/FrostedGlass";
+import { LinearGradient } from "expo-linear-gradient";
 import Thumbnail, {
   prefetchThumbnail,
   ThumbnailSizes,
@@ -42,6 +40,8 @@ import { type TourRef, type TourStep } from "../../../components/Tour/TourContex
 import TutorialTooltip from "../../../components/TutorialTooltip";
 import { useTutorialSeen } from "../../../hooks/useTutorial";
 import Touch from "../../../components/Touch";
+import SearchSkeleton from "../../../components/Search/SearchSkeleton";
+import ActiveFilters from "../../../components/Search/ActiveFilters";
 import RatingIcons from "../../../components/RatingIcons";
 import Chip from "../../../components/Chip";
 
@@ -58,14 +58,7 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
           img: item.poster_path,
         },
       }}
-
-      style={{
-        width: SCREEN_WIDTH - 30,
-        borderRadius: radius.md + 3,
-        marginTop: spacing.screen,
-        borderWidth: 2,
-        borderColor: colors.border,
-      }}
+      style={styles.cardLink}
       asChild
     >
       <Touch>
@@ -74,53 +67,39 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
             uri: `https://image.tmdb.org/t/p/w780${item.backdrop_path}`,
           }}
           blurRadius={10}
-          style={{ flex: 1 }}
-          imageStyle={{ flex: 1, borderRadius: radius.md + 3 }}
+          style={styles.card}
+          imageStyle={styles.cardImage}
         >
-          <View
-            style={{
-              position: "relative",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: spacing.screen,
-            }}
-          >
-            <Thumbnail
-              path={item.poster_path}
-              container={[styles.cardImage]}
-              size={ThumbnailSizes.poster.xlarge}
-            />
+          <View style={styles.posterWrap}>
+            <Link.AppleZoom>
+              <Thumbnail
+                path={item.poster_path}
+                container={[styles.poster]}
+                size={ThumbnailSizes.poster.xlarge}
+              />
+            </Link.AppleZoom>
           </View>
 
-          <FrostedGlass
-            style={{ flex: 1, padding: spacing.screen, overflow: "hidden", gap: spacing.xs - 2.5 }}
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.75)", "rgba(0,0,0,0.95)"]}
+            style={styles.infoPanel}
           >
-            <Text
-              numberOfLines={2}
-              style={{
-                fontFamily: "Bebas",
-                fontSize: 40,
-              }}
-            >
+            <Text numberOfLines={2} style={styles.title}>
               {item?.title || item?.name}
             </Text>
 
-            <View style={{ flexDirection: "row" }}>
+            <View style={styles.ratingRow}>
               {!!item?.vote_average && (
                 <RatingIcons vote={item.vote_average} size={20} />
               )}
             </View>
 
-            <View style={{ flex: 1, overflow: "hidden" }}>
-              <Text
-                numberOfLines={4}
-                ellipsizeMode="tail"
-                style={{ marginTop: spacing.xs + 1 }}
-              >
+            <View style={styles.overviewWrap}>
+              <Text numberOfLines={4} ellipsizeMode="tail" style={styles.overview}>
                 {item.overview}
               </Text>
             </View>
-          </FrostedGlass>
+          </LinearGradient>
         </ImageBackground>
       </Touch>
     </Link>
@@ -129,12 +108,14 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
 
 const SearchScreen = () => {
   const searchParams = useLocalSearchParams();
-  const dispatch = useAppDispatch();
   const [searchQuery, setSearchQuery] = useState("");
 
   const [allResults, setAllResults] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
+  const [searchPhase, setSearchPhase] = useState<"idle" | "pending" | "done">(
+    "idle",
+  );
 
   const searchTimeout = React.useRef<NodeJS.Timeout>(null);
   const lastReceivedApiPage = useRef(0);
@@ -148,6 +129,12 @@ const SearchScreen = () => {
   ] = useLazyGetSimilarQuery();
   const t = useTranslation();
   const mediaFilters = useAppSelector((s) => s.mediaFilters);
+
+  const activeFilterCount =
+    (mediaFilters.mediaType !== "both" ? 1 : 0) +
+    (mediaFilters.selectedDecade !== "all" ? 1 : 0) +
+    mediaFilters.selectedGenres.length +
+    mediaFilters.selectedProviders.length;
 
   const tourRef = useRef<TourRef>(null);
   const { seen, markSeen } = useTutorialSeen("tutorial_search_seen");
@@ -212,6 +199,7 @@ const SearchScreen = () => {
     setCurrentPage(1);
     setAllResults([]);
     setHasNextPage(false);
+    setSearchPhase("pending");
     lastReceivedApiPage.current = 0;
     isLoadingNextPage.current = false;
 
@@ -234,6 +222,7 @@ const SearchScreen = () => {
       setCurrentPage(1);
       setAllResults([]);
       setHasNextPage(false);
+      setSearchPhase("pending");
       lastReceivedApiPage.current = 0;
       isLoadingNextPage.current = false;
       performSearch(1);
@@ -252,6 +241,7 @@ const SearchScreen = () => {
       setCurrentPage(1);
       setAllResults([]);
       setHasNextPage(false);
+      setSearchPhase("pending");
       lastReceivedApiPage.current = 0;
       isLoadingNextPage.current = false;
       performSearch(1);
@@ -263,6 +253,7 @@ const SearchScreen = () => {
       setCurrentPage(1);
       setAllResults([]);
       setHasNextPage(false);
+      setSearchPhase("pending");
       lastReceivedApiPage.current = 0;
       isLoadingNextPage.current = false;
 
@@ -275,6 +266,7 @@ const SearchScreen = () => {
     if (searchQuery.trim().length === 0 && !searchParams) {
       setAllResults([]);
       setHasNextPage(false);
+      setSearchPhase("idle");
       return;
     }
 
@@ -294,6 +286,7 @@ const SearchScreen = () => {
         if (response.results && page === 1) {
           setAllResults(response.results);
           setHasNextPage(false); // Similar movies usually don't have pagination
+          setSearchPhase("done");
         }
         return;
       }
@@ -329,6 +322,7 @@ const SearchScreen = () => {
 
         if (page === 1) {
           setAllResults(response.results);
+          setSearchPhase("done");
         } else {
           setAllResults((prevResults) => {
             const existingIds = new Set(prevResults.map((item) => item.id));
@@ -344,6 +338,9 @@ const SearchScreen = () => {
 
       isLoadingNextPage.current = false;
     } catch (error) {
+      if (page === 1) {
+        setSearchPhase("done");
+      }
       isLoadingNextPage.current = false;
     }
   };
@@ -366,21 +363,14 @@ const SearchScreen = () => {
     }
   }, [isFetching, isFetchingSimilar, hasNextPage, currentPage]);
 
-  const handleFilterChange = useCallback((type: "movie" | "tv" | "both") => {
-    dispatch(setMediaType(type));
-  }, [dispatch]);
-
   const renderEmptyComponent = useCallback(() => {
-    if ((isLoading || isLoadingSimilar) && currentPage === 1)
-      return (
-        <ActivityIndicator
-          style={[styles.loader, { marginTop: spacing.xxl * 2 + 2 }]}
-          animating={true}
-          color={colors.primary}
-        />
-      );
+    if (
+      (isLoading || isLoadingSimilar || searchPhase === "pending") &&
+      currentPage === 1
+    )
+      return <SearchSkeleton />;
 
-    if (searchQuery.trim().length === 0 && !searchParams) {
+    if (searchPhase === "idle") {
       return (
         <Text style={styles.emptyText} variant="bodyLarge">
           {t("search.begin")}
@@ -388,22 +378,12 @@ const SearchScreen = () => {
       );
     }
 
-    if (!isLoading && (searchQuery.trim().length > 0 || searchParams)) {
-      return (
-        <Text style={styles.emptyText} variant="bodyLarge">
-          {t("search.no-results")} {searchQuery ? `"${searchQuery}"` : ""}
-        </Text>
-      );
-    }
-
-    return null;
-  }, [isLoading, searchQuery, currentPage, searchParams]);
-
-  const categories = [
-    { id: "both", label: t("voter.types.mixed") },
-    { id: "movie", label: t("voter.types.movie") },
-    { id: "tv", label: t("voter.types.series") },
-  ] as { id: "movie" | "tv" | "both"; label: string }[];
+    return (
+      <Text style={styles.emptyText} variant="bodyLarge">
+        {t("search.no-results")} {searchQuery ? `"${searchQuery}"` : ""}
+      </Text>
+    );
+  }, [isLoading, isLoadingSimilar, searchQuery, currentPage, searchPhase]);
 
   const insets = useSafeAreaInsets();
 
@@ -412,7 +392,7 @@ const SearchScreen = () => {
       <Stack.Screen
         options={Platform.select({
           ios: {
-            headertitle: t("search.title", { query: searchQuery }) as string,
+            headerTitle: t("tabBar.search") as string,
             headerStyle: {
               backgroundColor: colors.appBackground,
             },
@@ -432,7 +412,7 @@ const SearchScreen = () => {
         })}
       />
     ),
-    [t, searchQuery],
+    [t],
   );
 
   return (
@@ -469,25 +449,12 @@ const SearchScreen = () => {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.categoriesContainer}
             >
-              {categories.map((category, index) => (
-                <Animated.View
-                  key={category.id}
-                  entering={FadeInUp.delay(50 * (index + 1))}
-                >
-                  <Chip
-                    selected={mediaFilters.mediaType === category.id}
-                    onPress={() => handleFilterChange(category.id)}
-                    showSelectedCheck={false}
-                    style={{ marginRight: spacing.xs }}
-                  >
-                    {category.label}
-                  </Chip>
-                </Animated.View>
-              ))}
+              <ActiveFilters />
             </ScrollView>
           </TourAttachStep>
           <TourAttachStep index={1}>
             <Chip
+              icon="tune-variant"
               onPress={() =>
                 router.push({
                   pathname: "/filters",
@@ -495,7 +462,8 @@ const SearchScreen = () => {
                 })
               }
             >
-              Filters
+              {t("filters.title") as string}
+              {activeFilterCount > 0 ? ` ${activeFilterCount}` : ""}
             </Chip>
           </TourAttachStep>
         </View>
@@ -503,7 +471,7 @@ const SearchScreen = () => {
         <TourAttachStep index={2} fill style={{ flex: 1 }}>
         <FlashList
         style={{ flex: 1 }}
-        contentContainerStyle={{ padding: spacing.screen }}
+        contentContainerStyle={{ paddingHorizontal: spacing.lg }}
         data={allResults}
         renderItem={({ item }) => <MovieCard item={item} />}
         keyExtractor={(item) => {
@@ -560,7 +528,28 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
     minHeight: 100,
   },
+  cardLink: {
+    width: SCREEN_WIDTH - spacing.lg * 2,
+    borderRadius: radius.card,
+    marginTop: spacing.lg,
+    overflow: "hidden",
+    backgroundColor: colors.surface,
+  },
+  card: {
+    flex: 1,
+    overflow: "hidden",
+  },
   cardImage: {
+    flex: 1,
+    borderRadius: radius.card,
+  },
+  posterWrap: {
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: spacing.lg,
+  },
+  poster: {
     borderRadius: radius.sm + 2,
     height: 230,
     width: 170,
@@ -572,6 +561,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  infoPanel: {
+    padding: spacing.lg,
+    gap: spacing.xs - 2.5,
+  },
+  title: {
+    fontFamily: "Bebas",
+    fontSize: 40,
+    letterSpacing: typography.bebasLetterSpacing,
+  },
+  ratingRow: {
+    flexDirection: "row",
+  },
+  overviewWrap: {
+    flex: 1,
+    overflow: "hidden",
+  },
+  overview: {
+    marginTop: spacing.xs + 1,
+    fontSize: fontSize.md,
   },
   loader: {
     marginVertical: spacing.xl,

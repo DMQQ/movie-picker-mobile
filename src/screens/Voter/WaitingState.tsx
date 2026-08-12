@@ -49,8 +49,6 @@ export default function WaitingState({
           : t("voter.home.waiting-initial")
         ).slice(0, 30)}
         onPress={onGoBack}
-        showGradientBackground={false}
-        gradientHeight={50}
       />
 
       <View style={{ padding: spacing.screen, flex: 1 }}>
@@ -117,7 +115,6 @@ export default function WaitingState({
             loading={loadingInitialContent}
             onPress={actions.startSession}
             style={{ marginTop: spacing.screen }}
-            buttonColor={colors.accent}
           >
             {t("voter.home.start")}
           </PrimaryButton>

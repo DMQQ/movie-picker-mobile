@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import Home from "../../screens/Voter/Home";
 import { SocketProvider } from "../../context/SocketContext";
 import { MovieVoterProvider } from "../../service/useVoter";
@@ -13,7 +13,7 @@ export default function VoterPage() {
         flex: 1,
         backgroundColor: colors.appBackground,
         paddingTop: insets.top,
-        paddingBottom: insets.bottom,
+        paddingBottom: Platform.OS === "android" ? insets.bottom : 0,
       }}
     >
       <SocketProvider namespace="/voter">

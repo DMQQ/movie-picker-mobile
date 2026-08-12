@@ -6,6 +6,7 @@ import {
   isNoSavedCredentialFoundResponse,
   isSuccessResponse,
 } from "react-native-nitro-google-signin";
+import { Platform } from "react-native";
 import * as Sentry from "@sentry/react-native";
 import { useGoogleAuthMutation, useAppleAuthMutation } from "../redux/auth/authApi";
 import useTranslation from "../service/useTranslation";
@@ -48,7 +49,7 @@ export function useAuthProviders(onError: (msg: string) => void) {
 
   async function handleGoogleSignIn() {
     try {
-      await GoogleOneTapSignIn.checkPlayServices();
+      if (Platform.OS === "android") await GoogleOneTapSignIn.checkPlayServices();
       let response = await GoogleOneTapSignIn.signIn();
 
       // User dismissed One Tap bottom sheet — not an error
@@ -88,6 +89,8 @@ export function useAuthProviders(onError: (msg: string) => void) {
       // setCredentials dispatched by onQueryStarted → listener middleware persists to SecureStore
       dismissAuthSheet();
     } catch (err: any) {
+      // Stale cached session — clear it so next attempt gets a fresh token
+      await GoogleOneTapSignIn.signOut().catch(() => {});
       Sentry.captureException(err, {
         tags: { provider: "google" },
         extra: {

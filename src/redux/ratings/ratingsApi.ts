@@ -45,7 +45,13 @@ export const ratingsApi = createApi({
     }),
 
     getMyRating: build.query<UserRating | null, { contentType: string; contentId: number }>({
-      query: ({ contentType, contentId }) => `/ratings/${contentType}/${contentId}/me`,
+      queryFn: async ({ contentType, contentId }, _api, _extraOptions, baseQuery) => {
+        const result = await baseQuery(`/ratings/${contentType}/${contentId}/me`);
+        if (result.error && (result.error as { status: unknown }).status === 404) {
+          return { data: null };
+        }
+        return result as { data: UserRating | null };
+      },
       providesTags: (_r, _e, { contentType, contentId }) => [
         { type: "Rating", id: `${contentType}:${contentId}` },
       ],

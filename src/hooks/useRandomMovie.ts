@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Image } from "expo-image";
-import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { SharedValue, useSharedValue, withRepeat, withTiming, withSequence, withSpring, Easing } from "react-native-reanimated";
 import { Movie, MovieDetails } from "../../types";
@@ -175,19 +174,6 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
     }
   }, [isLoading, isRevealed, revealNext, fetchRandomMovie]);
 
-  const handleViewDetails = useCallback(() => {
-    if (!movie) return;
-    const type = movie.type === "tv" ? "tv" : "movie";
-    router.push({
-      pathname: "/movie/type/[type]/[id]",
-      params: {
-        id: movie.id,
-        img: movie.poster_path,
-        type: type,
-      },
-    });
-  }, [movie]);
-
   const handleSuperLike = useCallback(() => {
     if (!movie) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -214,7 +200,6 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
     fetchRandomMovie,
     revealMovie,
     resetCard,
-    handleViewDetails,
     handleSuperLike,
     handleBlock,
     triggerHaptic,

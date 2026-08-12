@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Text from "../../components/Text";
 
 import PrimaryButton from "../../components/PrimaryButton";
@@ -8,7 +8,8 @@ import PickGenres from "../../components/Voter/PickGenres";
 import PickProviders from "../../components/Voter/PickProviders";
 import PageHeading from "../../components/PageHeading";
 import useTranslation from "../../service/useTranslation";
-import { fontSize, spacing } from "../../constants/design";
+import { LinearGradient } from "expo-linear-gradient";
+import { colors, fontSize, spacing } from "../../constants/design";
 
 interface Props {
   sessionSettings: any;
@@ -30,8 +31,8 @@ export default function InitialState({
       exiting={FadeOut.duration(300)}
     >
       <PageHeading
-        gradientHeight={50}
         useSafeArea={false}
+        gradientHeight={80}
         title={t("voter.home.howtotitle")}
         onPress={onGoBack}
       />
@@ -45,14 +46,24 @@ export default function InitialState({
       >
         <View style={{ flex: 1 }}>
           <View style={{ marginTop: spacing.screen }}>
-            <Text style={{ fontSize: fontSize.xl }}>{t("voter.home.howto")}</Text>
+            <Text
+              style={{
+                fontSize: fontSize.md,
+                color: colors.placeholder,
+                lineHeight: 20,
+              }}
+            >
+              {t("voter.home.howto")}
+            </Text>
           </View>
+          <Text style={styles.sectionTitle}>{t("filters.categories")}</Text>
           <PickCategory
             category={sessionSettings.category}
             setCategory={(category: string) => {
               actions.setSessionSettings((p: any) => ({ ...p, category }));
             }}
           />
+          <Text style={styles.sectionTitle}>{t("filters.genres")}</Text>
           <PickGenres
             genres={sessionSettings.genres}
             setGenres={(genres: any) => {
@@ -62,6 +73,7 @@ export default function InitialState({
               }));
             }}
           />
+          <Text style={styles.sectionTitle}>{t("filters.providers")}</Text>
           <PickProviders
             setProviders={(providers: any) => {
               actions.setSessionSettings((p: any) => ({
@@ -73,11 +85,24 @@ export default function InitialState({
           />
         </View>
       </View>
-      <View style={{ padding: spacing.screen, paddingTop: 0 }}>
+      <LinearGradient
+        colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}
+        style={{ padding: spacing.screen, paddingTop: spacing.screen }}
+      >
         <PrimaryButton onPress={actions.createSession}>
           {t("voter.home.create")}
         </PrimaryButton>
-      </View>
+      </LinearGradient>
     </Animated.View>
   );
 }
+
+const styles = StyleSheet.create({
+  sectionTitle: {
+    fontFamily: "Bebas",
+    fontSize: 24,
+    color: colors.text,
+    marginTop: spacing.lg,
+    marginBottom: spacing.sm + 2,
+  },
+});

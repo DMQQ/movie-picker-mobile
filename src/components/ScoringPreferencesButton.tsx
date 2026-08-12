@@ -46,10 +46,10 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.md + 2,
-    padding: spacing.md + 2,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingVertical: 5
   },
   left: { flexDirection: "row", alignItems: "center", gap: spacing.sm + 2 },
   label: { fontSize: fontSize.md, color: colors.text },
