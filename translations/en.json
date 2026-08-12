@@ -347,7 +347,9 @@
     "code": "Code",
     "error-empty": "Please enter a code",
     "error-invalid-prefix": "Code must start with S or V",
-    "error-room-not-found": "Room not found"
+    "error-room-not-found": "Room not found",
+    "permission-denied": "Camera permission is required to scan QR codes. You can grant it in your device settings.",
+    "open-settings": "Open Settings"
   },
   "settings": {
     "hello": "Hello",

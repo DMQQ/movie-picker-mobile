@@ -1,6 +1,6 @@
 import { Link, router, useIsPreview, useLocalSearchParams } from "expo-router";
 import { memo, useCallback, useMemo, useState } from "react";
-import { Dimensions, Pressable, View } from "react-native";
+import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -13,7 +13,8 @@ import Thumbnail, { ThumbnailSizes } from "../../../../components/Thumbnail";
 import Icon from "../../../../components/Icon";
 import Text from "../../../../components/Text";
 import { useGetCombinedMovieDetailsQuery } from "../../../../redux/movie/movieApi";
-import { colors } from "../../../../constants/design";
+import { colors, radius } from "../../../../constants/design";
+import { LinearGradient } from "expo-linear-gradient";
 import useTranslation from "../../../../service/useTranslation";
 
 const { width, height } = Dimensions.get("screen");
@@ -153,8 +154,13 @@ export default function MovieDetailsScreen() {
               priority="high"
             />
           </Link.AppleZoomTarget>
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.45)", colors.appBackground]}
+            style={StyleSheet.absoluteFill}
+            locations={[0.45, 0.78, 1]}
+          />
         </Animated.View>
-        <View style={{ zIndex: 10, position: "relative", width }}>
+        <View style={{ zIndex: 10, position: "relative", width, backgroundColor: colors.appBackground, borderTopLeftRadius: radius.modal, borderTopRightRadius: radius.modal, overflow: "hidden" }}>
           {loading ? (
             <MovieDetailsSkeleton />
           ) : isError && !movie?.id ? (

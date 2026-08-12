@@ -1,11 +1,13 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
 import Text from "../components/Text";
 import TextInput from "../components/TextInput";
+import Button from "../components/Button";
 import { useTheme } from "../hooks/useTheme";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { Platform, StyleSheet, ToastAndroid, Vibration, View } from "react-native";
+import { Linking, Platform, StyleSheet, ToastAndroid, Vibration, View } from "react-native";
 
-import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
+import { colors, common, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import PrimaryButton from "../components/PrimaryButton";
 import PageHeading from "../components/PageHeading";
 import useTranslation from "../service/useTranslation";
@@ -175,20 +177,8 @@ export default function QRScanner() {
     if (manualError) setManualError("");
   };
 
-  if (hasPermission === null) {
-    return (
-      <SafeIOSContainer style={{ flex: 1, backgroundColor: colors.appBackground, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ marginTop: spacing.xxl + 1, fontWeight: fontWeight.bold, fontSize: 25 }}>Requesting camera permission</Text>
-
-        <PrimaryButton onPress={() => request()}>
-          {t("scanner.request-permission")}
-        </PrimaryButton>
-      </SafeIOSContainer>
-    );
-  }
-
   return (
-    <SafeIOSContainer style={{ flex: 1, backgroundColor: colors.appBackground }}>
+    <SafeIOSContainer style={{ flex: 1, backgroundColor: colors.appBackground, marginTop:0 }}>
       <PageHeading
         title={t("scanner.heading")}
         useSafeArea={Platform.OS === "android"}
@@ -201,33 +191,75 @@ export default function QRScanner() {
         tintColor={colors.primary}
       ></PageHeading>
 
-      {hasPermission.granted && isFocused && (
-        <CameraView
-          key={`${hasPermission?.granted}-camera`}
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          facing="back"
-          onBarcodeScanned={isScanned ? undefined : throttle(onBarcodeScanned, 1000)}
-          mute
-        />
+      {hasPermission?.granted && isFocused ? (
+        <>
+          <CameraView
+            key={`${hasPermission?.granted}-camera`}
+            style={[{ flex: 1, justifyContent: "center", alignItems: "center" }, StyleSheet.absoluteFill]}
+            facing="back"
+            onBarcodeScanned={isScanned ? undefined : throttle(onBarcodeScanned, 1000)}
+            mute
+          />
+
+          {/* Scanner Frame with Corner Brackets */}
+          <View style={styles.scannerFrame}>
+            {/* Semi-transparent center */}
+            <View style={styles.scannerBackground} />
+
+            {/* Top Left Corner */}
+            <View style={[styles.corner, styles.cornerTopLeft, { borderColor: theme.colors.primary }]} />
+
+            {/* Top Right Corner */}
+            <View style={[styles.corner, styles.cornerTopRight, { borderColor: theme.colors.primary }]} />
+
+            {/* Bottom Left Corner */}
+            <View style={[styles.corner, styles.cornerBottomLeft, { borderColor: theme.colors.primary }]} />
+
+            {/* Bottom Right Corner */}
+            <View style={[styles.corner, styles.cornerBottomRight, { borderColor: theme.colors.primary }]} />
+          </View>
+        </>
+      ) : hasPermission === null ? (
+        <View style={styles.permissionDenied}>
+          <Text style={styles.permissionTitle}>{t("scanner.heading")}</Text>
+          <Text style={styles.permissionSubtitle}>Requesting camera permission…</Text>
+        </View>
+      ) : (
+        <View style={styles.permissionDenied}>
+          <View style={styles.iconCircle}>
+            <MaterialCommunityIcons name="camera-off-outline" size={40} color={colors.placeholder} />
+          </View>
+          <Text style={styles.permissionTitle}>Camera Access Needed</Text>
+          <Text style={styles.permissionSubtitle}>
+            {t("scanner.permission-denied")}
+          </Text>
+          <View style={styles.permissionButtons}>
+            {hasPermission?.canAskAgain ? (
+              <PrimaryButton onPress={() => request()}>
+                {t("scanner.request-permission")}
+              </PrimaryButton>
+            ) : (
+              <>
+                <Text style={styles.codeHint}>
+                  Or tap the <Text style={styles.codeHintBold}>Code</Text> button above to enter manually
+                </Text>
+                <PrimaryButton onPress={() => setIsManual(true)}>
+                  {t("scanner.join")}
+                </PrimaryButton>
+              </>
+            )}
+            <Button
+              mode="outlined"
+              onPress={() => Linking.openSettings()}
+              style={common.pillButton}
+              contentStyle={common.pillButton}
+              labelStyle={{ fontSize: fontSize.md, fontWeight: fontWeight.semibold, letterSpacing: 0.8 }}
+            >
+              {t("scanner.open-settings")}
+            </Button>
+          </View>
+        </View>
       )}
-
-      {/* Scanner Frame with Corner Brackets */}
-      <View style={styles.scannerFrame}>
-        {/* Semi-transparent center */}
-        <View style={styles.scannerBackground} />
-
-        {/* Top Left Corner */}
-        <View style={[styles.corner, styles.cornerTopLeft, { borderColor: theme.colors.primary }]} />
-
-        {/* Top Right Corner */}
-        <View style={[styles.corner, styles.cornerTopRight, { borderColor: theme.colors.primary }]} />
-
-        {/* Bottom Left Corner */}
-        <View style={[styles.corner, styles.cornerBottomLeft, { borderColor: theme.colors.primary }]} />
-
-        {/* Bottom Right Corner */}
-        <View style={[styles.corner, styles.cornerBottomRight, { borderColor: theme.colors.primary }]} />
-      </View>
 
       <UserInputModal
         visible={scanError}
@@ -339,5 +371,51 @@ const styles = StyleSheet.create({
     fontSize: fontSize.md - 1,
     textAlign: "center",
     marginTop: spacing.sm,
+  },
+  permissionDenied: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: spacing.xxl + spacing.sm,
+    gap: spacing.md,
+  },
+  iconCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(255,255,255,0.06)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: spacing.lg,
+  },
+  permissionTitle: {
+    fontFamily: "Bebas",
+    fontSize: 35,
+    color: colors.text,
+    textAlign: "center",
+    marginBottom: spacing.xs,
+  },
+  permissionSubtitle: {
+    fontSize: fontSize.md,
+    color: colors.placeholder,
+    textAlign: "center",
+    lineHeight: fontSize.md + 6,
+    maxWidth: "80%",
+    marginBottom: spacing.xl,
+  },
+  permissionButtons: {
+    gap: spacing.md,
+    width: "100%",
+    maxWidth: 280,
+  },
+  codeHint: {
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
+    textAlign: "center",
+    lineHeight: fontSize.sm + 6,
+  },
+  codeHintBold: {
+    fontWeight: fontWeight.bold,
+    color: colors.text,
   },
 });

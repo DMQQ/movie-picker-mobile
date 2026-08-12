@@ -335,7 +335,9 @@
     "code": "Código",
     "error-empty": "Por favor ingresa un código",
     "error-invalid-prefix": "El código debe comenzar con S o V",
-    "error-room-not-found": "Sala no encontrada"
+    "error-room-not-found": "Sala no encontrada",
+    "permission-denied": "Se requiere permiso de cámara para escanear códigos QR. Puedes concederlo en la configuración del dispositivo.",
+    "open-settings": "Abrir configuración"
   },
   "settings": {
     "hello": "Hola",

@@ -334,7 +334,7 @@ export default function FortuneWheel() {
           entering={FadeIn.delay(300)}
         >
           <Button
-            mode="text"
+            mode='contained'
             icon="refresh"
             onPress={throttle(() => handleThrowDice(), 200)}
           >

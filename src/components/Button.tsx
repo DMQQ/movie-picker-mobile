@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   button: {
     minWidth: 64,
     borderStyle: "solid",
-    borderRadius: radius.xs,
+    borderRadius: radius.modal,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   icon: {
-    marginLeft: 12,
+    marginLeft: 4,
     marginRight: -4,
   },
   iconReverse: {

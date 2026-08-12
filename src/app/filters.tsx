@@ -231,6 +231,7 @@ export default function FiltersScreen() {
         {showCategories === "true" && (
           <CategoriesSection onSelect={handleCategorySelect} />
         )}
+        <View style={{height: 60}} />
       </ScrollView>
 
       <View style={styles.footer} collapsable={false}>

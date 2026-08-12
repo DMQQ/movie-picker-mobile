@@ -96,7 +96,7 @@ export const FeaturedSectionSkeleton = memo(() => {
           </View>
 
           {/* Overview Block - This fills the gap between thumbnail and buttons */}
-          <View style={{ marginTop: spacing.xl, marginBottom: spacing.xl, gap: spacing.sm + 2 }}>
+          <View style={{ marginTop: spacing.xs + 1, marginBottom: spacing.xl, gap: spacing.sm + 2 }}>
             <Skeleton>
               <View
                 style={{

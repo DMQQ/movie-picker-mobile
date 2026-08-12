@@ -335,7 +335,9 @@
     "code": "Code",
     "error-empty": "Bitte Code eingeben",
     "error-invalid-prefix": "Code muss mit S oder V beginnen",
-    "error-room-not-found": "Raum nicht gefunden"
+    "error-room-not-found": "Raum nicht gefunden",
+    "permission-denied": "Kamera-Berechtigung ist erforderlich, um QR-Codes zu scannen. Du kannst sie in den Geräteeinstellungen erteilen.",
+    "open-settings": "Einstellungen öffnen"
   },
   "settings": {
     "hello": "Hallo",
