@@ -5,6 +5,7 @@ export interface TourStepRenderProps {
   current: number;
   isFirst: boolean;
   isLast: boolean;
+  total: number;
   next: () => void;
   stop: () => void;
 }

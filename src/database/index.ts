@@ -6,6 +6,7 @@ import { migrateDatabase } from "./schema";
 const DATABASE_NAME = "flickmate.db";
 
 let dbInstance: SQLite.SQLiteDatabase | null = null;
+let openPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 let reopenPromise: Promise<void> | null = null;
 
 function ensureSQLiteDirectory(): void {
@@ -111,14 +112,21 @@ function createResilientDatabase(
 }
 
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
-  if (dbInstance) {
-    return dbInstance;
+  if (dbInstance) return dbInstance;
+
+  if (!openPromise) {
+    openPromise = openAndMigrate()
+      .then((db) => {
+        dbInstance = createResilientDatabase(db);
+        return dbInstance;
+      })
+      .catch((err) => {
+        openPromise = null;
+        throw err;
+      });
   }
 
-  const db = await openAndMigrate();
-  dbInstance = createResilientDatabase(db);
-
-  return dbInstance;
+  return openPromise;
 }
 
 export async function closeDatabase(): Promise<void> {

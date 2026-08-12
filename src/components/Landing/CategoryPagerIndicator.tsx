@@ -14,6 +14,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import PlatformBlurView from "../PlatformBlurView";
+import { TourAttachStep } from "../Tour/TourAttachStep";
 
 interface CategoryPagerIndicatorProps {
   chipCategories: Array<{
@@ -25,12 +26,14 @@ interface CategoryPagerIndicatorProps {
   }>;
   selectedChip: string;
   onChipPress: (chipId: string) => void;
+  tourStepIndex?: number;
 }
 
 function CategoryPagerIndicator({
   chipCategories,
   selectedChip,
   onChipPress,
+  tourStepIndex,
 }: CategoryPagerIndicatorProps) {
   const flatListRef = useRef<FlatList>(null);
   const insets = useSafeAreaInsets();
@@ -98,19 +101,29 @@ function CategoryPagerIndicator({
     [onChipPress, selectedChip],
   );
 
+  const chips = (
+    <FlatList
+      ref={flatListRef}
+      data={chipCategories}
+      renderItem={renderCategory}
+      keyExtractor={(item) => item.id}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.scrollContainer}
+      ItemSeparatorComponent={() => <View style={{ width: 8 }} />}
+      onScrollToIndexFailed={() => {}}
+    />
+  );
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <FlatList
-        ref={flatListRef}
-        data={chipCategories}
-        renderItem={renderCategory}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContainer}
-        ItemSeparatorComponent={() => <View style={{ width: 8 }} />}
-        onScrollToIndexFailed={() => {}}
-      />
+      {tourStepIndex !== undefined ? (
+        <TourAttachStep index={tourStepIndex} fill>
+          {chips}
+        </TourAttachStep>
+      ) : (
+        chips
+      )}
     </View>
   );
 }

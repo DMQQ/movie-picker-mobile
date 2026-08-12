@@ -31,7 +31,7 @@ export function useMigrateLibrary() {
     const localGroups: Array<{
       name: string;
       type?: string;
-      movies: Array<{ id: number; type: string; imageUrl: string }>;
+      movies: Array<{ id: number; type: string; imageUrl: string; title?: string }>;
     }> = parseStorage(await AsyncStorage.getItem(STORAGE_KEY)).groups;
 
     const body: MigrateBody = {
@@ -44,6 +44,7 @@ export function useMigrateLibrary() {
           id: Number(m.id),
           type: m.type as "movie" | "tv",
           imageUrl: m.imageUrl,
+          title: m.title ?? "",
         })),
       })),
       interactions: [

@@ -1,16 +1,14 @@
 import * as AppleAuthentication from "expo-apple-authentication";
 import { useNavigation } from "expo-router";
-import * as SecureStore from "expo-secure-store";
 import {
   GoogleOneTapSignIn,
   isCancelledResponse,
   isNoSavedCredentialFoundResponse,
   isSuccessResponse,
 } from "react-native-nitro-google-signin";
+import * as Sentry from "@sentry/react-native";
 import { useGoogleAuthMutation, useAppleAuthMutation } from "../redux/auth/authApi";
 import useTranslation from "../service/useTranslation";
-
-const AUTH_TOKEN_KEY = "user_auth_token";
 
 export function useAuthProviders(onError: (msg: string) => void) {
   const t = useTranslation();
@@ -33,16 +31,17 @@ export function useAuthProviders(onError: (msg: string) => void) {
       });
       const { identityToken, fullName } = credential;
       if (!identityToken) throw new Error("No identity token");
-      const result = await appleAuth({
+      await appleAuth({
         identityToken,
         fullName: fullName
           ? { givenName: fullName.givenName, familyName: fullName.familyName }
           : null,
       }).unwrap();
-      await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
+      // setCredentials dispatched by onQueryStarted → listener middleware persists to SecureStore
       dismissAuthSheet();
     } catch (err: any) {
       if (err.code === "ERR_REQUEST_CANCELED") return;
+      Sentry.captureException(err, { tags: { provider: "apple" } });
       onError(err?.data?.message ?? t("auth.appleSignInFailed"));
     }
   }
@@ -85,11 +84,18 @@ export function useAuthProviders(onError: (msg: string) => void) {
       const { idToken } = response.data;
       if (!idToken) throw new Error("No ID token");
 
-      const result = await googleAuth({ idToken }).unwrap();
-      await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
+      await googleAuth({ idToken }).unwrap();
+      // setCredentials dispatched by onQueryStarted → listener middleware persists to SecureStore
       dismissAuthSheet();
     } catch (err: any) {
-      if (isCancelledResponse(err)) return;
+      Sentry.captureException(err, {
+        tags: { provider: "google" },
+        extra: {
+          message: err?.message,
+          data: err?.data,
+          status: err?.status,
+        },
+      });
       onError(err?.data?.message ?? t("auth.googleSignInFailed"));
     }
   }

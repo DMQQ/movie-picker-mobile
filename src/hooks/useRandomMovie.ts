@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { SharedValue, useSharedValue, withRepeat, withTiming, withSequence, withSpring, Easing } from "react-native-reanimated";
@@ -80,6 +81,10 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
           const type = selectedMovie.type === "tv" ? "tv" : "movie";
 
           const detailsResponse = await getMovieDetails({ id: selectedMovie.id, type });
+
+          if (selectedMovie.poster_path) {
+            Image.prefetch(`https://image.tmdb.org/t/p/w780${selectedMovie.poster_path}`).catch(() => {});
+          }
 
           setTimeout(() => {
             setMovie(selectedMovie);

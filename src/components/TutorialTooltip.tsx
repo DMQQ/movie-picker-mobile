@@ -1,8 +1,15 @@
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View, Dimensions } from "react-native";
 import Text from "./Text";
 
 import Button from "./Button";
-import { colors, fontWeight, fontSize, radius, spacing } from "../constants/design";
+import {
+  colors,
+  fontWeight,
+  fontSize,
+  radius,
+  spacing,
+  typography,
+} from "../constants/design";
 import PrimaryButton from "./PrimaryButton";
 import type { TourStepRenderProps } from "./Tour/TourContext";
 import PlatformBlurView from "./PlatformBlurView";
@@ -10,10 +17,10 @@ import PlatformBlurView from "./PlatformBlurView";
 interface Props extends TourStepRenderProps {
   title: string;
   description: string;
-  total?: number;
 }
 
 const PRIMARY = colors.primary;
+const dimensions = Dimensions.get("window");
 
 export default function TutorialTooltip({
   title,
@@ -22,7 +29,7 @@ export default function TutorialTooltip({
   stop,
   isLast,
   current,
-  total = 5,
+  total,
 }: Props) {
   return (
     <PlatformBlurView
@@ -68,8 +75,8 @@ export default function TutorialTooltip({
 
 const styles = StyleSheet.create({
   container: {
-    width: 300,
-    borderRadius: 32,
+    width: dimensions.width * 0.85,
+    borderRadius: spacing.xl,
     overflow: "hidden",
     borderWidth: 1,
     borderColor: `${PRIMARY}33`,
@@ -86,20 +93,20 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(8,8,8,0.88)",
   },
   inner: {
-    padding: spacing.xxl,
+    padding: spacing.lg,
   },
   title: {
     fontFamily: "Bebas",
-    fontSize: 28,
+    fontSize: fontSize.title,
     color: colors.text,
-    letterSpacing: 1,
+    letterSpacing: typography.bebasLetterSpacing,
     marginBottom: spacing.sm,
   },
   description: {
     color: "rgba(255,255,255,0.62)",
     fontSize: fontSize.md,
-    lineHeight: 21,
-    marginBottom: spacing.xl,
+    lineHeight: fontSize.md + 7,
+    marginBottom: spacing.sm,
   },
   footer: {
     flexDirection: "row",
@@ -112,13 +119,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   dot: {
-    width: 6,
-    height: 6,
+    width: spacing.xs + 2,
+    height: spacing.xs + 2,
     borderRadius: radius.xs - 1,
     backgroundColor: "rgba(255,255,255,0.2)",
   },
   dotActive: {
-    width: 18,
+    width: spacing.lg + 2,
     borderRadius: radius.xs - 1,
     backgroundColor: PRIMARY,
   },

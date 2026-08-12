@@ -29,8 +29,10 @@ export default function useRoomToasts() {
     const currentIds = new Set(users.map(userId));
 
     if (!hasInit.current) {
+      if (users.length === 0) return;
       hasInit.current = true;
       prevIds.current = currentIds;
+      toast.show("You joined the room", { type: "success", duration: 2500 });
       return;
     }
 

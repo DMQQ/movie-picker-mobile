@@ -26,20 +26,20 @@ const SwipeText = memo(
     icon?: React.ReactNode;
     isVisible?: SharedValue<boolean>;
   }) => {
-    const animatedStyle = useAnimatedStyle(() => {
-      if (!props.isVisible) return {};
+    const { isVisible, rotate } = props;
 
-      const isVisible = props.isVisible.value;
+    const animatedStyle = useAnimatedStyle(() => {
+      if (!isVisible) return {};
 
       return {
-        opacity: withTiming(isVisible ? 1 : 0, {
+        opacity: withTiming(isVisible.value ? 1 : 0, {
           duration: 200,
           easing: Easing.out(Easing.cubic),
         }),
         transform: [
-          { rotate: props.rotate },
+          { rotate },
           {
-            scale: withSpring(isVisible ? 1 : 0.8, {
+            scale: withSpring(isVisible.value ? 1 : 0.8, {
               damping: 15,
               stiffness: 200,
             }),

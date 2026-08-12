@@ -27,7 +27,6 @@ import PageHeading from "../../components/PageHeading";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
-import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import * as Haptics from "expo-haptics";
 import MovieResultCard, {
   CARD_HEIGHT,
@@ -44,13 +43,11 @@ export default function FortuneWheel() {
   const params = useLocalSearchParams();
 
   const { getFilterParams, isFilterActive } = useMediaFilters();
-  const { getBlockedIds, blockMovie } = useBlockedMovies();
-  const { superLikeMovie } = useSuperLikedMovies();
+  const { getBlockedIds } = useBlockedMovies();
   const [getMovieDetails] = useLazyGetMovieQuery();
 
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [movieDetails, setMovieDetails] = useState<MovieDetails | null>(null);
-  const [isSuperLiked, setIsSuperLiked] = useState(false);
   const prefetchedDetails = useRef<MovieDetails | null>(null);
 
   const handleWinnerPredicted = useCallback(
@@ -72,8 +69,6 @@ export default function FortuneWheel() {
     async (item: Movie) => {
       setIsSpin(false);
       if (!item?.id) return;
-
-      setIsSuperLiked(false);
 
       let details = prefetchedDetails.current;
       prefetchedDetails.current = null;
@@ -108,13 +103,6 @@ export default function FortuneWheel() {
       },
     });
   }, [selectedMovie]);
-
-  const handleSuperLike = useCallback(() => {
-    if (!selectedMovie) return;
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    superLikeMovie(selectedMovie);
-    setIsSuperLiked(true);
-  }, [selectedMovie, superLikeMovie]);
 
   const [selectedCards, setSelectedCards] = useState<{
     results: Movie[];
@@ -207,16 +195,6 @@ export default function FortuneWheel() {
       .catch(handleError);
   };
 
-  const handleBlock = useCallback(() => {
-    if (!selectedMovie) return;
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    blockMovie(selectedMovie);
-    setSelectedMovie(null);
-    setMovieDetails(null);
-    setIsSuperLiked(false);
-    handleThrowDice();
-  }, [selectedMovie, blockMovie]);
-
   const [isSpin, setIsSpin] = useState(false);
 
   useFocusEffect(
@@ -284,7 +262,6 @@ export default function FortuneWheel() {
         <PlatformBlurView style={fortuneStyles.filterButtonWrapper}>
           <FilterButton
             shouldAutoOpen
-            size={25}
             onApply={handleThrowDice}
             showCategories
           />
@@ -303,9 +280,6 @@ export default function FortuneWheel() {
             movie={selectedMovie}
             details={movieDetails}
             onPress={handleViewDetails}
-            onSuperLike={handleSuperLike}
-            onBlock={handleBlock}
-            isSuperLiked={isSuperLiked}
           />
         </Animated.View>
       )}
@@ -354,6 +328,21 @@ export default function FortuneWheel() {
         </Animated.View>
       )}
 
+      {selectedMovie && (
+        <Animated.View
+          style={[fortuneStyles.bottomActions, { top: height * 0.1 + CARD_HEIGHT + 20 }]}
+          entering={FadeIn.delay(300)}
+        >
+          <Button
+            mode="text"
+            icon="refresh"
+            onPress={throttle(() => handleThrowDice(), 200)}
+          >
+            {t("fortune-wheel.spin-again")}
+          </Button>
+        </Animated.View>
+      )}
+
       {selectedCards?.results?.length > 0 && (
         <FortuneWheelComponent
           ref={wheelRef as any}
@@ -370,28 +359,6 @@ export default function FortuneWheel() {
           items={selectedCards.results as any}
         />
       )}
-
-      {selectedMovie && (
-        <Animated.View
-          style={{
-            position: "absolute",
-            top: height * 0.1 + CARD_HEIGHT + 20,
-            left: 0,
-            right: 0,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          entering={FadeIn.delay(300)}
-        >
-          <Button
-            mode="text"
-            icon="refresh"
-            onPress={throttle(() => handleThrowDice(), 200)}
-          >
-            {t("fortune-wheel.spin-again")}
-          </Button>
-        </Animated.View>
-      )}
     </SafeIOSContainer>
   );
 }
@@ -406,6 +373,11 @@ const fortuneStyles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: "center",
-    zIndex: -1,
+  },
+  bottomActions: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    alignItems: "center",
   },
 });

@@ -3,7 +3,7 @@ import Badge from "../Badge";
 import IconButton from "../IconButton";
 import { StyleSheet, View } from "react-native";
 
-import { colors } from "../../constants/design";
+import { colors, common } from "../../constants/design";
 import { router, useFocusEffect } from "expo-router";
 import { useAppSelector } from "../../redux/store";
 
@@ -20,7 +20,7 @@ interface FilterButtonProps {
 }
 
 export const FilterButton = React.memo(function FilterButton({
-  size = 24,
+  size = 28,
   style,
   onApply,
   showCategories,
@@ -76,6 +76,7 @@ export const FilterButton = React.memo(function FilterButton({
         icon="tune-variant"
         iconColor={isFilterActive ? colors.primary : colors.text}
         size={size}
+        style={common.iconButton}
         onPress={openFilters}
       />
       {activeFilterCount > 0 && (

@@ -9,7 +9,14 @@ import {
   useRef,
   useState,
 } from "react";
-import { Dimensions, LayoutRectangle, Modal, Platform, Pressable, StyleSheet, View } from "react-native";
+import {
+  Dimensions,
+  LayoutRectangle,
+  Modal,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   runOnJS,
@@ -17,11 +24,16 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { TourContext, TourRef, TourStep, TourStableContext } from "./TourContext";
+import {
+  TourContext,
+  TourRef,
+  TourStep,
+  TourStableContext,
+} from "./TourContext";
 
 const { width: W, height: H } = Dimensions.get("screen");
 const SPOTLIGHT_PADDING = 10;
-const OVERLAY_OPACITY = 0.92;
+const OVERLAY_OPACITY = 0.7;
 const ACCENT = colors.primary;
 const FADE_IN_MS = 220;
 const FADE_OUT_MS = 180;
@@ -42,16 +54,20 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
   const [current, setCurrent] = useState<number | undefined>(undefined);
   const [spot, setSpot] = useState<LayoutRectangle>(EMPTY_SPOT);
   const [spotRadius, setSpotRadius] = useState(16);
+  const [tooltipHeight, setTooltipHeight] = useState(220);
   const measurers = useRef<Record<number, () => Promise<LayoutRectangle>>>({});
   const fade = useSharedValue(0);
   // Tracks the latest requested step — if it changes mid-flight, earlier async calls abort
   const pendingStep = useRef<number | undefined>(undefined);
 
-  const measureStep = useCallback(async (index: number): Promise<LayoutRectangle> => {
-    const fn = measurers.current[index];
-    if (!fn) return EMPTY_SPOT;
-    return fn();
-  }, []);
+  const measureStep = useCallback(
+    async (index: number): Promise<LayoutRectangle> => {
+      const fn = measurers.current[index];
+      if (!fn) return EMPTY_SPOT;
+      return fn();
+    },
+    [],
+  );
 
   const showStep = useCallback(
     async (index: number) => {
@@ -68,8 +84,7 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
       const rect = await measureStep(index);
       if (pendingStep.current !== index) return;
 
-      const yOffset = Platform.OS === "android" ? insets.top : 0;
-      setSpot({ ...rect, y: rect.y + yOffset });
+      setSpot(rect);
       setCurrent(index);
       setSpotRadius(step.spotRadius ?? 16);
 
@@ -86,7 +101,7 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
 
   const stop = useCallback(() => {
     pendingStep.current = undefined;
-    fade.value = withTiming(0, { duration: FADE_OUT_MS }, finished => {
+    fade.value = withTiming(0, { duration: FADE_OUT_MS }, (finished) => {
       if (finished) {
         runOnJS(setCurrent)(undefined);
         runOnJS(setSpot)(EMPTY_SPOT);
@@ -102,7 +117,7 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
       return;
     }
     const nextIndex = current + 1;
-    fade.value = withTiming(0, { duration: FADE_OUT_MS }, finished => {
+    fade.value = withTiming(0, { duration: FADE_OUT_MS }, (finished) => {
       if (finished) runOnJS(showStep)(nextIndex);
     });
   }, [current, steps.length, fade, stop, showStep]);
@@ -159,8 +174,12 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
 
   const tooltipTop = useMemo(() => {
     const belowY = spot.y + spot.height + SPOTLIGHT_PADDING + 20;
-    return belowY + 200 < H ? belowY : spot.y - SPOTLIGHT_PADDING - 220;
-  }, [spot]);
+    const top =
+      belowY + tooltipHeight < H
+        ? belowY
+        : spot.y - SPOTLIGHT_PADDING - tooltipHeight;
+    return Math.max(top, insets.top);
+  }, [spot, tooltipHeight, insets.top]);
 
   const ctx = useMemo(
     () => ({ current, spot, steps, next, stop }),
@@ -171,52 +190,60 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
 
   return (
     <TourStableContext.Provider value={stableCtx}>
-    <TourContext.Provider value={ctx}>
-      {children}
+      <TourContext.Provider value={ctx}>
+        {children}
 
-      <Modal
-        visible={current !== undefined}
-        transparent
-        animationType="none"
-        statusBarTranslucent
-        presentationStyle="overFullScreen"
-      >
-        <Animated.View style={[StyleSheet.absoluteFill, overlayStyle]} pointerEvents="box-none">
-          <Canvas style={StyleSheet.absoluteFill} pointerEvents="none">
-            <Path
-              path={skPath}
-              color={`rgba(0,0,0,${OVERLAY_OPACITY})`}
-              style="fill"
-              fillType="evenOdd"
-            />
-            {skBorderPath && (
+        <Modal
+          visible={current !== undefined}
+          transparent
+          animationType="none"
+          statusBarTranslucent
+          presentationStyle="overFullScreen"
+        >
+          <Animated.View
+            style={[StyleSheet.absoluteFill, overlayStyle]}
+            pointerEvents="box-none"
+          >
+            <Canvas style={StyleSheet.absoluteFill} pointerEvents="none">
               <Path
-                path={skBorderPath}
-                color={ACCENT}
-                style="stroke"
-                strokeWidth={2}
+                path={skPath}
+                color={`rgba(0,0,0,${OVERLAY_OPACITY})`}
+                style="fill"
+                fillType="evenOdd"
+              />
+              {skBorderPath && (
+                <Path
+                  path={skBorderPath}
+                  color={ACCENT}
+                  style="stroke"
+                  strokeWidth={2}
+                >
+                  <BlurMask blur={10} style="solid" />
+                </Path>
+              )}
+            </Canvas>
+
+            <Pressable style={StyleSheet.absoluteFill} onPress={next} />
+
+            {current !== undefined && (
+              <View
+                style={[styles.tooltip, { top: tooltipTop }]}
+                pointerEvents="box-none"
+                onLayout={(e) => setTooltipHeight(e.nativeEvent.layout.height)}
               >
-                <BlurMask blur={10} style="solid" />
-              </Path>
+                {steps[current]?.render({
+                  current,
+                  isFirst: current === 0,
+                  isLast: current === steps.length - 1,
+                  total: steps.length,
+                  next,
+                  stop,
+                })}
+              </View>
             )}
-          </Canvas>
-
-          <Pressable style={StyleSheet.absoluteFill} onPress={next} />
-
-          {current !== undefined && (
-            <View style={[styles.tooltip, { top: tooltipTop }]} pointerEvents="box-none">
-              {steps[current]?.render({
-                current,
-                isFirst: current === 0,
-                isLast: current === steps.length - 1,
-                next,
-                stop,
-              })}
-            </View>
-          )}
-        </Animated.View>
-      </Modal>
-    </TourContext.Provider>
+          </Animated.View>
+        </Modal>
+      </TourContext.Provider>
     </TourStableContext.Provider>
   );
 });

@@ -1,22 +1,12 @@
-import {
-  Dimensions,
-  Platform,
-  Pressable,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import Text from "../Text";
-import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
-
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Movie, MovieDetails } from "../../../types";
 import { ThumbnailSizes } from "../Thumbnail";
-import { IconShareButton } from "../ShareTicketButton";
 import GenresView from "../GenresView";
-import useTranslation from "../../service/useTranslation";
+import RatingIcons from "../RatingIcons";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -24,9 +14,6 @@ interface MovieResultCardProps {
   movie: Movie;
   details?: MovieDetails | null;
   onPress?: () => void;
-  onSuperLike?: () => void;
-  onBlock?: () => void;
-  isSuperLiked?: boolean;
   width?: number;
   height?: number;
 }
@@ -38,31 +25,20 @@ export default function MovieResultCard({
   movie,
   details,
   onPress,
-  onSuperLike,
-  onBlock,
-  isSuperLiked = false,
   width = CARD_WIDTH,
   height = CARD_HEIGHT,
 }: MovieResultCardProps) {
-  const t = useTranslation();
   return (
     <View style={[styles.card, { width, height }]}>
       <Pressable onPress={onPress} style={styles.cardPressable}>
         <Image
           placeholder={`https://image.tmdb.org/t/p/${ThumbnailSizes.poster.tiny}${movie.poster_path}`}
-          source={{
-            uri: `https://image.tmdb.org/t/p/w780${movie.poster_path}`,
-          }}
+          source={{ uri: `https://image.tmdb.org/t/p/w780${movie.poster_path}` }}
           style={styles.poster}
           contentFit="cover"
         />
         <LinearGradient
-          colors={[
-            "transparent",
-            "rgba(0,0,0,0.6)",
-            "rgba(0,0,0,0.95)",
-            colors.appBackground,
-          ]}
+          colors={["transparent", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)", colors.appBackground]}
           locations={[0, 0.4, 0.75, 1]}
           style={styles.infoOverlay}
         >
@@ -72,12 +48,7 @@ export default function MovieResultCard({
 
           <View style={styles.ratingRow}>
             {movie.vote_average > 0 && (
-              <>
-                <MaterialCommunityIcons name="star" size={16} color="#fbbf24" />
-                <Text style={styles.ratingText}>
-                  {movie.vote_average.toFixed(1)}
-                </Text>
-              </>
+              <RatingIcons size={13} vote={movie.vote_average} showText />
             )}
             {details?.runtime ? (
               <>
@@ -85,58 +56,19 @@ export default function MovieResultCard({
                 <Text style={styles.ratingText}>{details.runtime} min</Text>
               </>
             ) : null}
-
-            {details?.genres && details.genres.length > 0 && (
-              <>
-                <Text style={styles.dotSeparator}>•</Text>
-                <GenresView genres={details.genres.slice(0, 3)} />
-              </>
-            )}
           </View>
+
+          {details?.genres && details.genres.length > 0 && (
+            <View style={styles.genresRow}>
+              <GenresView genres={details.genres.slice(0, 3)} />
+            </View>
+          )}
 
           {movie?.overview && (
             <Text style={styles.overview} numberOfLines={3}>
               {movie.overview}
             </Text>
           )}
-
-          <View style={styles.bottomRow}>
-            <View style={styles.hintRow}>
-              <Text style={styles.hintText}>
-                {t("fortune-wheel.tap-for-details")}
-              </Text>
-              <MaterialCommunityIcons
-                name="chevron-right"
-                size={14}
-                color="rgba(255,255,255,0.5)"
-              />
-            </View>
-
-            <View style={styles.actionIcons}>
-              {onSuperLike && (
-                <TouchableOpacity
-                  onPress={onSuperLike}
-                  style={styles.iconButton}
-                >
-                  <MaterialCommunityIcons
-                    name={isSuperLiked ? "star" : "star-outline"}
-                    size={24}
-                    color="#fbbf24"
-                  />
-                </TouchableOpacity>
-              )}
-              {onBlock && (
-                <TouchableOpacity onPress={onBlock} style={styles.iconButton}>
-                  <MaterialCommunityIcons
-                    name="block-helper"
-                    size={22}
-                    color="#ef4444"
-                  />
-                </TouchableOpacity>
-              )}
-              <IconShareButton movie={movie} />
-            </View>
-          </View>
         </LinearGradient>
       </Pressable>
     </View>
@@ -147,7 +79,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: radius.lg + 4,
     overflow: "hidden",
-    backgroundColor: "#1e1e1e",
+    backgroundColor: colors.appBackground,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.6,
@@ -167,7 +99,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: spacing.xl,
-    paddingTop: spacing.xl * 4,
+    paddingTop: spacing.xl * 3,
     justifyContent: "flex-end",
   },
   movieTitle: {
@@ -182,8 +114,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm - 2,
-    marginBottom: spacing.sm + 2,
-    flexWrap: "wrap",
+    marginBottom: spacing.sm - 2,
   },
   ratingText: {
     color: "#e2e8f0",
@@ -194,33 +125,17 @@ const styles = StyleSheet.create({
     color: "#64748b",
     fontSize: fontSize.md,
   },
+  genresRow: {
+    flexDirection: "row",
+    flexWrap: "nowrap",
+    overflow: "hidden",
+    gap: spacing.sm - 2,
+    marginBottom: spacing.sm + 2,
+  },
   overview: {
     color: "rgba(255,255,255,0.85)",
     fontSize: fontSize.md - 1,
     lineHeight: 18,
     fontWeight: fontWeight.normal,
-  },
-  bottomRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: spacing.md,
-  },
-  hintRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  hintText: {
-    color: "rgba(255,255,255,0.5)",
-    fontSize: fontSize.sm,
-    fontWeight: fontWeight.medium,
-  },
-  actionIcons: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-  iconButton: {
-    padding: spacing.xs,
   },
 });

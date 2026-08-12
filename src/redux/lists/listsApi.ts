@@ -122,7 +122,7 @@ export interface MigrateBody {
   groups: {
     name: string;
     type: string;
-    movies: { id: number; type: ContentType; imageUrl: string }[];
+    movies: { id: number; type: ContentType; imageUrl: string; title?: string }[];
   }[];
   interactions: {
     movieId: number;

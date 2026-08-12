@@ -4,7 +4,7 @@ import Text from "../../../components/Text";
 import TextInput from "../../../components/TextInput";
 import * as Updates from "expo-updates";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   Linking,
@@ -32,6 +32,11 @@ import AuthAccount from "../../../components/AuthAccount";
 import UnauthAccount from "../../../components/UnauthAccount";
 import ScoringPreferencesButton from "../../../components/ScoringPreferencesButton";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../../constants/design";
+import { TourAttachStep } from "../../../components/Tour/TourAttachStep";
+import { TourProvider } from "../../../components/Tour/TourProvider";
+import { type TourRef, type TourStep } from "../../../components/Tour/TourContext";
+import TutorialTooltip from "../../../components/TutorialTooltip";
+import { useTutorialSeen } from "../../../hooks/useTutorial";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 function SectionLabel({
@@ -187,6 +192,68 @@ export default function SettingsScreen() {
     );
   }
 
+  const tourRef = useRef<TourRef>(null);
+  const { seen, markSeen } = useTutorialSeen("tutorial_account_seen");
+  const scrollRef = useRef<ScrollView>(null);
+
+  const scrollTo = useCallback(
+    (y: number) =>
+      new Promise<void>((resolve) => {
+        scrollRef.current?.scrollTo({ y, animated: true });
+        setTimeout(resolve, 380);
+      }),
+    [],
+  );
+
+  const steps = useMemo<TourStep[]>(
+    () => [
+      {
+        render: (props) => (
+          <TutorialTooltip
+            {...props}
+            title={t("tutorial.account.profile.title") as string}
+            description={t("tutorial.account.profile.description") as string}
+          />
+        ),
+        spotRadius: 16,
+        placement: "bottom",
+      },
+      {
+        render: (props) => (
+          <TutorialTooltip
+            {...props}
+            title={t("tutorial.account.preferences.title") as string}
+            description={t("tutorial.account.preferences.description") as string}
+          />
+        ),
+        spotRadius: 16,
+        placement: "bottom",
+        before: () => scrollTo(360),
+      },
+      {
+        render: (props) => (
+          <TutorialTooltip
+            {...props}
+            title={t("tutorial.account.notifications.title") as string}
+            description={t("tutorial.account.notifications.description") as string}
+          />
+        ),
+        spotRadius: 16,
+        placement: "bottom",
+        before: () => scrollTo(460),
+      },
+    ],
+    [t, scrollTo],
+  );
+
+  useEffect(() => {
+    if (seen === false) {
+      // Wait for the profile block entering animation to settle before measuring
+      const timer = setTimeout(() => tourRef.current?.start(), 700);
+      return () => clearTimeout(timer);
+    }
+  }, [seen]);
+
   useEffect(() => {
     if (!nickname.trim()) return;
     const id = setTimeout(() => {
@@ -228,15 +295,17 @@ export default function SettingsScreen() {
     (Updates.manifest as any)?.createdAt?.toString().split("T")[0] ?? "—";
 
   return (
-    <View style={styles.container}>
-      <PageHeading
-        title={t("settings.heading")}
-        showBackButton={false}
-        showRightIconButton={false}
-        showGradientBackground
-      />
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
+      <View style={styles.container}>
+        <PageHeading
+          title={t("settings.heading")}
+          showBackButton={false}
+          showRightIconButton={false}
+          showGradientBackground
+        />
 
-      <ScrollView
+        <ScrollView
+        ref={scrollRef}
         style={styles.scrollView}
         contentContainerStyle={[
           styles.scrollContent,
@@ -271,13 +340,15 @@ export default function SettingsScreen() {
           </Animated.View>
         )}
 
-        <Animated.View entering={FadeInDown.delay(isFullAccount ? 60 : 140)}>
-          {isFullAccount ? (
-            <AuthAccount user={user} />
-          ) : (
-            <UnauthAccount expired={sessionExpired} />
-          )}
-        </Animated.View>
+        <TourAttachStep index={0} fill>
+          <Animated.View entering={FadeInDown.delay(isFullAccount ? 60 : 140)}>
+            {isFullAccount ? (
+              <AuthAccount user={user} />
+            ) : (
+              <UnauthAccount expired={sessionExpired} />
+            )}
+          </Animated.View>
+        </TourAttachStep>
 
         {isFullAccount && (
           <Animated.View
@@ -307,7 +378,10 @@ export default function SettingsScreen() {
 
         <Animated.View entering={FadeInDown.delay(180)} style={styles.section}>
           <SectionLabel icon="tune-variant" title={t("account.sections.preferences")} />
-          <ScoringPreferencesButton />
+          <TourAttachStep index={1} fill>
+            <ScoringPreferencesButton />
+          </TourAttachStep>
+          <TourAttachStep index={2} fill>
           <Pressable
             style={styles.notifCard}
             disabled={notificationsEnabled === null}
@@ -325,6 +399,7 @@ export default function SettingsScreen() {
               thumbColor={colors.text}
             />
           </Pressable>
+          </TourAttachStep>
           {systemPermission === "denied" ? (
             <Text style={styles.notifHint}>
               {t("account.notifications.systemDisabled")}{" "}
@@ -357,9 +432,16 @@ export default function SettingsScreen() {
             />
             <Text
               style={styles.devButton}
-              onPress={async () => {
-                await AsyncStorage.removeItem("tutorial_home_seen");
-                await AsyncStorage.removeItem("tutorial_swipe_seen");
+              onPress={() => {
+                const tutorialKeys = [
+                  "tutorial_home_seen",
+                  "tutorial_swipe_seen",
+                  "tutorial_discover_seen",
+                  "tutorial_favourites_seen",
+                  "tutorial_search_seen",
+                  "tutorial_account_seen",
+                ];
+                tutorialKeys.forEach((key) => AsyncStorage.removeItem(key));
               }}
             >
               Reset tutorial
@@ -385,8 +467,9 @@ export default function SettingsScreen() {
             </Text>
           </Animated.View>
         )}
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </TourProvider>
   );
 }
 

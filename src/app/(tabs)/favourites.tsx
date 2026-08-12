@@ -2,7 +2,7 @@ import { Platform, FlatList, View } from "react-native";
 import TextInput from "../../components/TextInput";
 
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import PageHeading from "../../components/PageHeading";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import UserInputModal from "../../components/UserInputModal";
@@ -16,6 +16,11 @@ import { useMigrationPrompt } from "../../hooks/useMigrationPrompt";
 import { listsApi } from "../../redux/lists/listsApi";
 import useTranslation from "../../service/useTranslation";
 import { spacing } from "../../constants/design";
+import { TourAttachStep } from "../../components/Tour/TourAttachStep";
+import { TourProvider } from "../../components/Tour/TourProvider";
+import { type TourRef, type TourStep } from "../../components/Tour/TourContext";
+import TutorialTooltip from "../../components/TutorialTooltip";
+import { useTutorialSeen } from "../../hooks/useTutorial";
 
 export default function Favourites() {
   const params = useLocalSearchParams();
@@ -30,6 +35,65 @@ export default function Favourites() {
   const [isModalVisible, setModalVisible] = useState(false);
   const [text, setText] = useState("");
   const listRef = useRef<FlatList>(null);
+
+  const tourRef = useRef<TourRef>(null);
+  const { seen, markSeen } = useTutorialSeen("tutorial_favourites_seen");
+
+  const scrollToEnd = useCallback(
+    () =>
+      new Promise<void>((resolve) => {
+        listRef.current?.scrollToEnd({ animated: true });
+        setTimeout(resolve, 400);
+      }),
+    [],
+  );
+
+  const steps = useMemo<TourStep[]>(
+    () => [
+      {
+        render: (props) => (
+          <TutorialTooltip
+            {...props}
+            title={t("tutorial.favourites.add.title") as string}
+            description={t("tutorial.favourites.add.description") as string}
+          />
+        ),
+        spotRadius: 16,
+        placement: "bottom",
+      },
+      {
+        render: (props) => (
+          <TutorialTooltip
+            {...props}
+            title={t("tutorial.favourites.list.title") as string}
+            description={t("tutorial.favourites.list.description") as string}
+          />
+        ),
+        spotRadius: 16,
+        placement: "bottom",
+      },
+      {
+        render: (props) => (
+          <TutorialTooltip
+            {...props}
+            title={t("tutorial.favourites.superLiked.title") as string}
+            description={t("tutorial.favourites.superLiked.description") as string}
+          />
+        ),
+        spotRadius: 16,
+        placement: "bottom",
+        before: () => scrollToEnd(),
+      },
+    ],
+    [t, scrollToEnd],
+  );
+
+  useEffect(() => {
+    if (seen === false) {
+      const timer = setTimeout(() => tourRef.current?.start(), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [seen]);
 
   useEffect(() => {
     dispatch(loadFavorites());
@@ -66,76 +130,82 @@ export default function Favourites() {
   };
 
   return (
-    <SafeIOSContainer style={{ paddingBottom: 0 }}>
-      <PageHeading
-        title={t("favourites.title")}
-        showBackButton={false}
-        showRightIconButton
-        rightIconName="plus"
-        onRightIconPress={() => setModalVisible(true)}
-        useSafeArea
-        extraScreenPaddingTop={Platform.OS === "android" ? 0 : 0}
-      />
-
-      <View
-        style={{
-          paddingHorizontal: spacing.screen,
-          flex: 1,
-        }}
-      >
-        {isFullAccount ? (
-          <RemoteFavouritesList
-            listRef={listRef}
-            listHeader={
-              migration.showBanner ? (
-                <MigrationBanner
-                  counts={migration.counts}
-                  isMigrating={migration.isMigrating}
-                  onSync={migration.migrate}
-                  onDismiss={migration.dismissBanner}
-                />
-              ) : undefined
-            }
-          />
-        ) : (
-          <LocalFavouritesList listRef={listRef} />
-        )}
-      </View>
-
-      <UserInputModal
-        visible={isModalVisible}
-        onDismiss={closeCreateModal}
-        title={t("favourites.create.title")}
-        dismissable
-        actionsLayout="horizontal"
-        actions={[
-          {
-            label: t("favourites.create.cancel"),
-            onPress: closeCreateModal,
-            mode: "outlined",
-          },
-          {
-            label: t("favourites.create.create"),
-            onPress: handleCreateGroup,
-            mode: "contained",
-          },
-        ]}
-      >
-        <TextInput
-          onSubmitEditing={handleCreateGroup}
-          value={text}
-          onChangeText={setText}
-          label={t("favourites.create.name")}
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
+      <SafeIOSContainer style={{ paddingBottom: 0 }}>
+        <PageHeading
+          title={t("favourites.title")}
+          showBackButton={false}
+          showRightIconButton
+          rightIconName="plus"
+          onRightIconPress={() => setModalVisible(true)}
+          useSafeArea
+          extraScreenPaddingTop={Platform.OS === "android" ? 0 : 0}
+          rightIconTourIndex={0}
         />
-      </UserInputModal>
 
-      <MigrationModal
-        visible={migration.showModal}
-        counts={migration.counts}
-        isMigrating={migration.isMigrating}
-        onSync={migration.migrate}
-        onDismiss={migration.dismissModal}
-      />
-    </SafeIOSContainer>
+        <TourAttachStep index={1} fill style={{ flex: 1 }}>
+          <View
+            style={{
+              paddingHorizontal: spacing.screen,
+              flex: 1,
+            }}
+          >
+            {isFullAccount ? (
+              <RemoteFavouritesList
+                listRef={listRef}
+                tourStepIndex={2}
+                listHeader={
+                  migration.showBanner ? (
+                    <MigrationBanner
+                      counts={migration.counts}
+                      isMigrating={migration.isMigrating}
+                      onSync={migration.migrate}
+                      onDismiss={migration.dismissBanner}
+                    />
+                  ) : undefined
+                }
+              />
+            ) : (
+              <LocalFavouritesList listRef={listRef} tourStepIndex={2} />
+            )}
+          </View>
+        </TourAttachStep>
+
+        <UserInputModal
+          visible={isModalVisible}
+          onDismiss={closeCreateModal}
+          title={t("favourites.create.title")}
+          dismissable
+          actionsLayout="horizontal"
+          actions={[
+            {
+              label: t("favourites.create.cancel"),
+              onPress: closeCreateModal,
+              mode: "outlined",
+            },
+            {
+              label: t("favourites.create.create"),
+              onPress: handleCreateGroup,
+              mode: "contained",
+            },
+          ]}
+        >
+          <TextInput
+            onSubmitEditing={handleCreateGroup}
+            value={text}
+            onChangeText={setText}
+            label={t("favourites.create.name")}
+          />
+        </UserInputModal>
+
+        <MigrationModal
+          visible={migration.showModal}
+          counts={migration.counts}
+          isMigrating={migration.isMigrating}
+          onSync={migration.migrate}
+          onDismiss={migration.dismissModal}
+        />
+      </SafeIOSContainer>
+    </TourProvider>
   );
 }

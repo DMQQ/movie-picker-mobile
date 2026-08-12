@@ -4,7 +4,8 @@ import Text from "./Text";
 import { colors, common, fontWeight, fontSize, radius, spacing} from "../constants/design";
 import * as Haptic from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, ReactElement } from "react";
+import { TourAttachStep } from "./Tour/TourAttachStep";
 import {
   Platform,
   Pressable,
@@ -38,6 +39,7 @@ interface RightIconButtonProps extends PageHeadingProps {
   rightIconTitle?: string;
   tintColor?: string;
   rightIconColor?: string;
+  rightIconTourIndex?: number;
 }
 
 export default function PageHeading({
@@ -56,9 +58,17 @@ export default function PageHeading({
   rightIconColor,
   onRightIconPress,
   extraScreenPaddingTop = 0,
+  rightIconTourIndex,
 }: RightIconButtonProps) {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+
+  const wrapRightIcon = (node: ReactElement) =>
+    rightIconTourIndex !== undefined ? (
+      <TourAttachStep index={rightIconTourIndex}>{node}</TourAttachStep>
+    ) : (
+      node
+    );
 
   return (
     <>
@@ -116,61 +126,63 @@ export default function PageHeading({
           {children
             ? children
             : showRightIconButton &&
-              (rightIconTitle ? (
-                <PlatformBlurView
-                  interactive
-                  tintColor={tintColor}
-                  style={styles.buttonContainer}
-                >
-                  <Pressable
-                    onPress={() => {
-                      if (onRightIconPress) onRightIconPress();
-                      if (Platform.OS === "ios") {
-                        Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
-                      }
-                    }}
-                    style={styles.rightButtonWithText}
+              wrapRightIcon(
+                rightIconTitle ? (
+                  <PlatformBlurView
+                    interactive
+                    tintColor={tintColor}
+                    style={styles.buttonContainer}
                   >
-                    {rightIconName && (
-                      <IconButton
-                        icon={rightIconName as any}
-                        size={22}
-                        iconColor={colors.text}
-                      />
-                    )}
-                    <Text
-                      style={[
-                        styles.rightText,
-                        !rightIconName && {
-                          paddingHorizontal: spacing.screen,
-                          paddingVertical: spacing.sm + 2,
-                        },
-                      ]}
+                    <Pressable
+                      onPress={() => {
+                        if (onRightIconPress) onRightIconPress();
+                        if (Platform.OS === "ios") {
+                          Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+                        }
+                      }}
+                      style={styles.rightButtonWithText}
                     >
-                      {rightIconTitle}
-                    </Text>
-                  </Pressable>
-                </PlatformBlurView>
-              ) : (
-                <PlatformBlurView
-                  interactive
-                  tintColor={tintColor}
-                  style={styles.buttonContainer}
-                >
-                  <IconButton
-                    icon={rightIconName as any}
-                    size={28}
-                    style={common.iconButton}
-                    onPress={() => {
-                      if (onRightIconPress) onRightIconPress();
-                      if (Platform.OS === "ios") {
-                        Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
-                      }
-                    }}
-                    iconColor={rightIconColor ?? colors.text}
-                  />
-                </PlatformBlurView>
-              ))}
+                      {rightIconName && (
+                        <IconButton
+                          icon={rightIconName as any}
+                          size={22}
+                          iconColor={colors.text}
+                        />
+                      )}
+                      <Text
+                        style={[
+                          styles.rightText,
+                          !rightIconName && {
+                            paddingHorizontal: spacing.screen,
+                            paddingVertical: spacing.sm + 2,
+                          },
+                        ]}
+                      >
+                        {rightIconTitle}
+                      </Text>
+                    </Pressable>
+                  </PlatformBlurView>
+                ) : (
+                  <PlatformBlurView
+                    interactive
+                    tintColor={tintColor}
+                    style={styles.buttonContainer}
+                  >
+                    <IconButton
+                      icon={rightIconName as any}
+                      size={28}
+                      style={common.iconButton}
+                      onPress={() => {
+                        if (onRightIconPress) onRightIconPress();
+                        if (Platform.OS === "ios") {
+                          Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+                        }
+                      }}
+                      iconColor={rightIconColor ?? colors.text}
+                    />
+                  </PlatformBlurView>
+                ),
+              )}
         </View>
       </View>
     </>

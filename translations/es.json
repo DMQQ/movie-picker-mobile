@@ -470,7 +470,7 @@
       "revealing": "Buscando...",
       "try-again": "Intentar de nuevo",
       "view-details": "Detalles",
-      "hint": "Toca para descubrir tu próxima película"
+      "hint": "Toca o agita para descubrir tu próxima película"
     },
     "empty": "Aún no hay juegos"
   },
@@ -781,6 +781,58 @@
     "join": {
       "title": "Unirse a una sala",
       "description": "¿Ya tienes un código de sala? Toca aquí para escanear el código QR y unirte al juego de un amigo al instante."
+    },
+    "discover": {
+      "chips": {
+        "title": "Explorar categorías",
+        "description": "Toca las fichas para cambiar de categoría: películas, series, géneros y plataformas."
+      },
+      "grid": {
+        "title": "Películas y series",
+        "description": "Toca un título para ver detalles, tráileres, reparto y tus listas. Sigue desplazándote para ver más."
+      }
+    },
+    "favourites": {
+      "add": {
+        "title": "Crear una lista",
+        "description": "Toca + para crear tu propia lista. Favoritos, ver más tarde y vistos están aquí por defecto."
+      },
+      "list": {
+        "title": "Tus listas",
+        "description": "Toca una lista para abrirla y gestionar las películas de su interior."
+      },
+      "superLiked": {
+        "title": "Películas súper gustadas",
+        "description": "Tus mejores elecciones al deslizar: películas súper gustadas. Toca para abrir la lista completa."
+      }
+    },
+    "search": {
+      "chips": {
+        "title": "Explorar por tipo",
+        "description": "Cambia entre películas, series y personas. También puedes buscar por título."
+      },
+      "filters": {
+        "title": "Filtros",
+        "description": "Acota los resultados por año, puntuación y género."
+      },
+      "results": {
+        "title": "Resultados",
+        "description": "Toca un resultado para abrir detalles, tráileres y reparto."
+      }
+    },
+    "account": {
+      "profile": {
+        "title": "Perfil y ajustes",
+        "description": "Gestiona aquí tu cuenta, historial de juegos y preferencias de la app."
+      },
+      "preferences": {
+        "title": "Preferencias de puntuación",
+        "description": "Ajusta cuánto importan el interés, el estado de ánimo y la originalidad en tus recomendaciones."
+      },
+      "notifications": {
+        "title": "Notificaciones",
+        "description": "Controla las notificaciones push de invitaciones, coincidencias y novedades de juegos."
+      }
     }
   },
   "swipe_tutorial": {

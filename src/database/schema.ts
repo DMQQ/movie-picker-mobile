@@ -48,7 +48,12 @@ async function getSchemaVersion(db: SQLiteDatabase): Promise<number> {
     );
     return result?.version ?? 0;
   } catch (error) {
-    Sentry.captureException(error, { tags: { context: "db_getSchemaVersion" } });
+    // Expected on fresh installs or pre-migration databases — table simply
+    // doesn't exist yet. Return 0 so migrateDatabase runs all migrations.
+    const msg = (error as Error)?.message ?? "";
+    if (!msg.includes("no such table: schema_version")) {
+      Sentry.captureException(error, { tags: { context: "db_getSchemaVersion" } });
+    }
     return 0;
   }
 }
@@ -66,11 +71,14 @@ async function setSchemaVersion(
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   const currentVersion = await getSchemaVersion(db);
 
+  console.log(`[DB] Schema version: ${currentVersion}, current: ${CURRENT_SCHEMA_VERSION}`);
+
   if (currentVersion >= CURRENT_SCHEMA_VERSION) {
     await ensureTablesExist(db);
     return;
   }
 
+  console.log(`[DB] Running migrations ${currentVersion + 1} → ${CURRENT_SCHEMA_VERSION}`);
   for (
     let version = currentVersion + 1;
     version <= CURRENT_SCHEMA_VERSION;

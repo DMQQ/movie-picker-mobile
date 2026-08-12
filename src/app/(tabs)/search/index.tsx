@@ -36,6 +36,11 @@ import Thumbnail, {
 } from "../../../components/Thumbnail";
 import useTranslation from "../../../service/useTranslation";
 import { isLiquidGlassSupported } from "@callstack/liquid-glass";
+import { TourAttachStep } from "../../../components/Tour/TourAttachStep";
+import { TourProvider } from "../../../components/Tour/TourProvider";
+import { type TourRef, type TourStep } from "../../../components/Tour/TourContext";
+import TutorialTooltip from "../../../components/TutorialTooltip";
+import { useTutorialSeen } from "../../../hooks/useTutorial";
 import Touch from "../../../components/Touch";
 import RatingIcons from "../../../components/RatingIcons";
 import Chip from "../../../components/Chip";
@@ -143,6 +148,55 @@ const SearchScreen = () => {
   ] = useLazyGetSimilarQuery();
   const t = useTranslation();
   const mediaFilters = useAppSelector((s) => s.mediaFilters);
+
+  const tourRef = useRef<TourRef>(null);
+  const { seen, markSeen } = useTutorialSeen("tutorial_search_seen");
+
+  const steps = useMemo<TourStep[]>(
+    () => [
+      {
+        render: (props) => (
+          <TutorialTooltip
+            {...props}
+            title={t("tutorial.search.chips.title") as string}
+            description={t("tutorial.search.chips.description") as string}
+          />
+        ),
+        spotRadius: 16,
+        placement: "bottom",
+      },
+      {
+        render: (props) => (
+          <TutorialTooltip
+            {...props}
+            title={t("tutorial.search.filters.title") as string}
+            description={t("tutorial.search.filters.description") as string}
+          />
+        ),
+        spotRadius: 16,
+        placement: "bottom",
+      },
+      {
+        render: (props) => (
+          <TutorialTooltip
+            {...props}
+            title={t("tutorial.search.results.title") as string}
+            description={t("tutorial.search.results.description") as string}
+          />
+        ),
+        spotRadius: 16,
+        placement: "bottom",
+      },
+    ],
+    [t],
+  );
+
+  useEffect(() => {
+    if (seen === false) {
+      const timer = setTimeout(() => tourRef.current?.start(), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [seen]);
 
   useEffect(() => {
     if (searchParams?.initialQuery && !searchQuery) {
@@ -382,66 +436,73 @@ const SearchScreen = () => {
   );
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      {memoStack}
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        {memoStack}
 
-      {Platform.OS !== "ios" && (
-        <View style={styles.searchContainer}>
-          <SearchField
-            placeholder={t("search.search-placeholder") as string}
-            onChangeText={setSearchQuery}
-            value={searchQuery}
-            style={styles.searchbar}
-            inputStyle={styles.searchInput}
-          />
-        </View>
-      )}
+        {Platform.OS !== "ios" && (
+          <View style={styles.searchContainer}>
+            <SearchField
+              placeholder={t("search.search-placeholder") as string}
+              onChangeText={setSearchQuery}
+              value={searchQuery}
+              style={styles.searchbar}
+              inputStyle={styles.searchInput}
+            />
+          </View>
+        )}
 
-      <View
-        style={[
-          styles.chipContainer,
-          {
-            marginTop:
-              Platform.OS === "ios"
-                ? insets.top + (isLiquidGlassSupported ? 0 : 30)
-                : 0,
-          },
-        ]}
-      >
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoriesContainer}
+        <View
+          style={[
+            styles.chipContainer,
+            {
+              marginTop:
+                Platform.OS === "ios"
+                  ? insets.top + (isLiquidGlassSupported ? 0 : 30)
+                  : 0,
+            },
+          ]}
         >
-          {categories.map((category, index) => (
-            <Animated.View
-              key={category.id}
-              entering={FadeInUp.delay(50 * (index + 1))}
+          <TourAttachStep index={0} fill style={{ flex: 1 }}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.categoriesContainer}
             >
-              <Chip
-                selected={mediaFilters.mediaType === category.id}
-                onPress={() => handleFilterChange(category.id)}
-                showSelectedCheck={false}
-                style={{ marginRight: spacing.xs }}
-              >
-                {category.label}
-              </Chip>
-            </Animated.View>
-          ))}
-        </ScrollView>
-        <Chip
-          onPress={() =>
-            router.push({
-              pathname: "/filters",
-              params: { presentation: "formSheet" },
-            })
-          }
-        >
-          Filters
-        </Chip>
-      </View>
+              {categories.map((category, index) => (
+                <Animated.View
+                  key={category.id}
+                  entering={FadeInUp.delay(50 * (index + 1))}
+                >
+                  <Chip
+                    selected={mediaFilters.mediaType === category.id}
+                    onPress={() => handleFilterChange(category.id)}
+                    showSelectedCheck={false}
+                    style={{ marginRight: spacing.xs }}
+                  >
+                    {category.label}
+                  </Chip>
+                </Animated.View>
+              ))}
+            </ScrollView>
+          </TourAttachStep>
+          <TourAttachStep index={1}>
+            <Chip
+              onPress={() =>
+                router.push({
+                  pathname: "/filters",
+                  params: { presentation: "formSheet" },
+                })
+              }
+            >
+              Filters
+            </Chip>
+          </TourAttachStep>
+        </View>
 
-      <FlashList
+        <TourAttachStep index={2} fill style={{ flex: 1 }}>
+        <FlashList
+        style={{ flex: 1 }}
         contentContainerStyle={{ padding: spacing.screen }}
         data={allResults}
         renderItem={({ item }) => <MovieCard item={item} />}
@@ -463,7 +524,9 @@ const SearchScreen = () => {
         }
         ListEmptyComponent={renderEmptyComponent}
       />
-    </View>
+        </TourAttachStep>
+      </View>
+    </TourProvider>
   );
 };
 

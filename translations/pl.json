@@ -470,7 +470,7 @@
       "revealing": "Szukam...",
       "try-again": "Losuj Ponownie",
       "view-details": "Szczegóły",
-      "hint": "Dotknij aby odkryć swój następny film"
+      "hint": "Dotknij lub potrząśnij aby odkryć swój następny film"
     },
     "empty": "Brak gier"
   },
@@ -780,6 +780,58 @@
     "join": {
       "title": "Dołącz do pokoju",
       "description": "Masz już kod pokoju? Dotknij tutaj, aby zeskanować kod QR i natychmiast dołączyć do gry znajomego."
+    },
+    "discover": {
+      "chips": {
+        "title": "Przeglądaj kategorie",
+        "description": "Dotknij pól, aby przełączać kategorie — filmy, seriale, gatunki i platformy."
+      },
+      "grid": {
+        "title": "Filmy i seriale",
+        "description": "Dotknij tytułu, aby zobaczyć szczegóły, zwiastuny, obsadę i swoje listy. Przewiń, aby zobaczyć więcej."
+      }
+    },
+    "favourites": {
+      "add": {
+        "title": "Utwórz listę",
+        "description": "Dotknij +, aby utworzyć własną listę. Ulubione, obejrzane i do obejrzenia są tutaj domyślnie."
+      },
+      "list": {
+        "title": "Twoje listy",
+        "description": "Dotknij listy, aby ją otworzyć i zarządzać filmami w środku."
+      },
+      "superLiked": {
+        "title": "Super polubione",
+        "description": "Twoje najlepsze typy z przeglądania — filmy, które super polubiłeś. Dotknij, aby otworzyć pełną listę."
+      }
+    },
+    "search": {
+      "chips": {
+        "title": "Przeglądaj według typu",
+        "description": "Przełączaj między filmami, serialami i osobami. Możesz też szukać po tytule."
+      },
+      "filters": {
+        "title": "Filtry",
+        "description": "Zawęź wyniki według roku, oceny i gatunku."
+      },
+      "results": {
+        "title": "Wyniki",
+        "description": "Dotknij wyniku, aby otworzyć szczegóły, zwiastuny i obsadę."
+      }
+    },
+    "account": {
+      "profile": {
+        "title": "Profil i ustawienia",
+        "description": "Zarządzaj tutaj swoim kontem, historią gier i preferencjami aplikacji."
+      },
+      "preferences": {
+        "title": "Preferencje oceniania",
+        "description": "Dopasuj, jak ważne są zainteresowanie, nastrój i oryginalność w twoich propozycjach."
+      },
+      "notifications": {
+        "title": "Powiadomienia",
+        "description": "Kontroluj powiadomienia push o zaproszeniach, trafieniach i aktualizacjach gier."
+      }
     }
   },
   "swipe_tutorial": {

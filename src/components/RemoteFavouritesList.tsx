@@ -22,6 +22,7 @@ import { useBlockedMovies } from "../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
 import Thumbnail from "./Thumbnail";
 import useTranslation from "../service/useTranslation";
+import { TourAttachStep } from "./Tour/TourAttachStep";
 
 const { width: WINDOW_WIDTH } = Dimensions.get("window");
 
@@ -110,70 +111,78 @@ function GroupCard({ item }: { item: UserList }) {
   );
 }
 
-function SpecialCardsFooter() {
+function SpecialCardsFooter({ tourStepIndex }: { tourStepIndex?: number }) {
   const { superLikedMovies } = useSuperLikedMovies();
   const { blockedMovies } = useBlockedMovies();
   const t = useTranslation();
 
+  const superLikedCard = (
+    <Pressable onPress={() => router.push("/group/super-liked")}>
+      <View
+        style={{
+          borderRadius: radius.sm + 2,
+          overflow: "hidden",
+          position: "relative",
+        }}
+      >
+        <ImageBackground
+          blurRadius={20}
+          style={styles.cardBg}
+          source={
+            superLikedMovies[0]
+              ? {
+                  uri:
+                    "https://image.tmdb.org/t/p/w500" +
+                    superLikedMovies[0].poster_path,
+                }
+              : undefined
+          }
+        >
+          <View
+            style={[
+              styles.overlay,
+              { backgroundColor: "rgba(255, 215, 0, 0.12)" },
+            ]}
+          />
+          {superLikedMovies.length === 0 ? (
+            <View style={styles.emptyInner}>
+              <MaterialCommunityIcons
+                name="star"
+                size={50}
+                color="#FFD700"
+                style={{ opacity: 0.5 }}
+              />
+            </View>
+          ) : (
+            <View style={styles.thumbnailGrid}>
+              {superLikedMovies.slice(0, 4).map((m) => (
+                <Thumbnail
+                  key={m.movie_id}
+                  path={m.poster_path || ""}
+                  size={200}
+                  container={styles.thumbnail}
+                />
+              ))}
+            </View>
+          )}
+        </ImageBackground>
+        <View style={styles.labelRow}>
+          <Text style={[styles.labelText, { color: "#FFD700" }]}>
+            {t("super-liked.title")}
+          </Text>
+          <Text style={styles.countText}>({superLikedMovies.length})</Text>
+        </View>
+      </View>
+    </Pressable>
+  );
+
   return (
     <View style={{ gap: spacing.screen }}>
-      <Pressable onPress={() => router.push("/group/super-liked")}>
-        <View
-          style={{
-            borderRadius: radius.sm + 2,
-            overflow: "hidden",
-            position: "relative",
-          }}
-        >
-          <ImageBackground
-            blurRadius={20}
-            style={styles.cardBg}
-            source={
-              superLikedMovies[0]
-                ? {
-                    uri:
-                      "https://image.tmdb.org/t/p/w500" +
-                      superLikedMovies[0].poster_path,
-                  }
-                : undefined
-            }
-          >
-            <View
-              style={[
-                styles.overlay,
-                { backgroundColor: "rgba(255, 215, 0, 0.12)" },
-              ]}
-            />
-            {superLikedMovies.length === 0 ? (
-              <View style={styles.emptyInner}>
-                <MaterialCommunityIcons
-                  name="star"
-                  size={50}
-                  color="#FFD700"
-                  style={{ opacity: 0.5 }}
-                />
-              </View>
-            ) : (
-              <View style={styles.thumbnailGrid}>
-                {superLikedMovies.slice(0, 4).map((m) => (
-                  <Thumbnail
-                    key={m.movie_id}
-                    path={m.poster_path || ""}
-                    size={200}
-                    container={styles.thumbnail}
-                  />
-                ))}
-              </View>
-            )}
-          </ImageBackground>
-          <View style={styles.labelRow}>
-            <Text style={[styles.labelText, { color: "#FFD700" }]}>
-              {t("super-liked.title")}
-            </Text>
-            <Text style={styles.countText}>({superLikedMovies.length})</Text>
-          </View>
-        </View>
-      </Pressable>
+      {tourStepIndex !== undefined ? (
+        <TourAttachStep index={tourStepIndex}>{superLikedCard}</TourAttachStep>
+      ) : (
+        superLikedCard
+      )}
 
       <Pressable onPress={() => router.push("/group/blocked")}>
         <View
@@ -239,9 +248,14 @@ function SpecialCardsFooter() {
 type Props = {
   listHeader?: ReactNode;
   listRef?: React.RefObject<FlatList | null>;
+  tourStepIndex?: number;
 };
 
-export default function RemoteFavouritesList({ listHeader, listRef }: Props) {
+export default function RemoteFavouritesList({
+  listHeader,
+  listRef,
+  tourStepIndex,
+}: Props) {
   const [page, setPage] = useState(1);
 
   const { data, isFetching, refetch } = useGetListsQuery({ page });
@@ -274,7 +288,7 @@ export default function RemoteFavouritesList({ listHeader, listRef }: Props) {
       onEndReached={loadMore}
       onEndReachedThreshold={0.5}
       ListHeaderComponent={listHeader ? <>{listHeader}</> : null}
-      ListFooterComponent={<SpecialCardsFooter />}
+      ListFooterComponent={<SpecialCardsFooter tourStepIndex={tourStepIndex} />}
       renderItem={({ item }) => <GroupCard item={item} />}
     />
   );

@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import * as Sentry from "@sentry/react-native";
 import { baseUrl } from "../../context/SocketContext";
 import { AuthUser, authActions } from "./authSlice";
 import prepareHeaders from "../../service/prepareHeaders";
@@ -41,7 +42,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
-        } catch {}
+        } catch (err) {
+          Sentry.captureException(err, { tags: { auth: "login" } });
+        }
       },
     }),
     register: build.mutation<RegisterResponse, { name: string; email: string; password: string; anonymousId?: string }>({
@@ -50,7 +53,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials({ token: data.token, refreshToken: data.refreshToken, user: data.user }));
-        } catch {}
+        } catch (err) {
+          Sentry.captureException(err, { tags: { auth: "register" } });
+        }
       },
     }),
     googleAuth: build.mutation<AuthResponse, { idToken: string }>({
@@ -59,7 +64,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
-        } catch {}
+        } catch (err) {
+          Sentry.captureException(err, { tags: { auth: "google" } });
+        }
       },
     }),
     appleAuth: build.mutation<
@@ -71,7 +78,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
-        } catch {}
+        } catch (err) {
+          Sentry.captureException(err, { tags: { auth: "apple" } });
+        }
       },
     }),
     me: build.query<MeResponse, void>({
@@ -80,7 +89,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setUser(data.user));
-        } catch {}
+        } catch (err) {
+          Sentry.captureException(err, { tags: { auth: "me" } });
+        }
       },
     }),
     recover: build.mutation<AuthResponse, { email: string; code: string }>({
@@ -89,7 +100,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
-        } catch {}
+        } catch (err) {
+          Sentry.captureException(err, { tags: { auth: "recover" } });
+        }
       },
     }),
 
@@ -107,7 +120,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
-        } catch {}
+        } catch (err) {
+          Sentry.captureException(err, { tags: { auth: "refresh" } });
+        }
       },
     }),
 
@@ -121,7 +136,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setUser(data.user));
-        } catch {}
+        } catch (err) {
+          Sentry.captureException(err, { tags: { auth: "updateMe" } });
+        }
       },
     }),
   }),

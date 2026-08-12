@@ -483,7 +483,7 @@
       "revealing": "Finding...",
       "try-again": "Try Again",
       "view-details": "Details",
-      "hint": "Tap to discover your next movie"
+      "hint": "Tap or shake to discover your next movie"
     }
   },
   "search": {
@@ -793,6 +793,58 @@
     "join": {
       "title": "Join a room",
       "description": "Already have a room code? Tap here to scan the QR code and join a friend's game instantly."
+    },
+    "discover": {
+      "chips": {
+        "title": "Browse categories",
+        "description": "Tap the chips to switch between categories — movies, TV, genres and providers."
+      },
+      "grid": {
+        "title": "Movies & shows",
+        "description": "Tap any title for details, trailers, cast and your saved lists. Keep scrolling for more."
+      }
+    },
+    "favourites": {
+      "add": {
+        "title": "Create a list",
+        "description": "Tap + to create your own custom list. Favourites, watchlist and watched are here by default."
+      },
+      "list": {
+        "title": "Your lists",
+        "description": "Tap a list to open it and manage the movies inside."
+      },
+      "superLiked": {
+        "title": "Super-liked movies",
+        "description": "Your top picks from swiping — movies you super-liked. Tap to open the full list."
+      }
+    },
+    "search": {
+      "chips": {
+        "title": "Browse by type",
+        "description": "Switch between movies, TV shows and people. You can also search by title."
+      },
+      "filters": {
+        "title": "Filters",
+        "description": "Narrow the results by year, rating and genre."
+      },
+      "results": {
+        "title": "Results",
+        "description": "Tap a result to open details, trailers and cast."
+      }
+    },
+    "account": {
+      "profile": {
+        "title": "Profile & settings",
+        "description": "Manage your account, game history and app preferences here."
+      },
+      "preferences": {
+        "title": "Scoring preferences",
+        "description": "Tune how much interest, mood and uniqueness matter in your picks."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Control push notifications for invites, matches and game updates."
+      }
     }
   },
   "swipe_tutorial": {

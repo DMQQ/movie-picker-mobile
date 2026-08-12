@@ -4,12 +4,14 @@ import { SocketContext } from "../context/SocketContext";
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import { Movie } from "../../types";
 import * as Haptics from "expo-haptics";
+import { useAppSelector } from "../redux/store";
+import { selectProviders } from "../redux/filterPreferences/filterPreferencesSlice";
 
 interface Settings {
   language: string;
   region: string;
-  providers: never[];
-  genres: never[];
+  providers: number[];
+  genres: number[];
   category: "movie" | "tv" | "mixed";
 }
 
@@ -68,15 +70,24 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   const [isHost, setIsHost] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  const [sessionSettings, setSessionSettings] = useState({
+  const [sessionSettings, setSessionSettings] = useState<Settings>({
     language: "en",
     region: "US",
     providers: [],
     genres: [],
-    category: "movie" as "movie" | "tv" | "mixed",
+    category: "movie",
   });
 
   const [sessionResults, setSessionResults] = useState<MovieVoterContextValue["sessionResults"]>(null);
+
+  const savedProviders = useAppSelector(selectProviders);
+
+  const prefilledProviders = useRef(false);
+  useEffect(() => {
+    if (status !== "idle" || prefilledProviders.current || savedProviders.length === 0) return;
+    prefilledProviders.current = true;
+    setSessionSettings((p) => ({ ...p, providers: savedProviders }));
+  }, [status, savedProviders]);
 
   // Guards the auto-join effect so a session is joined exactly once —
   // previously joinSession + this effect emitted voter:session:join twice.

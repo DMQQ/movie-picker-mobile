@@ -470,7 +470,7 @@
       "revealing": "Suche...",
       "try-again": "Nochmal versuchen",
       "view-details": "Details",
-      "hint": "Tippe, um deinen nächsten Film zu entdecken"
+      "hint": "Tippe oder schüttle, um deinen nächsten Film zu entdecken"
     },
     "empty": "Noch keine Spiele"
   },
@@ -781,6 +781,58 @@
     "join": {
       "title": "Raum beitreten",
       "description": "Hast du bereits einen Raumcode? Tippe hier, um den QR-Code zu scannen und sofort dem Spiel eines Freundes beizutreten."
+    },
+    "discover": {
+      "chips": {
+        "title": "Kategorien durchstöbern",
+        "description": "Tippe auf die Chips, um die Kategorie zu wechseln — Filme, Serien, Genres und Anbieter."
+      },
+      "grid": {
+        "title": "Filme & Serien",
+        "description": "Tippe auf einen Titel für Details, Trailer, Cast und deine Listen. Scrolle weiter für mehr."
+      }
+    },
+    "favourites": {
+      "add": {
+        "title": "Liste erstellen",
+        "description": "Tippe auf +, um eine eigene Liste zu erstellen. Favoriten, Watchlist und gesehene Filme sind standardmäßig da."
+      },
+      "list": {
+        "title": "Deine Listen",
+        "description": "Tippe auf eine Liste, um sie zu öffnen und die Filme darin zu verwalten."
+      },
+      "superLiked": {
+        "title": "Super-gelikte Filme",
+        "description": "Deine Top-Picks aus dem Swipen — super-gelikte Filme. Tippe, um die volle Liste zu öffnen."
+      }
+    },
+    "search": {
+      "chips": {
+        "title": "Nach Typ stöbern",
+        "description": "Wechsle zwischen Filmen, Serien und Personen. Du kannst auch nach Titel suchen."
+      },
+      "filters": {
+        "title": "Filter",
+        "description": "Grenze die Ergebnisse nach Jahr, Bewertung und Genre ein."
+      },
+      "results": {
+        "title": "Ergebnisse",
+        "description": "Tippe auf ein Ergebnis, um Details, Trailer und Cast zu öffnen."
+      }
+    },
+    "account": {
+      "profile": {
+        "title": "Profil & Einstellungen",
+        "description": "Verwalte hier dein Konto, deine Spielhistorie und deine App-Einstellungen."
+      },
+      "preferences": {
+        "title": "Bewertungs-Präferenzen",
+        "description": "Stelle ein, wie wichtig Interesse, Stimmung und Einzigartigkeit in deinen Empfehlungen sind."
+      },
+      "notifications": {
+        "title": "Benachrichtigungen",
+        "description": "Steuere Push-Benachrichtigungen für Einladungen, Matches und Spiel-Updates."
+      }
     }
   },
   "swipe_tutorial": {
