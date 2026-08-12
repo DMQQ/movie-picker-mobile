@@ -1,11 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import Text from "../../Text";
-import { View, StyleSheet, LayoutChangeEvent } from "react-native";
+import { View, StyleSheet, LayoutChangeEvent, FlatList } from "react-native";
 
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
 import {
   useGetMovieCategoriesWithThumbnailsQuery,
   useGetTVCategoriesWithThumbnailsQuery,
@@ -49,7 +45,6 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
   const t = useTranslation();
   const [listHeight, setListHeight] = useState(0);
   const selectedCategoryId = useAppSelector((state) => state.builder.categoryId);
-  const movieScrollX = useSharedValue(0);
   const { data: movieCategories, isLoading: moviesLoading } = useGetMovieCategoriesWithThumbnailsQuery();
 
   useEffect(() => {
@@ -58,12 +53,6 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
       onSelectCategory(firstCategory.id, firstCategory.path, "movie");
     }
   }, [movieCategories, selectedCategoryId, onSelectCategory]);
-
-  const movieScrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      movieScrollX.value = event.contentOffset.x;
-    },
-  });
 
   const onListWrapperLayout = useCallback((e: LayoutChangeEvent) => {
     const h = e.nativeEvent.layout.height;
@@ -78,12 +67,11 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
 
       <View style={styles.listWrapper} onLayout={onListWrapperLayout}>
         {listHeight > 0 && (
-          <Animated.FlatList
+          <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.scrollContent}
             style={{ height: listHeight }}
-            onScroll={movieScrollHandler}
             data={movieCategories}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item: category, index }) => (
@@ -94,8 +82,6 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
                 onPress={() => onSelectCategory(category.id, category.path, "movie")}
                 delay={index * 50}
                 large
-                scrollX={movieScrollX}
-                index={index}
                 cardWidth={cardWidth}
                 cardHeight={listHeight}
               />
@@ -114,13 +100,6 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
 
 const SeriesSection = ({ onSelectCategory }: SectionPrpos) => {
   const [listHeight, setListHeight] = useState(0);
-  const tvScrollX = useSharedValue(0);
-
-  const tvScrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      tvScrollX.value = event.contentOffset.x;
-    },
-  });
   const t = useTranslation();
   const selectedCategoryId = useAppSelector((state) => state.builder.categoryId);
   const { data: tvCategories, isLoading: tvLoading } = useGetTVCategoriesWithThumbnailsQuery();
@@ -138,12 +117,11 @@ const SeriesSection = ({ onSelectCategory }: SectionPrpos) => {
 
       <View style={styles.listWrapper} onLayout={onListWrapperLayout}>
         {listHeight > 0 && (
-          <Animated.FlatList
+          <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.scrollContent}
             style={{ height: listHeight }}
-            onScroll={tvScrollHandler}
             data={tvCategories}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item: category, index }) => (
@@ -154,8 +132,6 @@ const SeriesSection = ({ onSelectCategory }: SectionPrpos) => {
                 onPress={() => onSelectCategory(category.id, category.path, "tv")}
                 delay={index * 50}
                 large
-                scrollX={tvScrollX}
-                index={index}
                 cardWidth={cardWidth}
                 cardHeight={listHeight}
               />

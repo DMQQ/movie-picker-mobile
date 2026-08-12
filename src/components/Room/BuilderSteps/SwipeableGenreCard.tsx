@@ -4,7 +4,7 @@ import { useTheme } from "../../../hooks/useTheme";
 import { View, StyleSheet, Pressable, Dimensions } from "react-native";
 
 import { colors, radius, spacing, typography } from "../../../constants/design";
-import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
+import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Thumbnail from "../../Thumbnail";
@@ -16,8 +16,6 @@ interface SwipeableGenreCardProps {
   onPress: () => void;
   delay?: number;
   vertical?: boolean;
-  scrollX?: Animated.SharedValue<number>;
-  index?: number;
 }
 
 const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
@@ -27,8 +25,6 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
   onPress,
   delay = 0,
   vertical = false,
-  scrollX,
-  index = 0,
 }) => {
   const theme = useTheme();
   const scale = useSharedValue(1);
@@ -36,19 +32,6 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: withSpring(scale.value) }],
   }));
-
-  const cardWidth = Dimensions.get("window").width * 0.75;
-  const imageParallaxStyle = useAnimatedStyle(() => {
-    if (!scrollX) return {};
-
-    const inputRange = [(index - 1) * (cardWidth + 16), index * (cardWidth + 16), (index + 1) * (cardWidth + 16)];
-
-    const translateX = interpolate(scrollX.value, inputRange, [-50, 0, 50], Extrapolate.CLAMP);
-
-    return {
-      transform: [{ translateX }],
-    };
-  });
 
   const handlePressIn = () => {
     scale.value = 0.97;
@@ -70,9 +53,9 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
         >
           {posterUrl ? (
             <>
-              <Animated.View style={[styles.background, imageParallaxStyle]}>
+              <View style={styles.background}>
                 <Thumbnail path={posterUrl} size={780} priority="high" container={styles.backgroundImage} contentFit="cover" />
-              </Animated.View>
+              </View>
               <LinearGradient colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]} style={styles.gradient}>
                 <Text style={vertical ? styles.genreNameVertical : styles.genreName}>{genreName}</Text>
                 {isSelected && (
@@ -128,9 +111,8 @@ const styles = StyleSheet.create({
   },
   background: {
     position: "absolute",
-    width: "120%",
+    width: "100%",
     height: "100%",
-    left: "-10%",
     overflow: "hidden",
   },
   backgroundImage: {

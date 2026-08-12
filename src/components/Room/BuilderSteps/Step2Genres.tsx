@@ -1,9 +1,5 @@
 import React, { memo } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
+import { View, StyleSheet, Dimensions, FlatList } from "react-native";
 import { useGetGenresWithThumbnailsQuery } from "../../../redux/movie/movieApi";
 import SwipeableGenreCard from "./SwipeableGenreCard";
 import SkeletonCard from "../SkeletonCard";
@@ -26,13 +22,6 @@ const Step2Genres: React.FC = () => {
   const { data: genres, isLoading } = useGetGenresWithThumbnailsQuery({
     type: gameType,
   });
-  const scrollX = useSharedValue(0);
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollX.value = event.contentOffset.x;
-    },
-  });
 
   const isGenreSelected = (genreId: number) => {
     return (
@@ -47,12 +36,11 @@ const Step2Genres: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Animated.FlatList
+      <FlatList
         initialNumToRender={2}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
-        onScroll={scrollHandler}
         snapToInterval={cardWidth + 16}
         data={genres}
         keyExtractor={(item) => item.id.toString()}
@@ -65,8 +53,6 @@ const Step2Genres: React.FC = () => {
             onPress={() => onToggleGenre({ id: genre.id, name: genre.name })}
             delay={index * 50}
             vertical={false}
-            scrollX={scrollX}
-            index={index}
           />
         )}
         ListEmptyComponent={

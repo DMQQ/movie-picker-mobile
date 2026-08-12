@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
-import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import SelectionCard from "../SelectionCard";
 import SkeletonCard from "../SkeletonCard";
@@ -15,17 +14,9 @@ const Step4SpecialCategories: React.FC = React.memo(() => {
   const gameType = useAppSelector((state) => state.builder.gameType);
   const { data: categoriesWithThumbnails, isLoading } = useGetSpecialCategoriesWithThumbnailsQuery({ type: gameType });
 
-  const scrollX = useSharedValue(0);
-
   const onToggleCategory = (categoryId: string) => {
     dispatch(toggleSpecialCategory(categoryId));
   };
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollX.value = event.contentOffset.x;
-    },
-  });
 
   const specialCategoryOptions = useMemo(() => {
     if (!categoriesWithThumbnails || categoriesWithThumbnails.length === 0) {
@@ -49,12 +40,10 @@ const Step4SpecialCategories: React.FC = React.memo(() => {
 
   return (
     <View style={styles.container}>
-      <Animated.ScrollView
+      <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
         snapToInterval={cardWidth + 16}
         decelerationRate="fast"
       >
@@ -75,14 +64,12 @@ const Step4SpecialCategories: React.FC = React.memo(() => {
               vertical
               delay={index * 50}
               posterUrl={option.posterUrl}
-              scrollX={scrollX}
-              index={index}
               cardWidth={cardWidth}
               cardHeight={cardHeight}
             />
           ))
         )}
-      </Animated.ScrollView>
+      </ScrollView>
     </View>
   );
 });

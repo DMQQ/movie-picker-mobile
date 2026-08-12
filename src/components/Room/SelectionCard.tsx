@@ -5,7 +5,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { StyleSheet, View, Pressable } from "react-native";
 
 import { colors, fontWeight, fontSize, radius, spacing, typography } from "../../constants/design";
-import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
+import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import Thumbnail from "../Thumbnail";
@@ -20,9 +20,6 @@ type SelectionCardProps = {
   vertical?: boolean;
   delay?: number;
   posterUrl?: string;
-  scrollX?: Animated.SharedValue<number>;
-  scrollY?: Animated.SharedValue<number>;
-  index?: number;
   cardHeight?: number;
   cardWidth?: number;
 };
@@ -36,9 +33,6 @@ const SelectionCard = React.memo(
     vertical = false,
     delay = 0,
     posterUrl,
-    scrollX,
-    scrollY,
-    index = 0,
     cardHeight = 140,
     cardWidth = 200,
   }: SelectionCardProps) => {
@@ -50,40 +44,6 @@ const SelectionCard = React.memo(
     const animatedStyle = useAnimatedStyle(() => ({
       transform: [{ scale: withSpring(scale.value) }],
     }));
-
-    const imageParallaxStyle = useAnimatedStyle(() => {
-      if (!posterUrl) return {};
-
-      // Horizontal scrolling parallax
-      if (scrollX) {
-        const cardMargin = 16;
-        const inputRange = [
-          (index - 1) * (cardWidth + cardMargin),
-          index * (cardWidth + cardMargin),
-          (index + 1) * (cardWidth + cardMargin),
-        ];
-
-        const translateX = interpolate(scrollX.value, inputRange, [-50, 0, 50], Extrapolate.CLAMP);
-
-        return { transform: [{ translateX }] };
-      }
-
-      // Vertical scrolling parallax
-      if (scrollY) {
-        const cardMargin = 16;
-        const inputRange = [
-          (index - 1) * (cardHeight + cardMargin),
-          index * (cardHeight + cardMargin),
-          (index + 1) * (cardHeight + cardMargin),
-        ];
-
-        const translateY = interpolate(scrollY.value, inputRange, [-50, 0, 50], Extrapolate.CLAMP);
-
-        return { transform: [{ translateY }] };
-      }
-
-      return {};
-    });
 
     const handlePressIn = () => {
       scale.value = 0.97;
@@ -107,9 +67,9 @@ const SelectionCard = React.memo(
             >
               {posterUrl ? (
                 <>
-                  <Animated.View style={[styles.background, imageParallaxStyle]}>
+                  <View style={styles.background}>
                     <Thumbnail path={posterUrl} size={780} priority="high" container={styles.backgroundImage} contentFit="cover" />
-                  </Animated.View>
+                  </View>
                   <LinearGradient colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]} style={styles.gradient}>
                     <IconComponent name={iconData.name} size={40} color={color} />
                     <Text style={[styles.labelTextVertical, { color: isSelected ? theme.colors.primary : colors.text }]}>{label}</Text>
@@ -191,9 +151,8 @@ const styles = StyleSheet.create({
   },
   background: {
     position: "absolute",
-    width: "120%",
-    height: "105%",
-    left: "-10%",
+    width: "100%",
+    height: "100%",
     overflow: "hidden",
   },
   gradient: {

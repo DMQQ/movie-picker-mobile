@@ -3,7 +3,7 @@ import Text from "../../Text";
 import { useTheme } from "../../../hooks/useTheme";
 import { View, StyleSheet, Pressable, Image } from "react-native";
 
-import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring, interpolate, Extrapolate } from "react-native-reanimated";
+import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { fontWeight, colors, radius, spacing, typography, fontSize } from "../../../constants/design";
 
@@ -14,8 +14,6 @@ interface PosterCardProps {
   onPress: () => void;
   delay?: number;
   large?: boolean;
-  scrollX?: Animated.SharedValue<number>;
-  index?: number;
   cardWidth?: number;
   cardHeight?: number;
 }
@@ -27,8 +25,6 @@ const PosterCard: React.FC<PosterCardProps> = ({
   onPress,
   delay = 0,
   large = false,
-  scrollX,
-  index = 0,
   cardWidth = 200,
   cardHeight,
 }) => {
@@ -38,18 +34,6 @@ const PosterCard: React.FC<PosterCardProps> = ({
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: withSpring(scale.value) }],
   }));
-
-  const imageParallaxStyle = useAnimatedStyle(() => {
-    if (!scrollX) return {};
-
-    const inputRange = [(index - 1) * (cardWidth + 12), index * (cardWidth + 12), (index + 1) * (cardWidth + 12)];
-
-    const translateX = interpolate(scrollX.value, inputRange, [-30, 0, 30], Extrapolate.CLAMP);
-
-    return {
-      transform: [{ translateX }],
-    };
-  });
 
   const handlePressIn = () => {
     scale.value = 0.95;
@@ -74,9 +58,7 @@ const PosterCard: React.FC<PosterCardProps> = ({
             isSelected && { borderColor: theme.colors.primary, borderWidth: 3 },
           ]}
         >
-          <Animated.View style={[styles.imageContainer, imageParallaxStyle]}>
-            <Image source={{ uri: imageUrl }} style={styles.posterImage} resizeMode="cover" />
-          </Animated.View>
+          <Image source={{ uri: imageUrl }} style={styles.posterImage} resizeMode="cover" />
 
           <LinearGradient colors={["rgba(0,0,0,0.1)", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.9)"]} style={styles.gradient}>
             <Text style={styles.label} numberOfLines={2}>
@@ -117,20 +99,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "transparent",
   },
-  imageContainer: {
-    position: "absolute",
-    width: "125%",
-    height: "105%",
-    left: "-10%",
-    overflow: "hidden",
-  },
   posterImage: {
     position: "absolute",
     top: 0,
     left: 0,
     width: "100%",
     height: "100%",
-    borderRadius: radius.card,
   },
   gradient: {
     position: "absolute",
