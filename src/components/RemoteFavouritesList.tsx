@@ -7,6 +7,7 @@ import {
   Dimensions,
   FlatList,
   Pressable,
+  RefreshControl,
   StyleSheet,
   View,
 } from "react-native";
@@ -259,6 +260,7 @@ export default function RemoteFavouritesList({
   topPadding = spacing.xl * 4,
 }: Props) {
   const [page, setPage] = useState(1);
+  const [refreshing, setRefreshing] = useState(false);
 
   const { data, isFetching, refetch } = useGetListsQuery({ page });
 
@@ -267,6 +269,16 @@ export default function RemoteFavouritesList({
       refetch();
     }, [refetch]),
   );
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      setPage(1);
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetch]);
 
   const groups = (data?.lists ?? []).filter(
     (l) => !INTERACTION_LIST_TYPES.has(l.type),
@@ -289,6 +301,14 @@ export default function RemoteFavouritesList({
       }}
       onEndReached={loadMore}
       onEndReachedThreshold={0.5}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          tintColor={colors.placeholder}
+          colors={[colors.primary]}
+        />
+      }
       ListHeaderComponent={listHeader ? <>{listHeader}</> : null}
       ListFooterComponent={<SpecialCardsFooter tourStepIndex={tourStepIndex} />}
       renderItem={({ item }) => <GroupCard item={item} />}

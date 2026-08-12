@@ -91,7 +91,14 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
   }, [isError, hasMore, fetchNextPage]);
 
   const refreshControl = useMemo(
-    () => <RefreshControl refreshing={isRefreshing} onRefresh={refetch} />,
+    () => (
+      <RefreshControl
+        refreshing={isRefreshing}
+        onRefresh={refetch}
+        tintColor={colors.placeholder}
+        colors={[colors.primary]}
+      />
+    ),
     [isRefreshing, refetch],
   );
 
@@ -128,7 +135,6 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
   return (
     <VirtualizedList
       overScrollMode="never"
-      bounces={false}
       initialNumToRender={3}
       data={data}
       renderItem={renderItem}
