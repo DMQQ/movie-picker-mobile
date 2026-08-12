@@ -48,7 +48,7 @@ export default function MovieResultCard({
 
           <View style={styles.ratingRow}>
             {movie.vote_average > 0 && (
-              <RatingIcons size={13} vote={movie.vote_average} showText />
+              <RatingIcons size={20} vote={movie.vote_average} showText />
             )}
             {details?.runtime ? (
               <>

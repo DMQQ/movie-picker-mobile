@@ -140,10 +140,13 @@ export default function FortuneWheel() {
 
         const shuffled = shuffleInPlace([...movies]);
 
-        setSelectedCards({
-          results: fillMissing(shuffled.slice(0, 12), 12),
-          name: (params.title as string) || "",
-        });
+        const results = fillMissing(shuffled.slice(0, 12), 12);
+        Promise.allSettled(
+          results.filter(m => m?.poster_path).map(m =>
+            Image.prefetch(`https://image.tmdb.org/t/p/w200${m.poster_path}`)
+          )
+        );
+        setSelectedCards({ results, name: (params.title as string) || "" });
         setShouldSpin(true);
       } catch (error) {}
       return;
@@ -159,10 +162,13 @@ export default function FortuneWheel() {
 
         const shuffled = shuffleInPlace([...movies]);
 
-        const newSelectedCards = {
-          results: fillMissing(shuffled.slice(0, 12), 12),
-          name: response.data.name || "",
-        };
+        const results = fillMissing(shuffled.slice(0, 12), 12);
+        Promise.allSettled(
+          results.filter(m => m?.poster_path).map(m =>
+            Image.prefetch(`https://image.tmdb.org/t/p/w200${m.poster_path}`)
+          )
+        );
+        const newSelectedCards = { results, name: response.data.name || "" };
 
         setSelectedCards(newSelectedCards);
         setShouldSpin(true);
@@ -217,10 +223,13 @@ export default function FortuneWheel() {
 
         const shuffled = shuffleInPlace([...movies]);
 
-        setSelectedCards({
-          results: fillMissing(shuffled.slice(0, 12), 12),
-          name: (params?.title as string) || "",
-        });
+        const results = fillMissing(shuffled.slice(0, 12), 12);
+        Promise.allSettled(
+          results.filter(m => m?.poster_path).map(m =>
+            Image.prefetch(`https://image.tmdb.org/t/p/w200${m.poster_path}`)
+          )
+        );
+        setSelectedCards({ results, name: (params?.title as string) || "" });
         setShouldSpin(true);
       } catch (error) {}
       return;
