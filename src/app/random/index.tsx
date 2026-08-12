@@ -117,8 +117,8 @@ export default function RandomMovie() {
 
   const progressCircleStyle = useAnimatedStyle(() => {
     const progress = shakeIntensity.value;
-    const visualProgress = progress * progress * progress;
-    const maxRadius = Math.max(CARD_WIDTH, CARD_HEIGHT) * 1.5;
+    const visualProgress = progress;
+    const maxRadius = Math.max(CARD_WIDTH * 0.55, CARD_HEIGHT * 0.65);
     const size = visualProgress * maxRadius * 2;
     return {
       width: size,

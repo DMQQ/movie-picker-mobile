@@ -80,7 +80,7 @@ export function useShakeDetector(options: ShakeDetectorOptions) {
         setIsShaking(shakingRef.current);
       }
 
-      onProgressRef.current?.(smoothedRef.current);
+      onProgressRef.current?.(chargeRef.current);
 
       if (chargeRef.current >= 1) {
         chargeRef.current = 0;
