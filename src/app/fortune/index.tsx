@@ -24,7 +24,7 @@ import fillMissing from "../../utils/fillMissing";
 import { shuffleInPlace } from "../../utils/shuffle";
 import { throttle } from "../../utils/throttle";
 import PageHeading from "../../components/PageHeading";
-import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import * as Haptics from "expo-haptics";
@@ -90,19 +90,6 @@ export default function FortuneWheel() {
     },
     [getMovieDetails],
   );
-
-  const handleViewDetails = useCallback(() => {
-    if (!selectedMovie) return;
-    const type = selectedMovie.type === "tv" ? "tv" : "movie";
-    router.push({
-      pathname: "/movie/type/[type]/[id]",
-      params: {
-        id: selectedMovie.id,
-        img: selectedMovie.poster_path,
-        type: type,
-      },
-    });
-  }, [selectedMovie]);
 
   const [selectedCards, setSelectedCards] = useState<{
     results: Movie[];
@@ -285,11 +272,7 @@ export default function FortuneWheel() {
           exiting={FadeOut.duration(300)}
           style={fortuneStyles.cardOverlay}
         >
-          <MovieResultCard
-            movie={selectedMovie}
-            details={movieDetails}
-            onPress={handleViewDetails}
-          />
+          <MovieResultCard movie={selectedMovie} details={movieDetails} />
         </Animated.View>
       )}
 
