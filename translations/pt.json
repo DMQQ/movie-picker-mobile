@@ -278,6 +278,10 @@
       "loading": "Criando seu ingresso...",
       "error": "Falha ao criar ingresso",
       "dialog-title": "Compartilhar coleção"
+    },
+    "switch": {
+      "local": "Dispositivo",
+      "account": "Conta"
     }
   },
   "lists": {

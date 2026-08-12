@@ -249,12 +249,14 @@ type Props = {
   listHeader?: ReactNode;
   listRef?: React.RefObject<FlatList | null>;
   tourStepIndex?: number;
+  topPadding?: number;
 };
 
 export default function RemoteFavouritesList({
   listHeader,
   listRef,
   tourStepIndex,
+  topPadding = spacing.xl * 4,
 }: Props) {
   const [page, setPage] = useState(1);
 
@@ -282,7 +284,7 @@ export default function RemoteFavouritesList({
       data={groups}
       keyExtractor={(item) => item.id}
       contentContainerStyle={{
-        paddingTop: spacing.xl * 4,
+        paddingTop: topPadding,
         paddingBottom: spacing.xl * 5,
       }}
       onEndReached={loadMore}

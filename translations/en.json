@@ -278,6 +278,10 @@
       "loading": "Creating your ticket...",
       "error": "Failed to create ticket",
       "dialog-title": "Share Collection"
+    },
+    "switch": {
+      "local": "Device",
+      "account": "Account"
     }
   },
   "ratings": {

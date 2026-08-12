@@ -278,6 +278,10 @@
       "loading": "Creando tu entrada...",
       "error": "Error al crear la entrada",
       "dialog-title": "Compartir colección"
+    },
+    "switch": {
+      "local": "Dispositivo",
+      "account": "Cuenta"
     }
   },
   "lists": {

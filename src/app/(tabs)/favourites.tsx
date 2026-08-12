@@ -1,4 +1,4 @@
-import { Platform, FlatList, View } from "react-native";
+import { Platform, FlatList, View, Pressable, StyleSheet } from "react-native";
 import TextInput from "../../components/TextInput";
 
 import { useLocalSearchParams } from "expo-router";
@@ -15,7 +15,8 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { useMigrationPrompt } from "../../hooks/useMigrationPrompt";
 import { listsApi } from "../../redux/lists/listsApi";
 import useTranslation from "../../service/useTranslation";
-import { spacing } from "../../constants/design";
+import Text from "../../components/Text";
+import { colors, fontSize, radius, spacing } from "../../constants/design";
 import { TourAttachStep } from "../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../components/Tour/TourContext";
@@ -32,8 +33,11 @@ export default function Favourites() {
   const prevToken = useRef(token);
   const migration = useMigrationPrompt();
 
+  const showSwitch = isFullAccount && migration.showBanner;
+
   const [isModalVisible, setModalVisible] = useState(false);
   const [text, setText] = useState("");
+  const [localView, setLocalView] = useState(true);
   const listRef = useRef<FlatList>(null);
 
   const tourRef = useRef<TourRef>(null);
@@ -144,29 +148,48 @@ export default function Favourites() {
         />
 
         <TourAttachStep index={1} fill style={{ flex: 1 }}>
-          <View
-            style={{
-              paddingHorizontal: spacing.screen,
-              flex: 1,
-            }}
-          >
-            {isFullAccount ? (
+          <View style={{ paddingHorizontal: spacing.screen, flex: 1 }}>
+            {showSwitch && (
+              <View style={styles.switchZone}>
+                <MigrationBanner
+                  counts={migration.counts}
+                  isMigrating={migration.isMigrating}
+                  onSync={migration.migrate}
+                  onDismiss={migration.dismissBanner}
+                />
+                <View style={styles.switchRow}>
+                  <Pressable
+                    onPress={() => setLocalView(true)}
+                    style={[styles.switchTab, localView && styles.switchTabActive]}
+                  >
+                    <Text style={[styles.switchLabel, localView && styles.switchLabelActive]}>
+                      {t("favourites.switch.local") as string}
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => setLocalView(false)}
+                    style={[styles.switchTab, !localView && styles.switchTabActive]}
+                  >
+                    <Text style={[styles.switchLabel, !localView && styles.switchLabelActive]}>
+                      {t("favourites.switch.account") as string}
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+            )}
+
+            {isFullAccount && (!showSwitch || !localView) ? (
               <RemoteFavouritesList
                 listRef={listRef}
                 tourStepIndex={2}
-                listHeader={
-                  migration.showBanner ? (
-                    <MigrationBanner
-                      counts={migration.counts}
-                      isMigrating={migration.isMigrating}
-                      onSync={migration.migrate}
-                      onDismiss={migration.dismissBanner}
-                    />
-                  ) : undefined
-                }
+                topPadding={showSwitch ? 0 : undefined}
               />
             ) : (
-              <LocalFavouritesList listRef={listRef} tourStepIndex={2} />
+              <LocalFavouritesList
+                listRef={listRef}
+                tourStepIndex={2}
+                topPadding={showSwitch ? 0 : undefined}
+              />
             )}
           </View>
         </TourAttachStep>
@@ -209,3 +232,32 @@ export default function Favourites() {
     </TourProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  switchZone: {
+    paddingTop: spacing.xl * 4,
+  },
+  switchRow: {
+    flexDirection: "row",
+    backgroundColor: colors.input,
+    borderRadius: radius.pill,
+    padding: 4,
+    marginBottom: spacing.md,
+  },
+  switchTab: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.pill,
+    alignItems: "center",
+  },
+  switchTabActive: {
+    backgroundColor: colors.primary,
+  },
+  switchLabel: {
+    fontSize: fontSize.md,
+    color: colors.placeholder,
+  },
+  switchLabelActive: {
+    color: colors.text,
+  },
+});

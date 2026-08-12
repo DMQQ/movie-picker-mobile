@@ -278,6 +278,10 @@
       "loading": "Ticket wird erstellt...",
       "error": "Ticket konnte nicht erstellt werden",
       "dialog-title": "Sammlung teilen"
+    },
+    "switch": {
+      "local": "Gerät",
+      "account": "Konto"
     }
   },
   "lists": {

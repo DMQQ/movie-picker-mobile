@@ -23,9 +23,14 @@ const { width: WINDOW_WIDTH } = Dimensions.get("window");
 type Props = {
   listRef?: React.RefObject<FlatList | null>;
   tourStepIndex?: number;
+  topPadding?: number;
 };
 
-export default function LocalFavouritesList({ listRef, tourStepIndex }: Props) {
+export default function LocalFavouritesList({
+  listRef,
+  tourStepIndex,
+  topPadding = spacing.xl * 4,
+}: Props) {
   const groups = useAppSelector((state) => state.favourite.groups);
   const { blockedMovies } = useBlockedMovies();
   const { superLikedMovies } = useSuperLikedMovies();
@@ -103,7 +108,7 @@ export default function LocalFavouritesList({ listRef, tourStepIndex }: Props) {
       data={groups}
       keyExtractor={(item, index) => item.id + "-" + index}
       contentContainerStyle={{
-        paddingTop: spacing.xl * 4,
+        paddingTop: topPadding,
         paddingBottom: spacing.xl * 3,
       }}
       ListFooterComponent={
