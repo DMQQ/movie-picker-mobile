@@ -20,6 +20,7 @@ import { store, useAppDispatch, useAppSelector } from "../redux/store";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { DatabaseProvider } from "../context/DatabaseContext";
+import ScreenTracker from "../components/ScreenTracker";
 import PushTokenRegistrar from "../components/PushTokenRegistrar";
 import NotificationHandler from "../components/NotificationHandler";
 import SessionExpiredWatcher from "../components/SessionExpiredWatcher";
@@ -28,41 +29,18 @@ import useMaintenance from "../service/useMaintanance";
 import { getDeviceSettings } from "../service/translationUtils";
 import useTranslation from "../service/useTranslation";
 
-import * as Sentry from "@sentry/react-native";
 import { GoogleOneTapSignIn } from "react-native-nitro-google-signin";
 import { enableFreeze } from "react-native-screens";
+import { PostHogProvider } from "posthog-react-native";
 import { allSettled } from "../utils/utilities";
 import envs from "../constants/envs";
+import { posthog } from "../constants/posthog";
 
 GoogleOneTapSignIn.configure({
   webClientId: envs.google_web_client_id!,
 });
 
 enableFreeze(true);
-
-if (!__DEV__)
-  Sentry.init({
-    dsn: "https://2ab39326e2ee096051c4b72e34eb98d1@o4507922596036608.ingest.de.sentry.io/4511676327395408",
-
-    // Adds more context data to events (IP address, cookies, user, etc.)
-    // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
-    sendDefaultPii: true,
-
-    // Enable Logs
-    enableLogs: true,
-
-    // Configure Session Replay
-    replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1,
-    integrations: [
-      Sentry.mobileReplayIntegration(),
-      // console.error/warn/etc → Sentry Logs (error-level events for silent failures)
-      Sentry.consoleLoggingIntegration(),
-    ],
-
-    // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-    // spotlight: __DEV__,
-  });
 
 function RootLayout() {
   const { isLoaded, isUpdating } = useInit();
@@ -82,13 +60,16 @@ function RootLayout() {
           <PortalProvider>
             <Provider store={store}>
               <DatabaseProvider>
-                <PushTokenRegistrar />
-                <NotificationHandler />
-                <InviteToastWatcher />
-                <SessionExpiredWatcher />
-                <ToastContainer />
-                <AnonymousBlockedWatcher />
-                <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
+                {posthog ? (
+                  <PostHogProvider
+                    client={posthog}
+                    autocapture={{ captureTouches: true, captureScreens: false }}
+                  >
+                    <AppContent isLoaded={isLoaded} isUpdating={isUpdating} />
+                  </PostHogProvider>
+                ) : (
+                  <AppContent isLoaded={isLoaded} isUpdating={isUpdating} />
+                )}
               </DatabaseProvider>
             </Provider>
           </PortalProvider>
@@ -99,6 +80,21 @@ function RootLayout() {
 }
 
 SplashScreen.preventAutoHideAsync();
+
+function AppContent({ isLoaded, isUpdating }: { isLoaded: boolean; isUpdating: boolean }) {
+  return (
+    <>
+      <ScreenTracker />
+      <PushTokenRegistrar />
+      <NotificationHandler />
+      <InviteToastWatcher />
+      <SessionExpiredWatcher />
+      <ToastContainer />
+      <AnonymousBlockedWatcher />
+      <RootNavigator isLoaded={isLoaded} isUpdating={isUpdating} />
+    </>
+  );
+}
 
 function MaintenanceWatcher() {
   useMaintenance();
@@ -112,15 +108,26 @@ function AnonymousBlockedWatcher() {
 
   useEffect(() => {
     if (!anonymousBlocked) return;
+    posthog?.capture("account_required_shown");
     Alert.alert(
       t("account.required.title"),
       t("account.required.message"),
       [
-        { text: t("account.required.notNow"), style: "cancel" },
+        {
+          text: t("account.required.notNow"),
+          style: "cancel",
+          onPress: () => {
+            posthog?.capture("account_required_action", { choice: "not_now" });
+          },
+        },
         {
           text: t("auth.createAccount"),
-          onPress: () =>
-            router.push({ pathname: "/auth/register", params: { presentation: "formSheet" } }),
+          onPress: () => {
+            posthog?.capture("account_required_action", {
+              choice: "create_account",
+            });
+            router.push({ pathname: "/auth/register", params: { presentation: "formSheet" } });
+          },
         },
       ],
     );
@@ -322,4 +329,4 @@ const RootNavigator = ({
   );
 };
 
-export default Sentry.wrap(RootLayout);
+export default RootLayout;

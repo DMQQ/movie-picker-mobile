@@ -37,6 +37,7 @@ import TutorialTooltip from "../../components/TutorialTooltip";
 import { useTutorialSeen } from "../../hooks/useTutorial";
 import PlatformBlurView from "../../components/PlatformBlurView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { posthog } from "../../constants/posthog";
 
 const CARD_HEIGHT = 280;
 const CARD_GAP = 24;
@@ -72,7 +73,7 @@ const GameCard = ({
       exiting={FadeInDown.delay((index + 1) * 75)}
     >
       <Link href={href as any} asChild>
-        <Touch>
+        <Touch onPress={() => posthog?.capture("game_mode_selected", { game: href })}>
           <View style={styles.card}>
             {Animations[index]}
 

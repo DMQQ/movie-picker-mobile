@@ -6,8 +6,8 @@ import Button from "./Button";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import PrimaryButton from "./PrimaryButton";
 import * as Updates from "expo-updates";
-import * as Sentry from "@sentry/react-native";
 import { colors, fontSize, fontWeight, radius, spacing} from "../constants/design";
+import { posthog } from "../constants/posthog";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -38,7 +38,9 @@ export default class ErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, errorInfo: any) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
-    Sentry.captureException(error, errorInfo);
+    posthog?.captureException(error, {
+      componentStack: errorInfo?.componentStack,
+    });
     this.setState({
       error,
       errorInfo,
@@ -69,7 +71,7 @@ export default class ErrorBoundary extends React.Component<
         },
       });
     } catch (error) {
-      Sentry.captureException(error);
+      posthog?.captureException(error, { context: "restart" });
       console.error("Failed to restart app:", error);
       this.retry();
     }

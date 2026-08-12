@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
 import { File, Directory, Paths } from "expo-file-system";
-import * as Sentry from "@sentry/react-native";
+import { posthog } from "../constants/posthog";
 import { migrateDatabase } from "./schema";
 
 const DATABASE_NAME = "flickmate.db";
@@ -66,7 +66,7 @@ function createResilientDatabase(
       try {
         await currentDb.closeAsync();
       } catch (error) {
-        Sentry.captureException(error, { tags: { context: "db_close" } });
+        posthog?.captureException(error, { context: "db_close" });
       }
       currentDb = await openAndMigrate();
       dbInstance = currentDb;
@@ -98,8 +98,9 @@ function createResilientDatabase(
               ) as Function;
               return await newFn.apply(currentDb, args);
             }
-            Sentry.captureException(e, {
-              tags: { context: "db_query", method: String(prop) },
+            posthog?.captureException(e, {
+              context: "db_query",
+              method: String(prop),
             });
             throw e;
           }

@@ -16,6 +16,7 @@ import {
   reset,
 } from "../../redux/roomBuilder/roomBuilderSlice";
 import { colors } from "../../constants/design";
+import { posthog } from "../../constants/posthog";
 
 export default function RoomSetup() {
   const t = useTranslation();
@@ -23,6 +24,7 @@ export default function RoomSetup() {
   const { step } = useLocalSearchParams<{ step?: string }>();
 
   useEffect(() => {
+    posthog?.capture("room_create_tapped");
     if (step) {
       const parsed = parseInt(step, 10);
       if (!isNaN(parsed)) dispatch(goToStep(parsed));

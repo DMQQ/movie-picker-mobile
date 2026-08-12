@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/react-native";
 import {
   fetchBaseQuery,
   type BaseQueryFn,
@@ -8,6 +7,7 @@ import {
 import type { BaseQueryApi } from "@reduxjs/toolkit/query";
 import { authActions } from "./auth/authSlice";
 import { baseUrl } from "../context/SocketContext";
+import { posthog } from "../constants/posthog";
 
 const lastReported = new Map<string, number>();
 const DEDUPE_MS = 60_000;
@@ -43,20 +43,17 @@ function reportNetworkError(
   if ((lastReported.get(dedupeKey) ?? 0) > now - DEDUPE_MS) return;
   lastReported.set(dedupeKey, now);
 
-  Sentry.withScope((scope) => {
-    scope.setTag("endpoint", endpointName);
-    scope.setTag("http.status", statusKey);
-    scope.setContext("network", {
+  posthog?.captureException(
+    new Error(`API ${endpointName} failed: ${statusKey} (${method} ${url})`),
+    {
+      endpoint: endpointName,
+      http_status: statusKey,
       url,
       method,
-      rtkEndpoint: api.endpoint,
-      error: typeof error.status === "number" ? undefined : error.error,
-    });
-    Sentry.captureMessage(
-      `API ${endpointName} failed: ${statusKey} (${method} ${url})`,
-      "error",
-    );
-  });
+      rtk_endpoint: api.endpoint,
+      network_error: typeof error.status === "number" ? null : error.error ?? null,
+    },
+  );
 }
 
 async function tryRefresh(refreshToken: string): Promise<{ token: string; refreshToken: string } | null> {

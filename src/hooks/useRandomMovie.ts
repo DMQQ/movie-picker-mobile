@@ -7,6 +7,7 @@ import { useLazyGetMovieQuery, useLazyGetRandomSectionQuery } from "../redux/mov
 import { useMediaFilters } from "../components/MediaFilters";
 import { useBlockedMovies } from "./useBlockedMovies";
 import { useSuperLikedMovies } from "./useSuperLikedMovies";
+import { posthog } from "../constants/posthog";
 
 type QueuedMovie = { movie: Movie; details: MovieDetails | null };
 
@@ -120,6 +121,7 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
 
   const fetchRandomMovie = useCallback(async () => {
     if (isLoading) return;
+    posthog?.capture("random_picked", { reroll: isRevealed });
     setIsLoading(true);
     superLikeIconScale.value = 1;
 

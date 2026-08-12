@@ -7,7 +7,7 @@ import {
   isSuccessResponse,
 } from "react-native-nitro-google-signin";
 import { Platform } from "react-native";
-import * as Sentry from "@sentry/react-native";
+import { posthog } from "../constants/posthog";
 import { useGoogleAuthMutation, useAppleAuthMutation } from "../redux/auth/authApi";
 import useTranslation from "../service/useTranslation";
 
@@ -42,7 +42,7 @@ export function useAuthProviders(onError: (msg: string) => void) {
       dismissAuthSheet();
     } catch (err: any) {
       if (err.code === "ERR_REQUEST_CANCELED") return;
-      Sentry.captureException(err, { tags: { provider: "apple" } });
+      posthog?.captureException(err, { provider: "apple" });
       onError(err?.data?.message ?? t("auth.appleSignInFailed"));
     }
   }
@@ -91,13 +91,11 @@ export function useAuthProviders(onError: (msg: string) => void) {
     } catch (err: any) {
       // Stale cached session — clear it so next attempt gets a fresh token
       await GoogleOneTapSignIn.signOut().catch(() => {});
-      Sentry.captureException(err, {
-        tags: { provider: "google" },
-        extra: {
-          message: err?.message,
-          data: err?.data,
-          status: err?.status,
-        },
+      posthog?.captureException(err, {
+        provider: "google",
+        message: err?.message,
+        data: err?.data,
+        status: err?.status,
       });
       onError(err?.data?.message ?? t("auth.googleSignInFailed"));
     }

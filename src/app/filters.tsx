@@ -30,6 +30,7 @@ import TypeSelector from "../components/MediaFilters/TypeSelector";
 import DecadeSelector from "../components/MediaFilters/DecadeSelector";
 import ProviderList from "../components/Room/ProviderList";
 import { useFilterPreferences } from "../hooks/useFilterPreferences";
+import { posthog } from "../constants/posthog";
 
 function ProvidersSection() {
   const t = useTranslation();
@@ -189,8 +190,14 @@ export default function FiltersScreen() {
   );
 
   const handleApply = useCallback(() => {
+    posthog?.capture("filters_applied", {
+      media_type: mediaType,
+      decade: selectedDecade,
+      selected_provider_count: providersCount,
+      selected_genre_count: genresCount,
+    });
     router.back();
-  }, []);
+  }, [mediaType, selectedDecade, providersCount, genresCount]);
 
   const handleCategorySelect = useCallback((name: string) => {
     router.back();

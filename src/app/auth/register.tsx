@@ -5,7 +5,7 @@ import TextInput from "../../components/TextInput";
 import { colors, fontWeight, fontSize, radius, spacing, typography} from "../../constants/design";
 import { Link, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AsyncStorage from "expo-sqlite/kv-store";
 import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 
@@ -15,6 +15,7 @@ import { useAuthProviders } from "../../hooks/useAuthProviders";
 import AuthProviderButtons from "../../components/AuthProviderButtons";
 import FadeSlide from "../../components/FadeSlide";
 import useTranslation from "../../service/useTranslation";
+import { posthog } from "../../constants/posthog";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
@@ -34,6 +35,10 @@ export default function RegisterScreen() {
     useAuthProviders((msg) => setErrors({ form: msg }));
 
   const anyLoading = isLoading || isGoogleLoading || isAppleLoading;
+
+  useEffect(() => {
+    posthog?.capture("sign_up_started");
+  }, []);
 
   function validate() {
     const next: Errors = {};

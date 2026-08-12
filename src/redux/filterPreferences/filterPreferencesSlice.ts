@@ -6,6 +6,7 @@ const FILTER_PREFERENCES_KEY = "room_builder_preferences";
 
 interface FilterPreferences {
   providers: number[];
+  genres: { id: number; name: string }[];
   savedAt: number;
 }
 
@@ -36,9 +37,11 @@ export const loadFilterPreferences = createAsyncThunk(
 
 export const saveFilterPreferences = createAsyncThunk(
   "filterPreferences/save",
-  async (newPreferences: Partial<FilterPreferences>) => {
+  async (newPreferences: Partial<FilterPreferences>, { getState }) => {
+    const current = (getState() as RootState).filterPreferences.preferences;
     const toSave: FilterPreferences = {
-      providers: newPreferences.providers || [],
+      providers: newPreferences.providers ?? current?.providers ?? [],
+      genres: newPreferences.genres ?? current?.genres ?? [],
       savedAt: Date.now(),
     };
     await AsyncStorage.setItem(FILTER_PREFERENCES_KEY, JSON.stringify(toSave));

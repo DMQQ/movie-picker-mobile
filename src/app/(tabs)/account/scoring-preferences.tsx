@@ -14,6 +14,7 @@ import {
 } from "../../../redux/scoringPreferences/scoringPreferencesApi";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../../constants/design";
 import useTranslation from "../../../service/useTranslation";
+import { posthog } from "../../../constants/posthog";
 
 type ContentType = "movie" | "tv";
 type ViewTab = "genres" | "keywords";
@@ -109,8 +110,11 @@ export default function ScoringPreferencesScreen() {
         {
           text: t("account.scoringPreferences.resetConfirm"),
           style: "destructive",
-          onPress: () => {
-            resetAll(contentType);
+          onPress: async () => {
+            await resetAll(contentType).unwrap();
+            posthog?.capture("scoring_preferences_reset", {
+              content_type: contentType,
+            });
             resetPagination();
           },
         },

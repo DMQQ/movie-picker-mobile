@@ -16,6 +16,7 @@ import {
 import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
+import { posthog } from "../constants/posthog";
 
 export default function FavouriteGroupsScreen() {
   const dispatch = useAppDispatch<any>();
@@ -46,6 +47,10 @@ export default function FavouriteGroupsScreen() {
 
     if (inGroup) {
       dispatch(removeFromGroup({ groupId: group.id, movieId }));
+      posthog?.capture("favourite_removed", {
+        content_id: movieId,
+        content_type: movieType ?? (movieTitle !== undefined ? "movie" : "tv"),
+      });
     } else {
       dispatch(
         addToGroup({
@@ -59,6 +64,10 @@ export default function FavouriteGroupsScreen() {
           groupId: group.id,
         }),
       );
+      posthog?.capture("favourite_added", {
+        content_id: movieId,
+        content_type: movieType ?? (movieTitle !== undefined ? "movie" : "tv"),
+      });
     }
 
     if (Platform.OS === "ios")

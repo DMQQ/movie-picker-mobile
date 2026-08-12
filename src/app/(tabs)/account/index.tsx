@@ -32,6 +32,7 @@ import AuthAccount from "../../../components/AuthAccount";
 import UnauthAccount from "../../../components/UnauthAccount";
 import ScoringPreferencesButton from "../../../components/ScoringPreferencesButton";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../../constants/design";
+import { posthog } from "../../../constants/posthog";
 import { TourAttachStep } from "../../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../../components/Tour/TourContext";
@@ -127,6 +128,7 @@ export default function SettingsScreen() {
   async function handleToggleNotifications(value: boolean) {
     if (value) {
       const { status } = await Notifications.requestPermissionsAsync();
+      posthog?.capture("push_permission_granted", { granted: status === "granted" });
       setSystemPermission(status);
       if (status !== "granted") {
         setNotificationsEnabled(false);

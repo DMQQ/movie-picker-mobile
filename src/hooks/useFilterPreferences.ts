@@ -11,6 +11,7 @@ import {
 
 interface FilterPreferences {
   providers: number[];
+  genres: { id: number; name: string }[];
   savedAt: number;
 }
 

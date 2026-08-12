@@ -44,6 +44,7 @@ import SearchSkeleton from "../../../components/Search/SearchSkeleton";
 import ActiveFilters from "../../../components/Search/ActiveFilters";
 import RatingIcons from "../../../components/RatingIcons";
 import Chip from "../../../components/Chip";
+import { posthog } from "../../../constants/posthog";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -313,6 +314,13 @@ const SearchScreen = () => {
 
       if (response.page === page) {
         lastReceivedApiPage.current = page;
+
+        if (page === 1) {
+          posthog?.capture("search_performed", {
+            has_query: searchQuery.trim().length > 0,
+            result_count: response.results.length,
+          });
+        }
 
         Promise.any(
           response.results.map((item) =>

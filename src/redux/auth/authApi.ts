@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import * as Sentry from "@sentry/react-native";
 import { baseUrl } from "../../context/SocketContext";
 import { AuthUser, authActions } from "./authSlice";
 import prepareHeaders from "../../service/prepareHeaders";
 import { createReportingBaseQuery } from "../baseQuery";
+import { posthog } from "../../constants/posthog";
 
 interface AuthResponse {
   token: string;
@@ -42,8 +42,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
+          posthog?.capture("sign_in", { provider: "email" });
         } catch (err) {
-          Sentry.captureException(err, { tags: { auth: "login" } });
+          posthog?.captureException(err, { auth: "login" });
         }
       },
     }),
@@ -53,8 +54,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials({ token: data.token, refreshToken: data.refreshToken, user: data.user }));
+          posthog?.capture("sign_up_completed", { provider: "email" });
         } catch (err) {
-          Sentry.captureException(err, { tags: { auth: "register" } });
+          posthog?.captureException(err, { auth: "register" });
         }
       },
     }),
@@ -64,8 +66,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
+          posthog?.capture("sign_in", { provider: "google" });
         } catch (err) {
-          Sentry.captureException(err, { tags: { auth: "google" } });
+          posthog?.captureException(err, { auth: "google" });
         }
       },
     }),
@@ -78,8 +81,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
+          posthog?.capture("sign_in", { provider: "apple" });
         } catch (err) {
-          Sentry.captureException(err, { tags: { auth: "apple" } });
+          posthog?.captureException(err, { auth: "apple" });
         }
       },
     }),
@@ -90,7 +94,7 @@ export const authApi = createApi({
           const { data } = await queryFulfilled;
           dispatch(authActions.setUser(data.user));
         } catch (err) {
-          Sentry.captureException(err, { tags: { auth: "me" } });
+          posthog?.captureException(err, { auth: "me" });
         }
       },
     }),
@@ -100,8 +104,9 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
+          posthog?.capture("sign_in", { provider: "recovery" });
         } catch (err) {
-          Sentry.captureException(err, { tags: { auth: "recover" } });
+          posthog?.captureException(err, { auth: "recover" });
         }
       },
     }),
@@ -121,7 +126,7 @@ export const authApi = createApi({
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
         } catch (err) {
-          Sentry.captureException(err, { tags: { auth: "refresh" } });
+          posthog?.captureException(err, { auth: "refresh" });
         }
       },
     }),
@@ -137,7 +142,7 @@ export const authApi = createApi({
           const { data } = await queryFulfilled;
           dispatch(authActions.setUser(data.user));
         } catch (err) {
-          Sentry.captureException(err, { tags: { auth: "updateMe" } });
+          posthog?.captureException(err, { auth: "updateMe" });
         }
       },
     }),

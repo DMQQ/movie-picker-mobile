@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "../../context/SocketContext";
 import prepareHeaders from "../../service/prepareHeaders";
 import { createReportingBaseQuery } from "../baseQuery";
+import { posthog } from "../../constants/posthog";
 
 export type SystemListType = "favourites" | "watchlist" | "watched" | "superliked" | "disliked";
 export type ContentType = "movie" | "tv";
@@ -196,6 +197,12 @@ export const listsApi = createApi({
         { type: "ListItems", id: type },
         { type: "List", id: "ALL" },
       ],
+      async onQueryStarted({ type }, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          posthog?.capture("list_item_added", { list_type: type });
+        } catch {}
+      },
     }),
 
     removeItem: build.mutation<OkResponse, { itemId: string; listType?: string }>({
@@ -207,11 +214,23 @@ export const listsApi = createApi({
         { type: "List", id: "ALL" },
         ...(listType ? [{ type: "ListItems" as const, id: listType }] : []),
       ],
+      async onQueryStarted({ listType }, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          posthog?.capture("list_item_removed", { list_type: listType ?? null });
+        } catch {}
+      },
     }),
 
     createList: build.mutation<CreateListResponse, { name: string; type: string }>({
       query: (body) => ({ url: "/lists", method: "POST", body }),
       invalidatesTags: [{ type: "List", id: "ALL" }],
+      async onQueryStarted({ type }, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          posthog?.capture("list_created", { type });
+        } catch {}
+      },
     }),
 
     deleteList: build.mutation<OkResponse, string>({
@@ -233,6 +252,12 @@ export const listsApi = createApi({
     migrateLists: build.mutation<{ ok: boolean; queued: boolean }, MigrateBody>({
       query: (body) => ({ url: "/lists/migrate", method: "POST", body }),
       invalidatesTags: [{ type: "List", id: "ALL" }, { type: "ListItems" }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          posthog?.capture("lists_migrated", { queued: data.queued });
+        } catch {}
+      },
     }),
 
     getGames: build.query<GetGamesResponse, void>({

@@ -3,7 +3,7 @@ import * as Updates from "expo-updates";
 import React, { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
 import { shallowEqual, useSelector } from "react-redux";
-import * as Sentry from "@sentry/react-native";
+import { posthog } from "../constants/posthog";
 import socketIOClient, {
   ManagerOptions,
   Socket,
@@ -151,7 +151,7 @@ export const SocketProvider = ({
 
       newSocket.on("connect_error", (error) => {
         console.log("🚨 Socket connection error:", error);
-        Sentry.captureException(error, { tags: { namespace } });
+        posthog?.captureException(error, { namespace });
         // socket.io's internal reconnect handles retries.
       });
 
@@ -162,7 +162,7 @@ export const SocketProvider = ({
 
       socketRef.current = newSocket;
     } catch (error) {
-      Sentry.captureException(error, { tags: { namespace } });
+      posthog?.captureException(error, { namespace });
     }
   };
 
@@ -197,7 +197,7 @@ export const SocketProvider = ({
           }
           s.disconnect();
         } catch (error) {
-          Sentry.captureException(error, { tags: { namespace } });
+          posthog?.captureException(error, { namespace });
         }
         s.removeAllListeners();
         socketRef.current = null;

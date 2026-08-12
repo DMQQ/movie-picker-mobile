@@ -1,5 +1,6 @@
 import { BlurMask, Canvas, Path, Skia } from "@shopify/react-native-skia";
 import { colors } from "../../constants/design";
+import { posthog } from "../../constants/posthog";
 import {
   forwardRef,
   ReactNode,
@@ -100,6 +101,12 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
   );
 
   const stop = useCallback(() => {
+    if (current !== undefined && current < steps.length - 1) {
+      posthog?.capture("tutorial_skipped", {
+        step: current + 1,
+        total: steps.length,
+      });
+    }
     pendingStep.current = undefined;
     fade.value = withTiming(0, { duration: FADE_OUT_MS }, (finished) => {
       if (finished) {
@@ -108,14 +115,19 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
       }
     });
     onStop?.();
-  }, [fade, onStop]);
+  }, [fade, onStop, current, steps.length]);
 
   const next = useCallback(() => {
     if (current === undefined) return;
     if (current >= steps.length - 1) {
+      posthog?.capture("tutorial_completed", { total: steps.length });
       stop();
       return;
     }
+    posthog?.capture("tutorial_step_completed", {
+      step: current + 1,
+      total: steps.length,
+    });
     const nextIndex = current + 1;
     fade.value = withTiming(0, { duration: FADE_OUT_MS }, (finished) => {
       if (finished) runOnJS(showStep)(nextIndex);
@@ -130,7 +142,10 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
   );
 
   useImperativeHandle(ref, () => ({
-    start: () => showStep(0),
+    start: () => {
+      posthog?.capture("tutorial_started", { total: steps.length });
+      showStep(0);
+    },
     stop,
   }));
 

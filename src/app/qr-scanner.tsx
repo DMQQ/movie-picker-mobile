@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Linking, Platform, StyleSheet, ToastAndroid, Vibration, View } from "react-native";
 
 import { colors, common, fontSize, fontWeight, radius, spacing } from "../constants/design";
+import { posthog } from "../constants/posthog";
 import PrimaryButton from "../components/PrimaryButton";
 import PageHeading from "../components/PageHeading";
 import useTranslation from "../service/useTranslation";
@@ -34,6 +35,10 @@ export default function QRScanner() {
   const [scanError, setScanError] = useState(false);
   const [manualCode, setManualCode] = useState("");
   const [manualError, setManualError] = useState("");
+
+  useEffect(() => {
+    posthog?.capture("room_join_tapped");
+  }, []);
 
   const joinRoom = async (c: JoinRoomParams) => {
     return new Promise(async (resolve, reject) => {

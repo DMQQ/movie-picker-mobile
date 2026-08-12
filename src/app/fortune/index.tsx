@@ -34,6 +34,7 @@ import MovieResultCard, {
 import PlatformBlurView from "../../components/PlatformBlurView";
 import { Image } from "expo-image";
 import { colors, radius} from "../../constants/design";
+import { posthog } from "../../constants/posthog";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -116,6 +117,7 @@ export default function FortuneWheel() {
   const [getLazySection] = useLazyGetSectionMoviesQuery();
 
   const handleThrowDice = (value?: number | string) => {
+    posthog?.capture("fortune_spun", { category: value ?? null });
     prefetchedDetails.current = null;
 
     if (params?.movies) {

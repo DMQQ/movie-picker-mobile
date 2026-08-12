@@ -79,10 +79,10 @@ export const mediaFiltersSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // Automatically sync providers when filterPreferences loads
+    // Automatically sync providers and genres when filterPreferences loads
     builder.addCase(loadFilterPreferences.fulfilled, (state, action) => {
-      const providers = action.payload?.providers ?? [];
-      state.selectedProviders = providers;
+      state.selectedProviders = action.payload?.providers ?? [];
+      state.selectedGenres = action.payload?.genres ?? [];
       state.isFilterActive = computeIsFilterActive(state);
     });
   },

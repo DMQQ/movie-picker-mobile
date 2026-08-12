@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 import { baseUrl } from "../context/SocketContext";
 import { useAppSelector } from "../redux/store";
+import { posthog } from "../constants/posthog";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -25,6 +26,8 @@ export default function NotificationHandler() {
       unknown
     > | null;
     if (!data?.screen) return;
+
+    posthog?.capture("push_notification_opened", { screen: String(data.screen) });
 
     if (data.screen === "invite") {
       const inviteId = data.inviteId as string | undefined;

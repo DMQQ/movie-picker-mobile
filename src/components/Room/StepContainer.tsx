@@ -16,6 +16,7 @@ import {
 } from "../../redux/roomBuilder/roomBuilderSlice";
 import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
 import { colors, fontSize, radius, spacing} from "../../constants/design";
+import { posthog } from "../../constants/posthog";
 
 interface StepContainerProps {
   currentStep: number;
@@ -63,6 +64,14 @@ const StepContainer: React.FC<StepContainerProps> = ({
   };
 
   const handleCreateRoom = () => {
+    posthog?.capture("room_setup_completed", {
+      category: state.category,
+      game_type: state.gameType,
+      is_quick_start: state.quickStartMode,
+      selected_genre_count: state.genres.length,
+      selected_provider_count: state.providers.length,
+      selected_special_category_count: state.specialCategories.length,
+    });
     router.push({
       pathname: "/room/qr-code",
       params: {
@@ -81,6 +90,14 @@ const StepContainer: React.FC<StepContainerProps> = ({
 
   const handleQuickStart = useCallback(() => {
     if (hasProviders) {
+      posthog?.capture("room_setup_completed", {
+        category: state.category,
+        game_type: state.gameType,
+        is_quick_start: true,
+        selected_genre_count: 0,
+        selected_provider_count: savedProviders?.providers.length ?? 0,
+        selected_special_category_count: 0,
+      });
       router.push({
         pathname: "/room/qr-code",
         params: {
@@ -97,7 +114,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
       dispatch(setQuickStartMode(true));
       dispatch(goToStep(3));
     }
-  }, [hasProviders, state.category, savedProviders, dispatch]);
+  }, [hasProviders, state.category, state.gameType, savedProviders, dispatch]);
 
   const handleFilters = useCallback(() => {
     dispatch(goNext());

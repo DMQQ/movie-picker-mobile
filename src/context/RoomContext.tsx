@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { Platform } from "react-native";
-import * as Sentry from "@sentry/react-native";
+import { posthog } from "../constants/posthog";
 import type { Movie } from "../../types";
 import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import { useDatabase, useMatches } from "./DatabaseContext";
@@ -82,7 +82,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
           hasJoined.current = false;
         }
       } catch (error) {
-        Sentry.captureException(error, { tags: { context: "room_join" } });
+        posthog?.captureException(error, { context: "room_join" });
         if (joinCancelToken.current !== token) return;
         dispatch(roomActions.setJoinError(true));
         hasJoined.current = false;
@@ -125,7 +125,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
         await socket.timeout(10000).emitWithAck("join-room", roomId, nickname, mappedBlocked, mappedSuperLiked);
         hasJoined.current = true;
       } catch (error) {
-        Sentry.captureException(error, { tags: { context: "room_reconnect_join" } });
+        posthog?.captureException(error, { context: "room_reconnect_join" });
         attemptTimeout.current = setTimeout(() => onReconnected(_, attempt + 1), 100 * attempt);
       }
     };
@@ -152,7 +152,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
         ]),
       ).catch((error) => {
         console.error(error);
-        Sentry.captureException(error, { tags: { context: "room_prefetch" } });
+        posthog?.captureException(error, { context: "room_prefetch" });
       });
     };
 
@@ -214,7 +214,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
           // the last ones. Swipe them out; removeMovie flips isFinished on empty.
         })
         .catch((error) => {
-          Sentry.captureException(error, { tags: { context: "room_next_page" } });
+          posthog?.captureException(error, { context: "room_next_page" });
         });
     }
   }, [cards.length, socket, roomId, dispatch, isPlaying]);

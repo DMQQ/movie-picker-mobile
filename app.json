@@ -86,11 +86,9 @@
         }
       ],
       [
-        "@sentry/react-native/expo",
+        "posthog-react-native/expo",
         {
-          "url": "https://sentry.io/",
-          "project": "flickmate-mobile",
-          "organization": "dmq"
+          "uploadNativeSymbols": true
         }
       ]
     ],

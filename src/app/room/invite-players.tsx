@@ -19,6 +19,7 @@ import {
   spacing,
 } from "../../constants/design";
 import useTranslation from "../../service/useTranslation";
+import { posthog } from "../../constants/posthog";
 
 interface PlayerRowProps {
   member: GameMember;
@@ -128,6 +129,9 @@ export default function InvitePlayersScreen() {
           roomId: roomId,
         }).unwrap();
         setInvitedIds((prev) => new Set(prev).add(member.id));
+        posthog?.capture("room_invite_sent", {
+          game_type: gameType ?? "swipe",
+        });
       } catch {}
       setLoadingId(null);
     },
