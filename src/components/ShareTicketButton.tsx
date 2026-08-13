@@ -2,6 +2,7 @@ import { memo, useCallback, useRef, useState } from "react";
 import IconButton from "./IconButton";
 import Text from "./Text";
 import { Dimensions, Modal, Pressable, StyleSheet, View } from "react-native";
+import useTranslation from "../service/useTranslation";
 
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
@@ -62,6 +63,7 @@ interface ShareTicketButtonProps {
 }
 
 function ShareTicketButton({ movie, providers, headerText, pickupLine, holeColor = colors.appBackground }: ShareTicketButtonProps) {
+  const t = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
   const viewShotRef = useRef<ViewShot>(null);
 
@@ -106,7 +108,7 @@ function ShareTicketButton({ movie, providers, headerText, pickupLine, holeColor
           <View style={[styles.cornerHole, styles.cornerBottomRight, { backgroundColor: holeColor }]} />
 
           <Text style={styles.ticketButtonIcon}>🎟️</Text>
-          <Text style={styles.ticketButtonText}>Share it!</Text>
+          <Text style={styles.ticketButtonText}>{t("ticket.share-it")}</Text>
         </Pressable>
       </View>
 

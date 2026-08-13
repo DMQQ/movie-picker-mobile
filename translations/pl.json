@@ -476,7 +476,8 @@
       "revealing": "Szukam...",
       "try-again": "Losuj Ponownie",
       "view-details": "Szczegóły",
-      "hint": "Dotknij lub potrząśnij aby odkryć swój następny film"
+      "hint": "Dotknij lub potrząśnij aby odkryć swój następny film",
+      "shake": "Potrząśnij, aby odkryć"
     },
     "empty": "Brak gier"
   },
@@ -707,6 +708,7 @@
   },
   "ticket": {
     "unknown-movie": "Nieznany Film",
+    "share-it": "Udostępnij!",
     "unknown": "Nieznane",
     "watch-it-on": "Oglądaj na",
     "scan-to-get-app": "ZESKANUJ, ABY POBRAĆ APLIKACJĘ",
@@ -990,7 +992,7 @@
     "loadError": "Nie udało się załadować ocen",
     "rateTitle": "Oceń film",
     "reviewPlaceholder": "Dodaj recenzję…",
-    "reviewCount": "{count} recenzj{plural}",
+    "reviewCount": "{count} recenzji",
     "avgLabel": "{avg}/10 średnio",
     "noRatingsYet": "Brak ocen",
     "deleteRating": "Usuń recenzję"

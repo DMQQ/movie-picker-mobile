@@ -489,7 +489,8 @@
       "revealing": "Finding...",
       "try-again": "Try Again",
       "view-details": "Details",
-      "hint": "Tap or shake to discover your next movie"
+      "hint": "Tap or shake to discover your next movie",
+      "shake": "Shake to discover"
     }
   },
   "search": {
@@ -719,6 +720,7 @@
   },
   "ticket": {
     "unknown-movie": "Unknown Movie",
+    "share-it": "Share it!",
     "unknown": "Unknown",
     "watch-it-on": "Watch it on",
     "scan-to-get-app": "SCAN TO GET THE APP",

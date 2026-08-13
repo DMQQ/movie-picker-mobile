@@ -476,7 +476,8 @@
       "revealing": "Suche...",
       "try-again": "Nochmal versuchen",
       "view-details": "Details",
-      "hint": "Tippe oder schüttle, um deinen nächsten Film zu entdecken"
+      "hint": "Tippe oder schüttle, um deinen nächsten Film zu entdecken",
+      "shake": "Schütteln zum Entdecken"
     },
     "empty": "Noch keine Spiele"
   },
@@ -707,6 +708,7 @@
   },
   "ticket": {
     "unknown-movie": "Unbekannter Film",
+    "share-it": "Teilen!",
     "unknown": "Unbekannt",
     "watch-it-on": "Anschauen auf",
     "scan-to-get-app": "SCANNEN UM DIE APP ZU ERHALTEN",

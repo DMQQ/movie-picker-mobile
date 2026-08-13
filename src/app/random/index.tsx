@@ -283,7 +283,7 @@ export default function RandomMovie() {
           )}
           <View style={styles.shakePromptRow}>
             <MaterialCommunityIcons name="vibrate" size={16} color={colors.placeholder} />
-            <Text style={styles.shakePrompt}>Shake to discover</Text>
+            <Text style={styles.shakePrompt}>{t("games.random.shake")}</Text>
             <MaterialCommunityIcons name="vibrate" size={16} color={colors.placeholder} />
           </View>
         </Animated.View>

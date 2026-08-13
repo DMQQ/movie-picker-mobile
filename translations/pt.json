@@ -476,7 +476,8 @@
       "revealing": "Buscando...",
       "try-again": "Tentar novamente",
       "view-details": "Detalhes",
-      "hint": "Toque ou agite para descobrir seu próximo filme"
+      "hint": "Toque ou agite para descobrir seu próximo filme",
+      "shake": "Agite para descobrir"
     },
     "empty": "Nenhum jogo ainda"
   },
@@ -707,6 +708,7 @@
   },
   "ticket": {
     "unknown-movie": "Filme desconhecido",
+    "share-it": "Compartilhe!",
     "unknown": "Desconhecido",
     "watch-it-on": "Assista em",
     "scan-to-get-app": "ESCANEIE PARA BAIXAR O APP",
