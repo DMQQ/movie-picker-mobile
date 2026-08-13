@@ -122,10 +122,21 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
         const [blocked, superLiked] = await Promise.all([getBlockedIds(), getSuperLikedIds()]);
         const mappedBlocked = blocked.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
         const mappedSuperLiked = superLiked.map((m) => `${m.type === "movie" ? "m" : "t"}${m.id}`);
-        await socket.timeout(10000).emitWithAck("join-room", roomId, nickname, mappedBlocked, mappedSuperLiked);
+        const response = await socket.timeout(10000).emitWithAck(
+          "join-room",
+          roomId,
+          nickname,
+          mappedBlocked,
+          mappedSuperLiked,
+        );
+        if (!response?.joined) throw new Error("join-room rejected");
         hasJoined.current = true;
       } catch (error) {
         posthog?.captureException(error, { context: "room_reconnect_join" });
+        if (attempt >= 5) {
+          dispatch(roomActions.setJoinError(true));
+          return;
+        }
         attemptTimeout.current = setTimeout(() => onReconnected(_, attempt + 1), 100 * attempt);
       }
     };

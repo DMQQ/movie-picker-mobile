@@ -90,11 +90,12 @@ export const ensureAnonymousSession = createAsyncThunk(
 
     // Already have a UUID — just ensure it's in state
     if (userId && !isLegacyId) {
+      console.log("🕵️ anonymous session skipped — userId already exists", { userId });
       dispatch(setUserId(userId));
       return null;
     }
 
-    const res = await fetch(`${baseUrl}/auth/anonymous`, {
+    const res = await fetch(`${baseUrl}/api/auth/anonymous`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -131,7 +132,10 @@ export const authSlice = createSlice({
       action: PayloadAction<{ token: string; refreshToken?: string; user: AuthUser }>,
     ) {
       state.token = action.payload.token;
-      if (action.payload.refreshToken) state.refreshToken = action.payload.refreshToken;
+      // Always reset — a login without a refresh token must not inherit the
+      // anonymous session's token, or a later refresh mints an anon token
+      // under a real user (user/token desync).
+      state.refreshToken = action.payload.refreshToken ?? null;
       state.user = action.payload.user;
       state.sessionExpired = false;
       if (action.payload.user.provider !== "anonymous") {

@@ -12,7 +12,7 @@ import { posthog } from "../constants/posthog";
 const lastReported = new Map<string, number>();
 const DEDUPE_MS = 60_000;
 
-let refreshPromise: Promise<{ token: string; refreshToken: string } | null> | null = null;
+let refreshPromise: Promise<{ token: string; refreshToken: string; user?: unknown } | null> | null = null;
 
 function reportNetworkError(
   endpointName: string,
@@ -56,7 +56,7 @@ function reportNetworkError(
   );
 }
 
-async function tryRefresh(refreshToken: string): Promise<{ token: string; refreshToken: string } | null> {
+async function tryRefresh(refreshToken: string): Promise<{ token: string; refreshToken: string; user?: unknown } | null> {
   try {
     const res = await fetch(`${baseUrl}/api/auth/refresh`, {
       method: "POST",
@@ -65,7 +65,7 @@ async function tryRefresh(refreshToken: string): Promise<{ token: string; refres
     });
     if (!res.ok) return null;
     const data = await res.json();
-    return { token: data.token, refreshToken: data.refreshToken };
+    return { token: data.token, refreshToken: data.refreshToken, user: data.user };
   } catch {
     return null;
   }
@@ -105,6 +105,9 @@ export function createReportingBaseQuery(
 
           if (newTokens) {
             api.dispatch(authActions.setToken({ token: newTokens.token, refreshToken: newTokens.refreshToken }));
+            if (newTokens.user) {
+              api.dispatch(authActions.setUser(newTokens.user as { id: string; name: string; email: string; provider: string; avatarUrl: string | null }));
+            }
             // Retry the original request with the new token
             return baseQuery(args, api, extraOptions);
           }

@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef } from "react";
 import { SocketContext, type ConnectionStatus } from "../context/SocketContext";
 import { useAppSelector } from "../redux/store";
 import { useToast } from "../components/Toast";
+import useTranslation from "../service/useTranslation";
 
 function userName(u: unknown): string {
   if (typeof u === "string") return u;
@@ -19,10 +20,12 @@ function userId(u: unknown): string {
 export default function useRoomToasts() {
   const users = useAppSelector((s) => s.room.users);
   const toast = useToast();
+  const t = useTranslation();
   const { connectionStatus } = useContext(SocketContext);
   const prevIds = useRef<Set<string>>(new Set());
   const prevStatus = useRef<ConnectionStatus>("idle");
   const hasInit = useRef(false);
+  const connToastId = useRef<string | null>(null);
 
   // User join/leave detection
   useEffect(() => {
@@ -32,7 +35,7 @@ export default function useRoomToasts() {
       if (users.length === 0) return;
       hasInit.current = true;
       prevIds.current = currentIds;
-      toast.show("You joined the room", { type: "success", duration: 2500 });
+      toast.show(t("room.toast.joined-room"), { type: "success", duration: 2500 });
       return;
     }
 
@@ -40,12 +43,12 @@ export default function useRoomToasts() {
     const left = [...prevIds.current].filter((id) => !currentIds.has(id));
 
     for (const u of joined) {
-      toast.show(`${userName(u)} joined`, { type: "success", duration: 2500 });
+      toast.show(t("room.toast.joined", { name: userName(u) }), { type: "success", duration: 2500 });
     }
     if (left.length === 1) {
-      toast.show("A player left", { type: "info", duration: 2500 });
+      toast.show(t("room.toast.player-left"), { type: "info", duration: 2500 });
     } else if (left.length > 1) {
-      toast.show(`${left.length} players left`, { type: "info", duration: 2500 });
+      toast.show(t("room.toast.players-left", { count: left.length }), { type: "info", duration: 2500 });
     }
 
     prevIds.current = currentIds;
@@ -58,11 +61,11 @@ export default function useRoomToasts() {
     if (prev === connectionStatus) return;
 
     if (connectionStatus === "reconnecting") {
-      toast.show("Connection lost, reconnecting...", { type: "error", duration: 0 });
+      connToastId.current = toast.replace(connToastId.current, t("room.toast.connection-lost"), { type: "error", duration: 3000 });
     } else if (connectionStatus === "disconnected") {
-      toast.show("Connection lost, pull to refresh", { type: "error", duration: 0 });
+      connToastId.current = toast.replace(connToastId.current, t("room.toast.connection-lost-refresh"), { type: "error", duration: 0 });
     } else if (connectionStatus === "connected" && (prev === "reconnecting" || prev === "disconnected")) {
-      toast.show("Reconnected", { type: "success", duration: 2000 });
+      connToastId.current = toast.replace(connToastId.current, t("room.toast.reconnected"), { type: "success", duration: 2000 });
     }
   }, [connectionStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 }

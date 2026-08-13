@@ -112,6 +112,15 @@
     "waiting-for-host-decision": "Oczekiwanie na decyzję gospodarza...",
     "reconnecting": "Ponowne łączenie...",
     "disconnected": "Brak połączenia",
+    "toast": {
+      "joined-room": "Dołączyłeś do pokoju",
+      "joined": "{name} dołączył",
+      "player-left": "Gracz opuścił pokój",
+      "players-left": "{count} graczy opuściło pokój",
+      "connection-lost": "Utracono połączenie, ponawiam...",
+      "connection-lost-refresh": "Utracono połączenie, przeciągnij aby odświeżyć",
+      "reconnected": "Połączono ponownie"
+    },
     "genres": {
       "all_movies": "Wszystkie filmy",
       "now_playing": "Aktualnie w kinach",

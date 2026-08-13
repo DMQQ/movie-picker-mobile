@@ -119,10 +119,10 @@ export default function Group() {
       </Pressable>
       <View style={styles.rowActions}>
         <IconButton
-          icon={item.rating != null ? "star" : "star-outline"}
-          iconColor={item.rating != null ? "#FFD700" : colors.placeholder}
+          icon="trash-can-outline"
+          iconColor={colors.error}
           size={16}
-          onPress={() => openRateSheet(item)}
+          onPress={() => handleRemoveItem(item.id)}
         />
       </View>
     </View>

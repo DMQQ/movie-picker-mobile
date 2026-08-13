@@ -127,6 +127,15 @@
     "waiting-for-host-decision": "Waiting for host to decide to play next game...",
     "reconnecting": "Reconnecting...",
     "disconnected": "Disconnected",
+    "toast": {
+      "joined-room": "You joined the room",
+      "joined": "{name} joined",
+      "player-left": "A player left",
+      "players-left": "{count} players left",
+      "connection-lost": "Connection lost, reconnecting...",
+      "connection-lost-refresh": "Connection lost, pull to refresh",
+      "reconnected": "Reconnected"
+    },
     "genres": {
       "all_movies": "All movies",
       "now_playing": "Now playing",

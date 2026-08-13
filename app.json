@@ -88,7 +88,8 @@
       [
         "posthog-react-native/expo",
         {
-          "uploadNativeSymbols": true
+          "uploadNativeSymbols": true,
+          "skipOnConflict": true
         }
       ]
     ],
@@ -117,7 +118,7 @@
       },
       "permissions": ["android.permission.CAMERA"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202608110,
+      "versionCode": 202608130,
       "intentFilters": [
         {
           "action": "VIEW",

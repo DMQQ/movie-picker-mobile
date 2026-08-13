@@ -250,7 +250,15 @@ export function useToast() {
     [dispatch],
   );
 
-  return { show, dismiss };
+  const replace = useCallback(
+    (id: string | null, message: string, opts?: { type?: ToastType; duration?: number; onPress?: () => void; onDismiss?: () => void }) => {
+      if (id) dismiss(id);
+      return show(message, opts);
+    },
+    [show, dismiss],
+  );
+
+  return { show, dismiss, replace };
 }
 
 /** Declarative toast — shows on mount, hides on unmount or after duration. */

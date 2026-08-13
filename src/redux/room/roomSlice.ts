@@ -3,6 +3,12 @@ import { Movie } from "../../../types";
 import { removeDuplicateResults } from "../../utils/deduplicates";
 import { IGameSummary } from "../../components/GameSummary/types";
 
+// Reconnect re-emits the same deck — detect it so addMovies keeps the current
+// reference and selectors don't re-render for identical content.
+const isSameDeck = (current: Movie[], incoming: Movie[]) =>
+  current.length === incoming.length &&
+  current.every((m, i) => m.id === incoming[i].id);
+
 const initialState = {
   // Settings — survive resets
   nickname: "",
@@ -40,6 +46,7 @@ const initialState = {
   // Card deck
   movies: [] as Movie[],
   index: 0,
+  deckVersion: 0,
 
   // Matches / interactions
   match: undefined as Movie | undefined,
@@ -210,7 +217,10 @@ const roomSlice = createSlice({
       },
     ) {
       if (payload.movies.length > 0) {
-        state.movies = payload.movies;
+        if (!isSameDeck(state.movies, payload.movies)) {
+          state.movies = payload.movies;
+          state.deckVersion += 1;
+        }
         state.isFinished = false;
         state.beenFired = true;
         if (typeof payload.index === "number") {

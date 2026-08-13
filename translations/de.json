@@ -112,6 +112,15 @@
     "waiting-for-host-decision": "Warte auf die Entscheidung des Gastgebers...",
     "reconnecting": "Verbinde...",
     "disconnected": "Getrennt",
+    "toast": {
+      "joined-room": "Du bist dem Raum beigetreten",
+      "joined": "{name} ist beigetreten",
+      "player-left": "Ein Spieler hat den Raum verlassen",
+      "players-left": "{count} Spieler haben den Raum verlassen",
+      "connection-lost": "Verbindung verloren, verbinde neu...",
+      "connection-lost-refresh": "Verbindung verloren, zum Aktualisieren ziehen",
+      "reconnected": "Wieder verbunden"
+    },
     "genres": {
       "all_movies": "Alle Filme",
       "now_playing": "Aktuell im Kino",
