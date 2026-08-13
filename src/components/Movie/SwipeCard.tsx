@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import Text from "../Text";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import Animated, {
   Extrapolation,
@@ -17,18 +17,15 @@ import { colors, fontSize, radius, spacing } from "../../constants/design";
 const { width, height } = Dimensions.get("window");
 
 const CARD_TOP = height * (Platform.OS === "ios" ? 0.055 : 0.075);
-
-const dims = {
-  width: width * 0.9 - 20,
-  height: height * 0.65,
-};
+// TabBar height + bottom offset + breathing room
+const TAB_BAR_ZONE = Platform.OS === "ios" ? 85 : 150;
 
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
     left: width * 0.1 - 10,
-    width: dims.width,
-    height: dims.height,
+    width: width * 0.9 - 20,
+    height: height * 0.65,
     backgroundColor: colors.appBackground,
     borderRadius: radius.lg + 1,
     overflow: "hidden",
@@ -78,6 +75,7 @@ interface SwipeCardProps {
   dragProgress: SharedValue<number>;
   isLeftVisible?: SharedValue<boolean>;
   isRightVisible?: SharedValue<boolean>;
+  areaHeight: number;
 }
 
 const SwipeCard = ({
@@ -88,8 +86,20 @@ const SwipeCard = ({
   dragProgress,
   isLeftVisible,
   isRightVisible,
+  areaHeight,
 }: SwipeCardProps) => {
   const isTop = index === 0;
+
+  const dims = useMemo(
+    () => ({
+      width: width * 0.9 - 20,
+      height:
+        areaHeight > 0
+          ? Math.min(height * 0.65, areaHeight - CARD_TOP - TAB_BAR_ZONE)
+          : height * 0.65,
+    }),
+    [areaHeight],
+  );
 
   const animatedStyle = useAnimatedStyle(() => {
     if (isTop) {
@@ -128,7 +138,10 @@ const SwipeCard = ({
   });
 
   return (
-    <Animated.View style={[styles.container, animatedStyle]} pointerEvents="none">
+    <Animated.View
+      style={[styles.container, dims, animatedStyle]}
+      pointerEvents="none"
+    >
       <LinearGradient
         colors={[
           "transparent",

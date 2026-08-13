@@ -1,5 +1,6 @@
 import { memo, useCallback, useRef } from "react";
-import { Dimensions, View } from "react-native";
+import { Dimensions, View, useWindowDimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   Easing,
   runOnJS,
@@ -17,6 +18,9 @@ import useTranslation from "../../service/useTranslation";
 
 const { width } = Dimensions.get("window");
 const SWIPE_THRESHOLD = width * 0.15;
+// HomeAppbar row height; estimate keeps the first frame's card size close to
+// the measured cap so there's no visible snap when onLayout lands
+const APP_BAR_HEIGHT = 56;
 
 const SwipeContent = memo(() => {
   const { type } = useLocalSearchParams<{ type?: string }>();
@@ -27,6 +31,12 @@ const SwipeContent = memo(() => {
 
   const t = useTranslation();
   const busy = useRef(false);
+  const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
+  const areaHeight = Math.max(
+    windowHeight - insets.top - insets.bottom - APP_BAR_HEIGHT,
+    0,
+  );
 
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -183,6 +193,7 @@ const SwipeContent = memo(() => {
                   dragProgress={dragProgress}
                   isLeftVisible={isTop ? isLikeBadge : undefined}
                   isRightVisible={isTop ? isNopeBadge : undefined}
+                  areaHeight={areaHeight}
                 />
               );
             })}
