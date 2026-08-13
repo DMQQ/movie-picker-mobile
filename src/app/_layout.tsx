@@ -63,7 +63,7 @@ function RootLayout() {
                 {posthog ? (
                   <PostHogProvider
                     client={posthog}
-                    autocapture={{ captureTouches: true, captureScreens: false }}
+                    autocapture={{ captureScreens: false }}
                   >
                     <AppContent isLoaded={isLoaded} isUpdating={isUpdating} />
                   </PostHogProvider>

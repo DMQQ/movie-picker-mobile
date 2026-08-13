@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { baseUrl } from "../../context/SocketContext";
 import prepareHeaders from "../../service/prepareHeaders";
 import { createReportingBaseQuery } from "../baseQuery";
@@ -60,9 +59,9 @@ export const inviteApi = createApi({
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           await queryFulfilled;
-        } catch (err) {
-          const status = (err as FetchBaseQueryError).status;
-          if (status !== 404 && status !== 409 && status !== 410) throw err;
+        } catch {
+          // Expected statuses (404/409/410) are silent; other failures are
+          // already reported by createReportingBaseQuery.
         }
       },
     }),
