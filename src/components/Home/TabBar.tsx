@@ -121,6 +121,8 @@ const AnimatedButton = ({
   );
 };
 
+export { AnimatedButton };
+
 interface TabBarProps {
   likeCard: () => void;
   removeCard: () => void;

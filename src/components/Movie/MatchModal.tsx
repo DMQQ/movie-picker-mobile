@@ -4,6 +4,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { LinearGradient } from "expo-linear-gradient";
 import LottieView from "lottie-react-native";
 import { useEffect, useRef } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Dimensions,
   Platform,
@@ -13,7 +14,8 @@ import {
   View,
 } from "react-native";
 
-import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
+import { colors, radius, spacing } from "../../constants/design";
+import { AnimatedButton } from "../Home/TabBar";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -89,27 +91,20 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     paddingLeft: spacing.sm + 2,
   },
-  share: {
-    position: "absolute",
-    bottom: -75,
-    right: 0,
-    left: 0,
-    zIndex: 20,
-    justifyContent: "center",
+  belowCard: {
     alignItems: "center",
+    justifyContent: "center",
+    paddingTop: spacing.lg,
   },
-  reconsiderButton: {
-    marginTop: spacing.sm,
-    alignSelf: "flex-start",
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
-  },
-  reconsiderLabel: {
-    color: colors.text,
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.semibold,
+  reconsiderActions: {
+    ...StyleSheet.absoluteFill,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    gap: spacing.md,
+    paddingBottom: Platform.OS === "ios" ? 0 : 30,
+    zIndex: 1001,
+    pointerEvents: "box-none",
   },
 });
 
@@ -129,8 +124,9 @@ export default function MatchModal({
   onReconsider?: VoidFunction;
 }) {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const cardWidth = windowWidth * 0.95 - 20;
-  const cardHeight = windowHeight * 0.68;
+  const cardHeight = windowHeight * 0.68 - (Platform.OS === "android" ? insets.bottom + 30 : 0);
   const theme = useTheme();
   const t = useTranslation();
   const animation = useRef<LottieView>(null);
@@ -157,94 +153,96 @@ export default function MatchModal({
   if (!match) return null;
 
   return (
-    <Animated.View
-      entering={FadeIn}
-      exiting={FadeOut.delay(200)}
-      style={styles.matchModal}
-    >
-      <Pressable onPress={hideMatchModal}>
-        <Animated.Text
-          style={[styles.matchText, isPartial && { color: theme.colors.accent }]}
-          entering={SlideInUp.delay(100)}
-          exiting={SlideOutUp}
-        >
-          {isPartial ? (t("partial-match.title") as string) : `${t("match.title")} 🎉`}
-        </Animated.Text>
+    <>
+      <Animated.View
+        entering={FadeIn}
+        exiting={FadeOut.delay(200)}
+        style={styles.matchModal}
+      >
+        <Pressable onPress={hideMatchModal}>
+          <Animated.Text
+            style={[styles.matchText, isPartial && { color: theme.colors.accent }]}
+            entering={SlideInUp.delay(100)}
+            exiting={SlideOutUp}
+          >
+            {isPartial ? (t("partial-match.title") as string) : `${t("match.title")} 🎉`}
+          </Animated.Text>
 
-        {isPartial && didLike === false && onReconsider && (
-          <Animated.View entering={SlideInUp.delay(150)} exiting={SlideOutUp}>
-            <Pressable
-              onPress={onReconsider}
-              style={styles.reconsiderButton}
-            >
-              <Text style={styles.reconsiderLabel}>{t("partial-match.reconsider-action") as string}</Text>
-            </Pressable>
-          </Animated.View>
-        )}
-
-        {!isPartial && (
-          <LottieView
-            key={match.id}
-            ref={animation}
-            style={styles.lottie}
-            autoPlay={!!match}
-            loop={false}
-            speed={1}
-            resizeMode="cover"
-            source={require("../../assets/confetti.json")}
-          />
-        )}
-
-        <Animated.View
-          entering={ModalEnteringTransition}
-          exiting={ModalExitingTransition}
-          style={{
-            marginTop: Platform.OS === "ios" ? 0 : 20,
-          }}
-        >
-          <Card>
-            {isPartial && likedBy && <LikedByAvatars likedBy={likedBy} />}
-
-            <LinearGradient
-              colors={["transparent", "transparent", theme.colors.surface]}
-              style={[styles.gradient, { width: cardWidth, height: cardHeight }]}
-            >
-              <Text style={styles.title}>{match.title || match.name}</Text>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  paddingHorizontal: spacing.sm + 2,
-                  marginBottom: spacing.xs + 1,
-                }}
-              >
-                <RatingIcons size={15} vote={match?.vote_average} />
-              </View>
-
-              <View style={styles.meta}>
-                {match.genres ? (
-                  <GenresView genres={match.genres.slice(0, 3)} />
-                ) : null}
-                <Text style={styles.release_date}>
-                  {match.release_date || match.first_air_date}
-                </Text>
-              </View>
-            </LinearGradient>
-
-            <Poster
-              link={false}
-              imageDimensions={{ width: cardWidth, height: cardHeight }}
-              card={match}
+          {!isPartial && (
+            <LottieView
+              key={match.id}
+              ref={animation}
+              style={styles.lottie}
+              autoPlay={!!match}
+              loop={false}
+              speed={1}
+              resizeMode="cover"
+              source={require("../../assets/confetti.json")}
             />
-          </Card>
-        </Animated.View>
+          )}
 
-        {!isPartial && (
-          <Animated.View exiting={FadeOut} style={styles.share}>
-            <ShareTicketButton movie={match} />
+          <Animated.View
+            entering={ModalEnteringTransition}
+            exiting={ModalExitingTransition}
+            style={{
+              marginTop: Platform.OS === "ios" ? 0 : 20,
+            }}
+          >
+            <Card>
+              {isPartial && likedBy && <LikedByAvatars likedBy={likedBy} />}
+
+              <LinearGradient
+                colors={["transparent", "transparent", theme.colors.surface]}
+                style={[styles.gradient, { width: cardWidth, height: cardHeight }]}
+              >
+                <Text style={styles.title}>{match.title || match.name}</Text>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    paddingHorizontal: spacing.sm + 2,
+                    marginBottom: spacing.xs + 1,
+                  }}
+                >
+                  <RatingIcons size={15} vote={match?.vote_average} />
+                </View>
+
+                <View style={styles.meta}>
+                  {match.genres ? (
+                    <GenresView genres={match.genres.slice(0, 3)} />
+                  ) : null}
+                  <Text style={styles.release_date}>
+                    {match.release_date || match.first_air_date}
+                  </Text>
+                </View>
+              </LinearGradient>
+
+              <Poster
+                link={false}
+                imageDimensions={{ width: cardWidth, height: cardHeight }}
+                card={match}
+              />
+            </Card>
           </Animated.View>
-        )}
-      </Pressable>
-    </Animated.View>
+
+          {!isPartial && (
+            <Animated.View exiting={FadeOut} style={[styles.belowCard, { paddingBottom: insets.bottom }]}>
+              <ShareTicketButton movie={match} />
+            </Animated.View>
+          )}
+        </Pressable>
+      </Animated.View>
+
+      {isPartial && didLike === false && onReconsider && (
+        <Animated.View
+          entering={FadeIn.delay(200)}
+          exiting={FadeOut}
+          style={styles.reconsiderActions}
+        >
+          <AnimatedButton onPress={hideMatchModal} icon="close" variant="dislike" size={25} label={t("swipe.nope") as string} />
+          <AnimatedButton onPress={onReconsider} icon="heart" variant="like" size={25} label={t("swipe.like") as string} />
+        </Animated.View>
+      )}
+    </>
   );
 }
