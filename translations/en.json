@@ -55,7 +55,8 @@
   "partial-match": {
     "title": "Almost a match!",
     "liked-by": "{names} liked this",
-    "reconsider": "Reconsider? 👀"
+    "reconsider": "Reconsider? 👀",
+    "reconsider-action": "Change my vote"
   },
   "matches": {
     "unviewed-title": "You have matches!",

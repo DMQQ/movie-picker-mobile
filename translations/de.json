@@ -55,7 +55,8 @@
   "partial-match": {
     "title": "Fast ein Match!",
     "liked-by": "{names} mag das",
-    "reconsider": "Nochmal überlegen? 👀"
+    "reconsider": "Nochmal überlegen? 👀",
+    "reconsider-action": "Stimme ändern"
   },
   "matches": {
     "unviewed-title": "Du hast Übereinstimmungen!",

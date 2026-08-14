@@ -55,7 +55,8 @@
   "partial-match": {
     "title": "Prawie match!",
     "liked-by": "{names} polubił(a) to",
-    "reconsider": "Przemyśl to? 👀"
+    "reconsider": "Przemyśl to? 👀",
+    "reconsider-action": "Zmień głos"
   },
   "matches": {
     "unviewed-title": "Masz dopasowania!",

@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 
-import { colors, radius, spacing } from "../../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
 import Animated, {
   FadeIn,
   FadeOut,
@@ -98,6 +98,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  reconsiderButton: {
+    marginTop: spacing.sm,
+    alignSelf: "flex-start",
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.pill,
+  },
+  reconsiderLabel: {
+    color: colors.text,
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.semibold,
+  },
 });
 
 export default function MatchModal({
@@ -106,12 +119,14 @@ export default function MatchModal({
   likedBy,
   totalUsers,
   didLike,
+  onReconsider,
 }: {
   match: Movie | undefined;
   hideMatchModal: VoidFunction;
   likedBy?: { userId: string; username: string }[];
   totalUsers?: number;
   didLike?: boolean;
+  onReconsider?: VoidFunction;
 }) {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const cardWidth = windowWidth * 0.95 - 20;
@@ -156,14 +171,15 @@ export default function MatchModal({
           {isPartial ? (t("partial-match.title") as string) : `${t("match.title")} 🎉`}
         </Animated.Text>
 
-        {isPartial && didLike === false && (
-          <Animated.Text
-            style={[styles.matchText, { color: theme.colors.primary, fontSize: 36, marginTop: spacing.xs - 2 }]}
-            entering={SlideInUp.delay(150)}
-            exiting={SlideOutUp}
-          >
-            {t("partial-match.reconsider") as string}
-          </Animated.Text>
+        {isPartial && didLike === false && onReconsider && (
+          <Animated.View entering={SlideInUp.delay(150)} exiting={SlideOutUp}>
+            <Pressable
+              onPress={onReconsider}
+              style={styles.reconsiderButton}
+            >
+              <Text style={styles.reconsiderLabel}>{t("partial-match.reconsider-action") as string}</Text>
+            </Pressable>
+          </Animated.View>
         )}
 
         {!isPartial && (

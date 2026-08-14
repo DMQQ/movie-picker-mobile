@@ -20,6 +20,8 @@ export default function useRoomMatches(room: string) {
   matchesRepoRef.current = matchesRepo;
   const roomRef = useRef(room);
   roomRef.current = room;
+  const socketRef = useRef(socket);
+  socketRef.current = socket;
 
   const match = useAppSelector((st) => st.room.match);
   const partialMatch = useAppSelector((st) => st.room.partialMatch);
@@ -66,6 +68,15 @@ export default function useRoomMatches(room: string) {
     dispatch(roomActions.clearPartialMatch());
   }, [dispatch]);
 
+  const overrideSwipe = useCallback(
+    (movieId: number) => {
+      if (!socketRef.current?.connected) return;
+      socketRef.current.emit("override-swipe", { roomId: roomRef.current, movieId });
+      dispatch(roomActions.clearPartialMatch());
+    },
+    [dispatch],
+  );
+
   useEffect(() => {
     if (!socket || !room) return;
 
@@ -79,7 +90,7 @@ export default function useRoomMatches(room: string) {
   }, [socket, room]);
 
   return useMemo(
-    () => ({ match, hideMatchModal, isFocused, partialMatch, hidePartialMatch }),
-    [match, hideMatchModal, isFocused, partialMatch, hidePartialMatch],
+    () => ({ match, hideMatchModal, isFocused, partialMatch, hidePartialMatch, overrideSwipe }),
+    [match, hideMatchModal, isFocused, partialMatch, hidePartialMatch, overrideSwipe],
   );
 }
