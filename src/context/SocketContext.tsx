@@ -12,6 +12,7 @@ import socketIOClient, {
 import envs from "../constants/envs";
 import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
+import { getLocaleForLanguage } from "../service/translationUtils";
 
 const isDev = envs.mode !== "production";
 
@@ -59,7 +60,7 @@ const makeHeaders = (
   regionalization: Record<string, string> = {},
 ) => {
   const headers = new Map<string, string>();
-  const userLanguage = appLanguage === "pl" ? "pl-PL" : "en-US";
+  const userLanguage = getLocaleForLanguage(appLanguage);
 
   headers.set("authorization", `Bearer ${envs.server_auth_token}`);
   headers.set("x-platform", Platform.OS);
@@ -76,7 +77,6 @@ const makeHeaders = (
     headers.set(key, value);
   });
 
-  // x-user-language is always pl-PL or en-US based on app language
   headers.set("x-user-language", userLanguage);
 
   return Object.fromEntries(headers);

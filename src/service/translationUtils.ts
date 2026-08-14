@@ -11,6 +11,17 @@ const translations: Record<string, any> = { en, pl, de, es, pt };
 export const isAvailable = (language: string) =>
   translations[language] !== undefined;
 
+const LANGUAGE_TO_LOCALE: Record<string, string> = {
+  en: "en-US",
+  pl: "pl-PL",
+  de: "de-DE",
+  es: "es-ES",
+  pt: "pt-PT",
+};
+
+export const getLocaleForLanguage = (language: string) =>
+  LANGUAGE_TO_LOCALE[language] ?? LANGUAGE_TO_LOCALE.en;
+
 export function getDeviceSettings() {
   const locales = Localization.getLocales();
   const calendars = Localization.getCalendars();

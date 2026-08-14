@@ -3,13 +3,14 @@ import { Platform } from "react-native";
 import envs from "../constants/envs";
 import { BaseQueryApi } from "@reduxjs/toolkit/query";
 import { RootState } from "../redux/store";
+import { getLocaleForLanguage } from "./translationUtils";
 
 export default function prepareHeaders(headers: Headers, { getState }: Pick<BaseQueryApi, "getState">) {
   const state = getState() as RootState;
 
   const appLanguage = state.room.language || "en";
   const regionalization = state.room.regionalization || {};
-  const userLanguage = appLanguage === "pl" ? "pl-PL" : "en-US";
+  const userLanguage = getLocaleForLanguage(appLanguage);
 
   const userToken = (state as RootState).auth.token;
   headers.set("authorization", `Bearer ${userToken ?? envs.server_auth_token}`);
