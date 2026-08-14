@@ -166,11 +166,7 @@ const RootNavigator = ({
           ensureAnonymousSession({ userId, refreshToken: storedRefreshToken }),
         )
           .unwrap()
-          .catch((error) => {
-            console.log("🕵️ anonymous session failed", error);
-            return null;
-          });
-        console.log("🕵️ anonymous session result", anonymousResult);
+          .catch(console.error);
 
         if (storedToken) {
           await dispatch(restoreSession({ token: storedToken, refreshToken: storedRefreshToken }));

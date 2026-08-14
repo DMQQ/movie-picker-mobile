@@ -146,6 +146,10 @@ export const authApi = createApi({
         }
       },
     }),
+
+    changePassword: build.mutation<{ ok: boolean }, { newPassword: string; currentPassword?: string }>({
+      query: (body) => ({ url: "/me/password", method: "PATCH", body }),
+    }),
   }),
 });
 
@@ -161,4 +165,5 @@ export const {
   useDeleteMeMutation,
   useUpdateMeMutation,
   useUpdateDeviceMutation,
+  useChangePasswordMutation,
 } = authApi;

@@ -95,7 +95,7 @@ export default function LoginScreen() {
 
                   <TextInput label={t("auth.passwordLabel")} value={password}
                     onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, form: undefined })); }}
-                    secureTextEntry={!showPassword} returnKeyType="done" onSubmitEditing={handleLogin}
+                    secureTextEntry={!showPassword} autoCapitalize="none" returnKeyType="done" onSubmitEditing={handleLogin}
                     outlineStyle={styles.inputOutline} error={!!errors.password}
                     right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword((v) => !v)} />}
                   />

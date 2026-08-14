@@ -19,14 +19,16 @@ import { posthog } from "../../constants/posthog";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
-interface Errors { name?: string; email?: string; password?: string; form?: string }
+interface Errors { name?: string; email?: string; password?: string; confirmPassword?: string; form?: string }
 
 export default function RegisterScreen() {
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [register, { isLoading }] = useRegisterMutation();
 
@@ -48,6 +50,8 @@ export default function RegisterScreen() {
     else if (!/\S+@\S+\.\S+/.test(email)) next.email = t("auth.emailInvalid");
     if (!password.trim()) next.password = t("auth.passwordRequired");
     else if (password.length < 8) next.password = t("auth.passwordMinLength");
+    if (!confirmPassword.trim()) next.confirmPassword = t("auth.passwordRequired");
+    else if (confirmPassword !== password) next.confirmPassword = t("auth.passwordMismatch");
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -113,12 +117,20 @@ export default function RegisterScreen() {
                   {errors.email && <Text style={styles.fieldError}>{errors.email}</Text>}
 
                   <TextInput label={t("auth.passwordLabel")} value={password}
-                    onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, form: undefined })); }}
-                    secureTextEntry={!showPassword} returnKeyType="done" onSubmitEditing={handleRegister}
+                    onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, confirmPassword: undefined, form: undefined })); }}
+                    secureTextEntry={!showPassword} autoCapitalize="none" returnKeyType="next"
                     outlineStyle={styles.inputOutline} error={!!errors.password}
                     right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword((v) => !v)} />}
                   />
                   {errors.password && <Text style={styles.fieldError}>{errors.password}</Text>}
+
+                  <TextInput label={t("auth.confirmPassword")} value={confirmPassword}
+                    onChangeText={(v) => { setConfirmPassword(v); setErrors((e) => ({ ...e, confirmPassword: undefined, form: undefined })); }}
+                    secureTextEntry={!showConfirmPassword} autoCapitalize="none" returnKeyType="done" onSubmitEditing={handleRegister}
+                    outlineStyle={styles.inputOutline} error={!!errors.confirmPassword}
+                    right={<TextInput.Icon icon={showConfirmPassword ? "eye-off" : "eye"} onPress={() => setShowConfirmPassword((v) => !v)} />}
+                  />
+                  {errors.confirmPassword && <Text style={styles.fieldError}>{errors.confirmPassword}</Text>}
                 </View>
 
                 <PrimaryButton

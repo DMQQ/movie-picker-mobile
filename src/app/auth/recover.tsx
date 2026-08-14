@@ -46,7 +46,7 @@ export default function RecoverScreen() {
     try {
       const result = await recover({ email: email.trim(), code: code.replace(/-/g, "") }).unwrap();
       await SecureStore.setItemAsync(AUTH_TOKEN_KEY, result.token);
-      router.dismissAll();
+      router.replace("/auth/set-password");
     } catch (err: any) {
       setErrors({ form: err?.data?.message ?? t("auth.recoveryFailed") });
     }

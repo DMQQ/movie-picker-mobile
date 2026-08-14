@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000000"
+      "backgroundColor": "#0A0A0F"
     },
     "plugins": [
       [
@@ -42,7 +42,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#000000",
+          "backgroundColor": "#0A0A0F",
           "image": "./assets/images/icon-light.png",
           "imageWidth": 200
         }
@@ -61,7 +61,7 @@
           "icon": "./assets/images/notification-icon.png",
           "color": "#4169E1",
           "defaultChannel": "default",
-          "mode": "development"
+          "mode": "production"
         }
       ],
       "expo-localization",
@@ -96,7 +96,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
-      "buildNumber": "20260815",
+      "buildNumber": "202608141",
       "supportsTablet": true,
       "icon": "./assets/images/icon.icon",
       "infoPlist": {

@@ -359,6 +359,18 @@ export default function SettingsScreen() {
           >
             <SectionLabel icon="alert-circle-outline" title={t("account.sections.account")} />
             <View style={styles.card}>
+              {user?.provider === "email" && (
+                <>
+                  <Pressable style={styles.actionRow} onPress={() => router.push("/auth/set-password" as any)}>
+                    <View style={styles.actionRowInner}>
+                      <Icon source="lock-reset" size={16} color={colors.placeholder} />
+                      <Text style={styles.actionRowText}>{t("account.changePassword")}</Text>
+                    </View>
+                    <Icon source="chevron-right" size={16} color={colors.placeholder} />
+                  </Pressable>
+                  <View style={styles.infoRowDivider} />
+                </>
+              )}
               <Pressable style={styles.actionRow} onPress={handleSignOut}>
                 <View style={styles.actionRowInner}>
                   <Icon source="logout" size={16} color={colors.placeholder} />
