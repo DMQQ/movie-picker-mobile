@@ -352,7 +352,12 @@
     "error-invalid-prefix": "El código debe comenzar con S o V",
     "error-room-not-found": "Sala no encontrada",
     "permission-denied": "Se requiere permiso de cámara para escanear códigos QR. Puedes concederlo en la configuración del dispositivo.",
-    "open-settings": "Abrir configuración"
+    "open-settings": "Abrir configuración",
+    "requesting-permission": "Solicitando permiso de cámara…",
+    "permission-title": "Acceso a la cámara necesario",
+    "manual-hint-prefix": "O toca",
+    "manual-hint-suffix": "arriba para ingresar el código manualmente",
+    "enter-code-label": "Ingresa el código"
   },
   "settings": {
     "hello": "Hola",

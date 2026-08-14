@@ -227,14 +227,14 @@ export default function QRScanner() {
       ) : hasPermission === null ? (
         <View style={styles.permissionDenied}>
           <Text style={styles.permissionTitle}>{t("scanner.heading")}</Text>
-          <Text style={styles.permissionSubtitle}>Requesting camera permission…</Text>
+          <Text style={styles.permissionSubtitle}>{t("scanner.requesting-permission")}</Text>
         </View>
       ) : (
         <View style={styles.permissionDenied}>
           <View style={styles.iconCircle}>
             <MaterialCommunityIcons name="camera-off-outline" size={40} color={colors.placeholder} />
           </View>
-          <Text style={styles.permissionTitle}>Camera Access Needed</Text>
+          <Text style={styles.permissionTitle}>{t("scanner.permission-title")}</Text>
           <Text style={styles.permissionSubtitle}>
             {t("scanner.permission-denied")}
           </Text>
@@ -246,7 +246,8 @@ export default function QRScanner() {
             ) : (
               <>
                 <Text style={styles.codeHint}>
-                  Or tap the <Text style={styles.codeHintBold}>Code</Text> button above to enter manually
+                  {t("scanner.manual-hint-prefix")} <Text style={styles.codeHintBold}>{t("scanner.code")}</Text>{" "}
+                  {t("scanner.manual-hint-suffix")}
                 </Text>
                 <PrimaryButton onPress={() => setIsManual(true)}>
                   {t("scanner.join")}
@@ -297,7 +298,7 @@ export default function QRScanner() {
         ]}
       >
         <TextInput
-          label="Enter code"
+          label={t("scanner.enter-code-label")}
           value={manualCode}
           maxLength={7}
           autoFocus

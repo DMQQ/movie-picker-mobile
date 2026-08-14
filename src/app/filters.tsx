@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef } from "react";
 import Text from "../components/Text";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 import {
   colors,
@@ -158,7 +162,16 @@ function CategoriesSection({ onSelect }: { onSelect: (name: string) => void }) {
 }
 
 export default function FiltersScreen() {
+  return (
+    <SafeAreaProvider>
+      <FiltersScreenContent />
+    </SafeAreaProvider>
+  );
+}
+
+function FiltersScreenContent() {
   const t = useTranslation();
+  const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const { showCategories } = useLocalSearchParams<{ showCategories: string }>();
 
@@ -241,7 +254,13 @@ export default function FiltersScreen() {
         <View style={{height: 60}} />
       </ScrollView>
 
-      <View style={styles.footer} collapsable={false}>
+      <View
+        style={[
+          styles.footer,
+          Platform.OS === "android" && { paddingBottom: insets.bottom + spacing.lg },
+        ]}
+        collapsable={false}
+      >
         <PrimaryButton onPress={handleApply} style={styles.applyButton}>
           {t("filters.apply")}
           {activeFilterCount > 0 && ` (${activeFilterCount})`}

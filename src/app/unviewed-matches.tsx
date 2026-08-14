@@ -18,7 +18,10 @@ import Thumbnail, { ThumbnailSizes } from "../components/Thumbnail";
 import useTranslation from "../service/useTranslation";
 import type { StoredMatch } from "../database/types";
 import CreateCollectionFromLiked from "../components/CreateCollectionFromLiked";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const GRID_PADDING = 20;
@@ -35,6 +38,14 @@ const getGridConfig = (count: number) => {
 };
 
 function UnviewedMatchesScreen() {
+  return (
+    <SafeAreaProvider>
+      <UnviewedMatchesContent />
+    </SafeAreaProvider>
+  );
+}
+
+function UnviewedMatchesContent() {
   const { matches: matchesRepo, isReady } = useMatches();
   const [unviewedMatches, setUnviewedMatches] = useState<StoredMatch[]>([]);
   const t = useTranslation();

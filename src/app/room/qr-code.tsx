@@ -407,7 +407,7 @@ export default function QRCodePage() {
         )}
 
         <View style={styles.actionRow}>
-          <RoleGuard guard="authenticated">
+          <RoleGuard guard="fullAccount">
             <Button
               mode="outlined"
               disabled={!qrCode}

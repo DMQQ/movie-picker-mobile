@@ -10,6 +10,8 @@ const MIGRATION_OFFERED_KEY = "migration_prompt_offered";
 
 export function useMigrationPrompt() {
   const token = useAppSelector((s) => s.auth.token);
+  const user = useAppSelector((s) => s.auth.user);
+  const isFullAccount = !!token && !!user && user.provider !== "anonymous";
   const dispatch = useAppDispatch();
   const t = useTranslation();
   const { migrateLibrary, getLocalDataCount, isLoading: isMigrating } = useMigrateLibrary();
@@ -19,7 +21,7 @@ export function useMigrationPrompt() {
   const [counts, setCounts] = useState({ movies: 0, interactions: 0 });
 
   useEffect(() => {
-    if (!token) return;
+    if (!isFullAccount) return;
     (async () => {
       const { movies, interactions } = await getLocalDataCount();
       if (movies === 0 && interactions === 0) return;
@@ -32,7 +34,7 @@ export function useMigrationPrompt() {
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [isFullAccount]);
 
   const migrate = useCallback(async () => {
     try {

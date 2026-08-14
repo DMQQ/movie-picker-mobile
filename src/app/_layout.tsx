@@ -262,11 +262,10 @@ const RootNavigator = ({
             presentation: "formSheet",
             sheetGrabberVisible: true,
             contentStyle: {
-              backgroundColor:
-                Platform.OS === "android" ? colors.surface : "transparent",
+              backgroundColor: colors.surface,
             },
             sheetAllowedDetents: [0.85, 1.0],
-            sheetInitialDetentIndex: 0,
+            sheetInitialDetentIndex: Platform.OS === "android" ? 1 : 0,
           }}
         />
 

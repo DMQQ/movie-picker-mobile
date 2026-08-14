@@ -213,7 +213,7 @@ export default function Group() {
           if (match) return setMatch(undefined);
           setMatch(movies[Math.floor(Math.random() * movies.length)]);
         }}
-        containerStyle={{ bottom: 30 }}
+        containerStyle={{ bottom: insets.bottom }}
       />
     </>
   );

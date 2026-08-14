@@ -352,7 +352,12 @@
     "error-invalid-prefix": "Kod musi zaczynać się od S lub V",
     "error-room-not-found": "Nie znaleziono pokoju",
     "permission-denied": "Uprawnienia do kamery są wymagane do skanowania kodów QR. Możesz je przyznać w ustawieniach urządzenia.",
-    "open-settings": "Otwórz ustawienia"
+    "open-settings": "Otwórz ustawienia",
+    "requesting-permission": "Proszenie o dostęp do kamery…",
+    "permission-title": "Wymagany dostęp do kamery",
+    "manual-hint-prefix": "Lub naciśnij przycisk",
+    "manual-hint-suffix": "powyżej, aby wpisać kod ręcznie",
+    "enter-code-label": "Wprowadź kod"
   },
   "settings": {
     "hello": "Cześć",
