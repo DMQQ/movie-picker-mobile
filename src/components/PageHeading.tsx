@@ -155,28 +155,24 @@ export default function PageHeading({
                     </PlatformBlurView>
                   </Pressable>
                 ) : (
-                  <Pressable
-                    onPress={() => {
-                      if (onRightIconPress) onRightIconPress();
-                      if (Platform.OS === "ios") {
-                        Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
-                      }
-                    }}
-                    hitSlop={12}
+                  <PlatformBlurView
+                    interactive
+                    tintColor={tintColor}
+                    style={styles.buttonContainer}
                   >
-                    <PlatformBlurView
-                      interactive
-                      tintColor={tintColor}
-                      style={styles.buttonContainer}
-                    >
-                      <IconButton
-                        icon={rightIconName as any}
-                        size={28}
-                        style={common.iconButton}
-                        iconColor={rightIconColor ?? colors.text}
-                      />
-                    </PlatformBlurView>
-                  </Pressable>
+                    <IconButton
+                      icon={rightIconName as any}
+                      size={28}
+                      style={common.iconButton}
+                      iconColor={rightIconColor ?? colors.text}
+                      onPress={() => {
+                        if (onRightIconPress) onRightIconPress();
+                        if (Platform.OS === "ios") {
+                          Haptic.impactAsync(Haptic.ImpactFeedbackStyle.Light);
+                        }
+                      }}
+                    />
+                  </PlatformBlurView>
                 ),
               )}
         </View>

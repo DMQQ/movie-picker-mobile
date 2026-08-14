@@ -96,9 +96,10 @@ function buildMembershipIndex(groups: FavoriteGroup[]): Record<string, Record<st
 export const loadFavorites = createAsyncThunk(
   "favorites/load",
   async (_: void, { getState, dispatch }) => {
-    const token = (getState() as RootState).auth.token;
+    const { token, user } = (getState() as RootState).auth;
+    const isFullAccount = !!user && user.provider !== "anonymous";
 
-    if (token) {
+    if (token && isFullAccount) {
       const listsResult = await d(dispatch)(
         listsApi.endpoints.getLists.initiate({ page: 1 }, { forceRefetch: true })
       ).unwrap();
@@ -172,9 +173,10 @@ export const loadFavorites = createAsyncThunk(
 export const createGroup = createAsyncThunk(
   "favorites/createGroup",
   async (name: string, { getState, dispatch }) => {
-    const token = (getState() as RootState).auth.token;
+    const { token, user } = (getState() as RootState).auth;
+    const isFullAccount = !!user && user.provider !== "anonymous";
 
-    if (token) {
+    if (token && isFullAccount) {
       const result = await d(dispatch)(
         listsApi.endpoints.createList.initiate({ name, type: toSlug(name) })
       ).unwrap();
@@ -205,9 +207,10 @@ export const addToGroup = createAsyncThunk(
   "favorites/addToGroup",
   async ({ item, groupId }: { item: FavoriteItem; groupId: string }, { getState, dispatch }) => {
     const state = getState() as RootState;
-    const token = state.auth.token;
+    const { token, user } = state.auth;
+    const isFullAccount = !!user && user.provider !== "anonymous";
 
-    if (token) {
+    if (token && isFullAccount) {
       const group = state.favourite.groups.find((g) => g.id === groupId);
       const listType = group?.type ?? LOCAL_ID_TO_TYPE[groupId] ?? groupId;
 
@@ -263,9 +266,10 @@ export const removeFromGroup = createAsyncThunk(
   "favorites/removeFromGroup",
   async ({ movieId, groupId }: { movieId: number; groupId: string }, { getState, dispatch }) => {
     const state = getState() as RootState;
-    const token = state.auth.token;
+    const { token, user } = state.auth;
+    const isFullAccount = !!user && user.provider !== "anonymous";
 
-    if (token) {
+    if (token && isFullAccount) {
       const group = state.favourite.groups.find((g) => g.id === groupId);
       const movie = group?.movies.find((m) => m.id === movieId);
       const listType = group?.type ?? LOCAL_ID_TO_TYPE[groupId] ?? groupId;
@@ -334,9 +338,10 @@ export const deleteGroup = createAsyncThunk(
   "favorites/deleteGroup",
   async (groupId: string, { getState, dispatch }) => {
     const state = getState() as RootState;
-    const token = state.auth.token;
+    const { token, user } = state.auth;
+    const isFullAccount = !!user && user.provider !== "anonymous";
 
-    if (token) {
+    if (token && isFullAccount) {
       const group = state.favourite.groups.find((g) => g.id === groupId);
       const listType = group?.type ?? LOCAL_ID_TO_TYPE[groupId] ?? groupId;
       await d(dispatch)(listsApi.endpoints.deleteList.initiate(listType)).unwrap();
@@ -359,9 +364,10 @@ export const createGroupFromArray = createAsyncThunk(
   "favourites/createGroupFromArray",
   async ({ name, movies }: { name: string; movies: Movie[] }, { getState, dispatch }) => {
     const state = getState() as RootState;
-    const token = state.auth.token;
+    const { token, user } = state.auth;
+    const isFullAccount = !!user && user.provider !== "anonymous";
 
-    if (token) {
+    if (token && isFullAccount) {
       const result = await d(dispatch)(
         listsApi.endpoints.createList.initiate({ name, type: toSlug(name) })
       ).unwrap();
@@ -441,7 +447,8 @@ export const rateInGroup = createAsyncThunk(
 
     // Ratings are local-only; while signed in, skip storage so remote-derived
     // groups are never cached as local data.
-    if (!state.auth.token) {
+    const isFullAccount = !!state.auth.user && state.auth.user.provider !== "anonymous";
+    if (!isFullAccount) {
       const storage = parseStorage(await AsyncStorage.getItem(STORAGE_KEY));
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ ...storage, groups }));
     }
