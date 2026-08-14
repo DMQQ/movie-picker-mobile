@@ -279,7 +279,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
   const blockAndDislikeCard = useCallback(
     async (card: Movie, index: number) => {
       if (!cardsRef.current.some((m) => m.id === card.id)) return;
-      await blockMovie(card);
+      blockMovie(card);
       dislikeCard(card, index);
     },
     [blockMovie, dislikeCard],
@@ -288,7 +288,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
   const superLikeAndLikeCard = useCallback(
     async (card: Movie, index: number) => {
       if (!cardsRef.current.some((m) => m.id === card.id)) return;
-      await superLikeMovie(card);
+      superLikeMovie(card);
       await likeCard(card, index);
 
       if (isReady && movieInteractions) {
