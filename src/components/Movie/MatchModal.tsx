@@ -14,7 +14,7 @@ import {
   View,
 } from "react-native";
 
-import { colors, radius, spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing } from "../../constants/design";
 import { AnimatedButton } from "../Home/TabBar";
 import Animated, {
   FadeIn,
@@ -95,6 +95,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingTop: spacing.lg,
+  },
+  waitingSection: {
+    alignItems: "center",
+    paddingTop: spacing.lg,
+    gap: spacing.sm,
+  },
+  waitingCount: {
+    color: colors.text,
+    fontSize: 28,
+    fontFamily: "Bebas",
+    letterSpacing: 1,
+  },
+  waitingText: {
+    color: colors.placeholder,
+    fontSize: fontSize.md,
   },
   reconsiderActions: {
     ...StyleSheet.absoluteFill,
@@ -228,6 +243,13 @@ export default function MatchModal({
           {!isPartial && (
             <Animated.View exiting={FadeOut} style={[styles.belowCard, { paddingBottom: insets.bottom }]}>
               <ShareTicketButton movie={match} />
+            </Animated.View>
+          )}
+
+          {isPartial && didLike !== false && likedBy && totalUsers && (
+            <Animated.View entering={FadeIn.delay(200)} exiting={FadeOut} style={[styles.waitingSection, { paddingBottom: insets.bottom }]}>
+              <Text style={styles.waitingCount}>{likedBy.length} / {totalUsers}</Text>
+              <Text style={styles.waitingText}>{t("partial-match.waiting") as string}</Text>
             </Animated.View>
           )}
         </Pressable>

@@ -56,7 +56,8 @@
     "title": "Quase um match!",
     "liked-by": "{names} gostou disso",
     "reconsider": "Reconsiderar? 👀",
-    "reconsider-action": "Mudar meu voto"
+    "reconsider-action": "Mudar meu voto",
+    "waiting": "Aguardando a decisão dos outros..."
   },
   "matches": {
     "unviewed-title": "Você tem coincidências!",

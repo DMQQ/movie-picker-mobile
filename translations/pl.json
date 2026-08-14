@@ -56,7 +56,8 @@
     "title": "Prawie match!",
     "liked-by": "{names} polubił(a) to",
     "reconsider": "Przemyśl to? 👀",
-    "reconsider-action": "Zmień głos"
+    "reconsider-action": "Zmień głos",
+    "waiting": "Czekamy na decyzję innych..."
   },
   "matches": {
     "unviewed-title": "Masz dopasowania!",

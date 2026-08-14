@@ -56,7 +56,8 @@
     "title": "Fast ein Match!",
     "liked-by": "{names} mag das",
     "reconsider": "Nochmal überlegen? 👀",
-    "reconsider-action": "Stimme ändern"
+    "reconsider-action": "Stimme ändern",
+    "waiting": "Warte auf die Entscheidung der anderen..."
   },
   "matches": {
     "unviewed-title": "Du hast Übereinstimmungen!",

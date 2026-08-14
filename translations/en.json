@@ -56,7 +56,8 @@
     "title": "Almost a match!",
     "liked-by": "{names} liked this",
     "reconsider": "Reconsider? 👀",
-    "reconsider-action": "Change my vote"
+    "reconsider-action": "Change my vote",
+    "waiting": "Waiting for others to decide..."
   },
   "matches": {
     "unviewed-title": "You have matches!",
