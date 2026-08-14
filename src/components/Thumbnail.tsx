@@ -61,10 +61,11 @@ const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path"
       style={[styles.image, rest.style, { justifyContent: "center", alignItems: "center", backgroundColor: colors.surface }]}
     >
       <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={colors.placeholder} />
-
-      <Text style={{ color: colors.placeholder, marginTop: spacing.sm, textAlign: "center" }} variant="bodyMedium">
-        {rest.alt || "No Image Available"}
-      </Text>
+      {size >= 150 && (
+        <Text style={{ color: colors.placeholder, marginTop: spacing.sm, textAlign: "center" }} variant="bodyMedium">
+          {rest.alt || "No Image Available"}
+        </Text>
+      )}
     </View>
   </View>
 );

@@ -1,5 +1,4 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import IconButton from "../../components/IconButton";
 import Text from "../../components/Text";
 import {
   colors,
@@ -273,7 +272,7 @@ export default function GameList() {
                 onPress={() => router.push("/qr-scanner")}
                 style={styles.qrButton}
               >
-                <IconButton icon="camera" size={20} iconColor={colors.text} />
+                <MaterialCommunityIcons name="camera" size={20} color={colors.text} style={styles.qrIcon} />
                 <Text style={styles.qrButtonText}>{t("scanner.button")}</Text>
               </Pressable>
             </PlatformBlurView>
@@ -432,11 +431,14 @@ const styles = StyleSheet.create({
   qrButton: {
     flexDirection: "row",
     alignItems: "center",
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    gap: spacing.sm,
   },
+  qrIcon: {},
   qrButtonText: {
     color: colors.text,
     fontSize: fontSize.lg,
     fontWeight: fontWeight.semibold,
-    paddingRight: spacing.sm + 2,
   },
 });

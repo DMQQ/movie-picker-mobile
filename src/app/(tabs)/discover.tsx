@@ -100,7 +100,7 @@ const PagerCategoryScreen = memo(() => {
 
   return (
     <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
-      <SafeIOSContainer style={{ flex: 1, paddingBottom: 0 }}>
+      <SafeIOSContainer style={{ flex: 1, paddingBottom: 0, paddingTop:0 }}>
         <TourAttachStep index={1} fill style={{ flex: 1 }}>
           <CategoryPage key={selectedChip} categoryId={selectedChip} />
         </TourAttachStep>
