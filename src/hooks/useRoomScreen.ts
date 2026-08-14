@@ -18,6 +18,7 @@ export default function useRoomScreen() {
   const isHost = useAppSelector((state) => state.room.isHost);
   const roomId = useAppSelector((state) => state.room.roomId);
   const isPlaying = useAppSelector((state) => state.room.isPlaying);
+  const authToken = useAppSelector((state) => state.auth.token);
 
   const isPlayingRef = useRef(isPlaying);
   isPlayingRef.current = isPlaying;
@@ -31,7 +32,7 @@ export default function useRoomScreen() {
     const verify = async () => {
       try {
         const res = await fetch(`${url}/room/verify/${params.roomId}`, {
-          headers: { authorization: `Bearer ${envs.server_auth_token}` },
+          headers: { authorization: `Bearer ${authToken ?? envs.server_auth_token}` },
           signal: controller.signal,
         });
         const data = await res.json();

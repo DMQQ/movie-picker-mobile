@@ -117,7 +117,7 @@ export default function FavouriteGroupsScreen() {
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
         renderItem={({ item: group }) => {
-          const inGroup = group.movies.some((m) => +m.id === movieId);
+          const inGroup = group.movies.some((m) => +m.id === movieId && m.type === movieType);
           return (
             <Pressable
               style={[

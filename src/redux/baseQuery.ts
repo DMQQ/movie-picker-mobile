@@ -14,6 +14,10 @@ const DEDUPE_MS = 60_000;
 
 let refreshPromise: Promise<{ token: string; refreshToken: string; user?: unknown } | null> | null = null;
 
+export function resetRefreshPromise() {
+  refreshPromise = null;
+}
+
 function reportNetworkError(
   endpointName: string,
   args: FetchArgs | string,

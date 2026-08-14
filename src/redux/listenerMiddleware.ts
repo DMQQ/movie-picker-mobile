@@ -1,4 +1,5 @@
 import { createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
+import { resetRefreshPromise } from "./baseQuery";
 import * as SecureStore from "expo-secure-store";
 import { setProviders, toggleProvider, toggleGenre, setGenres, clearAllFilters } from "./mediaFilters/mediaFiltersSlice";
 import { saveFilterPreferences, clearFilterPreferences } from "./filterPreferences/filterPreferencesSlice";
@@ -77,6 +78,7 @@ listenerMiddleware.startListening({
   effect: async (action) => {
     if (action.type === authActions.clearAuth.type) {
       posthog?.reset();
+      resetRefreshPromise();
     }
     await SecureStore.deleteItemAsync("user_auth_token");
     await SecureStore.deleteItemAsync("user_refresh_token");

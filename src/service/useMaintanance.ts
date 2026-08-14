@@ -12,7 +12,7 @@ export interface MaintenanceCheckResult {
 }
 
 export default function useMaintenance(initialCheck = true) {
-  const { isConnected } = useNetInfo();
+  const { isConnected, isInternetReachable } = useNetInfo();
   const appState = useRef(AppState.currentState);
   const hasNavigated = useRef(false);
 
@@ -24,7 +24,7 @@ export default function useMaintenance(initialCheck = true) {
         setIsRetrying(true);
       }
 
-      const hasInternet = isConnected === true;
+      const hasInternet = isConnected === true && isInternetReachable !== false;
 
       const handleFailure = (
         type: "no-internet" | "server-error" | "maintenance" | "update",

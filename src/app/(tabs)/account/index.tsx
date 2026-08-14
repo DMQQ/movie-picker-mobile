@@ -106,6 +106,7 @@ export default function SettingsScreen() {
   const [updateMe] = useUpdateMeMutation();
   const [updateDevice] = useUpdateDeviceMutation();
   const [notificationsEnabled, setNotificationsEnabled] = useState<boolean | null>(null);
+  const [notificationsPending, setNotificationsPending] = useState(false);
   const [systemPermission, setSystemPermission] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const { refetch: refetchMe } = useMeQuery(undefined, { skip: !isFullAccount });
@@ -126,38 +127,44 @@ export default function SettingsScreen() {
   }, []);
 
   async function handleToggleNotifications(value: boolean) {
-    if (value) {
-      const { status } = await Notifications.requestPermissionsAsync();
-      posthog?.capture("push_permission_granted", { granted: status === "granted" });
-      setSystemPermission(status);
-      if (status !== "granted") {
+    if (notificationsPending) return;
+    setNotificationsPending(true);
+    try {
+      if (value) {
+        const { status } = await Notifications.requestPermissionsAsync();
+        posthog?.capture("push_permission_granted", { granted: status === "granted" });
+        setSystemPermission(status);
+        if (status !== "granted") {
+          setNotificationsEnabled(false);
+          Alert.alert(
+            t("account.notifications.disabledTitle"),
+            t("account.notifications.disabledMessage"),
+            [
+              { text: t("common.cancel"), style: "cancel" },
+              { text: t("account.notifications.openSettings"), onPress: () => Linking.openSettings() },
+            ],
+          );
+          return;
+        }
+        await AsyncStorage.setItem("notificationsEnabled", "true");
+        setNotificationsEnabled(true);
+        try {
+          const token = (await Notifications.getExpoPushTokenAsync()).data;
+          await updateDevice({
+            platform: Platform.OS,
+            pushNotificationToken: token,
+            notificationsEnabled: true,
+          }).unwrap();
+        } catch {}
+      } else {
+        await AsyncStorage.setItem("notificationsEnabled", "false");
         setNotificationsEnabled(false);
-        Alert.alert(
-          t("account.notifications.disabledTitle"),
-          t("account.notifications.disabledMessage"),
-          [
-            { text: t("common.cancel"), style: "cancel" },
-            { text: t("account.notifications.openSettings"), onPress: () => Linking.openSettings() },
-          ],
-        );
-        return;
+        try {
+          await updateDevice({ pushNotificationToken: null, platform: Platform.OS, notificationsEnabled: false }).unwrap();
+        } catch {}
       }
-      await AsyncStorage.setItem("notificationsEnabled", "true");
-      setNotificationsEnabled(true);
-      try {
-        const token = (await Notifications.getExpoPushTokenAsync()).data;
-        await updateDevice({
-          platform: Platform.OS,
-          pushNotificationToken: token,
-          notificationsEnabled: true,
-        }).unwrap();
-      } catch {}
-    } else {
-      await AsyncStorage.setItem("notificationsEnabled", "false");
-      setNotificationsEnabled(false);
-      try {
-        await updateDevice({ pushNotificationToken: null, platform: Platform.OS, notificationsEnabled: false }).unwrap();
-      } catch {}
+    } finally {
+      setNotificationsPending(false);
     }
   }
 
@@ -401,8 +408,7 @@ export default function SettingsScreen() {
               <TourAttachStep index={2} fill>
               <Pressable
                 style={styles.notifCard}
-                disabled={notificationsEnabled === null}
-                onPress={() => handleToggleNotifications(!notificationsEnabled)}
+                disabled={notificationsEnabled === null || notificationsPending}
               >
                 <View style={styles.notifLeft}>
                   <Icon source="bell-outline" size={16} color={colors.placeholder} />
@@ -410,7 +416,7 @@ export default function SettingsScreen() {
                 </View>
                 <Switch
                   value={notificationsEnabled ?? false}
-                  disabled={notificationsEnabled === null}
+                  disabled={notificationsEnabled === null || notificationsPending}
                   onValueChange={handleToggleNotifications}
                   trackColor={{ false: colors.border, true: colors.primary }}
                   thumbColor={colors.text}
