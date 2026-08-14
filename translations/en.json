@@ -301,6 +301,7 @@
     "empty": "No reviews yet",
     "loadError": "Failed to load reviews",
     "rateTitle": "Rate this movie",
+    "yourReview": "Your review",
     "reviewPlaceholder": "Add a review…",
     "reviewCount": "{count} review{plural}",
     "avgLabel": "{avg}/10 avg",
@@ -635,6 +636,7 @@
       "header": "Discover FlickMate",
       "skip": "Skip",
       "next": "Next",
+      "done": "Done",
       "getStarted": "Get Started",
       "welcome": {
         "title": "Pick Movies Together",

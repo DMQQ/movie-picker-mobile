@@ -26,7 +26,7 @@ export default function MatchesScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, padding: spacing.screen }}>
+      <View style={{ flex: 1, padding: spacing.screen, paddingBottom:0 }}>
         <TilesList label={t("matched.title")} data={data} />
       </View>
 

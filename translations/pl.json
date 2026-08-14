@@ -623,6 +623,7 @@
       "header": "Odkryj FlickMate",
       "skip": "Pomiń",
       "next": "Dalej",
+      "done": "Gotowe",
       "getStarted": "Zaczynajmy",
       "welcome": {
         "title": "Wybieraj Filmy Razem",
@@ -1012,6 +1013,7 @@
     "empty": "Brak ocen",
     "loadError": "Nie udało się załadować ocen",
     "rateTitle": "Oceń film",
+    "yourReview": "Twoja recenzja",
     "reviewPlaceholder": "Dodaj recenzję…",
     "reviewCount": "{count} recenzji",
     "avgLabel": "{avg}/10 średnio",

@@ -26,7 +26,7 @@ export default function LikesScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, padding: spacing.screen }}>
+      <View style={{ flex: 1, padding: spacing.screen, paddingBottom:0 }}>
         <TilesList label={t("likes.title")} data={data} />
       </View>
       {match && <Modal onClose={() => setMatch(undefined)} match={match} />}

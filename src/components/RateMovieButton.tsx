@@ -8,6 +8,7 @@ import { Movie } from "../../types";
 import { useAppSelector } from "../redux/store";
 import { useGetMyRatingQuery } from "../redux/ratings/ratingsApi";
 import { getUserAvatarColor } from "../utils/avatar";
+import useTranslation from "../service/useTranslation";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 
 interface Props {
@@ -40,6 +41,7 @@ function StarRow({ rating }: { rating: number }) {
 }
 
 export default function RateMovieButton({ movie, contentType }: Props) {
+  const t = useTranslation();
   const user = useAppSelector((s) => s.auth.user);
 
   const { data: myRating } = useGetMyRatingQuery(
@@ -74,7 +76,7 @@ export default function RateMovieButton({ movie, contentType }: Props) {
         <View style={styles.content}>
           {myRating ? (
             <>
-              <Text style={styles.reviewLabel}>Your review</Text>
+              <Text style={styles.reviewLabel}>{t("ratings.yourReview")}</Text>
               {myRating.review ? (
                 <Text style={styles.review} numberOfLines={2}>{myRating.review}</Text>
               ) : null}
@@ -86,7 +88,7 @@ export default function RateMovieButton({ movie, contentType }: Props) {
           ) : (
             <View style={styles.ratePrompt}>
               <MaterialCommunityIcons name="star-outline" size={16} color={colors.placeholder} />
-              <Text style={styles.promptText}>Rate this movie</Text>
+              <Text style={styles.promptText}>{t("ratings.rateTitle")}</Text>
             </View>
           )}
         </View>

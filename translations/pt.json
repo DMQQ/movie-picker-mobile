@@ -623,6 +623,7 @@
       "header": "Descubra o FlickMate",
       "skip": "Pular",
       "next": "Próximo",
+      "done": "Concluído",
       "getStarted": "Começar",
       "welcome": {
         "title": "Escolha filmes juntos",
@@ -1013,6 +1014,7 @@
     "empty": "Nenhuma avaliação ainda",
     "loadError": "Erro ao carregar avaliações",
     "rateTitle": "Avaliar filme",
+    "yourReview": "Sua avaliação",
     "reviewPlaceholder": "Adicionar resenha…",
     "reviewCount": "{count} avaliação{plural}",
     "avgLabel": "{avg}/10 média",

@@ -13,6 +13,7 @@ import {
 import PrimaryButton from "./PrimaryButton";
 import type { TourStepRenderProps } from "./Tour/TourContext";
 import PlatformBlurView from "./PlatformBlurView";
+import useTranslation from "../service/useTranslation";
 
 interface Props extends TourStepRenderProps {
   title: string;
@@ -31,6 +32,7 @@ export default function TutorialTooltip({
   current,
   total,
 }: Props) {
+  const t = useTranslation();
   return (
     <PlatformBlurView
       style={[styles.container, Platform.OS === "android" && styles.androidBg]}
@@ -59,11 +61,11 @@ export default function TutorialTooltip({
                   compact
                   labelStyle={styles.skipLabel}
                 >
-                  Skip
+                  {t("onboarding.features.skip")}
                 </Button>
               )}
               <PrimaryButton onPress={next} style={styles.nextButton}>
-                {isLast ? "Done" : "Next"}
+                {isLast ? t("onboarding.features.done") : t("onboarding.features.next")}
               </PrimaryButton>
             </View>
           </View>

@@ -623,6 +623,7 @@
       "header": "FlickMate entdecken",
       "skip": "Überspringen",
       "next": "Weiter",
+      "done": "Fertig",
       "getStarted": "Loslegen",
       "welcome": {
         "title": "Gemeinsam Filme auswählen",
@@ -1013,6 +1014,7 @@
     "empty": "Noch keine Bewertungen",
     "loadError": "Fehler beim Laden der Bewertungen",
     "rateTitle": "Film bewerten",
+    "yourReview": "Deine Bewertung",
     "reviewPlaceholder": "Rezension hinzufügen…",
     "reviewCount": "{count} Bewertung{plural}",
     "avgLabel": "{avg}/10 Ø",

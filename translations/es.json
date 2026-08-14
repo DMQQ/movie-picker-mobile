@@ -623,6 +623,7 @@
       "header": "Descubre FlickMate",
       "skip": "Saltar",
       "next": "Siguiente",
+      "done": "Listo",
       "getStarted": "Comenzar",
       "welcome": {
         "title": "Elige películas juntos",
@@ -1013,6 +1014,7 @@
     "empty": "Aún no hay reseñas",
     "loadError": "Error al cargar las reseñas",
     "rateTitle": "Calificar película",
+    "yourReview": "Tu reseña",
     "reviewPlaceholder": "Añadir reseña…",
     "reviewCount": "{count} reseña{plural}",
     "avgLabel": "{avg}/10 media",

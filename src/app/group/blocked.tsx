@@ -33,6 +33,7 @@ function RatingRow({
   ratingsMap: Map<string, UserRating>;
   user: { name: string } | null;
 }) {
+  const t = useTranslation();
   const rating = ratingsMap.get(`${contentType}:${movieId}`);
 
   const openRateSheet = () =>
@@ -70,11 +71,11 @@ function RatingRow({
             {rating.review ? (
               <Text style={styles.reviewText} numberOfLines={1}>{rating.review}</Text>
             ) : (
-              <Text style={styles.noReviewText}>No review</Text>
+              <Text style={styles.noReviewText}>{t("lists.noReview")}</Text>
             )}
           </>
         ) : (
-          <Text style={styles.noReviewText}>Rate this movie</Text>
+          <Text style={styles.noReviewText}>{t("ratings.rateTitle")}</Text>
         )}
       </View>
       <Icon source="pencil-outline" size={10} color="rgba(255,255,255,0.2)" />
