@@ -22,6 +22,7 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { posthog } from "../constants/posthog";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const GRID_PADDING = 20;
@@ -64,6 +65,7 @@ function UnviewedMatchesContent() {
   }, [isReady, matchesRepo]);
 
   const handleViewMatch = useCallback((match: StoredMatch) => {
+    posthog?.capture("unviewed_match_opened", { movieId: match.movie_id });
     router.replace({
       pathname: "/movie/type/[type]/[id]",
       params: {
@@ -162,7 +164,10 @@ function UnviewedMatchesContent() {
             title: m.title,
             type: m.movie_type,
           }))}
-          beforeCreate={() => router.back()}
+          beforeCreate={() => {
+            posthog?.capture("unviewed_match_saved", { count: unviewedMatches.length });
+            router.back();
+          }}
         />
       </View>
     </View>

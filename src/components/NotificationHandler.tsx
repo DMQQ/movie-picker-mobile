@@ -1,5 +1,6 @@
 import * as Notifications from "expo-notifications";
 import { router } from "expo-router";
+import { Platform } from "react-native";
 import { useEffect } from "react";
 import { baseUrl } from "../context/SocketContext";
 import { useAppSelector } from "../redux/store";
@@ -7,11 +8,20 @@ import { posthog } from "../constants/posthog";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),
 });
+
+if (Platform.OS === "android") {
+  Notifications.setNotificationChannelAsync("default", {
+    name: "Default",
+    importance: Notifications.AndroidImportance.MAX,
+    color: "#4169E1",
+  });
+}
 
 export default function NotificationHandler() {
   const token = useAppSelector((s) => s.auth.token);

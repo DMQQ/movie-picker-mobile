@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
-import { Platform } from "react-native";
+import { AppState, type AppStateStatus, Platform } from "react-native";
 import { posthog } from "../constants/posthog";
 import type { Movie } from "../../types";
 import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
@@ -54,12 +54,22 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
   const movieIndex = useAppSelector((state) => state.room.index);
   const usersCount = useAppSelector((state) => state.room.usersCount);
 
+  const likesCount = useAppSelector((state) => state.room.likes.length);
+  const dislikesCount = useAppSelector((state) => state.room.dislikes.length);
+  const matchesCount = useAppSelector((state) => state.room.matches.length);
+
   const isPlayingRef = useRef(isPlaying);
   isPlayingRef.current = isPlaying;
+  const isFinishedRef = useRef(isFinished);
+  isFinishedRef.current = isFinished;
   const movieIndexRef = useRef(movieIndex);
   movieIndexRef.current = movieIndex;
   const cardsRef = useRef(cards);
   cardsRef.current = cards;
+  const swipesCountRef = useRef(0);
+  swipesCountRef.current = likesCount + dislikesCount;
+  const matchesCountRef = useRef(matchesCount);
+  matchesCountRef.current = matchesCount;
 
   const hasJoined = useRef(false);
   const lastJoinedRoomId = useRef<string | null>(null);
@@ -200,6 +210,20 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
       socket.off("room:host:changed", handleHostChanged);
     };
   }, [socket, dispatch]);
+
+  // Track sessions that get abandoned (backgrounded) instead of ended via the End Game button
+  useEffect(() => {
+    const handleAppStateChange = (nextState: AppStateStatus) => {
+      if (nextState !== "background") return;
+      if (!isPlayingRef.current || isFinishedRef.current) return;
+      posthog?.capture("game_backgrounded_while_playing", {
+        swipes: swipesCountRef.current,
+        matches: matchesCountRef.current,
+      });
+    };
+    const subscription = AppState.addEventListener("change", handleAppStateChange);
+    return () => subscription.remove();
+  }, []);
 
   // Finish effect
   useEffect(() => {

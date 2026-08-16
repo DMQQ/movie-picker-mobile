@@ -111,6 +111,7 @@
       "usesAppleSignIn": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "playStoreUrl": "https://play.google.com/store/apps/details?id=pl.dmq.moviepicker",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -119,7 +120,7 @@
       "permissions": ["android.permission.CAMERA"],
       "blockedPermissions": ["android.permission.ACTIVITY_RECOGNITION"],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202608152,
+      "versionCode": 202608161,
       "intentFilters": [
         {
           "action": "VIEW",
@@ -159,7 +160,7 @@
     "updates": {
       "url": "https://flickmate.app/api/manifest",
       "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 2000,
+      "fallbackToCacheTimeout": 1000,
       "runtimeVersion": "7.0.0"
     }
   }

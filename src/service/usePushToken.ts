@@ -1,9 +1,12 @@
 import { useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import { AsyncStorage } from "expo-sqlite/kv-store";
+import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import { useUpdateDeviceMutation } from "../redux/auth/authApi";
 import { useAppSelector } from "../redux/store";
+
+const projectId = Constants.expoConfig?.extra?.eas?.projectId;
 
 export function usePushToken() {
   const authToken = useAppSelector((state) => state.auth.token);
@@ -34,7 +37,7 @@ export function usePushToken() {
       const { status } = await Notifications.getPermissionsAsync();
       if (status !== "granted") return;
 
-      const { data } = await Notifications.getExpoPushTokenAsync();
+      const { data } = await Notifications.getExpoPushTokenAsync({ projectId });
       await register(data);
     }
 

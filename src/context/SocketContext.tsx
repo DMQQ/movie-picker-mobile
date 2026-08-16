@@ -134,6 +134,7 @@ export const SocketProvider = ({
         setSocket(newSocket);
 
         if (isReconnect) {
+          posthog?.capture("socket_reconnected", { namespace });
           emitter.emit("reconnected", true);
         }
       });

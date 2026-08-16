@@ -19,6 +19,7 @@ import {
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as SecureStore from "expo-secure-store";
+import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import PageHeading from "../../../components/PageHeading";
@@ -40,6 +41,7 @@ import TutorialTooltip from "../../../components/TutorialTooltip";
 import { useTutorialSeen } from "../../../hooks/useTutorial";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
+const projectId = Constants.expoConfig?.extra?.eas?.projectId;
 function SectionLabel({
   icon,
   title,
@@ -149,7 +151,7 @@ export default function SettingsScreen() {
         await AsyncStorage.setItem("notificationsEnabled", "true");
         setNotificationsEnabled(true);
         try {
-          const token = (await Notifications.getExpoPushTokenAsync()).data;
+          const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
           await updateDevice({
             platform: Platform.OS,
             pushNotificationToken: token,
