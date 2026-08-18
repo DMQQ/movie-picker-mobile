@@ -1,6 +1,9 @@
 {
   "expo": {
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "name": "FlickMate",
     "slug": "qr-mobile",
     "version": "4.0.0",
@@ -14,6 +17,7 @@
       "backgroundColor": "#0A0A0F"
     },
     "plugins": [
+      "./plugins/withGradleMemory",
       [
         "expo-camera",
         {
@@ -88,12 +92,17 @@
       [
         "posthog-react-native/expo",
         {
-          "uploadNativeSymbols": true,
-          "skipOnConflict": true
+          "uploadNativeSymbols": {
+            "includeSource": true
+          },
+          "skipOnConflict": true,
+          "dotenvFile": ".env"
         }
       ]
     ],
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "appStoreUrl": "https://apps.apple.com/us/app/flickmate-movie-finder/id6741321848",
       "buildNumber": "202608151",
@@ -106,9 +115,12 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "pl.dmq.movie-picker",
-      "associatedDomains": ["applinks:flickmate.app"],
+      "associatedDomains": [
+        "applinks:flickmate.app"
+      ],
       "appleTeamId": "55RA6Q9VSR",
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -117,10 +129,15 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
-      "permissions": ["android.permission.CAMERA"],
-      "blockedPermissions": ["android.permission.ACTIVITY_RECOGNITION"],
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "blockedPermissions": [
+        "android.permission.ACTIVITY_RECOGNITION"
+      ],
       "package": "pl.dmq.moviepicker",
-      "versionCode": 202608161,
+      "versionCode": 202608162,
       "intentFilters": [
         {
           "action": "VIEW",
@@ -129,7 +146,10 @@
               "scheme": "flickmate"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         },
         {
           "action": "VIEW",
@@ -140,7 +160,10 @@
               "pathPrefix": "/"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
@@ -158,7 +181,7 @@
       "reactCompiler": true
     },
     "updates": {
-      "url": "https://flickmate.app/api/manifest",
+      "url": "https://u.expo.dev/ab2d7ea0-e25f-4063-a2e2-1a449547340b",
       "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 1000,
       "runtimeVersion": "7.0.0"

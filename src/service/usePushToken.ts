@@ -50,7 +50,11 @@ export function usePushToken() {
     const sub = Notifications.addPushTokenListener(async ({ data }) => {
       const enabled = await AsyncStorage.getItemAsync("notificationsEnabled");
       if (enabled === "false") return;
-      register(data);
+      const { data: expoToken } = await Notifications.getExpoPushTokenAsync({
+        projectId,
+        devicePushToken: { type: Platform.OS, data },
+      });
+      register(expoToken);
     });
     return () => sub.remove();
   }, [authToken]);
