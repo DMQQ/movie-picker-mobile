@@ -1,92 +1,82 @@
 import { memo } from "react";
 import Text from "../Text";
-import { StyleSheet, View } from "react-native";
-
+import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
 import { Movie } from "../../../types";
-import SectionListItem, {
-  SECTION_ITEM_WIDTH,
-  SECTION_ITEM_HEIGHT,
-} from "../SectionItem";
-import Skeleton from "../Skeleton/Skeleton";
-import { useInfiniteSectionMovies } from "../../hooks/useInfiniteSectionMovies";
-import { colors, radius, spacing, typography} from "../../constants/design";
+import SectionListItem from "../SectionItem";
+import { colors, fontSize, fontWeight, spacing, typography } from "../../constants/design";
+import { useRouter } from "expo-router";
 
 interface SectionProps {
   group: { name: string; results: Movie[] };
 }
 
-export const SECTION_HEIGHT = SECTION_ITEM_HEIGHT + 80;
+const { width: screenWidth } = Dimensions.get("screen");
+
+const COMPACT_W = Math.round(Math.min(screenWidth * 0.27, 130));
+const COMPACT_H = Math.round(COMPACT_W * 1.5);
+
+const SECTION_GAP = spacing.xl;
+export const SECTION_HEIGHT = COMPACT_H + 60 + SECTION_GAP;
 
 const sectionStyles = StyleSheet.create({
   container: {
     paddingHorizontal: spacing.screen,
     height: SECTION_HEIGHT,
+    marginBottom: SECTION_GAP,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: spacing.sm + 2,
   },
   title: {
     color: colors.text,
     fontSize: typography.bebasSize.section,
     fontFamily: "Bebas",
-    marginBottom: spacing.sm + 2,
   },
-});
-
-const skeletonStyles = StyleSheet.create({
-  moviesList: {
-    flexDirection: "row",
-    gap: spacing.sm + 2,
-    marginTop: spacing.screen,
-  },
-  movieCard: {
-    alignItems: "center",
+  showAll: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.placeholder,
+    letterSpacing: 0.4,
   },
 });
 
 const renderItem = ({ item }: ListRenderItemInfo<Movie>) => (
-  <SectionListItem {...item} />
+  <SectionListItem {...item} imageWidth={COMPACT_W} hideTitle={true} />
 );
 
 const movieKeyExtractor = (item: Movie) => `${item.id}-${item.type}`;
 
 export const Section = memo(
   ({ group }: SectionProps) => {
-    const { movies, isFetching, fetchNextPage } = useInfiniteSectionMovies(group.name, group.results);
+    const router = useRouter();
 
-    if (movies.length === 0) return null;
+    if (group.results.length === 0) return null;
+
+    const handleShowAll = () => {
+      router.push({ pathname: "/section-movies", params: { name: group.name } });
+    };
 
     return (
       <View style={sectionStyles.container}>
-        <Text style={sectionStyles.title}>{group.name}</Text>
+        <View style={sectionStyles.header}>
+          <Text style={sectionStyles.title}>{group.name}</Text>
+          <Pressable onPress={handleShowAll} hitSlop={8}>
+            <Text style={sectionStyles.showAll}>Show all {">"}</Text>
+          </Pressable>
+        </View>
 
         <FlashList
-          data={movies}
-          extraData={movies.length}
+          data={group.results}
           renderItem={renderItem}
           keyExtractor={movieKeyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          onEndReached={fetchNextPage}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={
-            isFetching ? (
-              <View style={skeletonStyles.moviesList}>
-                {[...Array(2)].map((_, index) => (
-                  <View style={skeletonStyles.movieCard} key={index}>
-                    <Skeleton>
-                      <View
-                        style={{
-                          width: SECTION_ITEM_WIDTH,
-                          height: SECTION_ITEM_HEIGHT,
-                          backgroundColor: "#333",
-                          borderRadius: radius.sm,
-                        }}
-                      />
-                    </Skeleton>
-                  </View>
-                ))}
-              </View>
-            ) : null
-          }
+          estimatedItemSize={COMPACT_W + spacing.sm}
+          ItemSeparatorComponent={() => <View style={{ width: spacing.sm }} />}
         />
       </View>
     );

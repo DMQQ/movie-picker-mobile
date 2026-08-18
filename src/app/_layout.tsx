@@ -323,6 +323,8 @@ const RootNavigator = ({
           }}
         />
 
+        <Stack.Screen name="section-movies" options={{ headerShown: false }} />
+
       </Stack>
     </GestureHandlerRootView>
   );

@@ -84,6 +84,8 @@ export const SectionListItem = ({
                 alt={name || title}
                 showsPlaceholder={false}
                 priority="low"
+                recyclingKey={`${rest.id}-${rest.type}`}
+                transition={0}
               />
             </Link.AppleZoom>
             {vote_average > 0 && (
@@ -190,7 +192,7 @@ const sectionStyles = StyleSheet.create({
 
   badgeItem: {
     fontSize: fontSize.xs,
-    transform: [{ skewX: "10deg" }],
+
     color: "rgba(255,255,255,0.8)",
     fontWeight: fontWeight.bold,
   },
