@@ -217,7 +217,7 @@ const SearchScreen = () => {
 
   const prevFiltersRef = useRef("");
   useEffect(() => {
-    const key = `${mediaFilters.mediaType}|${mediaFilters.selectedGenres.map(g => g.id).join(",")}|${mediaFilters.selectedProviders.join(",")}`;
+    const key = `${mediaFilters.mediaType}|${mediaFilters.selectedDecade}|${mediaFilters.selectedGenres.map(g => g.id).join(",")}|${mediaFilters.selectedProviders.join(",")}`;
     if (key !== prevFiltersRef.current) {
       prevFiltersRef.current = key;
       setCurrentPage(1);
@@ -301,6 +301,7 @@ const SearchScreen = () => {
         with_watch_providers: mediaFilters.selectedProviders.length > 0
           ? mediaFilters.selectedProviders
           : undefined,
+        decade: mediaFilters.selectedDecade !== "all" ? mediaFilters.selectedDecade : undefined,
         with_people: searchParams?.people,
       } as any;
 
