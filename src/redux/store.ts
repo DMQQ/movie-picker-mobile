@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { AppState } from "react-native";
 import { roomSlice } from "./room/roomSlice";
 import { eitherOrSlice } from "./eitherOr/eitherOrSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -47,6 +49,17 @@ const store = configureStore({
     getDefaultMiddleware()
       .prepend(listenerMiddleware.middleware)
       .concat([movieApi.middleware, personApi.middleware, authApi.middleware, listsApi.middleware, roomApi.middleware, scoringPreferencesApi.middleware, ratingsApi.middleware, inviteApi.middleware]),
+});
+
+setupListeners(store.dispatch, (dispatch, { onFocus, onFocusLost }) => {
+  const sub = AppState.addEventListener("change", (state) => {
+    if (state === "active") {
+      dispatch(onFocus());
+    } else {
+      dispatch(onFocusLost());
+    }
+  });
+  return () => sub.remove();
 });
 
 export { store };
