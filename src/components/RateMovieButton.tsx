@@ -7,7 +7,7 @@ import PlatformBlurView from "./PlatformBlurView";
 import { Movie } from "../../types";
 import { useAppSelector } from "../redux/store";
 import { useGetMyRatingQuery } from "../redux/ratings/ratingsApi";
-import { getUserAvatarColor } from "../utils/avatar";
+import { getUserAvatarColor, getInitials } from "../utils/avatar";
 import useTranslation from "../service/useTranslation";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 
@@ -63,7 +63,7 @@ export default function RateMovieButton({ movie, contentType }: Props) {
 
   const avatar = user ? (
     <AvatarText
-      label={user.name.charAt(0).toUpperCase()}
+      label={getInitials(user.name)}
       size={38}
       style={{ backgroundColor: getUserAvatarColor(user.name) }}
     />

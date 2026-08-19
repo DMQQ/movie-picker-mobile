@@ -112,6 +112,12 @@ export const ensureAnonymousSession = createAsyncThunk(
     if (finalUserId) {
       if (!userId) await AsyncStorage.setItemAsync("userId", finalUserId);
       dispatch(setUserId(finalUserId));
+    } else {
+      // Fallback: ensure Redux state has whatever userId is in AsyncStorage
+      const stored = await AsyncStorage.getItemAsync("userId");
+      if (stored) {
+        dispatch(setUserId(stored));
+      }
     }
 
     return data as {

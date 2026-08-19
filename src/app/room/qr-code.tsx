@@ -12,7 +12,6 @@ import PlayersRow from "../../components/GameLobby/PlayersRow";
 import LobbyShell from "../../components/GameLobby/LobbyShell";
 import { Movie } from "../../../types";
 import PageHeading from "../../components/PageHeading";
-import RoleGuard from "../../components/RoleGuard";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../context/SocketContext";
@@ -359,23 +358,21 @@ export default function QRCodePage() {
         }
         actions={
           <View style={styles.actionRow}>
-            <RoleGuard guard="fullAccount">
-              <Button
-                mode="outlined"
-                disabled={!qrCode}
-                icon="account-multiple-plus"
-                compact
-                style={styles.inviteButton}
-                onPress={() =>
-                  router.push({
-                    pathname: "/room/invite-players",
-                    params: { roomId: qrCode, gameType: "swipe" },
-                  })
-                }
-              >
-                {""}
-              </Button>
-            </RoleGuard>
+            <Button
+              mode="outlined"
+              disabled={!qrCode}
+              icon="account-multiple-plus"
+              compact
+              style={styles.inviteButton}
+              onPress={() =>
+                router.push({
+                  pathname: "/invite-players",
+                  params: { roomId: qrCode, gameType: "swipe" },
+                })
+              }
+            >
+              {""}
+            </Button>
 
             <Link
               href={startGameHref}

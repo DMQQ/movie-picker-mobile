@@ -145,7 +145,7 @@ export default function MatchupCard({ movie, side, votes, totalVotes, votedSide,
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    aspectRatio: 2 / 3,
+    aspectRatio: 9 / 16,
     borderRadius: radius.card,
     overflow: "hidden",
     borderWidth: 3,

@@ -181,7 +181,7 @@ export default function Home() {
             <Button
               onPress={() => {
                 setShowError(false);
-                router.replace("/(tabs)");
+                router.back();
               }}
             >
               {t("dialogs.qr.close")}

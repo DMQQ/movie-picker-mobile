@@ -12,7 +12,7 @@ import {
   useUpdateMeMutation,
 } from "../redux/auth/authApi";
 import { useGetGamesQuery } from "../redux/lists/listsApi";
-import { getUserAvatarColor } from "../utils/avatar";
+import { getUserAvatarColor, getInitials } from "../utils/avatar";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import useTranslation from "../service/useTranslation";
 
@@ -92,7 +92,7 @@ export default function AccountProfileHeader({ user }: Props) {
             />
           ) : (
             <Text style={styles.avatarLetter}>
-              {user.name.charAt(0).toUpperCase()}
+              {getInitials(user.name)}
             </Text>
           )}
         </View>

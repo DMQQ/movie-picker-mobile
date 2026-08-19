@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Image } from "expo-image";
 import { Pressable, StyleSheet, View } from "react-native";
 import Icon from "./Icon";
 import Text from "./Text";
@@ -83,7 +84,11 @@ export default function RecentGames() {
         {posterGames.length === 0 && (
           <View style={[styles.fanCard, { left: 0, zIndex: 1 }]}>
             <View style={styles.noPoster}>
-              <Icon source="movie-open-outline" size={18} color={colors.textSecondary} />
+              <Image
+                source={require("../../assets/images/adaptive-icon.png")}
+                style={styles.noPosterLogo}
+                contentFit="contain"
+              />
             </View>
           </View>
         )}
@@ -155,10 +160,11 @@ const styles = StyleSheet.create({
     width: POSTER_W,
     height: POSTER_H,
     borderRadius: radius.xs + 2,
-    backgroundColor: colors.overlay,
+    backgroundColor: "#1a1a2e",
     alignItems: "center",
     justifyContent: "center",
   },
+  noPosterLogo: { width: POSTER_W - 6, height: POSTER_W - 6 },
 
   info: { flex: 1, gap: spacing.xs },
   title: { fontSize: fontSize.lg - 1, fontWeight: fontWeight.bold, color: colors.text },

@@ -17,7 +17,8 @@ import useEitherOrContext from "../../context/EitherOrContext";
 import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
 import { colors, fontSize, fontWeight, radius, spacing, typography, withAlpha } from "../../constants/design";
-import { getUserAvatarColor } from "../../utils/avatar";
+import { getUserAvatarColor, getInitials } from "../../utils/avatar";
+import { prefetchThumbnails } from "../../utils/prefetchImages";
 import type { Side } from "../../redux/eitherOr/eitherOrSlice";
 
 export default function Matchup() {
@@ -48,7 +49,7 @@ export default function Matchup() {
   const cardWidth = contentWidth > 0 ? contentWidth / 2 : 0;
   // Drive height from available vertical space so cards fill the screen.
   // Fall back to natural poster ratio when height isn't measured yet.
-  const cardHeight = duelSize.height > 0 ? duelSize.height * 0.65 : cardWidth * 1.5;
+  const cardHeight = cardWidth * (4 / 3);
 
   const vsScale = useSharedValue(1);
 
@@ -96,6 +97,14 @@ export default function Matchup() {
     const id = setInterval(tick, 250);
     return () => clearInterval(id);
   }, [currentMatch?.startedAt, currentMatch?.countdownMs, isRevealing]);
+
+  useEffect(() => {
+    if (!currentMatch) return;
+    prefetchThumbnails(
+      [currentMatch.champion.poster_path, currentMatch.challenger.poster_path].filter(Boolean),
+      'xlarge'
+    );
+  }, [currentMatch?.roundNumber, currentMatch?.matchIndex]);
 
   if (!currentMatch) return null;
 
@@ -250,7 +259,7 @@ export default function Matchup() {
                 <View key={user.userId} style={styles.playerSlot}>
                   <AvatarText
                     size={30}
-                    label={user.username[0]?.toUpperCase() || "?"}
+                    label={getInitials(user.username || "?")}
                     style={{ backgroundColor: getUserAvatarColor(user.username) }}
                   />
                   <View style={[styles.votedDot, voted ? styles.votedDotYes : styles.votedDotNo]}>

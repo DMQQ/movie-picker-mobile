@@ -1,7 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "./Icon";
 import Text from "./Text";
-import { Image } from "expo-image";
+import UserAvatar from "./UserAvatar";
 import { Link } from "expo-router";
 import { StyleSheet, View } from "react-native";
 
@@ -9,7 +9,6 @@ import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import Touch from "./Touch";
 import { type GameMember, type UserGame } from "../redux/lists/listsApi";
 import { formatGameType } from "../utils/formatGameType";
-import { getUserAvatarColor } from "../utils/avatar";
 import {
   colors,
   fontSize,
@@ -37,16 +36,30 @@ function AvatarStack({ members }: { members: GameMember[] }) {
   return (
     <View style={av.row}>
       {visible.map((m, i) => (
-        <View key={m.id} style={[av.circle, { marginLeft: i === 0 ? 0 : -AVATAR_OVERLAP, backgroundColor: getUserAvatarColor(m.name) }]}>
-          {m.avatarUrl ? (
-            <Image style={av.img} source={{ uri: m.avatarUrl }} cachePolicy="memory-disk" />
-          ) : (
-            <Text style={av.letter}>{m.name.charAt(0).toUpperCase()}</Text>
-          )}
+        <View
+          key={m.id}
+          style={[
+            av.wrapper,
+            { marginLeft: i === 0 ? 0 : -AVATAR_OVERLAP },
+          ]}
+        >
+          <UserAvatar
+            name={m.name}
+            avatarUrl={m.avatarUrl}
+            size={AVATAR_SIZE}
+            borderWidth={1.5}
+            borderColor="rgba(0,0,0,0.6)"
+          />
         </View>
       ))}
       {extra > 0 && (
-        <View style={[av.circle, av.extra, { marginLeft: -AVATAR_OVERLAP }]}>
+        <View
+          style={[
+            av.circle,
+            av.extra,
+            { marginLeft: -AVATAR_OVERLAP },
+          ]}
+        >
           <Text style={av.extraText}>+{extra}</Text>
         </View>
       )}
@@ -153,18 +166,14 @@ const styles = StyleSheet.create({
 
 const av = StyleSheet.create({
   row: { flexDirection: "row", alignItems: "center" },
+  wrapper: { alignItems: "center", justifyContent: "center" },
   circle: {
     width: AVATAR_SIZE,
     height: AVATAR_SIZE,
     borderRadius: AVATAR_SIZE / 2,
-    borderWidth: 1.5,
-    borderColor: "rgba(0,0,0,0.6)",
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden",
   },
-  img: { width: AVATAR_SIZE, height: AVATAR_SIZE },
-  letter: { fontSize: fontSize.xs - 1, fontWeight: fontWeight.bold, color: colors.text },
   extra: { backgroundColor: colors.overlay },
   extraText: { fontSize: fontSize.xs - 2, fontWeight: fontWeight.bold, color: "rgba(255,255,255,0.7)" },
 });

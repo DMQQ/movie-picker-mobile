@@ -1,25 +1,25 @@
 import { useLocalSearchParams } from "expo-router";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import { FlatList, Platform, StyleSheet, TextInput, View } from "react-native";
-import { Image } from "expo-image";
-import Button from "../../components/Button";
-import Text from "../../components/Text";
-import { useAppSelector } from "../../redux/store";
+import Button from "../components/Button";
+import Text from "../components/Text";
+import UserAvatar from "../components/UserAvatar";
+import { useAppSelector } from "../redux/store";
 import {
   useGetGameMembersQuery,
   type GameMember,
-} from "../../redux/lists/listsApi";
-import { useSendInviteMutation } from "../../redux/invite/inviteApi";
-import { getUserAvatarColor } from "../../utils/avatar";
+} from "../redux/lists/listsApi";
+import { useSendInviteMutation } from "../redux/invite/inviteApi";
 import {
   colors,
   fontSize,
   fontWeight,
   radius,
   spacing,
-} from "../../constants/design";
-import useTranslation from "../../service/useTranslation";
-import { posthog } from "../../constants/posthog";
+} from "../constants/design";
+import useTranslation from "../service/useTranslation";
+import { posthog } from "../constants/posthog";
+import SignUpNudgeBanner from "../components/SignUpNudgeBanner";
 
 interface PlayerRowProps {
   member: GameMember;
@@ -35,28 +35,7 @@ const PlayerRow = memo(
     return (
       <View style={styles.row}>
         <View style={styles.playerInfo}>
-          <View
-            style={[
-              styles.avatar,
-              {
-                backgroundColor: member.avatarUrl
-                  ? undefined
-                  : getUserAvatarColor(member.name),
-              },
-            ]}
-          >
-            {member.avatarUrl ? (
-              <Image
-                style={styles.avatarImg}
-                source={{ uri: member.avatarUrl }}
-                cachePolicy="memory-disk"
-              />
-            ) : (
-              <Text style={styles.avatarLetter}>
-                {member.name.charAt(0).toUpperCase()}
-              </Text>
-            )}
-          </View>
+          <UserAvatar name={member.name} avatarUrl={member.avatarUrl} size={40} />
           <View style={styles.playerText}>
             <Text style={styles.name} numberOfLines={1}>
               {member.name}
@@ -141,18 +120,27 @@ export default function InvitePlayersScreen() {
   return (
     <View style={styles.container} collapsable={false}>
       {Platform.OS === "android" && <View style={styles.grabber} />}
-      <View style={styles.searchContainer} collapsable={false}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder={t("room.invite.searchPlaceholder") as string}
-          placeholderTextColor={colors.placeholder}
-          value={query}
-          onChangeText={setQuery}
-          autoFocus={false}
-        />
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>{t("room.inviteFriends") as string}</Text>
       </View>
+      {!isFullAccount ? (
+        <View style={styles.nudgeContainer}>
+          <SignUpNudgeBanner />
+        </View>
+      ) : (
+        <>
+          <View style={styles.searchContainer} collapsable={false}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder={t("room.invite.searchPlaceholder") as string}
+              placeholderTextColor={colors.placeholder}
+              value={query}
+              onChangeText={setQuery}
+              autoFocus={false}
+            />
+          </View>
 
-      <FlatList
+          <FlatList
         data={members}
         keyExtractor={(m) => m.id}
         style={styles.listContainer}
@@ -170,15 +158,17 @@ export default function InvitePlayersScreen() {
             </Text>
           </View>
         }
-        renderItem={({ item }) => (
-          <PlayerRow
-            member={item}
-            invited={invitedIds.has(item.id)}
-            loading={loadingId === item.id}
-            onInvite={handleInvite}
-          />
-        )}
-      />
+          renderItem={({ item }) => (
+            <PlayerRow
+              member={item}
+              invited={invitedIds.has(item.id)}
+              loading={loadingId === item.id}
+              onInvite={handleInvite}
+            />
+          )}
+        />
+        </>
+      )}
     </View>
   );
 }
@@ -190,6 +180,20 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: { paddingTop: spacing.xxl + 1 },
     }),
+  },
+  header: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.sm,
+  },
+  headerTitle: {
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
+  },
+  nudgeContainer: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
   },
   grabber: {
     width: 36,
@@ -232,23 +236,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.md,
     flex: 1,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  avatarImg: {
-    width: 40,
-    height: 40,
-  },
-  avatarLetter: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.bold,
-    color: colors.text,
   },
   playerText: {
     flex: 1,

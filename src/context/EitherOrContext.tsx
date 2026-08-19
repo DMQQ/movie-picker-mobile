@@ -56,8 +56,11 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
       if (!socket) return null;
 
       try {
-        const payload = { ...config, nickname: nicknameRef.current || "guest" };
-        console.log("[EitherOr] create-room payload:", JSON.stringify(payload, null, 2));
+        const payload = {
+          ...config,
+          nickname: nicknameRef.current || "guest",
+          userId: userIdRef.current,
+        };
         const response = await socket.timeout(10000).emitWithAck("create-room", payload);
 
         if (!response?.roomId) {
@@ -78,7 +81,10 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
 
   const joinRoom = useCallback(
     async (targetRoomId: string) => {
-      if (!socket) return false;
+      if (!socket) {
+        dispatch(eitherOrActions.setJoinError(true));
+        return false;
+      }
 
       dispatch(eitherOrActions.setJoining(true));
       dispatch(eitherOrActions.setJoinError(false));
@@ -86,7 +92,7 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
       try {
         const response = await socket
           .timeout(10000)
-          .emitWithAck("join-room", targetRoomId, nicknameRef.current || "guest");
+          .emitWithAck("join-room", targetRoomId, nicknameRef.current || "guest", userIdRef.current);
 
         if (!response?.joined) {
           dispatch(eitherOrActions.setJoinError(true));

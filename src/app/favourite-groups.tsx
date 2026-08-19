@@ -25,6 +25,7 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 import { posthog } from "../constants/posthog";
 import { addToast } from "../redux/toast/toastSlice";
+import SignUpNudgeBanner from "../components/SignUpNudgeBanner";
 
 interface CreateListHeaderProps {
   onCreated: (groupId: string) => void;
@@ -248,6 +249,7 @@ export default function FavouriteGroupsScreen() {
             </Pressable>
           );
         }}
+        ListFooterComponent={<SignUpNudgeBanner />}
       />
     </View>
   );

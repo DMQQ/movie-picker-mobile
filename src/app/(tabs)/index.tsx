@@ -6,6 +6,7 @@ import {
   fontSize,
   radius,
   spacing,
+  withAlpha,
 } from "../../constants/design";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -40,7 +41,8 @@ import PlatformBlurView from "../../components/PlatformBlurView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { posthog } from "../../constants/posthog";
 
-const CARD_HEIGHT = 280;
+const CARD_HEIGHT = 260;
+const CARD_HEIGHT_FEATURED = 310;
 const CARD_GAP = 24;
 
 interface GameCardProps {
@@ -54,6 +56,7 @@ interface GameCardProps {
   badge?: string;
   badgeColor?: string;
   highlight?: string;
+  featured?: boolean;
 }
 
 const Animations = [
@@ -74,19 +77,24 @@ const GameCard = ({
   badge,
   badgeColor,
   highlight,
+  featured,
 }: GameCardProps) => {
+  const cardHeight = featured ? CARD_HEIGHT_FEATURED : CARD_HEIGHT;
   return (
     <Animated.View
-      style={styles.cardContainer}
+      style={[styles.cardContainer]}
       exiting={FadeInDown.delay((index + 1) * 75)}
     >
       <Link href={href as any} asChild>
         <Touch onPress={() => posthog?.capture("game_mode_selected", { game: href })}>
-          <View style={styles.card}>
+          <View style={[styles.card, { height: cardHeight }, featured && { borderWidth: 1.5, borderColor: `${badgeColor ?? colors.primary}66` }]}>
             {Animations[index]}
 
             {badge && (
               <View style={[styles.badgeChip, { backgroundColor: badgeColor ?? colors.primary }]}>
+                {featured && (
+                  <MaterialCommunityIcons name="crown" size={11} color={colors.text} />
+                )}
                 <Text style={styles.badgeText}>{badge}</Text>
               </View>
             )}
@@ -250,6 +258,7 @@ export default function GameList() {
         badge: t("games.voter.swipeBadge") as string,
         badgeColor: colors.primary,
         highlight: t("games.voter.swipeHighlight") as string,
+        featured: true,
       },
       {
         title: t("games.fortunewheel.title"),
@@ -261,6 +270,7 @@ export default function GameList() {
         badge: t("games.fortunewheel.badge") as string,
         badgeColor: "#F59E0B",
         highlight: t("games.fortunewheel.highlight") as string,
+        featured: true,
       },
       {
         title: t("games.random.title"),
@@ -361,6 +371,7 @@ return (
                 badge={game.badge}
                 badgeColor={game.badgeColor}
                 highlight={game.highlight}
+                featured={(game as any).featured}
               />
             </TourAttachStep>
           ))}
@@ -410,8 +421,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.card,
     overflow: "hidden",
   },
+
   card: {
-    height: CARD_HEIGHT,
     borderRadius: radius.card,
     overflow: "hidden",
   },
@@ -468,6 +479,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     paddingHorizontal: spacing.sm + 2,
     paddingVertical: 3,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   badgeText: {
     color: colors.text,

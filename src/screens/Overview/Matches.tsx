@@ -7,6 +7,7 @@ import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
 import Modal from "./Modal";
 import { spacing } from "../../constants/design";
+import { useNotificationNudge } from "../../hooks/useNotificationNudge";
 
 export default function MatchesScreen() {
   const matches = useAppSelector((state) => state.room.matches);
@@ -23,6 +24,8 @@ export default function MatchesScreen() {
   const data = useMemo(() => {
     return [...matches].reverse();
   }, [matches.length]);
+
+  useNotificationNudge("post_game");
 
   return (
     <View style={{ flex: 1 }}>

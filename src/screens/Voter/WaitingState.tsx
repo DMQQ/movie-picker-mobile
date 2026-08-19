@@ -2,13 +2,15 @@ import { View } from "react-native";
 import Chip from "../../components/Chip";
 import Text from "../../components/Text";
 
-import { colors, spacing } from "../../constants/design";
+import { colors, radius, spacing } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
+import Button from "../../components/Button";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import PageHeading from "../../components/PageHeading";
 import QrCodeBox from "../../components/GameLobby/QrCodeBox";
 import LobbyShell from "../../components/GameLobby/LobbyShell";
 import useTranslation from "../../service/useTranslation";
+import { router } from "expo-router";
 
 interface Props {
   users: any[];
@@ -70,15 +72,33 @@ export default function WaitingState({
         }
         actions={
           <>
-            {!currentUserReady && (
-              <PrimaryButton onPress={handleReady}>{t("voter.home.ready-status")}</PrimaryButton>
-            )}
+            <View style={{ flexDirection: "row", gap: spacing.sm }}>
+              <Button
+                mode="outlined"
+                disabled={!sessionId}
+                icon="account-multiple-plus"
+                compact
+                style={{ borderRadius: radius.pill, width: 48, height: 48 }}
+                onPress={() =>
+                  router.push({
+                    pathname: "/invite-players",
+                    params: { roomId: sessionId, gameType: "voter" },
+                  })
+                }
+              >
+                {""}
+              </Button>
 
-            {allReady && isHost && (
-              <PrimaryButton disabled={loadingInitialContent} loading={loadingInitialContent} onPress={actions.startSession}>
-                {t("voter.home.start")}
-              </PrimaryButton>
-            )}
+              {!currentUserReady && (
+                <PrimaryButton style={{ flex: 1 }} onPress={handleReady}>{t("voter.home.ready-status")}</PrimaryButton>
+              )}
+
+              {allReady && isHost && (
+                <PrimaryButton style={{ flex: 1 }} disabled={loadingInitialContent} loading={loadingInitialContent} onPress={actions.startSession}>
+                  {t("voter.home.start")}
+                </PrimaryButton>
+              )}
+            </View>
           </>
         }
       >

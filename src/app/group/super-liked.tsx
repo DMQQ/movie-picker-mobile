@@ -15,7 +15,7 @@ import GroupScreenLayout from "../../components/Group/GroupScreenLayout";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import { useGetMyRatingsQuery, type UserRating } from "../../redux/ratings/ratingsApi";
 import { useAppSelector } from "../../redux/store";
-import { getUserAvatarColor } from "../../utils/avatar";
+import { getUserAvatarColor, getInitials } from "../../utils/avatar";
 import useTranslation from "../../service/useTranslation";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
 
@@ -50,7 +50,7 @@ function RatingRow({
   return (
     <Pressable onPress={openRateSheet} style={styles.reviewPressable}>
       <AvatarText
-        label={(user?.name ?? "?").charAt(0).toUpperCase()}
+        label={getInitials(user?.name ?? "?")}
         size={22}
         style={{ backgroundColor: getUserAvatarColor(user?.name ?? "") }}
       />

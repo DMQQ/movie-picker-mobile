@@ -6,7 +6,7 @@ import { Pressable, View } from "react-native";
 import { colors } from "../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
-import { getUserAvatarColor } from "../../utils/avatar";
+import { getUserAvatarColor, getInitials } from "../../utils/avatar";
 
 function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () => void }) {
   const isVisible = props.showAll ? true : props.data.length > 1;
@@ -34,7 +34,7 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
             >
               <AvatarText
                 size={24}
-                label={nick?.[0]?.toUpperCase()}
+                label={getInitials(nick || "")}
                 color={colors.text}
                 style={{
                   borderWidth: 0.5,

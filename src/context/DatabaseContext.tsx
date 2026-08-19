@@ -7,7 +7,8 @@ import {
   type ReactNode,
 } from "react";
 import type { SQLiteDatabase } from "expo-sqlite";
-import { getDatabase } from "../database";
+import { AppState } from "react-native";
+import { getDatabase, closeDatabase } from "../database";
 import {
   createMovieInteractionsRepo,
   type MovieInteractionsRepo,
@@ -57,8 +58,19 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
 
     initDatabase();
 
+    const handleAppStateChange = (state: string) => {
+      if (state === "background") {
+        closeDatabase().catch((e) =>
+          console.error("Failed to close database on background:", e),
+        );
+      }
+    };
+
+    const subscription = AppState.addEventListener("change", handleAppStateChange);
+
     return () => {
       mounted = false;
+      subscription.remove();
     };
   }, []);
 

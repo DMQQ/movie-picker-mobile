@@ -115,21 +115,16 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
               )}
             </View>
 
-            {(year || lang || runtime) && (
+            {(genres.length > 0 || year || lang || runtime) && (
               <View style={styles.metaRow}>
-                {!!year && <Text style={styles.metaText}>{year}</Text>}
-                {!!lang && <Text style={styles.metaText}>{lang}</Text>}
-                {!!runtime && <Text style={styles.metaText}>{runtime}</Text>}
-              </View>
-            )}
-
-            {genres.length > 0 && (
-              <View style={styles.genreRow}>
                 {genres.map((g) => (
                   <View key={g} style={styles.genreChip}>
                     <Text style={styles.genreText}>{g}</Text>
                   </View>
                 ))}
+                {!!year && <Text style={styles.metaText}>{year}</Text>}
+                {!!lang && <Text style={styles.metaText}>{lang}</Text>}
+                {!!runtime && <Text style={styles.metaText}>{runtime}</Text>}
               </View>
             )}
 
@@ -623,18 +618,15 @@ const styles = StyleSheet.create({
   },
   metaRow: {
     flexDirection: "row",
-    gap: spacing.sm,
+    flexWrap: "wrap",
+    gap: spacing.xs,
     marginTop: spacing.xs - 2,
+    alignItems: "center",
   },
   metaText: {
     fontSize: fontSize.sm,
     color: colors.placeholder,
     fontWeight: fontWeight.medium,
-  },
-  genreRow: {
-    flexDirection: "row",
-    gap: spacing.xs,
-    marginTop: spacing.xs - 2,
   },
   genreChip: {
     backgroundColor: "rgba(255,255,255,0.12)",

@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import Text from "../Text";
 import AvatarText from "../AvatarText";
-import { getUserAvatarColor } from "../../utils/avatar";
+import { getUserAvatarColor, getInitials } from "../../utils/avatar";
 import { colors, fontSize, spacing } from "../../constants/design";
 
 export interface LobbyPlayer {
@@ -26,7 +26,7 @@ export default function PlayersRow({ players, waitingLabel }: Props) {
           <Animated.View key={player.id} entering={FadeInDown.duration(300)} style={index > 0 && styles.avatarOverlap}>
             <AvatarText
               size={32}
-              label={player.name[0]?.toUpperCase() || "?"}
+              label={getInitials(player.name) || "?"}
               style={{
                 backgroundColor: getUserAvatarColor(player.name),
                 borderWidth: 2,

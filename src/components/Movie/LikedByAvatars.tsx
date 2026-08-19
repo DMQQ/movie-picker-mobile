@@ -1,9 +1,8 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Text from "../Text";
+import UserAvatar from "../UserAvatar";
 import { colors, fontWeight, fontSize, radius} from "../../constants/design";
 import { StyleSheet, View } from "react-native";
-
-import { getUserAvatarColor } from "../../utils/avatar";
 
 const styles = StyleSheet.create({
   row: {
@@ -15,20 +14,6 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     marginLeft: 0,
-  },
-  avatar: {
-    width: 38,
-    height: 38,
-    borderRadius: radius.modal - 1,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-    borderColor: colors.appBackground,
-  },
-  initial: {
-    color: colors.text,
-    fontWeight: fontWeight.bold,
-    fontSize: fontSize.md + 1,
   },
   thumbBadge: {
     position: "absolute",
@@ -64,16 +49,12 @@ export default function LikedByAvatars({
             },
           ]}
         >
-          <View
-            style={[
-              styles.avatar,
-              { backgroundColor: getUserAvatarColor(user.username) },
-            ]}
-          >
-            <Text style={styles.initial}>
-              {user.username.charAt(0).toUpperCase()}
-            </Text>
-          </View>
+          <UserAvatar
+            name={user.username}
+            size={38}
+            borderWidth={2}
+            borderColor={colors.appBackground}
+          />
           <View style={styles.thumbBadge}>
             <MaterialCommunityIcons name="thumb-up" size={10} color={colors.text} />
           </View>

@@ -16,6 +16,7 @@ import {
 } from "../../redux/roomBuilder/roomBuilderSlice";
 import { colors } from "../../constants/design";
 import { posthog } from "../../constants/posthog";
+import { useNotificationNudge } from "../../hooks/useNotificationNudge";
 
 export default function RoomSetup() {
   const t = useTranslation();
@@ -35,6 +36,8 @@ export default function RoomSetup() {
 
   const currentStep = useAppSelector((state) => state.builder.currentStep);
   const isRoomReady = useAppSelector((state) => state.room.isCreated && !!state.room.qrCode);
+
+  useNotificationNudge("room_setup");
 
   const getStepTitle = useCallback(() => {
     if (currentStep >= 1 && currentStep <= 4) {

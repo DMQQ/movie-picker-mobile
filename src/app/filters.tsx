@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import Text from "../components/Text";
+import SignUpNudgeBanner from "../components/SignUpNudgeBanner";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import {
   SafeAreaProvider,
@@ -251,6 +252,7 @@ function FiltersScreenContent() {
         {showCategories === "true" && (
           <CategoriesSection onSelect={handleCategorySelect} />
         )}
+        <SignUpNudgeBanner />
         <View style={{height: 60}} />
       </ScrollView>
 

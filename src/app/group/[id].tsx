@@ -18,7 +18,7 @@ import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/d
 import { useGroupData, type GroupMovie } from "../../hooks/useGroupData";
 import useTranslation from "../../service/useTranslation";
 import { useAppSelector } from "../../redux/store";
-import { getUserAvatarColor } from "../../utils/avatar";
+import { getUserAvatarColor, getInitials } from "../../utils/avatar";
 
 const POSTER_W = 42;
 const POSTER_H = 62;
@@ -89,7 +89,7 @@ export default function Group() {
           </Text>
           <Pressable onPress={() => openRateSheet(item)} style={styles.reviewPressable}>
             <AvatarText
-              label={(user?.name ?? "?").charAt(0).toUpperCase()}
+              label={getInitials(user?.name ?? "?")}
               size={22}
               style={{ backgroundColor: getUserAvatarColor(user?.name ?? "") }}
             />

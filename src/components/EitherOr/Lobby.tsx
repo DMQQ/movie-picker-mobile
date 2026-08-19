@@ -1,7 +1,8 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import Text from "../Text";
 import PrimaryButton from "../PrimaryButton";
+import Button from "../Button";
 import PageHeading from "../PageHeading";
 import QrCodeBox from "../GameLobby/QrCodeBox";
 import PlayersRow from "../GameLobby/PlayersRow";
@@ -9,7 +10,8 @@ import LobbyShell from "../GameLobby/LobbyShell";
 import useTranslation from "../../service/useTranslation";
 import useEitherOrContext from "../../context/EitherOrContext";
 import { useAppSelector } from "../../redux/store";
-import { colors, fontSize, radius } from "../../constants/design";
+import { colors, fontSize, radius, spacing } from "../../constants/design";
+import { router } from "expo-router";
 
 interface Props {
   onGoBack: () => void;
@@ -38,13 +40,31 @@ export default function Lobby({ onGoBack }: Props) {
           </>
         }
         actions={
-          isHost ? (
-            <PrimaryButton onPress={start} style={styles.startButton}>
-              {t("eitherOr.lobby.start")}
-            </PrimaryButton>
-          ) : (
-            <Text style={{ textAlign: "center" }}>{t("eitherOr.lobby.waitingForHost")}</Text>
-          )
+          <View style={styles.actionRow}>
+            <Button
+              mode="outlined"
+              disabled={!roomId}
+              icon="account-multiple-plus"
+              compact
+              style={styles.inviteButton}
+              onPress={() =>
+                router.push({
+                  pathname: "/invite-players",
+                  params: { roomId: roomId, gameType: "either-or" },
+                })
+              }
+            >
+              {""}
+            </Button>
+
+            {isHost ? (
+              <PrimaryButton onPress={start} style={styles.startButton}>
+                {t("eitherOr.lobby.start")}
+              </PrimaryButton>
+            ) : (
+              <Text style={{ textAlign: "center", flex: 1 }}>{t("eitherOr.lobby.waitingForHost")}</Text>
+            )}
+          </View>
         }
       >
         {roomId && (
@@ -62,7 +82,18 @@ const styles = StyleSheet.create({
     color: colors.placeholder,
     fontSize: fontSize.sm,
   },
+  actionRow: {
+    flexDirection: "row",
+    gap: spacing.sm,
+    alignItems: "center",
+  },
+  inviteButton: {
+    borderRadius: radius.pill,
+    width: 48,
+    height: 48,
+  },
   startButton: {
     borderRadius: radius.pill,
+    flex: 1,
   },
 });

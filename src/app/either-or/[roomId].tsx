@@ -11,7 +11,8 @@ import Matchup from "../../components/EitherOr/Matchup";
 import RoundTransition from "../../components/EitherOr/RoundTransition";
 import useEitherOrContext from "../../context/EitherOrContext";
 import { SocketContext } from "../../context/SocketContext";
-import { useAppSelector } from "../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { eitherOrActions } from "../../redux/eitherOr/eitherOrSlice";
 import useTranslation from "../../service/useTranslation";
 import { colors, radius, spacing } from "../../constants/design";
 
@@ -20,7 +21,8 @@ const RESULTS_DELAY_MS = 1400;
 export default function EitherOrRoomScreen() {
   const params = useLocalSearchParams<{ roomId: string }>();
   const { joinRoom } = useEitherOrContext();
-  const { socket } = useContext(SocketContext);
+  const { socket, connectionStatus } = useContext(SocketContext);
+  const dispatch = useAppDispatch();
   const t = useTranslation();
 
   const roomId = useAppSelector((state) => state.eitherOr.roomId);
@@ -43,6 +45,12 @@ export default function EitherOrRoomScreen() {
     attempted.current = true;
     joinRoom(target);
   }, [params.roomId, roomId, socket?.connected, joinRoom]);
+
+  useEffect(() => {
+    if (connectionStatus === "disconnected" && !roomId && !attempted.current) {
+      dispatch(eitherOrActions.setJoinError(true));
+    }
+  }, [connectionStatus, roomId]);
 
   useEffect(() => {
     if (!gameEnded) return;
@@ -117,7 +125,7 @@ export default function EitherOrRoomScreen() {
             <Text>{t("dialogs.qr.error-desc")}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => router.replace("/(tabs)")}>{t("dialogs.qr.close")}</Button>
+            <Button onPress={() => router.back()}>{t("dialogs.qr.close")}</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

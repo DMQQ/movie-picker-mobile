@@ -1,13 +1,12 @@
 import { useCallback } from "react";
 import Icon from "./Icon";
 import Text from "./Text";
+import UserAvatar from "./UserAvatar";
 import { StyleSheet, View } from "react-native";
 
-import { Image } from "expo-image";
 import { useFocusEffect } from "expo-router";
 import { useAppSelector } from "../redux/store";
 import { useGetGameMembersQuery } from "../redux/lists/listsApi";
-import { getUserAvatarColor } from "../utils/avatar";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 
 const mutedText = "rgba(255,255,255,0.45)";
@@ -49,25 +48,20 @@ export default function PlayedWith() {
           <View
             key={m.id}
             style={[
-              styles.avatar,
+              styles.avatarWrapper,
               {
                 marginLeft: i === 0 ? 0 : -OVERLAP,
                 zIndex: visible.length - i,
-                backgroundColor: m.avatarUrl ? undefined : getUserAvatarColor(m.name),
               },
             ]}
           >
-            {m.avatarUrl ? (
-              <Image
-                style={styles.avatarImg}
-                source={{ uri: m.avatarUrl }}
-                cachePolicy="memory-disk"
-              />
-            ) : (
-              <Text style={styles.avatarLetter}>
-                {m.name.charAt(0).toUpperCase()}
-              </Text>
-            )}
+            <UserAvatar
+              name={m.name}
+              avatarUrl={m.avatarUrl}
+              size={AVATAR_SIZE}
+              borderWidth={2}
+              borderColor={colors.background}
+            />
           </View>
         ))}
         {extra > 0 && (
@@ -112,20 +106,14 @@ const styles = StyleSheet.create({
 
   stack: { flexDirection: "row", alignItems: "center" },
 
+  avatarWrapper: { alignItems: "center", justifyContent: "center" },
   avatar: {
     width: AVATAR_SIZE,
     height: AVATAR_SIZE,
     borderRadius: AVATAR_SIZE / 2,
-    backgroundColor: colors.surface,
     alignItems: "center",
     justifyContent: "center",
-    overflow: "hidden",
-    borderWidth: 2,
-    borderColor: colors.background,
   },
-  avatarImg: { width: AVATAR_SIZE, height: AVATAR_SIZE },
-  avatarLetter: { fontSize: fontSize.sm + 1, fontWeight: fontWeight.bold, color: colors.text },
-
   extra: { backgroundColor: colors.overlay },
   extraText: { fontSize: fontSize.xs, fontWeight: fontWeight.bold, color: mutedText },
 

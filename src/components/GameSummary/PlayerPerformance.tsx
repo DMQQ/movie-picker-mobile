@@ -4,7 +4,7 @@ import Text from "../Text";
 import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { getUserAvatarColor } from "../../utils/avatar";
+import { getUserAvatarColor, getInitials } from "../../utils/avatar";
 import useTranslation from "../../service/useTranslation";
 import { IGameSummary } from "./types";
 
@@ -23,7 +23,7 @@ export default function PlayerPerformance({
             <View style={styles.avatarWrap}>
               <AvatarText
                 size={28}
-                label={user.username?.[0].toUpperCase() || "U"}
+                label={getInitials(user.username || "U")}
                 color={colors.text}
                 style={{
                   borderWidth: 1.5,

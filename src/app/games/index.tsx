@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import Icon from "../../components/Icon";
 import Text from "../../components/Text";
@@ -40,17 +41,27 @@ function GameRow({ item }: { item: UserGame }) {
         } as any)
       }
     >
-      <Thumbnail
-        path={item.posterPath ?? ""}
-        size={ThumbnailSizes.poster.small}
-        container={{
-          width: POSTER_W,
-          height: POSTER_H,
-          borderRadius: radius.xs + 2,
-        }}
-        showsPlaceholder={false}
-        priority="low"
-      />
+      {item.posterPath ? (
+        <Thumbnail
+          path={item.posterPath}
+          size={ThumbnailSizes.poster.small}
+          container={{
+            width: POSTER_W,
+            height: POSTER_H,
+            borderRadius: radius.xs + 2,
+          }}
+          showsPlaceholder={false}
+          priority="low"
+        />
+      ) : (
+        <View style={styles.noPoster}>
+          <Image
+            source={require("../../../assets/images/adaptive-icon.png")}
+            style={styles.noPosterLogo}
+            contentFit="contain"
+          />
+        </View>
+      )}
       <View style={styles.rowInfo}>
         <Text style={styles.rowTitle} numberOfLines={1}>
           {formatGameType(item.session?.gameType ?? null)}
@@ -170,6 +181,16 @@ const styles = StyleSheet.create({
     fontSize: fontSize.xs,
     color: "rgba(255,255,255,0.25)",
   },
+
+  noPoster: {
+    width: POSTER_W,
+    height: POSTER_H,
+    borderRadius: radius.xs + 2,
+    backgroundColor: "#1a1a2e",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  noPosterLogo: { width: POSTER_W - 6, height: POSTER_W - 6 },
 
   separator: {
     height: StyleSheet.hairlineWidth,

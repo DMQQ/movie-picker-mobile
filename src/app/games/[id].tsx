@@ -1,6 +1,9 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
+import { useState } from "react";
 import Icon from "../../components/Icon";
 import Text from "../../components/Text";
+import UserAvatar from "../../components/UserAvatar";
+import SegmentedControl from "../../components/SegmentedControl";
 import {
   colors,
   fontWeight,
@@ -9,18 +12,18 @@ import {
   spacing,
   withAlpha,
 } from "../../constants/design";
-import { Dimensions, FlatList, StyleSheet, View } from "react-native";
+import { Dimensions, FlatList, Pressable, StyleSheet, View } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import PageHeading from "../../components/PageHeading";
 import { SectionListItem } from "../../components/SectionItem";
 import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
-import { useAppSelector } from "../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { useGetGameQuery } from "../../redux/lists/listsApi";
 import type { GameMember, ListItem } from "../../redux/lists/listsApi";
+import { setPendingBulkMovies } from "../../redux/favourites/favourites";
 import { formatGameType } from "../../utils/formatGameType";
-import { getUserAvatarColor } from "../../utils/avatar";
 
 const { width: SW } = Dimensions.get("window");
 const COLUMNS = 3;
@@ -47,19 +50,12 @@ function formatDuration(start: number, end: number | null) {
 function MemberChip({ member }: { member: GameMember }) {
   return (
     <View style={styles.memberChip}>
-      <View style={[styles.memberAvatar, { backgroundColor: getUserAvatarColor(member.name) }]}>
-        {member.avatarUrl ? (
-          <Image
-            style={styles.memberAvatarImg}
-            source={{ uri: member.avatarUrl }}
-            cachePolicy="memory-disk"
-          />
-        ) : (
-          <Text style={styles.memberAvatarLetter}>
-            {member.name.charAt(0).toUpperCase()}
-          </Text>
-        )}
-      </View>
+      <UserAvatar
+        name={member.name}
+        avatarUrl={member.avatarUrl}
+        size={28}
+        style={styles.memberAvatar}
+      />
       <Text style={styles.memberName} numberOfLines={1}>
         {member.name}
       </Text>
@@ -76,19 +72,49 @@ function Pill({ icon, label }: { icon: string; label: string }) {
   );
 }
 
+type Tab = "matches" | "liked" | "disliked";
+
+const TAB_OPTIONS = [
+  { value: "matches", label: "Matched" },
+  { value: "liked", label: "Liked" },
+  { value: "disliked", label: "Disliked" },
+];
+
 export default function GameDetailScreen() {
   const { id, poster: posterParam } = useLocalSearchParams<{ id: string; poster?: string }>();
+  const dispatch = useAppDispatch();
   const user = useAppSelector((s) => s.auth.user);
   const isFullAccount = !!user && user.provider !== "anonymous";
   const { data, isLoading, isError } = useGetGameQuery(id, { skip: !isFullAccount });
+  const [tab, setTab] = useState<Tab>("matches");
   const session = data?.session ?? null;
   const items = data?.items ?? [];
+  const liked = data?.liked ?? [];
+  const disliked = data?.disliked ?? [];
   const posterPath = data?.list.posterPath ?? posterParam ?? null;
   const members = data?.members ?? [];
   const bannerHeight = Dimensions.get("window").height / 2;
   const duration = session
     ? formatDuration(session.startTime, session.endTime)
     : null;
+
+  const activeItems = tab === "matches" ? items : tab === "liked" ? liked : disliked;
+  const hasAnyContent = items.length > 0 || liked.length > 0 || disliked.length > 0;
+  const canSave = tab !== "disliked" && activeItems.length > 0;
+
+  const handleSaveAll = () => {
+    dispatch(
+      setPendingBulkMovies(
+        activeItems.map((item) => ({
+          id: item.contentId,
+          title: item.content.title,
+          poster_path: item.content.poster_path ?? undefined,
+          type: item.contentType as "movie" | "tv",
+        })),
+      ),
+    );
+    router.push("/favourite-groups");
+  };
 
   return (
     <View style={styles.container}>
@@ -99,7 +125,7 @@ export default function GameDetailScreen() {
       />
 
       <FlatList
-        data={items}
+        data={activeItems}
         keyExtractor={(item) => item.id}
         numColumns={COLUMNS}
         bounces={false}
@@ -119,9 +145,13 @@ export default function GameDetailScreen() {
                     priority="high"
                   />
                 ) : (
-                  <View
-                    style={[StyleSheet.absoluteFill, styles.bannerPlaceholder]}
-                  />
+                  <View style={[StyleSheet.absoluteFill, styles.bannerPlaceholder]}>
+                    <Image
+                      source={require("../../../assets/images/adaptive-icon.png")}
+                      style={styles.bannerLogo}
+                      contentFit="contain"
+                    />
+                  </View>
                 )}
               </Link.AppleZoomTarget>
 
@@ -167,11 +197,22 @@ export default function GameDetailScreen() {
             )}
 
             {/* Section heading */}
-            {items.length > 0 && (
+            {hasAnyContent && (
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Matched Movies</Text>
-                <View style={styles.sectionBadge}>
-                  <Text style={styles.sectionBadgeText}>{items.length}</Text>
+                <SegmentedControl
+                  options={TAB_OPTIONS}
+                  value={tab}
+                  onChange={(v) => setTab(v as Tab)}
+                  size="sm"
+                />
+                <View style={styles.sectionMeta}>
+                  <Text style={styles.sectionCount}>{activeItems.length} titles</Text>
+                  {canSave && (
+                    <Pressable style={styles.saveAllBtn} onPress={handleSaveAll}>
+                      <Icon source="bookmark-plus-outline" size={15} color={colors.primary} />
+                      <Text style={styles.saveAllText}>Save all to list</Text>
+                    </Pressable>
+                  )}
                 </View>
               </View>
             )}
@@ -220,7 +261,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginHorizontal: -H_PAD,
   },
-  bannerPlaceholder: { backgroundColor: "#111" },
+  bannerPlaceholder: {
+    backgroundColor: "#1a1a2e",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bannerLogo: { width: 120, height: 120, opacity: 0.9 },
   bannerContent: {
     flex: 1,
     justifyContent: "flex-end",
@@ -276,37 +322,35 @@ const styles = StyleSheet.create({
     paddingLeft: spacing.xs,
     paddingVertical: spacing.xs,
   },
-  memberAvatar: {
-    width: 28,
-    height: 28,
-    borderRadius: radius.md + 2,
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  memberAvatarImg: { width: 28, height: 28 },
-  memberAvatarLetter: { fontSize: fontSize.sm, fontWeight: fontWeight.bold, color: colors.text },
+  memberAvatar: {},
   memberName: { fontSize: fontSize.md - 1, color: "rgba(255,255,255,0.8)", maxWidth: 100 },
   sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
     gap: spacing.sm,
-    paddingHorizontal: spacing.xs - 2,
     marginTop: spacing.xl,
   },
-  sectionTitle: {
-    fontSize: fontSize.xl,
-    fontFamily: "Bebas",
-    color: colors.text,
-    letterSpacing: 0.5,
+  sectionMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-  sectionBadge: {
-    backgroundColor: withAlpha(colors.primary, 0.2),
-    borderRadius: radius.modal,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs - 2,
+  sectionCount: {
+    fontSize: fontSize.sm,
+    color: "rgba(255,255,255,0.35)",
   },
-  sectionBadgeText: { fontSize: fontSize.sm, color: colors.primary, fontWeight: fontWeight.semibold },
+  saveAllBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs + 1,
+    backgroundColor: withAlpha(colors.primary, 0.15),
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  saveAllText: {
+    fontSize: fontSize.md - 1,
+    color: colors.primary,
+    fontWeight: fontWeight.semibold,
+  },
 
   empty: {
     alignItems: "center",

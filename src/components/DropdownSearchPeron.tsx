@@ -9,6 +9,7 @@ import { Animated, FlatList, Image, ListRenderItem, StyleSheet, TouchableOpacity
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import { useLazySearchPeopleQuery } from "../redux/person/personApi";
 import useTranslation from "../service/useTranslation";
+import { getInitials } from "../utils/avatar";
 
 interface Person {
   id: number;
@@ -103,7 +104,7 @@ const DropdownPersonSearch: React.FC<DropdownPersonSearchProps> = ({
           <Image source={{ uri: `https://image.tmdb.org/t/p/w92${item.profile_path}` }} style={styles.personImage} />
         ) : (
           <View style={styles.placeholderImage}>
-            <Text style={styles.placeholderText}>{item.name.charAt(0).toUpperCase()}</Text>
+            <Text style={styles.placeholderText}>{getInitials(item.name)}</Text>
           </View>
         )}
         <View style={styles.personInfo}>
@@ -124,7 +125,7 @@ const DropdownPersonSearch: React.FC<DropdownPersonSearchProps> = ({
         ) : (
           <AvatarText
             size={36}
-            label={item.name.charAt(0).toUpperCase()}
+            label={getInitials(item.name)}
             style={styles.selectedPersonAvatar}
             labelStyle={styles.selectedPersonAvatarLabel}
           />

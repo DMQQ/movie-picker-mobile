@@ -139,7 +139,13 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
           mappedBlocked,
           mappedSuperLiked,
         );
-        if (!response?.joined) throw new Error("join-room rejected");
+        if (!response?.joined) {
+          if (response?.reason === "room_not_found") {
+            dispatch(roomActions.setRoomNotFound(true));
+            return;
+          }
+          throw new Error("join-room rejected");
+        }
         hasJoined.current = true;
       } catch (error) {
         posthog?.captureException(error, { context: "room_reconnect_join" });
@@ -196,11 +202,16 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
       dispatch(roomActions.setHost(data.host === userIdRef.current));
     };
 
+    const handleRoomDeleted = () => {
+      dispatch(roomActions.setRoomNotFound(true));
+    };
+
     socket.on("movies", handleMovies);
     socket.on("room:state", handleRoomState);
     socket.on("active", handleActive);
     socket.on("movies:blocked-update", handleBlockedUpdate);
     socket.on("room:host:changed", handleHostChanged);
+    socket.on("room-deleted", handleRoomDeleted);
 
     return () => {
       socket.off("movies", handleMovies);
@@ -208,6 +219,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
       socket.off("active", handleActive);
       socket.off("movies:blocked-update", handleBlockedUpdate);
       socket.off("room:host:changed", handleHostChanged);
+      socket.off("room-deleted", handleRoomDeleted);
     };
   }, [socket, dispatch]);
 

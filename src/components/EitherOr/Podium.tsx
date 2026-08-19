@@ -13,15 +13,18 @@ import { router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Text from "../Text";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
+import { prefetchThumbnails } from "../../utils/prefetchImages";
 import type { Movie } from "../../../types";
 import { colors, fontSize, radius, spacing, withAlpha } from "../../constants/design";
 
 const RANK_COLORS = ["#FFD166", "#C7CDD9", "#D18A5C"];
 const STEP_HEIGHTS = [72, 44, 24];
+const TROPHY_SIZES = [18, 14, 12];
+const ORDINALS = ["1st", "2nd", "3rd"];
 
 const TIMING: Record<number, { step: number; content: number; trophy: number }> = {
-  2: { step: 100,  content: 500,  trophy: 0    },
-  1: { step: 650,  content: 1050, trophy: 0    },
+  2: { step: 100,  content: 500,  trophy: 750  },
+  1: { step: 650,  content: 1050, trophy: 1300 },
   0: { step: 1200, content: 1600, trophy: 1800 },
 };
 
@@ -50,15 +53,13 @@ function PodiumColumn({ movie, rank }: { movie: Movie; rank: number }) {
       withTiming(1, { duration: 300, easing: Easing.out(Easing.cubic) })
     );
     contentOpacity.value = withDelay(contentDelay, withTiming(1, { duration: 280 }));
-    if (rank === 0) {
-      trophyScale.value = withDelay(
-        trophyDelay,
-        withSequence(
-          withSpring(1.35, { damping: 10, stiffness: 260 }),
-          withSpring(1, { damping: 18, stiffness: 220 })
-        )
-      );
-    }
+    trophyScale.value = withDelay(
+      trophyDelay,
+      withSequence(
+        withSpring(rank === 0 ? 1.35 : 1.2, { damping: 10, stiffness: 260 }),
+        withSpring(1, { damping: 18, stiffness: 220 })
+      )
+    );
   }, []);
 
   const fillStyle = useAnimatedStyle(() => ({ height: fillH.value }));
@@ -89,6 +90,7 @@ function PodiumColumn({ movie, rank }: { movie: Movie; rank: number }) {
         <Text numberOfLines={2} style={[styles.title, rank === 0 && styles.titleChampion]}>
           {movie.title || movie.name}
         </Text>
+        <Text style={[styles.ordinal, { color: RANK_COLORS[rank] }]}>{ORDINALS[rank]}</Text>
       </Animated.View>
 
       <View style={[styles.stepWrapper, { height: STEP_HEIGHTS[rank] }]}>
@@ -102,11 +104,9 @@ function PodiumColumn({ movie, rank }: { movie: Movie; rank: number }) {
             },
           ]}
         >
-          {rank === 0 && (
-            <Animated.View style={trophyStyle}>
-              <MaterialCommunityIcons name="trophy" size={18} color={RANK_COLORS[0]} />
-            </Animated.View>
-          )}
+          <Animated.View style={trophyStyle}>
+            <MaterialCommunityIcons name="trophy" size={TROPHY_SIZES[rank]} color={RANK_COLORS[rank]} />
+          </Animated.View>
         </Animated.View>
       </View>
     </Pressable>
@@ -120,6 +120,13 @@ export default function Podium({ top3 }: { top3: Movie[] }) {
     [champion, 0],
     [third, 2],
   ];
+
+  useEffect(() => {
+    const posterPaths = top3.map((m) => m.poster_path).filter(Boolean);
+    if (posterPaths.length) {
+      prefetchThumbnails(posterPaths, 'xlarge');
+    }
+  }, [top3.map((m) => m.id).join()]);
 
   return (
     <View style={styles.row}>
@@ -180,6 +187,13 @@ const styles = StyleSheet.create({
   },
   titleChampion: {
     fontSize: fontSize.lg,
+  },
+  ordinal: {
+    fontFamily: "Bebas",
+    fontSize: fontSize.sm,
+    textAlign: "center",
+    letterSpacing: 1,
+    marginBottom: spacing.xs,
   },
   stepWrapper: {
     width: "100%",
