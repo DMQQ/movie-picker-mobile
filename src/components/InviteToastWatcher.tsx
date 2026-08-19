@@ -31,10 +31,13 @@ export default function InviteToastWatcher() {
       if (shownIds.current.has(invite.id)) continue;
       shownIds.current.add(invite.id);
 
-      const isVoter = invite.gameType === "voter";
-      const message = isVoter
-        ? (t("room.invite.banner.voter") as string)
-        : (t("room.invite.banner.swipe") as string);
+      const gameType = invite.gameType ?? "swipe";
+      const message =
+        gameType === "voter"
+          ? (t("room.invite.banner.voter") as string)
+          : gameType === "either-or"
+            ? (t("room.invite.banner.either-or") as string)
+            : (t("room.invite.banner.swipe") as string);
 
       const id = toast.show(message, {
         type: "info",

@@ -8,6 +8,7 @@ interface ActiveRoom {
   isStarted: boolean;
   isEnded: boolean;
   participantCount: number;
+  type: "swipe" | "voter" | "either-or";
 }
 
 interface ActiveRoomResponse {

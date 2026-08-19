@@ -102,6 +102,7 @@
       "banner": {
         "swipe": "You've been invited to a swiping game!",
         "voter": "You've been invited to a voting game!",
+        "either-or": "You've been invited to an Either-Or game!",
         "join": "Tap to join"
       }
     },
@@ -546,8 +547,8 @@
       "games": "Party Games",
       "title": "Group Voter",
       "swipe": "Swipe to Match!",
-      "swipeDescription": "Quick and fun party game where players swipe left or right to vote on movies or series to match with other players.",
-      "description": "Picking movies easy and fun! Vote on movies or series in three categories to get your top picks.",
+      "swipeDescription": "Everyone swipes. First film you all like is tonight's pick.",
+      "description": "Rate movies in three categories together. Your top pick wins.",
       "swipeBadge": "Most Popular",
       "swipeHighlight": "Most groups find a match in under 1 min",
       "badge": "Group Mode",
@@ -555,13 +556,13 @@
     },
     "fortunewheel": {
       "title": "Spin & Watch",
-      "description": "Spin the wheel of fortune to make random selections or decisions. Perfect for undecided or making quick picks!",
+      "description": "Can't decide? Spin the wheel and let fate pick.",
       "badge": "Quick Pick",
       "highlight": "Let fate decide in seconds"
     },
     "random": {
       "title": "Shake & Pick",
-      "description": "Shake your phone to reveal an instant random movie recommendation.",
+      "description": "Shake your phone for an instant movie pick.",
       "mystery": "???",
       "reveal": "Reveal Movie",
       "revealing": "Finding...",
@@ -574,7 +575,7 @@
     },
     "eitherOr": {
       "title": "Either/Or",
-      "description": "Two movies enter, one wins. Vote head-to-head through a bracket to crown a champion.",
+      "description": "Two movies, head-to-head. Vote until one champion stands.",
       "badge": "BETA",
       "highlight": "Head-to-head until one stands"
     }

@@ -55,7 +55,19 @@ export default function PendingInviteBanner() {
   if (pending.length === 0) return null;
 
   const invite = pending[0];
-  const isVoter = invite.gameType === "voter";
+  const gameType = invite.gameType ?? "swipe";
+  const iconName =
+    gameType === "voter"
+      ? "vote"
+      : gameType === "either-or"
+        ? "swap-horizontal"
+        : "cards-playing-heart-multiple";
+  const bannerText =
+    gameType === "voter"
+      ? (t("room.invite.banner.voter") as string)
+      : gameType === "either-or"
+        ? (t("room.invite.banner.either-or") as string)
+        : (t("room.invite.banner.swipe") as string);
 
   return (
     <Animated.View
@@ -65,14 +77,12 @@ export default function PendingInviteBanner() {
     >
       <Pressable style={styles.banner} onPress={() => handleAccept(invite)}>
         <MaterialCommunityIcons
-          name={isVoter ? "vote" : "cards-playing-heart-multiple"}
+          name={iconName}
           size={18}
           color={colors.primary}
         />
         <Text style={styles.text} numberOfLines={2}>
-          {isVoter
-            ? (t("room.invite.banner.voter") as string)
-            : (t("room.invite.banner.swipe") as string)}
+          {bannerText}
         </Text>
         <Pressable
           hitSlop={10}

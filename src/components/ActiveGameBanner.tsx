@@ -17,12 +17,15 @@ export default function ActiveGameBanner() {
   return (
     <Pressable
       style={styles.banner}
-      onPress={() =>
-        router.push({
-          pathname: "/room/[roomId]",
-          params: { roomId: room.roomId },
-        })
-      }
+      onPress={() => {
+        if (room.type === "voter") {
+          router.push({ pathname: "/voter", params: { sessionId: room.roomId } });
+        } else if (room.type === "either-or") {
+          router.push({ pathname: "/either-or/[roomId]", params: { roomId: room.roomId } });
+        } else {
+          router.push({ pathname: "/room/[roomId]", params: { roomId: room.roomId } });
+        }
+      }}
     >
       <MaterialCommunityIcons
         name="play-circle-outline"

@@ -7,7 +7,7 @@ export interface Invite {
   id: string;
   senderId: string;
   receiverId: string;
-  gameType: "swipe" | "voter";
+  gameType: "swipe" | "voter" | "either-or";
   roomId: string;
   status: "pending" | "accepted" | "declined" | "expired";
   joinMethod: string | null;
