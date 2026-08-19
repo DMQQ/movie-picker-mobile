@@ -1,4 +1,5 @@
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { useEffect, useCallback } from "react";
 import { router } from "expo-router";
 import { Image } from "expo-image";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -27,10 +28,16 @@ export default function StepCustomMovies({ movies }: Props) {
     router.push("/movie-picker/");
   };
 
-  const removeMovie = (id: number) => {
+  useEffect(() => {
+    if (movies.length === 0) {
+      openPicker();
+    }
+  }, []);
+
+  const removeMovie = useCallback((id: number) => {
     const movie = movies.find((m) => m.id === id);
     if (movie) dispatch(moviePickerActions.toggle(movie));
-  };
+  }, [movies, dispatch]);
 
   const hasMovies = movies.length > 0;
   const needsMore = hasMovies && movies.length < MIN_MOVIES;
@@ -41,7 +48,6 @@ export default function StepCustomMovies({ movies }: Props) {
     <View style={styles.container}>
       {hasMovies ? (
         <Animated.View entering={FadeInDown.duration(250)} style={styles.selectionHeader}>
-          {/* Overlapping poster stack */}
           <Touch onPress={openPicker} style={styles.thumbRow}>
             <View style={[styles.thumbStack, { width: THUMB_W + (thumbs.length - 1) * (THUMB_W - THUMB_OVERLAP) }]}>
               {thumbs.map((m, i) => (
@@ -79,16 +85,15 @@ export default function StepCustomMovies({ movies }: Props) {
           </Touch>
         </Animated.View>
       ) : (
-        <Animated.View entering={FadeInDown.duration(300)}>
-          <Touch scaleTo={0.97} onPress={openPicker} style={styles.emptyCard}>
-            <View style={styles.iconWrap}>
-              <MaterialCommunityIcons name="playlist-plus" size={28} color={colors.primary} />
-            </View>
-            <View style={styles.emptyTextCol}>
-              <Text style={styles.emptyTitle}>Pick your movies</Text>
-              <Text style={styles.emptySub}>Choose from your lists or search</Text>
-            </View>
-            <MaterialCommunityIcons name="chevron-right" size={20} color={colors.placeholder} />
+        <Animated.View entering={FadeInDown.duration(300)} style={styles.emptyContainer}>
+          <View style={styles.emptyIconWrap}>
+            <MaterialCommunityIcons name="playlist-plus" size={44} color={colors.primary} />
+          </View>
+          <Text style={styles.emptyHeading}>No movies selected</Text>
+          <Text style={styles.emptyMessage}>Open the picker to choose at least {MIN_MOVIES} movies</Text>
+          <Touch scaleTo={0.97} onPress={openPicker} style={styles.emptyButton}>
+            <Text style={styles.emptyButtonText}>Pick movies</Text>
+            <MaterialCommunityIcons name="arrow-right" size={16} color={colors.text} />
           </Touch>
         </Animated.View>
       )}
@@ -128,34 +133,53 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
 
-  // — Empty state CTA card —
-  emptyCard: {
-    flexDirection: "row",
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    gap: spacing.md,
-    padding: spacing.xl,
-    marginHorizontal: spacing.lg,
-    borderRadius: radius.card,
-    backgroundColor: colors.surface,
-    borderWidth: 1.5,
-    borderColor: withAlpha(colors.primary, 0.35),
-    borderStyle: "dashed",
+    paddingHorizontal: spacing.lg,
+    gap: spacing.lg,
   },
-  iconWrap: {
-    width: 52,
-    height: 52,
+  emptyIconWrap: {
+    width: 80,
+    height: 80,
     borderRadius: radius.md,
     backgroundColor: withAlpha(colors.primary, 0.12),
     alignItems: "center",
     justifyContent: "center",
   },
-  emptyTextCol: { flex: 1, gap: 2 },
-  emptyTitle: { fontSize: fontSize.lg, fontWeight: fontWeight.semibold, color: colors.text },
-  emptySub: { fontSize: fontSize.sm, color: colors.placeholder },
+  emptyHeading: {
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
+    textAlign: "center",
+  },
+  emptyMessage: {
+    fontSize: fontSize.md,
+    color: colors.placeholder,
+    textAlign: "center",
+    lineHeight: 20,
+  },
+  emptyButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    borderRadius: radius.pill,
+    backgroundColor: colors.primary,
+    marginTop: spacing.lg,
+  },
+  emptyButtonText: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
+  },
 
-  // — Selection header (has movies) —
   selectionHeader: {
     marginHorizontal: spacing.lg,
+    marginTop: spacing.lg,
     backgroundColor: colors.surface,
     borderRadius: radius.card,
     padding: spacing.md,
@@ -164,10 +188,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,
+    overflow: "hidden",
   },
   thumbStack: {
     position: "relative",
     height: THUMB_H,
+    overflow: "hidden",
   },
   thumb: {
     position: "absolute",
@@ -216,7 +242,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
 
-  // — Poster grid —
   gridWrap: { marginHorizontal: spacing.lg },
   gridRow: { gap: spacing.sm, marginBottom: spacing.sm },
   tile: {

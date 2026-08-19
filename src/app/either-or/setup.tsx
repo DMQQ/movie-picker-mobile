@@ -51,6 +51,13 @@ export default function EitherOrSetup() {
     }
   }, [pickerConfirmed]);
 
+  // Sync changes to picker selection (e.g., removing movies in the grid)
+  useEffect(() => {
+    if (isCustom && step === 2) {
+      setCustomMovies(pickerSelected);
+    }
+  }, [pickerSelected, isCustom, step]);
+
   const onSelectType = useCallback((next: EitherOrType) => {
     setType((prev) => {
       if (prev !== next) setGenres([]);
