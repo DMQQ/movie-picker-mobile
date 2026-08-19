@@ -295,7 +295,9 @@
     "switch": {
       "local": "Urządzenie",
       "account": "Konto"
-    }
+    },
+    "saveTo": "Zapisz na liście",
+    "savedToList": "Zapisano do {name}"
   },
   "lists": {
     "favourites": "Ulubione",
@@ -531,22 +533,36 @@
       "title": "Ranking w parach",
       "swipe": "Przesuwaj i matchuj!",
       "swipeDescription": "Szybka i prosta gra grupowa, dla par i znajomych, przesuń w prawo lub w lewo aby głosować na filmy i seriale.",
-      "description": "Ułatw podejmowanie decyzji! Głosuj na filmy lub seriale w 3 kategoriach aby znaleźć wspólne TOP propozycje."
+      "description": "Ułatw podejmowanie decyzji! Głosuj na filmy lub seriale w 3 kategoriach aby znaleźć wspólne TOP propozycje.",
+      "swipeBadge": "Najpopularniejsza",
+      "swipeHighlight": "Większość grup znajduje match w mniej niż 1 min",
+      "badge": "Tryb Grupowy",
+      "highlight": "Wszyscy głosują, najlepszy film wygrywa"
     },
     "fortunewheel": {
       "title": "Koło Fortuny",
-      "description": "Zakręć kołem fortuny i losuj! Idealne dla niezdecydowanych lub szybkich decyzji!"
+      "description": "Zakręć kołem fortuny i losuj! Idealne dla niezdecydowanych lub szybkich decyzji!",
+      "badge": "Szybki Wybór",
+      "highlight": "Pozwól losowi zdecydować w sekundy"
     },
     "random": {
-      "title": "Losowy Film",
-      "description": "Jedno kliknięcie, jeden film. Błyskawiczna losowa rekomendacja gdy nie wiesz co obejrzeć.",
+      "title": "Shake & Pick",
+      "description": "Potrząśnij telefonem, aby odkryć losową rekomendację filmową.",
       "mystery": "???",
       "reveal": "Odkryj Film",
       "revealing": "Szukam...",
       "try-again": "Losuj Ponownie",
       "view-details": "Szczegóły",
       "hint": "Dotknij lub potrząśnij aby odkryć swój następny film",
-      "shake": "Potrząśnij, aby odkryć"
+      "shake": "Potrząśnij, aby odkryć",
+      "badge": "Potrząśnij",
+      "highlight": "Potrząśnij, aby odkryć"
+    },
+    "eitherOr": {
+      "title": "Albo/Albo",
+      "description": "Dwa filmy wchodzą, jeden wygrywa. Głosuj głowa w głowę przez bracket.",
+      "badge": "BETA",
+      "highlight": "Głowa w głowę aż jeden zwycięży"
     },
     "empty": "Brak gier"
   },

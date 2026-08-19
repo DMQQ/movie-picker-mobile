@@ -295,7 +295,9 @@
     "switch": {
       "local": "Gerät",
       "account": "Konto"
-    }
+    },
+    "saveTo": "In Liste speichern",
+    "savedToList": "In {name} gespeichert"
   },
   "lists": {
     "favourites": "Favoriten",
@@ -531,22 +533,36 @@
       "title": "Gruppen-Abstimmung",
       "swipe": "Wischen und Matchen!",
       "swipeDescription": "Schnelles und lustiges Party-Spiel, bei dem die Spieler nach links oder rechts wischen, um für Filme oder Serien abzustimmen.",
-      "description": "Filme auswählen leicht gemacht! Stimme für Filme oder Serien in drei Kategorien ab, um deine Top-Auswahl zu erhalten."
+      "description": "Filme auswählen leicht gemacht! Stimme für Filme oder Serien in drei Kategorien ab, um deine Top-Auswahl zu erhalten.",
+      "swipeBadge": "Beliebteste",
+      "swipeHighlight": "Die meisten Gruppen finden einen Match in unter 1 Min",
+      "badge": "Gruppen-Modus",
+      "highlight": "Alle stimmen ab, der beste Film gewinnt"
     },
     "fortunewheel": {
       "title": "Drehen & Schauen",
-      "description": "Drehe das Glücksrad für zufällige Auswahl oder Entscheidungen. Perfekt für Unentschlossene!"
+      "description": "Drehe das Glücksrad für zufällige Auswahl oder Entscheidungen. Perfekt für Unentschlossene!",
+      "badge": "Schnell-Wahl",
+      "highlight": "Das Schicksal entscheidet in Sekunden"
     },
     "random": {
-      "title": "Zufällige Auswahl",
-      "description": "Ein Tippen, ein Film. Sofortige zufällige Empfehlung, wenn du nicht entscheiden kannst.",
+      "title": "Shake & Pick",
+      "description": "Schüttle dein Telefon, um eine zufällige Filmempfehlung zu erhalten.",
       "mystery": "???",
       "reveal": "Film enthüllen",
       "revealing": "Suche...",
       "try-again": "Nochmal versuchen",
       "view-details": "Details",
       "hint": "Tippe oder schüttle, um deinen nächsten Film zu entdecken",
-      "shake": "Schütteln zum Entdecken"
+      "shake": "Schütteln zum Entdecken",
+      "badge": "Schütteln",
+      "highlight": "Schütteln zum Entdecken"
+    },
+    "eitherOr": {
+      "title": "Entweder/Oder",
+      "description": "Zwei Filme treten an, einer gewinnt. Stimme Kopf-an-Kopf durch ein Bracket ab.",
+      "badge": "BETA",
+      "highlight": "Kopf-an-Kopf bis einer siegt"
     },
     "empty": "Noch keine Spiele"
   },

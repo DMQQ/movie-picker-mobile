@@ -275,6 +275,7 @@
     "searchPlaceholder": "Search lists…",
     "newList": "New list",
     "newListPlaceholder": "List name…",
+    "saveTo": "Save to list",
     "empty": "You haven't added any movies to your favorites yet",
     "create": {
       "title": "Create a new list",
@@ -295,7 +296,8 @@
     "switch": {
       "local": "Device",
       "account": "Account"
-    }
+    },
+    "savedToList": "Saved to {name}"
   },
   "ratings": {
     "title": "My Reviews",
@@ -545,26 +547,36 @@
       "title": "Group Voter",
       "swipe": "Swipe to Match!",
       "swipeDescription": "Quick and fun party game where players swipe left or right to vote on movies or series to match with other players.",
-      "description": "Picking movies easy and fun! Vote on movies or series in three categories to get your top picks."
+      "description": "Picking movies easy and fun! Vote on movies or series in three categories to get your top picks.",
+      "swipeBadge": "Most Popular",
+      "swipeHighlight": "Most groups find a match in under 1 min",
+      "badge": "Group Mode",
+      "highlight": "Everyone votes, best movie wins"
     },
     "fortunewheel": {
       "title": "Spin & Watch",
-      "description": "Spin the wheel of fortune to make random selections or decisions. Perfect for undecided or making quick picks!"
+      "description": "Spin the wheel of fortune to make random selections or decisions. Perfect for undecided or making quick picks!",
+      "badge": "Quick Pick",
+      "highlight": "Let fate decide in seconds"
     },
     "random": {
-      "title": "Random Pick",
-      "description": "One tap, one movie. Instant random recommendation when you can't decide what to watch.",
+      "title": "Shake & Pick",
+      "description": "Shake your phone to reveal an instant random movie recommendation.",
       "mystery": "???",
       "reveal": "Reveal Movie",
       "revealing": "Finding...",
       "try-again": "Try Again",
       "view-details": "Details",
       "hint": "Tap or shake to discover your next movie",
-      "shake": "Shake to discover"
+      "shake": "Shake to discover",
+      "badge": "Shake",
+      "highlight": "Shake to reveal"
     },
     "eitherOr": {
       "title": "Either/Or",
-      "description": "Two movies enter, one wins. Vote head-to-head through a bracket to crown a champion."
+      "description": "Two movies enter, one wins. Vote head-to-head through a bracket to crown a champion.",
+      "badge": "BETA",
+      "highlight": "Head-to-head until one stands"
     }
   },
   "search": {

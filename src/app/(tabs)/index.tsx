@@ -8,7 +8,7 @@ import {
   spacing,
 } from "../../constants/design";
 import { LinearGradient } from "expo-linear-gradient";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Platform,
   Pressable,
@@ -17,6 +17,7 @@ import {
   View,
 } from "react-native";
 
+import SegmentedControl from "../../components/SegmentedControl";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
 import { Link, router } from "expo-router";
@@ -25,6 +26,7 @@ import FortuneWheelAnimation from "../../components/GameListAnimations/FortuneWh
 import SwiperAnimation from "../../components/GameListAnimations/SwipeAnimation";
 import VoterAnimation from "../../components/GameListAnimations/VoterAnimation";
 import RandomMovieAnimation from "../../components/GameListAnimations/RandomMovieAnimation";
+import EitherOrAnimation from "../../components/GameListAnimations/EitherOrAnimation";
 import PageHeading from "../../components/PageHeading";
 import { useUnviewedMatches } from "../../hooks/useUnviewedMatches";
 import Touch from "../../components/Touch";
@@ -49,6 +51,9 @@ interface GameCardProps {
   players?: string;
   duration?: string;
   index: number;
+  badge?: string;
+  badgeColor?: string;
+  highlight?: string;
 }
 
 const Animations = [
@@ -56,6 +61,7 @@ const Animations = [
   <VoterAnimation />,
   <FortuneWheelAnimation />,
   <RandomMovieAnimation />,
+  <EitherOrAnimation />,
 ];
 
 const GameCard = ({
@@ -65,6 +71,9 @@ const GameCard = ({
   players,
   duration,
   index,
+  badge,
+  badgeColor,
+  highlight,
 }: GameCardProps) => {
   return (
     <Animated.View
@@ -75,6 +84,12 @@ const GameCard = ({
         <Touch onPress={() => posthog?.capture("game_mode_selected", { game: href })}>
           <View style={styles.card}>
             {Animations[index]}
+
+            {badge && (
+              <View style={[styles.badgeChip, { backgroundColor: badgeColor ?? colors.primary }]}>
+                <Text style={styles.badgeText}>{badge}</Text>
+              </View>
+            )}
 
             <LinearGradient
               colors={["transparent", colors.appBackground]}
@@ -89,13 +104,25 @@ const GameCard = ({
                   {title}
                 </Text>
                 <Text style={styles.cardDescription}>{description}</Text>
+                {highlight && (
+                  <View style={styles.highlightRow}>
+                    <MaterialCommunityIcons
+                      name="lightning-bolt"
+                      size={11}
+                      color={badgeColor ?? colors.primary}
+                    />
+                    <Text style={[styles.highlightText, { color: badgeColor ?? colors.primary }]}>
+                      {highlight}
+                    </Text>
+                  </View>
+                )}
                 <View style={styles.cardMeta}>
                   {players && (
                     <View style={styles.metaItem}>
                       <MaterialCommunityIcons
                         name="account-group"
-                        size={12}
-                        color="rgba(255,255,255,0.5)"
+                        size={13}
+                        color="rgba(255,255,255,0.65)"
                       />
                       <Text style={styles.metaText}>{players}</Text>
                     </View>
@@ -105,8 +132,8 @@ const GameCard = ({
                     <View style={styles.metaItem}>
                       <MaterialCommunityIcons
                         name="clock-outline"
-                        size={12}
-                        color="rgba(255,255,255,0.5)"
+                        size={13}
+                        color="rgba(255,255,255,0.65)"
                       />
                       <Text style={styles.metaText}>{duration}</Text>
                     </View>
@@ -218,24 +245,33 @@ export default function GameList() {
         description: t("games.voter.swipeDescription"),
         href: "/room/setup",
         players: "1-8",
-        duration: "3-10m",
+        duration: "~1 min",
         index: 0,
+        badge: t("games.voter.swipeBadge") as string,
+        badgeColor: colors.primary,
+        highlight: t("games.voter.swipeHighlight") as string,
       },
       {
         title: t("games.fortunewheel.title"),
         description: t("games.fortunewheel.description"),
         href: "/fortune",
         players: "1",
-        duration: "1m",
+        duration: "< 1 min",
         index: 2,
+        badge: t("games.fortunewheel.badge") as string,
+        badgeColor: "#F59E0B",
+        highlight: t("games.fortunewheel.highlight") as string,
       },
       {
         title: t("games.random.title"),
         description: t("games.random.description"),
         href: "/random",
         players: "1",
-        duration: "< 1m",
+        duration: "< 1 min",
         index: 3,
+        badge: t("games.random.badge") as string,
+        badgeColor: "#22C55E",
+        highlight: t("games.random.highlight") as string,
       },
       {
         title: t("games.voter.title"),
@@ -243,14 +279,29 @@ export default function GameList() {
         href: "/voter",
         beta: true,
         players: "2",
-        duration: "5-10 min",
+        duration: "~3 min",
         index: 1,
+        badge: t("games.voter.badge") as string,
+        badgeColor: "#8B5CF6",
+        highlight: t("games.voter.highlight") as string,
+      },
+      {
+        title: t("games.eitherOr.title"),
+        description: t("games.eitherOr.description"),
+        href: "/either-or/setup",
+        beta: true,
+        players: "1-8",
+        duration: "2-5 min",
+        index: 4,
+        badge: t("games.eitherOr.badge") as string,
+        badgeColor: colors.error,
+        highlight: t("games.eitherOr.highlight") as string,
       },
     ],
     [t],
   );
 
-  return (
+return (
     <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
       <SafeIOSContainer
         style={{
@@ -307,6 +358,9 @@ export default function GameList() {
                 beta={game.beta}
                 players={game.players}
                 duration={game.duration}
+                badge={game.badge}
+                badgeColor={game.badgeColor}
+                highlight={game.highlight}
               />
             </TourAttachStep>
           ))}
@@ -349,26 +403,8 @@ const styles = StyleSheet.create({
     marginLeft: spacing.xxl + 16,
     marginRight: spacing.xxl + 16,
   },
-  categoriesContainer: {
-    marginTop: spacing.sm,
-  },
-  categoryChip: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.modal,
-    backgroundColor: colors.border,
-    marginRight: spacing.sm,
-  },
-  categoryChipActive: {
-    backgroundColor: colors.text,
-  },
-  categoryText: {
-    color: colors.text,
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-  },
-  categoryTextActive: {
-    color: colors.appBackground,
+  modeChipsRow: {
+    marginBottom: spacing.lg,
   },
   cardContainer: {
     borderRadius: radius.card,
@@ -417,12 +453,38 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   metaText: {
-    color: "rgba(255,255,255,0.45)",
+    color: "rgba(255,255,255,0.65)",
     fontSize: fontSize.sm,
   },
   metaDot: {
-    color: "rgba(255,255,255,0.25)",
+    color: "rgba(255,255,255,0.35)",
     fontSize: fontSize.sm,
+  },
+  badgeChip: {
+    position: "absolute",
+    top: spacing.md,
+    left: spacing.md,
+    zIndex: 20,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: 3,
+  },
+  badgeText: {
+    color: colors.text,
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.bold,
+    letterSpacing: 0.4,
+    textTransform: "uppercase",
+  },
+  highlightRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+    marginTop: spacing.xs,
+  },
+  highlightText: {
+    fontSize: 11,
+    fontWeight: fontWeight.semibold,
   },
   qrButtonContainer: {
     borderRadius: radius.pill,

@@ -295,7 +295,9 @@
     "switch": {
       "local": "Dispositivo",
       "account": "Conta"
-    }
+    },
+    "saveTo": "Salvar na lista",
+    "savedToList": "Salvo em {name}"
   },
   "lists": {
     "favourites": "Favoritos",
@@ -531,22 +533,36 @@
       "title": "Votador em grupo",
       "swipe": "Deslize para combinar!",
       "swipeDescription": "Jogo em grupo rápido e divertido onde os jogadores deslizam para a esquerda ou direita para votar em filmes ou séries.",
-      "description": "Escolher filmes fácil e divertido! Vote em filmes ou séries em três categorias para obter suas melhores escolhas."
+      "description": "Escolher filmes fácil e divertido! Vote em filmes ou séries em três categorias para obter suas melhores escolhas.",
+      "swipeBadge": "Mais Popular",
+      "swipeHighlight": "A maioria encontra um match em menos de 1 min",
+      "badge": "Modo Grupo",
+      "highlight": "Todos votam, o melhor filme vence"
     },
     "fortunewheel": {
       "title": "Gire e assista",
-      "description": "Gire a roda da fortuna para fazer seleções aleatórias. Perfeito para indecisos!"
+      "description": "Gire a roda da fortuna para fazer seleções aleatórias. Perfeito para indecisos!",
+      "badge": "Escolha Rápida",
+      "highlight": "O destino decide em segundos"
     },
     "random": {
-      "title": "Escolha aleatória",
-      "description": "Um toque, um filme. Recomendação aleatória instantânea quando você não consegue decidir o que assistir.",
+      "title": "Shake & Pick",
+      "description": "Sacuda o telefone para revelar uma recomendação aleatória de filme.",
       "mystery": "???",
       "reveal": "Revelar filme",
       "revealing": "Buscando...",
       "try-again": "Tentar novamente",
       "view-details": "Detalhes",
       "hint": "Toque ou agite para descobrir seu próximo filme",
-      "shake": "Agite para descobrir"
+      "shake": "Agite para descobrir",
+      "badge": "Sacudir",
+      "highlight": "Sacudir para revelar"
+    },
+    "eitherOr": {
+      "title": "Um ou outro",
+      "description": "Dois filmes entram, um vence. Vote cara a cara através de um bracket.",
+      "badge": "BETA",
+      "highlight": "Cara a cara até um vencer"
     },
     "empty": "Nenhum jogo ainda"
   },
