@@ -1,10 +1,9 @@
 import * as Notifications from "expo-notifications";
-import { router } from "expo-router";
 import { Platform } from "react-native";
 import { useEffect } from "react";
-import { baseUrl } from "../context/SocketContext";
 import { useAppSelector } from "../redux/store";
 import { posthog } from "../constants/posthog";
+import { handleInviteDeeplink } from "../utils/inviteRouter";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -42,34 +41,7 @@ export default function NotificationHandler() {
     if (data.screen === "invite") {
       const inviteId = data.inviteId as string | undefined;
       if (!inviteId) return;
-
-      fetch(`${baseUrl}/api/invites/${inviteId}`, {
-        headers: token
-          ? { authorization: `Bearer ${token}` }
-          : {},
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("invite fetch failed");
-          return res.json();
-        })
-        .then(({ invite }) => {
-          if (invite.status !== "pending") {
-            router.replace("/");
-            return;
-          }
-          if (invite.gameType === "voter") {
-            router.replace({
-              pathname: "/voter",
-              params: { sessionId: invite.roomId, inviteId: invite.id },
-            });
-          } else {
-            router.replace({
-              pathname: "/room/[roomId]",
-              params: { roomId: invite.roomId, inviteId: invite.id },
-            });
-          }
-        })
-        .catch(() => router.replace("/"));
+      handleInviteDeeplink(inviteId, token);
     }
   }, [lastResponse, isRestored, token]);
 

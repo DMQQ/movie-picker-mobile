@@ -2,8 +2,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
 import { colors } from "../constants/design";
-import { baseUrl } from "../context/SocketContext";
-import envs from "../constants/envs";
+import { handleInviteDeeplink } from "../utils/inviteRouter";
 
 export default function Unmatched() {
   const params = useLocalSearchParams();
@@ -28,6 +27,12 @@ export default function Unmatched() {
         pathname: "/voter",
         params: { sessionId: sessionId.toUpperCase() },
       });
+    } else if (url.startsWith("either-or/")) {
+      const roomId = url.replace("either-or/", "");
+      router.replace({
+        pathname: "/either-or/[roomId]",
+        params: { roomId: roomId.toUpperCase() },
+      });
     } else if (url.startsWith("create-room")) {
       router.replace({
         pathname: "/room/qr-code",
@@ -35,33 +40,7 @@ export default function Unmatched() {
       });
     } else if (url.startsWith("invite/")) {
       const inviteId = url.replace("invite/", "");
-      fetch(`${baseUrl}/api/invites/${inviteId}`, {
-        headers: { authorization: `Bearer ${envs.server_auth_token}` },
-        signal,
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("invite fetch failed");
-          return res.json();
-        })
-        .then(({ invite }) => {
-          if (signal.aborted) return;
-          if (invite.status !== "pending") {
-            router.replace("/");
-            return;
-          }
-          if (invite.gameType === "voter") {
-            router.replace({
-              pathname: "/voter",
-              params: { sessionId: invite.roomId, inviteId: invite.id },
-            });
-          } else {
-            router.replace({
-              pathname: "/room/[roomId]",
-              params: { roomId: invite.roomId, inviteId: invite.id },
-            });
-          }
-        })
-        .catch(() => { if (!signal.aborted) router.replace("/"); });
+      handleInviteDeeplink(inviteId, undefined, signal);
     } else {
       router.replace("/");
     }

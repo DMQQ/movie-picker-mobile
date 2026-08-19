@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { router } from "expo-router";
 import { skipToken } from "@reduxjs/toolkit/query";
 import {
   useGetPendingInvitesQuery,
@@ -9,6 +8,7 @@ import {
 import { useAppSelector } from "../redux/store";
 import { useToast } from "./Toast";
 import useTranslation from "../service/useTranslation";
+import { routeToGameByInvite } from "../utils/inviteRouter";
 
 export default function InviteToastWatcher() {
   const token = useAppSelector((s) => s.auth.token);
@@ -42,11 +42,11 @@ export default function InviteToastWatcher() {
         onPress: async () => {
           try {
             await acceptInvite({ id: invite.id, joinMethod: "manual" }).unwrap();
-            if (invite.gameType === "voter") {
-              router.replace({ pathname: "/voter", params: { sessionId: invite.roomId, inviteId: invite.id } });
-            } else {
-              router.replace({ pathname: "/room/[roomId]", params: { roomId: invite.roomId, inviteId: invite.id } });
-            }
+            routeToGameByInvite({
+              inviteId: invite.id,
+              roomId: invite.roomId,
+              gameType: invite.gameType || "swipe",
+            });
           } catch {}
         },
         onDismiss: () => {

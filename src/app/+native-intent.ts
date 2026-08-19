@@ -1,6 +1,11 @@
 import { router } from "expo-router";
-import { baseUrl } from "../context/SocketContext";
-import envs from "../constants/envs";
+import { fetchAndRouteInvite, routeToGameByInvite } from "../utils/inviteRouter";
+
+const GAME_TYPE_PATHS: Record<string, string> = {
+  voter: "/voter",
+  "either-or": "/either-or/[roomId]",
+  swipe: "/room/[roomId]",
+};
 
 export async function handleNativeIntent(url: string): Promise<string | undefined> {
   const [type, value] = url.replace("flickmate://", "/").split("/").filter(Boolean);
@@ -20,6 +25,13 @@ export async function handleNativeIntent(url: string): Promise<string | undefine
       });
       return "/voter";
 
+    case "either-or":
+      router.push({
+        pathname: "/either-or/[roomId]",
+        params: { roomId: value.toUpperCase() },
+      });
+      return "/either-or/[roomId]";
+
     case "create-room":
       router.push({
         pathname: "/room/qr-code",
@@ -28,30 +40,11 @@ export async function handleNativeIntent(url: string): Promise<string | undefine
       return "/room/qr-code";
 
     case "invite": {
-      try {
-        const res = await fetch(`${baseUrl}/api/invites/${value}`, {
-          headers: { authorization: `Bearer ${envs.server_auth_token}` },
-        });
-        if (!res.ok) return undefined;
-        const { invite } = await res.json();
-        if (invite.status !== "pending") return undefined;
+      const payload = await fetchAndRouteInvite(value);
+      if (!payload) return undefined;
 
-        if (invite.gameType === "voter") {
-          router.push({
-            pathname: "/voter",
-            params: { sessionId: invite.roomId, inviteId: invite.id },
-          });
-          return "/voter";
-        }
-
-        router.push({
-          pathname: "/room/[roomId]",
-          params: { roomId: invite.roomId, inviteId: invite.id },
-        });
-        return "/room/[roomId]";
-      } catch {
-        return undefined;
-      }
+      routeToGameByInvite(payload, { method: "push" });
+      return GAME_TYPE_PATHS[payload.gameType] || "/room/[roomId]";
     }
 
     default:

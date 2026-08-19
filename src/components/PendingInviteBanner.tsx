@@ -1,5 +1,4 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { Pressable, StyleSheet } from "react-native";
 import Animated, { FadeInDown, FadeOutUp } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,6 +20,7 @@ import {
 } from "../constants/design";
 import Text from "./Text";
 import useTranslation from "../service/useTranslation";
+import { routeToGameByInvite } from "../utils/inviteRouter";
 
 export default function PendingInviteBanner() {
   const token = useAppSelector((s) => s.auth.token);
@@ -40,17 +40,11 @@ export default function PendingInviteBanner() {
   const handleAccept = async (invite: Invite) => {
     try {
       await acceptInvite({ id: invite.id, joinMethod: "manual" }).unwrap();
-      if (invite.gameType === "voter") {
-        router.replace({
-          pathname: "/voter",
-          params: { sessionId: invite.roomId, inviteId: invite.id },
-        });
-      } else {
-        router.replace({
-          pathname: "/room/[roomId]",
-          params: { roomId: invite.roomId, inviteId: invite.id },
-        });
-      }
+      routeToGameByInvite({
+        inviteId: invite.id,
+        roomId: invite.roomId,
+        gameType: invite.gameType || "swipe",
+      });
     } catch {}
   };
 
