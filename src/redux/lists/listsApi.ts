@@ -119,6 +119,11 @@ export interface AddItemBody {
   content: { title: string; poster_path: string | null };
 }
 
+export interface AddBulkItemsBody {
+  type: string;
+  items: AddItemBody[];
+}
+
 export interface MigrateBody {
   groups: {
     name: string;
@@ -205,6 +210,18 @@ export const listsApi = createApi({
       },
     }),
 
+    addBulkItems: build.mutation<OkResponse, AddBulkItemsBody>({
+      query: ({ type, items }) => ({
+        url: `/lists/${type}/items/bulk`,
+        method: "POST",
+        body: { items },
+      }),
+      invalidatesTags: (_result, _err, { type }) => [
+        { type: "ListItems", id: type },
+        { type: "List", id: "ALL" },
+      ],
+    }),
+
     removeItem: build.mutation<OkResponse, { itemId: string; listType?: string }>({
       query: ({ itemId }) => ({
         url: `/lists/items/${itemId}`,
@@ -285,6 +302,7 @@ export const {
   useGetListsQuery,
   useGetListQuery,
   useAddItemMutation,
+  useAddBulkItemsMutation,
   useRemoveItemMutation,
   useCreateListMutation,
   useDeleteListMutation,

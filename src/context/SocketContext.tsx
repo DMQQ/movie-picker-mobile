@@ -14,12 +14,12 @@ import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 import { getLocaleForLanguage } from "../service/translationUtils";
 
-const isDev = envs.mode !== "production";
+const isDev = true // envs.mode !== "production";
 
 export const baseUrl = isDev
   ? Platform.OS === "ios"
-    ? "http://192.168.1.20:3000"
-    : "http://192.168.1.20:3000"
+    ? "http://10.1.1.141:3000"
+    : "http://10.1.1.141:3000"
   : "https://flickmate.app";
 export const url = baseUrl + "/api";
 
@@ -87,7 +87,7 @@ export const SocketProvider = ({
   namespace,
 }: {
   children: React.ReactNode;
-  namespace: "/swipe" | "/voter";
+  namespace: "/swipe" | "/voter" | "/either-or";
 }) => {
   const language = useSelector((st: RootState) => st.room.language);
   const regionalization =

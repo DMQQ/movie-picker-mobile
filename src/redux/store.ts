@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { roomSlice } from "./room/roomSlice";
+import { eitherOrSlice } from "./eitherOr/eitherOrSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { movieApi } from "./movie/movieApi";
 import { favoritesSlice } from "./favourites/favourites";
@@ -18,11 +19,13 @@ import { scoringPreferencesApi } from "./scoringPreferences/scoringPreferencesAp
 import { ratingsApi } from "./ratings/ratingsApi";
 import { inviteApi } from "./invite/inviteApi";
 import toastSlice from "./toast/toastSlice";
+import moviePickerReducer from "./moviePicker/moviePickerSlice";
 
 const store = configureStore({
   reducer: {
     app: appSlice.reducer,
     room: roomSlice.reducer,
+    eitherOr: eitherOrSlice.reducer,
     auth: authSlice.reducer,
     [movieApi?.reducerPath]: movieApi.reducer,
     [personApi?.reducerPath]: personApi.reducer,
@@ -38,6 +41,7 @@ const store = configureStore({
     movieInteractions: movieInteractionsSlice.reducer,
     filterPreferences: filterPreferencesSlice.reducer,
     toast: toastSlice.reducer,
+    moviePicker: moviePickerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()

@@ -325,6 +325,22 @@ const RootNavigator = ({
 
         <Stack.Screen name="section-movies" options={{ headerShown: false }} />
 
+        <Stack.Screen
+          name="movie-picker"
+          options={{
+            headerShown: false,
+            gestureEnabled: true,
+            presentation: "formSheet",
+            sheetGrabberVisible: true,
+            contentStyle: {
+              backgroundColor:
+                Platform.OS === "android" ? colors.surface : "transparent",
+            },
+            sheetAllowedDetents: [0.92, 1.0],
+            sheetInitialDetentIndex: 0,
+          }}
+        />
+
       </Stack>
     </GestureHandlerRootView>
   );
