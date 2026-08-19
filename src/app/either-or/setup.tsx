@@ -20,7 +20,8 @@ import { colors, radius, spacing } from "../../constants/design";
 import { posthog } from "../../constants/posthog";
 
 const STANDARD_STEPS = 4;
-const CUSTOM_STEPS = 3; // type → pick movies → bracket size
+const CUSTOM_STEPS = 2; // type → pick movies
+const BRACKET_SIZE = 16;
 
 export default function EitherOrSetup() {
   const t = useTranslation();
@@ -34,7 +35,6 @@ export default function EitherOrSetup() {
   const [type, setType] = useState<EitherOrType>("movie");
   const [genres, setGenres] = useState<number[]>([]);
   const [providers, setProviders] = useState<number[]>(savedProviders);
-  const [bracketSize, setBracketSize] = useState<number>(8);
   const [customMovies, setCustomMovies] = useState<PickedMovie[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const { preferences: savedPrefs, isLoading: prefsLoading } = useBuilderPreferences();
@@ -74,14 +74,14 @@ export default function EitherOrSetup() {
     posthog?.capture("either_or_create_tapped", { type, bracketSize, is_custom: isCustom });
 
     const config = isCustom
-      ? { bracketSize, movies: customMovies }
-      : { type: type as "movie" | "tv", genre: genres, providers, bracketSize };
+      ? { bracketSize: BRACKET_SIZE, movies: customMovies }
+      : { type: type as "movie" | "tv", genre: genres, providers, bracketSize: BRACKET_SIZE };
 
     const roomId = await createRoom(config);
     setIsCreating(false);
 
     if (roomId) router.push(`/either-or/${roomId}`);
-  }, [createRoom, type, genres, providers, bracketSize, isCustom, customMovies]);
+  }, [createRoom, type, genres, providers, isCustom, customMovies]);
 
   const handleQuickStart = useCallback(async () => {
     if (isCustom) {
@@ -90,14 +90,14 @@ export default function EitherOrSetup() {
     }
     if (hasSavedProviders) {
       setIsCreating(true);
-      posthog?.capture("either_or_create_tapped", { type, bracketSize: 8, quick_start: true });
-      const roomId = await createRoom({ type: type as "movie" | "tv", genre: [], providers: savedPrefs!.providers, bracketSize: 8 });
+      posthog?.capture("either_or_create_tapped", { type, bracketSize: BRACKET_SIZE, quick_start: true });
+      const roomId = await createRoom({ type: type as "movie" | "tv", genre: [], providers: savedPrefs!.providers, bracketSize: BRACKET_SIZE });
       setIsCreating(false);
       if (roomId) router.push(`/either-or/${roomId}`);
     } else {
       setStep(totalSteps);
     }
-  }, [hasSavedProviders, savedPrefs, createRoom, type, isCustom, customMovies, totalSteps, dispatch]);
+  }, [hasSavedProviders, savedPrefs, createRoom, type, isCustom, totalSteps]);
 
   const handleNext = useCallback(() => {
     if (step === totalSteps) {
@@ -120,10 +120,7 @@ export default function EitherOrSetup() {
   // Step labels vary by mode
   const getStepTitle = useCallback(() => {
     if (step === 1) return t("room.builder.step1.title") as string;
-    if (isCustom) {
-      if (step === 2) return t("eitherOr.setup.custom") as string || "Pick Movies";
-      if (step === 3) return t("eitherOr.setup.bracketSize") as string;
-    }
+    if (isCustom && step === 2) return t("eitherOr.setup.custom") as string || "Pick Movies";
     if (step === 2) return t("room.builder.step2.title") as string;
     if (step === 3) return t("eitherOr.setup.bracketSize") as string;
     return t("room.builder.step3.title") as string;
@@ -131,38 +128,27 @@ export default function EitherOrSetup() {
 
   const getStepSubtitle = useCallback(() => {
     if (step === 1) return t("room.builder.step1.subtitle");
-    if (isCustom) {
-      if (step === 2) return undefined;
-      if (step === 3) return t("eitherOr.setup.bracketSizeSubtitle");
-    }
+    if (isCustom && step === 2) return undefined;
     if (step === 2) return t("room.builder.step2.subtitle");
     if (step === 3) return t("eitherOr.setup.bracketSizeSubtitle");
     return t("room.builder.step3.subtitle");
   }, [step, isCustom, t]);
 
   // Map logical step → which standard step index for bracket/providers
-  const standardStep = isCustom
-    ? step === 2 ? -1 : step === 3 ? 3 : step
-    : step;
+  const standardStep = isCustom ? -1 : step;
 
   const renderStep = useMemo(() => {
     if (step === 1) return <Step1Type key="step1" type={type} onSelect={onSelectType} />;
-
-    if (isCustom) {
-      if (step === 2) return <StepCustomMovies key="step-custom" movies={customMovies} />;
-      if (step === 3) return <Step3BracketSize key="step3c" bracketSize={bracketSize} onSelect={setBracketSize} />;
-      return null;
-    }
-
-    if (step === 2) return <GenreSwipeStep key="step2" type={type as "movie" | "tv"} genres={genres} onToggleGenre={onToggleGenre} />;
-    if (step === 3) return <Step3BracketSize key="step3" bracketSize={bracketSize} onSelect={setBracketSize} />;
-    if (step === 4) return <ProviderSearchStep key="step4" providers={providers} onChangeProviders={setProviders} />;
+    if (isCustom && step === 2) return <StepCustomMovies key="step-custom" movies={customMovies} />;
+    if (!isCustom && step === 2) return <GenreSwipeStep key="step2" type={type as "movie" | "tv"} genres={genres} onToggleGenre={onToggleGenre} />;
+    if (!isCustom && step === 3) return <Step3BracketSize key="step3" bracketSize={BRACKET_SIZE} onSelect={() => {}} />;
+    if (!isCustom && step === 4) return <ProviderSearchStep key="step4" providers={providers} onChangeProviders={setProviders} />;
     return null;
-  }, [step, type, isCustom, customMovies, genres, providers, bracketSize, onSelectType, onToggleGenre]);
+  }, [step, type, isCustom, customMovies, genres, providers, onSelectType, onToggleGenre]);
 
   const isLastStep = step === totalSteps;
-  const canProceedCustomMovies = !isCustom || step !== 2 || customMovies.length >= 4;
-  const canCreate = !isCustom || customMovies.length >= bracketSize;
+  const canProceedCustomMovies = !isCustom || customMovies.length >= 4;
+  const canCreate = !isCustom || customMovies.length >= BRACKET_SIZE;
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.appBackground }}>
