@@ -47,6 +47,7 @@ export const useInfiniteLandingPageMovies = ({
   return {
     data: sections,
     isLoading: isLoading && sections.length === 0,
+    isFetching,
     isError,
     hasMore: hasNextPage ?? true,
     fetchNextPage: fetchNextPageIfReady,

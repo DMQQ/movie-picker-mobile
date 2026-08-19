@@ -17,7 +17,7 @@ import uniqueBy from "../../../utils/unique";
 
 const { width } = Dimensions.get("screen");
 
-const imageWidth = (width - 45) / 2;
+const imageWidth = (width - 45) / 3;
 
 interface SimilarTabProps {
   id: number;
@@ -76,7 +76,7 @@ function SimilarTab({ id, type, initialData }: SimilarTabProps) {
       <View style={styles.gridContainer}>
         {movies.map((item, index) => (
           <View key={`${item.id}-${type}-${index}`} style={styles.itemWrapper}>
-            <SectionListItem {...item} type={type} imageWidth={imageWidth} />
+            <SectionListItem {...item} type={type} imageWidth={imageWidth} hideTitle />
           </View>
         ))}
       </View>

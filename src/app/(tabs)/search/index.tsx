@@ -18,7 +18,7 @@ import {
 
   View, ActivityIndicator} from "react-native";
 
-import { colors, fontSize, radius, spacing, typography } from "../../../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing, typography } from "../../../constants/design";
 import {
   useLazySearchQuery,
   useLazyGetSimilarQuery,
@@ -48,7 +48,27 @@ import { posthog } from "../../../constants/posthog";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
+const GENRE_MAP: Record<number, string> = {
+  28: "Action", 12: "Adventure", 16: "Animation", 35: "Comedy", 80: "Crime",
+  99: "Documentary", 18: "Drama", 10751: "Family", 14: "Fantasy", 36: "History",
+  27: "Horror", 10402: "Music", 9648: "Mystery", 10749: "Romance", 878: "Sci-Fi",
+  53: "Thriller", 10752: "War", 37: "Western", 10759: "Action & Adventure",
+  10762: "Kids", 10765: "Sci-Fi & Fantasy", 10768: "War & Politics",
+};
+
+function formatRuntime(minutes: number) {
+  if (!minutes) return null;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return h > 0 ? `${h}h ${m > 0 ? `${m}m` : ""}`.trim() : `${m}m`;
+}
+
 const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
+  const year = (item.release_date || item.first_air_date)?.slice(0, 4);
+  const lang = item.original_language?.toUpperCase();
+  const runtime = item.runtime ? formatRuntime(item.runtime) : null;
+  const genres = (item.genre_ids ?? []).slice(0, 2).map((id) => GENRE_MAP[id]).filter(Boolean);
+
   return (
     <Link
       href={{
@@ -94,6 +114,24 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
                 <RatingIcons vote={item.vote_average} size={20} />
               )}
             </View>
+
+            {(year || lang || runtime) && (
+              <View style={styles.metaRow}>
+                {!!year && <Text style={styles.metaText}>{year}</Text>}
+                {!!lang && <Text style={styles.metaText}>{lang}</Text>}
+                {!!runtime && <Text style={styles.metaText}>{runtime}</Text>}
+              </View>
+            )}
+
+            {genres.length > 0 && (
+              <View style={styles.genreRow}>
+                {genres.map((g) => (
+                  <View key={g} style={styles.genreChip}>
+                    <Text style={styles.genreText}>{g}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
 
             <View style={styles.overviewWrap}>
               <Text numberOfLines={4} ellipsizeMode="tail" style={styles.overview}>
@@ -582,6 +620,32 @@ const styles = StyleSheet.create({
   },
   ratingRow: {
     flexDirection: "row",
+  },
+  metaRow: {
+    flexDirection: "row",
+    gap: spacing.sm,
+    marginTop: spacing.xs - 2,
+  },
+  metaText: {
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
+    fontWeight: fontWeight.medium,
+  },
+  genreRow: {
+    flexDirection: "row",
+    gap: spacing.xs,
+    marginTop: spacing.xs - 2,
+  },
+  genreChip: {
+    backgroundColor: "rgba(255,255,255,0.12)",
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+  },
+  genreText: {
+    fontSize: fontSize.xs,
+    color: colors.text,
+    fontWeight: fontWeight.medium,
   },
   overviewWrap: {
     flex: 1,

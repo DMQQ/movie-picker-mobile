@@ -4,13 +4,13 @@ import { colors } from "../constants/design";
 const LandingHeader = () => {
   return (
     <LinearGradient
-      colors={[colors.appBackground, "rgba(0,0,0,0.6)", "transparent"]}
+      colors={["transparent", "rgba(0,0,0,0.6)", colors.appBackground]}
       style={{
         position: "absolute",
-        top: 0,
+        bottom:0,
         left: 0,
         right: 0,
-        height: 220,
+        height: 100,
         zIndex: 90,
       }}
       pointerEvents="none"

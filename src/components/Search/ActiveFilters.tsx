@@ -1,12 +1,13 @@
-import { router } from "expo-router";
 import Chip from "../Chip";
 import { colors } from "../../constants/design";
-import { useAppSelector } from "../../redux/store";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
+import { setMediaType, setDecade, toggleGenre, toggleProvider } from "../../redux/mediaFilters/mediaFiltersSlice";
 import useTranslation from "../../service/useTranslation";
 
 export default function ActiveFilters() {
   const t = useTranslation();
+  const dispatch = useAppDispatch();
   const { mediaType, selectedDecade, selectedGenres, selectedProviders } =
     useAppSelector((s) => s.mediaFilters);
   const { data: providersData } = useGetAllProvidersQuery({});
@@ -16,6 +17,7 @@ export default function ActiveFilters() {
     label: string;
     icon?: string;
     image?: { uri: string };
+    onDeselect: () => void;
   }[] = [];
 
   if (mediaType !== "both") {
@@ -25,6 +27,7 @@ export default function ActiveFilters() {
         mediaType === "movie" ? "voter.types.movie" : "voter.types.series",
       ) as string,
       icon: mediaType === "movie" ? "movie-open" : "television",
+      onDeselect: () => dispatch(setMediaType("both")),
     });
   }
 
@@ -33,10 +36,16 @@ export default function ActiveFilters() {
       key: `decade-${selectedDecade}`,
       label: t(`filters.${selectedDecade}` as any) as string,
       icon: "calendar-range",
+      onDeselect: () => dispatch(setDecade("all")),
     });
   }
   selectedGenres.forEach((g) =>
-    chips.push({ key: `genre-${g.id}`, label: g.name, icon: "tag" }),
+    chips.push({
+      key: `genre-${g.id}`,
+      label: g.name,
+      icon: "tag",
+      onDeselect: () => dispatch(toggleGenre(g)),
+    }),
   );
   selectedProviders.forEach((id) => {
     const provider = providersData?.find((p) => p.provider_id === id);
@@ -46,6 +55,7 @@ export default function ActiveFilters() {
       image: provider?.logo_path
         ? { uri: `https://image.tmdb.org/t/p/w92${provider.logo_path}` }
         : undefined,
+      onDeselect: () => dispatch(toggleProvider(id)),
     });
   });
 
@@ -59,13 +69,9 @@ export default function ActiveFilters() {
           icon={chip.icon}
           iconColor={colors.text}
           image={chip.image}
-          style={{ backgroundColor: colors.primary, borderColor: colors.primary }}
-          onPress={() =>
-            router.push({
-              pathname: "/filters",
-              params: { presentation: "formSheet" },
-            })
-          }
+          removable
+          contained
+          onPress={chip.onDeselect}
         >
           {chip.label}
         </Chip>

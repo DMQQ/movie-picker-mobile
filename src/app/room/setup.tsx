@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import PageHeading from "../../components/PageHeading";
+import SetupHeader from "../../components/Setup/SetupHeader";
 import StepContainer from "../../components/Room/StepContainer";
 import Step1GameType from "../../components/Room/BuilderSteps/Step1GameType";
 import Step2Genres from "../../components/Room/BuilderSteps/Step2Genres";
 import Step3Providers from "../../components/Room/BuilderSteps/Step3Providers";
 import Step4SpecialCategories from "../../components/Room/BuilderSteps/Step4SpecialCategories";
-import CircularStepProgress from "../../components/Room/BuilderSteps/CircularStepProgress";
 import useTranslation from "../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import {
@@ -35,6 +34,7 @@ export default function RoomSetup() {
   }, []);
 
   const currentStep = useAppSelector((state) => state.builder.currentStep);
+  const isRoomReady = useAppSelector((state) => state.room.isCreated && !!state.room.qrCode);
 
   const getStepTitle = useCallback(() => {
     if (currentStep >= 1 && currentStep <= 4) {
@@ -77,16 +77,13 @@ export default function RoomSetup() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.appBackground }}>
-      <PageHeading
-        onPress={handleBackPress}
-        showBackButton
-        gradientHeight={100}
-        showGradientBackground={false}
-        useSafeArea={false}
+      <SetupHeader
         title={getStepTitle()}
-      >
-        <CircularStepProgress currentStep={currentStep} totalSteps={4} />
-      </PageHeading>
+        currentStep={currentStep}
+        totalSteps={4}
+        onBackPress={handleBackPress}
+        isReady={isRoomReady}
+      />
 
       <StepContainer
         currentStep={currentStep}

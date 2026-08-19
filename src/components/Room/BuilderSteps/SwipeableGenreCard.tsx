@@ -16,6 +16,8 @@ interface SwipeableGenreCardProps {
   onPress: () => void;
   delay?: number;
   vertical?: boolean;
+  cardWidth?: number;
+  cardHeight?: number;
 }
 
 const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
@@ -25,6 +27,8 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
   onPress,
   delay = 0,
   vertical = false,
+  cardWidth,
+  cardHeight,
 }) => {
   const theme = useTheme();
   const scale = useSharedValue(1);
@@ -47,6 +51,8 @@ const SwipeableGenreCard: React.FC<SwipeableGenreCardProps> = ({
         <Animated.View
           style={[
             vertical ? styles.cardVertical : styles.card,
+            cardWidth !== undefined && { width: cardWidth },
+            cardHeight !== undefined && { height: cardHeight },
             animatedStyle,
             isSelected && { borderColor: theme.colors.primary, borderWidth: 3 },
           ]}

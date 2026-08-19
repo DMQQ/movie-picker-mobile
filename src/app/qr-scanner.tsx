@@ -63,6 +63,8 @@ export default function QRScanner() {
             pathname: `/voter`,
             params: { sessionId: code },
           });
+        } else if (code[0] === "E") {
+          router.replace(`/either-or/${code}`);
         } else router.replace(`/room/${code}`);
 
         resolve(true);
@@ -85,7 +87,7 @@ export default function QRScanner() {
 
       const id = urlParts[urlParts.length - 1];
 
-      if (type === "room" || type === "swipe" || type === "voter") {
+      if (type === "room" || type === "swipe" || type === "voter" || type === "either-or") {
         return joinRoom(id).catch((err) => {
           console.error("Error joining room from QR code:", err);
           setScanError(true);
@@ -134,7 +136,7 @@ export default function QRScanner() {
     }
 
     const firstChar = code[0];
-    if (firstChar !== "S" && firstChar !== "V") {
+    if (firstChar !== "S" && firstChar !== "V" && firstChar !== "E") {
       setManualError(t("scanner.error-invalid-prefix") as string);
       return;
     }
@@ -156,6 +158,8 @@ export default function QRScanner() {
       // disappears without a dismiss animation, same as the QR scan path.
       if (code[0] === "V") {
         router.replace({ pathname: "/voter", params: { sessionId: code } });
+      } else if (code[0] === "E") {
+        router.replace(`/either-or/${code}`);
       } else {
         router.replace(`/room/${code}`);
       }

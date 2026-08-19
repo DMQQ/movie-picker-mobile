@@ -1,9 +1,6 @@
-import { useCallback, useMemo } from "react";
-import SegmentedButtons from "../SegmentedButtons";
-import { StyleSheet, View } from "react-native";
-
-import { colors, fontWeight, fontSize, radius } from "../../constants/design";
+import { useMemo } from "react";
 import useTranslation from "../../service/useTranslation";
+import SegmentedControl from "../SegmentedControl";
 
 type MediaType = "movie" | "tv" | "both";
 
@@ -15,63 +12,20 @@ interface TypeSelectorProps {
 export default function TypeSelector({ value, onChange }: TypeSelectorProps) {
   const t = useTranslation();
 
-  const handleValueChange = useCallback((val: string) => onChange(val as MediaType), [onChange]);
-
-  const buttons = useMemo(
+  const options = useMemo(
     () => [
-      {
-        value: "both",
-        label: t("filters.both"),
-        style: value === "both" ? styles.selectedButton : styles.button,
-        labelStyle: value === "both" ? styles.selectedLabel : styles.label,
-      },
-      {
-        value: "movie",
-        label: t("filters.movie"),
-        style: value === "movie" ? styles.selectedButton : styles.button,
-        labelStyle: value === "movie" ? styles.selectedLabel : styles.label,
-      },
-      {
-        value: "tv",
-        label: t("filters.tv"),
-        style: value === "tv" ? styles.selectedButton : styles.button,
-        labelStyle: value === "tv" ? styles.selectedLabel : styles.label,
-      },
+      { value: "both", label: t("filters.both") as string },
+      { value: "movie", label: t("filters.movie") as string },
+      { value: "tv", label: t("filters.tv") as string },
     ],
-    [value, t],
+    [t],
   );
 
   return (
-    <View style={styles.container}>
-      <SegmentedButtons value={value} onValueChange={handleValueChange} buttons={buttons} style={styles.segmentedButtons} />
-    </View>
+    <SegmentedControl
+      options={options}
+      value={value}
+      onChange={(v) => onChange(v as MediaType)}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: 0,
-    borderRadius: radius.sm + 2,
-    overflow: "hidden",
-  },
-  segmentedButtons: {
-    backgroundColor: colors.input,
-  },
-  button: {
-    backgroundColor: colors.input,
-    borderColor: "#333",
-  },
-  selectedButton: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  label: {
-    color: "#999",
-    fontSize: fontSize.md,
-  },
-  selectedLabel: {
-    color: colors.text,
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-  },
-});

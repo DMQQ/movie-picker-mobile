@@ -1,32 +1,17 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "../../components/Button";
-import AvatarText from "../../components/AvatarText";
 import Text from "../../components/Text";
-import { useTheme } from "../../hooks/useTheme";
 import { router, Link } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
-import {
-  memo,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
-import { Dimensions, View, StyleSheet, Pressable, Share } from "react-native";
+import { useContext, useEffect, useRef, useState, useTransition } from "react";
+import { View, StyleSheet } from "react-native";
 
-import {
-  colors,
-  fontSize,
-  fontWeight,
-  radius,
-  spacing,
-} from "../../constants/design";
+import { colors, radius, spacing } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
-import StyledQRCode from "../../components/StyledQRCode";
+import QrCodeBox from "../../components/GameLobby/QrCodeBox";
+import PlayersRow from "../../components/GameLobby/PlayersRow";
+import LobbyShell from "../../components/GameLobby/LobbyShell";
 import { Movie } from "../../../types";
 import PageHeading from "../../components/PageHeading";
-import { getUserAvatarColor } from "../../utils/avatar";
 import RoleGuard from "../../components/RoleGuard";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -335,7 +320,7 @@ export default function QRCodePage() {
     isPending;
 
   return (
-    <View style={[styles.container]}>
+    <View style={styles.container}>
       <PageHeading
         showGradientBackground={false}
         useSafeArea={false}
@@ -344,7 +329,78 @@ export default function QRCodePage() {
           router.canGoBack() ? router.back() : router.replace("/(tabs)")
         }
       />
-      <View style={styles.contentContainer}>
+
+      <LobbyShell
+        bottomContent={
+          <>
+            <View
+              style={{
+                width: "100%",
+                alignItems: "center",
+                height: 20,
+              }}
+            >
+              {isLoadingMovies && !isRefetching ? (
+                <Text style={styles.infoText}>Checking available movies...</Text>
+              ) : moviesCount === 0 ? (
+                <Text style={styles.warningText}>{t("room.too-restricted")}</Text>
+              ) : moviesCount != null && moviesCount < 5 ? (
+                <Text style={styles.warningText}>
+                  {t("room.lower-results-count", { count: moviesCount })}
+                </Text>
+              ) : null}
+            </View>
+
+            <PlayersRow
+              players={users.map((nick) => ({ id: nick, name: nick }))}
+              waitingLabel={t("room.waiting-for-players")}
+            />
+          </>
+        }
+        actions={
+          <View style={styles.actionRow}>
+            <RoleGuard guard="fullAccount">
+              <Button
+                mode="outlined"
+                disabled={!qrCode}
+                icon="account-multiple-plus"
+                compact
+                style={styles.inviteButton}
+                onPress={() =>
+                  router.push({
+                    pathname: "/room/invite-players",
+                    params: { roomId: qrCode, gameType: "swipe" },
+                  })
+                }
+              >
+                {""}
+              </Button>
+            </RoleGuard>
+
+            <Link
+              href={startGameHref}
+              asChild
+              disabled={isDisabled}
+              onPress={handleStartGame}
+            >
+              <PrimaryButton
+                disabled={isDisabled}
+                style={styles.startButton}
+              >
+                {isRefetching
+                  ? SYNC_PHRASES[syncPhraseIndex]
+                  : isLoadingMovies
+                    ? "Loading..."
+                    : moviesCount === 0
+                      ? t("room.too-restricted")
+                      : users.length === 1
+                        ? t("room.play-alone")
+                        : t("room.start")}
+              </PrimaryButton>
+            </Link>
+          </View>
+        }
+      >
         {createRoomLoading ? (
           <Animated.View entering={FadeInDown} style={styles.loadingContainer}>
             <FancySpinner size={100} />
@@ -352,220 +408,20 @@ export default function QRCodePage() {
           </Animated.View>
         ) : (
           qrCode && (
-            <Animated.View entering={FadeInDown} style={styles.qrCodeContainer}>
-              <QrCodeBox code={qrCode} />
+            <Animated.View entering={FadeInDown} style={{ flex: 1 }}>
+              <QrCodeBox code={qrCode} scheme="room" webPath="swipe" />
             </Animated.View>
           )
         )}
-      </View>
-      <View style={styles.bottomSection}>
-        <View
-          style={{
-            width: "100%",
-            alignItems: "center",
-            height: 20,
-          }}
-        >
-          {isLoadingMovies && !isRefetching ? (
-            <Text style={styles.infoText}>Checking available movies...</Text>
-          ) : moviesCount === 0 ? (
-            <Text style={styles.warningText}>{t("room.too-restricted")}</Text>
-          ) : moviesCount != null && moviesCount < 5 ? (
-            <Text style={styles.warningText}>
-              {t("room.lower-results-count", { count: moviesCount })}
-            </Text>
-          ) : null}
-        </View>
-
-        {users.length > 0 && (
-          <View style={styles.playersRow}>
-            <View style={styles.avatarsStack}>
-              {users.map((nick, index) => (
-                <Animated.View
-                  key={nick}
-                  entering={FadeInDown.duration(300)}
-                  style={index > 0 && styles.avatarOverlap}
-                >
-                  <AvatarText
-                    size={32}
-                    label={nick[0].toUpperCase()}
-                    style={{
-                      backgroundColor: getUserAvatarColor(nick),
-                      borderWidth: 2,
-                      borderColor: colors.appBackground,
-                    }}
-                  />
-                </Animated.View>
-              ))}
-            </View>
-            <Text style={styles.playersCount}>
-              {users.length > 1
-                ? `${users.length} active`
-                : t("room.waiting-for-players")}
-            </Text>
-          </View>
-        )}
-
-        <View style={styles.actionRow}>
-          <RoleGuard guard="fullAccount">
-            <Button
-              mode="outlined"
-              disabled={!qrCode}
-              icon="account-multiple-plus"
-              compact
-              style={styles.inviteButton}
-              onPress={() =>
-                router.push({
-                  pathname: "/room/invite-players",
-                  params: { roomId: qrCode, gameType: "swipe" },
-                })
-              }
-            >
-              {""}
-            </Button>
-          </RoleGuard>
-
-          <Link
-            href={startGameHref}
-            asChild
-            disabled={isDisabled}
-            onPress={handleStartGame}
-          >
-            <PrimaryButton
-              disabled={isDisabled}
-              style={styles.startButton}
-            >
-              {isRefetching
-                ? SYNC_PHRASES[syncPhraseIndex]
-                : isLoadingMovies
-                  ? "Loading..."
-                  : moviesCount === 0
-                    ? t("room.too-restricted")
-                    : users.length === 1
-                      ? t("room.play-alone")
-                      : t("room.start")}
-            </PrimaryButton>
-          </Link>
-        </View>
-      </View>
+      </LobbyShell>
     </View>
   );
 }
-
-const TutorialTips = () => {
-  const theme = useTheme();
-  const t = useTranslation();
-
-  const tips = [
-    {
-      icon: "camera" as const,
-      text: t("room.tutorial.native-camera"),
-    },
-    {
-      icon: "qrcode-scan" as const,
-      text: t("room.tutorial.in-app-scanner"),
-    },
-    {
-      icon: "account-multiple-plus" as const,
-      text: t("room.tutorial.join-during-game"),
-    },
-  ];
-
-  return (
-    <View style={styles.tutorialContainer}>
-      {tips.map((tip, index) => (
-        <View key={index} style={styles.tipRow}>
-          <View
-            style={[
-              styles.tipIconContainer,
-              { backgroundColor: theme.colors.primary + "20" },
-            ]}
-          >
-            <MaterialCommunityIcons
-              name={tip.icon}
-              size={20}
-              color={theme.colors.primary}
-            />
-          </View>
-          <Text style={styles.tipText}>{tip.text}</Text>
-        </View>
-      ))}
-    </View>
-  );
-};
-
-const QrCodeBox = memo(({ code }: { code: string }) => {
-  const theme = useTheme();
-  const t = useTranslation();
-
-  const shareCode = async (code: string) => {
-    Share.share({
-      message:
-        t("room.share.message", { code }) +
-        "\nOr join via https://flickmate.app/swipe/" +
-        code.toUpperCase(),
-      title: t("room.share.title") as string,
-      url: "https://flickmate.app/swipe/" + code.toUpperCase(),
-    });
-  };
-
-  return (
-    <View style={styles.qrBoxContainer}>
-      <StyledQRCode
-        value={`flickmate://room/${code.toUpperCase()}`}
-        size={Dimensions.get("screen").width * 0.6}
-      />
-
-      <Pressable
-        onPress={async () => {
-          shareCode(code.toUpperCase());
-        }}
-        style={styles.shareButton}
-      >
-        <View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: spacing.xs + 1,
-            }}
-          >
-            {!!code && code.length > 0 ? (
-              <>
-                {code.split("").map((char, index) => (
-                  <Text key={index} style={styles.codeChar}>
-                    {char}
-                  </Text>
-                ))}
-              </>
-            ) : (
-              <Text style={{ color: colors.text }}>Loading</Text>
-            )}
-          </View>
-          <Text style={styles.shareButtonText}>
-            {t("room.share.button")}{" "}
-            <MaterialCommunityIcons
-              name="share"
-              size={20}
-              color={theme.colors.primary}
-            />
-          </Text>
-        </View>
-      </Pressable>
-
-      <TutorialTips />
-    </View>
-  );
-});
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.appBackground,
-  },
-  contentContainer: {
-    flex: 1,
-    paddingHorizontal: spacing.screen,
   },
   loadingContainer: {
     flex: 1,
@@ -575,14 +431,6 @@ const styles = StyleSheet.create({
   loadingText: {
     color: colors.text,
     marginTop: spacing.xl,
-  },
-  qrCodeContainer: {
-    flex: 1,
-  },
-  bottomSection: {
-    padding: spacing.screen,
-    gap: spacing.xs + 3.5,
-    paddingBottom: Platform.OS === "android" ? spacing.screen : 0,
   },
   warningText: {
     color: "#ff6b6b",
@@ -606,74 +454,5 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     width: 48,
     height: 48,
-  },
-  playersRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  avatarsStack: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  avatarOverlap: {
-    marginLeft: -12,
-  },
-  playersCount: {
-    color: colors.placeholder,
-    fontSize: fontSize.sm,
-  },
-  avatarWrapper: {
-    borderRadius: radius.pill,
-    borderWidth: 2,
-    borderColor: colors.appBackground,
-    backgroundColor: colors.appBackground,
-  },
-  tutorialContainer: {
-    marginTop: spacing.screen,
-    paddingHorizontal: spacing.sm + 2,
-    gap: spacing.sm + 2,
-  },
-  tipRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-    width: "80%",
-  },
-  tipIconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.card + 2,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  tipText: {
-    flex: 1,
-    fontSize: fontSize.md,
-    color: colors.text,
-    opacity: 0.85,
-  },
-  qrBoxContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 1,
-  },
-  shareButton: {
-    marginTop: spacing.sm + 2,
-  },
-  codeRow: {
-    flexDirection: "row",
-    gap: spacing.xs + 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  codeChar: {
-    fontSize: fontSize.xxl,
-    fontWeight: fontWeight.bold,
-  },
-  shareButtonText: {
-    opacity: 0.7,
-    textAlign: "center",
   },
 });

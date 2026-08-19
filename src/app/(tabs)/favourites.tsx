@@ -1,4 +1,4 @@
-import { Platform, FlatList, View, Pressable, StyleSheet } from "react-native";
+import { Platform, FlatList, View, StyleSheet } from "react-native";
 import TextInput from "../../components/TextInput";
 
 import { useLocalSearchParams } from "expo-router";
@@ -8,6 +8,7 @@ import SafeIOSContainer from "../../components/SafeIOSContainer";
 import UserInputModal from "../../components/UserInputModal";
 import RemoteFavouritesList from "../../components/RemoteFavouritesList";
 import LocalFavouritesList from "../../components/LocalFavouritesList";
+import SegmentedControl from "../../components/SegmentedControl";
 import MigrationBanner from "../../components/MigrationBanner";
 import MigrationModal from "../../components/MigrationModal";
 import { createGroup, loadFavorites } from "../../redux/favourites/favourites";
@@ -15,8 +16,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { useMigrationPrompt } from "../../hooks/useMigrationPrompt";
 import { listsApi } from "../../redux/lists/listsApi";
 import useTranslation from "../../service/useTranslation";
-import Text from "../../components/Text";
-import { colors, fontSize, radius, spacing } from "../../constants/design";
+import { spacing } from "../../constants/design";
 import { TourAttachStep } from "../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../components/Tour/TourContext";
@@ -157,24 +157,15 @@ export default function Favourites() {
                   onSync={migration.migrate}
                   onDismiss={migration.dismissBanner}
                 />
-                <View style={styles.switchRow}>
-                  <Pressable
-                    onPress={() => setLocalView(true)}
-                    style={[styles.switchTab, localView && styles.switchTabActive]}
-                  >
-                    <Text style={[styles.switchLabel, localView && styles.switchLabelActive]}>
-                      {t("favourites.switch.local") as string}
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => setLocalView(false)}
-                    style={[styles.switchTab, !localView && styles.switchTabActive]}
-                  >
-                    <Text style={[styles.switchLabel, !localView && styles.switchLabelActive]}>
-                      {t("favourites.switch.account") as string}
-                    </Text>
-                  </Pressable>
-                </View>
+                <SegmentedControl
+                  options={[
+                    { value: "local", label: t("favourites.switch.local") as string },
+                    { value: "account", label: t("favourites.switch.account") as string },
+                  ]}
+                  value={localView ? "local" : "account"}
+                  onChange={(v) => setLocalView(v === "local")}
+                  style={styles.switchRow}
+                />
               </View>
             )}
 
@@ -238,26 +229,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xl * 4,
   },
   switchRow: {
-    flexDirection: "row",
-    backgroundColor: colors.input,
-    borderRadius: radius.pill,
-    padding: 4,
     marginBottom: spacing.md,
-  },
-  switchTab: {
-    flex: 1,
-    paddingVertical: spacing.sm,
-    borderRadius: radius.pill,
-    alignItems: "center",
-  },
-  switchTabActive: {
-    backgroundColor: colors.primary,
-  },
-  switchLabel: {
-    fontSize: fontSize.md,
-    color: colors.placeholder,
-  },
-  switchLabelActive: {
-    color: colors.text,
   },
 });

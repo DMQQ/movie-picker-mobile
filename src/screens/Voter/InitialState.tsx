@@ -1,15 +1,19 @@
-import { StyleSheet, View } from "react-native";
-import Text from "../../components/Text";
+import { useCallback, useMemo, useState } from "react";
 
 import PrimaryButton from "../../components/PrimaryButton";
+import IconButton from "../../components/IconButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import PickCategory from "../../components/Voter/PickCategory";
-import PickGenres from "../../components/Voter/PickGenres";
-import PickProviders from "../../components/Voter/PickProviders";
-import PageHeading from "../../components/PageHeading";
+import GenreSwipeStep from "../../components/Setup/GenreSwipeStep";
+import ProviderSearchStep from "../../components/Setup/ProviderSearchStep";
+import SetupHeader from "../../components/Setup/SetupHeader";
+import SetupStepShell from "../../components/Setup/SetupStepShell";
 import useTranslation from "../../service/useTranslation";
-import { LinearGradient } from "expo-linear-gradient";
-import { colors, fontSize, spacing } from "../../constants/design";
+import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
+import { StyleSheet, View } from "react-native";
+import { radius, spacing } from "../../constants/design";
+
+const TOTAL_STEPS = 3;
 
 interface Props {
   sessionSettings: any;
@@ -23,6 +27,91 @@ export default function InitialState({
   onGoBack,
 }: Props) {
   const t = useTranslation();
+  const [step, setStep] = useState(1);
+  const { preferences: savedPrefs, isLoading: prefsLoading } = useBuilderPreferences();
+  const hasSavedProviders = savedPrefs && savedPrefs.providers.length > 0;
+
+  const handleNext = useCallback(() => {
+    if (step === TOTAL_STEPS) {
+      actions.createSession();
+    } else {
+      setStep((s) => Math.min(TOTAL_STEPS, s + 1));
+    }
+  }, [step, actions]);
+
+  const handleQuickStart = useCallback(() => {
+    if (hasSavedProviders) {
+      actions.createSession({ providers: savedPrefs!.providers, genres: [] });
+    } else {
+      setStep(TOTAL_STEPS);
+    }
+  }, [hasSavedProviders, savedPrefs, actions]);
+
+  const handleBackPress = useCallback(() => {
+    if (step > 1) {
+      setStep((s) => s - 1);
+    } else {
+      onGoBack();
+    }
+  }, [step, onGoBack]);
+
+  const stepTitle = useMemo(() => {
+    if (step === 1) return t("filters.categories") as string;
+    if (step === 2) return t("filters.genres") as string;
+    return t("filters.providers") as string;
+  }, [step, t]);
+
+  const renderStep = useMemo(() => {
+    switch (step) {
+      case 1:
+        return (
+          <PickCategory
+            category={sessionSettings.category}
+            setCategory={(category: string) => {
+              actions.setSessionSettings((p: any) => ({ ...p, category }));
+            }}
+          />
+        );
+      case 2:
+        return (
+          <GenreSwipeStep
+            type={sessionSettings.category === "Series" ? "tv" : "movie"}
+            genres={sessionSettings.genres}
+            onToggleGenre={(id: number) => {
+              actions.setSessionSettings((p: any) => ({
+                ...p,
+                genres: p.genres.includes(id) ? p.genres.filter((g: number) => g !== id) : [...p.genres, id],
+              }));
+            }}
+          />
+        );
+      case 3:
+        return (
+          <ProviderSearchStep
+            providers={sessionSettings.providers}
+            onChangeProviders={(providers: number[]) => {
+              actions.setSessionSettings((p: any) => ({ ...p, providers }));
+            }}
+          />
+        );
+      default:
+        return null;
+    }
+  }, [step, sessionSettings, actions]);
+
+  const footerActions =
+    step === 1 ? (
+      <View style={styles.step1Row}>
+        <PrimaryButton style={styles.quickStartButton} onPress={handleQuickStart} disabled={prefsLoading}>
+          {t("room.builder.quickStart")}
+        </PrimaryButton>
+        <IconButton icon="tune-variant" size={24} onPress={() => setStep(2)} mode="contained" />
+      </View>
+    ) : (
+      <PrimaryButton onPress={handleNext}>
+        {step === TOTAL_STEPS ? t("voter.home.create") : t("room.builder.next")}
+      </PrimaryButton>
+    );
 
   return (
     <Animated.View
@@ -30,79 +119,23 @@ export default function InitialState({
       entering={FadeIn.duration(300)}
       exiting={FadeOut.duration(300)}
     >
-      <PageHeading
-        useSafeArea={false}
-        gradientHeight={80}
-        title={t("voter.home.howtotitle")}
-        onPress={onGoBack}
-      />
-      <View
-        style={{
-          flex: 1,
-          paddingHorizontal: spacing.screen,
-          paddingBottom: spacing.screen,
-          paddingTop: spacing.xl * 3,
-        }}
-      >
-        <View style={{ flex: 1 }}>
-          <View style={{ marginTop: spacing.screen }}>
-            <Text
-              style={{
-                fontSize: fontSize.md,
-                color: colors.placeholder,
-                lineHeight: 20,
-              }}
-            >
-              {t("voter.home.howto")}
-            </Text>
-          </View>
-          <Text style={styles.sectionTitle}>{t("filters.categories")}</Text>
-          <PickCategory
-            category={sessionSettings.category}
-            setCategory={(category: string) => {
-              actions.setSessionSettings((p: any) => ({ ...p, category }));
-            }}
-          />
-          <Text style={styles.sectionTitle}>{t("filters.genres")}</Text>
-          <PickGenres
-            genres={sessionSettings.genres}
-            setGenres={(genres: any) => {
-              actions.setSessionSettings((p: any) => ({
-                ...p,
-                genres: genres(p.genres),
-              }));
-            }}
-          />
-          <Text style={styles.sectionTitle}>{t("filters.providers")}</Text>
-          <PickProviders
-            setProviders={(providers: any) => {
-              actions.setSessionSettings((p: any) => ({
-                ...p,
-                providers: providers(p.providers),
-              }));
-            }}
-            providers={sessionSettings.providers}
-          />
-        </View>
-      </View>
-      <LinearGradient
-        colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}
-        style={{ padding: spacing.screen, paddingTop: spacing.screen }}
-      >
-        <PrimaryButton onPress={actions.createSession}>
-          {t("voter.home.create")}
-        </PrimaryButton>
-      </LinearGradient>
+      <SetupHeader title={stepTitle} currentStep={step} totalSteps={TOTAL_STEPS} onBackPress={handleBackPress} />
+
+      <SetupStepShell stepKey={step} footerActions={footerActions}>
+        {renderStep}
+      </SetupStepShell>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionTitle: {
-    fontFamily: "Bebas",
-    fontSize: 24,
-    color: colors.text,
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm + 2,
+  step1Row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+  },
+  quickStartButton: {
+    flex: 1,
+    borderRadius: radius.pill,
   },
 });

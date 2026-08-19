@@ -1,11 +1,9 @@
 import React, { useCallback } from "react";
 import IconButton from "../IconButton";
-import Text from "../Text";
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 import PrimaryButton from "../PrimaryButton";
-import { LinearGradient } from "expo-linear-gradient";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import SetupStepShell from "../Setup/SetupStepShell";
 import useTranslation from "../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { router } from "expo-router";
@@ -15,7 +13,7 @@ import {
   setQuickStartMode,
 } from "../../redux/roomBuilder/roomBuilderSlice";
 import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
-import { colors, fontSize, radius, spacing} from "../../constants/design";
+import { radius, spacing } from "../../constants/design";
 import { posthog } from "../../constants/posthog";
 
 interface StepContainerProps {
@@ -86,8 +84,6 @@ const StepContainer: React.FC<StepContainerProps> = ({
     });
   };
 
-  const memoChildren = React.useMemo(() => children, [children]);
-
   const handleQuickStart = useCallback(() => {
     if (hasProviders) {
       posthog?.capture("room_setup_completed", {
@@ -120,115 +116,56 @@ const StepContainer: React.FC<StepContainerProps> = ({
     dispatch(goNext());
   }, [dispatch]);
 
-  return (
-    <View style={styles.container}>
-      <View style={[styles.scrollView, styles.scrollContent]}>
-        <Animated.View
-          key={`step-${currentStep}`}
-          entering={FadeIn.duration(300)}
-          exiting={FadeOut.duration(200)}
-          style={[styles.stepContent]}
+  const footerActions =
+    currentStep === 1 ? (
+      <View style={styles.step1NavigationRow}>
+        <PrimaryButton
+          style={styles.quickStartButton}
+          disabled={!canGoNext() || providersLoading}
+          onPress={handleQuickStart}
         >
-          {memoChildren}
-        </Animated.View>
+          {t("room.builder.quickStart")}
+        </PrimaryButton>
+        <IconButton
+          icon="tune-variant"
+          size={24}
+          onPress={handleFilters}
+          mode="contained"
+          disabled={!canGoNext()}
+        />
       </View>
-
-      <LinearGradient
-        style={styles.buttonContainer}
-        colors={["transparent", "rgba(0,0,0,0.5)", "rgba(0,0,0,0.9)"]}
+    ) : (
+      <PrimaryButton
+        style={styles.nextButton}
+        disabled={!canGoNext()}
+        onPress={handleNext}
       >
-        {footerSubtitle && (
-          <Text style={styles.footerSubtitle}>{footerSubtitle}</Text>
-        )}
+        {nextButtonText ||
+          (isLastStep || (currentStep === 3 && state.quickStartMode)
+            ? t("room.builder.createRoom")
+            : t("room.builder.next"))}
+      </PrimaryButton>
+    );
 
-        {currentStep === 1 ? (
-          <View style={styles.step1NavigationRow}>
-            <PrimaryButton
-              style={styles.quickStartButton}
-              disabled={!canGoNext() || providersLoading}
-              onPress={handleQuickStart}
-            >
-              {t("room.builder.quickStart")}
-            </PrimaryButton>
-            <IconButton
-              icon="tune-variant"
-              size={24}
-              onPress={handleFilters}
-              mode="contained"
-              style={styles.filtersIconButton}
-              disabled={!canGoNext()}
-            />
-          </View>
-        ) : (
-          <PrimaryButton
-            style={styles.nextButton}
-            disabled={!canGoNext()}
-            onPress={handleNext}
-          >
-            {nextButtonText ||
-              (isLastStep || (currentStep === 3 && state.quickStartMode)
-                ? t("room.builder.createRoom")
-                : t("room.builder.next"))}
-          </PrimaryButton>
-        )}
-      </LinearGradient>
-    </View>
+  return (
+    <SetupStepShell stepKey={currentStep} footerSubtitle={footerSubtitle} footerActions={footerActions}>
+      {children}
+    </SetupStepShell>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.appBackground,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: 90,
-    paddingTop: spacing.xxl + 16,
-  },
-  stepContent: {
-    flex: 1,
-  },
-  buttonContainer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    ...Platform.select({
-      android: {
-        paddingBottom: spacing.screen,
-      },
-    }),
-  },
-  footerSubtitle: {
-    fontSize: fontSize.md,
-    color: "#999",
-    textAlign: "center",
-    marginBottom: spacing.sm,
-  },
   nextButton: {
     borderRadius: radius.pill,
-  },
-  nextButtonContent: {
-    paddingVertical: spacing.sm,
   },
   step1NavigationRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,
   },
-  filtersIconButton: {},
   quickStartButton: {
     flex: 1,
     borderRadius: radius.pill,
-  },
-  quickStartButtonContent: {
-    paddingVertical: spacing.sm,
   },
 });
 

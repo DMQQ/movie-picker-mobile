@@ -21,10 +21,11 @@ const getItem = (data: any, index: number) => data[index];
 
 const styles = StyleSheet.create({
   listContent: {
-    paddingTop: spacing.xl * 5,
+    paddingTop: spacing.xl * 4,
   },
   footer: {
-    height: 250,
+    minHeight: 0,
+    paddingBottom: 80,
   },
   noMoreContainer: {
     alignItems: "center",
@@ -73,7 +74,7 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
 
   const {
     data,
-    isLoading,
+    isFetching,
     isError,
     hasMore,
     fetchNextPage,
@@ -110,9 +111,9 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
   const listFooterComponent = useMemo(
     () => (
       <View style={styles.footer}>
-        {isLoading || hasMore ? (
+        {isFetching ? (
           <LoadingSkeleton />
-        ) : (
+        ) : !hasMore ? (
           <View style={styles.noMoreContainer}>
             <MaterialCommunityIcons
               name="check"
@@ -126,10 +127,10 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
               {t("landing.reached_end")}
             </Text>
           </View>
-        )}
+        ) : null}
       </View>
     ),
-    [isLoading, hasMore, t],
+    [isFetching, hasMore, t],
   );
 
   return (
@@ -148,6 +149,7 @@ const CategoryPage = memo(({ categoryId }: CategoryPageProps) => {
       contentContainerStyle={styles.listContent}
       refreshControl={refreshControl}
       ListFooterComponent={listFooterComponent}
+      showsVerticalScrollIndicator={false}
     />
   );
 });

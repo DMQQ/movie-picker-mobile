@@ -1,61 +1,34 @@
 import React, { useState, useRef } from "react";
 import IconButton from "../../components/IconButton";
-import Text from "../../components/Text";
-import { useTheme } from "../../hooks/useTheme";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import { colors, fontWeight, fontSize, spacing } from "../../constants/design";
+import { colors, spacing } from "../../constants/design";
 import PagerView from "react-native-pager-view";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
 import { router } from "expo-router";
 import useTranslation from "../../service/useTranslation";
 import MatchesScreen from "../../screens/Overview/Matches";
 import LikesScreen from "../../screens/Overview/Likes";
-
-const TRACK_HEIGHT = 40;
-const TRACK_PADDING = 3;
-const PILL_HEIGHT = TRACK_HEIGHT - TRACK_PADDING * 2;
-const PILL_RADIUS = PILL_HEIGHT / 2;
+import SegmentedControl from "../../components/SegmentedControl";
 
 export default function RoomOverview() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [pillWidth, setPillWidth] = useState(0);
-  const theme = useTheme();
   const t = useTranslation();
   const pagerRef = useRef<PagerView>(null);
-  const pillX = useSharedValue(0);
 
   const tabs = [
-    { key: "matches", title: t("overview.matches") as string },
-    { key: "likes", title: t("overview.likes") as string },
+    { value: "matches", label: t("overview.matches") as string },
+    { value: "likes", label: t("overview.likes") as string },
   ];
 
-  const slidePill = (index: number) => {
-    pillX.value = withSpring(index * pillWidth, {
-      damping: 22,
-      stiffness: 220,
-    });
-  };
-
   const onPageSelected = (e: any) => {
-    const index = e.nativeEvent.position;
-    setActiveIndex(index);
-    slidePill(index);
+    setActiveIndex(e.nativeEvent.position);
   };
 
-  const onTabPress = (index: number) => {
+  const handleTabChange = (value: string) => {
+    const index = tabs.findIndex((t) => t.value === value);
     setActiveIndex(index);
     pagerRef.current?.setPage(index);
-    slidePill(index);
   };
-
-  const pillStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: pillX.value }],
-  }));
 
   return (
     <View style={styles.root}>
@@ -67,38 +40,13 @@ export default function RoomOverview() {
           iconColor={colors.text}
         />
 
-        <View
-          style={styles.track}
-          onLayout={(e) => {
-            const w = e.nativeEvent.layout.width;
-            const pw = (w - TRACK_PADDING * 2) / tabs.length;
-            setPillWidth(pw);
-          }}
-        >
-          <Animated.View
-            style={[
-              styles.pill,
-              { width: pillWidth, backgroundColor: theme.colors.primary },
-              pillStyle,
-            ]}
-          />
-          {tabs.map((tab, index) => (
-            <Pressable
-              key={tab.key}
-              style={styles.tab}
-              onPress={() => onTabPress(index)}
-            >
-              <Text
-                style={[
-                  styles.tabLabel,
-                  activeIndex === index && styles.tabLabelActive,
-                ]}
-              >
-                {tab.title}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
+        <SegmentedControl
+          options={tabs}
+          value={tabs[activeIndex].value}
+          onChange={handleTabChange}
+          duration={140}
+          style={styles.control}
+        />
 
         <View style={styles.headerSpacer} />
       </View>
@@ -131,36 +79,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     height: 56,
   },
-  track: {
+  control: {
     flex: 1,
-    height: TRACK_HEIGHT,
-    borderRadius: TRACK_HEIGHT / 2,
-    backgroundColor: "#1c1c1c",
-    flexDirection: "row",
-    padding: TRACK_PADDING,
-    overflow: "hidden",
-  },
-  pill: {
-    position: "absolute",
-    left: TRACK_PADDING,
-    top: TRACK_PADDING,
-    height: PILL_HEIGHT,
-    borderRadius: PILL_RADIUS,
-  },
-  tab: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  tabLabel: {
-    fontSize: fontSize.md - 1,
-    fontWeight: fontWeight.medium,
-    color: "rgba(255,255,255,0.45)",
-    letterSpacing: 0.3,
-  },
-  tabLabelActive: {
-    color: colors.appBackground,
-    fontWeight: fontWeight.bold,
   },
   headerSpacer: {
     width: 48,

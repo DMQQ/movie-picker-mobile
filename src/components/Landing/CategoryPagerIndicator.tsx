@@ -116,7 +116,7 @@ function CategoryPagerIndicator({
   );
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { bottom: insets.bottom + 5 }]}>
       {tourStepIndex !== undefined ? (
         <TourAttachStep index={tourStepIndex} fill>
           {chips}
@@ -131,7 +131,6 @@ function CategoryPagerIndicator({
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 15,
     left: 0,
     right: 0,
     zIndex: 100,

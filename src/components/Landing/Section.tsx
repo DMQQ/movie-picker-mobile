@@ -6,6 +6,7 @@ import { Movie } from "../../../types";
 import SectionListItem from "../SectionItem";
 import { colors, fontSize, fontWeight, spacing, typography } from "../../constants/design";
 import { useRouter } from "expo-router";
+import useTranslation from "../../service/useTranslation";
 
 interface SectionProps {
   group: { name: string; results: Movie[] };
@@ -53,6 +54,7 @@ const movieKeyExtractor = (item: Movie) => `${item.id}-${item.type}`;
 export const Section = memo(
   ({ group }: SectionProps) => {
     const router = useRouter();
+    const t = useTranslation();
 
     if (group.results.length === 0) return null;
 
@@ -65,7 +67,7 @@ export const Section = memo(
         <View style={sectionStyles.header}>
           <Text style={sectionStyles.title}>{group.name}</Text>
           <Pressable onPress={handleShowAll} hitSlop={8}>
-            <Text style={sectionStyles.showAll}>Show all {">"}</Text>
+            <Text style={sectionStyles.showAll}>{t("landing.show_all") as string} {">"}</Text>
           </Pressable>
         </View>
 

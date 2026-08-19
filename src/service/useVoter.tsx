@@ -20,14 +20,14 @@ interface MovieVoterContextValue {
   status: "idle" | "waiting" | "rating" | "completed";
   users: Array<{ userId: string; ready: boolean; connected: boolean }>;
   currentMovies: Movie[];
-  currentSetId: "A" | "B" | null;
+  cursor: number | null;
   error: string | null;
   isHost: boolean;
   currentUserId: string | null;
 
   loadingInitialContent: boolean;
   actions: {
-    createSession: () => void;
+    createSession: (overrides?: { providers?: number[]; genres?: number[] }) => void;
     joinSession: (sessionId: string) => Promise<void>;
     setReady: (ready: boolean) => void;
     startSession: () => void;
@@ -63,7 +63,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   const { socket, emitter } = useContext(SocketContext);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentMovies, setCurrentMovies] = useState<Movie[]>([]);
-  const [currentSetId, setCurrentSetId] = useState<"A" | "B" | null>(null);
+  const [cursor, setCursor] = useState<number | null>(null);
   const [status, setStatus] = useState<"idle" | "waiting" | "rating" | "completed">("idle");
   const [users, setUsers] = useState<Array<{ userId: string; ready: boolean; connected: boolean }>>([]);
   const [error, setError] = useState<string | null>(null);
@@ -93,15 +93,15 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   // previously joinSession + this effect emitted voter:session:join twice.
   const lastJoinedSessionId = useRef<string | null>(null);
 
-  const createSession = useCallback(async () => {
+  const createSession = useCallback(async (overrides?: { providers?: number[]; genres?: number[] }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     if (!socket) return;
 
     const { sessionId, error } = await socket.emitWithAck("voter:session:create", {
       category: sessionSettings.category,
-      genres: sessionSettings.genres,
-      providers: sessionSettings.providers,
+      genres: overrides?.genres ?? sessionSettings.genres,
+      providers: overrides?.providers ?? sessionSettings.providers,
     });
 
     if (error) {
@@ -277,17 +277,19 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    const handleMoviesReceive = async ({ movies, setId }: any) => {
+    const handleMoviesReceive = async ({ movies }: any) => {
       if (movies.length === 0) {
         await socket.emitWithAck("voter:movies:refetch", { sessionId });
         return;
       }
       setCurrentMovies(movies);
-      setCurrentSetId(setId);
       setStatus("rating");
     };
 
     const handleSessionUpdate = ({ session }: any) => {
+      if (session.cursor != null) {
+        setCursor(session.cursor);
+      }
       if (session.status === "completed") {
         setStatus("completed");
       }
@@ -330,7 +332,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     status,
     users,
     currentMovies,
-    currentSetId,
+    cursor,
     error,
     isHost,
     currentUserId,

@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { colors, common, fontSize, fontWeight } from "../constants/design";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors, common, fontSize, fontWeight, radius, spacing, withAlpha } from "../constants/design";
 
 interface GenreChipProps {
   genre: string;
@@ -10,11 +11,13 @@ interface GenreChipProps {
 
 export default function GenreChip({ genre, selected, onPress, light }: GenreChipProps) {
   const isInteractive = !!onPress;
+  const removable = isInteractive && selected;
 
   const chipStyle = [
     styles.chip,
     light && styles.chipLight,
     isInteractive && selected && styles.chipSelected,
+    removable && styles.chipRemovable,
   ];
 
   const textStyle = [
@@ -27,6 +30,14 @@ export default function GenreChip({ genre, selected, onPress, light }: GenreChip
     return (
       <TouchableOpacity onPress={onPress} style={chipStyle} activeOpacity={0.7}>
         <Text style={textStyle}>{genre}</Text>
+        {removable && (
+          <MaterialCommunityIcons
+            name="close"
+            size={12}
+            color={colors.text}
+            style={styles.removeIcon}
+          />
+        )}
       </TouchableOpacity>
     );
   }
@@ -41,6 +52,8 @@ export default function GenreChip({ genre, selected, onPress, light }: GenreChip
 const styles = StyleSheet.create({
   chip: {
     ...common.chip,
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.15)",
     borderWidth: 1,
     borderColor: colors.border,
@@ -52,6 +65,15 @@ const styles = StyleSheet.create({
   chipSelected: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
+  },
+  chipRemovable: {
+    paddingRight: spacing.xs,
+  },
+  removeIcon: {
+    marginLeft: spacing.xs,
+    backgroundColor: withAlpha(colors.text, 0.2),
+    borderRadius: radius.pill,
+    padding: 2,
   },
   text: {
     color: colors.text,

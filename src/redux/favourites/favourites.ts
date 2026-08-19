@@ -26,12 +26,22 @@ interface FavoriteGroup {
   movies: FavoriteItem[];
 }
 
+interface PendingBulkMovie {
+  id: number;
+  title?: string;
+  name?: string;
+  poster_path?: string;
+  type?: "movie" | "tv";
+  first_air_date?: string;
+}
+
 interface FavoritesState {
   groups: FavoriteGroup[];
   // O(1) membership lookup: localGroupId → "contentId:contentType" → true
   membershipIndex: Record<string, Record<string, true>>;
   loading: boolean;
   error: string | null;
+  pendingBulkMovies: PendingBulkMovie[] | null;
 }
 
 const initialState: FavoritesState = {
@@ -39,6 +49,7 @@ const initialState: FavoritesState = {
   membershipIndex: {},
   loading: false,
   error: null,
+  pendingBulkMovies: null,
 };
 
 export const STORAGE_KEY = "favorites_groups";
@@ -428,6 +439,75 @@ export const createGroupFromArray = createAsyncThunk(
   }
 );
 
+export const addManyToGroup = createAsyncThunk(
+  "favorites/addManyToGroup",
+  async (
+    { groupId, movies }: { groupId: string; movies: PendingBulkMovie[] },
+    { getState, dispatch }
+  ) => {
+    const state = getState() as RootState;
+    const { token, user } = state.auth;
+    const isFullAccount = !!user && user.provider !== "anonymous";
+
+    if (token && isFullAccount) {
+      const group = state.favourite.groups.find((g) => g.id === groupId);
+      const listType = group?.type ?? LOCAL_ID_TO_TYPE[groupId] ?? groupId;
+
+      const items = movies.map((m) => ({
+        contentId: m.id,
+        contentType: (m.type ?? (m.first_air_date ? "tv" : "movie")) as "movie" | "tv",
+        content: {
+          title: m.title || m.name || "",
+          poster_path: m.poster_path ?? null,
+        },
+      }));
+
+      await d(dispatch)(
+        listsApi.endpoints.addBulkItems.initiate({ type: listType, items })
+      ).unwrap();
+
+      const updatedList = await d(dispatch)(
+        listsApi.endpoints.getList.initiate(listType, { forceRefetch: true })
+      ).unwrap();
+
+      return {
+        groupId,
+        movies: (updatedList.items as any[]).map((item) => ({
+          id: item.contentId,
+          imageUrl: item.content?.poster_path || "",
+          type: item.contentType as MediaType,
+          remoteItemId: item.id,
+        })),
+      };
+    }
+
+    const storage = parseStorage(await AsyncStorage.getItem(STORAGE_KEY));
+    const updated = {
+      ...storage,
+      groups: storage.groups.map((group: FavoriteGroup) => {
+        if (group.id !== groupId) return group;
+        const existingIds = new Set(group.movies.map((m) => m.id));
+        const newItems: FavoriteItem[] = movies
+          .filter((m) => !existingIds.has(m.id))
+          .map((m) => ({
+            id: m.id,
+            imageUrl: m.poster_path ?? "",
+            type: (m.type ?? (m.first_air_date ? "tv" : "movie")) as MediaType,
+            title: m.title || m.name,
+          }));
+        return {
+          ...group,
+          posterPath: group.posterPath || newItems[0]?.imageUrl || group.posterPath,
+          movies: [...newItems, ...group.movies],
+        };
+      }),
+    };
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    const updatedGroup = updated.groups.find((g: FavoriteGroup) => g.id === groupId);
+    return { groupId, movies: updatedGroup?.movies ?? [] };
+  }
+);
+
 export const rateInGroup = createAsyncThunk(
   "favorites/rateInGroup",
   async (
@@ -460,7 +540,14 @@ export const rateInGroup = createAsyncThunk(
 export const favoritesSlice = createSlice({
   name: "favorites",
   initialState,
-  reducers: {},
+  reducers: {
+    setPendingBulkMovies(state, action: { payload: PendingBulkMovie[] }) {
+      state.pendingBulkMovies = action.payload;
+    },
+    clearPendingBulkMovies(state) {
+      state.pendingBulkMovies = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loadFavorites.pending, (state) => {
@@ -505,6 +592,15 @@ export const favoritesSlice = createSlice({
         for (const m of action.payload.movies) entry[`${m.id}:${m.type}`] = true;
         state.membershipIndex[action.payload.id] = entry;
       })
+      .addCase(addManyToGroup.fulfilled, (state, action) => {
+        const { groupId, movies } = action.payload;
+        const group = state.groups.find((g) => g.id === groupId);
+        if (group) group.movies = movies;
+        if (!state.membershipIndex[groupId]) state.membershipIndex[groupId] = {};
+        for (const m of movies) {
+          state.membershipIndex[groupId][`${m.id}:${m.type}`] = true;
+        }
+      })
       .addMatcher(
         (action): action is { type: string; error: { message?: string } } =>
           action.type.endsWith("/rejected"),
@@ -515,3 +611,6 @@ export const favoritesSlice = createSlice({
       );
   },
 });
+
+export const { setPendingBulkMovies, clearPendingBulkMovies } = favoritesSlice.actions;
+export const { reducer: favouritesReducer } = favoritesSlice;

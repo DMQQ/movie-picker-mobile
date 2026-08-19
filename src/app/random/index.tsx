@@ -261,7 +261,7 @@ export default function RandomMovie() {
                       {isLoading ? t("games.random.revealing") : t("games.random.title")}
                     </Text>
                     <Text style={styles.frontSubtitle}>
-                      Shake the phone to discover your next movie
+                      {t("games.random.shake")}
                     </Text>
                   </View>
                 </View>

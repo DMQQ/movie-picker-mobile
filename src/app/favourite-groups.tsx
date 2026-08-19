@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors, fontSize, radius, spacing } from "../constants/design";
 import * as Haptics from "expo-haptics";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { memo, useState } from "react";
 import {
   FlatList,
@@ -14,13 +14,20 @@ import {
 } from "react-native";
 import TextInput from "../components/TextInput";
 
-import { addToGroup, createGroup, removeFromGroup } from "../redux/favourites/favourites";
+import {
+  addManyToGroup,
+  addToGroup,
+  clearPendingBulkMovies,
+  createGroup,
+  removeFromGroup,
+} from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 import { posthog } from "../constants/posthog";
+import { addToast } from "../redux/toast/toastSlice";
 
 interface CreateListHeaderProps {
-  onCreated: () => void;
+  onCreated: (groupId: string) => void;
 }
 
 const CreateListHeader = memo(function CreateListHeader({ onCreated }: CreateListHeaderProps) {
@@ -34,11 +41,11 @@ const CreateListHeader = memo(function CreateListHeader({ onCreated }: CreateLis
     const trimmed = name.trim();
     if (!trimmed) return;
     setSaving(true);
-    await dispatch(createGroup(trimmed));
+    const result = await dispatch(createGroup(trimmed));
     setName("");
     setCreating(false);
     setSaving(false);
-    onCreated();
+    onCreated(result.payload?.id ?? "");
   };
 
   const handleCancel = () => {
@@ -95,7 +102,10 @@ export default function FavouriteGroupsScreen() {
       movieType?: string;
     }>();
 
-  const movieId = +movieIdParam;
+  const pendingBulkMovies = useAppSelector((state) => state.favourite.pendingBulkMovies);
+  const isBulkMode = !!pendingBulkMovies;
+
+  const movieId = isBulkMode ? 0 : +movieIdParam;
 
   const groups = useAppSelector((state) => state.favourite.groups);
 
@@ -103,7 +113,27 @@ export default function FavouriteGroupsScreen() {
     ? groups.filter((g) => g.name.toLowerCase().includes(query.toLowerCase()))
     : groups;
 
+  const handleBulkAdd = async (groupId: string) => {
+    if (!pendingBulkMovies) return;
+    const group = groups.find((g) => g.id === groupId);
+    await dispatch(addManyToGroup({ groupId, movies: pendingBulkMovies }));
+    dispatch(clearPendingBulkMovies());
+    dispatch(addToast({
+      id: Date.now().toString(),
+      message: t("favourites.savedToList", { name: group?.name ?? "" }),
+      type: "success",
+      duration: 3000,
+    }));
+    if (Platform.OS === "ios") Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    router.back();
+  };
+
   const onPress = (group: (typeof groups)[number]) => {
+    if (isBulkMode) {
+      handleBulkAdd(group.id);
+      return;
+    }
+
     const inGroup = group.movies.some(
       (m) => +m.id === movieId && m.type === movieType,
     );
@@ -142,8 +172,10 @@ export default function FavouriteGroupsScreen() {
       <View style={styles.header} collapsable={false}>
         {Platform.OS === "android" && <View style={styles.grabber} />}
         <Text style={styles.title}>
-          {t("quick-actions.modal")}{" "}
-          <Text style={styles.movieTitle}>{movieTitle || movieName}</Text>
+          {isBulkMode
+            ? t("favourites.saveTo")
+            : <>{t("quick-actions.modal")}{" "}<Text style={styles.movieTitle}>{movieTitle || movieName}</Text></>
+          }
         </Text>
 
         <View style={styles.searchRow}>
@@ -179,9 +211,15 @@ export default function FavouriteGroupsScreen() {
         style={styles.listContainer}
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
-        ListHeaderComponent={<CreateListHeader onCreated={() => {}} />}
+        ListHeaderComponent={
+          <CreateListHeader
+            onCreated={(groupId) => {
+              if (isBulkMode && groupId) handleBulkAdd(groupId);
+            }}
+          />
+        }
         renderItem={({ item: group }) => {
-          const inGroup = group.movies.some((m) => +m.id === movieId && m.type === movieType);
+          const inGroup = !isBulkMode && group.movies.some((m) => +m.id === movieId && m.type === movieType);
           return (
             <Pressable
               style={[
@@ -194,13 +232,13 @@ export default function FavouriteGroupsScreen() {
               android_ripple={{ color: colors.border }}
             >
               <MaterialCommunityIcons
-                name={inGroup ? "bookmark-check" : "bookmark-outline"}
+                name={isBulkMode ? "folder-plus-outline" : inGroup ? "bookmark-check" : "bookmark-outline"}
                 size={22}
                 color={inGroup ? colors.text : colors.placeholder}
                 style={styles.itemIcon}
               />
               <Text style={styles.itemText}>{group.name}</Text>
-              {inGroup && (
+              {!isBulkMode && inGroup && (
                 <MaterialCommunityIcons
                   name="check"
                   size={18}
