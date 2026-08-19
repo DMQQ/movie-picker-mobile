@@ -273,6 +273,8 @@
   "favourites": {
     "title": "Favoritos",
     "searchPlaceholder": "Buscar listas…",
+    "newList": "Nueva lista",
+    "newListPlaceholder": "Nombre de la lista…",
     "empty": "Todavía no has añadido ninguna película a tus favoritos",
     "create": {
       "title": "Crear nueva lista",
@@ -405,11 +407,8 @@
     "home": {
       "title": "Votación de películas",
       "description": "Inicia una nueva sesión o únete a una existente para votar por las películas que quieres ver.",
-      "howtotitle": "¿De qué se trata?",
-      "howto": "Uno de los jugadores crea una sesión e invita a otros a unirse. Los jugadores votan por las películas que quieren ver. Las películas con más votos se muestran a los jugadores. Los jugadores pueden calificar las películas y decidir cuál ver.",
       "create": "Crear una nueva sesión",
       "waiting": "Esperando a otros jugadores",
-      "waiting-initial": "Esperando a que el compañero se una...",
       "ready": "Listo para comenzar",
       "you": "Tú",
       "user": "Compañero",
@@ -456,6 +455,58 @@
       "no-matches": "Ninguna película coincide con tus preferencias"
     }
   },
+  "eitherOr": {
+    "setup": {
+      "title": "Cara a Cara",
+      "howto": "Crea un cuadro de películas y vota cara a cara con tus amigos. En cada ronda se enfrentan dos películas: la ganadora avanza hasta que una película se corona campeona.",
+      "bracketSize": "Tamaño del cuadro",
+      "bracketSizeSubtitle": "¿Cuántas películas competirán?",
+      "movieCount": "{count} películas",
+      "movies": "películas",
+      "rounds": "{count} rondas",
+      "create": "Crear cuadro",
+      "custom": "Lista personalizada",
+      "sizeQuick": "Rápido",
+      "sizeStandard": "Estándar",
+      "sizeEpic": "Épico"
+    },
+    "lobby": {
+      "title": "Sala de espera",
+      "bracketSize": "Cuadro de {count} películas",
+      "host": "Anfitrión",
+      "start": "Iniciar cuadro",
+      "waitingForHost": "Esperando a que el anfitrión inicie...",
+      "joining": "Uniéndose a la sala...",
+      "loading": "Cargando..."
+    },
+    "game": {
+      "round": "Ronda {current} de {total}",
+      "match": "Enfrentamiento {current} de {total}",
+      "vs": "VS",
+      "roundComplete": "Ronda {round} completada",
+      "nextRoundStarting": "La ronda {round} está comenzando...",
+      "votesIn": "{count} votos emitidos",
+      "waitingForVotes": "Esperando votos...",
+      "tie": "¡Empate!",
+      "tieChampionKeeps": "Empate — el campeón conserva su lugar",
+      "tieSpeedWin": "Empate desempatado por velocidad"
+    },
+    "results": {
+      "title": "Resultados",
+      "champion": "Campeón",
+      "loading": "Cargando resultados...",
+      "done": "Listo"
+    },
+    "bracket": {
+      "title": "Cuadro",
+      "champion": "Campeón",
+      "tbd": "Por determinar",
+      "final": "Final",
+      "semifinal": "Semifinal",
+      "quarterfinal": "Cuartos de final",
+      "round": "Ronda {round}"
+    }
+  },
   "quick-actions": {
     "watch-later": "Ver después",
     "watched": "Vista",
@@ -471,7 +522,9 @@
     "categories": {
       "all": "Todos los juegos",
       "popular": "Populares",
-      "new": "Juegos nuevos"
+      "new": "Juegos nuevos",
+      "singleplayer": "Un jugador",
+      "multiplayer": "Multijugador"
     },
     "voter": {
       "games": "Juegos de grupo",
@@ -524,7 +577,8 @@
     "list_footer": "Cargando más",
     "no_more_results": "Sin más resultados",
     "reached_end": "Has llegado al final",
-    "loadError": "Error al cargar las categorías"
+    "loadError": "Error al cargar las categorías",
+    "show_all": "Ver todo"
   },
   "tabBar": {
     "account": "Cuenta",

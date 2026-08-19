@@ -273,6 +273,8 @@
   "favourites": {
     "title": "Favoriten",
     "searchPlaceholder": "Listen suchen…",
+    "newList": "Neue Liste",
+    "newListPlaceholder": "Listenname…",
     "empty": "Du hast noch keine Filme zu deinen Favoriten hinzugefügt",
     "create": {
       "title": "Neue Liste erstellen",
@@ -405,11 +407,8 @@
     "home": {
       "title": "Film-Abstimmung",
       "description": "Starte eine neue Sitzung oder tritt einer bestehenden bei, um für die Filme abzustimmen, die du sehen möchtest.",
-      "howtotitle": "Worum geht es?",
-      "howto": "Einer der Spieler erstellt eine Sitzung und lädt andere ein beizutreten. Die Spieler stimmen dann für die Filme ab, die sie sehen möchten. Die Filme mit den meisten Stimmen werden den Spielern angezeigt. Die Spieler können dann die Filme bewerten und entscheiden, welchen sie sehen wollen.",
       "create": "Neue Sitzung erstellen",
       "waiting": "Warte auf andere Spieler",
-      "waiting-initial": "Warte auf Partner...",
       "ready": "Bereit zum Starten",
       "you": "Du",
       "user": "Partner",
@@ -456,6 +455,58 @@
       "no-matches": "Keine Filme entsprechen deinen Präferenzen"
     }
   },
+  "eitherOr": {
+    "setup": {
+      "title": "Entweder/Oder",
+      "howto": "Erstelle ein Turnier aus Filmen und stimme mit Freunden im direkten Duell ab. In jeder Runde treten zwei Filme gegeneinander an – der Gewinner zieht weiter, bis ein Film zum Champion gekürt wird.",
+      "bracketSize": "Turniergröße",
+      "bracketSizeSubtitle": "Wie viele Filme sollen antreten?",
+      "movieCount": "{count} Filme",
+      "movies": "Filme",
+      "rounds": "{count} Runden",
+      "create": "Turnier erstellen",
+      "custom": "Eigene Liste",
+      "sizeQuick": "Schnell",
+      "sizeStandard": "Standard",
+      "sizeEpic": "Episch"
+    },
+    "lobby": {
+      "title": "Warteraum",
+      "bracketSize": "{count}-Filme-Turnier",
+      "host": "Gastgeber",
+      "start": "Turnier starten",
+      "waitingForHost": "Warte, bis der Gastgeber startet...",
+      "joining": "Raum wird beigetreten...",
+      "loading": "Lädt..."
+    },
+    "game": {
+      "round": "Runde {current} von {total}",
+      "match": "Duell {current} von {total}",
+      "vs": "VS",
+      "roundComplete": "Runde {round} abgeschlossen",
+      "nextRoundStarting": "Runde {round} startet...",
+      "votesIn": "{count} Stimmen abgegeben",
+      "waitingForVotes": "Warte auf Stimmen...",
+      "tie": "Unentschieden!",
+      "tieChampionKeeps": "Unentschieden — Champion bleibt im Turnier",
+      "tieSpeedWin": "Unentschieden per Schnelligkeit entschieden"
+    },
+    "results": {
+      "title": "Ergebnisse",
+      "champion": "Champion",
+      "loading": "Ergebnisse werden geladen...",
+      "done": "Fertig"
+    },
+    "bracket": {
+      "title": "Turnierbaum",
+      "champion": "Champion",
+      "tbd": "Offen",
+      "final": "Finale",
+      "semifinal": "Halbfinale",
+      "quarterfinal": "Viertelfinale",
+      "round": "Runde {round}"
+    }
+  },
   "quick-actions": {
     "watch-later": "Später ansehen",
     "watched": "Gesehen",
@@ -471,7 +522,9 @@
     "categories": {
       "all": "Alle Spiele",
       "popular": "Beliebt",
-      "new": "Neue Spiele"
+      "new": "Neue Spiele",
+      "singleplayer": "Einzelspieler",
+      "multiplayer": "Mehrspieler"
     },
     "voter": {
       "games": "Party-Spiele",
@@ -524,7 +577,8 @@
     "list_footer": "Mehr laden",
     "no_more_results": "Keine weiteren Ergebnisse",
     "reached_end": "Du hast das Ende erreicht",
-    "loadError": "Fehler beim Laden der Kategorien"
+    "loadError": "Fehler beim Laden der Kategorien",
+    "show_all": "Alle anzeigen"
   },
   "tabBar": {
     "account": "Konto",

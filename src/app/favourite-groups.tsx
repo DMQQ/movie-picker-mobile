@@ -2,21 +2,84 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors, fontSize, radius, spacing } from "../constants/design";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { memo, useState } from "react";
 import {
   FlatList,
   Platform,
   Pressable,
   StyleSheet,
   Text,
-  TextInput,
+  TextInput as RNTextInput,
   View,
 } from "react-native";
+import TextInput from "../components/TextInput";
 
-import { addToGroup, removeFromGroup } from "../redux/favourites/favourites";
+import { addToGroup, createGroup, removeFromGroup } from "../redux/favourites/favourites";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import useTranslation from "../service/useTranslation";
 import { posthog } from "../constants/posthog";
+
+interface CreateListHeaderProps {
+  onCreated: () => void;
+}
+
+const CreateListHeader = memo(function CreateListHeader({ onCreated }: CreateListHeaderProps) {
+  const dispatch = useAppDispatch<any>();
+  const t = useTranslation();
+  const [creating, setCreating] = useState(false);
+  const [name, setName] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    setSaving(true);
+    await dispatch(createGroup(trimmed));
+    setName("");
+    setCreating(false);
+    setSaving(false);
+    onCreated();
+  };
+
+  const handleCancel = () => {
+    setCreating(false);
+    setName("");
+  };
+
+  if (creating) {
+    return (
+      <View style={styles.createRow}>
+        <TextInput
+          style={styles.createInput}
+          placeholder={t("favourites.newListPlaceholder")}
+          value={name}
+          onChangeText={setName}
+          autoFocus
+          autoCorrect={false}
+          returnKeyType="done"
+          onSubmitEditing={handleSave}
+        />
+        <Pressable
+          style={[styles.createSaveBtn, !name.trim() && styles.createSaveBtnDisabled]}
+          onPress={handleSave}
+          disabled={!name.trim() || saving}
+        >
+          <MaterialCommunityIcons name="check" size={20} color={colors.text} />
+        </Pressable>
+        <Pressable style={styles.createCancelBtn} onPress={handleCancel}>
+          <MaterialCommunityIcons name="close" size={20} color={colors.placeholder} />
+        </Pressable>
+      </View>
+    );
+  }
+
+  return (
+    <Pressable style={styles.newListBtn} onPress={() => setCreating(true)}>
+      <MaterialCommunityIcons name="plus" size={20} color={colors.primary} style={styles.itemIcon} />
+      <Text style={styles.newListBtnText}>{t("favourites.newList")}</Text>
+    </Pressable>
+  );
+});
 
 export default function FavouriteGroupsScreen() {
   const dispatch = useAppDispatch<any>();
@@ -90,7 +153,7 @@ export default function FavouriteGroupsScreen() {
             color={colors.placeholder}
             style={styles.searchIcon}
           />
-          <TextInput
+          <RNTextInput
             style={styles.searchInput}
             placeholder={t("favourites.searchPlaceholder")}
             placeholderTextColor={colors.placeholder}
@@ -116,6 +179,7 @@ export default function FavouriteGroupsScreen() {
         style={styles.listContainer}
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
+        ListHeaderComponent={<CreateListHeader onCreated={() => {}} />}
         renderItem={({ item: group }) => {
           const inGroup = group.movies.some((m) => +m.id === movieId && m.type === movieType);
           return (
@@ -224,5 +288,45 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: fontSize.lg,
     color: colors.text,
+  },
+  newListBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: radius.md,
+    height: 50,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: colors.input,
+  },
+  newListBtnText: {
+    flex: 1,
+    fontSize: fontSize.lg,
+    color: colors.placeholder,
+  },
+  createRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  createInput: {
+    flex: 1,
+  },
+  createSaveBtn: {
+    width: 50,
+    height: 50,
+    borderRadius: radius.md,
+    backgroundColor: colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  createSaveBtnDisabled: {
+    opacity: 0.4,
+  },
+  createCancelBtn: {
+    width: 50,
+    height: 50,
+    borderRadius: radius.md,
+    backgroundColor: colors.input,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

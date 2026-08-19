@@ -273,6 +273,8 @@
   "favourites": {
     "title": "Ulubione",
     "searchPlaceholder": "Szukaj list…",
+    "newList": "Nowa lista",
+    "newListPlaceholder": "Nazwa listy…",
     "empty": "Jeszcze nie dodałeś żadnych filmów do ulubionych",
     "create": {
       "title": "Stwórz nową listę",
@@ -405,11 +407,8 @@
     "home": {
       "title": "Głosowanie w parach",
       "description": "Głosowanie w parach to zabawa, w której możesz głosować na filmy i seriale, aby znaleźć wspólne zainteresowania ze znajomym.",
-      "howtotitle": "Jak to działa?",
-      "howto": "Jeden uzytkownik tworzy sesję, a drugi dołącza do niej. Następnie obaj użytkownicy oceniają filmy i seriale, aby znaleźć wspólne zainteresowania. Gdy obaj użytkownicy ocenią, sesja zostanie zakończona, a wyniki zostaną wyświetlone.",
       "create": "Utwórz nową sesję",
       "waiting": "Oczekiwanie na innych graczy",
-      "waiting-initial": "Oczekwianie na partnera...",
       "ready": "Gotowy do głosowania",
       "you": "Ty",
       "user": "Partner",
@@ -456,6 +455,58 @@
       "no-matches": "Żaden film nie pasuje do twoich preferencji"
     }
   },
+  "eitherOr": {
+    "setup": {
+      "title": "Albo-Albo",
+      "howto": "Stwórz drabinkę filmów i głosuj w pojedynkach ze znajomymi. W każdej rundzie rywalizują dwa filmy — zwycięzca awansuje, aż jeden film zostanie mistrzem.",
+      "bracketSize": "Rozmiar drabinki",
+      "bracketSizeSubtitle": "Ile filmów ma rywalizować?",
+      "movieCount": "{count} filmów",
+      "movies": "filmów",
+      "rounds": "{count} rund",
+      "create": "Utwórz drabinkę",
+      "custom": "Własna lista",
+      "sizeQuick": "Szybka",
+      "sizeStandard": "Standardowa",
+      "sizeEpic": "Epicka"
+    },
+    "lobby": {
+      "title": "Poczekalnia",
+      "bracketSize": "Drabinka {count} filmów",
+      "host": "Gospodarz",
+      "start": "Rozpocznij drabinkę",
+      "waitingForHost": "Czekanie na rozpoczęcie przez gospodarza...",
+      "joining": "Dołączanie do pokoju...",
+      "loading": "Ładowanie..."
+    },
+    "game": {
+      "round": "Runda {current} z {total}",
+      "match": "Pojedynek {current} z {total}",
+      "vs": "VS",
+      "roundComplete": "Runda {round} zakończona",
+      "nextRoundStarting": "Runda {round} rozpoczyna się...",
+      "votesIn": "Oddano {count} głosów",
+      "waitingForVotes": "Oczekiwanie na głosy...",
+      "tie": "Remis!",
+      "tieChampionKeeps": "Remis — mistrz zachowuje miejsce",
+      "tieSpeedWin": "Remis rozstrzygnięty szybkością"
+    },
+    "results": {
+      "title": "Wyniki",
+      "champion": "Mistrz",
+      "loading": "Ładowanie wyników...",
+      "done": "Gotowe"
+    },
+    "bracket": {
+      "title": "Drabinka",
+      "champion": "Mistrz",
+      "tbd": "Do ustalenia",
+      "final": "Finał",
+      "semifinal": "Półfinał",
+      "quarterfinal": "Ćwierćfinał",
+      "round": "Runda {round}"
+    }
+  },
   "quick-actions": {
     "watch-later": "Na później",
     "watched": "Obejrzane",
@@ -471,7 +522,9 @@
     "categories": {
       "all": "Wszystkie Gry",
       "popular": "Popularne",
-      "new": "Nowe Gry"
+      "new": "Nowe Gry",
+      "singleplayer": "Jeden gracz",
+      "multiplayer": "Wielu graczy"
     },
     "voter": {
       "games": "Gry Imprezowe",
@@ -524,7 +577,8 @@
     "list_footer": "Ładowanie więcej...",
     "no_more_results": "Brak więcej wyników",
     "reached_end": "Dotarłeś do końca",
-    "loadError": "Nie udało się załadować kategorii"
+    "loadError": "Nie udało się załadować kategorii",
+    "show_all": "Pokaż wszystkie"
   },
   "tabBar": {
     "account": "Konto",

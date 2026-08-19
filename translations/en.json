@@ -273,6 +273,8 @@
   "favourites": {
     "title": "Favorites",
     "searchPlaceholder": "Search lists…",
+    "newList": "New list",
+    "newListPlaceholder": "List name…",
     "empty": "You haven't added any movies to your favorites yet",
     "create": {
       "title": "Create a new list",
@@ -362,7 +364,7 @@
     "hint": "Place the QR code in the scan area or tap Join above to enter code manually",
     "code": "Code",
     "error-empty": "Please enter a code",
-    "error-invalid-prefix": "Code must start with S or V",
+    "error-invalid-prefix": "Code must start with S, V or E",
     "error-room-not-found": "Room not found",
     "permission-denied": "Camera permission is required to scan QR codes. You can grant it in your device settings.",
     "open-settings": "Open Settings",
@@ -418,11 +420,8 @@
     "home": {
       "title": "Movie voting",
       "description": "Start a new session or join an existing one to vote for the movies you want to watch.",
-      "howtotitle": "What is it about?",
-      "howto": "One of the players creates a session and invites others to join. The players then vote for the movies they want to watch. The movies with the most votes are then shown to the players. The players can then rate the movies and decide which one to watch.",
       "create": "Create a new session",
       "waiting": "Waiting for other players",
-      "waiting-initial": "Waiting for partner to join...",
       "ready": "Ready to start",
       "you": "You",
       "user": "Partner",
@@ -469,6 +468,58 @@
       "no-matches": "No movies matched your preferences"
     }
   },
+  "eitherOr": {
+    "setup": {
+      "title": "Either/Or",
+      "howto": "Create a bracket of movies and vote head-to-head with friends. Each round pits two movies against each other — the winner advances until one movie is crowned champion.",
+      "bracketSize": "Bracket size",
+      "bracketSizeSubtitle": "How many movies should compete?",
+      "movieCount": "{count} movies",
+      "movies": "movies",
+      "rounds": "{count} rounds",
+      "create": "Create bracket",
+      "custom": "Custom List",
+      "sizeQuick": "Quick",
+      "sizeStandard": "Standard",
+      "sizeEpic": "Epic"
+    },
+    "lobby": {
+      "title": "Waiting room",
+      "bracketSize": "{count}-movie bracket",
+      "host": "Host",
+      "start": "Start bracket",
+      "waitingForHost": "Waiting for the host to start...",
+      "joining": "Joining room...",
+      "loading": "Loading..."
+    },
+    "game": {
+      "round": "Round {current} of {total}",
+      "match": "Match {current} of {total}",
+      "vs": "VS",
+      "roundComplete": "Round {round} complete",
+      "nextRoundStarting": "Round {round} starting...",
+      "votesIn": "{count} votes cast",
+      "waitingForVotes": "Waiting for votes...",
+      "tie": "It's a tie!",
+      "tieChampionKeeps": "Tie — champion keeps their spot",
+      "tieSpeedWin": "Tie broken by speed"
+    },
+    "results": {
+      "title": "Results",
+      "champion": "Champion",
+      "loading": "Loading results...",
+      "done": "Done"
+    },
+    "bracket": {
+      "title": "Bracket",
+      "champion": "Champion",
+      "tbd": "TBD",
+      "final": "Final",
+      "semifinal": "Semifinal",
+      "quarterfinal": "Quarterfinal",
+      "round": "Round {round}"
+    }
+  },
   "quick-actions": {
     "watch-later": "Watch later",
     "watched": "Watched",
@@ -484,7 +535,9 @@
     "categories": {
       "all": "All Games",
       "popular": "Popular",
-      "new": "New Games"
+      "new": "New Games",
+      "singleplayer": "Singleplayer",
+      "multiplayer": "Multiplayer"
     },
     "empty": "No games yet",
     "voter": {
@@ -508,6 +561,10 @@
       "view-details": "Details",
       "hint": "Tap or shake to discover your next movie",
       "shake": "Shake to discover"
+    },
+    "eitherOr": {
+      "title": "Either/Or",
+      "description": "Two movies enter, one wins. Vote head-to-head through a bracket to crown a champion."
     }
   },
   "search": {
@@ -537,7 +594,8 @@
     },
     "list_footer": "Loading more",
     "no_more_results": "No more results",
-    "reached_end": "You've reached the end"
+    "reached_end": "You've reached the end",
+    "show_all": "Show all"
   },
   "tabBar": {
     "account": "Account",

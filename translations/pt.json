@@ -273,6 +273,8 @@
   "favourites": {
     "title": "Favoritos",
     "searchPlaceholder": "Pesquisar listas…",
+    "newList": "Nova lista",
+    "newListPlaceholder": "Nome da lista…",
     "empty": "Você ainda não adicionou nenhum filme aos seus favoritos",
     "create": {
       "title": "Criar nova lista",
@@ -405,11 +407,8 @@
     "home": {
       "title": "Votação de filmes",
       "description": "Inicie uma nova sessão ou entre em uma existente para votar nos filmes que deseja assistir.",
-      "howtotitle": "Do que se trata?",
-      "howto": "Um dos jogadores cria uma sessão e convida outros para participar. Os jogadores votam nos filmes que querem assistir. Os filmes com mais votos são mostrados aos jogadores. Os jogadores podem então avaliar os filmes e decidir qual assistir.",
       "create": "Criar nova sessão",
       "waiting": "Aguardando outros jogadores",
-      "waiting-initial": "Aguardando parceiro entrar...",
       "ready": "Pronto para começar",
       "you": "Você",
       "user": "Parceiro",
@@ -456,6 +455,58 @@
       "no-matches": "Nenhum filme corresponde às suas preferências"
     }
   },
+  "eitherOr": {
+    "setup": {
+      "title": "Cara a Cara",
+      "howto": "Crie um chaveamento de filmes e vote cara a cara com os amigos. Cada rodada coloca dois filmes um contra o outro — o vencedor avança até que um filme seja coroado campeão.",
+      "bracketSize": "Tamanho do chaveamento",
+      "bracketSizeSubtitle": "Quantos filmes vão competir?",
+      "movieCount": "{count} filmes",
+      "movies": "filmes",
+      "rounds": "{count} rodadas",
+      "create": "Criar chaveamento",
+      "custom": "Lista personalizada",
+      "sizeQuick": "Rápido",
+      "sizeStandard": "Padrão",
+      "sizeEpic": "Épico"
+    },
+    "lobby": {
+      "title": "Sala de espera",
+      "bracketSize": "Chaveamento de {count} filmes",
+      "host": "Anfitrião",
+      "start": "Iniciar chaveamento",
+      "waitingForHost": "Aguardando o anfitrião iniciar...",
+      "joining": "Entrando na sala...",
+      "loading": "Carregando..."
+    },
+    "game": {
+      "round": "Rodada {current} de {total}",
+      "match": "Confronto {current} de {total}",
+      "vs": "VS",
+      "roundComplete": "Rodada {round} concluída",
+      "nextRoundStarting": "Rodada {round} começando...",
+      "votesIn": "{count} votos registrados",
+      "waitingForVotes": "Aguardando votos...",
+      "tie": "Empate!",
+      "tieChampionKeeps": "Empate — o campeão mantém sua vaga",
+      "tieSpeedWin": "Empate decidido pela velocidade"
+    },
+    "results": {
+      "title": "Resultados",
+      "champion": "Campeão",
+      "loading": "Carregando resultados...",
+      "done": "Concluído"
+    },
+    "bracket": {
+      "title": "Chaveamento",
+      "champion": "Campeão",
+      "tbd": "A definir",
+      "final": "Final",
+      "semifinal": "Semifinal",
+      "quarterfinal": "Quartas de final",
+      "round": "Rodada {round}"
+    }
+  },
   "quick-actions": {
     "watch-later": "Assistir depois",
     "watched": "Assistido",
@@ -471,7 +522,9 @@
     "categories": {
       "all": "Todos os jogos",
       "popular": "Populares",
-      "new": "Novos jogos"
+      "new": "Novos jogos",
+      "singleplayer": "Um jogador",
+      "multiplayer": "Multijogador"
     },
     "voter": {
       "games": "Jogos em grupo",
@@ -524,7 +577,8 @@
     "list_footer": "Carregando mais",
     "no_more_results": "Sem mais resultados",
     "reached_end": "Você chegou ao fim",
-    "loadError": "Erro ao carregar categorias"
+    "loadError": "Erro ao carregar categorias",
+    "show_all": "Ver todos"
   },
   "tabBar": {
     "account": "Conta",
