@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "./Icon";
 import IconButton from "./IconButton";
 import Text from "./Text";
-import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
+import { colors, radius, spacing, typography } from "../constants/design";
 
 interface FormSheetContainerProps {
   children: ReactNode;
@@ -109,8 +109,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   title: {
-    fontSize: fontSize.xl,
-    fontWeight: fontWeight.semibold,
+    fontFamily: "Bebas",
+    fontSize: typography.bebasSize.section,
     color: colors.text,
+    letterSpacing: 0.5,
   },
 });

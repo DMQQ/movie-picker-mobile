@@ -26,6 +26,8 @@ import useTranslation from "../service/useTranslation";
 import { posthog } from "../constants/posthog";
 import { addToast } from "../redux/toast/toastSlice";
 import SignUpNudgeBanner from "../components/SignUpNudgeBanner";
+import { useBlockedMovies } from "../hooks/useBlockedMovies";
+import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
 
 interface CreateListHeaderProps {
   onCreated: (groupId: string) => void;
@@ -107,8 +109,19 @@ export default function FavouriteGroupsScreen() {
   const isBulkMode = !!pendingBulkMovies;
 
   const movieId = isBulkMode ? 0 : +movieIdParam;
+  const movieContentType = (movieType as "movie" | "tv") ?? "movie";
 
   const groups = useAppSelector((state) => state.favourite.groups);
+
+  const { blockMovie, unblockMovie, isBlocked } = useBlockedMovies();
+  const { superLikeMovie, removeSuperLike, isSuperLiked } = useSuperLikedMovies();
+
+  const movie = !isBulkMode ? {
+    id: movieId,
+    title: movieTitle || movieName || "",
+    poster_path: moviePosterPath ?? null,
+    type: movieContentType,
+  } : null;
 
   const filtered = query
     ? groups.filter((g) => g.name.toLowerCase().includes(query.toLowerCase()))
@@ -213,11 +226,47 @@ export default function FavouriteGroupsScreen() {
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
-          <CreateListHeader
-            onCreated={(groupId) => {
-              if (isBulkMode && groupId) handleBulkAdd(groupId);
-            }}
-          />
+          <>
+            <CreateListHeader
+              onCreated={(groupId) => {
+                if (isBulkMode && groupId) handleBulkAdd(groupId);
+              }}
+            />
+            {!isBulkMode && movie && (
+              <View style={styles.systemListGroup}>
+                <Pressable
+                  style={[styles.item, isSuperLiked(movieId, movieContentType) && { backgroundColor: "#3A3200" }]}
+                  onPress={() =>
+                    isSuperLiked(movieId, movieContentType)
+                      ? removeSuperLike(movieId, movieContentType)
+                      : superLikeMovie(movie as any)
+                  }
+                  android_ripple={{ color: colors.border }}
+                >
+                  <MaterialCommunityIcons name="star-circle" size={22} color="#FFD700" style={styles.itemIcon} />
+                  <Text style={styles.itemText}>{t("super-liked.title")}</Text>
+                  {isSuperLiked(movieId, movieContentType) && (
+                    <MaterialCommunityIcons name="check" size={18} color="#FFD700" />
+                  )}
+                </Pressable>
+                <Pressable
+                  style={[styles.item, isBlocked(movieId, movieContentType) && { backgroundColor: "#3A0010" }]}
+                  onPress={() =>
+                    isBlocked(movieId, movieContentType)
+                      ? unblockMovie(movieId, movieContentType)
+                      : blockMovie(movie as any)
+                  }
+                  android_ripple={{ color: colors.border }}
+                >
+                  <MaterialCommunityIcons name="cancel" size={22} color="#FF4458" style={styles.itemIcon} />
+                  <Text style={styles.itemText}>{t("blocked.title")}</Text>
+                  {isBlocked(movieId, movieContentType) && (
+                    <MaterialCommunityIcons name="check" size={18} color="#FF4458" />
+                  )}
+                </Pressable>
+              </View>
+            )}
+          </>
         }
         renderItem={({ item: group }) => {
           const inGroup = !isBulkMode && group.movies.some((m) => +m.id === movieId && m.type === movieType);
@@ -368,5 +417,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.input,
     alignItems: "center",
     justifyContent: "center",
+  },
+  systemListGroup: {
+    gap: spacing.sm + 2,
+    marginTop: spacing.sm + 2,
+    marginBottom: spacing.sm + 2,
   },
 });

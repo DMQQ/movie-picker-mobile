@@ -90,6 +90,12 @@ export default function BlockedMoviesGroup() {
   const t = useTranslation();
   const insets = useSafeAreaInsets();
 
+  const openMoviePicker = () =>
+    router.push({
+      pathname: "/movie-picker",
+      params: { targetListType: "disliked", targetListName: t("blocked.title") },
+    } as any);
+
   const { data: ratingsData } = useGetMyRatingsQuery({ limit: 200 }, { skip: !isFullAccount });
 
   const ratingsMap = useMemo(() => {
@@ -144,7 +150,12 @@ export default function BlockedMoviesGroup() {
 
   return (
     <SafeIOSContainer style={styles.container}>
-      <PageHeading title={t("blocked.title") as string} />
+      <PageHeading
+        title={t("blocked.title") as string}
+        showRightIconButton
+        rightIconName="plus"
+        onRightIconPress={openMoviePicker}
+      />
       <FlatList
         data={blockedMovies}
         showsVerticalScrollIndicator={false}

@@ -90,6 +90,12 @@ export default function SuperLikedGroup() {
   const t = useTranslation();
   const insets = useSafeAreaInsets();
 
+  const openMoviePicker = () =>
+    router.push({
+      pathname: "/movie-picker",
+      params: { targetListType: "superliked", targetListName: t("super-liked.title") },
+    } as any);
+
   const { data: ratingsData } = useGetMyRatingsQuery({ limit: 200 }, { skip: !isFullAccount });
 
   const ratingsMap = useMemo(() => {
@@ -145,7 +151,12 @@ export default function SuperLikedGroup() {
 
   return (
     <SafeIOSContainer style={styles.container}>
-      <PageHeading title={t("super-liked.title") as string} />
+      <PageHeading
+        title={t("super-liked.title") as string}
+        showRightIconButton
+        rightIconName="plus"
+        onRightIconPress={openMoviePicker}
+      />
       <FlatList
         data={superLikedMovies}
         showsVerticalScrollIndicator={false}
