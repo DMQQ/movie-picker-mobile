@@ -26,6 +26,7 @@ import useTranslation from "../service/useTranslation";
 import { posthog } from "../constants/posthog";
 import { addToast } from "../redux/toast/toastSlice";
 import SignUpNudgeBanner from "../components/SignUpNudgeBanner";
+import Divider from "../components/Divider";
 import { useBlockedMovies } from "../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
 
@@ -266,6 +267,9 @@ export default function FavouriteGroupsScreen() {
                 </Pressable>
               </View>
             )}
+            {!isBulkMode && movie && (
+              <Divider style={{ marginVertical: spacing.md }} />
+            )}
           </>
         }
         renderItem={({ item: group }) => {
@@ -421,6 +425,5 @@ const styles = StyleSheet.create({
   systemListGroup: {
     gap: spacing.sm + 2,
     marginTop: spacing.sm + 2,
-    marginBottom: spacing.sm + 2,
   },
 });
