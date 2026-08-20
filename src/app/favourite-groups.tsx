@@ -235,7 +235,7 @@ export default function FavouriteGroupsScreen() {
             {!isBulkMode && movie && (
               <View style={styles.systemListGroup}>
                 <Pressable
-                  style={[styles.item, isSuperLiked(movieId, movieContentType) && { backgroundColor: "#3A3200" }]}
+                  style={[styles.item, { backgroundColor: isSuperLiked(movieId, movieContentType) ? "#3A3200" : colors.input }]}
                   onPress={() =>
                     isSuperLiked(movieId, movieContentType)
                       ? removeSuperLike(movieId, movieContentType)
@@ -250,7 +250,7 @@ export default function FavouriteGroupsScreen() {
                   )}
                 </Pressable>
                 <Pressable
-                  style={[styles.item, isBlocked(movieId, movieContentType) && { backgroundColor: "#3A0010" }]}
+                  style={[styles.item, { backgroundColor: isBlocked(movieId, movieContentType) ? "#3A0010" : colors.input }]}
                   onPress={() =>
                     isBlocked(movieId, movieContentType)
                       ? unblockMovie(movieId, movieContentType)
