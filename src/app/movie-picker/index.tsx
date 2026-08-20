@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,7 +11,7 @@ import Text from "../../components/Text";
 import Touch from "../../components/Touch";
 import { colors, fontSize, fontWeight, radius, spacing, withAlpha } from "../../constants/design";
 import { useLazySearchQuery } from "../../redux/movie/movieApi";
-import { useGetListsQuery } from "../../redux/lists/listsApi";
+import { useGetListsQuery, useAddBulkItemsMutation } from "../../redux/lists/listsApi";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { loadFavorites } from "../../redux/favourites/favourites";
 import { moviePickerActions } from "../../redux/moviePicker/moviePickerSlice";
@@ -20,12 +20,29 @@ import useTranslation from "../../service/useTranslation";
 const POSTER_BASE = "https://image.tmdb.org/t/p/w185";
 const HIDDEN_TYPES = new Set(["superliked", "disliked"]);
 
-interface SearchItem { id: number; title: string; poster_path: string | null }
+interface SearchItem {
+  id: number;
+  title: string;
+  poster_path: string | null;
+  media_type: "movie" | "tv";
+  vote_average: number;
+  runtime: number;
+}
+
+function formatRuntime(mins: number): string {
+  if (mins <= 0) return "";
+  if (mins < 60) return `${mins}m`;
+  return `${Math.floor(mins / 60)}h ${mins % 60}m`;
+}
 
 export default function MoviePickerIndex() {
   const dispatch = useAppDispatch();
   const t = useTranslation();
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams<{ targetListType?: string; targetListName?: string }>();
+  const targetListType = params.targetListType ?? "";
+  const targetListName = params.targetListName ?? "";
+  const isListAddMode = !!targetListType;
 
   const selected = useAppSelector((s) => s.moviePicker.selected);
   const groups = useAppSelector((s) => s.favourite.groups);
@@ -37,6 +54,7 @@ export default function MoviePickerIndex() {
   const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
   const debounceRef = useRef<NodeJS.Timeout>(null);
   const [search, { isFetching }] = useLazySearchQuery();
+  const [addBulkItems] = useAddBulkItemsMutation();
 
   const { data: listsData, isLoading: loadingLists } = useGetListsQuery(
     { limit: 50 },
@@ -45,6 +63,19 @@ export default function MoviePickerIndex() {
 
   useEffect(() => {
     if (!isAuthenticated) dispatch(loadFavorites());
+    if (isListAddMode) {
+      dispatch(moviePickerActions.init({}));
+      search({ page: 1, type: "both" }).unwrap()
+        .then((res) => setSearchResults(res.results.map((m: any) => ({
+          id: m.id,
+          title: m.title ?? m.name ?? "",
+          poster_path: m.poster_path ?? null,
+          media_type: m.type ?? m.media_type ?? (m.first_air_date ? "tv" : "movie"),
+          vote_average: m.vote_average ?? 0,
+          runtime: m.runtime ?? 0,
+        }))))
+        .catch(() => {});
+    }
   }, []);
 
   // Debounced search
@@ -59,6 +90,9 @@ export default function MoviePickerIndex() {
           id: m.id,
           title: m.title ?? m.name ?? "",
           poster_path: m.poster_path ?? null,
+          media_type: m.type ?? m.media_type ?? (m.first_air_date ? "tv" : "movie"),
+          vote_average: m.vote_average ?? 0,
+          runtime: m.runtime ?? 0,
         })));
       } catch {}
     }, 400);
@@ -70,25 +104,39 @@ export default function MoviePickerIndex() {
   const isSearching = !!query.trim();
 
   const handleToggle = useCallback((item: SearchItem) => {
-    dispatch(moviePickerActions.toggle({ id: item.id, title: item.title, poster_path: item.poster_path ?? "" }));
+    dispatch(moviePickerActions.toggle({ id: item.id, title: item.title, poster_path: item.poster_path ?? "", contentType: item.media_type }));
   }, [dispatch]);
 
-  const handleConfirm = useCallback(() => {
+  const handleConfirm = useCallback(async () => {
+    if (isListAddMode && selected.length > 0) {
+      try {
+        await addBulkItems({
+          type: targetListType,
+          items: selected.map((m) => ({
+            contentId: m.id,
+            contentType: m.contentType ?? "movie",
+            content: { title: m.title, poster_path: m.poster_path || null },
+          })),
+        }).unwrap();
+      } catch {}
+      router.back();
+      return;
+    }
     dispatch(moviePickerActions.confirm());
     router.back();
-  }, [dispatch]);
+  }, [dispatch, isListAddMode, selected, addBulkItems, targetListType]);
 
   const handleOpenAuthList = (list: { id: string; type: string; name: string }) => {
     router.push({
       pathname: "/movie-picker/[listId]",
-      params: { listId: list.id, listType: list.type, listName: list.name },
+      params: { listId: list.id, listType: list.type, listName: list.name, targetListType, targetListName },
     });
   };
 
   const handleOpenLocalGroup = (groupId: string) => {
     router.push({
       pathname: "/movie-picker/[listId]",
-      params: { listId: groupId, listName: groups.find((g) => g.id === groupId)?.name ?? "", isLocal: "true" },
+      params: { listId: groupId, listName: groups.find((g) => g.id === groupId)?.name ?? "", isLocal: "true", targetListType, targetListName },
     });
   };
 
@@ -109,10 +157,10 @@ export default function MoviePickerIndex() {
       </View>
 
       <Text style={styles.sectionLabel}>
-        {isSearching ? "Search results" : "Your lists"}
+        {isSearching ? "Search results" : isListAddMode ? `Add to ${targetListName}` : "Your lists"}
       </Text>
 
-      {isSearching ? (
+      {isSearching || isListAddMode ? (
         <Animated.View key="search" entering={FadeIn.duration(150)} style={{ flex: 1 }}>
           <FlashList
             data={searchResults}
@@ -126,14 +174,32 @@ export default function MoviePickerIndex() {
                   style={styles.poster}
                   contentFit="cover"
                 />
-                <Text numberOfLines={2} style={styles.rowTitle}>{item.title}</Text>
+                <View style={styles.rowInfo}>
+                  <Text numberOfLines={2} style={styles.rowTitle}>{item.title}</Text>
+                  <View style={styles.rowMeta}>
+                    <Text style={styles.metaText}>{item.media_type === "tv" ? "TV" : "Movie"}</Text>
+                    {item.vote_average > 0 && (
+                      <>
+                        <Text style={styles.metaDot}>·</Text>
+                        <MaterialCommunityIcons name="star" size={11} color="#FFB800" />
+                        <Text style={styles.metaText}>{item.vote_average.toFixed(1)}</Text>
+                      </>
+                    )}
+                    {item.runtime > 0 && (
+                      <>
+                        <Text style={styles.metaDot}>·</Text>
+                        <Text style={styles.metaText}>{formatRuntime(item.runtime)}</Text>
+                      </>
+                    )}
+                  </View>
+                </View>
                 <View style={[styles.check, selectedSet.has(item.id) && styles.checkActive]}>
                   {selectedSet.has(item.id) && <MaterialCommunityIcons name="check" size={14} color={colors.text} />}
                 </View>
               </Touch>
             )}
             ListEmptyComponent={
-              !isFetching ? <Text style={styles.empty}>{t("search.no-results") as string}</Text> : null
+              !isFetching && isSearching ? <Text style={styles.empty}>{t("search.no-results") as string}</Text> : null
             }
           />
         </Animated.View>
@@ -250,12 +316,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceElevated,
   },
   posterFallback: { alignItems: "center", justifyContent: "center" },
+  rowInfo: { flex: 1, gap: 3 },
   rowTitle: {
-    flex: 1,
     fontSize: fontSize.md,
     fontWeight: fontWeight.medium,
     color: colors.text,
   },
+  rowMeta: { flexDirection: "row", alignItems: "center", gap: 4 },
+  metaText: { fontSize: fontSize.xs, color: colors.placeholder },
+  metaDot: { fontSize: fontSize.xs, color: colors.placeholder },
   selectedHint: { fontSize: fontSize.sm, color: colors.primary, fontWeight: fontWeight.medium },
   check: {
     width: 24,

@@ -259,7 +259,8 @@
     "apply": "Apply Filters",
     "clear": "Clear All",
     "active": "{count} filter{plural} active",
-    "categories": "Categories"
+    "categories": "Categories",
+    "none": "No filters applied"
   },
   "likes": {
     "title": "Your likes",
@@ -326,6 +327,17 @@
     "input-label": "Enter a name for your new collection",
     "cancel": "Cancel",
     "create": "Create"
+  },
+  "manage-group": {
+    "title": "Manage List",
+    "nameLabel": "Name",
+    "namePlaceholder": "List name",
+    "save": "Save",
+    "delete": "Delete List",
+    "deleteTitle": "Delete List",
+    "deleteMessage": "This will permanently remove the list and all its movies.",
+    "renameError": "Failed to rename. Please try again.",
+    "searchPlaceholder": "Search movies…"
   },
   "common": {
     "confirmation": "Confirmation",

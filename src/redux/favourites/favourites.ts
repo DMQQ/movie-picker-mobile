@@ -345,6 +345,43 @@ export const removeFromGroup = createAsyncThunk(
   }
 );
 
+export const renameGroup = createAsyncThunk(
+  "favorites/renameGroup",
+  async ({ groupId, name }: { groupId: string; name: string }, { getState, dispatch }) => {
+    const state = getState() as RootState;
+    const { token, user } = state.auth;
+    const isFullAccount = !!user && user.provider !== "anonymous";
+
+    console.log("[renameGroup] start", { groupId, name, isFullAccount, hasToken: !!token });
+
+    if (token && isFullAccount) {
+      const group = state.favourite.groups.find((g) => g.id === groupId);
+      const listType = group?.type ?? LOCAL_ID_TO_TYPE[groupId] ?? groupId;
+      console.log("[renameGroup] remote path", { listType, groupFound: !!group });
+      try {
+        await d(dispatch)(listsApi.endpoints.patchList.initiate({ type: listType, name })).unwrap();
+        console.log("[renameGroup] remote success");
+      } catch (err) {
+        console.error("[renameGroup] remote error:", JSON.stringify(err));
+        throw err;
+      }
+      return { groupId, name };
+    }
+
+    console.log("[renameGroup] local path");
+    const storage = parseStorage(await AsyncStorage.getItem(STORAGE_KEY));
+    const updated = {
+      ...storage,
+      groups: storage.groups.map((g: FavoriteGroup) =>
+        g.id === groupId ? { ...g, name } : g
+      ),
+    };
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    console.log("[renameGroup] local success");
+    return { groupId, name };
+  }
+);
+
 export const deleteGroup = createAsyncThunk(
   "favorites/deleteGroup",
   async (groupId: string, { getState, dispatch }) => {
@@ -578,6 +615,10 @@ export const favoritesSlice = createSlice({
             if (key.startsWith(`${movieId}:`)) delete entry[key];
           }
         }
+      })
+      .addCase(renameGroup.fulfilled, (state, action) => {
+        const group = state.groups.find((g) => g.id === action.payload.groupId);
+        if (group) group.name = action.payload.name;
       })
       .addCase(deleteGroup.fulfilled, (state, action) => {
         state.groups = state.groups.filter((group) => group.id !== action.payload);

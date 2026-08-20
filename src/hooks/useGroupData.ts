@@ -58,7 +58,7 @@ export function useGroupData() {
     if (isRemote) {
       return {
         id: params.id,
-        name: remoteGroupMeta!.name,
+        name: groups.find((g) => g.id === params.id)?.name ?? remoteGroupMeta!.name,
         movies: remoteListData
           ? remoteListData.items.map((item) => ({
               id: item.contentId,

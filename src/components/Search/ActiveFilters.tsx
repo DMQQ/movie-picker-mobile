@@ -1,5 +1,6 @@
+import { Text, View, StyleSheet } from "react-native";
 import Chip from "../Chip";
-import { colors } from "../../constants/design";
+import { colors, fontSize, fontWeight } from "../../constants/design";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { useGetAllProvidersQuery } from "../../redux/movie/movieApi";
 import { setMediaType, setDecade, toggleGenre, toggleProvider } from "../../redux/mediaFilters/mediaFiltersSlice";
@@ -59,7 +60,13 @@ export default function ActiveFilters() {
     });
   });
 
-  if (chips.length === 0) return null;
+  if (chips.length === 0) {
+    return (
+      <View style={styles.hintContainer}>
+        <Text style={styles.hint}>{t("filters.none") as string}</Text>
+      </View>
+    );
+  }
 
   return (
     <>
@@ -79,3 +86,17 @@ export default function ActiveFilters() {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  hintContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  hint: {
+    color: colors.placeholder,
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.normal,
+    textAlign: "center",
+  },
+});

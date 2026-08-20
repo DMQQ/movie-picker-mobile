@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { useMemo, useState } from "react";
+import { FlatList, Pressable, StyleSheet, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useIsPreview } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -10,6 +10,7 @@ import AvatarText from "../../components/AvatarText";
 import PageHeading from "../../components/PageHeading";
 import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
+import PlatformBlurView from "../../components/PlatformBlurView";
 import GroupScreenLayout from "../../components/Group/GroupScreenLayout";
 import OverviewModal from "../../screens/Overview/Modal";
 import ShareSelectionModal from "../../components/Group/ShareSelectionModal";
@@ -32,9 +33,24 @@ export default function Group() {
 
   const [match, setMatch] = useState<GroupMovie | undefined>(undefined);
   const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [search, setSearch] = useState("");
 
   const movies = data?.movies ?? [];
   const fortuneMovies = movies.map((m) => ({ ...m, poster_path: m.imageUrl }));
+
+  const filteredMovies = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return movies;
+    return movies.filter((m) => m.title?.toLowerCase().includes(q));
+  }, [movies, search]);
+
+  const openManageSheet = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push({
+      pathname: "/group/manage",
+      params: { id: data?.id ?? "", name: data?.name ?? "" },
+    } as any);
+  };
 
   const openRateSheet = (item: GroupMovie) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -135,15 +151,41 @@ export default function Group() {
           <PageHeading
             title={data?.name ?? ""}
             showBackButton={!isPreview}
-            showRightIconButton={movies.length > 0}
-            rightIconName="share-outline"
-            onRightIconPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              setShareModalVisible(true);
-            }}
-          />
+          >
+            <PlatformBlurView interactive style={styles.headerActions}>
+              <IconButton
+                icon="plus"
+                size={22}
+                iconColor={colors.text}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  router.push({
+                    pathname: "/movie-picker",
+                    params: { targetListType: listType ?? "", targetListName: data?.name ?? "" },
+                  } as any);
+                }}
+              />
+              {movies.length > 0 && (
+                <IconButton
+                  icon="share-outline"
+                  size={22}
+                  iconColor={colors.text}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setShareModalVisible(true);
+                  }}
+                />
+              )}
+              <IconButton
+                icon="cog-outline"
+                size={22}
+                iconColor={colors.text}
+                onPress={openManageSheet}
+              />
+            </PlatformBlurView>
+          </PageHeading>
           <FlatList
-            data={movies}
+            data={filteredMovies}
             keyExtractor={(item) => `${item.type}_${item.id}`}
             renderItem={renderRemoteRow}
             showsVerticalScrollIndicator={false}
@@ -153,14 +195,25 @@ export default function Group() {
             }}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
             ListHeaderComponent={
-              movies.length > 0 ? (
-                <Text style={styles.countLabel}>
-                  {t("lists.items", {
-                    count: movies.length,
-                    plural: movies.length === 1 ? "" : "s",
-                  }) as string}
-                </Text>
-              ) : null
+              <View>
+                <TextInput
+                  value={search}
+                  onChangeText={setSearch}
+                  placeholder={t("manage-group.searchPlaceholder") as string}
+                  placeholderTextColor="rgba(255,255,255,0.3)"
+                  style={styles.searchInput}
+                  returnKeyType="search"
+                  clearButtonMode="while-editing"
+                />
+                {movies.length > 0 && (
+                  <Text style={styles.countLabel}>
+                    {t("lists.items", {
+                      count: filteredMovies.length,
+                      plural: filteredMovies.length === 1 ? "" : "s",
+                    }) as string}
+                  </Text>
+                )}
+              </View>
             }
             ListEmptyComponent={
               isListLoading ? (
@@ -222,10 +275,27 @@ export default function Group() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.appBackground },
 
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: radius.pill,
+    overflow: "hidden",
+  },
+
+  searchInput: {
+    marginTop: spacing.xxl * 3,
+    backgroundColor: colors.overlay,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm + 2,
+    color: colors.text,
+    fontSize: fontSize.md,
+  },
+
   countLabel: {
     fontSize: fontSize.sm - 1,
     color: "rgba(255,255,255,0.25)",
-    paddingTop: spacing.xxl * 3,
+    paddingTop: spacing.md,
     paddingBottom: spacing.xs,
     textTransform: "uppercase",
     letterSpacing: 0.8,

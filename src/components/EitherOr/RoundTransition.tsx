@@ -86,8 +86,9 @@ export default function RoundTransition({ completedRound, nextRound, bracketSize
   const { cardW, cardH } = getCardSize(n);
   const step = Math.round(cardW * 0.55);
   const deckW = n > 1 ? (n - 1) * step + cardW : cardW;
-  const deckH = cardH + 24;
-  const maxRot = n <= 2 ? 10 : n <= 4 ? 14 : 22;
+  const maxRot = n <= 2 ? 5 : n <= 4 ? 10 : 18;
+  const arcDrop = n <= 2 ? 8 : n <= 4 ? 20 : 48;
+  const deckH = cardH + arcDrop;
   const thumbnailSize = cardW > 200 ? ThumbnailSizes.poster.xlarge : ThumbnailSizes.poster.large;
 
   return (
@@ -111,9 +112,9 @@ export default function RoundTransition({ completedRound, nextRound, bracketSize
       <View style={{ width: deckW, height: deckH }}>
         {winners.map((movie, i) => {
           const frac = n > 1 ? (i - (n - 1) / 2) / ((n - 1) / 2) : 0;
-          const rot = frac * maxRot * (1 + Math.abs(frac));
+          const rot = frac * maxRot;
           const x = n > 1 ? (i - (n - 1) / 2) * step : 0;
-          const y = Math.abs(frac) * 28;
+          const y = arcDrop * frac * frac;
           const zIndex = n - Math.abs(Math.round(i - (n - 1) / 2));
 
           const xAnim = useSharedValue(0);

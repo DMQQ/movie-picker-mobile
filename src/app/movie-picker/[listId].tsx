@@ -9,7 +9,7 @@ import Touch from "../../components/Touch";
 import SearchField from "../../components/SearchField";
 import Text from "../../components/Text";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
-import { listsApi } from "../../redux/lists/listsApi";
+import { listsApi, useAddBulkItemsMutation } from "../../redux/lists/listsApi";
 import { movieApi } from "../../redux/movie/movieApi";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { moviePickerActions } from "../../redux/moviePicker/moviePickerSlice";
@@ -20,13 +20,16 @@ const POSTER_BASE = "https://image.tmdb.org/t/p/w185";
 interface RowItem { id: number; title: string; poster_path: string | null }
 
 export default function MoviePickerListDetail() {
-  const params = useLocalSearchParams<{ listId: string; listType?: string; listName?: string; isLocal?: string }>();
+  const params = useLocalSearchParams<{ listId: string; listType?: string; listName?: string; isLocal?: string; targetListType?: string; targetListName?: string }>();
   const dispatch = useAppDispatch();
   const t = useTranslation();
   const insets = useSafeAreaInsets();
+  const targetListType = params.targetListType ?? "";
+  const isListAddMode = !!targetListType;
 
   const selected = useAppSelector((s) => s.moviePicker.selected);
   const groups = useAppSelector((s) => s.favourite.groups);
+  const [addBulkItems] = useAddBulkItemsMutation();
 
   const [items, setItems] = useState<RowItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -110,11 +113,24 @@ export default function MoviePickerListDetail() {
     dispatch(moviePickerActions.toggle({ id: item.id, title: item.title, poster_path: item.poster_path ?? "" }));
   }, [dispatch]);
 
-  const handleConfirm = useCallback(() => {
+  const handleConfirm = useCallback(async () => {
+    if (isListAddMode && selected.length > 0) {
+      try {
+        await addBulkItems({
+          type: targetListType,
+          items: selected.map((m) => ({
+            contentId: m.id,
+            contentType: m.contentType ?? "movie",
+            content: { title: m.title, poster_path: m.poster_path || null },
+          })),
+        }).unwrap();
+      } catch {}
+      router.dismissAll();
+      return;
+    }
     dispatch(moviePickerActions.confirm());
-    // Pop back to root and dismiss
     router.dismissAll();
-  }, [dispatch]);
+  }, [dispatch, isListAddMode, selected, addBulkItems, targetListType]);
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom + spacing.sm }]}>

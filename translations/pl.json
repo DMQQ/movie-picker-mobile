@@ -258,7 +258,8 @@
     "apply": "Zastosuj filtry",
     "clear": "Wyczyść",
     "active": "{count} filtr{plural} aktywny",
-    "categories": "Kategorie"
+    "categories": "Kategorie",
+    "none": "Brak filtrów"
   },
   "likes": {
     "title": "Twoje polubienia",
@@ -312,6 +313,17 @@
     "input-label": "Wprowadź nazwę dla nowej kolekcji",
     "cancel": "Anuluj",
     "create": "Stwórz"
+  },
+  "manage-group": {
+    "title": "Zarządzaj listą",
+    "nameLabel": "Nazwa",
+    "namePlaceholder": "Nazwa listy",
+    "save": "Zapisz",
+    "delete": "Usuń listę",
+    "deleteTitle": "Usuń listę",
+    "deleteMessage": "Spowoduje to trwałe usunięcie listy i wszystkich jej filmów.",
+    "renameError": "Nie udało się zmienić nazwy. Spróbuj ponownie.",
+    "searchPlaceholder": "Szukaj filmów…"
   },
   "common": {
     "confirmation": "Potwierdzenie",

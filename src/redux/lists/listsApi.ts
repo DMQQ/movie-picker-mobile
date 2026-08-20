@@ -255,6 +255,22 @@ export const listsApi = createApi({
       invalidatesTags: [{ type: "List", id: "ALL" }],
     }),
 
+    patchList: build.mutation<OkResponse, { type: string; name: string }>({
+      query: ({ type, name }) => {
+        console.log("[listsApi.patchList] request", { type, name });
+        return { url: `/lists/${type}`, method: "PATCH", body: { name } };
+      },
+      invalidatesTags: [{ type: "List", id: "ALL" }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          console.log("[listsApi.patchList] success");
+        } catch (err) {
+          console.error("[listsApi.patchList] error:", JSON.stringify(err));
+        }
+      },
+    }),
+
     patchItem: build.mutation<OkResponse, { itemId: string; listType?: string; rating?: number | null; review?: string | null }>({
       query: ({ itemId, listType: _listType, ...body }) => ({
         url: `/lists/items/${itemId}`,
@@ -306,6 +322,7 @@ export const {
   useRemoveItemMutation,
   useCreateListMutation,
   useDeleteListMutation,
+  usePatchListMutation,
   usePatchItemMutation,
   useMigrateListsMutation,
   useGetGamesQuery,

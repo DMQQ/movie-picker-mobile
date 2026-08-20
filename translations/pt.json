@@ -258,7 +258,8 @@
     "apply": "Aplicar filtros",
     "clear": "Limpar tudo",
     "active": "{count} filtro{plural} ativo{plural}",
-    "categories": "Categorias"
+    "categories": "Categorias",
+    "none": "Sem filtros aplicados"
   },
   "likes": {
     "title": "Suas curtidas",
@@ -312,6 +313,17 @@
     "input-label": "Digite um nome para sua nova coleção",
     "cancel": "Cancelar",
     "create": "Criar"
+  },
+  "manage-group": {
+    "title": "Gerenciar lista",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Nome da lista",
+    "save": "Salvar",
+    "delete": "Excluir lista",
+    "deleteTitle": "Excluir lista",
+    "deleteMessage": "Isso removerá permanentemente a lista e todos os seus filmes.",
+    "renameError": "Falha ao renomear. Tente novamente.",
+    "searchPlaceholder": "Buscar filmes…"
   },
   "common": {
     "confirmation": "Confirmação",

@@ -4,6 +4,7 @@ export interface PickedMovie {
   id: number;
   title: string;
   poster_path: string;
+  contentType?: "movie" | "tv";
 }
 
 interface MoviePickerState {

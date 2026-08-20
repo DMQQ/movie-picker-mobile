@@ -258,7 +258,8 @@
     "apply": "Filter anwenden",
     "clear": "Alle löschen",
     "active": "{count} Filter aktiv",
-    "categories": "Kategorien"
+    "categories": "Kategorien",
+    "none": "Keine Filter aktiv"
   },
   "likes": {
     "title": "Deine Likes",
@@ -312,6 +313,17 @@
     "input-label": "Namen für die neue Sammlung eingeben",
     "cancel": "Abbrechen",
     "create": "Erstellen"
+  },
+  "manage-group": {
+    "title": "Liste verwalten",
+    "nameLabel": "Name",
+    "namePlaceholder": "Listenname",
+    "save": "Speichern",
+    "delete": "Liste löschen",
+    "deleteTitle": "Liste löschen",
+    "deleteMessage": "Die Liste und alle enthaltenen Filme werden dauerhaft gelöscht.",
+    "renameError": "Umbenennen fehlgeschlagen. Bitte erneut versuchen.",
+    "searchPlaceholder": "Filme suchen…"
   },
   "common": {
     "confirmation": "Bestätigung",

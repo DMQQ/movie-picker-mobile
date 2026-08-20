@@ -1,9 +1,8 @@
-import { StyleSheet, View, TouchableOpacity, ScrollView, Platform } from "react-native";
-import Text from "../Text";
-
-import { colors, fontWeight, fontSize, radius, spacing } from "../../constants/design";
+import { Platform, StyleSheet, View } from "react-native";
+import { colors, radius, spacing } from "../../constants/design";
 import { memo, useState } from "react";
 import PlatformBlurView from "../PlatformBlurView";
+import SegmentedControl from "../SegmentedControl";
 import DetailsTab from "./tabs/DetailsTab";
 import CastTab from "./tabs/CastTab";
 import SimilarTab from "./tabs/SimilarTab";
@@ -25,11 +24,10 @@ interface MovieTabsProps {
 }
 
 function MovieTabs({ movie, type, providers, tabs, similarData, trailersData, castData }: MovieTabsProps) {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(tabs[0]?.key ?? "");
 
   const renderContent = () => {
-    const tabKey = tabs[activeTab]?.key;
-    switch (tabKey) {
+    switch (activeTab) {
       case "details":
         return <DetailsTab movie={movie} providers={providers} />;
       case "cast":
@@ -47,20 +45,13 @@ function MovieTabs({ movie, type, providers, tabs, similarData, trailersData, ca
 
   return (
     <View>
-      <PlatformBlurView style={styles.tabBarContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabBarScrollContainer}>
-          {tabs.map((tab, index) => (
-            <TouchableOpacity
-              key={tab.key}
-              style={[styles.tabButton, activeTab === index && styles.activeTabButton]}
-              onPress={() => setActiveTab(index)}
-            >
-              <Text style={[styles.tabLabel, activeTab === index && styles.activeTabLabel]}>
-                {tab.title}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+      <PlatformBlurView style={styles.glassWrapper}>
+        <SegmentedControl
+          options={tabs.map((t) => ({ value: t.key, label: t.title }))}
+          value={activeTab}
+          onChange={setActiveTab}
+          style={styles.segmented}
+        />
       </PlatformBlurView>
 
       {renderContent()}
@@ -71,41 +62,20 @@ function MovieTabs({ movie, type, providers, tabs, similarData, trailersData, ca
 export default memo(MovieTabs);
 
 const styles = StyleSheet.create({
-  tabBarContainer: {
+  glassWrapper: {
     borderRadius: radius.modal,
     marginBottom: spacing.sm + 2,
     marginHorizontal: spacing.screen,
+    padding: spacing.xs,
     ...Platform.select({
       android: {
         backgroundColor: colors.surface + "cc",
-        borderRadius: radius.modal,
         borderWidth: 2,
         borderColor: "#343434ff",
       },
     }),
   },
-  tabBarScrollContainer: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.sm,
-    gap: spacing.sm,
-  },
-  tabButton: {
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: radius.md + 3,
-  },
-  activeTabButton: {
-    backgroundColor: colors.primary + "aa",
-  },
-  tabLabel: {
-    fontSize: fontSize.md + 1,
-    fontWeight: fontWeight.semibold,
-    color: "rgba(255,255,255,0.7)",
-    textTransform: "capitalize",
-  },
-  activeTabLabel: {
-    color: colors.text,
+  segmented: {
+    backgroundColor: "transparent",
   },
 });
