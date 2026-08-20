@@ -337,7 +337,8 @@
     "deleteTitle": "Delete List",
     "deleteMessage": "This will permanently remove the list and all its movies.",
     "renameError": "Failed to rename. Please try again.",
-    "searchPlaceholder": "Search movies…"
+    "searchPlaceholder": "Search movies…",
+    "share": "Share List"
   },
   "common": {
     "confirmation": "Confirmation",

@@ -8,16 +8,28 @@ import Icon from "../../components/Icon";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
 import { useAppDispatch } from "../../redux/store";
 import { renameGroup, deleteGroup } from "../../redux/favourites/favourites";
+import { useGetListQuery } from "../../redux/lists/listsApi";
 import useTranslation from "../../service/useTranslation";
 
 export default function ManageGroup() {
-  const params = useLocalSearchParams<{ id: string; name: string }>();
+  const params = useLocalSearchParams<{ id: string; name: string; listType?: string }>();
   const dispatch = useAppDispatch();
   const t = useTranslation();
   const insets = useSafeAreaInsets();
 
   const [name, setName] = useState(params.name ?? "");
   const [saving, setSaving] = useState(false);
+
+  const { data: listData } = useGetListQuery(params.listType ?? "", { skip: !params.listType });
+
+  const openShare = () => {
+    const movies = (listData?.items ?? []).map((item) => ({
+      id: item.contentId,
+      imageUrl: item.content?.poster_path ?? "",
+      type: item.contentType,
+    }));
+    router.push({ pathname: "/share-selection", params: { movies: JSON.stringify(movies) } } as any);
+  };
 
   const handleSave = async () => {
     const trimmed = name.trim();
@@ -99,6 +111,13 @@ export default function ManageGroup() {
 
         <View style={styles.divider} />
 
+        {listData && listData.items.length > 0 && (
+          <Pressable style={styles.shareButton} onPress={openShare}>
+            <Icon source="share-outline" size={18} color={colors.text} />
+            <Text style={styles.shareButtonText}>{t("manage-group.share") as string}</Text>
+          </Pressable>
+        )}
+
         <Pressable style={styles.deleteButton} onPress={handleDelete}>
           <Text style={styles.deleteButtonText}>{t("manage-group.delete") as string}</Text>
         </Pressable>
@@ -168,6 +187,22 @@ const styles = StyleSheet.create({
     marginVertical: spacing.sm,
   },
 
+  shareButton: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+  },
+  shareButtonText: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.medium,
+    color: colors.text,
+  },
   deleteButton: {
     width: "100%",
     borderWidth: 1,

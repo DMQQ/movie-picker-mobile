@@ -9,24 +9,14 @@ export const MAX_SELECTION = 7;
 
 export type ShareMovie = { id: number; imageUrl: string; type: "movie" | "tv" };
 
-export function useShareSelection(movies: ShareMovie[], visible: boolean) {
+export function useShareSelection(movies: ShareMovie[]) {
   const viewShotRef = useRef<ViewShot>(null);
-  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  const [shareMovies, { data, isLoading, error, reset }] = useShareMoviesMutation();
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(
+    () => new Set(movies.slice(0, Math.min(MAX_SELECTION, movies.length)).map((m) => m.id)),
+  );
+  const [shareMovies, { data, isLoading, error }] = useShareMoviesMutation();
   const [isSharing, setIsSharing] = useState(false);
-  const prevVisibleRef = useRef(false);
   const t = useTranslation();
-
-  useEffect(() => {
-    if (visible && !prevVisibleRef.current && movies.length > 0) {
-      setSelectedIds(
-        new Set(movies.slice(0, Math.min(MAX_SELECTION, movies.length)).map((m) => m.id)),
-      );
-      reset();
-      setIsSharing(false);
-    }
-    prevVisibleRef.current = visible;
-  }, [visible, movies, reset]);
 
   const toggleSelection = useCallback((id: number) => {
     setSelectedIds((prev) => {

@@ -323,7 +323,8 @@
     "deleteTitle": "Liste löschen",
     "deleteMessage": "Die Liste und alle enthaltenen Filme werden dauerhaft gelöscht.",
     "renameError": "Umbenennen fehlgeschlagen. Bitte erneut versuchen.",
-    "searchPlaceholder": "Filme suchen…"
+    "searchPlaceholder": "Filme suchen…",
+    "share": "Liste teilen"
   },
   "common": {
     "confirmation": "Bestätigung",

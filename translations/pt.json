@@ -323,7 +323,8 @@
     "deleteTitle": "Excluir lista",
     "deleteMessage": "Isso removerá permanentemente a lista e todos os seus filmes.",
     "renameError": "Falha ao renomear. Tente novamente.",
-    "searchPlaceholder": "Buscar filmes…"
+    "searchPlaceholder": "Buscar filmes…",
+    "share": "Partilhar lista"
   },
   "common": {
     "confirmation": "Confirmação",

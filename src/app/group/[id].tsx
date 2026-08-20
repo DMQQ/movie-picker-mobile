@@ -13,7 +13,6 @@ import SafeIOSContainer from "../../components/SafeIOSContainer";
 import PlatformBlurView from "../../components/PlatformBlurView";
 import GroupScreenLayout from "../../components/Group/GroupScreenLayout";
 import OverviewModal from "../../screens/Overview/Modal";
-import ShareSelectionModal from "../../components/Group/ShareSelectionModal";
 import MoviesActionButtons from "../../components/MoviesActionButtons";
 import { colors, common, fontSize, fontWeight, radius, spacing } from "../../constants/design";
 import { useGroupData, type GroupMovie } from "../../hooks/useGroupData";
@@ -32,7 +31,6 @@ export default function Group() {
   const user = useAppSelector((s) => s.auth.user);
 
   const [match, setMatch] = useState<GroupMovie | undefined>(undefined);
-  const [shareModalVisible, setShareModalVisible] = useState(false);
   const [search, setSearch] = useState("");
 
   const movies = data?.movies ?? [];
@@ -48,7 +46,7 @@ export default function Group() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     router.push({
       pathname: "/group/manage",
-      params: { id: data?.id ?? "", name: data?.name ?? "" },
+      params: { id: data?.id ?? "", name: data?.name ?? "", listType: listType ?? "" },
     } as any);
   };
 
@@ -166,18 +164,6 @@ export default function Group() {
                   } as any);
                 }}
               />
-              {movies.length > 0 && (
-                <IconButton
-                  icon="share-outline"
-                  size={28}
-                  style={common.iconButton}
-                  iconColor={colors.text}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    setShareModalVisible(true);
-                  }}
-                />
-              )}
               <IconButton
                 icon="cog-outline"
                 size={28}
@@ -238,12 +224,6 @@ export default function Group() {
           data={fortuneMovies}
           isLoading={false}
           showHeading={!isPreview}
-          showRightIconButton={movies.length > 0}
-          rightIconName="share-outline"
-          onRightIconPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            setShareModalVisible(true);
-          }}
           renderItemFooter={(item) => renderFooter(item as GroupMovie)}
           onLongItemPress={(item) => handleRemoveItem(item.id)}
         />
@@ -256,11 +236,6 @@ export default function Group() {
           match={{ ...match, poster_path: match.imageUrl }}
         />
       )}
-      <ShareSelectionModal
-        visible={shareModalVisible}
-        onClose={() => setShareModalVisible(false)}
-        movies={movies}
-      />
       <MoviesActionButtons
         match={!!match}
         fortuneWheelMovies={fortuneMovies}

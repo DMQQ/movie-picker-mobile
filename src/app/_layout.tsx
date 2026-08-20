@@ -279,6 +279,19 @@ const RootNavigator = ({
         />
 
         <Stack.Screen
+          name="share-selection"
+          options={{
+            headerShown: false,
+            gestureEnabled: true,
+            presentation: "formSheet",
+            sheetGrabberVisible: true,
+            contentStyle: { backgroundColor: colors.surface },
+            sheetAllowedDetents: [0.85, 1.0],
+            sheetInitialDetentIndex: 0,
+          }}
+        />
+
+        <Stack.Screen
           name="unviewed-matches"
           options={{
             headerShown: false,

@@ -323,7 +323,8 @@
     "deleteTitle": "Usuń listę",
     "deleteMessage": "Spowoduje to trwałe usunięcie listy i wszystkich jej filmów.",
     "renameError": "Nie udało się zmienić nazwy. Spróbuj ponownie.",
-    "searchPlaceholder": "Szukaj filmów…"
+    "searchPlaceholder": "Szukaj filmów…",
+    "share": "Udostępnij listę"
   },
   "common": {
     "confirmation": "Potwierdzenie",
