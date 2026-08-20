@@ -128,6 +128,11 @@ export default function FavouriteGroupsScreen() {
     ? groups.filter((g) => g.name.toLowerCase().includes(query.toLowerCase()))
     : groups;
 
+  const q = query.toLowerCase();
+  const showSuperLiked = !isBulkMode && movie && (!q || (t("super-liked.title") as string).toLowerCase().includes(q));
+  const showBlocked = !isBulkMode && movie && (!q || (t("blocked.title") as string).toLowerCase().includes(q));
+  const showSystemSection = showSuperLiked || showBlocked;
+
   const handleBulkAdd = async (groupId: string) => {
     if (!pendingBulkMovies) return;
     const group = groups.find((g) => g.id === groupId);
@@ -233,42 +238,44 @@ export default function FavouriteGroupsScreen() {
                 if (isBulkMode && groupId) handleBulkAdd(groupId);
               }}
             />
-            {!isBulkMode && movie && (
+            {showSystemSection && (
               <View style={styles.systemListGroup}>
-                <Pressable
-                  style={[styles.item, { backgroundColor: isSuperLiked(movieId, movieContentType) ? "#3A3200" : colors.input }]}
-                  onPress={() =>
-                    isSuperLiked(movieId, movieContentType)
-                      ? removeSuperLike(movieId, movieContentType)
-                      : superLikeMovie(movie as any)
-                  }
-                  android_ripple={{ color: colors.border }}
-                >
-                  <MaterialCommunityIcons name="star-circle" size={22} color="#FFD700" style={styles.itemIcon} />
-                  <Text style={styles.itemText}>{t("super-liked.title")}</Text>
-                  {isSuperLiked(movieId, movieContentType) && (
-                    <MaterialCommunityIcons name="check" size={18} color="#FFD700" />
-                  )}
-                </Pressable>
-                <Pressable
-                  style={[styles.item, { backgroundColor: isBlocked(movieId, movieContentType) ? "#3A0010" : colors.input }]}
-                  onPress={() =>
-                    isBlocked(movieId, movieContentType)
-                      ? unblockMovie(movieId, movieContentType)
-                      : blockMovie(movie as any)
-                  }
-                  android_ripple={{ color: colors.border }}
-                >
-                  <MaterialCommunityIcons name="cancel" size={22} color="#FF4458" style={styles.itemIcon} />
-                  <Text style={styles.itemText}>{t("blocked.title")}</Text>
-                  {isBlocked(movieId, movieContentType) && (
-                    <MaterialCommunityIcons name="check" size={18} color="#FF4458" />
-                  )}
-                </Pressable>
+                {showSuperLiked && (
+                  <Pressable
+                    style={[styles.item, { backgroundColor: isSuperLiked(movieId, movieContentType) ? "#3A3200" : colors.input }]}
+                    onPress={() =>
+                      isSuperLiked(movieId, movieContentType)
+                        ? removeSuperLike(movieId, movieContentType)
+                        : superLikeMovie(movie as any)
+                    }
+                    android_ripple={{ color: colors.border }}
+                  >
+                    <MaterialCommunityIcons name="star-circle" size={22} color="#FFD700" style={styles.itemIcon} />
+                    <Text style={styles.itemText}>{t("super-liked.title")}</Text>
+                    {isSuperLiked(movieId, movieContentType) && (
+                      <MaterialCommunityIcons name="check" size={18} color="#FFD700" />
+                    )}
+                  </Pressable>
+                )}
+                {showBlocked && (
+                  <Pressable
+                    style={[styles.item, { backgroundColor: isBlocked(movieId, movieContentType) ? "#3A0010" : colors.input }]}
+                    onPress={() =>
+                      isBlocked(movieId, movieContentType)
+                        ? unblockMovie(movieId, movieContentType)
+                        : blockMovie(movie as any)
+                    }
+                    android_ripple={{ color: colors.border }}
+                  >
+                    <MaterialCommunityIcons name="cancel" size={22} color="#FF4458" style={styles.itemIcon} />
+                    <Text style={styles.itemText}>{t("blocked.title")}</Text>
+                    {isBlocked(movieId, movieContentType) && (
+                      <MaterialCommunityIcons name="check" size={18} color="#FF4458" />
+                    )}
+                  </Pressable>
+                )}
+                <Divider style={styles.divider} />
               </View>
-            )}
-            {!isBulkMode && movie && (
-              <Divider style={{ marginVertical: spacing.md }} />
             )}
           </>
         }
@@ -426,4 +433,5 @@ const styles = StyleSheet.create({
     gap: spacing.sm + 2,
     marginTop: spacing.sm + 2,
   },
+  divider: {},
 });
