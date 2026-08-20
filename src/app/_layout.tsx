@@ -42,6 +42,25 @@ GoogleOneTapSignIn.configure({
 
 enableFreeze(true);
 
+const platformBg = Platform.OS === "android" ? colors.surface : "transparent";
+
+function formSheet(
+  detents: number[],
+  bg: string = platformBg,
+  overrides: Record<string, unknown> = {},
+) {
+  return {
+    headerShown: false,
+    gestureEnabled: true,
+    presentation: "formSheet" as const,
+    sheetGrabberVisible: true,
+    contentStyle: { backgroundColor: bg },
+    sheetAllowedDetents: detents,
+    sheetInitialDetentIndex: 0,
+    ...overrides,
+  };
+}
+
 function RootLayout() {
   const { isLoaded, isUpdating } = useInit();
 
@@ -238,35 +257,13 @@ const RootNavigator = ({
         <Stack.Screen name="person" options={{ headerShown: false }} />
 
 
-        <Stack.Screen
-          name="favourite-groups"
-          options={{
-            headerShown: false,
-            gestureEnabled: true,
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
-            contentStyle: {
-              backgroundColor:
-                Platform.OS === "android" ? colors.surface : "transparent",
-            },
-            sheetAllowedDetents: [0.5, 0.85],
-            sheetInitialDetentIndex: 0,
-          }}
-        />
+        <Stack.Screen name="favourite-groups" options={formSheet([0.5, 0.85])} />
 
         <Stack.Screen
           name="filters"
-          options={{
-            headerShown: false,
-            gestureEnabled: true,
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
-            contentStyle: {
-              backgroundColor: colors.surface,
-            },
-            sheetAllowedDetents: [0.85, 1.0],
+          options={formSheet([0.85, 1.0], colors.surface, {
             sheetInitialDetentIndex: Platform.OS === "android" ? 1 : 0,
-          }}
+          })}
         />
 
         <Stack.Screen
@@ -278,97 +275,25 @@ const RootNavigator = ({
           }}
         />
 
-        <Stack.Screen
-          name="share-selection"
-          options={{
-            headerShown: false,
-            gestureEnabled: true,
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
-            contentStyle: { backgroundColor: colors.surface },
-            sheetAllowedDetents: [0.85, 1.0],
-            sheetInitialDetentIndex: 0,
-          }}
-        />
+        <Stack.Screen name="share-selection" options={formSheet([0.85, 1.0], colors.surface)} />
 
         <Stack.Screen
           name="unviewed-matches"
-          options={{
-            headerShown: false,
-            presentation: "formSheet",
-            gestureEnabled: true,
+          options={formSheet([0.7], platformBg, {
             sheetGrabberVisible: false,
-            contentStyle: {
-              backgroundColor:
-                Platform.OS === "android"
-                  ? colors.surface
-                  : "transparent",
-            },
-            sheetAllowedDetents: [0.7], // 70%
-            sheetInitialDetentIndex: 0,
             sheetLargestUndimmedDetentIndex: 0,
-          }}
+          })}
         />
 
-        <Stack.Screen
-          name="auth"
-          options={{
-            headerShown: false,
-            gestureEnabled: true,
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
-            contentStyle: { backgroundColor: "transparent" },
-            sheetAllowedDetents: [0.6, 0.95],
-            sheetInitialDetentIndex: 0,
-          }}
-        />
+        <Stack.Screen name="auth" options={formSheet([0.6, 0.95], "transparent")} />
 
-        <Stack.Screen
-          name="rate-movie"
-          options={{
-            headerShown: false,
-            gestureEnabled: true,
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
-            contentStyle: { backgroundColor: colors.background },
-            sheetAllowedDetents: [0.5],
-            sheetInitialDetentIndex: 0,
-          }}
-        />
+        <Stack.Screen name="rate-movie" options={formSheet([0.5], colors.background)} />
 
         <Stack.Screen name="section-movies" options={{ headerShown: false }} />
 
-        <Stack.Screen
-          name="invite-players"
-          options={{
-            headerShown: false,
-            gestureEnabled: true,
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
-            contentStyle: {
-              backgroundColor:
-                Platform.OS === "android" ? colors.surface : "transparent",
-            },
-            sheetAllowedDetents: [0.5, 0.85],
-            sheetInitialDetentIndex: 0,
-          }}
-        />
+        <Stack.Screen name="invite-players" options={formSheet([0.5, 0.85])} />
 
-        <Stack.Screen
-          name="movie-picker"
-          options={{
-            headerShown: false,
-            gestureEnabled: true,
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
-            contentStyle: {
-              backgroundColor:
-                Platform.OS === "android" ? colors.surface : "transparent",
-            },
-            sheetAllowedDetents: [0.92, 1.0],
-            sheetInitialDetentIndex: 0,
-          }}
-        />
+        <Stack.Screen name="movie-picker" options={formSheet([0.92, 1.0])} />
 
       </Stack>
     </GestureHandlerRootView>

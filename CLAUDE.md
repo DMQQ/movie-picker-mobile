@@ -537,6 +537,18 @@ router.push({ pathname: "/share-selection", params: { movies: JSON.stringify(arr
 ```
 Registered sheets: `filters`, `search-filters`, `share-selection`, `favourite-groups`, `manage`, `rate-movie`, `unviewed-matches`, `qr-scanner`, `movie-picker` (stack).
 
+**To register a new formSheet**, use the `formSheet()` helper defined at the top of `_layout.tsx`:
+```tsx
+// default bg = platform-aware (transparent iOS / colors.surface Android)
+<Stack.Screen name="my-sheet" options={formSheet([0.6, 0.95])} />
+
+// solid background
+<Stack.Screen name="my-sheet" options={formSheet([0.85, 1.0], colors.surface)} />
+
+// with overrides for one-off options
+<Stack.Screen name="my-sheet" options={formSheet([0.7], platformBg, { sheetGrabberVisible: false })} />
+```
+
 ### Lists
 
 Prefer `<FlashList>` (from `@shopify/flash-list`) over `<FlatList>` for any list longer than ~20 items — it's already in the project and significantly more performant.
