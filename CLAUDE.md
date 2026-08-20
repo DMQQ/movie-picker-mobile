@@ -454,6 +454,104 @@ Use `getUserAvatarColor(name: string)` from `src/utils/avatar.ts` — returns a 
 
 ---
 
+## Custom Components — Always Use These
+
+**Never reach for a raw React Native primitive when a custom component exists.** These are drop-in replacements with correct theming, design tokens, and platform behaviour baked in.
+
+### Core primitives
+
+| Instead of… | Use | Import path |
+|---|---|---|
+| `<Text>` from RN | `<Text>` | `components/Text` |
+| `<TextInput>` from RN | `<TextInput>` | `components/TextInput` (animated floating label, design-system styled) |
+| `<Pressable>` / `<TouchableOpacity>` | `<Touch>` | `components/Touch` (spring scale animation, `scaleTo` prop) |
+| `<ActivityIndicator>` for loading screen | `<FancySpinner>` | `components/FancySpinner` (platform-split spinner) |
+| Raw `<View style={hairline}>` divider | `<Divider>` | `components/Divider` |
+| `<View style={card}>` | `<Surface>` | `components/Surface` (card bg + border + radius) |
+
+### Buttons
+
+| Component | When to use |
+|---|---|
+| `<PrimaryButton>` | Main CTA — filled blue pill, handles loading/disabled states |
+| `<Button mode="outlined">` | Secondary action |
+| `<Button mode="text">` | Tertiary / inline action |
+| `<IconButton icon="..." size={28} style={common.iconButton}>` | Icon-only tappable — always pass `common.iconButton` for 44px tap target in headers |
+| `<Touch>` | Any custom pressable surface — wraps children, handles scale animation |
+
+`IconButton` takes `icon` (MCI icon name string or render fn), `iconColor`, `size`, `style`.  
+`Icon` (stateless display) takes `source`, `size`, `color` — same icon name convention.
+
+### Images
+
+Always use `<Thumbnail>` for movie posters/backdrops (handles TMDB URL construction, placeholder, priority):
+```tsx
+import Thumbnail, { ThumbnailSizes } from "components/Thumbnail";
+<Thumbnail path={poster_path} size={ThumbnailSizes.poster.small} />
+```
+`ThumbnailSizes.poster`: `tiny(92)`, `small(154)`, `medium(185)`, `large(300)`, `xlarge(500)`.  
+For arbitrary images: `expo-image`'s `<Image>` (already installed). Never `<Image>` from React Native.
+
+### Search
+
+```tsx
+import SearchField from "components/SearchField";
+<SearchField value={q} onChangeText={setQ} placeholder="…" style={styles.field} />
+```
+Styled, includes magnify icon and clear button. Never build a raw `TextInput` search bar.
+
+### Screen shells
+
+| Component | When to use |
+|---|---|
+| `<SafeIOSContainer style={…}>` | Root wrapper for full-screen tabs/stacks — adds top/bottom safe area + `colors.appBackground` |
+| `<PageHeading title="…" showBackButton>` | Absolute-positioned header with back button, gradient bg, and optional right actions |
+
+`PageHeading` right-side slots:
+- Single icon: `showRightIconButton rightIconName="plus" onRightIconPress={fn}`
+- Multiple icons or custom: pass as `children` — renders a `<PlatformBlurView interactive style={styles.headerActions}>` containing `<IconButton>`s (use `size={28} style={common.iconButton}` to match back button)
+
+### Overlays & sheets
+
+| Component | When to use |
+|---|---|
+| `<PlatformBlurView interactive>` | Frosted-glass pill/card for header actions; iOS 26 = Liquid Glass, older = BlurView, Android = solid surface |
+| `<UserInputModal visible title actions>` | Confirm/input dialogs — has title, optional children, action buttons row |
+| `<SegmentedControl options value onChange>` | Tab-style switch between two or more options |
+
+`UserInputModal` actions shape: `[{ label, onPress, mode: "outlined"|"contained" }]`.
+
+### Chips & selection
+
+```tsx
+import Chip from "components/Chip";
+<Chip selected={active} onPress={fn} icon="star">Label</Chip>
+```
+Props: `selected`, `contained`, `removable`, `showSelectedCheck`, `icon`, `image`.
+
+### Navigation helpers
+
+All formSheet screens are registered in `src/app/_layout.tsx`. To navigate to one:
+```tsx
+router.push({ pathname: "/share-selection", params: { movies: JSON.stringify(arr) } } as any);
+```
+Registered sheets: `filters`, `search-filters`, `share-selection`, `favourite-groups`, `manage`, `rate-movie`, `unviewed-matches`, `qr-scanner`, `movie-picker` (stack).
+
+### Lists
+
+Prefer `<FlashList>` (from `@shopify/flash-list`) over `<FlatList>` for any list longer than ~20 items — it's already in the project and significantly more performant.
+
+### Common pitfalls
+
+- **Never** use `<Modal>` from React Native directly — use formSheet navigation or `<UserInputModal>` for dialogs.
+- **Never** use `<TouchableOpacity>` or `<TouchableHighlight>` — use `<Touch>` or `<IconButton>`.
+- **Never** use `<Image>` from React Native — use `<Thumbnail>` or `expo-image`'s `<Image>`.
+- **Never** write a custom `<TextInput>` with a floating label — use the project's `<TextInput>` component which already does this.
+- **Never** hardcode colors or spacing inline — always `colors.*`, `spacing.*`, `radius.*` from `design.ts`.
+- For hairline separators, use `<Divider>` or `borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border`.
+
+---
+
 ## Behavioral Guidelines
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
