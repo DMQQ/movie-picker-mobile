@@ -15,7 +15,7 @@ import GroupScreenLayout from "../../components/Group/GroupScreenLayout";
 import OverviewModal from "../../screens/Overview/Modal";
 import ShareSelectionModal from "../../components/Group/ShareSelectionModal";
 import MoviesActionButtons from "../../components/MoviesActionButtons";
-import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
+import { colors, common, fontSize, fontWeight, radius, spacing } from "../../constants/design";
 import { useGroupData, type GroupMovie } from "../../hooks/useGroupData";
 import useTranslation from "../../service/useTranslation";
 import { useAppSelector } from "../../redux/store";
@@ -155,7 +155,8 @@ export default function Group() {
             <PlatformBlurView interactive style={styles.headerActions}>
               <IconButton
                 icon="plus"
-                size={22}
+                size={28}
+                style={common.iconButton}
                 iconColor={colors.text}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -168,7 +169,8 @@ export default function Group() {
               {movies.length > 0 && (
                 <IconButton
                   icon="share-outline"
-                  size={22}
+                  size={28}
+                  style={common.iconButton}
                   iconColor={colors.text}
                   onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -178,7 +180,8 @@ export default function Group() {
               )}
               <IconButton
                 icon="cog-outline"
-                size={22}
+                size={28}
+                style={common.iconButton}
                 iconColor={colors.text}
                 onPress={openManageSheet}
               />
