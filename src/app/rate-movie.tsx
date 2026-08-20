@@ -1,23 +1,17 @@
 import { useEffect, useState } from "react";
-import Text from "../components/Text";
-import TextInput from "../components/TextInput";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  View,
-} from "react-native";
-
-import Button from "../components/Button";
-import PrimaryButton from "../components/PrimaryButton";
+import { Pressable, StyleSheet, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
+import FormSheetContainer from "../components/FormSheetContainer";
+import Text from "../components/Text";
+import TextInput from "../components/TextInput";
+import Button from "../components/Button";
+import PrimaryButton from "../components/PrimaryButton";
+import { colors, spacing } from "../constants/design";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { rateInGroup } from "../redux/favourites/favourites";
 import { useUpsertRatingMutation, useGetMyRatingQuery, useDeleteRatingMutation } from "../redux/ratings/ratingsApi";
 import { usePatchItemMutation } from "../redux/lists/listsApi";
-import { colors, spacing } from "../constants/design";
 import useTranslation from "../service/useTranslation";
 
 export default function RateMovieScreen() {
@@ -66,7 +60,6 @@ export default function RateMovieScreen() {
 
   const handleSave = async () => {
     if (!canSave) return;
-
     if (user && user.provider !== "anonymous") {
       await upsertRating({
         contentType: params.contentType,
@@ -75,44 +68,19 @@ export default function RateMovieScreen() {
         review: review.trim() || null,
       });
       if (params.itemId) {
-        await patchItem({
-          itemId: params.itemId,
-          listType: params.listType,
-          rating,
-          review: review.trim() || null,
-        });
+        await patchItem({ itemId: params.itemId, listType: params.listType, rating, review: review.trim() || null });
       }
     } else if (params.groupId) {
-      dispatch(rateInGroup({
-        groupId: params.groupId,
-        movieId: Number(params.movieId),
-        rating,
-        review: review.trim() || null,
-      }));
+      dispatch(rateInGroup({ groupId: params.groupId, movieId: Number(params.movieId), rating, review: review.trim() || null }));
     }
-
     router.back();
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <View style={styles.header}>
-        <Text style={styles.title}>{t("ratings.rateTitle") as string}</Text>
-        <Pressable onPress={() => router.back()} hitSlop={10}>
-          <MaterialCommunityIcons name="close" size={20} color={colors.placeholder} />
-        </Pressable>
-      </View>
-
+    <FormSheetContainer title={t("ratings.rateTitle") as string} keyboard padX={spacing.xxl}>
       <View style={styles.stars}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
-          <Pressable
-            key={star}
-            onPress={() => setRating(rating === star ? null : star)}
-            hitSlop={6}
-          >
+          <Pressable key={star} onPress={() => setRating(rating === star ? null : star)} hitSlop={6}>
             <MaterialCommunityIcons
               name={rating !== null && star <= rating ? "star" : "star-outline"}
               size={28}
@@ -133,7 +101,7 @@ export default function RateMovieScreen() {
 
       <View style={styles.actions}>
         {existingRating && (
-          <Button mode="text" onPress={handleDelete} textColor="#E5484D">
+          <Button mode="text" onPress={handleDelete} textColor={colors.error}>
             {t("ratings.deleteRating") as string}
           </Button>
         )}
@@ -141,27 +109,11 @@ export default function RateMovieScreen() {
           {t("overview.save-list") as string}
         </PrimaryButton>
       </View>
-    </KeyboardAvoidingView>
+    </FormSheetContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: spacing.xxl,
-    paddingTop: spacing.xxl,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: spacing.xxl,
-  },
-  title: {
-    fontSize: 22,
-    fontFamily: "Bebas",
-    letterSpacing: 0.5,
-  },
   stars: {
     flexDirection: "row",
     gap: spacing.sm - 2,

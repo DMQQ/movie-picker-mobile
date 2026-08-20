@@ -537,6 +537,25 @@ router.push({ pathname: "/share-selection", params: { movies: JSON.stringify(arr
 ```
 Registered sheets: `filters`, `search-filters`, `share-selection`, `favourite-groups`, `manage`, `rate-movie`, `unviewed-matches`, `qr-scanner`, `movie-picker` (stack).
 
+**Every formSheet screen must use `FormSheetContainer` as its root** (`components/FormSheetContainer`). It handles: Android grabber pill, iOS top padding, title + close button header, bottom safe area, optional scroll + keyboard-avoid.
+
+```tsx
+import FormSheetContainer from "../components/FormSheetContainer";
+
+// basic — just safe area + android grabber
+<FormSheetContainer>{children}</FormSheetContainer>
+
+// with title and close button (renders header row automatically)
+<FormSheetContainer title="Manage List">{children}</FormSheetContainer>
+
+// scrollable sheet with text inputs
+<FormSheetContainer title="Rate Movie" scroll keyboard padX={spacing.xxl}>
+  {children}
+</FormSheetContainer>
+```
+
+Props: `title?` (string — shows header row with close button), `onClose?` (default: `router.back()`), `scroll?` (bool), `keyboard?` (bool, wraps KeyboardAvoidingView), `padX?` (number, default `spacing.lg`), `style?`.
+
 **To register a new formSheet**, use the `formSheet()` helper defined at the top of `_layout.tsx`:
 ```tsx
 // default bg = platform-aware (transparent iOS / colors.surface Android)
