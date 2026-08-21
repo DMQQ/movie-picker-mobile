@@ -322,6 +322,7 @@
     "delete": "Usuń listę",
     "deleteTitle": "Usuń listę",
     "deleteMessage": "Spowoduje to trwałe usunięcie listy i wszystkich jej filmów.",
+    "deleteWarning": "Tej operacji nie można cofnąć.",
     "renameError": "Nie udało się zmienić nazwy. Spróbuj ponownie.",
     "searchPlaceholder": "Szukaj filmów…",
     "share": "Udostępnij listę"

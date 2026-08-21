@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { LayoutChangeEvent, StyleSheet, View } from "react-native";
-import Animated, { Easing, FadeIn, FadeInLeft, FadeInRight, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from "react-native-reanimated";
+import Animated, { Easing, FadeIn, FadeInLeft, FadeInRight, FadeOut, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -11,13 +11,12 @@ import MatchupCard from "./MatchupCard";
 import CountdownBar from "./CountdownBar";
 import RoundPips from "./RoundPips";
 import ActivePlayers from "./ActivePlayers";
-import AvatarText from "../AvatarText";
+import UserAvatar from "../UserAvatar";
 import TieOverlay from "./TieOverlay";
 import useEitherOrContext from "../../context/EitherOrContext";
 import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
 import { colors, fontSize, fontWeight, radius, spacing, typography, withAlpha } from "../../constants/design";
-import { getUserAvatarColor, getInitials } from "../../utils/avatar";
 import { prefetchThumbnails } from "../../utils/prefetchImages";
 import type { Side } from "../../redux/eitherOr/eitherOrSlice";
 
@@ -43,12 +42,8 @@ export default function Matchup() {
     setDuelSize({ width, height });
   };
 
-  // onLayout reports the duel View's border-box size, so its own padding must be
-  // subtracted to get the content box the cards actually have to fit in.
   const contentWidth = duelSize.width > 0 ? duelSize.width - spacing.sm * 2 : 0;
   const cardWidth = contentWidth > 0 ? contentWidth / 2 : 0;
-  // Drive height from available vertical space so cards fill the screen.
-  // Fall back to natural poster ratio when height isn't measured yet.
   const cardHeight = cardWidth * (4 / 3);
 
   const vsScale = useSharedValue(1);
@@ -65,8 +60,6 @@ export default function Matchup() {
     transform: [{ scale: vsScale.value }],
   }));
 
-  // Nudge the player once the clock is running out on an undecided vote — one
-  // buzz with a few seconds left, a stronger one right before it expires.
   useEffect(() => {
     if (!currentMatch || votedSide !== null || isRevealing) return;
 
@@ -136,25 +129,23 @@ export default function Matchup() {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Blurred split-screen background */}
       <View style={StyleSheet.absoluteFill} pointerEvents="none">
         <Image
           source={{ uri: `https://image.tmdb.org/t/p/w300${currentMatch.champion.poster_path}` }}
-          blurRadius={28}
+          blurRadius={45}
           contentFit="cover"
           cachePolicy="memory-disk"
           style={[StyleSheet.absoluteFill, { right: "50%" }]}
         />
         <Image
           source={{ uri: `https://image.tmdb.org/t/p/w300${currentMatch.challenger.poster_path}` }}
-          blurRadius={28}
+          blurRadius={45}
           contentFit="cover"
           cachePolicy="memory-disk"
           style={[StyleSheet.absoluteFill, { left: "50%" }]}
         />
-        {/* Feather the seam between the two halves */}
         <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.55)", "transparent"]}
+          colors={["transparent", "rgba(0,0,0,0.8)", "transparent"]}
           start={{ x: 0, y: 0.5 }}
           end={{ x: 1, y: 0.5 }}
           style={[StyleSheet.absoluteFill, styles.bgSeam]}
@@ -184,13 +175,11 @@ export default function Matchup() {
         </View>
       </View>
 
-      {/* Full-width progress bar pinned to screen bottom */}
       <View style={styles.bottomBar} pointerEvents="none">
         <CountdownBar startedAt={currentMatch.startedAt} countdownMs={currentMatch.countdownMs} frozen={isRevealing} />
       </View>
 
       <View style={styles.duel} onLayout={onDuelLayout}>
-        {/* Top space: vote percentages animate in after voting */}
         <View style={styles.duelTop}>
           {hasVoted && (
             <Animated.View entering={FadeIn.duration(400)} style={styles.votePercentRow}>
@@ -202,7 +191,7 @@ export default function Matchup() {
 
         {cardWidth > 0 && (
           <View style={styles.cardsRow}>
-            <Animated.View key={`champ-${matchKey}`} entering={FadeInLeft.duration(350).easing(Easing.out(Easing.cubic))}>
+            <Animated.View key={`champ-${matchKey}`} entering={FadeInLeft.duration(350).easing(Easing.out(Easing.cubic))} exiting={FadeOut.duration(150)}>
               <View style={styles.champTilt}>
                 <MatchupCard
                   movie={currentMatch.champion}
@@ -224,7 +213,7 @@ export default function Matchup() {
               </View>
             </Animated.View>
 
-            <Animated.View key={`chal-${matchKey}`} entering={FadeInRight.duration(350).easing(Easing.out(Easing.cubic))}>
+            <Animated.View key={`chal-${matchKey}`} entering={FadeInRight.duration(350).easing(Easing.out(Easing.cubic))} exiting={FadeOut.duration(150)}>
               <View style={styles.chalTilt}>
                 <MatchupCard
                   movie={currentMatch.challenger}
@@ -257,10 +246,9 @@ export default function Matchup() {
               const voted = votedUserIds.includes(user.userId);
               return (
                 <View key={user.userId} style={styles.playerSlot}>
-                  <AvatarText
+                  <UserAvatar
+                    name={user.username || "?"}
                     size={30}
-                    label={getInitials(user.username || "?")}
-                    style={{ backgroundColor: getUserAvatarColor(user.username) }}
                   />
                   <View style={[styles.votedDot, voted ? styles.votedDotYes : styles.votedDotNo]}>
                     <MaterialCommunityIcons
@@ -345,8 +333,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.78)",
   },
   bgSeam: {
-    left: "42%",
-    right: "42%",
+    left: "20%",
+    right: "20%",
   },
   duel: {
     flex: 1,

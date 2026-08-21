@@ -61,6 +61,7 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
           nickname: nicknameRef.current || "guest",
           userId: userIdRef.current,
         };
+        console.log("Creating room with payload:", payload);
         const response = await socket.timeout(10000).emitWithAck("create-room", payload);
 
         if (!response?.roomId) {
@@ -69,6 +70,7 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
         }
 
         dispatch(eitherOrActions.setRoomId(response.roomId));
+        dispatch(eitherOrActions.setIsHost(true));
         return response.roomId as string;
       } catch (error) {
         posthog?.captureException(error, { context: "either_or_create" });
@@ -82,26 +84,39 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
   const joinRoom = useCallback(
     async (targetRoomId: string) => {
       if (!socket) {
+        console.log("[EitherOr] joinRoom: no socket → setJoinError", { targetRoomId });
         dispatch(eitherOrActions.setJoinError(true));
         return false;
       }
 
+      console.log("[EitherOr] joinRoom: attempting", { targetRoomId, socketId: socket.id, connected: socket.connected });
       dispatch(eitherOrActions.setJoining(true));
       dispatch(eitherOrActions.setJoinError(false));
 
       try {
         const response = await socket
           .timeout(10000)
-          .emitWithAck("join-room", targetRoomId, nicknameRef.current || "guest", userIdRef.current);
+          .emitWithAck("join-room", targetRoomId, nicknameRef.current || "guest");
+
+        console.log("[EitherOr] joinRoom: response", response);
 
         if (!response?.joined) {
+          console.log("[EitherOr] joinRoom: server rejected → setJoinError", { response });
           dispatch(eitherOrActions.setJoinError(true));
           return false;
         }
 
         dispatch(eitherOrActions.setRoomId(response.roomId));
+        dispatch(eitherOrActions.setIsHost(false));
         return true;
       } catch (error) {
+        // Server sometimes sends room:state without calling the ack — if roomId
+        // is already set it means the join succeeded despite the timeout.
+        if (roomIdRef.current === targetRoomId) {
+          console.log("[EitherOr] joinRoom: ack timed out but room:state already arrived — join OK");
+          return true;
+        }
+        console.log("[EitherOr] joinRoom: exception → setJoinError", error);
         posthog?.captureException(error, { context: "either_or_join" });
         dispatch(eitherOrActions.setJoinError(true));
         return false;
@@ -129,25 +144,40 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
   const leaveRoom = useCallback(() => {
     if (!socket || !roomIdRef.current) return;
     socket.emit("leave-room", roomIdRef.current);
+    dispatch(eitherOrActions.reset());
+  }, [socket, dispatch]);
+
+  const rejoin = useCallback(() => {
+    if (!socket || !roomIdRef.current) return;
+    socket
+      .timeout(10000)
+      .emitWithAck("join-room", roomIdRef.current, nicknameRef.current || "guest")
+      .catch((error) => {
+        posthog?.captureException(error, { context: "either_or_reconnect" });
+      });
   }, [socket]);
 
-  // Rejoin on socket reconnect — the server just re-attaches the socket to the
-  // existing user, no state is lost.
+  // Rejoin on socket.io internal reconnect (same socket object, network blip).
   useEffect(() => {
     if (!emitter || !socket || !roomId) return;
+    emitter.on("reconnected", rejoin);
+    return () => emitter.off("reconnected", rejoin);
+  }, [emitter, socket, roomId, rejoin]);
 
-    const onReconnected = () => {
-      socket
-        .timeout(10000)
-        .emitWithAck("join-room", roomId, nicknameRef.current || "guest")
-        .catch((error) => {
-          posthog?.captureException(error, { context: "either_or_reconnect" });
-        });
-    };
-
-    emitter.on("reconnected", onReconnected);
-    return () => emitter.off("reconnected", onReconnected);
-  }, [emitter, socket, roomId]);
+  // Rejoin when the socket is fully reinitialized (SocketProvider deps changed —
+  // authToken, userId, language). wasConnected resets to false in that case so
+  // the emitter never fires; detect it by watching for a new socket object.
+  const prevSocketRef = useRef<typeof socket | null>(null);
+  useEffect(() => {
+    if (!socket || !roomId) {
+      prevSocketRef.current = socket;
+      return;
+    }
+    if (prevSocketRef.current !== null && prevSocketRef.current !== socket) {
+      rejoin();
+    }
+    prevSocketRef.current = socket;
+  }, [socket, roomId, rejoin]);
 
   useEffect(() => {
     if (!socket) return;
@@ -155,7 +185,13 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
     const handleRoomState = (data: any) => {
       if (!data) return;
       dispatch(eitherOrActions.setRoomState(data));
-      dispatch(eitherOrActions.setIsHost(data.host === userIdRef.current));
+      const isHostNow = data.host === userIdRef.current;
+      dispatch(eitherOrActions.setIsHost(isHostNow));
+      console.log("room:state event:", {
+        serverHost: data.host,
+        clientUserId: userIdRef.current,
+        isHost: isHostNow,
+      });
     };
 
     const handleActive = (nicks: string[]) => {

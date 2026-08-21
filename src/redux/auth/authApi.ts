@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { baseUrl } from "../../context/SocketContext";
 import { AuthUser, authActions } from "./authSlice";
+import { setUserId } from "../app/appSlice";
 import prepareHeaders from "../../service/prepareHeaders";
 import { createReportingBaseQuery } from "../baseQuery";
 import { posthog } from "../../constants/posthog";
@@ -29,6 +30,10 @@ interface DeviceUpdate {
   notificationsEnabled: boolean;
 }
 
+const saveAuthUserId = (dispatch: any, user: AuthUser) => {
+  dispatch(setUserId(user.id));
+};
+
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: createReportingBaseQuery("auth", fetchBaseQuery({
@@ -42,6 +47,7 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
+          await saveAuthUserId(dispatch, data.user);
           posthog?.capture("sign_in", { provider: "email" });
         } catch (err) {
           posthog?.captureException(err, { auth: "login" });
@@ -54,6 +60,7 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials({ token: data.token, refreshToken: data.refreshToken, user: data.user }));
+          await saveAuthUserId(dispatch, data.user);
           posthog?.capture("sign_up_completed", { provider: "email" });
         } catch (err) {
           posthog?.captureException(err, { auth: "register" });
@@ -66,6 +73,7 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
+          await saveAuthUserId(dispatch, data.user);
           posthog?.capture("sign_in", { provider: "google" });
         } catch (err) {
           posthog?.captureException(err, { auth: "google" });
@@ -81,6 +89,7 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
+          await saveAuthUserId(dispatch, data.user);
           posthog?.capture("sign_in", { provider: "apple" });
         } catch (err) {
           posthog?.captureException(err, { auth: "apple" });
@@ -104,6 +113,7 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
+          await saveAuthUserId(dispatch, data.user);
           posthog?.capture("sign_in", { provider: "recovery" });
         } catch (err) {
           posthog?.captureException(err, { auth: "recover" });
@@ -125,6 +135,7 @@ export const authApi = createApi({
         try {
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
+          await saveAuthUserId(dispatch, data.user);
         } catch (err) {
           posthog?.captureException(err, { auth: "refresh" });
         }

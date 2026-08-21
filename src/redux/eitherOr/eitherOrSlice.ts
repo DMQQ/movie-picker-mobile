@@ -45,6 +45,8 @@ export interface RoundHistoryEntry {
   loser: Movie;
   loserVotes: number;
   tally: RoundTally;
+  winnerSide: Side;
+  votes: Record<string, Side>;
 }
 
 export interface MatchResultEntry {
@@ -77,6 +79,7 @@ const initialState = {
   top3: [] as Movie[],
   history: [] as RoundHistoryEntry[],
   matchResults: [] as MatchResultEntry[],
+  players: [] as { userId: string; username: string }[],
   gameEnded: false,
 };
 
@@ -164,11 +167,12 @@ const eitherOrSlice = createSlice({
 
     gameComplete(
       state,
-      { payload }: { payload: { champion: Movie; top3: Movie[]; history: RoundHistoryEntry[] } },
+      { payload }: { payload: { champion: Movie; top3: Movie[]; history: RoundHistoryEntry[]; players?: { userId: string; username: string }[] } },
     ) {
       state.champion = payload.champion;
       state.top3 = payload.top3;
       state.history = payload.history;
+      if (payload.players) state.players = payload.players;
       state.matchResults = payload.history.map((h) => ({
         roundNumber: h.roundNumber,
         matchIndex: h.matchIndex,

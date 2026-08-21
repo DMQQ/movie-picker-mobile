@@ -88,16 +88,19 @@ export default function ManageGroup() {
 
       <Divider style={styles.divider} />
 
-      {listData && listData.items.length > 0 && (
-        <Pressable style={styles.shareButton} onPress={openShare}>
-          <Icon source="share-outline" size={18} color={colors.text} />
-          <Text style={styles.shareButtonText}>{t("manage-group.share") as string}</Text>
-        </Pressable>
-      )}
+      <View style={styles.actions}>
+        {listData && listData.items.length > 0 && (
+          <Pressable style={styles.shareButton} onPress={openShare}>
+            <Icon source="share-outline" size={18} color={colors.text} />
+            <Text style={styles.shareButtonText}>{t("manage-group.share") as string}</Text>
+          </Pressable>
+        )}
 
-      <Pressable style={styles.deleteButton} onPress={handleDelete}>
-        <Text style={styles.deleteButtonText}>{t("manage-group.delete") as string}</Text>
-      </Pressable>
+        <Pressable style={styles.deleteButton} onPress={handleDelete}>
+          <Text style={styles.deleteButtonText}>{t("manage-group.delete") as string}</Text>
+        </Pressable>
+        <Text style={styles.deleteWarning}>{t("manage-group.deleteWarning") as string}</Text>
+      </View>
     </FormSheetContainer>
   );
 }
@@ -119,6 +122,9 @@ const styles = StyleSheet.create({
   },
   saveButtonDisabled: { opacity: 0.5 },
   divider: { marginVertical: spacing.sm },
+  actions: {
+    gap: spacing.lg,
+  },
   shareButton: {
     width: "100%",
     flexDirection: "row",
@@ -148,5 +154,10 @@ const styles = StyleSheet.create({
     fontSize: fontSize.md,
     fontWeight: fontWeight.medium,
     color: colors.error,
+  },
+  deleteWarning: {
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
+    textAlign: "center",
   },
 });

@@ -1,10 +1,9 @@
 import { StyleSheet, View } from "react-native";
-import AvatarText from "../AvatarText";
+import UserAvatar from "../UserAvatar";
 import Text from "../Text";
 import { colors, fontWeight, fontSize, radius, spacing} from "../../constants/design";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { getUserAvatarColor, getInitials } from "../../utils/avatar";
 import useTranslation from "../../service/useTranslation";
 import { IGameSummary } from "./types";
 
@@ -21,15 +20,11 @@ export default function PlayerPerformance({
         {users.map((user, index) => (
           <View key={index} style={styles.chip}>
             <View style={styles.avatarWrap}>
-              <AvatarText
+              <UserAvatar
+                name={user.username || "U"}
                 size={28}
-                label={getInitials(user.username || "U")}
-                color={colors.text}
-                style={{
-                  borderWidth: 1.5,
-                  borderColor: "rgba(255,255,255,0.4)",
-                  backgroundColor: getUserAvatarColor(user.username),
-                }}
+                borderWidth={1.5}
+                borderColor="rgba(255,255,255,0.4)"
               />
               <View
                 style={[

@@ -36,8 +36,6 @@ export default function MatchupCard({ movie, side, votes, totalVotes, votedSide,
       dim.value = withTiming(0, { duration: 200 });
     } else if (outcome === "lost") {
       scale.value = withTiming(0.94, exitCfg);
-      // Fade a card the player picked themselves less — it lost the room vote,
-      // but blacking out their own choice the same as an unpicked card reads as broken.
       dim.value = withTiming(votedSide === side ? 0.2 : 0.55, exitCfg);
     } else {
       scale.value = withTiming(1, { duration: 150, easing: Easing.out(Easing.cubic) });
@@ -69,9 +67,6 @@ export default function MatchupCard({ movie, side, votes, totalVotes, votedSide,
   const barFillStyle = useAnimatedStyle(() => ({ width: `${barWidth.value}%` }));
   const votedRowStyle = useAnimatedStyle(() => ({ opacity: votedRowOpacity.value }));
 
-  // Border marks "this is your pick" for the whole vote → reveal flow, not just
-  // pre-reveal — losing the marker the instant the round resolves reads as the
-  // card just going dark for no reason.
   const isPicked = isMySide;
   const showPickedBadge = isMySide && !outcome;
 

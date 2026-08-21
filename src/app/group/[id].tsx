@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { FlatList, Pressable, StyleSheet, TextInput, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import SearchField from "../../components/SearchField";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useIsPreview } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -185,14 +186,12 @@ export default function Group() {
             ItemSeparatorComponent={() => <View style={styles.separator} />}
             ListHeaderComponent={
               <View>
-                <TextInput
+                <SearchField
                   value={search}
                   onChangeText={setSearch}
                   placeholder={t("manage-group.searchPlaceholder") as string}
-                  placeholderTextColor="rgba(255,255,255,0.3)"
-                  style={styles.searchInput}
                   returnKeyType="search"
-                  clearButtonMode="while-editing"
+                  style={styles.searchInput}
                 />
                 {movies.length > 0 && (
                   <Text style={styles.countLabel}>
@@ -262,12 +261,6 @@ const styles = StyleSheet.create({
 
   searchInput: {
     marginTop: spacing.xxl * 3,
-    backgroundColor: colors.overlay,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm + 2,
-    color: colors.text,
-    fontSize: fontSize.md,
   },
 
   countLabel: {

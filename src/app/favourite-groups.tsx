@@ -5,14 +5,14 @@ import { router, useLocalSearchParams } from "expo-router";
 import { memo, useState } from "react";
 import {
   FlatList,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
-  TextInput as RNTextInput,
   View,
 } from "react-native";
+import FormSheetContainer from "../components/FormSheetContainer";
 import TextInput from "../components/TextInput";
+import SearchField from "../components/SearchField";
 
 import {
   addManyToGroup,
@@ -187,43 +187,18 @@ export default function FavouriteGroupsScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
-  return (
-    <View style={styles.container} collapsable={false}>
-      <View style={styles.header} collapsable={false}>
-        {Platform.OS === "android" && <View style={styles.grabber} />}
-        <Text style={styles.title}>
-          {isBulkMode
-            ? t("favourites.saveTo")
-            : <>{t("quick-actions.modal")}{" "}<Text style={styles.movieTitle}>{movieTitle || movieName}</Text></>
-          }
-        </Text>
+  const title = isBulkMode
+    ? t("favourites.saveTo")
+    : `${t("quick-actions.modal")} ${movieTitle || movieName}`;
 
-        <View style={styles.searchRow}>
-          <MaterialCommunityIcons
-            name="magnify"
-            size={20}
-            color={colors.placeholder}
-            style={styles.searchIcon}
-          />
-          <RNTextInput
-            style={styles.searchInput}
-            placeholder={t("favourites.searchPlaceholder")}
-            placeholderTextColor={colors.placeholder}
-            value={query}
-            onChangeText={setQuery}
-            autoCorrect={false}
-          />
-          {query.length > 0 && (
-            <Pressable onPress={() => setQuery("")} style={styles.clearBtn}>
-              <MaterialCommunityIcons
-                name="close-circle"
-                size={18}
-                color={colors.placeholder}
-              />
-            </Pressable>
-          )}
-        </View>
-      </View>
+  return (
+    <FormSheetContainer title={title as string}>
+      <SearchField
+        value={query}
+        onChangeText={setQuery}
+        placeholder={t("favourites.searchPlaceholder") as string}
+        style={styles.searchRow}
+      />
 
       <FlatList
         data={filtered}
@@ -311,61 +286,13 @@ export default function FavouriteGroupsScreen() {
         }}
         ListFooterComponent={<SignUpNudgeBanner />}
       />
-    </View>
+    </FormSheetContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    paddingHorizontal: spacing.xl,
-    ...Platform.select({
-      ios: { paddingTop: spacing.xxl + 1 },
-    }),
-  },
-  grabber: {
-    width: 36,
-    height: 4,
-    borderRadius: radius.xs - 2,
-    backgroundColor: "#555",
-    alignSelf: "center",
-    marginTop: spacing.md,
-    marginBottom: spacing.screen,
-  },
-  header: {
-    flexShrink: 0,
-  },
-  title: {
-    color: colors.text,
-    fontSize: 26,
-    fontFamily: "Bebas",
-    marginBottom: spacing.lg + 2,
-  },
-  movieTitle: {
-    color: colors.primary,
-  },
   searchRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
     marginBottom: spacing.lg,
-    height: 46,
-    borderWidth: 1,
-    borderColor: colors.disabled,
-  },
-  searchIcon: {
-    marginRight: spacing.sm,
-  },
-  searchInput: {
-    flex: 1,
-    color: colors.text,
-    fontSize: fontSize.md + 1,
-  },
-  clearBtn: {
-    padding: spacing.xs,
   },
   list: {
     gap: spacing.sm + 2,

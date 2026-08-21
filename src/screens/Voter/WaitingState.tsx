@@ -36,8 +36,12 @@ export default function WaitingState({
   actions,
 }: Props) {
   const t = useTranslation();
-  const allReady = users.length > 0 && users.every((u) => u.ready);
   const currentUserReady = users.find((u) => u.userId === currentUserId)?.ready;
+
+  const handleHostStart = () => {
+    if (!currentUserReady) handleReady();
+    actions.startSession();
+  };
 
   return (
     <Animated.View
@@ -89,12 +93,12 @@ export default function WaitingState({
                 {""}
               </Button>
 
-              {!currentUserReady && (
+              {!isHost && !currentUserReady && (
                 <PrimaryButton style={{ flex: 1 }} onPress={handleReady}>{t("voter.home.ready-status")}</PrimaryButton>
               )}
 
-              {allReady && isHost && (
-                <PrimaryButton style={{ flex: 1 }} disabled={loadingInitialContent} loading={loadingInitialContent} onPress={actions.startSession}>
+              {isHost && (
+                <PrimaryButton style={{ flex: 1 }} disabled={loadingInitialContent} loading={loadingInitialContent} onPress={handleHostStart}>
                   {t("voter.home.start")}
                 </PrimaryButton>
               )}

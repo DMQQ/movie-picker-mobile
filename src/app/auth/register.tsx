@@ -2,12 +2,13 @@ import * as AppleAuthentication from "expo-apple-authentication";
 import Icon from "../../components/Icon";
 import Text from "../../components/Text";
 import TextInput from "../../components/TextInput";
+import FormSheetContainer from "../../components/FormSheetContainer";
 import { colors, fontWeight, fontSize, radius, spacing, typography} from "../../constants/design";
 import { Link, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import AsyncStorage from "expo-sqlite/kv-store";
-import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 
 import PrimaryButton from "../../components/PrimaryButton";
 import { useRegisterMutation } from "../../redux/auth/authApi";
@@ -73,117 +74,107 @@ export default function RegisterScreen() {
   }
 
   return (
-    <View style={styles.root}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          {Platform.OS === "android" && <View style={styles.grabber} />}
+    <FormSheetContainer scroll keyboard padX={spacing.xxl}>
+      <FadeSlide delay={0}>
+        <View style={[styles.header, { paddingTop: spacing.xxl }]}>
+          <Image source={require("../../../assets/images/icon-light.png")} style={styles.logo} />
+          <Text style={styles.title}>{t("auth.createAccount")}</Text>
+        </View>
+      </FadeSlide>
 
-          <FadeSlide delay={0}>
-            <View style={styles.header}>
-              <Image source={require("../../../assets/images/icon-light.png")} style={styles.logo} />
-              <Text style={styles.title}>{t("auth.createAccount")}</Text>
-            </View>
-          </FadeSlide>
+      <FadeSlide key={showEmailForm ? "email" : "providers"} delay={160}>
+        {showEmailForm ? (
+          <>
+            <Text style={styles.subtitle}>{t("auth.signUpWithEmail")}</Text>
 
-          <FadeSlide key={showEmailForm ? "email" : "providers"} delay={160}>
-            {showEmailForm ? (
-              <>
-                <Text style={styles.subtitle}>{t("auth.signUpWithEmail")}</Text>
+            <Pressable onPress={() => { setShowEmailForm(false); setErrors({}); }} style={styles.backBtn} hitSlop={10}>
+              <Icon source="arrow-left" size={18} color="rgba(255,255,255,0.6)" />
+              <Text style={styles.backText}>{t("auth.back")}</Text>
+            </Pressable>
 
-                <Pressable onPress={() => { setShowEmailForm(false); setErrors({}); }} style={styles.backBtn} hitSlop={10}>
-                  <Icon source="arrow-left" size={18} color="rgba(255,255,255,0.6)" />
-                  <Text style={styles.backText}>{t("auth.back")}</Text>
-                </Pressable>
-
-                {errors.form && (
-                  <View style={styles.formError}>
-                    <Text style={styles.formErrorText}>{errors.form}</Text>
-                  </View>
-                )}
-
-                <View style={styles.fields}>
-                  <TextInput label={t("auth.nameLabel")} value={name}
-                    onChangeText={(v) => { setName(v); setErrors((e) => ({ ...e, name: undefined, form: undefined })); }}
-                    autoCapitalize="words" returnKeyType="next"
-                    outlineStyle={styles.inputOutline} error={!!errors.name}
-                  />
-                  {errors.name && <Text style={styles.fieldError}>{errors.name}</Text>}
-
-                  <TextInput label={t("auth.emailLabel")} value={email}
-                    onChangeText={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: undefined, form: undefined })); }}
-                    autoCapitalize="none" keyboardType="email-address" autoCorrect={false}
-                    returnKeyType="next" outlineStyle={styles.inputOutline} error={!!errors.email}
-                  />
-                  {errors.email && <Text style={styles.fieldError}>{errors.email}</Text>}
-
-                  <TextInput label={t("auth.passwordLabel")} value={password}
-                    onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, confirmPassword: undefined, form: undefined })); }}
-                    secureTextEntry={!showPassword} autoCapitalize="none" returnKeyType="next"
-                    outlineStyle={styles.inputOutline} error={!!errors.password}
-                    right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword((v) => !v)} />}
-                  />
-                  {errors.password && <Text style={styles.fieldError}>{errors.password}</Text>}
-
-                  <TextInput label={t("auth.confirmPassword")} value={confirmPassword}
-                    onChangeText={(v) => { setConfirmPassword(v); setErrors((e) => ({ ...e, confirmPassword: undefined, form: undefined })); }}
-                    secureTextEntry={!showConfirmPassword} autoCapitalize="none" returnKeyType="done" onSubmitEditing={handleRegister}
-                    outlineStyle={styles.inputOutline} error={!!errors.confirmPassword}
-                    right={<TextInput.Icon icon={showConfirmPassword ? "eye-off" : "eye"} onPress={() => setShowConfirmPassword((v) => !v)} />}
-                  />
-                  {errors.confirmPassword && <Text style={styles.fieldError}>{errors.confirmPassword}</Text>}
-                </View>
-
-                <PrimaryButton
-                  onPress={handleRegister}
-                  loading={isLoading}
-                  disabled={anyLoading}
-                  style={styles.primaryBtn}
-                >
-                  {t("auth.signUp")}
-                </PrimaryButton>
-              </>
-            ) : (
-              <>
-                <Text style={styles.subtitle}>{t("auth.signUpSubtitle")}</Text>
-
-                {errors.form && (
-                  <View style={styles.formError}>
-                    <Text style={styles.formErrorText}>{errors.form}</Text>
-                  </View>
-                )}
-
-                <AuthProviderButtons
-                  onEmailPress={() => setShowEmailForm(true)}
-                  onApplePress={handleAppleSignIn}
-                  onGooglePress={handleGoogleSignIn}
-                  isGoogleLoading={isGoogleLoading}
-                  disabled={anyLoading}
-                  appleButtonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP}
-                  googleLabel={t("auth.signUpWithGoogle")}
-                />
-              </>
+            {errors.form && (
+              <View style={styles.formError}>
+                <Text style={styles.formErrorText}>{errors.form}</Text>
+              </View>
             )}
-          </FadeSlide>
 
-          <FadeSlide delay={320}>
-            <View style={styles.footer}>
-              <Text style={styles.footerText}>{t("auth.haveAccount")} </Text>
-              <Link href="/auth/login" asChild>
-                <Text style={styles.footerLink}>{t("auth.signInLink")}</Text>
-              </Link>
+            <View style={styles.fields}>
+              <TextInput label={t("auth.nameLabel")} value={name}
+                onChangeText={(v) => { setName(v); setErrors((e) => ({ ...e, name: undefined, form: undefined })); }}
+                autoCapitalize="words" returnKeyType="next"
+                outlineStyle={styles.inputOutline} error={!!errors.name}
+              />
+              {errors.name && <Text style={styles.fieldError}>{errors.name}</Text>}
+
+              <TextInput label={t("auth.emailLabel")} value={email}
+                onChangeText={(v) => { setEmail(v); setErrors((e) => ({ ...e, email: undefined, form: undefined })); }}
+                autoCapitalize="none" keyboardType="email-address" autoCorrect={false}
+                returnKeyType="next" outlineStyle={styles.inputOutline} error={!!errors.email}
+              />
+              {errors.email && <Text style={styles.fieldError}>{errors.email}</Text>}
+
+              <TextInput label={t("auth.passwordLabel")} value={password}
+                onChangeText={(v) => { setPassword(v); setErrors((e) => ({ ...e, password: undefined, confirmPassword: undefined, form: undefined })); }}
+                secureTextEntry={!showPassword} autoCapitalize="none" returnKeyType="next"
+                outlineStyle={styles.inputOutline} error={!!errors.password}
+                right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword((v) => !v)} />}
+              />
+              {errors.password && <Text style={styles.fieldError}>{errors.password}</Text>}
+
+              <TextInput label={t("auth.confirmPassword")} value={confirmPassword}
+                onChangeText={(v) => { setConfirmPassword(v); setErrors((e) => ({ ...e, confirmPassword: undefined, form: undefined })); }}
+                secureTextEntry={!showConfirmPassword} autoCapitalize="none" returnKeyType="done" onSubmitEditing={handleRegister}
+                outlineStyle={styles.inputOutline} error={!!errors.confirmPassword}
+                right={<TextInput.Icon icon={showConfirmPassword ? "eye-off" : "eye"} onPress={() => setShowConfirmPassword((v) => !v)} />}
+              />
+              {errors.confirmPassword && <Text style={styles.fieldError}>{errors.confirmPassword}</Text>}
             </View>
-          </FadeSlide>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </View>
+
+            <PrimaryButton
+              onPress={handleRegister}
+              loading={isLoading}
+              disabled={anyLoading}
+              style={styles.primaryBtn}
+            >
+              {t("auth.signUp")}
+            </PrimaryButton>
+          </>
+        ) : (
+          <>
+            <Text style={styles.subtitle}>{t("auth.signUpSubtitle")}</Text>
+
+            {errors.form && (
+              <View style={styles.formError}>
+                <Text style={styles.formErrorText}>{errors.form}</Text>
+              </View>
+            )}
+
+            <AuthProviderButtons
+              onEmailPress={() => setShowEmailForm(true)}
+              onApplePress={handleAppleSignIn}
+              onGooglePress={handleGoogleSignIn}
+              isGoogleLoading={isGoogleLoading}
+              disabled={anyLoading}
+              appleButtonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP}
+              googleLabel={t("auth.signUpWithGoogle")}
+            />
+          </>
+        )}
+      </FadeSlide>
+
+      <FadeSlide delay={320}>
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>{t("auth.haveAccount")} </Text>
+          <Link href="/auth/login" asChild>
+            <Text style={styles.footerLink}>{t("auth.signInLink")}</Text>
+          </Link>
+        </View>
+      </FadeSlide>
+    </FormSheetContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1 },
-  flex: { flex: 1, ...Platform.select({ ios: { paddingTop: spacing.xl } }) },
-  scroll: { padding: spacing.xxl, paddingTop: spacing.lg },
-  grabber: { width: 36, height: 4, borderRadius: radius.xs - 2, backgroundColor: "#555", alignSelf: "center", marginBottom: spacing.xxl + 4 },
   header: { flexDirection: "row", alignItems: "center", gap: spacing.md, marginBottom: spacing.xs },
   logo: { width: 44, height: 44 },
   title: { fontSize: typography.bebasSize.auth, fontFamily: "Bebas", color: colors.text, letterSpacing: 1 },

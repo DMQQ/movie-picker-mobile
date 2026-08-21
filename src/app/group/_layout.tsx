@@ -1,5 +1,5 @@
-import { Platform } from "react-native";
 import { Stack } from "expo-router";
+import { formSheet } from "../_layout";
 
 export default function FavouritesLayout() {
   return (
@@ -9,14 +9,7 @@ export default function FavouritesLayout() {
       <Stack.Screen name="super-liked" options={{ headerShown: false }} />
       <Stack.Screen
         name="manage"
-        options={{
-          headerShown: false,
-          presentation: "formSheet",
-          sheetAllowedDetents: [0.45],
-          contentStyle: {
-            backgroundColor: Platform.OS === "ios" ? "transparent" : "#121212",
-          },
-        }}
+        options={formSheet([0.45, 0.7])}
       />
     </Stack>
   );

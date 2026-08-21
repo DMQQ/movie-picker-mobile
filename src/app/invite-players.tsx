@@ -1,6 +1,8 @@
 import { useLocalSearchParams } from "expo-router";
 import { memo, useCallback, useMemo, useRef, useState } from "react";
-import { FlatList, Platform, StyleSheet, TextInput, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
+import FormSheetContainer from "../components/FormSheetContainer";
+import SearchField from "../components/SearchField";
 import Button from "../components/Button";
 import Text from "../components/Text";
 import UserAvatar from "../components/UserAvatar";
@@ -118,25 +120,16 @@ export default function InvitePlayersScreen() {
   );
 
   return (
-    <View style={styles.container} collapsable={false}>
-      {Platform.OS === "android" && <View style={styles.grabber} />}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>{t("room.inviteFriends") as string}</Text>
-      </View>
+    <FormSheetContainer title={t("room.inviteFriends") as string}>
       {!isFullAccount ? (
-        <View style={styles.nudgeContainer}>
-          <SignUpNudgeBanner />
-        </View>
+        <SignUpNudgeBanner />
       ) : (
         <>
-          <View style={styles.searchContainer} collapsable={false}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder={t("room.invite.searchPlaceholder") as string}
-              placeholderTextColor={colors.placeholder}
+          <View style={styles.searchWrapper}>
+            <SearchField
               value={query}
               onChangeText={setQuery}
-              autoFocus={false}
+              placeholder={t("room.invite.searchPlaceholder") as string}
             />
           </View>
 
@@ -169,60 +162,22 @@ export default function InvitePlayersScreen() {
         />
         </>
       )}
-    </View>
+    </FormSheetContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    ...Platform.select({
-      ios: { paddingTop: spacing.xxl + 1 },
-    }),
-  },
-  header: {
+  searchWrapper: {
+    marginTop: spacing.lg,
+    marginBottom: spacing.md,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.sm,
-  },
-  headerTitle: {
-    fontSize: fontSize.xl,
-    fontWeight: fontWeight.bold,
-    color: colors.text,
-  },
-  nudgeContainer: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-  },
-  grabber: {
-    width: 36,
-    height: 4,
-    borderRadius: radius.xs - 2,
-    backgroundColor: "#555",
-    alignSelf: "center",
-    marginTop: spacing.md,
-    marginBottom: spacing.screen,
-  },
-  searchContainer: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-  },
-  searchInput: {
-    backgroundColor: colors.input,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    fontSize: fontSize.lg,
-    color: colors.text,
   },
   listContainer: {
     flex: 1,
     overflow: "hidden",
   },
   list: {
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: 0,
     paddingBottom: spacing.xxl,
   },
   row: {

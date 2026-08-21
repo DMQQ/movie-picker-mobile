@@ -34,7 +34,6 @@ const BASE_SIZING: Sizing = {
   ACCENT: 3,
 };
 
-/** Best-fit scale for the bracket given how many rounds/matches are visible and the space available to draw them in. */
 export function computeBracketFitScale(bracketSize: number, roundsShown: number, availableWidth: number, availableHeight: number, startRound = 1) {
   const effectiveBracketSize = bracketSize / Math.pow(2, startRound - 1);
   const matchesInFirstRound = effectiveBracketSize / 2;

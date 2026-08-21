@@ -4,7 +4,6 @@ import Text from "./Text";
 import TextInput from "./TextInput";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
 
-import { Image } from "expo-image";
 import { router } from "expo-router";
 import type { AuthUser } from "../redux/auth/authSlice";
 import {
@@ -12,7 +11,7 @@ import {
   useUpdateMeMutation,
 } from "../redux/auth/authApi";
 import { useGetGamesQuery } from "../redux/lists/listsApi";
-import { getUserAvatarColor, getInitials } from "../utils/avatar";
+import UserAvatar from "./UserAvatar";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
 import useTranslation from "../service/useTranslation";
 
@@ -83,19 +82,7 @@ export default function AccountProfileHeader({ user }: Props) {
   return (
     <View style={styles.wrap}>
       <View style={styles.topRow}>
-        <View style={[styles.avatar, { backgroundColor: getUserAvatarColor(user.name) }]}>
-          {user.avatarUrl ? (
-            <Image
-              style={styles.avatarImage}
-              source={{ uri: user.avatarUrl }}
-              cachePolicy="memory-disk"
-            />
-          ) : (
-            <Text style={styles.avatarLetter}>
-              {getInitials(user.name)}
-            </Text>
-          )}
-        </View>
+        <UserAvatar name={user.name} avatarUrl={user.avatarUrl} size={AVATAR_SIZE} />
 
         <View style={styles.topInfo}>
           {nameEditing ? (
@@ -157,17 +144,6 @@ const styles = StyleSheet.create({
   wrap: { width: "100%", gap: spacing.xl, marginBottom: spacing.sm },
 
   topRow: { flexDirection: "row", alignItems: "center", gap: spacing.md + 2 },
-
-  avatar: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  avatarImage: { width: AVATAR_SIZE, height: AVATAR_SIZE },
-  avatarLetter: { fontSize: fontSize.xxl + 2, fontFamily: "Bebas", color: colors.background },
 
   topInfo: { flex: 1, gap: spacing.xs - 2 },
 

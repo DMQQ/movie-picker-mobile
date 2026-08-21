@@ -9,6 +9,7 @@ import {
 import { router, useLocalSearchParams } from "expo-router";
 import ViewShot from "react-native-view-shot";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import FormSheetContainer from "../components/FormSheetContainer";
 import IconButton from "../components/IconButton";
 import Text from "../components/Text";
 import PrimaryButton from "../components/PrimaryButton";
@@ -69,55 +70,46 @@ export default function ShareSelectionScreen() {
   }
 
   return (
-    <View style={styles.content}>
-      <View style={styles.inner}>
-        <IconButton
-          icon="close"
-          size={24}
-          onPress={() => router.back()}
-          style={styles.closeButton}
-          iconColor={colors.text}
-        />
-        {isLoading || isSharing ? (
-          <View style={styles.centeredBox}>
-            <FancySpinner size={60} />
-            <Text style={styles.loadingText}>{t("favourites.share.loading")}</Text>
-          </View>
-        ) : error ? (
-          <View style={styles.centeredBox}>
-            <MaterialCommunityIcons name="share-off" size={48} color="#ff6b6b" />
-            <Text style={styles.errorText}>{t("favourites.share.error")}</Text>
-          </View>
-        ) : (
-          <>
-            <Text style={styles.title}>{t("favourites.share.title")}</Text>
-            <Text style={styles.subtitle}>
-              {(t("favourites.share.selected") as string)
-                .replace("{count}", String(selectedIds.size))
-                .replace("{max}", String(MAX_SELECTION))}
-            </Text>
-            <FlatList
-              data={movies}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id.toString()}
-              numColumns={3}
-              contentContainerStyle={styles.listContent}
-              columnWrapperStyle={styles.columnWrapper}
-              showsVerticalScrollIndicator={false}
-              style={styles.list}
-            />
-            <PrimaryButton
-              onPress={handleShare}
-              disabled={selectedIds.size === 0}
-              style={styles.shareButton}
-              icon={({ color }) => <MaterialCommunityIcons name="share-variant" size={16} color={color} />}
-            >
-              {(t("favourites.share.button") as string).replace("{count}", String(selectedIds.size))}
-            </PrimaryButton>
-          </>
-        )}
-      </View>
-    </View>
+    <FormSheetContainer>
+      {isLoading || isSharing ? (
+        <View style={styles.centeredBox}>
+          <FancySpinner size={60} />
+          <Text style={styles.loadingText}>{t("favourites.share.loading")}</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.centeredBox}>
+          <MaterialCommunityIcons name="share-off" size={48} color="#ff6b6b" />
+          <Text style={styles.errorText}>{t("favourites.share.error")}</Text>
+        </View>
+      ) : (
+        <>
+          <Text style={styles.title}>{t("favourites.share.title")}</Text>
+          <Text style={styles.subtitle}>
+            {(t("favourites.share.selected") as string)
+              .replace("{count}", String(selectedIds.size))
+              .replace("{max}", String(MAX_SELECTION))}
+          </Text>
+          <FlatList
+            data={movies}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={3}
+            contentContainerStyle={styles.listContent}
+            columnWrapperStyle={styles.columnWrapper}
+            showsVerticalScrollIndicator={false}
+            style={styles.list}
+          />
+          <PrimaryButton
+            onPress={handleShare}
+            disabled={selectedIds.size === 0}
+            style={styles.shareButton}
+            icon={({ color }) => <MaterialCommunityIcons name="share-variant" size={16} color={color} />}
+          >
+            {(t("favourites.share.button") as string).replace("{count}", String(selectedIds.size))}
+          </PrimaryButton>
+        </>
+      )}
+    </FormSheetContainer>
   );
 }
 
@@ -132,9 +124,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border,
   },
   viewShot: { backgroundColor: colors.appBackground, borderRadius: radius.card },
-  content: { flex: 1 },
-  inner: { flex: 1, padding: spacing.xxl + 6, alignItems: "center" },
-  closeButton: { position: "absolute", top: 0, right: 0, zIndex: 10 },
   title: {
     fontSize: 32,
     fontFamily: "Bebas",

@@ -44,7 +44,7 @@ enableFreeze(true);
 
 const platformBg = Platform.OS === "android" ? colors.surface : "transparent";
 
-function formSheet(
+export function formSheet(
   detents: number[],
   bg: string = platformBg,
   overrides: Record<string, unknown> = {},
@@ -76,8 +76,8 @@ function RootLayout() {
             colors: { ...DarkTheme.colors, background: colors.appBackground },
           }}
         >
-          <PortalProvider>
-            <Provider store={store}>
+          <Provider store={store}>
+            <PortalProvider>
               <DatabaseProvider>
                 {posthog ? (
                   <PostHogProvider
@@ -90,8 +90,8 @@ function RootLayout() {
                   <AppContent isLoaded={isLoaded} isUpdating={isUpdating} />
                 )}
               </DatabaseProvider>
-            </Provider>
-          </PortalProvider>
+            </PortalProvider>
+          </Provider>
         </ThemeProvider>
       </SafeAreaProvider>
     </AppErrorBoundary>

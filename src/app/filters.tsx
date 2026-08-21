@@ -2,11 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import Text from "../components/Text";
 import SignUpNudgeBanner from "../components/SignUpNudgeBanner";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-
+import FormSheetContainer from "../components/FormSheetContainer";
 import {
   colors,
   fontWeight,
@@ -163,16 +159,7 @@ function CategoriesSection({ onSelect }: { onSelect: (name: string) => void }) {
 }
 
 export default function FiltersScreen() {
-  return (
-    <SafeAreaProvider>
-      <FiltersScreenContent />
-    </SafeAreaProvider>
-  );
-}
-
-function FiltersScreenContent() {
   const t = useTranslation();
-  const insets = useSafeAreaInsets();
   const dispatch = useAppDispatch();
   const { showCategories } = useLocalSearchParams<{ showCategories: string }>();
 
@@ -221,48 +208,41 @@ function FiltersScreenContent() {
   }, []);
 
   return (
-    <View style={styles.container} collapsable={false}>
-      {Platform.OS === "android" && <View style={styles.grabber} />}
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        collapsable={false}
-      >
-        <View style={styles.section}>
-          <Text variant="titleMedium" style={styles.sectionTitle}>
-            {t("filters.type")}
-          </Text>
-          <TypeSelector value={mediaType} onChange={handleMediaTypeChange} />
-        </View>
+    <View style={styles.wrapper}>
+      <FormSheetContainer padX={spacing.lg}>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={[styles.section, Platform.OS === "ios" && { paddingTop: spacing.xxl * 2 }]}>
+            <Text variant="titleMedium" style={styles.sectionTitle}>
+              {t("filters.type")}
+            </Text>
+            <TypeSelector value={mediaType} onChange={handleMediaTypeChange} />
+          </View>
 
-        <View style={styles.section}>
-          <Text variant="titleMedium" style={styles.sectionTitle}>
-            {t("filters.decade")}
-          </Text>
-          <DecadeSelector
-            value={selectedDecade}
-            onChange={handleDecadeChange}
-          />
-        </View>
+          <View style={styles.section}>
+            <Text variant="titleMedium" style={styles.sectionTitle}>
+              {t("filters.decade")}
+            </Text>
+            <DecadeSelector
+              value={selectedDecade}
+              onChange={handleDecadeChange}
+            />
+          </View>
 
-        <ProvidersSection />
-        <GenresSection />
+          <ProvidersSection />
+          <GenresSection />
 
-        {showCategories === "true" && (
-          <CategoriesSection onSelect={handleCategorySelect} />
-        )}
-        <SignUpNudgeBanner />
-        <View style={{height: 60}} />
-      </ScrollView>
+          {showCategories === "true" && (
+            <CategoriesSection onSelect={handleCategorySelect} />
+          )}
+          <SignUpNudgeBanner />
+        </ScrollView>
+      </FormSheetContainer>
 
-      <View
-        style={[
-          styles.footer,
-          Platform.OS === "android" && { paddingBottom: insets.bottom + spacing.lg },
-        ]}
-        collapsable={false}
-      >
+      <View style={[styles.footer, { paddingHorizontal: spacing.lg }]}>
         <PrimaryButton onPress={handleApply} style={styles.applyButton}>
           {t("filters.apply")}
           {activeFilterCount > 0 && ` (${activeFilterCount})`}
@@ -273,29 +253,16 @@ function FiltersScreenContent() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     flex: 1,
-    backgroundColor: colors.surface,
-    ...Platform.select({
-      ios: { paddingTop: spacing.xxl * 2 },
-    }),
-  },
-  grabber: {
-    width: 36,
-    height: 4,
-    borderRadius: radius.xs - 2,
-    backgroundColor: "#555",
-    alignSelf: "center",
-    marginTop: spacing.md,
-    marginBottom: spacing.xs,
+    flexDirection: "column",
   },
   scroll: {
     flex: 1,
-    paddingHorizontal: spacing.xl,
   },
   scrollContent: {
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xxl,
+    paddingBottom: spacing.lg,
+    paddingHorizontal: spacing.lg,
   },
   section: {
     marginBottom: spacing.xxl,
@@ -320,9 +287,8 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   footer: {
-    paddingHorizontal: spacing.xl,
     paddingTop: spacing.lg,
-    paddingBottom: Platform.OS === "android" ? 24 : 20,
+    paddingBottom: spacing.lg,
     borderTopWidth: 1,
     borderTopColor: "#333",
     backgroundColor: colors.surface,

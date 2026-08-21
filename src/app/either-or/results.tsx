@@ -12,18 +12,34 @@ import Podium from "../../components/EitherOr/Podium";
 import Bracket, { computeBracketFitScale } from "../../components/EitherOr/Bracket";
 import { FancySpinner } from "../../components/FancySpinner";
 import CreateCollectionFromLiked from "../../components/CreateCollectionFromLiked";
-import { useAppSelector } from "../../redux/store";
+import UserAvatar from "../../components/UserAvatar";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { eitherOrActions } from "../../redux/eitherOr/eitherOrSlice";
 import useTranslation from "../../service/useTranslation";
 import ReviewManager from "../../utils/rate";
-import { colors, fontSize, radius, spacing, typography } from "../../constants/design";
+import { colors, fontSize, radius, spacing, typography, withAlpha } from "../../constants/design";
 
 export default function EitherOrResults() {
   const t = useTranslation();
+  const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
   const top3 = useAppSelector((state) => state.eitherOr.top3);
   const champion = useAppSelector((state) => state.eitherOr.champion);
   const bracketSize = useAppSelector((state) => state.eitherOr.bracketSize);
   const matchResults = useAppSelector((state) => state.eitherOr.matchResults);
+  const myUserId = useAppSelector((state) => state.app.userId);
+  const users = useAppSelector((state) => state.eitherOr.users);
+  const players = useAppSelector((state) => state.eitherOr.players);
+  const history = useAppSelector((state) => state.eitherOr.history);
+
+  const displayPlayers = players.length > 0 ? players : users.map((u) => ({ userId: u.userId, username: u.username }));
+
+  const agreeScore = (userId: string): number | null => {
+    const voted = history.filter((h) => h.votes?.[userId] !== undefined);
+    if (voted.length === 0) return null;
+    const agreed = voted.filter((h) => h.votes[userId] === h.winnerSide);
+    return agreed.length / voted.length;
+  };
 
   const confettiRef = useRef<LottieView>(null);
   const [bracketCardWidth, setBracketCardWidth] = useState(0);
@@ -41,6 +57,7 @@ export default function EitherOrResults() {
 
   const onDone = () => {
     ReviewManager.onGameComplete(true);
+    dispatch(eitherOrActions.reset());
     router.dismissTo("/");
   };
 
@@ -67,7 +84,7 @@ export default function EitherOrResults() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: spacing.screen, paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xxl * 3 }}
+        contentContainerStyle={{ paddingHorizontal: spacing.screen, paddingTop: insets.top, paddingBottom: insets.bottom + spacing.xxl * 3 }}
       >
         <Animated.View entering={FadeIn.duration(400)} style={styles.header}>
           <Text style={styles.eyebrow}>{t("eitherOr.results.title")}</Text>
@@ -75,6 +92,32 @@ export default function EitherOrResults() {
         </Animated.View>
 
         <Podium top3={top3} />
+
+        {displayPlayers.length > 1 && (
+          <View style={styles.playersSection}>
+            <Text style={styles.sectionTitle}>Players</Text>
+            <View style={styles.playersList}>
+              {displayPlayers.map((player) => {
+                const isMe = player.userId === myUserId;
+                const score = !isMe ? agreeScore(player.userId) : null;
+                return (
+                  <View
+                    key={player.userId}
+                    style={[styles.playerRow, isMe && styles.playerRowMe]}
+                  >
+                    <UserAvatar name={player.username || "?"} size={36} />
+                    <View style={styles.playerInfo}>
+                      <Text style={styles.playerName}>{player.username}</Text>
+                      {score !== null && (
+                        <Text style={styles.playerScore}>{Math.round(score * 100)}% agree</Text>
+                      )}
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        )}
 
         <View style={styles.bracketSection}>
           <Text style={styles.sectionTitle}>{t("eitherOr.bracket.title")}</Text>
@@ -126,6 +169,41 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: spacing.xs,
   },
+  playersSection: {
+    marginTop: spacing.xxl,
+  },
+  playersList: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.sm,
+  },
+  playerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    backgroundColor: withAlpha(colors.surface, 0.8),
+    borderRadius: radius.pill,
+    paddingVertical: spacing.xs,
+    paddingLeft: spacing.xs,
+    paddingRight: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  playerRowMe: {
+    backgroundColor: withAlpha(colors.primary, 0.12),
+    borderColor: withAlpha(colors.primary, 0.4),
+  },
+  playerInfo: {
+    flexDirection: "column",
+  },
+  playerName: {
+    fontSize: fontSize.md,
+    color: colors.text,
+  },
+  playerScore: {
+    fontSize: fontSize.xs,
+    color: colors.placeholder,
+  },
   bracketSection: {
     marginTop: spacing.xxl,
   },
@@ -136,10 +214,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   bracketCard: {
-    borderRadius: spacing.lg,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
     overflow: "hidden",
   },
   buttonRow: {

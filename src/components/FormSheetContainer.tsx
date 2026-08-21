@@ -71,7 +71,7 @@ export default function FormSheetContainer({
   ) : content;
 
   return (
-    <View style={styles.root}>
+    <View style={styles.root} collapsable={false}>
       {Platform.OS === "android" && <View style={styles.grabber} />}
       {keyboard ? (
         <KeyboardAvoidingView
@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     paddingTop: Platform.OS === "ios" ? spacing.xxl + spacing.sm : 0,
+    backgroundColor: colors.surface
   },
   grabber: {
     width: 36,

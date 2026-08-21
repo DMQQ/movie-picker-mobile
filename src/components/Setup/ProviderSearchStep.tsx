@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import TouchableRipple from "../TouchableRipple";
+import SearchField from "../SearchField";
 import Button from "../Button";
 import Text from "../Text";
 import ProviderList from "../Room/ProviderList";
@@ -65,24 +66,13 @@ export default function ProviderSearchStep({ providers, onChangeProviders }: Pro
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <MaterialCommunityIcons name="search-web" size={20} color="#888" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder={t("room.builder.step3.search")}
-          placeholderTextColor="#666"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          returnKeyType="search"
-          clearButtonMode="while-editing"
-          autoCorrect={false}
-        />
-        {searchQuery.length > 0 && (
-          <TouchableRipple onPress={() => setSearchQuery("")} style={styles.clearSearch} borderless>
-            <MaterialCommunityIcons name="close" size={18} color="#888" />
-          </TouchableRipple>
-        )}
-      </View>
+      <SearchField
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder={t("room.builder.step3.search") as string}
+        returnKeyType="search"
+        style={styles.searchContainer}
+      />
 
       <TouchableRipple onPress={onToggleRemember} style={styles.rememberContainer} borderless={false}>
         <View style={styles.rememberInner}>
@@ -136,28 +126,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
   },
   searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.overlay,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
     marginBottom: spacing.sm + 2,
-    height: 46,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  searchIcon: {
-    marginRight: spacing.sm,
-  },
-  searchInput: {
-    flex: 1,
-    color: colors.text,
-    fontSize: fontSize.md + 1,
-    height: "100%",
-  },
-  clearSearch: {
-    padding: spacing.xs,
-    borderRadius: radius.md,
   },
   rememberContainer: {
     borderRadius: radius.md,

@@ -9,6 +9,7 @@ import Icon from "../../components/Icon";
 import IconButton from "../../components/IconButton";
 import AvatarText from "../../components/AvatarText";
 import PageHeading from "../../components/PageHeading";
+import HeaderActionButton from "../../components/HeaderActionButton";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
 import GroupScreenLayout from "../../components/Group/GroupScreenLayout";
@@ -151,12 +152,9 @@ export default function SuperLikedGroup() {
 
   return (
     <SafeIOSContainer style={styles.container}>
-      <PageHeading
-        title={t("super-liked.title") as string}
-        showRightIconButton
-        rightIconName="plus"
-        onRightIconPress={openMoviePicker}
-      />
+      <PageHeading title={t("super-liked.title") as string}>
+        <HeaderActionButton icon="plus" onPress={openMoviePicker} />
+      </PageHeading>
       <FlatList
         data={superLikedMovies}
         showsVerticalScrollIndicator={false}

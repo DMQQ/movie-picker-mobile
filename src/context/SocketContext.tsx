@@ -18,8 +18,8 @@ const isDev = true // envs.mode !== "production";
 
 export const baseUrl = isDev
   ? Platform.OS === "ios"
-    ? "http://10.1.1.141:3000"
-    : "http://10.1.1.141:3000"
+    ? "http://192.168.1.20:3000"
+    : "http://192.168.1.20:3000"
   : "https://flickmate.app";
 export const url = baseUrl + "/api";
 
@@ -93,6 +93,7 @@ export const SocketProvider = ({
   const regionalization =
     useSelector((st: RootState) => st.room.regionalization, shallowEqual) || {};
   const authToken = useSelector((st: RootState) => st.auth.token);
+  const userId = useSelector((st: RootState) => st.app.userId);
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connectionStatus, setConnectionStatus] =
@@ -104,7 +105,15 @@ export const SocketProvider = ({
 
   const initializeSocket = async () => {
     try {
-      const userId = await AsyncStorage.getItem("userId");
+      const storedUserId = await AsyncStorage.getItem("userId");
+      const effectiveUserId = userId || storedUserId;
+      console.log("Socket init:", {
+        namespace,
+        reduxUserId: userId,
+        storedUserId,
+        effectiveUserId,
+        authToken: !!authToken,
+      });
 
       const newSocket = socketIOClient(baseUrl + namespace, {
         ...connectionConfig,
@@ -114,7 +123,7 @@ export const SocketProvider = ({
             : `Bearer ${envs.server_auth_token}`,
         },
         extraHeaders: {
-          ...(userId ? { "user-id": userId } : {}),
+          ...(effectiveUserId ? { "user-id": effectiveUserId } : {}),
           ...makeHeaders(language, regionalization),
         },
       });
@@ -204,7 +213,7 @@ export const SocketProvider = ({
         socketRef.current = null;
       }
     };
-  }, [language, regionalization, authToken]);
+  }, [language, regionalization, authToken, userId]);
 
   const reconnect = async () => {
     if (socketRef.current) {

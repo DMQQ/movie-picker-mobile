@@ -322,6 +322,7 @@
     "delete": "Liste löschen",
     "deleteTitle": "Liste löschen",
     "deleteMessage": "Die Liste und alle enthaltenen Filme werden dauerhaft gelöscht.",
+    "deleteWarning": "Diese Aktion kann nicht rückgängig gemacht werden.",
     "renameError": "Umbenennen fehlgeschlagen. Bitte erneut versuchen.",
     "searchPlaceholder": "Filme suchen…",
     "share": "Liste teilen"

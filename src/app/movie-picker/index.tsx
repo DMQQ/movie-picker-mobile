@@ -3,9 +3,9 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import Animated, { FadeIn } from "react-native-reanimated";
+import FormSheetContainer from "../../components/FormSheetContainer";
 import SearchField from "../../components/SearchField";
 import Text from "../../components/Text";
 import Touch from "../../components/Touch";
@@ -38,7 +38,6 @@ function formatRuntime(mins: number): string {
 export default function MoviePickerIndex() {
   const dispatch = useAppDispatch();
   const t = useTranslation();
-  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ targetListType?: string; targetListName?: string }>();
   const targetListType = params.targetListType ?? "";
   const targetListName = params.targetListName ?? "";
@@ -144,7 +143,7 @@ export default function MoviePickerIndex() {
   const localGroups = groups.filter((g) => g.movies.length > 0);
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom + spacing.sm }]}>
+    <FormSheetContainer padX={spacing.lg}>
       {/* Search */}
       <View style={styles.header}>
         <SearchField
@@ -275,18 +274,18 @@ export default function MoviePickerIndex() {
           {selected.length > 0 ? `Done (${selected.length})` : "Done"}
         </Text>
       </Pressable>
-    </View>
+    </FormSheetContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.surface },
   header: {
     flexDirection: "row",
     alignItems: "center",
+    marginHorizontal: -spacing.lg,
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.sm,
+    paddingTop: 0,
+    paddingBottom: spacing.md,
     gap: spacing.sm,
   },
   searchField: { flex: 1, backgroundColor: colors.input, borderRadius: radius.pill },
@@ -294,12 +293,12 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     fontWeight: fontWeight.semibold,
     color: colors.placeholder,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: 0,
     paddingBottom: spacing.sm,
     textTransform: "uppercase",
     letterSpacing: 0.8,
   },
-  listPad: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg },
+  listPad: { paddingHorizontal: 0, paddingBottom: spacing.lg },
   empty: { textAlign: "center", marginTop: spacing.xxl, opacity: 0.5, fontSize: fontSize.md },
   row: {
     flexDirection: "row",
@@ -337,8 +336,8 @@ const styles = StyleSheet.create({
   },
   checkActive: { backgroundColor: colors.primary, borderColor: colors.primary },
   confirm: {
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.sm,
+    marginTop: spacing.lg,
+    marginBottom: -spacing.lg,
     backgroundColor: colors.primary,
     borderRadius: radius.pill,
     height: 50,

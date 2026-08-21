@@ -1,8 +1,7 @@
 import { Image } from "expo-image";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
-import Text from "./Text";
-import { colors, fontSize, fontWeight } from "../constants/design";
-import { getUserAvatarColor, getInitials } from "../utils/avatar";
+import { colors } from "../constants/design";
+import { getUserAvatarImage } from "../utils/avatar";
 
 interface UserAvatarProps {
   name: string;
@@ -21,6 +20,8 @@ export default function UserAvatar({
   borderWidth = 0,
   borderColor = "transparent",
 }: UserAvatarProps) {
+  const source = avatarUrl ? { uri: avatarUrl } : getUserAvatarImage(name);
+
   return (
     <View
       style={[
@@ -30,7 +31,7 @@ export default function UserAvatar({
           borderRadius: size / 2,
           borderWidth,
           borderColor,
-          backgroundColor: avatarUrl ? undefined : getUserAvatarColor(name),
+          backgroundColor: colors.surfaceElevated,
           overflow: "hidden",
           alignItems: "center",
           justifyContent: "center",
@@ -38,23 +39,11 @@ export default function UserAvatar({
         style,
       ]}
     >
-      {avatarUrl ? (
-        <Image
-          style={{ width: size, height: size }}
-          source={{ uri: avatarUrl }}
-          cachePolicy="memory-disk"
-        />
-      ) : (
-        <Text
-          style={{
-            fontSize: size * 0.4,
-            fontWeight: fontWeight.bold,
-            color: colors.text,
-          }}
-        >
-          {getInitials(name)}
-        </Text>
-      )}
+      <Image
+        style={{ width: size * 0.9, height: size * 0.9 }}
+        source={source}
+        cachePolicy="memory-disk"
+      />
     </View>
   );
 }

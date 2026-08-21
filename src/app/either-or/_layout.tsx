@@ -1,23 +1,14 @@
 import { Stack } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useEffect } from "react";
 import { View } from "react-native";
 import { SocketProvider } from "../../context/SocketContext";
 import { EitherOrContextProvider } from "../../context/EitherOrContext";
-import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { eitherOrActions } from "../../redux/eitherOr/eitherOrSlice";
+import { useAppSelector } from "../../redux/store";
 import { colors } from "../../constants/design";
 
 export default function EitherOrLayout() {
-  const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
   const isStarted = useAppSelector((state) => state.eitherOr.isStarted);
-
-  useEffect(() => {
-    return () => {
-      dispatch(eitherOrActions.reset());
-    };
-  }, []);
 
   return (
     <View

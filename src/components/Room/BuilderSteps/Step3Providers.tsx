@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import Text from "../../Text";
 import TouchableRipple from "../../TouchableRipple";
-import { View, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet } from "react-native";
+import SearchField from "../../SearchField";
 
 import Button from "../../Button";
 import { colors, fontWeight, fontSize, radius, spacing } from "../../../constants/design";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetAllProvidersQuery } from "../../../redux/movie/movieApi";
 import ProviderList from "../ProviderList";
 import useTranslation from "../../../service/useTranslation";
@@ -82,34 +82,13 @@ const Step3Providers = () => {
 
   return (
     <View style={styles.container}>
-      {/* Search bar */}
-      <View style={styles.searchContainer}>
-        <MaterialCommunityIcons
-          name="search-web"
-          size={20}
-          color="#888"
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={styles.searchInput}
-          placeholder={t("room.builder.step3.search")}
-          placeholderTextColor="#666"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          returnKeyType="search"
-          clearButtonMode="while-editing"
-          autoCorrect={false}
-        />
-        {searchQuery.length > 0 && (
-          <TouchableRipple
-            onPress={() => setSearchQuery("")}
-            style={styles.clearSearch}
-            borderless
-          >
-            <MaterialCommunityIcons name="close" size={18} color="#888" />
-          </TouchableRipple>
-        )}
-      </View>
+      <SearchField
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder={t("room.builder.step3.search") as string}
+        returnKeyType="search"
+        style={styles.searchContainer}
+      />
 
       {/* Save preferences row */}
       <TouchableRipple
@@ -184,28 +163,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
   },
   searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.07)",
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
     marginBottom: spacing.sm + 2,
-    height: 46,
-    borderWidth: 1,
-    borderColor: colors.overlay,
-  },
-  searchIcon: {
-    marginRight: spacing.sm,
-  },
-  searchInput: {
-    flex: 1,
-    color: colors.text,
-    fontSize: fontSize.md + 1,
-    height: "100%",
-  },
-  clearSearch: {
-    padding: spacing.xs,
-    borderRadius: radius.md,
   },
   rememberContainer: {
     borderRadius: radius.md,

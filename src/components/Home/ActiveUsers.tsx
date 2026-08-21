@@ -1,14 +1,20 @@
 import { memo } from "react";
-import AvatarIcon from "../AvatarIcon";
-import AvatarText from "../AvatarText";
+import UserAvatar from "../UserAvatar";
 import { Pressable, View } from "react-native";
 
 import { colors } from "../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
-import { getUserAvatarColor, getInitials } from "../../utils/avatar";
 
-function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () => void }) {
+interface ActiveUsersProps {
+  data: string[];
+  showAll?: boolean;
+  onPress?: () => void;
+  size?: number;
+}
+
+function ActiveUsers(props: ActiveUsersProps) {
+  const { size = 32 } = props;
   const isVisible = props.showAll ? true : props.data.length > 1;
 
   return (
@@ -19,7 +25,7 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
           flexDirection: "row",
           justifyContent: "center",
           position: "relative",
-          width: Math.min(6, props.data?.length || 0) * 24,
+          width: Math.min(6, props.data?.length || 0) * (size - 8),
         }}
       >
         {isVisible ? (
@@ -32,15 +38,11 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
                 position: "relative",
               }}
             >
-              <AvatarText
-                size={24}
-                label={getInitials(nick || "")}
-                color={colors.text}
-                style={{
-                  borderWidth: 0.5,
-                  borderColor: colors.text,
-                  backgroundColor: getUserAvatarColor(nick),
-                }}
+              <UserAvatar
+                name={nick || ""}
+                size={size}
+                borderWidth={0.5}
+                borderColor={colors.text}
               />
               {n === 0 && (
                 <MaterialCommunityIcons
@@ -61,28 +63,29 @@ function ActiveUsers(props: { data: string[]; showAll?: boolean; onPress?: () =>
             </View>
           ))
         ) : (
-          <AvatarIcon
-            size={24}
-            icon="account"
-            color={colors.text}
-            style={{
-              borderWidth: 0.5,
-              borderColor: colors.text,
-              backgroundColor: getUserAvatarColor(""),
-            }}
+          <UserAvatar
+            name={props.data[0] || "Guest"}
+            size={size}
+            borderWidth={0.5}
+            borderColor={colors.text}
           />
         )}
-        <AvatarIcon
-          size={24}
-          icon="plus"
+        <View
           style={{
+            width: size,
+            height: size,
+            borderRadius: size / 2,
             transform: [{ translateX: -props.data.length * 6.5 }],
             zIndex: (props.data?.length || 0) + 1,
             borderWidth: 0.5,
             borderColor: colors.text,
             backgroundColor: colors.surface,
+            alignItems: "center",
+            justifyContent: "center",
           }}
-        />
+        >
+          <MaterialCommunityIcons name="plus" size={size * 0.5} color={colors.text} />
+        </View>
       </Pressable>
     </Animated.View>
   );

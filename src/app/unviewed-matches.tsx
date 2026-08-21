@@ -179,8 +179,7 @@ export default memo(UnviewedMatchesScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:
-      Platform.OS === "android" ? colors.surface : "transparent",
+    backgroundColor: colors.appBackground,
     padding: GRID_PADDING,
     paddingBottom: spacing.screen,
   },

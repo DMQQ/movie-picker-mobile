@@ -26,6 +26,7 @@ import PageHeading from "../../../components/PageHeading";
 import { roomActions } from "../../../redux/room/roomSlice";
 import { authActions } from "../../../redux/auth/authSlice";
 import { setUserId } from "../../../redux/app/appSlice";
+import { ensureAnonymousSession } from "../../../redux/auth/authSlice";
 import { useDeleteMeMutation, useUpdateMeMutation, useUpdateDeviceMutation, useMeQuery } from "../../../redux/auth/authApi";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import useTranslation from "../../../service/useTranslation";
@@ -177,6 +178,7 @@ export default function SettingsScreen() {
     await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
     await SecureStore.deleteItemAsync("user_refresh_token");
     dispatch(authActions.clearAuth());
+    await dispatch(ensureAnonymousSession(null));
   }
 
   function handleDeleteAccount() {
@@ -194,6 +196,7 @@ export default function SettingsScreen() {
               await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
               await SecureStore.deleteItemAsync("user_refresh_token");
               dispatch(authActions.clearAuth());
+              await dispatch(ensureAnonymousSession(null));
             } catch {
               Alert.alert(t("common.error"), t("account.deleteDialog.error"));
             }

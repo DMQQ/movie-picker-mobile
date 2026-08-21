@@ -322,6 +322,7 @@
     "delete": "Excluir lista",
     "deleteTitle": "Excluir lista",
     "deleteMessage": "Isso removerá permanentemente a lista e todos os seus filmes.",
+    "deleteWarning": "Esta ação não pode ser desfeita.",
     "renameError": "Falha ao renomear. Tente novamente.",
     "searchPlaceholder": "Buscar filmes…",
     "share": "Partilhar lista"

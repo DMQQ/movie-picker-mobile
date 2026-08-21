@@ -13,7 +13,6 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Text from "../Text";
 import Thumbnail, { ThumbnailSizes } from "../Thumbnail";
@@ -30,8 +29,6 @@ interface Props {
 }
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get("window");
-// Each additional card adds ~55% of a card width (overlap factor)
-// deckW = CARD_W * (1 + (n-1) * 0.55) → CARD_W = availW / (1 + (n-1) * 0.55)
 const AVAIL_W = SCREEN_W - spacing.xl * 2;
 const MAX_CARD_H = Math.floor(SCREEN_H * 0.52);
 
@@ -86,7 +83,7 @@ export default function RoundTransition({ completedRound, nextRound, bracketSize
   const { cardW, cardH } = getCardSize(n);
   const step = Math.round(cardW * 0.55);
   const deckW = n > 1 ? (n - 1) * step + cardW : cardW;
-  const maxRot = n <= 2 ? 5 : n <= 4 ? 10 : 18;
+  const maxRot = n <= 2 ? 8 : n <= 4 ? 18 : 28;
   const arcDrop = n <= 2 ? 8 : n <= 4 ? 20 : 48;
   const deckH = cardH + arcDrop;
   const thumbnailSize = cardW > 200 ? ThumbnailSizes.poster.xlarge : ThumbnailSizes.poster.large;
@@ -107,12 +104,10 @@ export default function RoundTransition({ completedRound, nextRound, bracketSize
         </Text>
       </Animated.View>
 
-      {/* Outer Animated.View handles entering; inner View handles transform — kept
-          separate to avoid Reanimated's layout-animation / transform conflict. */}
       <View style={{ width: deckW, height: deckH }}>
         {winners.map((movie, i) => {
           const frac = n > 1 ? (i - (n - 1) / 2) / ((n - 1) / 2) : 0;
-          const rot = frac * maxRot;
+          const rot = Math.sign(frac) * frac * frac * maxRot;
           const x = n > 1 ? (i - (n - 1) / 2) * step : 0;
           const y = arcDrop * frac * frac;
           const zIndex = n - Math.abs(Math.round(i - (n - 1) / 2));
@@ -148,14 +143,6 @@ export default function RoundTransition({ completedRound, nextRound, bracketSize
                   container={{ width: cardW, height: cardH, borderRadius: radius.md }}
                   style={{ width: cardW, height: cardH, borderRadius: radius.md }}
                 />
-                <LinearGradient
-                  colors={["transparent", "rgba(0,0,0,0.88)"]}
-                  style={styles.cardGradient}
-                >
-                  <Text numberOfLines={2} style={styles.cardTitle}>
-                    {movie.title || movie.name}
-                  </Text>
-                </LinearGradient>
                 <View style={styles.trophyBadge}>
                   <MaterialCommunityIcons name="trophy" size={11} color={colors.appBackground} />
                 </View>
@@ -215,20 +202,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 8,
-  },
-  cardGradient: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    padding: spacing.sm,
-    paddingTop: spacing.xl,
-  },
-  cardTitle: {
-    fontFamily: "Bebas",
-    fontSize: fontSize.lg,
-    color: colors.text,
-    lineHeight: fontSize.lg * 1.2,
   },
   trophyBadge: {
     position: "absolute",
