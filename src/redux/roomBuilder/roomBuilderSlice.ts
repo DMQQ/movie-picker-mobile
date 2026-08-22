@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PickedMovie } from "../moviePicker/moviePickerSlice";
 
 interface Genre {
   id: number;
@@ -16,6 +17,7 @@ interface RoomBuilderState {
   maxRounds: number;
   cacheKey: string | null;
   quickStartMode: boolean;
+  customMovies: PickedMovie[];
 }
 
 const initialState: RoomBuilderState = {
@@ -29,6 +31,7 @@ const initialState: RoomBuilderState = {
   maxRounds: 3,
   cacheKey: null,
   quickStartMode: false,
+  customMovies: [],
 };
 
 export const roomBuilderSlice = createSlice({
@@ -47,11 +50,16 @@ export const roomBuilderSlice = createSlice({
     setCategory: (state, action: PayloadAction<{ id: string; path: string; type: "movie" | "tv" }>) => {
       state.category = action.payload.path;
       state.categoryId = action.payload.id;
-      // Reset genres when changing category type
       if (state.gameType !== action.payload.type) {
         state.genres = [];
       }
       state.gameType = action.payload.type;
+      state.customMovies = [];
+    },
+    setCustomMovies: (state, action: PayloadAction<PickedMovie[]>) => {
+      state.customMovies = action.payload;
+      state.category = "";
+      state.categoryId = "";
     },
     toggleGenre: (state, action: PayloadAction<Genre>) => {
       const genreExists = state.genres.some((g) => g.id === action.payload.id);
@@ -84,7 +92,7 @@ export const roomBuilderSlice = createSlice({
   },
 });
 
-export const { goToStep, goBack, goNext, setCategory, toggleGenre, setProviders, toggleSpecialCategory, setCacheKey, setQuickStartMode, reset } =
+export const { goToStep, goBack, goNext, setCategory, setCustomMovies, toggleGenre, setProviders, toggleSpecialCategory, setCacheKey, setQuickStartMode, reset } =
   roomBuilderSlice.actions;
 
 export default roomBuilderSlice.reducer;

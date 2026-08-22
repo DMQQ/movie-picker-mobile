@@ -24,6 +24,7 @@ const initialState = {
   joinError: false,
   roomNotFound: false,
   beenFired: false,
+  rejoinStatus: "idle" as "idle" | "success" | "failed",
 
   // Room data
   roomId: "",
@@ -306,6 +307,10 @@ const roomSlice = createSlice({
 
     setRoomNotFound(state, { payload }: { payload: boolean }) {
       state.roomNotFound = payload;
+    },
+
+    setRejoinStatus(state, { payload }: { payload: "idle" | "success" | "failed" }) {
+      state.rejoinStatus = payload;
     },
 
     setIsJoining(state, { payload }: { payload: boolean }) {

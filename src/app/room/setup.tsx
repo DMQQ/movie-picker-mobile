@@ -46,13 +46,6 @@ export default function RoomSetup() {
     return t("room.movie") as string;
   }, [currentStep, t]);
 
-  const getStepSubtitle = useCallback(() => {
-    if (currentStep >= 1 && currentStep <= 4) {
-      return t(`room.builder.step${currentStep}.subtitle`);
-    }
-    return "";
-  }, [currentStep, t]);
-
   const renderStep = useMemo(() => {
     switch (currentStep) {
       case 1:
@@ -91,7 +84,6 @@ export default function RoomSetup() {
       <StepContainer
         currentStep={currentStep}
         isLastStep={currentStep === 4}
-        footerSubtitle={getStepSubtitle()}
       >
         {renderStep}
       </StepContainer>

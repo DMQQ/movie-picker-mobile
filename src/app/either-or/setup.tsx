@@ -31,6 +31,9 @@ export default function EitherOrSetup() {
   const pickerConfirmed = useAppSelector((s) => s.moviePicker.confirmed);
   const pickerSelected = useAppSelector((s) => s.moviePicker.selected);
 
+  const existingRoomId = useAppSelector((s) => s.eitherOr.roomId);
+  const isCustomRoom = useAppSelector((s) => s.eitherOr.isCustomRoom);
+
   const [step, setStep] = useState(1);
   const [type, setType] = useState<EitherOrType>("movie");
   const [genres, setGenres] = useState<number[]>([]);
@@ -138,7 +141,10 @@ export default function EitherOrSetup() {
   const standardStep = isCustom ? -1 : step;
 
   const renderStep = useMemo(() => {
-    if (step === 1) return <Step1Type key="step1" type={type} onSelect={onSelectType} />;
+    const lockedTypes: EitherOrType[] | undefined = existingRoomId && isCustomRoom !== null
+      ? isCustomRoom ? ["custom"] : ["movie", "tv"]
+      : undefined;
+    if (step === 1) return <Step1Type key="step1" type={type} onSelect={onSelectType} visibleTypes={lockedTypes} />;
     if (isCustom && step === 2) return <StepCustomMovies key="step-custom" movies={customMovies} />;
     if (!isCustom && step === 2) return <GenreSwipeStep key="step2" type={type as "movie" | "tv"} genres={genres} onToggleGenre={onToggleGenre} />;
     if (!isCustom && step === 3) return <Step3BracketSize key="step3" bracketSize={BRACKET_SIZE} onSelect={() => {}} />;

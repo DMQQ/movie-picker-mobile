@@ -71,6 +71,7 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
 
         dispatch(eitherOrActions.setRoomId(response.roomId));
         dispatch(eitherOrActions.setIsHost(true));
+        dispatch(eitherOrActions.setIsCustomRoom(!!(config.movies && config.movies.length > 0)));
         return response.roomId as string;
       } catch (error) {
         posthog?.captureException(error, { context: "either_or_create" });

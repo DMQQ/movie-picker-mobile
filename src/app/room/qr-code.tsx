@@ -113,14 +113,23 @@ export default function QRCodePage() {
         : undefined;
 
       if (roomSetup) {
+        const customMovies = roomSetup.customMovies;
         setRoomConfig({
-          type: roomSetup.category,
-          genre: roomSetup.genre?.map((g) => g.id) || [],
+          type: roomSetup.category || "movies/discover",
+          genre: roomSetup.genre?.map((g: { id: number }) => g.id) || [],
           nickname,
           providers: roomSetup.providers || [],
           maxRounds: roomSetup.maxRounds || 6,
           specialCategories: roomSetup.specialCategories || [],
           quickStart: false,
+          ...(customMovies?.length > 0 && {
+            customMovies: customMovies.map((m: { id: number; title: string; poster_path: string; contentType?: string }) => ({
+              id: m.id,
+              title: m.title,
+              poster_path: m.poster_path,
+              type: m.contentType ?? "movie",
+            })),
+          }),
         });
       }
     }

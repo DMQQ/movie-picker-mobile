@@ -68,6 +68,7 @@ const initialState = {
   joinError: false,
   error: null as string | null,
   roomDeleted: false,
+  isCustomRoom: null as boolean | null,
 
   currentMatch: null as CurrentMatch | null,
   tally: { champion: 0, challenger: 0 } as RoundTally,
@@ -115,6 +116,10 @@ const eitherOrSlice = createSlice({
     setActiveNicknames(state, { payload }: { payload: string[] }) {
       const active = new Set(payload);
       state.users = state.users.map((u) => ({ ...u, isActive: active.has(u.username) }));
+    },
+
+    setIsCustomRoom(state, { payload }: { payload: boolean }) {
+      state.isCustomRoom = payload;
     },
 
     setJoining(state, { payload }: { payload: boolean }) {

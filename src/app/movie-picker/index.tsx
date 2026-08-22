@@ -16,6 +16,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { loadFavorites } from "../../redux/favourites/favourites";
 import { moviePickerActions } from "../../redux/moviePicker/moviePickerSlice";
 import useTranslation from "../../service/useTranslation";
+import { posthog } from "../../constants/posthog";
 
 const POSTER_BASE = "https://image.tmdb.org/t/p/w185";
 const HIDDEN_TYPES = new Set(["superliked", "disliked"]);
@@ -62,6 +63,7 @@ export default function MoviePickerIndex() {
 
   useEffect(() => {
     if (!isAuthenticated) dispatch(loadFavorites());
+    if (!isListAddMode) posthog?.capture("custom_room_movies_picker_opened");
     if (isListAddMode) {
       dispatch(moviePickerActions.init({}));
       search({ page: 1, type: "both" }).unwrap()
@@ -267,11 +269,17 @@ export default function MoviePickerIndex() {
 
       <Pressable
         onPress={handleConfirm}
-        disabled={selected.length === 0}
-        style={[styles.confirm, selected.length === 0 && styles.confirmDisabled]}
+        disabled={isListAddMode ? selected.length === 0 : selected.length < 10}
+        style={[styles.confirm, (isListAddMode ? selected.length === 0 : selected.length < 10) && styles.confirmDisabled]}
       >
         <Text style={styles.confirmText}>
-          {selected.length > 0 ? `Done (${selected.length})` : "Done"}
+          {isListAddMode
+            ? selected.length > 0 ? `Done (${selected.length})` : "Done"
+            : selected.length === 0
+              ? "Select 10+ movies"
+              : selected.length < 10
+                ? `${selected.length} / 10 selected`
+                : `Done (${selected.length})`}
         </Text>
       </Pressable>
     </FormSheetContainer>

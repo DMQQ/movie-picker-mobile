@@ -142,15 +142,18 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
         if (!response?.joined) {
           if (response?.reason === "room_not_found") {
             dispatch(roomActions.setRoomNotFound(true));
+            dispatch(roomActions.setRejoinStatus("failed"));
             return;
           }
           throw new Error("join-room rejected");
         }
         hasJoined.current = true;
+        dispatch(roomActions.setRejoinStatus("success"));
       } catch (error) {
         posthog?.captureException(error, { context: "room_reconnect_join" });
         if (attempt >= 5) {
           dispatch(roomActions.setJoinError(true));
+          dispatch(roomActions.setRejoinStatus("failed"));
           return;
         }
         attemptTimeout.current = setTimeout(() => onReconnected(_, attempt + 1), 100 * attempt);

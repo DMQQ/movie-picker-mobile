@@ -1,6 +1,9 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import Text from "../../Text";
+import Touch from "../../Touch";
 import { View, StyleSheet, LayoutChangeEvent, FlatList } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 import {
   useGetMovieCategoriesWithThumbnailsQuery,
@@ -11,28 +14,46 @@ import SkeletonCard from "../SkeletonCard";
 import useTranslation from "../../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import { setCategory } from "../../../redux/roomBuilder/roomBuilderSlice";
-import { colors, fontSize, spacing} from "../../../constants/design";
+import { moviePickerActions } from "../../../redux/moviePicker/moviePickerSlice";
+import { colors, fontSize, fontWeight, radius, spacing, withAlpha } from "../../../constants/design";
 
 const Step1GameType: React.FC = () => {
   const dispatch = useAppDispatch();
+  const customMovies = useAppSelector((state) => state.builder.customMovies);
+  // In-progress selection from a previous picker open (not yet confirmed)
+  const pickerSelected = useAppSelector((state) => state.moviePicker.selected);
+  const hasCustom = customMovies.length >= 10;
 
   const onSelectCategory = useCallback(
     (categoryId: string, categoryPath: string, gameType: "movie" | "tv") => {
-      dispatch(
-        setCategory({
-          id: categoryId,
-          path: categoryPath,
-          type: gameType,
-        }),
-      );
+      dispatch(setCategory({ id: categoryId, path: categoryPath, type: gameType }));
     },
     [dispatch],
   );
+
+  const handlePickCustomMovies = useCallback(() => {
+    // Prefer in-progress selection (swipe-away session) over last confirmed set
+    const initial = pickerSelected.length > 0 ? pickerSelected : customMovies;
+    dispatch(moviePickerActions.init({ initial }));
+    router.push("/movie-picker");
+  }, [dispatch, customMovies, pickerSelected]);
 
   return (
     <View style={styles.container}>
       <MoviesSection onSelectCategory={onSelectCategory} />
       <SeriesSection onSelectCategory={onSelectCategory} />
+      <Touch scaleTo={0.97} onPress={handlePickCustomMovies} style={[styles.customBanner, hasCustom && styles.customBannerSelected]}>
+        <View style={[styles.customBannerIcon, hasCustom && styles.customBannerIconSelected]}>
+          <MaterialCommunityIcons name="movie-filter" size={20} color={hasCustom ? colors.primary : colors.placeholder} />
+        </View>
+        <View style={styles.customBannerText}>
+          <Text style={[styles.customBannerTitle, hasCustom && styles.customBannerTitleSelected]}>Pick your own movies</Text>
+          <Text style={styles.customBannerSubtitle}>
+            {hasCustom ? `${customMovies.length} movies selected · tap to change` : "Choose exactly what gets swiped"}
+          </Text>
+        </View>
+        <MaterialCommunityIcons name="chevron-right" size={22} color={hasCustom ? colors.primary : colors.placeholder} />
+      </Touch>
     </View>
   );
 };
@@ -45,14 +66,17 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
   const t = useTranslation();
   const [listHeight, setListHeight] = useState(0);
   const selectedCategoryId = useAppSelector((state) => state.builder.categoryId);
+  const hasCustomMovies = useAppSelector((state) => state.builder.customMovies.length > 0);
   const { data: movieCategories, isLoading: moviesLoading } = useGetMovieCategoriesWithThumbnailsQuery();
+  const didAutoSelect = useRef(false);
 
   useEffect(() => {
+    if (didAutoSelect.current || hasCustomMovies) return;
     if (movieCategories && movieCategories.length > 0 && !selectedCategoryId) {
-      const firstCategory = movieCategories[0];
-      onSelectCategory(firstCategory.id, firstCategory.path, "movie");
+      didAutoSelect.current = true;
+      onSelectCategory(movieCategories[0].id, movieCategories[0].path, "movie");
     }
-  }, [movieCategories, selectedCategoryId, onSelectCategory]);
+  }, [movieCategories, selectedCategoryId, hasCustomMovies, onSelectCategory]);
 
   const onListWrapperLayout = useCallback((e: LayoutChangeEvent) => {
     const h = e.nativeEvent.layout.height;
@@ -78,7 +102,7 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
               <PosterCard
                 posterUrl={category.featured_poster}
                 label={category.label}
-                isSelected={selectedCategoryId === category.id}
+                isSelected={!hasCustomMovies && selectedCategoryId === category.id}
                 onPress={() => onSelectCategory(category.id, category.path, "movie")}
                 delay={index * 50}
                 large
@@ -102,6 +126,7 @@ const SeriesSection = ({ onSelectCategory }: SectionPrpos) => {
   const [listHeight, setListHeight] = useState(0);
   const t = useTranslation();
   const selectedCategoryId = useAppSelector((state) => state.builder.categoryId);
+  const hasCustomMovies = useAppSelector((state) => state.builder.customMovies.length > 0);
   const { data: tvCategories, isLoading: tvLoading } = useGetTVCategoriesWithThumbnailsQuery();
 
   const onListWrapperLayout = useCallback((e: LayoutChangeEvent) => {
@@ -128,7 +153,7 @@ const SeriesSection = ({ onSelectCategory }: SectionPrpos) => {
               <PosterCard
                 posterUrl={category.featured_poster}
                 label={category.label}
-                isSelected={selectedCategoryId === category.id}
+                isSelected={!hasCustomMovies && selectedCategoryId === category.id}
                 onPress={() => onSelectCategory(category.id, category.path, "tv")}
                 delay={index * 50}
                 large
@@ -178,6 +203,49 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingRight: spacing.lg,
+  },
+  customBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: radius.card,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md + 2,
+    marginTop: spacing.sm,
+    borderWidth: 1,
+    borderColor: "transparent",
+  },
+  customBannerSelected: {
+    backgroundColor: withAlpha(colors.primary, 0.1),
+    borderColor: withAlpha(colors.primary, 0.35),
+  },
+  customBannerIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: radius.sm,
+    backgroundColor: colors.input,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  customBannerIconSelected: {
+    backgroundColor: withAlpha(colors.primary, 0.15),
+  },
+  customBannerText: {
+    flex: 1,
+    gap: 2,
+  },
+  customBannerTitle: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
+  },
+  customBannerTitleSelected: {
+    color: colors.primary,
+  },
+  customBannerSubtitle: {
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
   },
 });
 

@@ -19,6 +19,7 @@ function userId(u: unknown): string {
 
 export default function useRoomToasts() {
   const users = useAppSelector((s) => s.room.users);
+  const rejoinStatus = useAppSelector((s) => s.room.rejoinStatus);
   const toast = useToast();
   const t = useTranslation();
   const { connectionStatus } = useContext(SocketContext);
@@ -65,7 +66,24 @@ export default function useRoomToasts() {
     } else if (connectionStatus === "disconnected") {
       connToastId.current = toast.replace(connToastId.current, t("room.toast.connection-lost-refresh"), { type: "error", duration: 0 });
     } else if (connectionStatus === "connected" && (prev === "reconnecting" || prev === "disconnected")) {
-      connToastId.current = toast.replace(connToastId.current, t("room.toast.reconnected"), { type: "success", duration: 2000 });
+      // Don't toast yet — wait for join-room to confirm the room still exists
     }
   }, [connectionStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Rejoin result — fires after RoomContext confirms whether the room survived
+  const prevRejoinStatus = useRef<typeof rejoinStatus>("idle");
+  useEffect(() => {
+    if (rejoinStatus === prevRejoinStatus.current) return;
+    prevRejoinStatus.current = rejoinStatus;
+
+    if (rejoinStatus === "success") {
+      connToastId.current = toast.replace(connToastId.current, t("room.toast.reconnected"), { type: "success", duration: 2000 });
+    }
+    // "failed" cases (room_not_found / join error) are handled by the room-not-found UI
+    // so we just dismiss the connection-lost toast silently
+    if (rejoinStatus === "failed") {
+      if (connToastId.current) toast.dismiss(connToastId.current);
+      connToastId.current = null;
+    }
+  }, [rejoinStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 }

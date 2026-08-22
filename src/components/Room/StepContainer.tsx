@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import IconButton from "../IconButton";
 import { View, StyleSheet } from "react-native";
 
@@ -10,8 +10,10 @@ import { router } from "expo-router";
 import {
   goNext,
   goToStep,
+  setCustomMovies,
   setQuickStartMode,
 } from "../../redux/roomBuilder/roomBuilderSlice";
+import { moviePickerActions } from "../../redux/moviePicker/moviePickerSlice";
 import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
 import { radius, spacing } from "../../constants/design";
 import { posthog } from "../../constants/posthog";
@@ -20,7 +22,6 @@ interface StepContainerProps {
   currentStep: number;
   isLastStep?: boolean;
   nextButtonText?: string;
-  footerSubtitle?: string;
   children: React.ReactNode;
 }
 
@@ -29,7 +30,6 @@ const StepContainer: React.FC<StepContainerProps> = ({
   isLastStep = false,
   nextButtonText,
   children,
-  footerSubtitle,
 }) => {
   const dispatch = useAppDispatch();
   const t = useTranslation();
@@ -40,10 +40,21 @@ const StepContainer: React.FC<StepContainerProps> = ({
   const hasProviders =
     savedProviders?.providers && savedProviders.providers.length > 0;
 
+  const isPickerConfirmed = useAppSelector((s) => s.moviePicker.confirmed);
+  const pickedMovies = useAppSelector((s) => s.moviePicker.selected);
+
+  useEffect(() => {
+    if (!isPickerConfirmed) return;
+    dispatch(moviePickerActions.clearConfirmed());
+    if (pickedMovies.length >= 10) {
+      dispatch(setCustomMovies(pickedMovies));
+    }
+  }, [isPickerConfirmed]);
+
   const canGoNext = () => {
     switch (currentStep) {
       case 1:
-        return !!category;
+        return !!category || state.customMovies.length >= 10;
       case 2:
       case 3:
       case 4:
@@ -85,6 +96,23 @@ const StepContainer: React.FC<StepContainerProps> = ({
   };
 
   const handleQuickStart = useCallback(() => {
+    if (state.customMovies.length >= 10) {
+      posthog?.capture("room_setup_completed", { custom_movies_count: state.customMovies.length, is_quick_start: false });
+      router.push({
+        pathname: "/room/qr-code",
+        params: {
+          roomSetup: JSON.stringify({
+            category: "movies/discover",
+            customMovies: state.customMovies,
+            maxRounds: 0,
+            genre: [],
+            providers: [],
+            specialCategories: [],
+          }),
+        },
+      });
+      return;
+    }
     if (hasProviders) {
       posthog?.capture("room_setup_completed", {
         category: state.category,
@@ -110,7 +138,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
       dispatch(setQuickStartMode(true));
       dispatch(goToStep(3));
     }
-  }, [hasProviders, state.category, state.gameType, savedProviders, dispatch]);
+  }, [hasProviders, state.category, state.gameType, state.customMovies, savedProviders, dispatch]);
 
   const handleFilters = useCallback(() => {
     dispatch(goNext());
@@ -148,7 +176,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
     );
 
   return (
-    <SetupStepShell stepKey={currentStep} footerSubtitle={footerSubtitle} footerActions={footerActions}>
+    <SetupStepShell stepKey={currentStep} footerActions={footerActions}>
       {children}
     </SetupStepShell>
   );
