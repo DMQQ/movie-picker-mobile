@@ -21,7 +21,7 @@ import { TourAttachStep } from "../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../components/Tour/TourContext";
 import TutorialTooltip from "../../components/TutorialTooltip";
-import { useTutorialSeen } from "../../hooks/useTutorial";
+import { useTutorialSeen, useMarkAllTutorialsSeen } from "../../hooks/useTutorial";
 
 export default function Favourites() {
   const params = useLocalSearchParams();
@@ -42,6 +42,7 @@ export default function Favourites() {
 
   const tourRef = useRef<TourRef>(null);
   const { seen, markSeen } = useTutorialSeen("tutorial_favourites_seen");
+  const markAllSeen = useMarkAllTutorialsSeen();
 
   const scrollToEnd = useCallback(
     () =>
@@ -134,7 +135,7 @@ export default function Favourites() {
   };
 
   return (
-    <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkippedFirst={markAllSeen}>
       <SafeIOSContainer style={{ paddingBottom: 0 }}>
         <PageHeading
           title={t("favourites.title")}

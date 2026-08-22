@@ -36,7 +36,7 @@ import { TourAttachStep } from "../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../components/Tour/TourContext";
 import TutorialTooltip from "../../components/TutorialTooltip";
-import { useTutorialSeen } from "../../hooks/useTutorial";
+import { useTutorialSeen, useMarkAllTutorialsSeen } from "../../hooks/useTutorial";
 import PlatformBlurView from "../../components/PlatformBlurView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { posthog } from "../../constants/posthog";
@@ -163,6 +163,7 @@ export default function GameList() {
   const tourRef = useRef<TourRef>(null);
   const scrollRef = useRef<ScrollView>(null);
   const { seen, markSeen } = useTutorialSeen("tutorial_home_seen");
+  const markAllSeen = useMarkAllTutorialsSeen();
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
@@ -312,7 +313,7 @@ export default function GameList() {
   );
 
 return (
-    <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkippedFirst={markAllSeen}>
       <SafeIOSContainer
         style={{
           flex: 1,

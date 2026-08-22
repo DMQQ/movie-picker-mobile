@@ -1,19 +1,26 @@
-import { useIsFocused } from "expo-router";
 import { AsyncStorage } from "expo-sqlite/kv-store";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { tutorialActions, TutorialKey, TUTORIAL_KEYS } from "../redux/tutorial/tutorialSlice";
+import { useAppDispatch, useAppSelector } from "../redux/store";
 
-export function useTutorialSeen(key: string) {
-  const [seen, setSeen] = useState<boolean | null>(null);
-  const isFocused = useIsFocused();
-
-  useEffect(() => {
-    AsyncStorage.getItem(key).then(val => setSeen(val === "1"));
-  }, [key]);
+export function useTutorialSeen(key: TutorialKey) {
+  const dispatch = useAppDispatch();
+  const loaded = useAppSelector((s) => s.tutorial.loaded);
+  const seen = useAppSelector((s) => s.tutorial.seen[key]);
 
   const markSeen = useCallback(async () => {
+    dispatch(tutorialActions.markSeen(key));
     await AsyncStorage.setItem(key, "1");
-    setSeen(true);
-  }, [key]);
+  }, [dispatch, key]);
 
-  return { seen: isFocused ? seen : null, markSeen };
+  // Return null while the bulk load hasn't resolved yet (prevents flash)
+  return { seen: loaded ? seen : null, markSeen };
+}
+
+export function useMarkAllTutorialsSeen() {
+  const dispatch = useAppDispatch();
+  return useCallback(async () => {
+    dispatch(tutorialActions.markAllSeen());
+    await AsyncStorage.multiSet(TUTORIAL_KEYS.map((k) => [k, "1"]));
+  }, [dispatch]);
 }

@@ -14,7 +14,7 @@ import { TourAttachStep } from "../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../components/Tour/TourContext";
 import TutorialTooltip from "../../components/TutorialTooltip";
-import { useTutorialSeen } from "../../hooks/useTutorial";
+import { useTutorialSeen, useMarkAllTutorialsSeen } from "../../hooks/useTutorial";
 import PageHeading from "../../components/PageHeading";
 
 export default function Landing() {
@@ -35,6 +35,7 @@ const PagerCategoryScreen = memo(() => {
   const tourRef = useRef<TourRef>(null);
   const startedRef = useRef(false);
   const { seen, markSeen } = useTutorialSeen("tutorial_discover_seen");
+  const markAllSeen = useMarkAllTutorialsSeen();
 
   const steps = useMemo<TourStep[]>(
     () => [
@@ -104,7 +105,7 @@ const PagerCategoryScreen = memo(() => {
   }
 
   return (
-    <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkippedFirst={markAllSeen}>
       <SafeIOSContainer style={{ flex: 1, paddingBottom: 0, paddingTop: 0 }}>
         <PageHeading
           title={activeCategory?.label ?? selectedChip}

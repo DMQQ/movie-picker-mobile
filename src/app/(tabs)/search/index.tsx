@@ -38,7 +38,7 @@ import { TourAttachStep } from "../../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../../components/Tour/TourContext";
 import TutorialTooltip from "../../../components/TutorialTooltip";
-import { useTutorialSeen } from "../../../hooks/useTutorial";
+import { useTutorialSeen, useMarkAllTutorialsSeen } from "../../../hooks/useTutorial";
 import Touch from "../../../components/Touch";
 import SearchSkeleton from "../../../components/Search/SearchSkeleton";
 import ActiveFilters from "../../../components/Search/ActiveFilters";
@@ -172,6 +172,7 @@ const SearchScreen = () => {
 
   const tourRef = useRef<TourRef>(null);
   const { seen, markSeen } = useTutorialSeen("tutorial_search_seen");
+  const markAllSeen = useMarkAllTutorialsSeen();
 
   const steps = useMemo<TourStep[]>(
     () => [
@@ -458,7 +459,7 @@ const SearchScreen = () => {
   );
 
   return (
-    <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkippedFirst={markAllSeen}>
       <View style={[styles.container, { paddingTop: insets.top }]}>
         {memoStack}
 

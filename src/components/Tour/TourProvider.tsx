@@ -43,12 +43,13 @@ interface Props {
   steps: TourStep[];
   children: ReactNode;
   onStop?: () => void;
+  onSkippedFirst?: () => void;
 }
 
 const EMPTY_SPOT: LayoutRectangle = { x: 0, y: 0, width: 0, height: 0 };
 
 export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
-  { steps, children, onStop },
+  { steps, children, onStop, onSkippedFirst },
   ref,
 ) {
   const insets = useSafeAreaInsets();
@@ -106,6 +107,7 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
         step: current + 1,
         total: steps.length,
       });
+      if (current === 0) onSkippedFirst?.();
     }
     pendingStep.current = undefined;
     fade.value = withTiming(0, { duration: FADE_OUT_MS }, (finished) => {
@@ -115,7 +117,7 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
       }
     });
     onStop?.();
-  }, [fade, onStop, current, steps.length]);
+  }, [fade, onStop, onSkippedFirst, current, steps.length]);
 
   const next = useCallback(() => {
     if (current === undefined) return;

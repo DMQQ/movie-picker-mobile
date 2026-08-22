@@ -39,7 +39,7 @@ import { TourAttachStep } from "../../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../../components/Tour/TourContext";
 import TutorialTooltip from "../../../components/TutorialTooltip";
-import { useTutorialSeen } from "../../../hooks/useTutorial";
+import { useTutorialSeen, useMarkAllTutorialsSeen } from "../../../hooks/useTutorial";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 const projectId = Constants.expoConfig?.extra?.eas?.projectId;
@@ -208,6 +208,7 @@ export default function SettingsScreen() {
 
   const tourRef = useRef<TourRef>(null);
   const { seen, markSeen } = useTutorialSeen("tutorial_account_seen");
+  const markAllSeen = useMarkAllTutorialsSeen();
   const scrollRef = useRef<ScrollView>(null);
 
   const scrollTo = useCallback(
@@ -309,7 +310,7 @@ export default function SettingsScreen() {
     (Updates.manifest as any)?.createdAt?.toString().split("T")[0] ?? "—";
 
   return (
-    <TourProvider ref={tourRef} steps={steps} onStop={markSeen}>
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkippedFirst={markAllSeen}>
       <View style={styles.container}>
         <PageHeading
           title={t("settings.heading")}
