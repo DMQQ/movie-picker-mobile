@@ -24,7 +24,7 @@ import fillMissing from "../../utils/fillMissing";
 import { shuffleInPlace } from "../../utils/shuffle";
 import { throttle } from "../../utils/throttle";
 import PageHeading from "../../components/PageHeading";
-import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { FilterButton, useMediaFilters } from "../../components/MediaFilters";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import * as Haptics from "expo-haptics";
@@ -33,8 +33,11 @@ import MovieResultCard, {
 } from "../../components/Random/MovieResultCard";
 import PlatformBlurView from "../../components/PlatformBlurView";
 import { Image } from "expo-image";
-import { colors, radius} from "../../constants/design";
+import { colors, common, radius } from "../../constants/design";
 import { posthog } from "../../constants/posthog";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { moviePickerActions } from "../../redux/moviePicker/moviePickerSlice";
+import IconButton from "../../components/IconButton";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -42,6 +45,9 @@ export default function FortuneWheel() {
   const wheelRef = useRef<{ spin: () => void; stop: () => void }>(null);
 
   const params = useLocalSearchParams();
+  const dispatch = useAppDispatch();
+  const pickerConfirmed = useAppSelector((s) => s.moviePicker.confirmed);
+  const pickerSelected = useAppSelector((s) => s.moviePicker.selected);
 
   const { getFilterParams, isFilterActive } = useMediaFilters();
   const { getBlockedIds } = useBlockedMovies();
@@ -91,6 +97,28 @@ export default function FortuneWheel() {
     },
     [getMovieDetails],
   );
+
+  useEffect(() => {
+    if (!pickerConfirmed || pickerSelected.length === 0) return;
+    dispatch(moviePickerActions.clearConfirmed());
+
+    const movies = pickerSelected.map((m) => ({
+      id: m.id,
+      title: m.title,
+      poster_path: m.poster_path || null,
+      type: m.contentType ?? "movie",
+    })) as Movie[];
+
+    const shuffled = shuffleInPlace([...movies]);
+    const results = fillMissing(shuffled.slice(0, 12), 12);
+    Promise.allSettled(
+      results.filter((m) => m?.poster_path).map((m) =>
+        Image.prefetch(`https://image.tmdb.org/t/p/w200${m.poster_path}`)
+      )
+    );
+    setSelectedCards({ results, name: "Custom" });
+    setShouldSpin(true);
+  }, [pickerConfirmed]);
 
   const [selectedCards, setSelectedCards] = useState<{
     results: Movie[];
@@ -257,7 +285,17 @@ export default function FortuneWheel() {
         showBackButton
         title={isSpin ? "" : (params?.title as string) || ""}
       >
-        <PlatformBlurView style={fortuneStyles.filterButtonWrapper}>
+        <PlatformBlurView style={fortuneStyles.headerActions}>
+          <IconButton
+            icon="playlist-play"
+            size={28}
+            style={common.iconButton}
+            onPress={() => {
+              dispatch(moviePickerActions.init({}));
+              router.push("/movie-picker" as any);
+            }}
+          />
+          <View style={fortuneStyles.headerDivider} />
           <FilterButton
             shouldAutoOpen
             onApply={handleThrowDice}
@@ -358,8 +396,15 @@ export default function FortuneWheel() {
 }
 
 const fortuneStyles = StyleSheet.create({
-  filterButtonWrapper: {
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: radius.pill,
+  },
+  headerDivider: {
+    width: 1,
+    height: 20,
+    backgroundColor: colors.border,
   },
   cardOverlay: {
     position: "absolute",
