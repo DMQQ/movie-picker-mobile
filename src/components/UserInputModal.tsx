@@ -6,7 +6,6 @@ import Button from "./Button";
 import PrimaryButton from "./PrimaryButton";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
-import PlatformBlurView from "./PlatformBlurView";
 import { colors, fontSize, radius, spacing} from "../constants/design";
 
 export interface UserInputModalAction {
@@ -72,7 +71,7 @@ export default function UserInputModal({
       onRequestClose={dismissable ? onDismiss : undefined}
     >
       <View style={styles.modalOverlay} onTouchEnd={handleBackdropPress}>
-        <PlatformBlurView style={[styles.modalContent, { width, maxHeight }]} onTouchEnd={(e) => e.stopPropagation()}>
+        <View style={[styles.modalContent, { width, maxHeight }]} onTouchEnd={(e) => e.stopPropagation()}>
           <Animated.View style={[styles.modalInner]}>
             <Text style={styles.modalTitle}>{title}</Text>
             {subtitle && <Text style={styles.modalSubtitle}>{subtitle}</Text>}
@@ -115,7 +114,7 @@ export default function UserInputModal({
               </View>
             )}
           </Animated.View>
-        </PlatformBlurView>
+        </View>
       </View>
     </Modal>
   );
@@ -133,33 +132,27 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     overflow: "hidden",
     flex: 0,
-    ...Platform.select({
-      android: {
-        backgroundColor: colors.appBackground,
-        borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.18)",
-      },
-    }),
+    backgroundColor: colors.appBackground,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.18)",
   },
   modalInner: {
     padding: spacing.xxl + 6,
-    alignItems: "center",
   },
   modalTitle: {
     fontSize: 32,
     fontFamily: "Bebas",
     color: colors.text,
-    textAlign: "center",
-    marginBottom: spacing.sm,
+    textAlign: "left",
+    marginBottom: spacing.xs,
     letterSpacing: 1.2,
   },
   modalSubtitle: {
     fontSize: fontSize.md,
     color: "rgba(255, 255, 255, 0.75)",
-    textAlign: "center",
+    textAlign: "left",
     marginBottom: spacing.xl,
     lineHeight: 20,
-    paddingHorizontal: spacing.sm + 2,
   },
   contentContainer: {
     width: "100%",
@@ -167,12 +160,14 @@ const styles = StyleSheet.create({
   },
   actionsContainer: {
     width: "100%",
+    flexDirection: "row",
     gap: spacing.sm + 2,
   },
   actionsContainerHorizontal: {
     flexDirection: "row",
   },
   actionButton: {
+    flex: 1,
     borderRadius: radius.pill,
     overflow: "hidden",
   },

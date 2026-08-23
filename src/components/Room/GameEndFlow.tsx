@@ -1,8 +1,7 @@
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { Dimensions, Modal, Share, StyleSheet, View } from "react-native";
+import { Dimensions, Modal, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as Notifications from "expo-notifications";
 import QRCode from "react-native-qrcode-svg";
 import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
@@ -12,6 +11,7 @@ import Button from "../Button";
 import PrimaryButton from "../PrimaryButton";
 import PlatformBlurView from "../PlatformBlurView";
 import Text from "../Text";
+import RoomShareStrip from "./RoomShareStrip";
 import { useAppSelector } from "../../redux/store";
 import { colors, fontSize, radius, spacing } from "../../constants/design";
 
@@ -29,7 +29,6 @@ const GameEndFlow = memo(() => {
   const [showDialog, setShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [waiting, setWaiting] = useState(false);
-  const [showNotifBanner, setShowNotifBanner] = useState(false);
 
   useEffect(() => {
     if (gameEnded && isPlaying === false) {
@@ -75,27 +74,6 @@ const GameEndFlow = memo(() => {
     setShowDialog(false);
     router.replace({ pathname: "/room/summary", params: { roomId } });
   }, [socket, roomId]);
-
-  const handleShareCode = useCallback(async () => {
-    if (!qrCode) return;
-    const code = qrCode.toUpperCase();
-    const webUrl = `https://flickmate.app/swipe/${code}`;
-    const result = await Share.share({
-      message: t("room.share.message", { code }) + "\nOr join via " + webUrl,
-      url: webUrl,
-    });
-    if (result.action === Share.sharedAction) {
-      const { status, canAskAgain } = await Notifications.getPermissionsAsync();
-      if (status !== "granted" && canAskAgain) {
-        setShowNotifBanner(true);
-      }
-    }
-  }, [qrCode, t]);
-
-  const handleEnableNotifications = useCallback(async () => {
-    setShowNotifBanner(false);
-    await Notifications.requestPermissionsAsync();
-  }, []);
 
   const handleViewSummary = useCallback(() => {
     setShowDialog(false);
@@ -147,16 +125,6 @@ const GameEndFlow = memo(() => {
                 <View style={styles.codeSide}>
                   <Text style={styles.codeLabel}>{t("room.invite-post-finish.code-label") as string}</Text>
                   <Text style={styles.codeValue}>{code}</Text>
-                  <Button
-                    mode="outlined"
-                    icon="share-variant"
-                    onPress={handleShareCode}
-                    style={styles.shareBtn}
-                    contentStyle={styles.shareBtnContent}
-                    compact
-                  >
-                    {t("room.share.button") as string}
-                  </Button>
                 </View>
               </View>
             ) : null}
@@ -169,16 +137,8 @@ const GameEndFlow = memo(() => {
               </View>
             ) : null}
 
-            {/* Notification nudge */}
-            {showNotifBanner && (
-              <View style={styles.notifBanner}>
-                <MaterialCommunityIcons name="bell-outline" size={16} color={colors.primary} />
-                <Text style={styles.notifBannerText}>{t("room.invite-post-finish.notif-hint") as string}</Text>
-                <Button mode="text" compact onPress={handleEnableNotifications} style={styles.notifEnableBtn}>
-                  {t("room.invite-post-finish.notif-enable") as string}
-                </Button>
-              </View>
-            )}
+            {/* Share + notify strip */}
+            {code ? <RoomShareStrip qrCode={code} webPath="swipe" roomId={roomId ?? undefined} /> : null}
 
             {/* Actions */}
             <View style={styles.actions}>
@@ -281,16 +241,6 @@ const styles = StyleSheet.create({
     letterSpacing: 6,
     color: colors.text,
   },
-  shareBtn: {
-    marginTop: spacing.xs,
-    borderRadius: radius.pill,
-    alignSelf: "flex-start",
-  },
-  shareBtnContent: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
-  },
-
   // Async hint
   asyncHint: {
     flexDirection: "row",
@@ -304,28 +254,6 @@ const styles = StyleSheet.create({
     flex: 1,
     lineHeight: 20,
   },
-
-  // Notification nudge
-  notifBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    backgroundColor: `${colors.primary}18`,
-    borderRadius: radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: `${colors.primary}40`,
-    paddingVertical: spacing.sm,
-    paddingLeft: spacing.md,
-    paddingRight: spacing.xs,
-    marginBottom: spacing.lg,
-  },
-  notifBannerText: {
-    flex: 1,
-    fontSize: fontSize.sm,
-    color: colors.text,
-    lineHeight: 18,
-  },
-  notifEnableBtn: { marginLeft: "auto" },
 
   // Actions
   actions: {

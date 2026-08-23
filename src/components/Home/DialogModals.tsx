@@ -2,9 +2,9 @@ import { router } from "expo-router";
 import Text from "../Text";
 import { useTheme } from "../../hooks/useTheme";
 import { useContext } from "react";
-import { Dimensions, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
-import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
+import { colors, fontWeight, spacing } from "../../constants/design";
 import QRCode from "react-native-qrcode-svg";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -13,6 +13,9 @@ import useTranslation from "../../service/useTranslation";
 import ReviewManager from "../../utils/rate";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import UserInputModal from "../UserInputModal";
+import RoomShareStrip from "../Room/RoomShareStrip";
+
+const QR_SIZE = 100;
 
 export default function DialogModals({
   showLeaveModal,
@@ -31,13 +34,11 @@ export default function DialogModals({
   const theme = useTheme();
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
-
   const isPlaying = useAppSelector((state) => state.room.isPlaying);
+  const t = useTranslation();
 
   const handleLeaveRoom = () => {
     socket?.emit("leave-room", roomId);
-    // If game is running the server pushes game:summary → useRoomScreen listener handles navigation.
-    // If game already ended, go home and clean up.
     if (!isPlaying) {
       router.replace("/");
       dispatch(roomActions.reset());
@@ -45,8 +46,6 @@ export default function DialogModals({
       ReviewManager.onGameComplete(true);
     }
   };
-
-  const t = useTranslation();
 
   return (
     <>
@@ -84,39 +83,40 @@ export default function DialogModals({
           },
         ]}
       >
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              borderWidth: 2,
-              borderColor: theme.colors.primary,
-              borderRadius: radius.sm + 2,
-              width: Dimensions.get("screen").width / 2 + 25,
-              height: Dimensions.get("screen").width / 2 + 25,
-            }}
-          >
-            <QRCode
-              backgroundColor={theme.colors.surface}
-              color={theme.colors.primary}
-              value={`flickmate://room/${qrCode}`}
-              size={Dimensions.get("screen").width / 2}
-            />
+        <View style={styles.qrRow}>
+          <QRCode
+            backgroundColor="transparent"
+            color={theme.colors.primary}
+            value={`flickmate://room/${qrCode}`}
+            size={QR_SIZE}
+          />
+
+          <View style={styles.codeBlock}>
+            <Text style={[styles.codeValue, { color: theme.colors.primary }]}>
+              {qrCode}
+            </Text>
+            <RoomShareStrip qrCode={qrCode ?? ""} webPath="swipe" roomId={roomId} />
           </View>
-          <Text
-            style={{
-              color: theme.colors.primary,
-              textAlign: "center",
-              marginTop: spacing.screen,
-              fontSize: fontSize.xl,
-              fontWeight: fontWeight.bold,
-              letterSpacing: 3,
-            }}
-          >
-            {qrCode}
-          </Text>
         </View>
       </UserInputModal>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  qrRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.lg,
+    width: "100%",
+  },
+  codeBlock: {
+    flex: 1,
+    gap: spacing.sm,
+  },
+  codeValue: {
+    fontSize: 26,
+    fontWeight: fontWeight.bold,
+    letterSpacing: 6,
+  },
+});
