@@ -1,15 +1,16 @@
 import { useState } from "react";
 import Text from "../Text";
-import { ActivityIndicator, Dimensions, Pressable, View } from "react-native";
+import Touch from "../Touch";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 import Animated, { FadeIn, LinearTransition } from "react-native-reanimated";
 import { Episode } from "../../../types";
 import { useGetSeasonEpisodesQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
-import FrostedGlass from "../FrostedGlass";
+import Card from "../Card";
 import RatingIcons from "../RatingIcons";
 import Thumbnail from "../Thumbnail";
-import { colors, fontSize, radius, spacing, typography} from "../../constants/design";
+import { colors, fontSize, fontWeight, spacing, typography } from "../../constants/design";
 
 export default function SeasonEpisodes({ id, season }: { id: number; season: number }) {
   const { data, isLoading } = useGetSeasonEpisodesQuery({ id, season }, { refetchOnMountOrArgChange: true });
@@ -20,7 +21,7 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
 
   if (isLoading) {
     return (
-      <View style={{ marginTop: spacing.xxl + 6, justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.loader}>
         <ActivityIndicator size="large" color={colors.text} />
       </View>
     );
@@ -29,55 +30,119 @@ export default function SeasonEpisodes({ id, season }: { id: number; season: num
   if (!data || !data?.episodes || data?.episodes?.length === 0) return null;
 
   return (
-    <Animated.View style={{ marginTop: spacing.xxl + 6, paddingBottom: spacing.xxl + 6 }} layout={LinearTransition}>
-      <Text style={{ fontSize: typography.bebasSize.section, fontFamily: "Bebas", color: colors.text, marginBottom: spacing.sm + 2 }}>
+    <Animated.View style={styles.root} layout={LinearTransition}>
+      <Text style={styles.heading}>
         {t("movie.details.season")} {season}{" "}
-        <Text style={{ fontSize: fontSize.xxl, fontFamily: "Bebas" }}>{data?.episodes.length ? `(${data?.episodes.length})` : ""}</Text>
+        <Text style={styles.headingCount}>{data?.episodes.length ? `(${data?.episodes.length})` : ""}</Text>
       </Text>
       {data?.episodes.slice(0, showAll ? data?.episodes.length : 5).map((item: Episode, index) => (
-        <Animated.View key={item.id} entering={FadeIn.delay(index * 50)} style={{ marginBottom: spacing.screen }}>
-          <FrostedGlass
-            style={{ flex: 0 }}
-            container={{
-              width: Dimensions.get("screen").width - 30,
-              borderRadius: radius.modal,
-            }}
-          >
-            <View style={{ padding: spacing.screen }}>
-              <View style={{ flexDirection: "row", gap: spacing.sm + 2 }}>
-                <Thumbnail
-                  path={item.still_path || item.still_path}
-                  style={{
-                    height: 100,
-                    width: 125,
-                    borderRadius: radius.sm + 2,
-                  }}
-                  container={{
-                    backgroundColor: "transparent",
-                  }}
-                  size={300}
-                />
-                <View style={{ flex: 1, justifyContent: "center", gap: spacing.xs - 1 }}>
-                  <Text style={{ fontFamily: "Bebas", fontSize: fontSize.xxl }}>{item.name || item.episode_type}</Text>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <RatingIcons size={13} vote={item.vote_average} />
-                    <Text style={{ fontSize: fontSize.sm, marginLeft: spacing.sm + 2 }}>{item.vote_average.toFixed(2)}</Text>
-                  </View>
-                  <Text style={{ color: "gray" }}>{item.runtime} min</Text>
-                </View>
+        <Animated.View key={item.id} entering={FadeIn.delay(index * 50)} style={styles.episodeWrapper}>
+          <Card style={styles.episodeCard}>
+            <Thumbnail
+              path={item.still_path}
+              style={styles.still}
+              container={styles.stillContainer}
+              size={300}
+            />
+            <View style={styles.episodeBody}>
+              <Text style={styles.episodeName}>{item.name || item.episode_type}</Text>
+              <View style={styles.ratingRow}>
+                <RatingIcons size={13} vote={item.vote_average} />
+                <Text style={styles.ratingText}>{item.vote_average.toFixed(2)}</Text>
               </View>
-              {item.overview && <Text style={{ marginTop: spacing.sm + 2, color: "rgba(255,255,255,0.9)" }}>{item.overview}</Text>}
+              <Text style={styles.runtime}>{item.runtime} min</Text>
+              {item.overview && (
+                <Text numberOfLines={2} style={styles.overview}>{item.overview}</Text>
+              )}
             </View>
-          </FrostedGlass>
+          </Card>
         </Animated.View>
       ))}
       {(data?.episodes.length || 0) > 5 && (
-        <View style={{ alignItems: "center", marginTop: spacing.sm + 2, marginBottom: spacing.xl }}>
-          <Pressable onPress={() => setShowAll((p) => !p)}>
-            <Text>{showAll ? t("movie.details.show_less") : `${t("movie.details.show_more")}`}</Text>
-          </Pressable>
-        </View>
+        <Touch onPress={() => setShowAll((p) => !p)} style={styles.showMore}>
+          <Text style={styles.showMoreText}>
+            {showAll ? t("movie.details.show_less") : t("movie.details.show_more")}
+          </Text>
+        </Touch>
       )}
     </Animated.View>
   );
 }
+
+const styles = StyleSheet.create({
+  loader: {
+    marginTop: spacing.xxl,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  root: {
+    marginTop: spacing.xxl,
+    paddingBottom: spacing.xxl,
+  },
+  heading: {
+    fontSize: typography.bebasSize.section,
+    fontFamily: typography.bebas,
+    letterSpacing: typography.bebasLetterSpacing,
+    color: colors.text,
+    marginBottom: spacing.md,
+  },
+  headingCount: {
+    fontSize: fontSize.xxl,
+    fontFamily: typography.bebas,
+  },
+  episodeWrapper: {
+    marginBottom: spacing.md,
+  },
+  episodeCard: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  still: {
+    height: 90,
+    width: 120,
+    borderRadius: 0,
+  },
+  stillContainer: {
+    backgroundColor: "transparent",
+  },
+  episodeBody: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    gap: spacing.xs,
+  },
+  episodeName: {
+    fontFamily: typography.bebas,
+    letterSpacing: typography.bebasLetterSpacing,
+    fontSize: fontSize.xxl,
+  },
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  ratingText: {
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
+    fontWeight: fontWeight.medium,
+  },
+  runtime: {
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
+  },
+  overview: {
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
+    lineHeight: 18,
+  },
+  showMore: {
+    alignItems: "center",
+    paddingVertical: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  showMoreText: {
+    color: colors.primary,
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.medium,
+  },
+});

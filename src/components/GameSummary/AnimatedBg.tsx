@@ -53,14 +53,14 @@ export default memo(function AnimatedBg({ matchedMovies }: { matchedMovies: Part
   return (
     <>
       {uriA && (
-        <Animated.View style={[styles.layer, { opacity: opacityA }]}>
+        <Animated.View style={[styles.layer, { opacity: opacityA }]} pointerEvents="none">
           <ImageBackground source={{ uri: uriA }} style={styles.image} blurRadius={8}>
             <BlurView intensity={15} style={styles.blur} />
           </ImageBackground>
         </Animated.View>
       )}
       {uriB && (
-        <Animated.View style={[styles.layer, { opacity: opacityB }]}>
+        <Animated.View style={[styles.layer, { opacity: opacityB }]} pointerEvents="none">
           <ImageBackground source={{ uri: uriB }} style={styles.image} blurRadius={8}>
             <BlurView intensity={15} style={styles.blur} />
           </ImageBackground>

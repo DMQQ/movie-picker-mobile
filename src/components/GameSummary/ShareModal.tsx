@@ -48,8 +48,10 @@ export default memo(function ShareModal({ visible, onClose, roomId }: Props) {
       }
     } catch (err) {
       console.error("Failed to capture ticket:", err);
+    } finally {
+      onClose();
     }
-  }, [roomId]);
+  }, [roomId, onClose]);
 
   useEffect(() => {
     if (!data || !visible) return;

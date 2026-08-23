@@ -298,11 +298,13 @@ export default function GameSummary() {
         )}
       </View>
 
-      <ShareModal
-        visible={shareVisible}
-        onClose={() => setShareVisible(false)}
-        roomId={roomId}
-      />
+      {shareVisible && (
+        <ShareModal
+          visible={shareVisible}
+          onClose={() => setShareVisible(false)}
+          roomId={roomId}
+        />
+      )}
     </View>
   );
 }

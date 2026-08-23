@@ -17,6 +17,8 @@ import Text from "../components/Text";
 import PrimaryButton from "../components/PrimaryButton";
 import Touch from "../components/Touch";
 import { colors, spacing, radius, fontSize, fontWeight, withAlpha } from "../constants/design";
+import { posthog } from "../constants/posthog";
+import useTranslation from "../service/useTranslation";
 
 const { width: W, height: H } = Dimensions.get("window");
 
@@ -156,10 +158,7 @@ function PosterCard({
   );
 }
 
-function AnimatedHeading() {
-  const line1 = "STOP SCROLLING.";
-  const line2 = "START WATCHING.";
-
+function AnimatedHeading({ line1, line2 }: { line1: string; line2: string }) {
   return (
     <View style={styles.heroBlock}>
       <View style={styles.heroLine}>
@@ -189,25 +188,28 @@ function AnimatedHeading() {
 }
 
 const MODES = [
-  { label: "Swipe", icon: "cards-outline" },
-  { label: "Vote", icon: "thumb-up-outline" },
-  { label: "Spin", icon: "rotate-right" },
-  { label: "Random", icon: "dice-5-outline" },
+  { key: "landing.modes.swipe", icon: "cards-outline" },
+  { key: "landing.modes.vote", icon: "thumb-up-outline" },
+  { key: "landing.modes.spin", icon: "rotate-right" },
+  { key: "landing.modes.random", icon: "dice-5-outline" },
 ] as const;
 
 export default function LandingScreen() {
   const insets = useSafeAreaInsets();
+  const t = useTranslation();
 
   useEffect(() => {
     AsyncStorage.setItem("landing_shown", "1");
   }, []);
 
   const goQuickstart = () => {
+    posthog?.capture("landing_quickstart_pressed");
     router.replace("/(tabs)");
     router.push({ pathname: "/room/qr-code", params: { quickStart: "true" } } as any);
   };
 
   const goBrowse = () => {
+    posthog?.capture("landing_browse_pressed");
     router.replace("/(tabs)");
   };
 
@@ -234,18 +236,16 @@ export default function LandingScreen() {
       </Animated.View>
 
       <View style={styles.textBlock}>
-        <AnimatedHeading />
+        <AnimatedHeading line1={t("landing.line1")} line2={t("landing.line2")} />
 
-        <Animated.View entering={FadeInUp.delay(700).duration(400)}>
-          <Text style={styles.sub}>
-            Your friends will actually agree. Probably.
-          </Text>
+        <Animated.View entering={FadeInUp.delay(700).duration(400)} style={styles.subBlock}>
+          <Text style={styles.sub}>{t("landing.sub")}</Text>
 
           <View style={styles.modesRow}>
-            {MODES.map(({ label, icon }) => (
-              <View key={label} style={styles.modeChip}>
+            {MODES.map(({ key, icon }) => (
+              <View key={key} style={styles.modeChip}>
                 <MaterialCommunityIcons name={icon as any} size={20} color={withAlpha(colors.text, 0.45)} />
-                <Text style={styles.modeText}>{label}</Text>
+                <Text style={styles.modeText}>{t(key)}</Text>
               </View>
             ))}
           </View>
@@ -254,10 +254,10 @@ export default function LandingScreen() {
 
       <Animated.View entering={FadeInUp.delay(800).duration(400)} style={styles.actions}>
         <PrimaryButton onPress={goQuickstart} style={styles.primaryBtn}>
-          Pick something tonight
+          {t("landing.cta")}
         </PrimaryButton>
         <Touch onPress={goBrowse} style={styles.browseBtn}>
-          <Text style={styles.browseText}>Just browsing</Text>
+          <Text style={styles.browseText}>{t("landing.browse")}</Text>
         </Touch>
       </Animated.View>
     </View>
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
-    paddingBottom: spacing.md,
+    marginBottom: -spacing.xl,
   },
   logo: {
     width: 380,
@@ -306,7 +306,10 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   textBlock: {
-    gap: spacing.sm,
+    gap: 0,
+  },
+  subBlock: {
+    gap: spacing.md,
   },
   heroBlock: {
     gap: 2,
@@ -337,7 +340,6 @@ const styles = StyleSheet.create({
   modesRow: {
     flexDirection: "row",
     gap: spacing.xs,
-    marginTop: spacing.sm,
   },
   modeChip: {
     flex: 1,
