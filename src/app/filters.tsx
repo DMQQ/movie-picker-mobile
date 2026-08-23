@@ -209,7 +209,7 @@ export default function FiltersScreen() {
 
   return (
     <View style={styles.wrapper}>
-      <FormSheetContainer padX={spacing.lg}>
+      <FormSheetContainer padX={0}>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
