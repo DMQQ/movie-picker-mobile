@@ -626,6 +626,9 @@
       "highlight": "Head-to-head until one stands"
     }
   },
+  "moviePicker": {
+    "searchPlaceholder": "Search millions of movies and shows"
+  },
   "search": {
     "error": "Something went wrong. Please try again.",
     "no-results": "No results for: ",

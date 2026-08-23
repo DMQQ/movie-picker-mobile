@@ -152,7 +152,7 @@ export default function MoviePickerIndex() {
         <SearchField
           value={query}
           onChangeText={setQuery}
-          placeholder={t("search.search-placeholder") as string}
+          placeholder={t("moviePicker.searchPlaceholder") as string}
           style={styles.searchField}
         />
         {isFetching && <ActivityIndicator size="small" color={colors.primary} />}

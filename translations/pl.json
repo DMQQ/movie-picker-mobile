@@ -612,6 +612,9 @@
     },
     "empty": "Brak gier"
   },
+  "moviePicker": {
+    "searchPlaceholder": "Przeszukaj miliony filmów i seriali"
+  },
   "search": {
     "error": "Oops, coś poszło nie tak, spróbuj ponownie.",
     "no-results": "Brak wyników dla frazy: ",
