@@ -3,6 +3,7 @@ import IconButton from "../IconButton";
 import { View, StyleSheet } from "react-native";
 
 import PrimaryButton from "../PrimaryButton";
+import Text from "../Text";
 import SetupStepShell from "../Setup/SetupStepShell";
 import useTranslation from "../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -15,8 +16,10 @@ import {
 } from "../../redux/roomBuilder/roomBuilderSlice";
 import { moviePickerActions } from "../../redux/moviePicker/moviePickerSlice";
 import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
-import { radius, spacing } from "../../constants/design";
+import { radius, spacing, colors, fontSize, fontWeight } from "../../constants/design";
 import { posthog } from "../../constants/posthog";
+
+const MIN_CUSTOM_MOVIES = 20;
 
 interface StepContainerProps {
   currentStep: number;
@@ -46,7 +49,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
   useEffect(() => {
     if (!isPickerConfirmed) return;
     dispatch(moviePickerActions.clearConfirmed());
-    if (pickedMovies.length >= 10) {
+    if (pickedMovies.length > 0) {
       dispatch(setCustomMovies(pickedMovies));
     }
   }, [isPickerConfirmed]);
@@ -54,7 +57,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
   const canGoNext = () => {
     switch (currentStep) {
       case 1:
-        return !!category || state.customMovies.length >= 10;
+        return !!category || state.customMovies.length >= MIN_CUSTOM_MOVIES;
       case 2:
       case 3:
       case 4:
@@ -96,7 +99,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
   };
 
   const handleQuickStart = useCallback(() => {
-    if (state.customMovies.length >= 10) {
+    if (state.customMovies.length >= MIN_CUSTOM_MOVIES) {
       posthog?.capture("room_setup_completed", { custom_movies_count: state.customMovies.length, is_quick_start: false });
       router.push({
         pathname: "/room/qr-code",
@@ -146,22 +149,34 @@ const StepContainer: React.FC<StepContainerProps> = ({
 
   const footerActions =
     currentStep === 1 ? (
-      <View style={styles.step1NavigationRow}>
+      state.customMovies.length > 0 ? (
         <PrimaryButton
-          style={styles.quickStartButton}
-          disabled={!canGoNext() || providersLoading}
+          style={styles.nextButton}
+          disabled={state.customMovies.length < MIN_CUSTOM_MOVIES}
           onPress={handleQuickStart}
         >
-          {t("room.builder.quickStart")}
+          {state.customMovies.length >= MIN_CUSTOM_MOVIES
+            ? t("room.builder.createRoom")
+            : `${t("eitherOr.setup.custom")} (${state.customMovies.length}/${MIN_CUSTOM_MOVIES})`}
         </PrimaryButton>
-        <IconButton
-          icon="tune-variant"
-          size={24}
-          onPress={handleFilters}
-          mode="contained"
-          disabled={!canGoNext()}
-        />
-      </View>
+      ) : (
+        <View style={styles.step1NavigationRow}>
+          <PrimaryButton
+            style={styles.quickStartButton}
+            disabled={!canGoNext() || providersLoading}
+            onPress={handleQuickStart}
+          >
+            {t("room.builder.quickStart")}
+          </PrimaryButton>
+          <IconButton
+            icon="tune-variant"
+            size={24}
+            onPress={handleFilters}
+            mode="contained"
+            disabled={!canGoNext()}
+          />
+        </View>
+      )
     ) : (
       <PrimaryButton
         style={styles.nextButton}

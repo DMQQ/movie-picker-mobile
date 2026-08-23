@@ -20,6 +20,7 @@ import { posthog } from "../../constants/posthog";
 
 const POSTER_BASE = "https://image.tmdb.org/t/p/w185";
 const HIDDEN_TYPES = new Set(["superliked", "disliked"]);
+const DEFAULT_MIN_MOVIES = 10;
 
 interface SearchItem {
   id: number;
@@ -39,9 +40,10 @@ function formatRuntime(mins: number): string {
 export default function MoviePickerIndex() {
   const dispatch = useAppDispatch();
   const t = useTranslation();
-  const params = useLocalSearchParams<{ targetListType?: string; targetListName?: string }>();
+  const params = useLocalSearchParams<{ targetListType?: string; targetListName?: string; requiredCount?: string }>();
   const targetListType = params.targetListType ?? "";
   const targetListName = params.targetListName ?? "";
+  const requiredCount = parseInt(params.requiredCount ?? String(DEFAULT_MIN_MOVIES), 10);
   const isListAddMode = !!targetListType;
 
   const selected = useAppSelector((s) => s.moviePicker.selected);
@@ -269,16 +271,16 @@ export default function MoviePickerIndex() {
 
       <Pressable
         onPress={handleConfirm}
-        disabled={isListAddMode ? selected.length === 0 : selected.length < 10}
-        style={[styles.confirm, (isListAddMode ? selected.length === 0 : selected.length < 10) && styles.confirmDisabled]}
+        disabled={isListAddMode ? selected.length === 0 : selected.length < requiredCount}
+        style={[styles.confirm, (isListAddMode ? selected.length === 0 : selected.length < requiredCount) && styles.confirmDisabled]}
       >
         <Text style={styles.confirmText}>
           {isListAddMode
             ? selected.length > 0 ? `Done (${selected.length})` : "Done"
             : selected.length === 0
-              ? "Select 10+ movies"
-              : selected.length < 10
-                ? `${selected.length} / 10 selected`
+              ? `Select ${requiredCount}+ movies`
+              : selected.length < requiredCount
+                ? `${selected.length} / ${requiredCount} selected`
                 : `Done (${selected.length})`}
         </Text>
       </Pressable>

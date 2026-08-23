@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import PrimaryButton from "../../components/PrimaryButton";
 import IconButton from "../../components/IconButton";
+import Text from "../../components/Text";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import PickCategory from "../../components/Voter/PickCategory";
 import GenreSwipeStep from "../../components/Setup/GenreSwipeStep";
@@ -11,12 +12,13 @@ import SetupStepShell from "../../components/Setup/SetupStepShell";
 import useTranslation from "../../service/useTranslation";
 import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
 import { StyleSheet, View } from "react-native";
-import { radius, spacing } from "../../constants/design";
+import { radius, spacing, colors, fontSize, fontWeight } from "../../constants/design";
 import { router } from "expo-router";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { moviePickerActions, type PickedMovie } from "../../redux/moviePicker/moviePickerSlice";
 
 const TOTAL_STEPS = 3;
+const MIN_CUSTOM_MOVIES = 20;
 
 interface Props {
   sessionSettings: any;
@@ -52,7 +54,7 @@ export default function InitialState({
   const handlePickCustom = useCallback(() => {
     setIsCustom(true);
     dispatch(moviePickerActions.init({ initial: customMovies }));
-    router.push("/movie-picker");
+    router.push({ pathname: "/movie-picker", params: { requiredCount: MIN_CUSTOM_MOVIES } });
   }, [dispatch, customMovies]);
 
   const handleClearCustom = useCallback(() => {
@@ -133,8 +135,15 @@ export default function InitialState({
 
   const footerActions =
     step === 1 ? (
-      isCustom && customMovies.length > 0 ? (
-        <PrimaryButton onPress={handleNext}>{t("voter.home.create")}</PrimaryButton>
+      isCustom ? (
+        <PrimaryButton
+          onPress={handleNext}
+          disabled={customMovies.length < MIN_CUSTOM_MOVIES}
+        >
+          {customMovies.length >= MIN_CUSTOM_MOVIES
+            ? t("voter.home.create")
+            : `${t("eitherOr.setup.custom")} (${customMovies.length}/${MIN_CUSTOM_MOVIES})`}
+        </PrimaryButton>
       ) : (
         <View style={styles.step1Row}>
           <PrimaryButton style={styles.quickStartButton} onPress={handleQuickStart} disabled={prefsLoading}>

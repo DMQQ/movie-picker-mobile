@@ -17,12 +17,14 @@ import { setCategory } from "../../../redux/roomBuilder/roomBuilderSlice";
 import { moviePickerActions } from "../../../redux/moviePicker/moviePickerSlice";
 import { colors, fontSize, fontWeight, radius, spacing, withAlpha } from "../../../constants/design";
 
+const MIN_CUSTOM_MOVIES = 20;
+
 const Step1GameType: React.FC = () => {
   const dispatch = useAppDispatch();
   const customMovies = useAppSelector((state) => state.builder.customMovies);
   // In-progress selection from a previous picker open (not yet confirmed)
   const pickerSelected = useAppSelector((state) => state.moviePicker.selected);
-  const hasCustom = customMovies.length >= 10;
+  const hasCustom = customMovies.length >= MIN_CUSTOM_MOVIES;
 
   const onSelectCategory = useCallback(
     (categoryId: string, categoryPath: string, gameType: "movie" | "tv") => {
@@ -35,7 +37,7 @@ const Step1GameType: React.FC = () => {
     // Prefer in-progress selection (swipe-away session) over last confirmed set
     const initial = pickerSelected.length > 0 ? pickerSelected : customMovies;
     dispatch(moviePickerActions.init({ initial }));
-    router.push("/movie-picker");
+    router.push({ pathname: "/movie-picker", params: { requiredCount: MIN_CUSTOM_MOVIES } });
   }, [dispatch, customMovies, pickerSelected]);
 
   return (

@@ -5,8 +5,8 @@ import SetupHeader from "../../components/Setup/SetupHeader";
 import SetupStepShell from "../../components/Setup/SetupStepShell";
 import PrimaryButton from "../../components/PrimaryButton";
 import IconButton from "../../components/IconButton";
+import Text from "../../components/Text";
 import Step1Type, { type EitherOrType } from "../../components/EitherOr/Setup/Step1Type";
-import StepCustomMovies from "../../components/EitherOr/Setup/StepCustomMovies";
 import GenreSwipeStep from "../../components/Setup/GenreSwipeStep";
 import Step3BracketSize from "../../components/EitherOr/Setup/Step3BracketSize";
 import ProviderSearchStep from "../../components/Setup/ProviderSearchStep";
@@ -16,11 +16,10 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { selectProviders } from "../../redux/filterPreferences/filterPreferencesSlice";
 import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
 import { moviePickerActions, type PickedMovie } from "../../redux/moviePicker/moviePickerSlice";
-import { colors, radius, spacing } from "../../constants/design";
+import { colors, radius, spacing, fontSize, fontWeight } from "../../constants/design";
 import { posthog } from "../../constants/posthog";
 
 const STANDARD_STEPS = 4;
-const CUSTOM_STEPS = 2; // type → pick movies
 const BRACKET_SIZE = 16;
 
 export default function EitherOrSetup() {
@@ -44,7 +43,6 @@ export default function EitherOrSetup() {
   const hasSavedProviders = savedPrefs && savedPrefs.providers.length > 0;
 
   const isCustom = type === "custom";
-  const totalSteps = isCustom ? CUSTOM_STEPS : STANDARD_STEPS;
 
   // Sync picker selection back — setup stays mounted under the picker in the stack
   useEffect(() => {
@@ -70,7 +68,7 @@ export default function EitherOrSetup() {
 
   const handlePickCustom = useCallback(() => {
     dispatch(moviePickerActions.init({ initial: customMovies }));
-    router.push("/movie-picker");
+    router.push({ pathname: "/movie-picker", params: { requiredCount: BRACKET_SIZE } } as any);
   }, [dispatch, customMovies]);
 
   const onToggleGenre = useCallback((id: number) => {
@@ -93,7 +91,9 @@ export default function EitherOrSetup() {
 
   const handleQuickStart = useCallback(async () => {
     if (isCustom) {
-      setStep(2);
+      if (customMovies.length >= BRACKET_SIZE) {
+        await onCreate();
+      }
       return;
     }
     if (hasSavedProviders) {
@@ -103,9 +103,9 @@ export default function EitherOrSetup() {
       setIsCreating(false);
       if (roomId) router.push(`/either-or/${roomId}`);
     } else {
-      setStep(totalSteps);
+      setStep(STANDARD_STEPS);
     }
-  }, [hasSavedProviders, savedPrefs, createRoom, type, isCustom, totalSteps]);
+  }, [hasSavedProviders, savedPrefs, createRoom, type, isCustom, customMovies, onCreate]);
 
   const handleNext = useCallback(() => {
     if (step === totalSteps) {
@@ -128,30 +128,26 @@ export default function EitherOrSetup() {
   // Step labels vary by mode
   const getStepTitle = useCallback(() => {
     if (step === 1) return t("room.builder.step1.title") as string;
-    if (isCustom && step === 2) return t("eitherOr.setup.custom") as string || "Pick Movies";
     if (step === 2) return t("room.builder.step2.title") as string;
     if (step === 3) return t("eitherOr.setup.bracketSize") as string;
     return t("room.builder.step3.title") as string;
-  }, [step, isCustom, t]);
-
-  // Map logical step → which standard step index for bracket/providers
-  const standardStep = isCustom ? -1 : step;
+  }, [step, t]);
 
   const renderStep = useMemo(() => {
     const lockedTypes: EitherOrType[] | undefined = existingRoomId && isCustomRoom !== null
       ? isCustomRoom ? ["custom"] : ["movie", "tv"]
       : undefined;
     if (step === 1) return <Step1Type key="step1" type={type} onSelect={onSelectType} visibleTypes={lockedTypes} customMovies={customMovies} onPickCustom={handlePickCustom} />;
-    if (isCustom && step === 2) return <StepCustomMovies key="step-custom" movies={customMovies} />;
     if (!isCustom && step === 2) return <GenreSwipeStep key="step2" type={type as "movie" | "tv"} genres={genres} onToggleGenre={onToggleGenre} />;
     if (!isCustom && step === 3) return <Step3BracketSize key="step3" bracketSize={BRACKET_SIZE} onSelect={() => {}} />;
     if (!isCustom && step === 4) return <ProviderSearchStep key="step4" providers={providers} onChangeProviders={setProviders} />;
     return null;
-  }, [step, type, isCustom, customMovies, genres, providers, onSelectType, onToggleGenre]);
+  }, [step, type, isCustom, genres, providers, onSelectType, onToggleGenre]);
 
+  const totalSteps = isCustom ? 1 : STANDARD_STEPS;
   const isLastStep = step === totalSteps;
-  const canProceedCustomMovies = !isCustom || customMovies.length >= 4;
   const canCreate = !isCustom || customMovies.length >= BRACKET_SIZE;
+  const canProceedCustom = isCustom && customMovies.length >= 4;
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.appBackground }}>
@@ -161,31 +157,38 @@ export default function EitherOrSetup() {
         stepKey={step}
         footerActions={
           step === 1 ? (
-            <View style={styles.step1Row}>
-              <PrimaryButton
-                style={styles.quickStartButton}
-                onPress={handleQuickStart}
-                loading={isCreating}
-                disabled={isCreating || (!isCustom && prefsLoading)}
-              >
-                {isCustom ? t("eitherOr.setup.custom") ?? "Pick Movies" : t("room.builder.quickStart")}
-              </PrimaryButton>
-              {!isCustom && (
-                <IconButton
-                  icon="tune-variant"
-                  size={24}
-                  onPress={() => setStep(2)}
-                  mode="contained"
-                  disabled={isCreating}
-                />
-              )}
+            <View style={styles.step1Column}>
+              <View style={styles.step1Row}>
+                <PrimaryButton
+                  style={styles.quickStartButton}
+                  onPress={handleQuickStart}
+                  loading={isCreating}
+                  disabled={isCreating || (!isCustom && prefsLoading) || !canCreate}
+                >
+                  {isCustom
+                    ? customMovies.length >= BRACKET_SIZE
+                      ? (t("eitherOr.setup.create") as string) ?? "Create bracket"
+                      : `${t("eitherOr.setup.custom") as string} (${customMovies.length}/${BRACKET_SIZE})`
+                    : t("room.builder.quickStart")
+                  }
+                </PrimaryButton>
+                {!isCustom && (
+                  <IconButton
+                    icon="tune-variant"
+                    size={24}
+                    onPress={() => setStep(2)}
+                    mode="contained"
+                    disabled={isCreating}
+                  />
+                )}
+              </View>
             </View>
           ) : (
             <PrimaryButton
               style={styles.nextButton}
               onPress={handleNext}
               loading={isCreating}
-              disabled={isCreating || (isLastStep && !canCreate) || !canProceedCustomMovies}
+              disabled={isCreating || (isLastStep && !canCreate)}
             >
               {isLastStep ? t("eitherOr.setup.create") : t("room.builder.next")}
             </PrimaryButton>
@@ -201,6 +204,9 @@ export default function EitherOrSetup() {
 const styles = StyleSheet.create({
   nextButton: {
     borderRadius: radius.pill,
+  },
+  step1Column: {
+    gap: spacing.md,
   },
   step1Row: {
     flexDirection: "row",
