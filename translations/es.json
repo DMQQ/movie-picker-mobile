@@ -365,7 +365,8 @@
     "no": "No",
     "seeAll": "Ver todo",
     "loading": "Cargando...",
-    "error": "Error"
+    "error": "Error",
+    "selected": "seleccionado"
   },
   "global": {
     "justwatch": "La disponibilidad de películas es proporcionada por JustWatch",

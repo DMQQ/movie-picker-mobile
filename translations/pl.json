@@ -365,7 +365,8 @@
     "no": "Nie",
     "seeAll": "Zobacz wszystkie",
     "loading": "Ładowanie...",
-    "error": "Błąd"
+    "error": "Błąd",
+    "selected": "wybrane"
   },
   "global": {
     "justwatch": "Dostępność filmów wspierana przez JustWatch",

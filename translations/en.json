@@ -379,7 +379,8 @@
     "no": "No",
     "seeAll": "See all",
     "loading": "Loading...",
-    "error": "Error"
+    "error": "Error",
+    "selected": "selected"
   },
   "global": {
     "justwatch": "The movie availabilities are powered by JustWatch",

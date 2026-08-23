@@ -256,7 +256,7 @@ export default function MoviePickerIndex() {
                     )}
                     <View style={{ flex: 1, gap: 2 }}>
                       <Text style={styles.rowTitle}>{group.name}</Text>
-                      <Text style={styles.countText}>{group.movies.length} movie{group.movies.length !== 1 ? "s" : ""}{selectedInGroup > 0 ? ` · ` : ""}<Text style={styles.selectedHint}>{selectedInGroup > 0 ? `${selectedInGroup} selected` : ""}</Text></Text>
+                      <Text style={styles.countText}>{group.movies.length} movie{group.movies.length !== 1 ? "s" : ""}{selectedInGroup > 0 ? ` · ` : ""}<Text style={styles.selectedHint}>{selectedInGroup > 0 ? t("common.selected", { defaultValue: "selected" }) : ""}</Text></Text>
                     </View>
                     <MaterialCommunityIcons name="chevron-right" size={20} color={colors.placeholder} />
                   </Touch>
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   rowMeta: { flexDirection: "row", alignItems: "center", gap: 4 },
   metaText: { fontSize: fontSize.xs, color: colors.placeholder },
   metaDot: { fontSize: fontSize.xs, color: colors.placeholder },
-  countText: { fontSize: fontSize.sm, color: colors.placeholder },
+  countText: { fontSize: fontSize.xs, color: colors.placeholder },
   selectedHint: { fontSize: fontSize.sm, color: colors.primary, fontWeight: fontWeight.medium },
   check: {
     width: 24,
