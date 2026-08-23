@@ -6,6 +6,7 @@ import { Movie } from "../../types";
 import * as Haptics from "expo-haptics";
 import { useAppSelector } from "../redux/store";
 import { selectProviders } from "../redux/filterPreferences/filterPreferencesSlice";
+import { type PickedMovie } from "../redux/moviePicker/moviePickerSlice";
 
 interface Settings {
   language: string;
@@ -27,7 +28,7 @@ interface MovieVoterContextValue {
 
   loadingInitialContent: boolean;
   actions: {
-    createSession: (overrides?: { providers?: number[]; genres?: number[] }) => void;
+    createSession: (overrides?: { providers?: number[]; genres?: number[]; movies?: PickedMovie[] }) => void;
     joinSession: (sessionId: string) => Promise<void>;
     setReady: (ready: boolean) => void;
     startSession: () => void;
@@ -93,16 +94,27 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   // previously joinSession + this effect emitted voter:session:join twice.
   const lastJoinedSessionId = useRef<string | null>(null);
 
-  const createSession = useCallback(async (overrides?: { providers?: number[]; genres?: number[] }) => {
+  const createSession = useCallback(async (overrides?: { providers?: number[]; genres?: number[]; movies?: PickedMovie[] }) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     if (!socket) return;
 
-    const { sessionId, error } = await socket.emitWithAck("voter:session:create", {
-      category: sessionSettings.category,
-      genres: overrides?.genres ?? sessionSettings.genres,
-      providers: overrides?.providers ?? sessionSettings.providers,
-    });
+    const payload = overrides?.movies?.length
+      ? {
+          movies: overrides.movies.map((m) => ({
+            id: m.id,
+            title: m.title,
+            poster_path: m.poster_path,
+            type: m.contentType ?? "movie",
+          })),
+        }
+      : {
+          category: sessionSettings.category,
+          genres: overrides?.genres ?? sessionSettings.genres,
+          providers: overrides?.providers ?? sessionSettings.providers,
+        };
+
+    const { sessionId, error } = await socket.emitWithAck("voter:session:create", payload);
 
     if (error) {
       setError(error);

@@ -13,11 +13,15 @@ export default function PickCategory({
   category,
   customMovies = [],
   onPickCustom,
+  isCustomSelected = false,
+  onClearCustom,
 }: {
   setCategory: (cat: string) => void;
   category: string;
   customMovies?: PickedMovie[];
   onPickCustom?: () => void;
+  isCustomSelected?: boolean;
+  onClearCustom?: () => void;
 }) {
   const t = useTranslation();
   const { data: movieCategories, isLoading: moviesLoading } = useGetMovieCategoriesWithThumbnailsQuery();
@@ -27,12 +31,12 @@ export default function PickCategory({
   const tvPosters = (tvCategories ?? []).map((c) => c.featured_poster).filter(Boolean);
   const mixedPosters = [moviePosters[0], tvPosters[0], moviePosters[1], tvPosters[1]].filter(Boolean);
 
-  const isCustom = category === "custom";
+  const isCustom = isCustomSelected;
   const hasCustom = isCustom && customMovies.length > 0;
 
-  const handleBannerPress = () => {
-    setCategory("custom");
-    onPickCustom?.();
+  const handleTileSelect = (value: string) => {
+    onClearCustom?.();
+    setCategory(value);
   };
 
   return (
@@ -40,7 +44,7 @@ export default function PickCategory({
       <TypeCollageStep
         isLoading={moviesLoading || tvLoading}
         selected={isCustom ? "" : category}
-        onSelect={setCategory}
+        onSelect={handleTileSelect}
         style={{ paddingTop: spacing.xl }}
         options={[
           { value: "movie", label: t("voter.types.movie"), posters: moviePosters },
@@ -48,7 +52,7 @@ export default function PickCategory({
           { value: "Mixed", label: t("voter.types.mixed"), posters: mixedPosters },
         ]}
       />
-      <Touch scaleTo={0.97} onPress={handleBannerPress} style={[styles.customBanner, isCustom && styles.customBannerSelected]}>
+      <Touch scaleTo={0.97} onPress={() => onPickCustom?.()} style={[styles.customBanner, isCustom && styles.customBannerSelected]}>
         <View style={[styles.customBannerIcon, isCustom && styles.customBannerIconSelected]}>
           <MaterialCommunityIcons name="movie-filter" size={20} color={isCustom ? colors.primary : colors.placeholder} />
         </View>

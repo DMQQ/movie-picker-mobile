@@ -32,31 +32,40 @@ export default function InitialState({
   const t = useTranslation();
   const dispatch = useAppDispatch();
   const [step, setStep] = useState(1);
+  const [isCustom, setIsCustom] = useState(false);
   const [customMovies, setCustomMovies] = useState<PickedMovie[]>([]);
   const pickerConfirmed = useAppSelector((s) => s.moviePicker.confirmed);
   const pickerSelected = useAppSelector((s) => s.moviePicker.selected);
   const { preferences: savedPrefs, isLoading: prefsLoading } = useBuilderPreferences();
   const hasSavedProviders = savedPrefs && savedPrefs.providers.length > 0;
 
+  const totalSteps = isCustom ? 1 : TOTAL_STEPS;
+
   useEffect(() => {
     if (pickerConfirmed) {
       setCustomMovies(pickerSelected);
+      setIsCustom(true);
       dispatch(moviePickerActions.clearConfirmed());
     }
   }, [pickerConfirmed]);
 
   const handlePickCustom = useCallback(() => {
+    setIsCustom(true);
     dispatch(moviePickerActions.init({ initial: customMovies }));
     router.push("/movie-picker");
   }, [dispatch, customMovies]);
 
+  const handleClearCustom = useCallback(() => {
+    setIsCustom(false);
+  }, []);
+
   const handleNext = useCallback(() => {
-    if (step === TOTAL_STEPS) {
-      actions.createSession();
+    if (step === totalSteps) {
+      actions.createSession(isCustom ? { movies: customMovies } : undefined);
     } else {
-      setStep((s) => Math.min(TOTAL_STEPS, s + 1));
+      setStep((s) => Math.min(totalSteps, s + 1));
     }
-  }, [step, actions]);
+  }, [step, totalSteps, isCustom, customMovies, actions]);
 
   const handleQuickStart = useCallback(() => {
     if (hasSavedProviders) {
@@ -90,7 +99,9 @@ export default function InitialState({
               actions.setSessionSettings((p: any) => ({ ...p, category }));
             }}
             customMovies={customMovies}
+            isCustomSelected={isCustom}
             onPickCustom={handlePickCustom}
+            onClearCustom={handleClearCustom}
           />
         );
       case 2:
@@ -118,19 +129,23 @@ export default function InitialState({
       default:
         return null;
     }
-  }, [step, sessionSettings, actions]);
+  }, [step, sessionSettings, isCustom, customMovies, actions, handlePickCustom, handleClearCustom]);
 
   const footerActions =
     step === 1 ? (
-      <View style={styles.step1Row}>
-        <PrimaryButton style={styles.quickStartButton} onPress={handleQuickStart} disabled={prefsLoading}>
-          {t("room.builder.quickStart")}
-        </PrimaryButton>
-        <IconButton icon="tune-variant" size={24} onPress={() => setStep(2)} mode="contained" />
-      </View>
+      isCustom && customMovies.length > 0 ? (
+        <PrimaryButton onPress={handleNext}>{t("voter.home.create")}</PrimaryButton>
+      ) : (
+        <View style={styles.step1Row}>
+          <PrimaryButton style={styles.quickStartButton} onPress={handleQuickStart} disabled={prefsLoading}>
+            {t("room.builder.quickStart")}
+          </PrimaryButton>
+          <IconButton icon="tune-variant" size={24} onPress={() => setStep(2)} mode="contained" />
+        </View>
+      )
     ) : (
       <PrimaryButton onPress={handleNext}>
-        {step === TOTAL_STEPS ? t("voter.home.create") : t("room.builder.next")}
+        {step === totalSteps ? t("voter.home.create") : t("room.builder.next")}
       </PrimaryButton>
     );
 
@@ -140,7 +155,7 @@ export default function InitialState({
       entering={FadeIn.duration(300)}
       exiting={FadeOut.duration(300)}
     >
-      <SetupHeader title={stepTitle} currentStep={step} totalSteps={TOTAL_STEPS} onBackPress={handleBackPress} />
+      <SetupHeader title={stepTitle} currentStep={step} totalSteps={totalSteps} onBackPress={handleBackPress} />
 
       <SetupStepShell stepKey={step} footerActions={footerActions}>
         {renderStep}
