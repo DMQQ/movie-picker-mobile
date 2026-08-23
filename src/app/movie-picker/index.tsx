@@ -218,22 +218,22 @@ export default function MoviePickerIndex() {
                 keyExtractor={(l) => l.id}
                 estimatedItemSize={68}
                 contentContainerStyle={styles.listPad}
-                renderItem={({ item: list }) => {
-                  const countInList = 0; // detailed count only available after opening
-                  return (
-                    <Touch scaleTo={0.97} onPress={() => handleOpenAuthList(list)} style={styles.row}>
-                      {list.posterPath ? (
-                        <Thumbnail path={list.posterPath} size={ThumbnailSizes.poster.small} style={styles.poster} />
-                      ) : (
-                        <View style={[styles.poster, styles.posterFallback]}>
-                          <MaterialCommunityIcons name="format-list-bulleted" size={18} color={colors.placeholder} />
-                        </View>
-                      )}
+                renderItem={({ item: list }) => (
+                  <Touch scaleTo={0.97} onPress={() => handleOpenAuthList(list)} style={styles.row}>
+                    {list.posterPath ? (
+                      <Thumbnail path={list.posterPath} size={ThumbnailSizes.poster.small} style={styles.poster} />
+                    ) : (
+                      <View style={[styles.poster, styles.posterFallback]}>
+                        <MaterialCommunityIcons name="format-list-bulleted" size={18} color={colors.placeholder} />
+                      </View>
+                    )}
+                    <View style={{ flex: 1, gap: 2 }}>
                       <Text style={styles.rowTitle}>{list.name}</Text>
-                      <MaterialCommunityIcons name="chevron-right" size={20} color={colors.placeholder} />
-                    </Touch>
-                  );
-                }}
+                      <Text style={styles.selectedHint}>{list.itemCount} movie{list.itemCount !== 1 ? "s" : ""}</Text>
+                    </View>
+                    <MaterialCommunityIcons name="chevron-right" size={20} color={colors.placeholder} />
+                  </Touch>
+                )}
                 ListEmptyComponent={<Text style={styles.empty}>No lists yet — search above</Text>}
               />
             )
@@ -256,9 +256,7 @@ export default function MoviePickerIndex() {
                     )}
                     <View style={{ flex: 1, gap: 2 }}>
                       <Text style={styles.rowTitle}>{group.name}</Text>
-                      {selectedInGroup > 0 && (
-                        <Text style={styles.selectedHint}>{selectedInGroup} selected</Text>
-                      )}
+                      <Text style={styles.selectedHint}>{group.movies.length} movie{group.movies.length !== 1 ? "s" : ""}{selectedInGroup > 0 ? ` · ${selectedInGroup} selected` : ""}</Text>
                     </View>
                     <MaterialCommunityIcons name="chevron-right" size={20} color={colors.placeholder} />
                   </Touch>
