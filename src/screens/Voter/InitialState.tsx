@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import PrimaryButton from "../../components/PrimaryButton";
 import IconButton from "../../components/IconButton";
@@ -12,6 +12,9 @@ import useTranslation from "../../service/useTranslation";
 import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
 import { StyleSheet, View } from "react-native";
 import { radius, spacing } from "../../constants/design";
+import { router } from "expo-router";
+import { useAppDispatch, useAppSelector } from "../../redux/store";
+import { moviePickerActions, type PickedMovie } from "../../redux/moviePicker/moviePickerSlice";
 
 const TOTAL_STEPS = 3;
 
@@ -27,9 +30,25 @@ export default function InitialState({
   onGoBack,
 }: Props) {
   const t = useTranslation();
+  const dispatch = useAppDispatch();
   const [step, setStep] = useState(1);
+  const [customMovies, setCustomMovies] = useState<PickedMovie[]>([]);
+  const pickerConfirmed = useAppSelector((s) => s.moviePicker.confirmed);
+  const pickerSelected = useAppSelector((s) => s.moviePicker.selected);
   const { preferences: savedPrefs, isLoading: prefsLoading } = useBuilderPreferences();
   const hasSavedProviders = savedPrefs && savedPrefs.providers.length > 0;
+
+  useEffect(() => {
+    if (pickerConfirmed) {
+      setCustomMovies(pickerSelected);
+      dispatch(moviePickerActions.clearConfirmed());
+    }
+  }, [pickerConfirmed]);
+
+  const handlePickCustom = useCallback(() => {
+    dispatch(moviePickerActions.init({ initial: customMovies }));
+    router.push("/movie-picker");
+  }, [dispatch, customMovies]);
 
   const handleNext = useCallback(() => {
     if (step === TOTAL_STEPS) {
@@ -70,6 +89,8 @@ export default function InitialState({
             setCategory={(category: string) => {
               actions.setSessionSettings((p: any) => ({ ...p, category }));
             }}
+            customMovies={customMovies}
+            onPickCustom={handlePickCustom}
           />
         );
       case 2:

@@ -68,6 +68,11 @@ export default function EitherOrSetup() {
     });
   }, []);
 
+  const handlePickCustom = useCallback(() => {
+    dispatch(moviePickerActions.init({ initial: customMovies }));
+    router.push("/movie-picker");
+  }, [dispatch, customMovies]);
+
   const onToggleGenre = useCallback((id: number) => {
     setGenres((prev) => (prev.includes(id) ? prev.filter((g) => g !== id) : [...prev, id]));
   }, []);
@@ -129,14 +134,6 @@ export default function EitherOrSetup() {
     return t("room.builder.step3.title") as string;
   }, [step, isCustom, t]);
 
-  const getStepSubtitle = useCallback(() => {
-    if (step === 1) return t("room.builder.step1.subtitle");
-    if (isCustom && step === 2) return undefined;
-    if (step === 2) return t("room.builder.step2.subtitle");
-    if (step === 3) return t("eitherOr.setup.bracketSizeSubtitle");
-    return t("room.builder.step3.subtitle");
-  }, [step, isCustom, t]);
-
   // Map logical step → which standard step index for bracket/providers
   const standardStep = isCustom ? -1 : step;
 
@@ -144,7 +141,7 @@ export default function EitherOrSetup() {
     const lockedTypes: EitherOrType[] | undefined = existingRoomId && isCustomRoom !== null
       ? isCustomRoom ? ["custom"] : ["movie", "tv"]
       : undefined;
-    if (step === 1) return <Step1Type key="step1" type={type} onSelect={onSelectType} visibleTypes={lockedTypes} />;
+    if (step === 1) return <Step1Type key="step1" type={type} onSelect={onSelectType} visibleTypes={lockedTypes} customMovies={customMovies} onPickCustom={handlePickCustom} />;
     if (isCustom && step === 2) return <StepCustomMovies key="step-custom" movies={customMovies} />;
     if (!isCustom && step === 2) return <GenreSwipeStep key="step2" type={type as "movie" | "tv"} genres={genres} onToggleGenre={onToggleGenre} />;
     if (!isCustom && step === 3) return <Step3BracketSize key="step3" bracketSize={BRACKET_SIZE} onSelect={() => {}} />;
@@ -162,7 +159,6 @@ export default function EitherOrSetup() {
 
       <SetupStepShell
         stepKey={step}
-        footerSubtitle={getStepSubtitle()}
         footerActions={
           step === 1 ? (
             <View style={styles.step1Row}>
