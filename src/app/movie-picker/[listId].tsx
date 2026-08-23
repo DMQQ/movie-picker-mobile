@@ -13,22 +13,31 @@ import { listsApi, useAddBulkItemsMutation } from "../../redux/lists/listsApi";
 import { movieApi } from "../../redux/movie/movieApi";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { moviePickerActions } from "../../redux/moviePicker/moviePickerSlice";
+import {
+  superLikeMovie as superLikeAction,
+  blockMovie as blockAction,
+} from "../../redux/movieInteractions/movieInteractionsSlice";
+import { addManyToGroup } from "../../redux/favourites/favourites";
+import { useMovieInteractions } from "../../context/DatabaseContext";
 import useTranslation from "../../service/useTranslation";
 
 const POSTER_BASE = "https://image.tmdb.org/t/p/w185";
 
-interface RowItem { id: number; title: string; poster_path: string | null }
+interface RowItem { id: number; title: string; poster_path: string | null; type?: "movie" | "tv" }
 
 export default function MoviePickerListDetail() {
-  const params = useLocalSearchParams<{ listId: string; listType?: string; listName?: string; isLocal?: string; targetListType?: string; targetListName?: string }>();
+  const params = useLocalSearchParams<{ listId: string; listType?: string; listName?: string; isLocal?: string; targetListType?: string; targetListName?: string; targetGroupId?: string }>();
   const dispatch = useAppDispatch();
   const t = useTranslation();
   const insets = useSafeAreaInsets();
   const targetListType = params.targetListType ?? "";
+  const targetGroupId = params.targetGroupId ?? "";
   const isListAddMode = !!targetListType;
 
   const selected = useAppSelector((s) => s.moviePicker.selected);
   const groups = useAppSelector((s) => s.favourite.groups);
+  const isAuthenticated = useAppSelector((s) => !!s.auth.user && s.auth.user.provider !== "anonymous");
+  const { movieInteractions } = useMovieInteractions();
   const [addBulkItems] = useAddBulkItemsMutation();
 
   const [items, setItems] = useState<RowItem[]>([]);
@@ -47,7 +56,7 @@ export default function MoviePickerListDetail() {
       const needTitle = raw.filter((m) => !m.title);
 
       const initial: RowItem[] = withTitle.map((m) => ({
-        id: m.id, title: m.title!, poster_path: m.imageUrl ?? null,
+        id: m.id, title: m.title!, poster_path: m.imageUrl ?? null, type: m.type,
       }));
       setItems(initial);
 
@@ -122,27 +131,51 @@ export default function MoviePickerListDetail() {
   }, [dispatch, filtered, allFilteredSelected]);
 
   const handleToggle = useCallback((item: RowItem) => {
-    dispatch(moviePickerActions.toggle({ id: item.id, title: item.title, poster_path: item.poster_path ?? "" }));
+    dispatch(moviePickerActions.toggle({ id: item.id, title: item.title, poster_path: item.poster_path ?? "", contentType: item.type }));
   }, [dispatch]);
 
   const handleConfirm = useCallback(async () => {
     if (isListAddMode && selected.length > 0) {
-      try {
-        await addBulkItems({
-          type: targetListType,
-          items: selected.map((m) => ({
-            contentId: m.id,
-            contentType: m.contentType ?? "movie",
-            content: { title: m.title, poster_path: m.poster_path || null },
-          })),
-        }).unwrap();
-      } catch {}
+      if (targetListType === "local-group" && targetGroupId) {
+        await dispatch(addManyToGroup({
+          groupId: targetGroupId,
+          movies: selected.map((m) => ({ id: m.id, type: m.contentType ?? "movie", title: m.title, poster_path: m.poster_path ?? "" })),
+        }));
+      } else if (!isAuthenticated && movieInteractions && (targetListType === "superliked" || targetListType === "disliked")) {
+        const action = targetListType === "superliked" ? superLikeAction : blockAction;
+        const interactionType = targetListType === "superliked" ? "super_liked" : "blocked";
+        await Promise.all(
+          selected.map((m) =>
+            dispatch(action({
+              repo: movieInteractions,
+              interaction: {
+                movie_id: m.id,
+                movie_type: m.contentType ?? "movie",
+                interaction_type: interactionType,
+                title: m.title || null,
+                poster_path: m.poster_path || null,
+              },
+            }))
+          )
+        );
+      } else {
+        try {
+          await addBulkItems({
+            type: targetListType,
+            items: selected.map((m) => ({
+              contentId: m.id,
+              contentType: m.contentType ?? "movie",
+              content: { title: m.title, poster_path: m.poster_path || null },
+            })),
+          }).unwrap();
+        } catch {}
+      }
       router.dismissAll();
       return;
     }
     dispatch(moviePickerActions.confirm());
     router.dismissAll();
-  }, [dispatch, isListAddMode, selected, addBulkItems, targetListType]);
+  }, [dispatch, isListAddMode, isAuthenticated, movieInteractions, selected, addBulkItems, targetListType, targetGroupId]);
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>

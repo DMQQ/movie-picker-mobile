@@ -13,8 +13,13 @@ import { colors, fontSize, fontWeight, radius, spacing, withAlpha } from "../../
 import { useLazySearchQuery } from "../../redux/movie/movieApi";
 import { useGetListsQuery, useAddBulkItemsMutation } from "../../redux/lists/listsApi";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
-import { loadFavorites } from "../../redux/favourites/favourites";
+import { loadFavorites, addManyToGroup } from "../../redux/favourites/favourites";
 import { moviePickerActions } from "../../redux/moviePicker/moviePickerSlice";
+import {
+  superLikeMovie as superLikeAction,
+  blockMovie as blockAction,
+} from "../../redux/movieInteractions/movieInteractionsSlice";
+import { useMovieInteractions } from "../../context/DatabaseContext";
 import useTranslation from "../../service/useTranslation";
 import { posthog } from "../../constants/posthog";
 
@@ -39,9 +44,10 @@ function formatRuntime(mins: number): string {
 export default function MoviePickerIndex() {
   const dispatch = useAppDispatch();
   const t = useTranslation();
-  const params = useLocalSearchParams<{ targetListType?: string; targetListName?: string; requiredCount?: string }>();
+  const params = useLocalSearchParams<{ targetListType?: string; targetListName?: string; targetGroupId?: string; requiredCount?: string }>();
   const targetListType = params.targetListType ?? "";
   const targetListName = params.targetListName ?? "";
+  const targetGroupId = params.targetGroupId ?? "";
   const requiredCount = parseInt(params.requiredCount ?? String(DEFAULT_MIN_MOVIES), 10);
   const isListAddMode = !!targetListType;
 
@@ -50,6 +56,7 @@ export default function MoviePickerIndex() {
   const isAuthenticated = useAppSelector(
     (s) => !!s.auth.user && s.auth.user.provider !== "anonymous",
   );
+  const { movieInteractions } = useMovieInteractions();
 
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
@@ -111,22 +118,46 @@ export default function MoviePickerIndex() {
 
   const handleConfirm = useCallback(async () => {
     if (isListAddMode && selected.length > 0) {
-      try {
-        await addBulkItems({
-          type: targetListType,
-          items: selected.map((m) => ({
-            contentId: m.id,
-            contentType: m.contentType ?? "movie",
-            content: { title: m.title, poster_path: m.poster_path || null },
-          })),
-        }).unwrap();
-      } catch {}
+      if (targetListType === "local-group" && targetGroupId) {
+        await dispatch(addManyToGroup({
+          groupId: targetGroupId,
+          movies: selected.map((m) => ({ id: m.id, type: m.contentType ?? "movie", title: m.title, poster_path: m.poster_path ?? "" })),
+        }));
+      } else if (!isAuthenticated && movieInteractions && (targetListType === "superliked" || targetListType === "disliked")) {
+        const action = targetListType === "superliked" ? superLikeAction : blockAction;
+        const interactionType = targetListType === "superliked" ? "super_liked" : "blocked";
+        await Promise.all(
+          selected.map((m) =>
+            dispatch(action({
+              repo: movieInteractions,
+              interaction: {
+                movie_id: m.id,
+                movie_type: m.contentType ?? "movie",
+                interaction_type: interactionType,
+                title: m.title || null,
+                poster_path: m.poster_path || null,
+              },
+            }))
+          )
+        );
+      } else {
+        try {
+          await addBulkItems({
+            type: targetListType,
+            items: selected.map((m) => ({
+              contentId: m.id,
+              contentType: m.contentType ?? "movie",
+              content: { title: m.title, poster_path: m.poster_path || null },
+            })),
+          }).unwrap();
+        } catch {}
+      }
       router.back();
       return;
     }
     dispatch(moviePickerActions.confirm());
     router.back();
-  }, [dispatch, isListAddMode, selected, addBulkItems, targetListType]);
+  }, [dispatch, isListAddMode, isAuthenticated, movieInteractions, selected, addBulkItems, targetListType, targetGroupId]);
 
   const handleOpenAuthList = (list: { id: string; type: string; name: string }) => {
     router.push({
@@ -138,7 +169,7 @@ export default function MoviePickerIndex() {
   const handleOpenLocalGroup = (groupId: string) => {
     router.push({
       pathname: "/movie-picker/[listId]",
-      params: { listId: groupId, listName: groups.find((g) => g.id === groupId)?.name ?? "", isLocal: "true", targetListType, targetListName },
+      params: { listId: groupId, listName: groups.find((g) => g.id === groupId)?.name ?? "", isLocal: "true", targetListType, targetListName, targetGroupId },
     });
   };
 

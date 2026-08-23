@@ -223,6 +223,15 @@ export default function Group() {
           data={fortuneMovies}
           isLoading={false}
           showHeading={!isPreview}
+          showRightIconButton={!isPreview}
+          rightIconName="plus"
+          onRightIconPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            router.push({
+              pathname: "/movie-picker",
+              params: { targetListType: "local-group", targetListName: data?.name ?? "", targetGroupId: data?.id ?? "" },
+            } as any);
+          }}
           renderItemFooter={(item) => renderFooter(item as GroupMovie)}
           onLongItemPress={(item) => handleRemoveItem(item.id)}
         />

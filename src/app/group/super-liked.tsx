@@ -133,6 +133,9 @@ export default function SuperLikedGroup() {
         data={tileData}
         useMovieType
         subheader={banner}
+        showRightIconButton
+        rightIconName="plus"
+        onRightIconPress={openMoviePicker}
         renderItemFooter={(item) => (
           <View style={styles.footer}>
             <Button
