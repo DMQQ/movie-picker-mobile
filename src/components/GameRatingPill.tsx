@@ -10,8 +10,8 @@ import UserInputModal, { UserInputModalAction } from "./UserInputModal";
 import useTranslation from "../service/useTranslation";
 
 interface GameRatingPillProps {
-  roomId: string;
-
+  roomId?: string;
+  sessionId?: string;
   shouldShow: boolean;
 }
 
@@ -35,7 +35,7 @@ const RATING_CONFIG = {
   },
 };
 
-export default function GameRatingPill({ roomId, shouldShow }: GameRatingPillProps) {
+export default function GameRatingPill({ roomId, sessionId, shouldShow }: GameRatingPillProps) {
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
   const [selectedRating, setSelectedRating] = useState<RatingType | null>(null);
@@ -78,11 +78,10 @@ export default function GameRatingPill({ roomId, shouldShow }: GameRatingPillPro
     setIsSubmitting(true);
 
     try {
-      const response = await socket.emitWithAck("submit-game-rating", {
-        roomId,
-        rating,
-        feedback,
-      });
+      const payload = sessionId
+        ? { sessionId, rating, feedback }
+        : { roomId, rating, feedback };
+      const response = await socket.emitWithAck("submit-game-rating", payload);
 
       if (response.success) {
         setShowModal(false);

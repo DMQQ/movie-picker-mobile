@@ -19,6 +19,7 @@ import QuickActions from "../../components/QuickActions";
 import { useMovieVoter } from "../../service/useVoter";
 import ReviewManager from "../../utils/rate";
 import useTranslation from "../../service/useTranslation";
+import GameRatingPill from "../../components/GameRatingPill";
 
 const scaleTitle = (title: string, size = 30) => {
   if (title.length > 30) return size * 0.75;
@@ -27,7 +28,7 @@ const scaleTitle = (title: string, size = 30) => {
 };
 
 export default function Results() {
-  const { sessionResults } = useMovieVoter();
+  const { sessionResults, sessionId } = useMovieVoter();
   const t = useTranslation();
 
   if (!sessionResults) {
@@ -96,6 +97,8 @@ export default function Results() {
           {t("voter.overview.title")} 🎬
         </Text>
       </View>
+
+      <GameRatingPill sessionId={sessionId ?? undefined} shouldShow={!!sessionResults?.topPicks.length} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}

@@ -15,6 +15,7 @@ import CreateCollectionFromLiked from "../../components/CreateCollectionFromLike
 import UserAvatar from "../../components/UserAvatar";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { eitherOrActions } from "../../redux/eitherOr/eitherOrSlice";
+import GameRatingPill from "../../components/GameRatingPill";
 import useTranslation from "../../service/useTranslation";
 import ReviewManager from "../../utils/rate";
 import { colors, fontSize, radius, spacing, typography, withAlpha } from "../../constants/design";
@@ -28,6 +29,7 @@ export default function EitherOrResults() {
   const bracketSize = useAppSelector((state) => state.eitherOr.bracketSize);
   const matchResults = useAppSelector((state) => state.eitherOr.matchResults);
   const myUserId = useAppSelector((state) => state.app.userId);
+  const roomId = useAppSelector((state) => state.eitherOr.roomId);
   const users = useAppSelector((state) => state.eitherOr.users);
   const players = useAppSelector((state) => state.eitherOr.players);
   const history = useAppSelector((state) => state.eitherOr.history);
@@ -135,6 +137,8 @@ export default function EitherOrResults() {
         style={styles.confetti}
         pointerEvents="none"
       />
+
+      <GameRatingPill roomId={roomId} shouldShow={!!top3.length} />
 
       <View
         style={[
