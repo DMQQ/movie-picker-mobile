@@ -9,7 +9,7 @@ import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
 import CinemaTicket from "./CinemaTicket";
-import { colors, common } from "../constants/design";
+import { colors, common, fontSize, radius, spacing } from "../constants/design";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
