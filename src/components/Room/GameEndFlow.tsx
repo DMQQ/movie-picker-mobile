@@ -1,23 +1,25 @@
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Dimensions, Modal, Share, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as Notifications from "expo-notifications";
+import QRCode from "react-native-qrcode-svg";
 import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { FancySpinner } from "../FancySpinner";
 import UserInputModal, { UserInputModalAction } from "../UserInputModal";
+import Button from "../Button";
+import PrimaryButton from "../PrimaryButton";
+import PlatformBlurView from "../PlatformBlurView";
+import Text from "../Text";
 import { useAppSelector } from "../../redux/store";
-import { spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing } from "../../constants/design";
 
-const styles = StyleSheet.create({
-  spinnerContainer: {
-    paddingVertical: spacing.xxl + 11,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+const CARD_WIDTH = Dimensions.get("window").width - 40;
 
 const GameEndFlow = memo(() => {
   const roomId = useAppSelector((state) => state.room.roomId);
+  const qrCode = useAppSelector((state) => state.room.qrCode);
   const isHost = useAppSelector((state) => state.room.isHost);
   const gameEnded = useAppSelector((state) => state.room.gameEnded);
   const isPlaying = useAppSelector((state) => state.room.isPlaying);
@@ -27,6 +29,7 @@ const GameEndFlow = memo(() => {
   const [showDialog, setShowDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [waiting, setWaiting] = useState(false);
+  const [showNotifBanner, setShowNotifBanner] = useState(false);
 
   useEffect(() => {
     if (gameEnded && isPlaying === false) {
@@ -73,31 +76,32 @@ const GameEndFlow = memo(() => {
     router.replace({ pathname: "/room/summary", params: { roomId } });
   }, [socket, roomId]);
 
+  const handleShareCode = useCallback(async () => {
+    if (!qrCode) return;
+    const code = qrCode.toUpperCase();
+    const webUrl = `https://flickmate.app/swipe/${code}`;
+    const result = await Share.share({
+      message: t("room.share.message", { code }) + "\nOr join via " + webUrl,
+      url: webUrl,
+    });
+    if (result.action === Share.sharedAction) {
+      const { status, canAskAgain } = await Notifications.getPermissionsAsync();
+      if (status !== "granted" && canAskAgain) {
+        setShowNotifBanner(true);
+      }
+    }
+  }, [qrCode, t]);
+
+  const handleEnableNotifications = useCallback(async () => {
+    setShowNotifBanner(false);
+    await Notifications.requestPermissionsAsync();
+  }, []);
+
   const handleViewSummary = useCallback(() => {
     setShowDialog(false);
     setWaiting(false);
     router.replace({ pathname: "/room/summary", params: { roomId } });
   }, [roomId]);
-
-  const playAgainActions = useMemo<UserInputModalAction[]>(
-    () => [
-      {
-        label: t("dialogs.scan-code.endGame") as string,
-        mode: "text",
-        textColor: "rgba(255, 100, 100, 0.9)",
-        onPress: handleEndGame,
-        disabled: loading,
-      },
-      {
-        label: t("game-summary.play-again") as string,
-        mode: "contained",
-        onPress: handlePlayAgain,
-        disabled: loading,
-        loading,
-      },
-    ],
-    [t, handleEndGame, handlePlayAgain, loading],
-  );
 
   const waitingActions = useMemo<UserInputModalAction[]>(
     () => [
@@ -110,16 +114,98 @@ const GameEndFlow = memo(() => {
     [t, handleViewSummary],
   );
 
+  const code = qrCode?.toUpperCase() ?? "";
+
   return (
     <>
-      <UserInputModal
+      <Modal
         visible={showDialog}
-        title={t("game-summary.game-completed") as string}
-        subtitle={t("room.play-again-prompt") as string}
-        actions={playAgainActions}
+        transparent
+        animationType="fade"
         statusBarTranslucent
-        maxHeight="50%"
-      />
+        onRequestClose={undefined}
+      >
+        <View style={styles.overlay}>
+          <PlatformBlurView style={[styles.card, { width: CARD_WIDTH }]}>
+
+            {/* Header */}
+            <Text style={styles.title}>{t("game-summary.game-completed") as string}</Text>
+            <Text style={styles.subtitle}>{t("room.play-again-prompt") as string}</Text>
+
+            {/* Invite section */}
+            {code ? (
+              <View style={styles.inviteSection}>
+                {/* QR + code side by side */}
+                <View style={styles.qrSide}>
+                  <QRCode
+                    value={`flickmate://room/${code}`}
+                    size={100}
+                    color={colors.primary}
+                    backgroundColor="transparent"
+                  />
+                </View>
+                <View style={styles.codeSide}>
+                  <Text style={styles.codeLabel}>{t("room.invite-post-finish.code-label") as string}</Text>
+                  <Text style={styles.codeValue}>{code}</Text>
+                  <Button
+                    mode="outlined"
+                    icon="share-variant"
+                    onPress={handleShareCode}
+                    style={styles.shareBtn}
+                    contentStyle={styles.shareBtnContent}
+                    compact
+                  >
+                    {t("room.share.button") as string}
+                  </Button>
+                </View>
+              </View>
+            ) : null}
+
+            {/* Async hint */}
+            {code ? (
+              <View style={styles.asyncHint}>
+                <MaterialCommunityIcons name="clock-outline" size={15} color={colors.placeholder} />
+                <Text style={styles.asyncText}>{t("room.invite-post-finish.async-hint") as string}</Text>
+              </View>
+            ) : null}
+
+            {/* Notification nudge */}
+            {showNotifBanner && (
+              <View style={styles.notifBanner}>
+                <MaterialCommunityIcons name="bell-outline" size={16} color={colors.primary} />
+                <Text style={styles.notifBannerText}>{t("room.invite-post-finish.notif-hint") as string}</Text>
+                <Button mode="text" compact onPress={handleEnableNotifications} style={styles.notifEnableBtn}>
+                  {t("room.invite-post-finish.notif-enable") as string}
+                </Button>
+              </View>
+            )}
+
+            {/* Actions */}
+            <View style={styles.actions}>
+              <Button
+                mode="outlined"
+                onPress={handleEndGame}
+                disabled={loading}
+                style={styles.actionBtn}
+                contentStyle={styles.actionBtnContent}
+                textColor="rgba(255,100,100,0.9)"
+              >
+                {t("dialogs.scan-code.endGame") as string}
+              </Button>
+              <PrimaryButton
+                onPress={handlePlayAgain}
+                disabled={loading}
+                loading={loading}
+                style={[styles.actionBtn, styles.playAgainBtn]}
+                contentStyle={styles.actionBtnContent}
+              >
+                {t("game-summary.play-again") as string}
+              </PrimaryButton>
+            </View>
+
+          </PlatformBlurView>
+        </View>
+      </Modal>
 
       <UserInputModal
         visible={waiting}
@@ -138,3 +224,129 @@ const GameEndFlow = memo(() => {
 });
 
 export default GameEndFlow;
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.75)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: spacing.xl,
+  },
+  card: {
+    borderRadius: 35,
+    overflow: "hidden",
+    padding: spacing.xxl + 6,
+  },
+  title: {
+    fontSize: 36,
+    fontFamily: "Bebas",
+    color: colors.text,
+    textAlign: "center",
+    letterSpacing: 1.5,
+    marginBottom: spacing.xs,
+  },
+  subtitle: {
+    fontSize: fontSize.md,
+    color: "rgba(255,255,255,0.7)",
+    textAlign: "center",
+    lineHeight: 20,
+    marginBottom: spacing.xl,
+  },
+
+  inviteSection: {
+    flexDirection: "row",
+    gap: spacing.lg,
+    alignItems: "center",
+    marginBottom: spacing.lg,
+  },
+  qrSide: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  codeSide: {
+    flex: 1,
+    justifyContent: "center",
+    gap: spacing.xs,
+  },
+  codeLabel: {
+    fontSize: fontSize.xs,
+    color: colors.placeholder,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+  },
+  codeValue: {
+    fontSize: 28,
+    fontFamily: "Bebas",
+    letterSpacing: 6,
+    color: colors.text,
+  },
+  shareBtn: {
+    marginTop: spacing.xs,
+    borderRadius: radius.pill,
+    alignSelf: "flex-start",
+  },
+  shareBtnContent: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+  },
+
+  // Async hint
+  asyncHint: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: spacing.xs,
+    marginBottom: spacing.xl,
+  },
+  asyncText: {
+    fontSize: fontSize.md,
+    color: colors.placeholder,
+    flex: 1,
+    lineHeight: 20,
+  },
+
+  // Notification nudge
+  notifBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    backgroundColor: `${colors.primary}18`,
+    borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: `${colors.primary}40`,
+    paddingVertical: spacing.sm,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.xs,
+    marginBottom: spacing.lg,
+  },
+  notifBannerText: {
+    flex: 1,
+    fontSize: fontSize.sm,
+    color: colors.text,
+    lineHeight: 18,
+  },
+  notifEnableBtn: { marginLeft: "auto" },
+
+  // Actions
+  actions: {
+    flexDirection: "row",
+    gap: spacing.sm + 2,
+  },
+  actionBtn: {
+    flex: 1,
+    borderRadius: radius.pill,
+  },
+  actionBtnContent: {
+    paddingVertical: spacing.xs + 2,
+  },
+  playAgainBtn: {
+    flex: 1.5,
+  },
+
+  // Waiting modal
+  spinnerContainer: {
+    paddingVertical: spacing.xxl + 11,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

@@ -109,6 +109,18 @@ export default function MoviePickerListDetail() {
 
   const selectedInList = items.filter((m) => selectedSet.has(m.id)).length;
 
+  const allFilteredSelected = filtered.length > 0 && filtered.every((m) => selectedSet.has(m.id));
+
+  const handleSelectAll = useCallback(() => {
+    if (allFilteredSelected) {
+      dispatch(moviePickerActions.removeMany(filtered.map((m) => m.id)));
+    } else {
+      dispatch(moviePickerActions.addMany(filtered.map((m) => ({
+        id: m.id, title: m.title, poster_path: m.poster_path ?? "",
+      }))));
+    }
+  }, [dispatch, filtered, allFilteredSelected]);
+
   const handleToggle = useCallback((item: RowItem) => {
     dispatch(moviePickerActions.toggle({ id: item.id, title: item.title, poster_path: item.poster_path ?? "" }));
   }, [dispatch]);
@@ -133,7 +145,7 @@ export default function MoviePickerListDetail() {
   }, [dispatch, isListAddMode, selected, addBulkItems, targetListType]);
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom + spacing.sm }]}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerText}>
@@ -153,6 +165,14 @@ export default function MoviePickerListDetail() {
           style={styles.searchField}
         />
       </View>
+
+      {!loading && items.length > 0 && (
+        <Touch onPress={handleSelectAll} style={styles.selectAllRow}>
+          <Text style={styles.selectAllText}>
+            {allFilteredSelected ? "Deselect all" : "Select all"}
+          </Text>
+        </Touch>
+      )}
 
       {loading ? (
         <ActivityIndicator color={colors.primary} style={{ marginTop: spacing.xxl }} />
@@ -216,6 +236,12 @@ const styles = StyleSheet.create({
   subtitle: { fontSize: fontSize.sm, color: colors.primary, fontWeight: fontWeight.medium },
   searchWrap: { paddingHorizontal: spacing.lg, paddingBottom: spacing.sm },
   searchField: { backgroundColor: colors.input, borderRadius: radius.pill },
+  selectAllRow: {
+    alignSelf: "flex-end",
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.sm,
+  },
+  selectAllText: { fontSize: fontSize.sm, color: colors.primary, fontWeight: fontWeight.semibold },
   listPad: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg },
   empty: { textAlign: "center", marginTop: spacing.xxl, opacity: 0.5, fontSize: fontSize.md },
   row: {
@@ -232,7 +258,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.xs + 1,
     backgroundColor: colors.surfaceElevated,
   },
-  rowTitle: { flex: 1, fontSize: fontSize.md, fontWeight: fontWeight.medium, color: colors.text },
+  rowTitle: { flex: 1, fontFamily: "Bebas", fontSize: 20, color: colors.text },
   check: {
     width: 24,
     height: 24,
@@ -247,7 +273,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginHorizontal: spacing.lg,
-    marginTop: spacing.sm,
+    marginTop: spacing.lg,
     gap: spacing.sm,
   },
   backBtn: {

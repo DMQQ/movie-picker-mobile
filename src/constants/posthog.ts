@@ -7,6 +7,8 @@ export const posthog = !__DEV__ && projectToken && host
   ? new PostHog(projectToken, {
       host,
       captureAppLifecycleEvents: true,
+      capturePushNotificationOpened: true,
+      enableSessionReplay: true,
       errorTracking: {
         autocapture: {
           uncaughtExceptions: true,

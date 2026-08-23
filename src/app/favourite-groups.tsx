@@ -5,6 +5,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { memo, useState } from "react";
 import {
   FlatList,
+  Platform,
   Pressable,
   StyleSheet,
   Text,

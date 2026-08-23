@@ -10,15 +10,14 @@ import React, {
 } from "react";
 import {
   Dimensions,
-  ImageBackground,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
+  View,
+  ActivityIndicator,
+} from "react-native";
 
-  View, ActivityIndicator} from "react-native";
-
-import { colors, fontSize, fontWeight, radius, spacing, typography } from "../../../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing } from "../../../constants/design";
 import {
   useLazySearchQuery,
   useLazyGetSimilarQuery,
@@ -27,7 +26,6 @@ import { useAppSelector } from "../../../redux/store";
 import { FlashList } from "@shopify/flash-list";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../../types";
-import { LinearGradient } from "expo-linear-gradient";
 import Thumbnail, {
   prefetchThumbnail,
   ThumbnailSizes,
@@ -45,6 +43,8 @@ import ActiveFilters from "../../../components/Search/ActiveFilters";
 import RatingIcons from "../../../components/RatingIcons";
 import Chip from "../../../components/Chip";
 import { posthog } from "../../../constants/posthog";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useQuickActions } from "../../../components/QuickActions";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -56,87 +56,58 @@ const GENRE_MAP: Record<number, string> = {
   10762: "Kids", 10765: "Sci-Fi & Fantasy", 10768: "War & Politics",
 };
 
-function formatRuntime(minutes: number) {
-  if (!minutes) return null;
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return h > 0 ? `${h}h ${m > 0 ? `${m}m` : ""}`.trim() : `${m}m`;
-}
-
 const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
   const year = (item.release_date || item.first_air_date)?.slice(0, 4);
-  const lang = item.original_language?.toUpperCase();
-  const runtime = item.runtime ? formatRuntime(item.runtime) : null;
-  const genres = (item.genre_ids ?? []).slice(0, 2).map((id) => GENRE_MAP[id]).filter(Boolean);
+  const genre = (item.genre_ids ?? []).slice(0, 1).map((id) => GENRE_MAP[id]).filter(Boolean)[0];
+  const { isInGroup, onPress } = useQuickActions({ movie: item });
 
   return (
-    <Link
-      href={{
-        pathname: "/movie/type/[type]/[id]",
-        params: {
-          id: item.id.toString(),
-          type: item?.title ? "movie" : "tv",
-          img: item.poster_path,
-        },
-      }}
-      style={styles.cardLink}
-      asChild
-    >
-      <Touch>
-        <ImageBackground
-          source={{
-            uri: `https://image.tmdb.org/t/p/w780${item.backdrop_path}`,
-          }}
-          blurRadius={10}
-          style={styles.card}
-          imageStyle={styles.cardImage}
-        >
-          <View style={styles.posterWrap}>
-            <Link.AppleZoom>
-              <Thumbnail
-                path={item.poster_path}
-                container={[styles.poster]}
-                size={ThumbnailSizes.poster.xlarge}
-              />
-            </Link.AppleZoom>
-          </View>
-
-          <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.75)", "rgba(0,0,0,0.95)"]}
-            style={styles.infoPanel}
-          >
+    <View style={styles.card}>
+      <Link
+        href={{
+          pathname: "/movie/type/[type]/[id]",
+          params: {
+            id: item.id.toString(),
+            type: item?.title ? "movie" : "tv",
+            img: item.poster_path,
+          },
+        }}
+        asChild
+      >
+        <Touch style={styles.cardInner}>
+          <Thumbnail
+            path={item.poster_path}
+            container={[styles.poster]}
+            size={ThumbnailSizes.poster.small}
+          />
+          <View style={styles.info}>
             <Text numberOfLines={2} style={styles.title}>
               {item?.title || item?.name}
             </Text>
-
-            <View style={styles.ratingRow}>
-              {!!item?.vote_average && (
-                <RatingIcons vote={item.vote_average} size={20} />
+            <View style={styles.metaRow}>
+              {!!year && <Text style={styles.metaText}>{year}</Text>}
+              {!!genre && (
+                <View style={styles.genreChip}>
+                  <Text style={styles.genreText}>{genre}</Text>
+                </View>
               )}
             </View>
-
-            {(genres.length > 0 || year || lang || runtime) && (
-              <View style={styles.metaRow}>
-                {genres.map((g) => (
-                  <View key={g} style={styles.genreChip}>
-                    <Text style={styles.genreText}>{g}</Text>
-                  </View>
-                ))}
-                {!!year && <Text style={styles.metaText}>{year}</Text>}
-                {!!lang && <Text style={styles.metaText}>{lang}</Text>}
-                {!!runtime && <Text style={styles.metaText}>{runtime}</Text>}
+            {!!item?.vote_average && (
+              <View style={styles.ratingRow}>
+                <RatingIcons vote={item.vote_average} size={14} />
               </View>
             )}
-
-            <View style={styles.overviewWrap}>
-              <Text numberOfLines={4} ellipsizeMode="tail" style={styles.overview}>
-                {item.overview}
-              </Text>
-            </View>
-          </LinearGradient>
-        </ImageBackground>
+          </View>
+        </Touch>
+      </Link>
+      <Touch onPress={() => onPress("2")} style={styles.actionButton}>
+        <MaterialCommunityIcons
+          name={isInGroup("2") ? "clock" : "clock-outline"}
+          size={22}
+          color={isInGroup("2") ? colors.primary : colors.placeholder}
+        />
       </Touch>
-    </Link>
+    </View>
   );
 };
 
@@ -571,57 +542,41 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
     minHeight: 100,
   },
-  cardLink: {
+  card: {
+    flexDirection: "row",
+    alignItems: "center",
     width: SCREEN_WIDTH - spacing.lg * 2,
     borderRadius: radius.card,
-    marginTop: spacing.lg,
+    marginTop: spacing.sm,
     overflow: "hidden",
     backgroundColor: colors.surface,
   },
-  card: {
+  cardInner: {
     flex: 1,
-    overflow: "hidden",
-  },
-  cardImage: {
-    flex: 1,
-    borderRadius: radius.card,
-  },
-  posterWrap: {
-    position: "relative",
-    justifyContent: "center",
+    flexDirection: "row",
     alignItems: "center",
-    padding: spacing.lg,
   },
   poster: {
-    borderRadius: radius.sm + 2,
-    height: 230,
-    width: 170,
-    borderColor: colors.border,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    width: 60,
+    height: 90,
+    borderRadius: 0,
   },
-  infoPanel: {
-    padding: spacing.lg,
-    gap: spacing.xs - 2.5,
+  info: {
+    flex: 1,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    gap: spacing.xs,
   },
   title: {
     fontFamily: "Bebas",
-    fontSize: 40,
-    letterSpacing: typography.bebasLetterSpacing,
+    fontSize: 22,
   },
   ratingRow: {
     flexDirection: "row",
   },
   metaRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
     gap: spacing.xs,
-    marginTop: spacing.xs - 2,
     alignItems: "center",
   },
   metaText: {
@@ -640,13 +595,9 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: fontWeight.medium,
   },
-  overviewWrap: {
-    flex: 1,
-    overflow: "hidden",
-  },
-  overview: {
-    marginTop: spacing.xs + 1,
-    fontSize: fontSize.md,
+  actionButton: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.xl,
   },
   loader: {
     marginVertical: spacing.xl,

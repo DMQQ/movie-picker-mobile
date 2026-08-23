@@ -128,6 +128,12 @@
     "continuing-game": "Continuing game with same players",
     "play-again-prompt": "Would you like to play another round with the same players?",
     "waiting-for-host-decision": "Waiting for host to decide to play next game...",
+    "invite-post-finish": {
+      "code-label": "Room code",
+      "async-hint": "Friends can join and swipe hours later. Matches still count.",
+      "notif-hint": "Want to know when you get a match?",
+      "notif-enable": "Enable"
+    },
     "reconnecting": "Reconnecting...",
     "disconnected": "Disconnected",
     "toast": {
@@ -655,7 +661,7 @@
     "no-matches-desc": "Unfortunately, you didn't find any common movies in this game. Try again with different categories or settings.",
     "try-again": "Play Again",
     "your-picks": "Your likes",
-    "play-again": "Continue Playing",
+    "play-again": "Play Again",
     "leave-room": "Leave Room",
     "play-again-failed": "Failed to restart game. Please try again.",
     "view-summary": "Leave Game",

@@ -34,6 +34,19 @@ const moviePickerSlice = createSlice({
         state.selected.push(movie);
       }
     },
+    addMany(state, action: PayloadAction<PickedMovie[]>) {
+      const existing = new Set(state.selected.map((m) => m.id));
+      for (const movie of action.payload) {
+        if (!existing.has(movie.id)) {
+          state.selected.push(movie);
+          existing.add(movie.id);
+        }
+      }
+    },
+    removeMany(state, action: PayloadAction<number[]>) {
+      const ids = new Set(action.payload);
+      state.selected = state.selected.filter((m) => !ids.has(m.id));
+    },
     confirm(state) {
       state.confirmed = true;
     },

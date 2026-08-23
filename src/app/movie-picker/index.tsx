@@ -325,8 +325,8 @@ const styles = StyleSheet.create({
   posterFallback: { alignItems: "center", justifyContent: "center" },
   rowInfo: { flex: 1, gap: 3 },
   rowTitle: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.medium,
+    fontFamily: "Bebas",
+    fontSize: 20,
     color: colors.text,
   },
   rowMeta: { flexDirection: "row", alignItems: "center", gap: 4 },

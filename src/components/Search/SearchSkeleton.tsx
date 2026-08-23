@@ -4,40 +4,18 @@ import { colors, radius, spacing } from "../../constants/design";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const CARD_WIDTH = SCREEN_WIDTH - spacing.lg * 2;
-const INNER_WIDTH = CARD_WIDTH - spacing.lg * 2;
 
 export default function SearchSkeleton() {
   return (
     <View>
-      {[0, 1].map((cardIndex) => (
-        <View key={cardIndex} style={styles.card}>
-          <SkeletonCard
-            width={170}
-            height={230}
-            borderRadius={radius.sm + 2}
-            style={styles.poster}
-          />
-          <SkeletonCard
-            width={INNER_WIDTH}
-            height={32}
-            borderRadius={radius.xs + 1}
-            style={styles.block}
-          />
-          <SkeletonCard
-            width={140}
-            height={18}
-            borderRadius={radius.xs + 1}
-            style={styles.block}
-          />
-          {[0, 1, 2].map((lineIndex) => (
-            <SkeletonCard
-              key={lineIndex}
-              width={INNER_WIDTH}
-              height={14}
-              borderRadius={radius.xs + 1}
-              style={styles.block}
-            />
-          ))}
+      {[0, 1, 2, 3, 4].map((i) => (
+        <View key={i} style={styles.card}>
+          <SkeletonCard width={60} height={90} borderRadius={0} />
+          <View style={styles.info}>
+            <SkeletonCard width={160} height={22} borderRadius={radius.xs} />
+            <SkeletonCard width={100} height={14} borderRadius={radius.xs} style={styles.row2} />
+            <SkeletonCard width={120} height={14} borderRadius={radius.xs} style={styles.row3} />
+          </View>
         </View>
       ))}
     </View>
@@ -46,19 +24,24 @@ export default function SearchSkeleton() {
 
 const styles = StyleSheet.create({
   card: {
+    flexDirection: "row",
+    alignItems: "center",
     width: CARD_WIDTH,
+    height: 90,
     backgroundColor: colors.surface,
     borderRadius: radius.card,
-    marginTop: spacing.lg,
-    padding: spacing.lg,
-    alignItems: "center",
+    marginTop: spacing.sm,
+    overflow: "hidden",
   },
-  poster: {
-    marginRight: 0,
-    marginBottom: spacing.lg,
+  info: {
+    flex: 1,
+    paddingHorizontal: spacing.md,
+    gap: spacing.xs,
   },
-  block: {
-    marginRight: 0,
-    marginBottom: spacing.sm + 2,
+  row2: {
+    marginTop: spacing.xs,
+  },
+  row3: {
+    marginTop: spacing.xs,
   },
 });

@@ -111,6 +111,12 @@
     "game_time_long": "Largo",
     "continuing-game": "Continuando juego con los mismos jugadores",
     "play-again-prompt": "¿Te gustaría jugar otra ronda con los mismos jugadores?",
+    "invite-post-finish": {
+      "code-label": "Código de sala",
+      "async-hint": "Los amigos pueden unirse y deslizar horas después. Los matches siguen contando.",
+      "notif-hint": "¿Quieres saber cuando tengas un match?",
+      "notif-enable": "Activar"
+    },
     "waiting-for-host-decision": "Esperando a que el anfitrión decida el siguiente juego...",
     "reconnecting": "Reconectando...",
     "disconnected": "Desconectado",
@@ -641,7 +647,7 @@
     "no-matches-desc": "Lamentablemente, no encontraron películas en común en este juego. Inténtalo de nuevo con diferentes categorías o configuraciones.",
     "try-again": "Jugar de nuevo",
     "your-picks": "Tus me gusta",
-    "play-again": "Seguir jugando",
+    "play-again": "Jugar de nuevo",
     "leave-room": "Salir de la sala",
     "play-again-failed": "Error al reiniciar el juego. Por favor inténtalo de nuevo.",
     "view-summary": "Salir del juego",

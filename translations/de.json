@@ -111,6 +111,12 @@
     "game_time_long": "Lang",
     "continuing-game": "Spiel mit denselben Spielern fortsetzen",
     "play-again-prompt": "Möchtest du eine weitere Runde mit denselben Spielern spielen?",
+    "invite-post-finish": {
+      "code-label": "Raumcode",
+      "async-hint": "Freunde können Stunden später beitreten und wischen. Matches zählen trotzdem.",
+      "notif-hint": "Benachrichtigung erhalten, wenn du ein Match bekommst?",
+      "notif-enable": "Aktivieren"
+    },
     "waiting-for-host-decision": "Warte auf die Entscheidung des Gastgebers...",
     "reconnecting": "Verbinde...",
     "disconnected": "Getrennt",
@@ -641,7 +647,7 @@
     "no-matches-desc": "Leider habt ihr in diesem Spiel keine gemeinsamen Filme gefunden. Versuche es erneut mit anderen Kategorien oder Einstellungen.",
     "try-again": "Nochmal spielen",
     "your-picks": "Deine Likes",
-    "play-again": "Weiterspielen",
+    "play-again": "Nochmal spielen",
     "leave-room": "Raum verlassen",
     "play-again-failed": "Spiel konnte nicht neu gestartet werden. Bitte erneut versuchen.",
     "view-summary": "Spiel verlassen",

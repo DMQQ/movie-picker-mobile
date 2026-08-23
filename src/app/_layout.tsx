@@ -17,6 +17,7 @@ import { Provider } from "react-redux";
 import { roomActions } from "../redux/room/roomSlice";
 import { restoreSession, authActions, ensureAnonymousSession } from "../redux/auth/authSlice";
 import { store, useAppDispatch, useAppSelector } from "../redux/store";
+import { loadTutorialState } from "../redux/tutorial/tutorialSlice";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { DatabaseProvider } from "../context/DatabaseContext";
@@ -165,21 +166,29 @@ const RootNavigator = ({
 }) => {
   const dispatch = useAppDispatch();
   const [settingsLoaded, setSettingsLoaded] = useState(false);
+  const [showLanding, setShowLanding] = useState(false);
 
   useEffect(() => {
     const initializeApp = async () => {
       if (!isLoaded || isUpdating) return;
 
       try {
-        const [nickname, storedToken, storedRefreshToken, userId] = await allSettled(
+        dispatch(loadTutorialState());
+
+        const [nickname, storedToken, storedRefreshToken, userId, landingShown] = await allSettled(
           Promise.allSettled([
-            AsyncStorage.getItemAsync("nickname"),
+            AsyncStorage.getItem("nickname"),
             SecureStore.getItemAsync("user_auth_token"),
             SecureStore.getItemAsync("user_refresh_token"),
-            AsyncStorage.getItemAsync("userId"),
+            AsyncStorage.getItem("userId"),
+            AsyncStorage.getItem("landing_shown"),
           ]),
           null,
         );
+
+        if (!landingShown || __DEV__) {
+          setShowLanding(true);
+        }
 
         const anonymousResult = await dispatch(
           ensureAnonymousSession({ userId, refreshToken: storedRefreshToken }),
@@ -219,9 +228,12 @@ const RootNavigator = ({
 
   useEffect(() => {
     if (isLoaded && settingsLoaded) {
+      if (showLanding) {
+        router.replace("/landing" as any);
+      }
       SplashScreen.hideAsync();
     }
-  }, [isLoaded, settingsLoaded]);
+  }, [isLoaded, settingsLoaded, showLanding]);
 
   if (!isLoaded || !settingsLoaded) {
     return null;
@@ -239,7 +251,9 @@ const RootNavigator = ({
           },
         }}
       >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="landing" options={{ headerShown: false, animation: "fade" }} />
+
+        <Stack.Screen name="(tabs)" options={{ headerShown: false, animation:'fade' }} />
 
         <Stack.Screen name="room" options={{ headerShown: false }} />
 

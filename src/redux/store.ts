@@ -22,6 +22,7 @@ import { ratingsApi } from "./ratings/ratingsApi";
 import { inviteApi } from "./invite/inviteApi";
 import toastSlice from "./toast/toastSlice";
 import moviePickerReducer from "./moviePicker/moviePickerSlice";
+import { tutorialSlice } from "./tutorial/tutorialSlice";
 
 const store = configureStore({
   reducer: {
@@ -44,6 +45,7 @@ const store = configureStore({
     filterPreferences: filterPreferencesSlice.reducer,
     toast: toastSlice.reducer,
     moviePicker: moviePickerReducer,
+    tutorial: tutorialSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()

@@ -1,6 +1,7 @@
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { useEffect } from "react";
+import { router } from "expo-router";
 import { useAppSelector } from "../redux/store";
 import { posthog } from "../constants/posthog";
 import { handleInviteDeeplink } from "../utils/inviteRouter";
@@ -42,6 +43,12 @@ export default function NotificationHandler() {
       const inviteId = data.inviteId as string | undefined;
       if (!inviteId) return;
       handleInviteDeeplink(inviteId, token);
+    }
+
+    if (data.screen === "GameDetail") {
+      const gameId = data.gameId as string | undefined;
+      if (!gameId) return;
+      router.push({ pathname: "/games/[id]", params: { id: gameId } });
     }
   }, [lastResponse, isRestored, token]);
 

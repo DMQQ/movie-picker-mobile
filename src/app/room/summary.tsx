@@ -1,7 +1,9 @@
 import { router, useLocalSearchParams } from "expo-router";
 import Text from "../../components/Text";
-import { useCallback, useMemo, useState } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Platform, Share, StyleSheet, View } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as Notifications from "expo-notifications";
 import Button from "../../components/Button";
 import PrimaryButton from "../../components/PrimaryButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -30,6 +32,8 @@ import {
   spacing,
   typography,
 } from "../../constants/design";
+import { posthog } from "../../constants/posthog";
+import TicketButton from "../../components/TicketButton";
 
 type MovieLike = { id?: number; title?: string; poster_path?: string };
 
@@ -58,8 +62,20 @@ export default function GameSummary() {
   const insets = useSafeAreaInsets();
   const likes = useAppSelector((st) => st.room.likes);
   const [shareVisible, setShareVisible] = useState(false);
+  const [showNotifBanner, setShowNotifBanner] = useState(false);
   const { summary, loading, error, shouldShowRatingPill, userId } =
     useGameSummary(roomId);
+
+  useEffect(() => {
+    Notifications.getPermissionsAsync().then(({ status, canAskAgain }) => {
+      if (status !== "granted" && canAskAgain) setShowNotifBanner(true);
+    });
+  }, []);
+
+  const handleEnableNotifications = useCallback(async () => {
+    setShowNotifBanner(false);
+    await Notifications.requestPermissionsAsync();
+  }, []);
 
   const handleBackToHome = useCallback(() => {
     dispatch(roomActions.reset());
@@ -73,6 +89,15 @@ export default function GameSummary() {
     router.dismissAll();
     router.replace("/room/qr-code");
   }, [dispatch]);
+
+  const handleShareCode = useCallback(() => {
+    const code = (summary?.roomId || roomId).toUpperCase();
+    const webUrl = `https://flickmate.app/swipe/${code}`;
+    Share.share({
+      message: t("room.share.message", { code }) + "\nOr join via " + webUrl,
+      url: webUrl,
+    });
+  }, [summary?.roomId, roomId, t]);
 
   const summaryType = summary?.type ?? "movie";
   const matches = summary?.matchedMovies ?? [];
@@ -180,9 +205,34 @@ export default function GameSummary() {
         />
         {summary && <StatsDashboard summary={summary} userId={userId} />}
         {summary?.users && <PlayerPerformance users={summary.users} />}
+        <View style={styles.asyncBanner}>
+          <View style={styles.asyncBannerText}>
+            <MaterialCommunityIcons name="clock-outline" size={13} color={colors.placeholder} style={styles.asyncIcon} />
+            <Text style={styles.asyncHintText}>{t("room.invite-post-finish.async-hint")}</Text>
+          </View>
+          <Button
+            mode="outlined"
+            icon="share-variant"
+            compact
+            onPress={handleShareCode}
+            style={styles.asyncShareBtn}
+            contentStyle={styles.asyncShareBtnContent}
+          >
+            {t("room.share.button") as string}
+          </Button>
+        </View>
+        {showNotifBanner && (
+          <View style={styles.notifBanner}>
+            <MaterialCommunityIcons name="bell-outline" size={15} color={colors.primary} />
+            <Text style={styles.notifBannerText}>{t("room.invite-post-finish.notif-hint")}</Text>
+            <Button mode="text" compact onPress={handleEnableNotifications}>
+              {t("room.invite-post-finish.notif-enable") as string}
+            </Button>
+          </View>
+        )}
       </View>
     ),
-    [summary, userId, roomId, hasMatches],
+    [summary, userId, roomId, hasMatches, t, handleShareCode, showNotifBanner, handleEnableNotifications],
   );
 
   if (loading) {
@@ -237,18 +287,14 @@ export default function GameSummary() {
           {t("game-summary.back-to-home")}
         </PrimaryButton>
         {hasMatches && (
-          <Button
-            mode="outlined"
+          <TicketButton
+            label={t("game-summary.share-marathon") as string}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              posthog?.capture("game_summary_share_ticket_tapped", { roomId });
               setShareVisible(true);
             }}
-            style={styles.shareBtn}
-            contentStyle={styles.btnContent}
-            icon="share-variant"
-          >
-            {t("game-summary.share-marathon")}
-          </Button>
+          />
         )}
       </View>
 
@@ -311,6 +357,51 @@ const styles = StyleSheet.create({
     backgroundColor: colors.appBackground,
   },
   backBtn: { borderRadius: radius.pill, flex: 1 },
-  btnContent: { paddingVertical: spacing.xs + 3.5 },
-  shareBtn: { borderRadius: radius.pill, borderColor: "rgba(255,255,255,0.3)" },
+  asyncBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: -spacing.md,
+    gap: spacing.sm,
+  },
+  asyncBannerText: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: spacing.xs,
+  },
+  asyncIcon: { marginTop: 2 },
+  asyncHintText: {
+    flex: 1,
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
+    lineHeight: 18,
+  },
+  asyncShareBtn: {
+    borderRadius: radius.pill,
+    borderColor: colors.border,
+  },
+  asyncShareBtnContent: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+  },
+  notifBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    backgroundColor: `${colors.primary}18`,
+    borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: `${colors.primary}40`,
+    paddingVertical: spacing.sm,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.xs,
+    marginTop: spacing.sm,
+  },
+  notifBannerText: {
+    flex: 1,
+    fontSize: fontSize.sm,
+    color: colors.text,
+    lineHeight: 18,
+  },
 });

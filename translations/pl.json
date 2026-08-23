@@ -111,6 +111,12 @@
     "game_time_long": "Długi",
     "continuing-game": "Kontynuacja gry z tymi samymi graczami",
     "play-again-prompt": "Czy chcesz zagrać kolejną rundę z tymi samymi graczami?",
+    "invite-post-finish": {
+      "code-label": "Kod pokoju",
+      "async-hint": "Znajomi mogą dołączyć i swipować nawet wiele godzin później. Dopasowania nadal się liczą.",
+      "notif-hint": "Chcesz wiedzieć, gdy pojawi się dopasowanie?",
+      "notif-enable": "Włącz"
+    },
     "waiting-for-host-decision": "Oczekiwanie na decyzję gospodarza...",
     "reconnecting": "Ponowne łączenie...",
     "disconnected": "Brak połączenia",
@@ -641,7 +647,7 @@
     "no-matches-desc": "Niestety, nie znaleźliście wspólnych filmów w tej grze. Spróbujcie ponownie z innymi kategoriami lub ustawieniami.",
     "try-again": "Zagraj ponownie",
     "your-picks": "Twoje polubienia",
-    "play-again": "Kontynuuj grę",
+    "play-again": "Zagraj jeszcze raz",
     "leave-room": "Opuść pokój",
     "play-again-failed": "Nie udało się ponownie rozpocząć gry. Spróbuj ponownie.",
     "view-summary": "Opuść grę",

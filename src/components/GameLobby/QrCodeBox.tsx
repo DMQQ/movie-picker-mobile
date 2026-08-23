@@ -6,7 +6,8 @@ import Text from "../Text";
 import StyledQRCode from "../StyledQRCode";
 import TutorialTips from "./TutorialTips";
 import useTranslation from "../../service/useTranslation";
-import { fontSize, fontWeight, spacing } from "../../constants/design";
+import { colors, fontSize, fontWeight, spacing } from "../../constants/design";
+import { posthog } from "../../constants/posthog";
 
 interface Props {
   code: string;
@@ -20,12 +21,15 @@ const QrCodeBox = memo(({ code, scheme, webPath }: Props) => {
   const upperCode = code.toUpperCase();
   const webUrl = `https://flickmate.app/${webPath}/${upperCode}`;
 
-  const shareCode = () => {
-    Share.share({
+  const shareCode = async () => {
+    const result = await Share.share({
       message: t("room.share.message", { code }) + "\nOr join via " + webUrl,
       title: t("room.share.title") as string,
       url: webUrl,
     });
+    if (result.action === Share.sharedAction) {
+      posthog?.capture("room_link_shared");
+    }
   };
 
   return (
@@ -44,6 +48,11 @@ const QrCodeBox = memo(({ code, scheme, webPath }: Props) => {
           {t("room.share.button")} <MaterialCommunityIcons name="share" size={20} color={theme.colors.primary} />
         </Text>
       </Pressable>
+
+      <View style={styles.asyncHint}>
+        <MaterialCommunityIcons name="clock-outline" size={12} color={colors.placeholder} />
+        <Text style={styles.asyncHintText}>{t("room.invite-post-finish.async-hint")}</Text>
+      </View>
 
       <TutorialTips />
     </View>
@@ -74,5 +83,18 @@ const styles = StyleSheet.create({
   shareButtonText: {
     opacity: 0.7,
     textAlign: "center",
+  },
+  asyncHint: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    marginTop: spacing.lg,
+    paddingHorizontal: spacing.xl,
+  },
+  asyncHintText: {
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
+    textAlign: "center",
+    lineHeight: 18,
   },
 });

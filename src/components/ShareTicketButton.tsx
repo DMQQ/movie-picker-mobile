@@ -3,12 +3,13 @@ import IconButton from "./IconButton";
 import Text from "./Text";
 import { Dimensions, Modal, Pressable, StyleSheet, View } from "react-native";
 import useTranslation from "../service/useTranslation";
+import TicketButton from "./TicketButton";
 
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
 import CinemaTicket from "./CinemaTicket";
-import { colors, common, fontSize, radius, spacing} from "../constants/design";
+import { colors, common } from "../constants/design";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -100,17 +101,7 @@ function ShareTicketButton({ movie, providers, headerText, pickupLine, holeColor
 
   return (
     <>
-      <View style={styles.ticketWrapper}>
-        <Pressable onPress={openModal} style={({ pressed }) => [styles.ticketButton, pressed && styles.ticketButtonPressed]}>
-          <View style={[styles.cornerHole, styles.cornerTopLeft, { backgroundColor: holeColor }]} />
-          <View style={[styles.cornerHole, styles.cornerTopRight, { backgroundColor: holeColor }]} />
-          <View style={[styles.cornerHole, styles.cornerBottomLeft, { backgroundColor: holeColor }]} />
-          <View style={[styles.cornerHole, styles.cornerBottomRight, { backgroundColor: holeColor }]} />
-
-          <Text style={styles.ticketButtonIcon}>🎟️</Text>
-          <Text style={styles.ticketButtonText}>{t("ticket.share-it")}</Text>
-        </Pressable>
-      </View>
+      <TicketButton label={t("ticket.share-it") as string} onPress={openModal} holeColor={holeColor} />
 
       <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={closeModal}>
         <View style={styles.modalOverlay}>
@@ -203,57 +194,6 @@ export function IconShareButton({ movie }: { movie: Movie | null | undefined }) 
 }
 
 const styles = StyleSheet.create({
-  // Ticket Button
-  ticketWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  ticketButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F5F0E1",
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
-    gap: spacing.sm - 2,
-    position: "relative",
-  },
-  ticketButtonPressed: {
-    opacity: 0.95,
-  },
-  ticketButtonIcon: {
-    fontSize: fontSize.lg,
-  },
-  ticketButtonText: {
-    fontFamily: "Bebas",
-    fontSize: fontSize.lg,
-    letterSpacing: 1,
-    color: colors.input,
-  },
-  cornerHole: {
-    position: "absolute",
-    width: 11,
-    height: 11,
-    borderRadius: radius.sm + 2,
-  },
-  cornerTopLeft: {
-    top: -5,
-    left: -5,
-  },
-  cornerTopRight: {
-    top: -5,
-    right: -5,
-  },
-  cornerBottomLeft: {
-    bottom: -5,
-    left: -5,
-  },
-  cornerBottomRight: {
-    bottom: -5,
-    right: -5,
-  },
-
   // Modal
   modalOverlay: {
     flex: 1,

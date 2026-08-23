@@ -6,13 +6,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Text from "../Text";
-import Portal from "../Portal";
 import MatchupCard from "./MatchupCard";
 import CountdownBar from "./CountdownBar";
 import RoundPips from "./RoundPips";
 import ActivePlayers from "./ActivePlayers";
 import UserAvatar from "../UserAvatar";
-import TieOverlay from "./TieOverlay";
 import useEitherOrContext from "../../context/EitherOrContext";
 import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
@@ -231,7 +229,17 @@ export default function Matchup() {
           </View>
         )}
 
-        <View style={styles.duelBottom} />
+        <View style={styles.duelBottom}>
+          {isRevealing && lastResult?.tieReason && (
+            <Animated.View entering={FadeIn.duration(200)} style={styles.tieBanner}>
+              <MaterialCommunityIcons name="scale-balance" size={16} color={colors.primary} />
+              <Text style={styles.tieBannerTitle}>{t("eitherOr.game.tie")}</Text>
+              <Text style={styles.tieBannerReason}>
+                {lastResult.tieReason === "champion-keeps" ? t("eitherOr.game.tieChampionKeeps") : t("eitherOr.game.tieSpeedWin")}
+              </Text>
+            </Animated.View>
+          )}
+        </View>
       </View>
 
       <View style={styles.footer}>
@@ -269,11 +277,6 @@ export default function Matchup() {
         </View>
       </View>
 
-      {isRevealing && lastResult?.tieReason && (
-        <Portal>
-          <TieOverlay reason={lastResult.tieReason} />
-        </Portal>
-      )}
     </View>
   );
 }
@@ -350,6 +353,24 @@ const styles = StyleSheet.create({
   },
   duelBottom: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tieBanner: {
+    alignItems: "center",
+    gap: spacing.xs,
+    paddingHorizontal: spacing.xl,
+  },
+  tieBannerTitle: {
+    fontFamily: "Bebas",
+    fontSize: 28,
+    color: colors.text,
+    lineHeight: 30,
+  },
+  tieBannerReason: {
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
+    textAlign: "center",
   },
   cardsRow: {
     flexDirection: "row",
