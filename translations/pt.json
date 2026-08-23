@@ -1,4 +1,29 @@
 {
+  "landing": {
+    "error": "Algo deu errado. Por favor tente novamente.",
+    "title": "Bem-vindo ao FlickMate",
+    "chips": {
+      "all": "Todos",
+      "trending": "Em alta",
+      "new": "Novo"
+    },
+    "list_footer": "Carregando mais",
+    "no_more_results": "Sem mais resultados",
+    "reached_end": "Você chegou ao fim",
+    "loadError": "Erro ao carregar categorias",
+    "show_all": "Ver todos",
+    "line1": "PARE DE ROLAR.",
+    "line2": "COMECE A ASSISTIR.",
+    "sub": "Seus amigos vão concordar. Provavelmente.",
+    "modes": {
+      "swipe": "Deslizar",
+      "vote": "Votar",
+      "spin": "Girar",
+      "random": "Aleatório"
+    },
+    "cta": "Escolha algo hoje à noite",
+    "browse": "Só estou navegando"
+  },
   "dialogs": {
     "scan-code": {
       "title": "Escanear código QR",
@@ -152,7 +177,7 @@
     "builder": {
       "next": "Próximo",
       "createRoom": "Criar sala",
-      "quickStart": "Início rápido",
+      "quickStart": "Criar sala",
       "leaveStepConfirmation": "Tem certeza que deseja voltar? Seu progresso será perdido.",
       "step1": {
         "title": "Qual é a sua escolha?",
@@ -234,7 +259,7 @@
     "random-category": "Categoria aleatória",
     "pick-category": "Escolher categoria",
     "pick-a-movie": "Gire a roda!",
-    "spin-again": "Giro aleatório",
+    "spin-again": "Tente outro",
     "tap-for-details": "Toque para detalhes",
     "fate-messages": [
       "Que o destino decida...",
@@ -601,20 +626,6 @@
   },
   "cast": {
     "heading": "Elenco"
-  },
-  "landing": {
-    "error": "Algo deu errado. Por favor tente novamente.",
-    "title": "Bem-vindo ao FlickMate",
-    "chips": {
-      "all": "Todos",
-      "trending": "Em alta",
-      "new": "Novo"
-    },
-    "list_footer": "Carregando mais",
-    "no_more_results": "Sem mais resultados",
-    "reached_end": "Você chegou ao fim",
-    "loadError": "Erro ao carregar categorias",
-    "show_all": "Ver todos"
   },
   "tabBar": {
     "account": "Conta",

@@ -349,7 +349,7 @@ export default function QRCodePage() {
               }}
             >
               {isLoadingMovies && !isRefetching ? (
-                <Text style={styles.infoText}>Checking available movies...</Text>
+                <Text style={styles.infoText}>Preparing content...</Text>
               ) : moviesCount === 0 ? (
                 <Text style={styles.warningText}>{t("room.too-restricted")}</Text>
               ) : moviesCount != null && moviesCount < 5 ? (
@@ -396,7 +396,7 @@ export default function QRCodePage() {
                 {isRefetching
                   ? SYNC_PHRASES[syncPhraseIndex]
                   : isLoadingMovies
-                    ? "Loading..."
+                    ? "Loading movies..."
                     : moviesCount === 0
                       ? t("room.too-restricted")
                       : users.length === 1
@@ -410,7 +410,7 @@ export default function QRCodePage() {
         {createRoomLoading ? (
           <Animated.View entering={FadeInDown} style={styles.loadingContainer}>
             <FancySpinner size={100} />
-            <Text style={styles.loadingText}>Creating room...</Text>
+            <Text style={styles.loadingText}>Setting up room...</Text>
           </Animated.View>
         ) : (
           qrCode && (

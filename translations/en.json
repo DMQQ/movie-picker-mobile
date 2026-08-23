@@ -1,4 +1,29 @@
 {
+  "landing": {
+    "loadError": "Failed to load categories",
+    "error": "Something went wrong. Please try again.",
+    "title": "Welcome to Movie Picker",
+    "chips": {
+      "all": "All",
+      "trending": "Trending",
+      "new": "New"
+    },
+    "list_footer": "Loading more",
+    "no_more_results": "No more results",
+    "reached_end": "You've reached the end",
+    "show_all": "Show all",
+    "line1": "STOP SCROLLING.",
+    "line2": "START WATCHING.",
+    "sub": "Your friends will actually agree. Probably.",
+    "modes": {
+      "swipe": "Swipe",
+      "vote": "Vote",
+      "spin": "Spin",
+      "random": "Random"
+    },
+    "cta": "Pick something tonight",
+    "browse": "Just browsing"
+  },
   "dialogs": {
     "scan-code": {
       "title": "Scan QR code",
@@ -168,7 +193,7 @@
     "builder": {
       "next": "Next",
       "createRoom": "Create Room",
-      "quickStart": "Quick Start",
+      "quickStart": "Create Room",
       "leaveStepConfirmation": "Are you sure you want to go back? Your progress will be lost.",
       "step1": {
         "title": "What's your pick?",
@@ -235,7 +260,7 @@
     "random-category": "Random Category",
     "pick-category": "Pick Category",
     "pick-a-movie": "Spin the wheel!",
-    "spin-again": "Random spin",
+    "spin-again": "Try another",
     "tap-for-details": "Tap for details",
     "fate-messages": [
       "Let fate decide...",
@@ -615,20 +640,6 @@
   },
   "cast": {
     "heading": "Cast"
-  },
-  "landing": {
-    "loadError": "Failed to load categories",
-    "error": "Something went wrong. Please try again.",
-    "title": "Welcome to Movie Picker",
-    "chips": {
-      "all": "All",
-      "trending": "Trending",
-      "new": "New"
-    },
-    "list_footer": "Loading more",
-    "no_more_results": "No more results",
-    "reached_end": "You've reached the end",
-    "show_all": "Show all"
   },
   "tabBar": {
     "account": "Account",

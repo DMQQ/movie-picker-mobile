@@ -1,4 +1,29 @@
 {
+  "landing": {
+    "error": "Oops, coś poszło nie tak, spróbuj ponownie.",
+    "title": "Movie Picker",
+    "chips": {
+      "all": "Wszystko",
+      "trending": "Popularne",
+      "new": "Nowości"
+    },
+    "list_footer": "Ładowanie więcej...",
+    "no_more_results": "Brak więcej wyników",
+    "reached_end": "Dotarłeś do końca",
+    "loadError": "Nie udało się załadować kategorii",
+    "show_all": "Pokaż wszystkie",
+    "line1": "PRZESTAŃ SCROLLOWAĆ.",
+    "line2": "ZACZNIJ OGLĄDAĆ.",
+    "sub": "Twoi znajomi się zgodzą. Prawdopodobnie.",
+    "modes": {
+      "swipe": "Przesuń",
+      "vote": "Głosuj",
+      "spin": "Kręć",
+      "random": "Losuj"
+    },
+    "cta": "Wybierz coś na dziś",
+    "browse": "Tylko przeglądam"
+  },
   "dialogs": {
     "scan-code": {
       "title": "Zeskanuj kod QR",
@@ -152,7 +177,7 @@
     "builder": {
       "next": "Dalej",
       "createRoom": "Utwórz pokój",
-      "quickStart": "Szybki Start",
+      "quickStart": "Utwórz pokój",
       "leaveStepConfirmation": "Czy na pewno chcesz wrócić? Twój postęp zostanie utracony.",
       "step1": {
         "title": "Co chcesz obejrzeć?",
@@ -234,7 +259,7 @@
     "random-category": "Losowa Kategoria",
     "pick-category": "Wybierz Kategorię",
     "pick-a-movie": "Zakręć kołem!",
-    "spin-again": "Wylosuj ponownie",
+    "spin-again": "Spróbuj innego",
     "tap-for-details": "Zobacz szczegóły",
     "fate-messages": [
       "Niech los zdecyduje...",
@@ -601,20 +626,6 @@
   },
   "cast": {
     "heading": "Obsada"
-  },
-  "landing": {
-    "error": "Oops, coś poszło nie tak, spróbuj ponownie.",
-    "title": "Movie Picker",
-    "chips": {
-      "all": "Wszystko",
-      "trending": "Popularne",
-      "new": "Nowości"
-    },
-    "list_footer": "Ładowanie więcej...",
-    "no_more_results": "Brak więcej wyników",
-    "reached_end": "Dotarłeś do końca",
-    "loadError": "Nie udało się załadować kategorii",
-    "show_all": "Pokaż wszystkie"
   },
   "tabBar": {
     "account": "Konto",

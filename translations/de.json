@@ -1,4 +1,29 @@
 {
+  "landing": {
+    "error": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+    "title": "Willkommen bei FlickMate",
+    "chips": {
+      "all": "Alle",
+      "trending": "Trending",
+      "new": "Neu"
+    },
+    "list_footer": "Mehr laden",
+    "no_more_results": "Keine weiteren Ergebnisse",
+    "reached_end": "Du hast das Ende erreicht",
+    "loadError": "Fehler beim Laden der Kategorien",
+    "show_all": "Alle anzeigen",
+    "line1": "HÖRT AUF ZU SCROLLEN.",
+    "line2": "FANG AN ZU SCHAUEN.",
+    "sub": "Eure Freunde werden sich einigen. Wahrscheinlich.",
+    "modes": {
+      "swipe": "Wischen",
+      "vote": "Abstimmen",
+      "spin": "Drehen",
+      "random": "Zufall"
+    },
+    "cta": "Heute Abend was aussuchen",
+    "browse": "Nur stöbern"
+  },
   "dialogs": {
     "scan-code": {
       "title": "QR-Code scannen",
@@ -152,7 +177,7 @@
     "builder": {
       "next": "Weiter",
       "createRoom": "Raum erstellen",
-      "quickStart": "Schnellstart",
+      "quickStart": "Raum erstellen",
       "leaveStepConfirmation": "Bist du sicher, dass du zurückgehen möchtest? Dein Fortschritt geht verloren.",
       "step1": {
         "title": "Was ist deine Wahl?",
@@ -234,7 +259,7 @@
     "random-category": "Zufällige Kategorie",
     "pick-category": "Kategorie wählen",
     "pick-a-movie": "Das Rad drehen!",
-    "spin-again": "Zufällig drehen",
+    "spin-again": "Nächster versuchen",
     "tap-for-details": "Tippen für Details",
     "fate-messages": [
       "Das Schicksal entscheidet...",
@@ -601,20 +626,6 @@
   },
   "cast": {
     "heading": "Besetzung"
-  },
-  "landing": {
-    "error": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
-    "title": "Willkommen bei FlickMate",
-    "chips": {
-      "all": "Alle",
-      "trending": "Trending",
-      "new": "Neu"
-    },
-    "list_footer": "Mehr laden",
-    "no_more_results": "Keine weiteren Ergebnisse",
-    "reached_end": "Du hast das Ende erreicht",
-    "loadError": "Fehler beim Laden der Kategorien",
-    "show_all": "Alle anzeigen"
   },
   "tabBar": {
     "account": "Konto",

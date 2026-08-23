@@ -1,4 +1,29 @@
 {
+  "landing": {
+    "error": "Algo salió mal. Por favor inténtalo de nuevo.",
+    "title": "Bienvenido a FlickMate",
+    "chips": {
+      "all": "Todo",
+      "trending": "Tendencias",
+      "new": "Nuevo"
+    },
+    "list_footer": "Cargando más",
+    "no_more_results": "Sin más resultados",
+    "reached_end": "Has llegado al final",
+    "loadError": "Error al cargar las categorías",
+    "show_all": "Ver todo",
+    "line1": "DEJA DE HACER SCROLL.",
+    "line2": "EMPIEZA A VER.",
+    "sub": "Tus amigos estarán de acuerdo. Probablemente.",
+    "modes": {
+      "swipe": "Deslizar",
+      "vote": "Votar",
+      "spin": "Girar",
+      "random": "Aleatorio"
+    },
+    "cta": "Elige algo esta noche",
+    "browse": "Solo estoy mirando"
+  },
   "dialogs": {
     "scan-code": {
       "title": "Escanear código QR",
@@ -152,7 +177,7 @@
     "builder": {
       "next": "Siguiente",
       "createRoom": "Crear sala",
-      "quickStart": "Inicio rápido",
+      "quickStart": "Crear sala",
       "leaveStepConfirmation": "¿Estás seguro de que quieres volver? Tu progreso se perderá.",
       "step1": {
         "title": "¿Qué prefieres?",
@@ -234,7 +259,7 @@
     "random-category": "Categoría aleatoria",
     "pick-category": "Elegir categoría",
     "pick-a-movie": "¡Gira la rueda!",
-    "spin-again": "Giro aleatorio",
+    "spin-again": "Intentar otro",
     "tap-for-details": "Toca para ver detalles",
     "fate-messages": [
       "Que el destino decida...",
@@ -601,20 +626,6 @@
   },
   "cast": {
     "heading": "Reparto"
-  },
-  "landing": {
-    "error": "Algo salió mal. Por favor inténtalo de nuevo.",
-    "title": "Bienvenido a FlickMate",
-    "chips": {
-      "all": "Todo",
-      "trending": "Tendencias",
-      "new": "Nuevo"
-    },
-    "list_footer": "Cargando más",
-    "no_more_results": "Sin más resultados",
-    "reached_end": "Has llegado al final",
-    "loadError": "Error al cargar las categorías",
-    "show_all": "Ver todo"
   },
   "tabBar": {
     "account": "Cuenta",
