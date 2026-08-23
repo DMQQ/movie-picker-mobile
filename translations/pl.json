@@ -660,8 +660,22 @@
     "failed-to-load": "Nie udało się załadować podsumowania gry",
     "add-to-favourites": "Polub",
     "remove-from-favourites": "Usuń z ulubionych",
-    "no-matches": "Brak dopasowań",
-    "no-matches-desc": "Niestety, nie znaleźliście wspólnych filmów w tej grze. Spróbujcie ponownie z innymi kategoriami lub ustawieniami.",
+    "no-matches": "Nikt się nie zgodził... jeszcze.",
+    "no-matches-desc": "Zero dopasowań. Boli. Okazuje się, że macie zupełnie inny filmowy gust — a to świetna informacja dla nas. Właśnie zaktualizowaliśmy waszą personalizację, więc następna runda będzie zupełnie inna. Jeszcze jedna gra?",
+    "no-matches-titles": [
+      "Nikt się nie zgodził... jeszcze.",
+      "Grupowy czat przemówił.",
+      "Zwrot akcji: zero dopasowań.",
+      "Jesteście wyjątkowo trudni.",
+      "Tym razem to nasza wina."
+    ],
+    "no-matches-descs": [
+      "Zero dopasowań. Boli. Okazuje się, że macie zupełnie inny filmowy gust — a to świetna informacja dla nas. Właśnie zaktualizowaliśmy waszą personalizację, więc następna runda będzie zupełnie inna. Jeszcze jedna gra?",
+      "I najwyraźniej nikt się na niczym nie zgodził. Klasyka. Dobra wiadomość: wiemy już dokładnie, czego NIE polecać następnym razem — wasza personalizacja właśnie dostała poważny upgrade. Wracajcie silniejsi.",
+      "Ani jeden film nie przeżył grupowego głosowania. Brutalnie, serio. Ale każde przesunięcie powiedziało nam coś o waszym guście, więc następna gra będzie już mądrzejsza. Nie rezygnujcie teraz.",
+      "I mówimy to z komplementem. Zero wspólnego gustu oznacza, że jesteście wyjątkowo wymagającymi widzami — albo po prostu bardzo upartymi. Tak czy inaczej, wyciągnęliśmy wnioski i następna gra będzie lepsza.",
+      "Nie znaleźliśmy tym razem filmów, które połączyłyby grupę — i to nasza wina. Zanotowaliśmy, zaktualizowaliśmy algorytm i daliśmy mu porządną reprymendę. Następna gra będzie inna."
+    ],
     "try-again": "Zagraj ponownie",
     "your-picks": "Twoje polubienia",
     "play-again": "Zagraj jeszcze raz",

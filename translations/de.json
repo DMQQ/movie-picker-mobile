@@ -660,8 +660,22 @@
     "failed-to-load": "Spielzusammenfassung konnte nicht geladen werden",
     "add-to-favourites": "Favorit",
     "remove-from-favourites": "Rückgängig",
-    "no-matches": "Keine Übereinstimmungen",
-    "no-matches-desc": "Leider habt ihr in diesem Spiel keine gemeinsamen Filme gefunden. Versuche es erneut mit anderen Kategorien oder Einstellungen.",
+    "no-matches": "Niemand war sich einig... noch.",
+    "no-matches-desc": "Null Treffer. Heftig. Ihr habt offenbar alle einen komplett einzigartigen Filmgeschmack — und das sind super Daten für uns. Wir haben eure Personalisierung gerade aktualisiert, also wird die nächste Runde ganz anders. Noch eine Runde?",
+    "no-matches-titles": [
+      "Niemand war sich einig... noch.",
+      "Der Gruppen-Chat hat gesprochen.",
+      "Plottwist: null Treffer.",
+      "Ihr seid alle einzigartig schwierig.",
+      "Das geht auf uns."
+    ],
+    "no-matches-descs": [
+      "Null Treffer. Heftig. Ihr habt offenbar alle einen komplett einzigartigen Filmgeschmack — und das sind super Daten für uns. Wir haben eure Personalisierung gerade aktualisiert, also wird die nächste Runde ganz anders. Noch eine Runde?",
+      "Und anscheinend war sich niemand über irgendetwas einig. Klassiker. Die gute Nachricht: Wir wissen jetzt genau, was wir euch NICHT empfehlen sollten — eure Personalisierung hat gerade ein ernstes Upgrade bekommen. Kommt stärker zurück.",
+      "Kein einziger Film hat das Gruppenabstimmen überlebt. Brutal, ehrlich gesagt. Aber jeder Swipe hat uns etwas über euren Geschmack verraten, also wird das nächste Spiel schon klüger sein. Gebt jetzt nicht auf.",
+      "Und das meinen wir als Kompliment. Null Überschneidung im Geschmack bedeutet, ihr seid alle extrem anspruchsvolle Zuschauer — oder einfach sehr stur. So oder so: Wir haben gelernt und das nächste Spiel wird viel besser.",
+      "Wir haben diesmal nicht die richtigen Filme gefunden, um die Gruppe zu vereinen — das liegt an uns. Wir haben Notizen gemacht, den Algorithmus aktualisiert und ihm eine ernste Standpauke gehalten. Nächstes Spiel kommen wir heißer zurück."
+    ],
     "try-again": "Nochmal spielen",
     "your-picks": "Deine Likes",
     "play-again": "Nochmal spielen",

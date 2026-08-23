@@ -660,8 +660,22 @@
     "failed-to-load": "Error al cargar el resumen del juego",
     "add-to-favourites": "Favorito",
     "remove-from-favourites": "Deshacer",
-    "no-matches": "Sin coincidencias",
-    "no-matches-desc": "Lamentablemente, no encontraron películas en común en este juego. Inténtalo de nuevo con diferentes categorías o configuraciones.",
+    "no-matches": "Nadie estuvo de acuerdo... todavía.",
+    "no-matches-desc": "Cero coincidencias. Duro. Resulta que todos tenéis gustos cinematográficos completamente distintos — y eso es información valiosísima para nosotros. Acabamos de actualizar vuestra personalización, así que la próxima partida será muy diferente. ¿Una más?",
+    "no-matches-titles": [
+      "Nadie estuvo de acuerdo... todavía.",
+      "El chat grupal ha hablado.",
+      "Giro de guion: cero coincidencias.",
+      "Sois todos difíciles a vuestra manera.",
+      "Esta vez es culpa nuestra."
+    ],
+    "no-matches-descs": [
+      "Cero coincidencias. Duro. Resulta que todos tenéis gustos cinematográficos completamente distintos — y eso es información valiosísima para nosotros. Acabamos de actualizar vuestra personalización, así que la próxima partida será muy diferente. ¿Una más?",
+      "Y aparentemente nadie estuvo de acuerdo en nada. Clásico. La buena noticia: ahora sabemos exactamente qué NO recomendarte la próxima vez — vuestra personalización acaba de recibir una mejora seria. Volved con más fuerza.",
+      "Ni una sola película sobrevivió a la votación grupal. Brutal, la verdad. Pero cada swipe nos dijo algo sobre vuestro gusto, así que el próximo juego ya va a ser más inteligente. No lo dejéis ahora.",
+      "Y lo decimos como un cumplido. Cero coincidencias de gusto significa que sois espectadores extremadamente exigentes — o simplemente muy tercos. De cualquier manera, hemos aprendido y el próximo juego será mucho mejor.",
+      "No encontramos las películas correctas para unir al grupo esta vez, y es responsabilidad nuestra. Hemos tomado nota, actualizado el algoritmo y le hemos dado una seria reprimenda. La próxima partida, volvemos con todo."
+    ],
     "try-again": "Jugar de nuevo",
     "your-picks": "Tus me gusta",
     "play-again": "Jugar de nuevo",

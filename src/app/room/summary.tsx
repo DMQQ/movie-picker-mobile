@@ -104,6 +104,13 @@ export default function GameSummary() {
   const likesList = likes ?? [];
   const hasMatches = matches.length > 0;
 
+  const noMatchContent = useMemo(() => {
+    const titles = t("game-summary.no-matches-titles") as unknown as string[];
+    const descs = t("game-summary.no-matches-descs") as unknown as string[];
+    const idx = Math.floor(Math.random() * titles.length);
+    return { title: titles[idx], desc: descs[idx] };
+  }, [t]);
+
   const listData = useMemo<ListItem[]>(() => {
     const items: ListItem[] = [];
 
@@ -160,12 +167,8 @@ export default function GameSummary() {
         case "empty":
           return (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyTitle}>
-                {t("game-summary.no-matches")}
-              </Text>
-              <Text style={styles.emptyDesc}>
-                {t("game-summary.no-matches-desc")}
-              </Text>
+              <Text style={styles.emptyTitle}>{noMatchContent.title}</Text>
+              <Text style={styles.emptyDesc}>{noMatchContent.desc}</Text>
               <Button onPress={handleTryAgain}>
                 {t("game-summary.try-again")}
               </Button>
@@ -190,7 +193,7 @@ export default function GameSummary() {
           );
       }
     },
-    [summaryType, t, handleTryAgain],
+    [summaryType, t, handleTryAgain, noMatchContent],
   );
 
   const listHeader = useCallback(

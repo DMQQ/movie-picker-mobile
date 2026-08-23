@@ -674,8 +674,22 @@
     "failed-to-load": "Failed to load game summary",
     "add-to-favourites": "Favourite",
     "remove-from-favourites": "Undo",
-    "no-matches": "No matches",
-    "no-matches-desc": "Unfortunately, you didn't find any common movies in this game. Try again with different categories or settings.",
+    "no-matches": "Nobody agreed... yet.",
+    "no-matches-desc": "Zero matches. Rough. Turns out you're all cinematic snowflakes with wildly different taste — and that's actually great data for us. We just updated your personalization, so the next round is going to hit way differently. One more game?",
+    "no-matches-titles": [
+      "Nobody agreed... yet.",
+      "The group chat has spoken.",
+      "Plot twist: zero matches.",
+      "You're all uniquely difficult.",
+      "This one's on us."
+    ],
+    "no-matches-descs": [
+      "Zero matches. Rough. Turns out you're all cinematic snowflakes with wildly different taste — and that's actually great data for us. We just updated your personalization, so the next round is going to hit way differently. One more game?",
+      "And apparently nobody agreed on anything. Classic. On the bright side, we now know exactly what NOT to recommend next time — your personalization just got a serious upgrade. Come back stronger.",
+      "Not a single film survived the group vote. Brutal, honestly. But every swipe told us something about your taste, so the next game is already going to be smarter. Don't give up now.",
+      "And we mean that as a compliment. Zero overlap in taste means you're all extremely discerning viewers — or just really stubborn. Either way, we've learned from this and your next game will be way better.",
+      "We didn't find the right movies to unite the group this time, and that's on us. We've taken notes, updated the algorithm, and promised it a stern talking-to. Next game, we're coming back hotter."
+    ],
     "try-again": "Play Again",
     "your-picks": "Your likes",
     "play-again": "Play Again",

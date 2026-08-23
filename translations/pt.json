@@ -660,8 +660,22 @@
     "failed-to-load": "Falha ao carregar resumo do jogo",
     "add-to-favourites": "Favorito",
     "remove-from-favourites": "Desfazer",
-    "no-matches": "Sem coincidências",
-    "no-matches-desc": "Infelizmente, vocês não encontraram filmes em comum neste jogo. Tente novamente com categorias ou configurações diferentes.",
+    "no-matches": "Ninguém concordou... ainda.",
+    "no-matches-desc": "Zero combinações. Pesado. Parece que vocês têm gostos cinematográficos completamente diferentes — e isso é ótimo para nós. Acabamos de atualizar a personalização de vocês, então a próxima rodada vai ser bem diferente. Mais uma?",
+    "no-matches-titles": [
+      "Ninguém concordou... ainda.",
+      "O grupo falou.",
+      "Reviravolta: zero combinações.",
+      "Vocês são todos difíceis à sua maneira.",
+      "Dessa vez a culpa é nossa."
+    ],
+    "no-matches-descs": [
+      "Zero combinações. Pesado. Parece que vocês têm gostos cinematográficos completamente diferentes — e isso é ótimo para nós. Acabamos de atualizar a personalização de vocês, então a próxima rodada vai ser bem diferente. Mais uma?",
+      "E aparentemente ninguém concordou em nada. Clássico. A boa notícia: agora sabemos exatamente o que NÃO recomendar da próxima vez — a personalização de vocês acabou de receber uma atualização séria. Voltem mais fortes.",
+      "Nenhum filme sobreviveu à votação do grupo. Brutal, honestamente. Mas cada swipe nos disse algo sobre o gosto de vocês, então o próximo jogo já vai ser mais inteligente. Não desistam agora.",
+      "E dizemos isso como elogio. Zero sobreposição de gosto significa que vocês são espectadores extremamente exigentes — ou simplesmente muito teimosos. De qualquer forma, aprendemos e o próximo jogo vai ser muito melhor.",
+      "Não encontramos os filmes certos para unir o grupo desta vez, e isso é responsabilidade nossa. Anotamos tudo, atualizamos o algoritmo e demos uma boa bronca nele. No próximo jogo, voltamos mais fortes."
+    ],
     "try-again": "Jogar novamente",
     "your-picks": "Suas curtidas",
     "play-again": "Jogar de novo",
