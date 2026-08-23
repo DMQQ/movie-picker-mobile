@@ -3,12 +3,12 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import Animated, { FadeIn } from "react-native-reanimated";
 import FormSheetContainer from "../../components/FormSheetContainer";
 import SearchField from "../../components/SearchField";
 import Text from "../../components/Text";
 import Touch from "../../components/Touch";
+import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
 import { colors, fontSize, fontWeight, radius, spacing, withAlpha } from "../../constants/design";
 import { useLazySearchQuery } from "../../redux/movie/movieApi";
 import { useGetListsQuery, useAddBulkItemsMutation } from "../../redux/lists/listsApi";
@@ -18,7 +18,6 @@ import { moviePickerActions } from "../../redux/moviePicker/moviePickerSlice";
 import useTranslation from "../../service/useTranslation";
 import { posthog } from "../../constants/posthog";
 
-const POSTER_BASE = "https://image.tmdb.org/t/p/w185";
 const HIDDEN_TYPES = new Set(["superliked", "disliked"]);
 const DEFAULT_MIN_MOVIES = 10;
 
@@ -172,11 +171,13 @@ export default function MoviePickerIndex() {
             contentContainerStyle={styles.listPad}
             renderItem={({ item }) => (
               <Touch scaleTo={0.97} onPress={() => handleToggle(item)} style={styles.row}>
-                <Image
-                  source={item.poster_path ? { uri: `${POSTER_BASE}${item.poster_path}` } : undefined}
-                  style={styles.poster}
-                  contentFit="cover"
-                />
+                {item.poster_path ? (
+                  <Thumbnail path={item.poster_path} size={ThumbnailSizes.poster.small} style={styles.poster} />
+                ) : (
+                  <View style={[styles.poster, styles.posterFallback]}>
+                    <MaterialCommunityIcons name="image-off" size={16} color={colors.placeholder} />
+                  </View>
+                )}
                 <View style={styles.rowInfo}>
                   <Text numberOfLines={2} style={styles.rowTitle}>{item.title}</Text>
                   <View style={styles.rowMeta}>
@@ -222,7 +223,7 @@ export default function MoviePickerIndex() {
                   return (
                     <Touch scaleTo={0.97} onPress={() => handleOpenAuthList(list)} style={styles.row}>
                       {list.posterPath ? (
-                        <Image source={{ uri: `${POSTER_BASE}${list.posterPath}` }} style={styles.poster} contentFit="cover" />
+                        <Thumbnail path={list.posterPath} size={ThumbnailSizes.poster.small} style={styles.poster} />
                       ) : (
                         <View style={[styles.poster, styles.posterFallback]}>
                           <MaterialCommunityIcons name="format-list-bulleted" size={18} color={colors.placeholder} />
@@ -247,7 +248,7 @@ export default function MoviePickerIndex() {
                 return (
                   <Touch scaleTo={0.97} onPress={() => handleOpenLocalGroup(group.id)} style={styles.row}>
                     {group.posterPath ? (
-                      <Image source={{ uri: `${POSTER_BASE}${group.posterPath}` }} style={styles.poster} contentFit="cover" />
+                      <Thumbnail path={group.posterPath} size={ThumbnailSizes.poster.small} style={styles.poster} />
                     ) : (
                       <View style={[styles.poster, styles.posterFallback]}>
                         <MaterialCommunityIcons name="format-list-bulleted" size={18} color={colors.placeholder} />
