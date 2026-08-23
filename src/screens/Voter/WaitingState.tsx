@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 import Chip from "../../components/Chip";
 import Text from "../../components/Text";
 
-import { colors, fontSize, spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Button from "../../components/Button";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";

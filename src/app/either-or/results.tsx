@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
   },
   confetti: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     zIndex: 10,
     pointerEvents: "none",
   },

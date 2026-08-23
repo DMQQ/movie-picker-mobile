@@ -106,6 +106,8 @@ export default function EitherOrSetup() {
     }
   }, [hasSavedProviders, savedPrefs, createRoom, type, isCustom, customMovies, onCreate]);
 
+  const totalSteps = isCustom ? 1 : STANDARD_STEPS;
+
   const handleNext = useCallback(() => {
     if (step === totalSteps) {
       onCreate();
@@ -141,7 +143,6 @@ export default function EitherOrSetup() {
     return null;
   }, [step, type, isCustom, genres, providers, onSelectType, onToggleGenre]);
 
-  const totalSteps = isCustom ? 1 : STANDARD_STEPS;
   const isLastStep = step === totalSteps;
   const canCreate = !isCustom || customMovies.length >= BRACKET_SIZE;
   const canProceedCustom = isCustom && customMovies.length >= 4;
