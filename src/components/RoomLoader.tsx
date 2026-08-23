@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { colors, radius, spacing} from "../constants/design";
+import { colors, radius, spacing } from "../constants/design";
 
 const { width, height } = Dimensions.get("window");
 

@@ -485,7 +485,7 @@ export default function SettingsScreen() {
                 await SecureStore.deleteItemAsync("user_refresh_token");
                 dispatch(setUserId(""));
                 dispatch(authActions.clearAuth());
-                Alert.alert("Done", "userId + tokens cleared — reload app to regenerate");
+                Alert.alert("Done", "userId + tokens cleared. Reload app to regenerate.");
               }}
             >
               Reset anonymous userId

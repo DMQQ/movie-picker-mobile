@@ -5,7 +5,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useRef, useState, useTransition } from "react";
 import { View, StyleSheet } from "react-native";
 
-import { colors, radius, spacing } from "../../constants/design";
+import { colors, fontSize, radius, spacing } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import QrCodeBox from "../../components/GameLobby/QrCodeBox";
 import PlayersRow from "../../components/GameLobby/PlayersRow";
@@ -359,6 +359,8 @@ export default function QRCodePage() {
               ) : null}
             </View>
 
+            <Text style={styles.hostHint}>{t("room.you-are-host")}</Text>
+
             <PlayersRow
               players={users.map((nick) => ({ id: nick, name: nick }))}
               waitingLabel={t("room.waiting-for-players")}
@@ -460,5 +462,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     width: 48,
     height: 48,
+  },
+  hostHint: {
+    color: colors.placeholder,
+    fontSize: fontSize.sm,
   },
 });

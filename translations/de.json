@@ -98,6 +98,7 @@
     "start": "Starten",
     "no-more-results": "Keine weiteren Ergebnisse in dieser Kategorie",
     "awaiting-start": "Warte auf den Gastgeber, das Spiel zu starten",
+    "you-are-host": "Du hast diesen Raum erstellt. Starte alleine oder warte auf andere.",
     "too-restricted": "Filter zu restriktiv, bitte erneut versuchen",
     "lower-results-count": "Nur {count} Ergebnisse gefunden, das Spiel wird kürzer sein",
     "providers": "Anbieter auswählen",
@@ -307,7 +308,7 @@
     "searchPlaceholder": "Listen suchen…",
     "newList": "Neue Liste",
     "newListPlaceholder": "Listenname…",
-    "empty": "Du hast noch keine Filme zu deinen Favoriten hinzugefügt",
+    "empty": "Du hast noch keine Filme zu {name} hinzugefügt",
     "create": {
       "title": "Neue Liste erstellen",
       "name": "Listenname",
@@ -463,6 +464,7 @@
       "ready-status": "Bereit",
       "ready-cancel": "Bereit abbrechen",
       "start": "Abstimmung starten",
+      "you-are-host": "Du bist der Gastgeber. Starte jetzt oder warte auf andere.",
       "rate": "Bewerten",
       "left": "verbleibend in dieser Runde",
       "quit": "Beenden",
@@ -521,7 +523,7 @@
     "lobby": {
       "title": "Warteraum",
       "bracketSize": "{count}-Filme-Turnier",
-      "host": "Gastgeber",
+      "host": "Du bist der Gastgeber. Starte das Turnier jetzt oder warte auf andere.",
       "start": "Turnier starten",
       "waitingForHost": "Warte, bis der Gastgeber startet...",
       "joining": "Raum wird beigetreten...",
@@ -536,7 +538,7 @@
       "votesIn": "{count} Stimmen abgegeben",
       "waitingForVotes": "Warte auf Stimmen...",
       "tie": "Unentschieden!",
-      "tieChampionKeeps": "Unentschieden — Champion bleibt im Turnier",
+      "tieChampionKeeps": "Unentschieden: Champion bleibt im Turnier",
       "tieSpeedWin": "Unentschieden per Schnelligkeit entschieden"
     },
     "results": {
@@ -915,7 +917,7 @@
     "discover": {
       "chips": {
         "title": "Kategorien durchstöbern",
-        "description": "Tippe auf die Chips, um die Kategorie zu wechseln — Filme, Serien, Genres und Anbieter."
+        "description": "Tippe auf die Chips, um die Kategorie zu wechseln: Filme, Serien, Genres und Anbieter."
       },
       "grid": {
         "title": "Filme & Serien",
@@ -933,7 +935,7 @@
       },
       "superLiked": {
         "title": "Super-gelikte Filme",
-        "description": "Deine Top-Picks aus dem Swipen — super-gelikte Filme. Tippe, um die volle Liste zu öffnen."
+        "description": "Deine Top-Picks aus dem Swipen. Super-gelikte Filme. Tippe, um die volle Liste zu öffnen."
       }
     },
     "search": {

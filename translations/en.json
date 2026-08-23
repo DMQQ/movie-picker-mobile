@@ -98,6 +98,7 @@
     "start": "Start",
     "no-more-results": "No more results in this category",
     "awaiting-start": "Waiting for host to start the game",
+    "you-are-host": "You created this room. You can start alone or wait for others to join.",
     "too-restricted": "Filters too restricted, try again",
     "lower-results-count": "Found only {count} results, the game will be less fun",
     "providers": "Pick your providers",
@@ -309,7 +310,7 @@
     "newList": "New list",
     "newListPlaceholder": "List name…",
     "saveTo": "Save to list",
-    "empty": "You haven't added any movies to your favorites yet",
+    "empty": "You haven't added any movies to {name} yet",
     "create": {
       "title": "Create a new list",
       "name": "List name",
@@ -477,6 +478,7 @@
       "ready-status": "Ready",
       "ready-cancel": "Cancel ready",
       "start": "Start voting",
+      "you-are-host": "You're the host. Start now or wait for others to join.",
       "rate": "Rate",
       "left": "left in this round",
       "quit": "Quit",
@@ -520,7 +522,7 @@
   "eitherOr": {
     "setup": {
       "title": "Either/Or",
-      "howto": "Create a bracket of movies and vote head-to-head with friends. Each round pits two movies against each other — the winner advances until one movie is crowned champion.",
+      "howto": "Create a bracket of movies and vote head-to-head with friends. Each round pits two movies against each other. The winner advances until one movie is crowned champion.",
       "bracketSize": "Bracket size",
       "bracketSizeSubtitle": "How many movies should compete?",
       "movieCount": "{count} movies",
@@ -535,7 +537,7 @@
     "lobby": {
       "title": "Waiting room",
       "bracketSize": "{count}-movie bracket",
-      "host": "Host",
+      "host": "You're the host. Start the bracket now or wait for others to join.",
       "start": "Start bracket",
       "waitingForHost": "Waiting for the host to start...",
       "joining": "Joining room...",
@@ -550,7 +552,7 @@
       "votesIn": "{count} votes cast",
       "waitingForVotes": "Waiting for votes...",
       "tie": "It's a tie!",
-      "tieChampionKeeps": "Tie — champion keeps their spot",
+      "tieChampionKeeps": "Tie: champion keeps their spot",
       "tieSpeedWin": "Tie broken by speed"
     },
     "results": {
@@ -929,7 +931,7 @@
     "discover": {
       "chips": {
         "title": "Browse categories",
-        "description": "Tap the chips to switch between categories — movies, TV, genres and providers."
+        "description": "Tap the chips to switch between categories: movies, TV, genres and providers."
       },
       "grid": {
         "title": "Movies & shows",
@@ -947,7 +949,7 @@
       },
       "superLiked": {
         "title": "Super-liked movies",
-        "description": "Your top picks from swiping — movies you super-liked. Tap to open the full list."
+        "description": "Your top picks from swiping. Movies you super-liked. Tap to open the full list."
       }
     },
     "search": {

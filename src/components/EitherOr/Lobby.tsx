@@ -33,6 +33,9 @@ export default function Lobby({ onGoBack }: Props) {
         bottomContent={
           <>
             <Text style={styles.bracketSizeText}>{t("eitherOr.lobby.bracketSize", { count: bracketSize })}</Text>
+            {isHost && (
+              <Text style={styles.hostHint}>{t("eitherOr.lobby.host")}</Text>
+            )}
             <PlayersRow
               players={users.map((user) => ({ id: user.userId, name: user.username, isActive: user.isActive }))}
               waitingLabel={t("eitherOr.lobby.waitingForHost")}
@@ -79,6 +82,10 @@ export default function Lobby({ onGoBack }: Props) {
 
 const styles = StyleSheet.create({
   bracketSizeText: {
+    color: colors.placeholder,
+    fontSize: fontSize.sm,
+  },
+  hostHint: {
     color: colors.placeholder,
     fontSize: fontSize.sm,
   },

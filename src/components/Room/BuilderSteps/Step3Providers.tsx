@@ -3,6 +3,7 @@ import Text from "../../Text";
 import TouchableRipple from "../../TouchableRipple";
 import { View, StyleSheet } from "react-native";
 import SearchField from "../../SearchField";
+import Icon from "../../Icon";
 
 import Button from "../../Button";
 import { colors, fontWeight, fontSize, radius, spacing } from "../../../constants/design";
@@ -103,8 +104,8 @@ const Step3Providers = () => {
               rememberProviders && styles.rememberIconWrapActive,
             ]}
           >
-            <MaterialCommunityIcons
-              name={rememberProviders ? "bookmark" : "bookmark-outline"}
+            <Icon
+              source={rememberProviders ? "bookmark" : "bookmark-outline"}
               size={18}
               color={rememberProviders ? colors.text : "#888"}
             />

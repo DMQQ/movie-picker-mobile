@@ -265,7 +265,7 @@ export default function MoviePickerIndex() {
                     <MaterialCommunityIcons name="chevron-right" size={20} color={colors.placeholder} />
                   </Touch>
                 )}
-                ListEmptyComponent={<Text style={styles.empty}>No lists yet — search above</Text>}
+                ListEmptyComponent={<Text style={styles.empty}>No lists yet. Search above.</Text>}
               />
             )
           ) : (
@@ -293,7 +293,7 @@ export default function MoviePickerIndex() {
                   </Touch>
                 );
               }}
-              ListEmptyComponent={<Text style={styles.empty}>No saved movies — search above</Text>}
+              ListEmptyComponent={<Text style={styles.empty}>No saved movies. Search above.</Text>}
             />
           )}
         </Animated.View>

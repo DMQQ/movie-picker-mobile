@@ -98,6 +98,7 @@
     "start": "Start",
     "no-more-results": "To juz koniec wyników w tej kategorii",
     "awaiting-start": "Oczekiwanie na rozpoczęcie gry przez gospodarza",
+    "you-are-host": "Stworzyłeś ten pokój. Możesz grać sam lub poczekać na innych.",
     "too-restricted": "Filtry są zbyt restrykcyjne",
     "lower-results-count": "Znaleziono tylko {count} wyników, gra będzie krótsza",
     "providers": "Wybierz platformy",
@@ -307,7 +308,7 @@
     "searchPlaceholder": "Szukaj list…",
     "newList": "Nowa lista",
     "newListPlaceholder": "Nazwa listy…",
-    "empty": "Jeszcze nie dodałeś żadnych filmów do ulubionych",
+    "empty": "Jeszcze nie dodałeś żadnych filmów do {name}",
     "create": {
       "title": "Stwórz nową listę",
       "name": "Nazwa listy",
@@ -463,6 +464,7 @@
       "ready-status": "Gotowy?",
       "ready-cancel": "Anuluj gotowość",
       "start": "Rozpocznij głosowanie",
+      "you-are-host": "Jesteś gospodarzem. Zacznij teraz lub poczekaj na innych.",
       "rate": "Oceń",
       "left": "pozostało w tej kolejce",
       "quit": "Opuść grę",
@@ -506,7 +508,7 @@
   "eitherOr": {
     "setup": {
       "title": "Albo-Albo",
-      "howto": "Stwórz drabinkę filmów i głosuj w pojedynkach ze znajomymi. W każdej rundzie rywalizują dwa filmy — zwycięzca awansuje, aż jeden film zostanie mistrzem.",
+      "howto": "Stwórz drabinkę filmów i głosuj w pojedynkach ze znajomymi. W każdej rundzie rywalizują dwa filmy. Zwycięzca awansuje, aż jeden film zostanie mistrzem.",
       "bracketSize": "Rozmiar drabinki",
       "bracketSizeSubtitle": "Ile filmów ma rywalizować?",
       "movieCount": "{count} filmów",
@@ -521,7 +523,7 @@
     "lobby": {
       "title": "Poczekalnia",
       "bracketSize": "Drabinka {count} filmów",
-      "host": "Gospodarz",
+      "host": "Jesteś gospodarzem. Zacznij drabinkę teraz lub poczekaj na innych.",
       "start": "Rozpocznij drabinkę",
       "waitingForHost": "Czekanie na rozpoczęcie przez gospodarza...",
       "joining": "Dołączanie do pokoju...",
@@ -536,7 +538,7 @@
       "votesIn": "Oddano {count} głosów",
       "waitingForVotes": "Oczekiwanie na głosy...",
       "tie": "Remis!",
-      "tieChampionKeeps": "Remis — mistrz zachowuje miejsce",
+      "tieChampionKeeps": "Remis: mistrz zachowuje miejsce",
       "tieSpeedWin": "Remis rozstrzygnięty szybkością"
     },
     "results": {
@@ -914,7 +916,7 @@
     "discover": {
       "chips": {
         "title": "Przeglądaj kategorie",
-        "description": "Dotknij pól, aby przełączać kategorie — filmy, seriale, gatunki i platformy."
+        "description": "Dotknij pól, aby przełączać kategorie: filmy, seriale, gatunki i platformy."
       },
       "grid": {
         "title": "Filmy i seriale",
@@ -932,7 +934,7 @@
       },
       "superLiked": {
         "title": "Super polubione",
-        "description": "Twoje najlepsze typy z przeglądania — filmy, które super polubiłeś. Dotknij, aby otworzyć pełną listę."
+        "description": "Twoje najlepsze typy z przeglądania. Filmy, które super polubiłeś. Dotknij, aby otworzyć pełną listę."
       }
     },
     "search": {

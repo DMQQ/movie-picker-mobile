@@ -84,7 +84,7 @@ function GroupCard({ item }: { item: UserList }) {
                 <Text
                   style={{ fontSize: fontSize.sm - 1, textAlign: "center" }}
                 >
-                  {t("favourites.empty")}
+                  {t("favourites.empty", { name: item.name })}
                 </Text>
               </View>
             ) : (

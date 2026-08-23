@@ -1,8 +1,8 @@
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Chip from "../../components/Chip";
 import Text from "../../components/Text";
 
-import { colors, radius, spacing } from "../../constants/design";
+import { colors, fontSize, spacing } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Button from "../../components/Button";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
@@ -57,6 +57,9 @@ export default function WaitingState({
             <Text style={{ color: colors.placeholder }}>
               {t("voter.home.waiting")}... ({users.length})
             </Text>
+            {isHost && (
+              <Text style={styles.hostHint}>{t("voter.home.you-are-host")}</Text>
+            )}
 
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.xs }}>
               {users.map((user) => (
@@ -111,3 +114,10 @@ export default function WaitingState({
     </Animated.View>
   );
 }
+
+const styles = StyleSheet.create({
+  hostHint: {
+    color: colors.placeholder,
+    fontSize: fontSize.sm,
+  },
+});

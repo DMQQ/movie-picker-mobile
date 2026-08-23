@@ -98,6 +98,7 @@
     "start": "Iniciar",
     "no-more-results": "Sem mais resultados nesta categoria",
     "awaiting-start": "Aguardando o anfitrião iniciar o jogo",
+    "you-are-host": "Você criou esta sala. Jogue sozinho ou aguarde outros entrarem.",
     "too-restricted": "Filtros muito restritivos, tente novamente",
     "lower-results-count": "Apenas {count} resultados encontrados, o jogo será mais curto",
     "providers": "Escolha suas plataformas",
@@ -307,7 +308,7 @@
     "searchPlaceholder": "Pesquisar listas…",
     "newList": "Nova lista",
     "newListPlaceholder": "Nome da lista…",
-    "empty": "Você ainda não adicionou nenhum filme aos seus favoritos",
+    "empty": "Você ainda não adicionou nenhum filme a {name}",
     "create": {
       "title": "Criar nova lista",
       "name": "Nome da lista",
@@ -463,6 +464,7 @@
       "ready-status": "Pronto",
       "ready-cancel": "Cancelar prontidão",
       "start": "Iniciar votação",
+      "you-are-host": "Você é o anfitrião. Comece agora ou aguarde outros entrarem.",
       "rate": "Avaliar",
       "left": "restantes nesta rodada",
       "quit": "Sair",
@@ -506,7 +508,7 @@
   "eitherOr": {
     "setup": {
       "title": "Cara a Cara",
-      "howto": "Crie um chaveamento de filmes e vote cara a cara com os amigos. Cada rodada coloca dois filmes um contra o outro — o vencedor avança até que um filme seja coroado campeão.",
+      "howto": "Crie um chaveamento de filmes e vote cara a cara com os amigos. Cada rodada coloca dois filmes um contra o outro. O vencedor avança até que um filme seja coroado campeão.",
       "bracketSize": "Tamanho do chaveamento",
       "bracketSizeSubtitle": "Quantos filmes vão competir?",
       "movieCount": "{count} filmes",
@@ -521,7 +523,7 @@
     "lobby": {
       "title": "Sala de espera",
       "bracketSize": "Chaveamento de {count} filmes",
-      "host": "Anfitrião",
+      "host": "Você é o anfitrião. Inicie o chaveamento agora ou aguarde outros entrarem.",
       "start": "Iniciar chaveamento",
       "waitingForHost": "Aguardando o anfitrião iniciar...",
       "joining": "Entrando na sala...",
@@ -536,7 +538,7 @@
       "votesIn": "{count} votos registrados",
       "waitingForVotes": "Aguardando votos...",
       "tie": "Empate!",
-      "tieChampionKeeps": "Empate — o campeão mantém sua vaga",
+      "tieChampionKeeps": "Empate: o campeão mantém sua vaga",
       "tieSpeedWin": "Empate decidido pela velocidade"
     },
     "results": {
@@ -915,7 +917,7 @@
     "discover": {
       "chips": {
         "title": "Explorar categorias",
-        "description": "Toque nas etiquetas para alternar entre categorias — filmes, séries, gêneros e plataformas."
+        "description": "Toque nas etiquetas para alternar entre categorias: filmes, séries, gêneros e plataformas."
       },
       "grid": {
         "title": "Filmes e séries",
@@ -933,7 +935,7 @@
       },
       "superLiked": {
         "title": "Filmes super curtidos",
-        "description": "Suas melhores escolhas ao deslizar — filmes super curtidos. Toque para abrir a lista completa."
+        "description": "Suas melhores escolhas ao deslizar. Filmes super curtidos. Toque para abrir a lista completa."
       }
     },
     "search": {

@@ -98,6 +98,7 @@
     "start": "Iniciar",
     "no-more-results": "No hay más resultados en esta categoría",
     "awaiting-start": "Esperando a que el anfitrión inicie el juego",
+    "you-are-host": "Creaste esta sala. Puedes jugar solo o esperar a que otros se unan.",
     "too-restricted": "Filtros muy restrictivos, inténtalo de nuevo",
     "lower-results-count": "Solo se encontraron {count} resultados, el juego será menos divertido",
     "providers": "Elige tus plataformas",
@@ -307,7 +308,7 @@
     "searchPlaceholder": "Buscar listas…",
     "newList": "Nueva lista",
     "newListPlaceholder": "Nombre de la lista…",
-    "empty": "Todavía no has añadido ninguna película a tus favoritos",
+    "empty": "Todavía no has añadido ninguna película a {name}",
     "create": {
       "title": "Crear nueva lista",
       "name": "Nombre de la lista",
@@ -463,6 +464,7 @@
       "ready-status": "Listo",
       "ready-cancel": "Cancelar listo",
       "start": "Comenzar votación",
+      "you-are-host": "Eres el anfitrión. Empieza ahora o espera a que otros se unan.",
       "rate": "Calificar",
       "left": "restantes en esta ronda",
       "quit": "Salir",
@@ -521,7 +523,7 @@
     "lobby": {
       "title": "Sala de espera",
       "bracketSize": "Cuadro de {count} películas",
-      "host": "Anfitrión",
+      "host": "Eres el anfitrión. Inicia el cuadro ahora o espera a que otros se unan.",
       "start": "Iniciar cuadro",
       "waitingForHost": "Esperando a que el anfitrión inicie...",
       "joining": "Uniéndose a la sala...",
@@ -536,7 +538,7 @@
       "votesIn": "{count} votos emitidos",
       "waitingForVotes": "Esperando votos...",
       "tie": "¡Empate!",
-      "tieChampionKeeps": "Empate — el campeón conserva su lugar",
+      "tieChampionKeeps": "Empate: el campeón conserva su lugar",
       "tieSpeedWin": "Empate desempatado por velocidad"
     },
     "results": {

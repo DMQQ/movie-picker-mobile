@@ -24,7 +24,7 @@ export default function RecoveryCodesScreen() {
 
   async function handleShare() {
     await Share.share({
-      message: `My recovery codes:\n\n${codes.join("\n")}\n\nKeep these safe — each can only be used once.`,
+      message: `My recovery codes:\n\n${codes.join("\n")}\n\nKeep these safe. Each can only be used once.`,
     });
   }
 
@@ -47,7 +47,7 @@ export default function RecoveryCodesScreen() {
         <Text style={styles.subtitle}>
           {isReplacing
             ? "Your old codes have been invalidated. Save these somewhere safe."
-            : "Save these somewhere safe — they won't be shown again."}
+            : "Save these somewhere safe. They won't be shown again."}
         </Text>
       </FadeSlide>
 

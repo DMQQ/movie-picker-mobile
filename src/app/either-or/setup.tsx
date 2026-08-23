@@ -8,7 +8,6 @@ import IconButton from "../../components/IconButton";
 import Text from "../../components/Text";
 import Step1Type, { type EitherOrType } from "../../components/EitherOr/Setup/Step1Type";
 import GenreSwipeStep from "../../components/Setup/GenreSwipeStep";
-import Step3BracketSize from "../../components/EitherOr/Setup/Step3BracketSize";
 import ProviderSearchStep from "../../components/Setup/ProviderSearchStep";
 import useTranslation from "../../service/useTranslation";
 import useEitherOrContext from "../../context/EitherOrContext";
@@ -19,7 +18,7 @@ import { moviePickerActions, type PickedMovie } from "../../redux/moviePicker/mo
 import { colors, radius, spacing, fontSize, fontWeight } from "../../constants/design";
 import { posthog } from "../../constants/posthog";
 
-const STANDARD_STEPS = 4;
+const STANDARD_STEPS = 3;
 const BRACKET_SIZE = 16;
 
 export default function EitherOrSetup() {
@@ -77,7 +76,7 @@ export default function EitherOrSetup() {
 
   const onCreate = useCallback(async () => {
     setIsCreating(true);
-    posthog?.capture("either_or_create_tapped", { type, bracketSize, is_custom: isCustom });
+    posthog?.capture("either_or_create_tapped", { type, bracketSize: BRACKET_SIZE, is_custom: isCustom });
 
     const config = isCustom
       ? { bracketSize: BRACKET_SIZE, movies: customMovies }
@@ -129,7 +128,6 @@ export default function EitherOrSetup() {
   const getStepTitle = useCallback(() => {
     if (step === 1) return t("room.builder.step1.title") as string;
     if (step === 2) return t("room.builder.step2.title") as string;
-    if (step === 3) return t("eitherOr.setup.bracketSize") as string;
     return t("room.builder.step3.title") as string;
   }, [step, t]);
 
@@ -139,8 +137,7 @@ export default function EitherOrSetup() {
       : undefined;
     if (step === 1) return <Step1Type key="step1" type={type} onSelect={onSelectType} visibleTypes={lockedTypes} customMovies={customMovies} onPickCustom={handlePickCustom} />;
     if (!isCustom && step === 2) return <GenreSwipeStep key="step2" type={type as "movie" | "tv"} genres={genres} onToggleGenre={onToggleGenre} />;
-    if (!isCustom && step === 3) return <Step3BracketSize key="step3" bracketSize={BRACKET_SIZE} onSelect={() => {}} />;
-    if (!isCustom && step === 4) return <ProviderSearchStep key="step4" providers={providers} onChangeProviders={setProviders} />;
+    if (!isCustom && step === 3) return <ProviderSearchStep key="step3" providers={providers} onChangeProviders={setProviders} />;
     return null;
   }, [step, type, isCustom, genres, providers, onSelectType, onToggleGenre]);
 
