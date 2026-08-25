@@ -125,6 +125,7 @@ export const SocketProvider = ({
         extraHeaders: {
           ...(effectiveUserId ? { "user-id": effectiveUserId } : {}),
           ...makeHeaders(language, regionalization),
+          ...(namespace === "/voter" ? { "x-voter-version": "2" } : {}),
         },
       });
 
