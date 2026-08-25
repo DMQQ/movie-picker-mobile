@@ -798,6 +798,20 @@
         "description": "Select the platforms you use to get personalized recommendations",
         "selected": "selected"
       }
+    },
+    "taste": {
+      "title": "Tell us your taste",
+      "subtitle": "Like or skip movies you know",
+      "like": "Like",
+      "skip": "Skip",
+      "skipAll": "Skip",
+      "progress": "{current} of {total}"
+    },
+    "providers": {
+      "title": "Your streaming services",
+      "subtitle": "We'll only show what you can actually watch",
+      "continue": "Continue",
+      "skip": "Skip for now"
     }
   },
   "swipe": {

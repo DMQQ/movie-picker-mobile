@@ -253,6 +253,8 @@ const RootNavigator = ({
       >
         <Stack.Screen name="landing" options={{ headerShown: false, animation: "fade" }} />
 
+        <Stack.Screen name="onboarding" options={{ headerShown: false, animation: "fade" }} />
+
         <Stack.Screen name="(tabs)" options={{ headerShown: false, animation:'fade' }} />
 
         <Stack.Screen name="room" options={{ headerShown: false }} />

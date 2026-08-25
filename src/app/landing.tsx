@@ -205,7 +205,7 @@ export default function LandingScreen() {
   const goQuickstart = () => {
     posthog?.capture("landing_quickstart_pressed");
     router.replace("/(tabs)");
-    router.push({ pathname: "/room/qr-code", params: { quickStart: "true" } } as any);
+    router.push({ pathname: "/room/qr-code", params: { quickStart: "true", autoStart: "true" } } as any);
   };
 
   const goBrowse = () => {

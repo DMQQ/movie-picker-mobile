@@ -66,6 +66,8 @@ export default function QRCodePage() {
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
   const t = useTranslation();
+  const autoStart = params?.autoStart === "true";
+  const hasAutoStarted = useRef(false);
   const [moviesCount, setMoviesCount] = useState<number | null>(null);
   const [isLoadingMovies, setIsLoadingMovies] = useState(false);
   const [isRefetching, setIsRefetching] = useState(false);
@@ -329,6 +331,18 @@ export default function QRCodePage() {
     createRoomLoading ||
     isPending;
 
+  useEffect(() => {
+    if (!autoStart || isDisabled || !qrCode || hasAutoStarted.current) return;
+    hasAutoStarted.current = true;
+    const gameType = roomConfig?.type?.includes("/tv") ? "tv" : "movie";
+    socket?.emit("room:start", roomId);
+    dispatch(roomActions.setPlaying(true));
+    dispatch(reset());
+    router.push({
+      pathname: "/room/[roomId]",
+      params: { roomId: qrCode.toUpperCase(), type: gameType },
+    } as any);
+  }, [autoStart, isDisabled, qrCode]);
 
   return (
     <View style={[styles.container, { paddingTop: spacing.screen * 3 }]}>
