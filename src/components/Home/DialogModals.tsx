@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { colors, fontWeight, spacing } from "../../constants/design";
-import QRCode from "react-native-qrcode-svg";
+import QRCode from "../QRCode";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../context/SocketContext";

@@ -2,7 +2,7 @@ import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } f
 import { Dimensions, Modal, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import QRCode from "react-native-qrcode-svg";
+import QRCode from "../QRCode";
 import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { FancySpinner } from "../FancySpinner";

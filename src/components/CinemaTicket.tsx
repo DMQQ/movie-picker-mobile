@@ -4,7 +4,7 @@ import { useTheme } from "../hooks/useTheme";
 import { View, StyleSheet, Dimensions } from "react-native";
 
 import { Image } from "expo-image";
-import QRCode from "react-native-qrcode-svg";
+import QRCode from "./QRCode";
 import GenresView from "./GenresView";
 import RatingIcons from "./RatingIcons";
 import useTranslation from "../service/useTranslation";
