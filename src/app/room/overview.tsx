@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import IconButton from "../../components/IconButton";
 import { StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { colors, spacing } from "../../constants/design";
 import PagerView from "react-native-pager-view";
@@ -31,7 +32,7 @@ export default function RoomOverview() {
   };
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root]}>
       <View style={styles.header}>
         <IconButton
           icon="chevron-left"

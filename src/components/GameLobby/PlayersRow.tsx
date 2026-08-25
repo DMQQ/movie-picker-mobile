@@ -1,8 +1,10 @@
 import { StyleSheet, View } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 import Text from "../Text";
 import UserAvatar from "../UserAvatar";
 import { colors, fontSize, spacing } from "../../constants/design";
+import { StyleProp } from "react-native";
+import { ViewStyle } from "react-native/Libraries/StyleSheet/StyleSheetTypes";
 
 export interface LobbyPlayer {
   id: string;
@@ -13,16 +15,17 @@ export interface LobbyPlayer {
 interface Props {
   players: LobbyPlayer[];
   waitingLabel: string;
+  style?: StyleProp<ViewStyle>
 }
 
-export default function PlayersRow({ players, waitingLabel }: Props) {
+export default function PlayersRow({ players, waitingLabel, style }: Props) {
   if (players.length === 0) return null;
 
   return (
-    <View style={styles.playersRow}>
+    <View style={[styles.playersRow,style]}>
       <View style={styles.avatarsStack}>
         {players.map((player, index) => (
-          <Animated.View key={player.id} entering={FadeInDown.duration(300)} style={index > 0 && styles.avatarOverlap}>
+          <Animated.View key={player.id} entering={FadeIn} style={index > 0 && styles.avatarOverlap}>
             <UserAvatar
               name={player.name}
               size={32}

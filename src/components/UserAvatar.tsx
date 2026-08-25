@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
+import {  View, type StyleProp, type ViewStyle } from "react-native";
 import { colors } from "../constants/design";
 import { getUserAvatarImage } from "../utils/avatar";
 
@@ -13,7 +13,7 @@ interface UserAvatarProps {
 }
 
 export default function UserAvatar({
-  name,
+  name = 'Anonymous',
   avatarUrl,
   size = 48,
   style,
@@ -40,9 +40,10 @@ export default function UserAvatar({
       ]}
     >
       <Image
-        style={{ width: size * 0.9, height: size * 0.9 }}
+        style={{ width: size, height: size  }}
         source={source}
         cachePolicy="memory-disk"
+        contentFit="cover"
       />
     </View>
   );

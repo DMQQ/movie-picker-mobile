@@ -1,4 +1,5 @@
 import { hash } from "./hash";
+import { AVATAR_IMAGES } from '@/assets/avatars_512/index'
 
 export const AVATAR_COLORS = [
   "#f44336",
@@ -9,19 +10,6 @@ export const AVATAR_COLORS = [
   "#2196f3",
   "#009688",
   "#f57c00",
-] as const;
-
-const AVATAR_IMAGES = [
-  require("../../assets/images/avatars/bloub-hexagone-attentif-bleu.png"),
-  require("../../assets/images/avatars/bloub-cercle-heureux-vert.png"),
-  require("../../assets/images/avatars/bloub-galet-confus-rose.png"),
-  require("../../assets/images/avatars/bloub-nuage-somnolent-bleu.png"),
-  require("../../assets/images/avatars/bloub-goutte-effraye-violet.png"),
-  require("../../assets/images/avatars/bloub-squircle-hilare-ambre.png"),
-  require("../../assets/images/avatars/bloub-nuage-triste-bleu.png"),
-  require("../../assets/images/avatars/bloub-triangle-blase-gris.png"),
-  require("../../assets/images/avatars/bloub-galet-mefiant-brun.png"),
-  require("../../assets/images/avatars/bloub-capsule-excite-rouge.png"),
 ] as const;
 
 export function getUserAvatarColor(name: string): string {

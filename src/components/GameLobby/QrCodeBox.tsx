@@ -49,11 +49,6 @@ const QrCodeBox = memo(({ code, scheme, webPath }: Props) => {
         </Text>
       </Pressable>
 
-      <View style={styles.asyncHint}>
-        <MaterialCommunityIcons name="clock-outline" size={12} color={colors.placeholder} />
-        <Text style={styles.asyncHintText}>{t("room.invite-post-finish.async-hint")}</Text>
-      </View>
-
       <TutorialTips />
     </View>
   );

@@ -99,6 +99,8 @@
     "no-more-results": "No hay más resultados en esta categoría",
     "awaiting-start": "Esperando a que el anfitrión inicie el juego",
     "you-are-host": "Creaste esta sala. Puedes jugar solo o esperar a que otros se unan.",
+    "async-play-title": "Los amigos pueden jugar después",
+    "async-play-desc": "Comparte el código de la sala — tus amigos pueden explorar películas en su propio tiempo, sin necesidad de estar conectados al mismo tiempo.",
     "too-restricted": "Filtros muy restrictivos, inténtalo de nuevo",
     "lower-results-count": "Solo se encontraron {count} resultados, el juego será menos divertido",
     "providers": "Elige tus plataformas",
@@ -683,6 +685,8 @@
     "play-again-failed": "Error al reiniciar el juego. Por favor inténtalo de nuevo.",
     "view-summary": "Salir del juego",
     "share-marathon": "Compartir",
+    "invite-friends-title": "INVITAR AMIGOS",
+    "invite-friends-desc": "Comparte esta sala para que un amigo pueda unirse y jugar más tarde",
     "share": {
       "loading": "Cargando tu maratón...",
       "error": "Error al cargar los datos del maratón",

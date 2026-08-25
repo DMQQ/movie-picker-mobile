@@ -99,6 +99,8 @@
     "no-more-results": "No more results in this category",
     "awaiting-start": "Waiting for host to start the game",
     "you-are-host": "You created this room. You can start alone or wait for others to join.",
+    "async-play-title": "Friends can play later",
+    "async-play-desc": "Share the room code and your friends can swipe through movies on their own time — no need to be online at the same time.",
     "too-restricted": "Filters too restricted, try again",
     "lower-results-count": "Found only {count} results, the game will be less fun",
     "providers": "Pick your providers",
@@ -697,6 +699,8 @@
     "play-again-failed": "Failed to restart game. Please try again.",
     "view-summary": "Leave Game",
     "share-marathon": "Share",
+    "invite-friends-title": "INVITE FRIENDS",
+    "invite-friends-desc": "Share this room so a friend can join and play later",
     "share": {
       "loading": "Loading your marathon...",
       "error": "Failed to load marathon data",

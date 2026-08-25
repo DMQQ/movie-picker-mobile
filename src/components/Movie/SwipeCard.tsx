@@ -12,7 +12,8 @@ import { Movie } from "../../../types";
 import RatingIcons from "../RatingIcons";
 import Poster from "./Poster";
 import GenresView from "../GenresView";
-import { colors, fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
+import Chip from "../Chip";
 
 const { width, height } = Dimensions.get("window");
 
@@ -54,8 +55,10 @@ const styles = StyleSheet.create({
     fontSize: fontSize.lg,
   },
   release_date: {
-    color: "rgba(255,255,255,0.6)",
+    color: colors.text,
     paddingHorizontal: spacing.sm + 2,
+    fontFamily: 'Bebas',
+    fontSize: fontSize.xl
   },
   meta: {
     flexDirection: "row",
@@ -156,12 +159,20 @@ const SwipeCard = ({
           style={{
             flexDirection: "row",
             paddingHorizontal: spacing.sm + 2,
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
           <RatingIcons size={15} vote={card?.vote_average} />
+
+          {(card.release_date || card.first_air_date) &&
+            <Text style={styles.release_date}>
+              {(card.release_date || card.first_air_date)?.split('-')?.[0]}
+            </Text>
+         }
         </View>
         {card.overview && (
-          <Text style={styles.overview} numberOfLines={3}>
+          <Text style={styles.overview} numberOfLines={2}>
             {card.overview}
           </Text>
         )}
@@ -169,9 +180,7 @@ const SwipeCard = ({
           {card.genres ? (
             <GenresView genres={card.genres.slice(0, 3)} />
           ) : null}
-          <Text style={styles.release_date}>
-            {card.release_date || card.first_air_date}
-          </Text>
+
         </View>
       </LinearGradient>
 

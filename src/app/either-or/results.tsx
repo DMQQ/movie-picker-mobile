@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn } from "react-native-reanimated";
 import Text from "../../components/Text";
 import PrimaryButton from "../../components/PrimaryButton";
-import AnimatedBg from "../../components/GameSummary/AnimatedBg";
+import AnimatedBg from "../../components/GameSummary/AnimatedBgClassic";
 import Podium from "../../components/EitherOr/Podium";
 import Bracket, { computeBracketFitScale } from "../../components/EitherOr/Bracket";
 import { FancySpinner } from "../../components/FancySpinner";

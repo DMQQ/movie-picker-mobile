@@ -99,6 +99,8 @@
     "no-more-results": "Keine weiteren Ergebnisse in dieser Kategorie",
     "awaiting-start": "Warte auf den Gastgeber, das Spiel zu starten",
     "you-are-host": "Du hast diesen Raum erstellt. Starte alleine oder warte auf andere.",
+    "async-play-title": "Freunde können später spielen",
+    "async-play-desc": "Teile den Raumcode — Freunde können Filme in ihrer eigenen Zeit durchswipen, ohne gleichzeitig online sein zu müssen.",
     "too-restricted": "Filter zu restriktiv, bitte erneut versuchen",
     "lower-results-count": "Nur {count} Ergebnisse gefunden, das Spiel wird kürzer sein",
     "providers": "Anbieter auswählen",
@@ -683,6 +685,8 @@
     "play-again-failed": "Spiel konnte nicht neu gestartet werden. Bitte erneut versuchen.",
     "view-summary": "Spiel verlassen",
     "share-marathon": "Teilen",
+    "invite-friends-title": "FREUNDE EINLADEN",
+    "invite-friends-desc": "Teile diesen Raum, damit ein Freund später beitreten und spielen kann",
     "share": {
       "loading": "Dein Marathon wird geladen...",
       "error": "Marathon-Daten konnten nicht geladen werden",

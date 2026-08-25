@@ -39,10 +39,8 @@ function ActiveUsers(props: ActiveUsersProps) {
               }}
             >
               <UserAvatar
-                name={nick || ""}
+                name={nick}
                 size={size}
-                borderWidth={0.5}
-                borderColor={colors.text}
               />
               {n === 0 && (
                 <MaterialCommunityIcons

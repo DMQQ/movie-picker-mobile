@@ -62,7 +62,7 @@ export default function PlayerPerformance({
 }
 
 const styles = StyleSheet.create({
-  container: { marginBottom: spacing.xxl + 6 },
+  container: {},
   title: {
     fontSize: 32,
     fontFamily: "Bebas",

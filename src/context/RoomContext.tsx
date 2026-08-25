@@ -140,13 +140,11 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
           mappedSuperLiked,
         );
         if (!response?.joined) {
-          if (response?.reason === "room_not_found") {
-            dispatch(roomActions.setRoomNotFound(true));
-            dispatch(roomActions.setRejoinStatus("failed"));
-            return;
-          }
-          throw new Error("join-room rejected");
+          dispatch(roomActions.setRoomNotFound(true));
+          dispatch(roomActions.setRejoinStatus("failed"));
+          return;
         }
+
         hasJoined.current = true;
         dispatch(roomActions.setRejoinStatus("success"));
       } catch (error) {

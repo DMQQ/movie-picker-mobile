@@ -5,7 +5,7 @@ import { RoomContextProvider } from "../../context/RoomContext";
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { roomActions } from "../../redux/room/roomSlice";
-import { View, Platform } from "react-native";
+import { View } from "react-native";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import { Image } from "expo-image";
 import { colors } from "../../constants/design";
@@ -30,8 +30,8 @@ export default function RootLayout() {
       style={{
         flex: 1,
         backgroundColor: colors.appBackground,
-        paddingTop: insets.top,
         paddingBottom: insets.bottom,
+        paddingTop: insets.top,
       }}
     >
       <Stack.Screen

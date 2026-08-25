@@ -5,7 +5,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useRef, useState, useTransition } from "react";
 import { View, StyleSheet } from "react-native";
 
-import { colors, fontSize, radius, spacing } from "../../constants/design";
+import { colors, fontSize, fontWeight, radius, spacing, withAlpha } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import QrCodeBox from "../../components/GameLobby/QrCodeBox";
 import PlayersRow from "../../components/GameLobby/PlayersRow";
@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../context/SocketContext";
 import useTranslation from "../../service/useTranslation";
 import { FancySpinner } from "../../components/FancySpinner";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { hash } from "../../utils/hash";
 import {
@@ -28,6 +29,7 @@ import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import { Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SYNC_PHRASES = [
   "Calculating scores...",
@@ -327,11 +329,12 @@ export default function QRCodePage() {
     createRoomLoading ||
     isPending;
 
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: spacing.screen * 3 }]}>
       <PageHeading
-        showGradientBackground={false}
         useSafeArea={false}
+        showGradientBackground={false}
         title={t("room.qr-title") as string}
         onPress={() =>
           router.canGoBack() ? router.back() : router.replace("/(tabs)")
@@ -359,12 +362,18 @@ export default function QRCodePage() {
               ) : null}
             </View>
 
-            <Text style={styles.hostHint}>{t("room.you-are-host")}</Text>
-
             <PlayersRow
               players={users.map((nick) => ({ id: nick, name: nick }))}
               waitingLabel={t("room.waiting-for-players")}
+              style={{ marginBottom: 0 }}
             />
+            <View style={styles.asyncBanner}>
+              <MaterialCommunityIcons name="account-clock-outline" size={22} color={colors.primary} />
+              <View style={styles.asyncBannerText}>
+                <Text style={styles.asyncBannerTitle}>{t("room.async-play-title")}</Text>
+                <Text style={styles.asyncBannerDesc}>{t("room.async-play-desc")}</Text>
+              </View>
+            </View>
           </>
         }
         actions={
@@ -463,8 +472,30 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
   },
-  hostHint: {
-    color: colors.placeholder,
+  asyncBanner: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: spacing.md,
+    backgroundColor: withAlpha(colors.primary, 0.08),
+    borderWidth: 1,
+    borderColor: withAlpha(colors.primary, 0.2),
+    borderRadius: radius.card,
+    padding: spacing.md,
+    width: "100%",
+    marginBottom: spacing.md
+  },
+  asyncBannerText: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  asyncBannerTitle: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
+  },
+  asyncBannerDesc: {
     fontSize: fontSize.sm,
+    color: colors.placeholder,
+    lineHeight: 18,
   },
 });

@@ -5,7 +5,6 @@ import SetupHeader from "../../components/Setup/SetupHeader";
 import SetupStepShell from "../../components/Setup/SetupStepShell";
 import PrimaryButton from "../../components/PrimaryButton";
 import IconButton from "../../components/IconButton";
-import Text from "../../components/Text";
 import Step1Type, { type EitherOrType } from "../../components/EitherOr/Setup/Step1Type";
 import GenreSwipeStep from "../../components/Setup/GenreSwipeStep";
 import ProviderSearchStep from "../../components/Setup/ProviderSearchStep";

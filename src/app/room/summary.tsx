@@ -1,9 +1,7 @@
 import { router, useLocalSearchParams } from "expo-router";
 import Text from "../../components/Text";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Platform, Share, StyleSheet, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as Notifications from "expo-notifications";
+import { Platform, StyleSheet, View } from "react-native";
 import Button from "../../components/Button";
 import PrimaryButton from "../../components/PrimaryButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,6 +19,8 @@ import PlayerPerformance from "../../components/GameSummary/PlayerPerformance";
 import MatchedItem from "../../components/GameSummary/MatchedItem";
 import CreateCollectionFromLiked from "../../components/CreateCollectionFromLiked";
 import ShareModal from "../../components/GameSummary/ShareModal";
+import SegmentedControl from "../../components/SegmentedControl";
+import SignUpNudgeBanner from "../../components/SignUpNudgeBanner";
 import { useGameSummary } from "../../hooks/useGameSummary";
 import useTranslation from "../../service/useTranslation";
 import { FlatList } from "react-native";
@@ -34,15 +34,9 @@ import {
 } from "../../constants/design";
 import { posthog } from "../../constants/posthog";
 import TicketButton from "../../components/TicketButton";
+import RoomShareStrip from "../../components/Room/RoomShareStrip";
 
 type MovieLike = { id?: number; title?: string; poster_path?: string };
-
-type SectionItem = {
-  type: "section";
-  key: string;
-  titleKey: string;
-  saveData: MovieLike[];
-};
 
 type EmptyItem = { type: "empty"; key: string };
 
@@ -53,7 +47,14 @@ type RowItem = {
   badgeFlags: boolean[];
 };
 
-type ListItem = SectionItem | EmptyItem | RowItem;
+type ListItem = EmptyItem | RowItem;
+
+type Tab = "matches" | "likes";
+
+const TAB_OPTIONS = [
+  { value: "matches", label: "Matched" },
+  { value: "likes", label: "Your Picks" },
+];
 
 export default function GameSummary() {
   const { roomId } = useLocalSearchParams<{ roomId: string }>();
@@ -62,20 +63,9 @@ export default function GameSummary() {
   const insets = useSafeAreaInsets();
   const likes = useAppSelector((st) => st.room.likes);
   const [shareVisible, setShareVisible] = useState(false);
-  const [showNotifBanner, setShowNotifBanner] = useState(false);
+  const [tab, setTab] = useState<Tab>("matches");
   const { summary, loading, error, shouldShowRatingPill, userId } =
     useGameSummary(roomId);
-
-  useEffect(() => {
-    Notifications.getPermissionsAsync().then(({ status, canAskAgain }) => {
-      if (status !== "granted" && canAskAgain) setShowNotifBanner(true);
-    });
-  }, []);
-
-  const handleEnableNotifications = useCallback(async () => {
-    setShowNotifBanner(false);
-    await Notifications.requestPermissionsAsync();
-  }, []);
 
   const handleBackToHome = useCallback(() => {
     dispatch(roomActions.reset());
@@ -90,19 +80,19 @@ export default function GameSummary() {
     router.replace("/room/qr-code");
   }, [dispatch]);
 
-  const handleShareCode = useCallback(() => {
-    const code = (summary?.roomId || roomId).toUpperCase();
-    const webUrl = `https://flickmate.app/swipe/${code}`;
-    Share.share({
-      message: t("room.share.message", { code }) + "\nOr join via " + webUrl,
-      url: webUrl,
-    });
-  }, [summary?.roomId, roomId, t]);
-
   const summaryType = summary?.type ?? "movie";
   const matches = summary?.matchedMovies ?? [];
   const likesList = likes ?? [];
   const hasMatches = matches.length > 0;
+
+  const fanPosters = useMemo(
+    () =>
+      (hasMatches ? matches : likesList)
+        .slice(0, 5)
+        .map((m) => m.poster_path)
+        .filter((p): p is string => Boolean(p)),
+    [hasMatches, matches, likesList],
+  );
 
   const noMatchContent = useMemo(() => {
     const titles = t("game-summary.no-matches-titles") as unknown as string[];
@@ -111,60 +101,50 @@ export default function GameSummary() {
     return { title: titles[idx], desc: descs[idx] };
   }, [t]);
 
+  const activeData = useMemo(
+    () => (tab === "matches" ? matches : likesList),
+    [tab, matches, likesList],
+  );
+
   const listData = useMemo<ListItem[]>(() => {
     const items: ListItem[] = [];
 
-    if (hasMatches) {
-      items.push({
-        type: "section",
-        key: "sec-matched",
-        titleKey: "game-summary.matched-movies",
-        saveData: matches,
-      });
-      for (let i = 0; i < matches.length; i += 3) {
-        items.push({
-          type: "row",
-          key: `row-matched-${i}`,
-          movies: matches.slice(i, i + 3),
-          badgeFlags: [],
-        });
+    if (tab === "matches") {
+      if (hasMatches) {
+        for (let i = 0; i < matches.length; i += 3) {
+          items.push({
+            type: "row",
+            key: `row-matched-${i}`,
+            movies: matches.slice(i, i + 3),
+            badgeFlags: [],
+          });
+        }
+      } else {
+        items.push({ type: "empty", key: "empty-matches" });
       }
     } else {
-      items.push({ type: "empty", key: "empty-matches" });
-    }
-
-    if (likesList.length > 0) {
-      items.push({
-        type: "section",
-        key: "sec-picks",
-        titleKey: "game-summary.your-picks",
-        saveData: likesList,
-      });
-      for (let i = 0; i < likesList.length; i += 3) {
-        const row = likesList.slice(i, i + 3);
-        items.push({
-          type: "row",
-          key: `row-picks-${i}`,
-          movies: row,
-          badgeFlags: row.map((m) => matches.some((mm) => mm.id === m.id)),
-        });
+      if (likesList.length > 0) {
+        for (let i = 0; i < likesList.length; i += 3) {
+          const row = likesList.slice(i, i + 3);
+          items.push({
+            type: "row",
+            key: `row-picks-${i}`,
+            movies: row,
+            badgeFlags: row.map((m) => matches.some((mm) => mm.id === m.id)),
+          });
+        }
+      } else {
+        items.push({ type: "empty", key: "empty-likes" });
       }
     }
 
     return items;
-  }, [hasMatches, matches, likesList]);
+  }, [tab, hasMatches, matches, likesList]);
 
   const renderItem = useCallback(
     ({ item }: { item: ListItem }) => {
-      switch (item.type) {
-        case "section":
-          return (
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{t(item.titleKey)}</Text>
-              <CreateCollectionFromLiked data={item.saveData} />
-            </View>
-          );
-        case "empty":
+      if (item.type === "empty") {
+        if (tab === "matches") {
           return (
             <View style={styles.emptyState}>
               <Text style={styles.emptyTitle}>{noMatchContent.title}</Text>
@@ -174,68 +154,77 @@ export default function GameSummary() {
               </Button>
             </View>
           );
-        case "row":
-          return (
-            <View style={styles.movieRow}>
-              {item.movies.map((movie, idx) => (
-                <View key={movie.id ?? idx} style={styles.movieCell}>
-                  <MatchedItem
-                    {...movie}
-                    summary={{ type: summaryType }}
-                    badge={item.badgeFlags[idx] ?? false}
-                  />
-                </View>
-              ))}
-              {Array.from({ length: 3 - item.movies.length }).map((_, i) => (
-                <View key={`ph-${i}`} style={styles.movieCell} />
-              ))}
-            </View>
-          );
+        }
+        return (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyDesc}>No picks yet</Text>
+          </View>
+        );
       }
+
+      return (
+        <View style={styles.movieRow}>
+          {item.movies.map((movie, idx) => (
+            <View key={movie.id ?? idx} style={styles.movieCell}>
+              <MatchedItem
+                {...movie}
+                summary={{ type: summaryType }}
+                badge={item.badgeFlags[idx] ?? false}
+              />
+            </View>
+          ))}
+          {Array.from({ length: 3 - item.movies.length }).map((_, i) => (
+            <View key={`ph-${i}`} style={styles.movieCell} />
+          ))}
+        </View>
+      );
     },
-    [summaryType, t, handleTryAgain, noMatchContent],
+    [summaryType, t, handleTryAgain, noMatchContent, tab],
   );
+
+  const heroHeight = 310;
 
   const listHeader = useCallback(
     () => (
       <View>
-        <GameSummaryHeader
-          gameEndReason={summary?.gameEndReason}
-          maxRounds={summary?.maxRounds}
-          type={summary?.type}
-          roomId={summary?.roomId || roomId}
-          hasMatches={hasMatches}
-        />
-        {summary && <StatsDashboard summary={summary} userId={userId} />}
-        {summary?.users && <PlayerPerformance users={summary.users} />}
-        <View style={styles.asyncBanner}>
-          <View style={styles.asyncBannerText}>
-            <MaterialCommunityIcons name="clock-outline" size={13} color={colors.placeholder} style={styles.asyncIcon} />
-            <Text style={styles.asyncHintText}>{t("room.invite-post-finish.async-hint")}</Text>
+        <View style={[styles.hero, { height: heroHeight }]}>
+          {fanPosters.length > 0 && <AnimatedBg posters={fanPosters} />}
+          <View style={styles.heroLabel}>
+            <GameSummaryHeader
+              gameEndReason={summary?.gameEndReason}
+              maxRounds={summary?.maxRounds}
+              type={summary?.type}
+              roomId={summary?.roomId || roomId}
+              hasMatches={hasMatches}
+              matchCount={matches.length}
+            />
           </View>
-          <Button
-            mode="outlined"
-            icon="share-variant"
-            compact
-            onPress={handleShareCode}
-            style={styles.asyncShareBtn}
-            contentStyle={styles.asyncShareBtnContent}
-          >
-            {t("room.share.button") as string}
-          </Button>
         </View>
-        {showNotifBanner && (
-          <View style={styles.notifBanner}>
-            <MaterialCommunityIcons name="bell-outline" size={15} color={colors.primary} />
-            <Text style={styles.notifBannerText}>{t("room.invite-post-finish.notif-hint")}</Text>
-            <Button mode="text" compact onPress={handleEnableNotifications}>
-              {t("room.invite-post-finish.notif-enable") as string}
-            </Button>
+        {summary && <StatsDashboard summary={summary} userId={userId} />}
+        <View style={styles.combinedSection}>
+          {summary?.users && <PlayerPerformance users={summary.users} />}
+          <Text style={styles.shareDesc}>{t("game-summary.invite-friends-desc")}</Text>
+          <RoomShareStrip qrCode={summary?.roomId || roomId} webPath="swipe" roomId={summary?.roomId || roomId} />
+        </View>
+
+        <View style={styles.tabHeader}>
+          <View style={styles.tabTitleRow}>
+            <Text style={styles.tabTitle}>
+              {tab === "matches" ? "Matched" : "Your Picks"}
+            </Text>
+            {activeData.length > 0 && <CreateCollectionFromLiked data={activeData} />}
           </View>
-        )}
+          <SegmentedControl
+            options={TAB_OPTIONS}
+            value={tab}
+            onChange={(v) => setTab(v as Tab)}
+          />
+          <SignUpNudgeBanner />
+
+        </View>
       </View>
     ),
-    [summary, userId, roomId, hasMatches, t, handleShareCode, showNotifBanner, handleEnableNotifications],
+    [summary, userId, roomId, hasMatches, matches.length, fanPosters, t, tab, activeData, heroHeight],
   );
 
   if (loading) {
@@ -257,21 +246,15 @@ export default function GameSummary() {
 
   return (
     <View style={styles.fill}>
-      {hasMatches && <AnimatedBg matchedMovies={matches} />}
       <FlatList
         data={listData}
         renderItem={renderItem}
         ListHeaderComponent={listHeader}
         keyExtractor={(item) => item.key}
-        style={{
-          ...styles.list,
-          paddingTop: Platform.OS === "android" ? insets.top : 0,
-          marginTop: Platform.OS === "ios" ? -insets.top : 0,
-        }}
+        style={styles.list}
         contentContainerStyle={{
           paddingHorizontal: spacing.screen,
-          paddingTop: Platform.OS === "ios" ? insets.top + 15 : 15,
-          paddingBottom: insets.bottom,
+          paddingBottom: 90,
         }}
         showsVerticalScrollIndicator={false}
       />
@@ -322,14 +305,6 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     fontWeight: fontWeight.bold,
   },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacing.screen,
-    marginTop: spacing.xxl + 6,
-  },
-  sectionTitle: { fontSize: typography.bebasSize.section, fontFamily: "Bebas" },
   movieRow: {
     flexDirection: "row",
     gap: spacing.sm + 2,
@@ -362,51 +337,44 @@ const styles = StyleSheet.create({
     backgroundColor: colors.appBackground,
   },
   backBtn: { borderRadius: radius.pill, flex: 1 },
-  asyncBanner: {
+  hero: {
+    marginHorizontal: -spacing.screen,
+    marginBottom: spacing.lg,
+    overflow: "hidden",
+    justifyContent: "flex-end",
+  },
+  heroLabel: {
+    paddingHorizontal: spacing.screen,
+  },
+  combinedSection: {
+    gap: spacing.sm,
+  },
+  shareHeader: {
+    gap: spacing.xs,
+  },
+  shareTitle: {
+    fontFamily: "Bebas",
+    fontSize: 32,
+    color: colors.text,
+    letterSpacing: 1,
+  },
+  shareDesc: {
+    fontSize: fontSize.md,
+    color: colors.placeholder,
+  },
+  tabHeader: {
+    gap: spacing.sm,
+    marginTop: spacing.xl,
+    marginBottom: spacing.md,
+  },
+  tabTitleRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: -spacing.md,
-    gap: spacing.sm,
   },
-  asyncBannerText: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: spacing.xs,
-  },
-  asyncIcon: { marginTop: 2 },
-  asyncHintText: {
-    flex: 1,
-    fontSize: fontSize.sm,
-    color: colors.placeholder,
-    lineHeight: 18,
-  },
-  asyncShareBtn: {
-    borderRadius: radius.pill,
-    borderColor: colors.border,
-  },
-  asyncShareBtnContent: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
-  },
-  notifBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    backgroundColor: `${colors.primary}18`,
-    borderRadius: radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: `${colors.primary}40`,
-    paddingVertical: spacing.sm,
-    paddingLeft: spacing.md,
-    paddingRight: spacing.xs,
-    marginTop: spacing.sm,
-  },
-  notifBannerText: {
-    flex: 1,
-    fontSize: fontSize.sm,
+  tabTitle: {
+    fontFamily: "Bebas",
+    fontSize: typography.bebasSize.auth,
     color: colors.text,
-    lineHeight: 18,
   },
 });

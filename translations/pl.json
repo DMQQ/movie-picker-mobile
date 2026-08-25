@@ -99,6 +99,8 @@
     "no-more-results": "To juz koniec wyników w tej kategorii",
     "awaiting-start": "Oczekiwanie na rozpoczęcie gry przez gospodarza",
     "you-are-host": "Stworzyłeś ten pokój. Możesz grać sam lub poczekać na innych.",
+    "async-play-title": "Znajomi mogą grać później",
+    "async-play-desc": "Udostępnij kod pokoju — znajomi mogą przeglądać filmy w swoim czasie, bez potrzeby bycia online jednocześnie.",
     "too-restricted": "Filtry są zbyt restrykcyjne",
     "lower-results-count": "Znaleziono tylko {count} wyników, gra będzie krótsza",
     "providers": "Wybierz platformy",
@@ -683,6 +685,8 @@
     "play-again-failed": "Nie udało się ponownie rozpocząć gry. Spróbuj ponownie.",
     "view-summary": "Opuść grę",
     "share-marathon": "Udostępnij",
+    "invite-friends-title": "ZAPROŚ ZNAJOMYCH",
+    "invite-friends-desc": "Udostępnij ten pokój, żeby znajomy mógł dołączyć i zagrać później",
     "share": {
       "loading": "Ładowanie maratonu...",
       "error": "Nie udało się załadować danych maratonu",

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import SetupHeader from "../../components/Setup/SetupHeader";
 import StepContainer from "../../components/Room/StepContainer";
@@ -21,6 +22,7 @@ import { useNotificationNudge } from "../../hooks/useNotificationNudge";
 export default function RoomSetup() {
   const t = useTranslation();
   const dispatch = useAppDispatch();
+  const insets = useSafeAreaInsets();
   const { step } = useLocalSearchParams<{ step?: string }>();
 
   useEffect(() => {
@@ -72,7 +74,7 @@ export default function RoomSetup() {
   }, [currentStep, dispatch]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.appBackground }}>
+    <View style={{ flex: 1, backgroundColor: colors.appBackground}}>
       <SetupHeader
         title={getStepTitle()}
         currentStep={currentStep}

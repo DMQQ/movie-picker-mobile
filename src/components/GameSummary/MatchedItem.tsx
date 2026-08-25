@@ -1,8 +1,6 @@
 import { StyleSheet, View } from "react-native";
-import Text from "../Text";
-
 import Button from "../Button";
-import { colors, fontSize, fontWeight, spacing } from "../../constants/design";
+import { colors, spacing } from "../../constants/design";
 import { Movie } from "../../../types";
 import MatchTile from "../Overview/MatchTile";
 import { addToGroup, removeFromGroup } from "../../redux/favourites/favourites";
@@ -41,11 +39,8 @@ export default function MatchedItem({ summary, badge = false, ...item }: Props) 
       index={0}
       disabled={!item.id}
       badge={badge ? <Badge /> : undefined}
-      renderFooter={(movie) => (
+      renderFooter={() => (
         <View style={styles.footer}>
-          <Text style={styles.title} numberOfLines={2}>
-            {movie.title}
-          </Text>
           <Button
             style={{
               marginTop: spacing.sm,
@@ -64,6 +59,5 @@ export default function MatchedItem({ summary, badge = false, ...item }: Props) 
 }
 
 const styles = StyleSheet.create({
-  footer: { flex: 1, justifyContent: "space-between", marginTop: spacing.xs + 1 },
-  title: { fontSize: fontSize.sm, fontWeight: fontWeight.bold },
+  footer: { marginTop: spacing.xs + 1 },
 });
