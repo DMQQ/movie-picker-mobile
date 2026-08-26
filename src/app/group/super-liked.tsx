@@ -121,7 +121,7 @@ export default function SuperLikedGroup() {
     <View style={styles.banner}>
       <MaterialCommunityIcons name="star-circle" size={22} color="#FFD700" style={styles.bannerIcon} />
       <Text style={styles.bannerText}>
-        Super liked movies appear more often in your games. Share your taste with friends so your favorites show up when playing together.
+        {t("super-liked.banner")}
       </Text>
     </View>
   );

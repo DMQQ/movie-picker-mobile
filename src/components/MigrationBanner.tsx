@@ -11,6 +11,7 @@ import {
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 
 import Button from "./Button";
+import useTranslation from "../service/useTranslation";
 
 type Props = {
   counts: { movies: number; interactions: number };
@@ -20,13 +21,14 @@ type Props = {
 };
 
 export default function MigrationBanner({ counts, isMigrating, onSync, onDismiss }: Props) {
+  const t = useTranslation();
   const movieLabel =
     counts.movies > 0
-      ? `${counts.movies} saved movie${counts.movies !== 1 ? "s" : ""}`
+      ? t(counts.movies === 1 ? "migration.movies-one" : "migration.movies-many", { count: counts.movies })
       : "";
   const interactionLabel =
     counts.interactions > 0
-      ? `${counts.interactions} interaction${counts.interactions !== 1 ? "s" : ""}`
+      ? t(counts.interactions === 1 ? "migration.interactions-one" : "migration.interactions-many", { count: counts.interactions })
       : "";
   const sub = [movieLabel, interactionLabel].filter(Boolean).join(" · ");
 
@@ -39,7 +41,7 @@ export default function MigrationBanner({ counts, isMigrating, onSync, onDismiss
         style={{ marginTop: spacing.xs - 3 }}
       />
       <View style={styles.text}>
-        <Text style={styles.title}>Sync to cloud</Text>
+        <Text style={styles.title}>{t("migration.bannerTitle")}</Text>
         <Text style={styles.sub}>{sub}</Text>
       </View>
       <Button
@@ -51,7 +53,7 @@ export default function MigrationBanner({ counts, isMigrating, onSync, onDismiss
         textColor={colors.primary}
         style={{ marginRight: -4 }}
       >
-        Sync
+        {t("migration.bannerSync")}
       </Button>
       <Pressable onPress={onDismiss} hitSlop={10} style={{ padding: spacing.xs }}>
         <MaterialCommunityIcons name="close" size={16} color="rgba(255,255,255,0.4)" />

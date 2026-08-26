@@ -33,8 +33,8 @@ interface DropdownPersonSearchProps {
 const DropdownPersonSearch: React.FC<DropdownPersonSearchProps> = ({
   onSelectPerson,
   maxSelections = 3,
-  label = "Search actors, directors...",
-  placeholder = "Type to search...",
+  label,
+  placeholder,
 }) => {
   const [query, setQuery] = useState("");
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -43,6 +43,8 @@ const DropdownPersonSearch: React.FC<DropdownPersonSearchProps> = ({
   const dropdownOpacity = useRef(new Animated.Value(0)).current;
 
   const t = useTranslation();
+  const resolvedLabel = label ?? t("common.search-actors");
+  const resolvedPlaceholder = placeholder ?? t("common.type-to-search");
 
   // Handle search with debounce
   useEffect(() => {
@@ -149,8 +151,8 @@ const DropdownPersonSearch: React.FC<DropdownPersonSearchProps> = ({
           value={query}
           onChangeText={setQuery}
           style={styles.input}
-          label={label}
-          placeholder={placeholder}
+          label={resolvedLabel}
+          placeholder={resolvedPlaceholder}
           right={<TextInput.Icon icon={query ? "close" : "magnify"} onPress={query ? handleClearSearch : undefined} />}
         />
 

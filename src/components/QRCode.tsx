@@ -7,6 +7,8 @@ interface QRCodeProps {
   size: number;
   color?: string;
   backgroundColor?: string;
+  /** Square area (px) carved out in the center — dots there are skipped */
+  clearArea?: number;
 }
 
 const FINDER_SIZE = 7;
@@ -85,6 +87,7 @@ function FinderPattern({
   size,
   color = "#000",
   backgroundColor = "transparent",
+  clearArea,
 }: QRCodeProps) {
   const matrix = useMemo(() => getMatrix(value), [value]);
 
@@ -94,6 +97,11 @@ function FinderPattern({
   const moduleSize = size / modules;
   const dotRadius = moduleSize * 0.45;
 
+  // Carved-out central zone, snapped to module grid
+  const clearModules = clearArea != null ? Math.ceil(clearArea / moduleSize) : 0;
+  const clearStart = clearArea != null ? Math.floor((modules - clearModules) / 2) : 0;
+  const clearEnd = clearArea != null ? clearStart + clearModules : 0;
+
   return (
     <Svg width={size} height={size}>
       <Rect x={0} y={0} width={size} height={size} fill={backgroundColor} />
@@ -101,6 +109,15 @@ function FinderPattern({
       {matrix.map((row, r) =>
         row.map((on, c) => {
           if (!on || isFinderModule(r, c, modules)) return null;
+          if (
+            clearArea != null &&
+            r >= clearStart &&
+            r < clearEnd &&
+            c >= clearStart &&
+            c < clearEnd
+          ) {
+            return null;
+          }
           return (
             <Circle
               key={`${r}-${c}`}

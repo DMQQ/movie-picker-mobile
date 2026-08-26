@@ -190,7 +190,7 @@ export default function MoviePickerIndex() {
       </View>
 
       <Text style={styles.sectionLabel}>
-        {isSearching ? "Search results" : isListAddMode ? t("moviePicker.addTo", { name: targetListName }) : t("moviePicker.yourLists")}
+        {isSearching ? t("moviePicker.searchResults") : isListAddMode ? t("moviePicker.addTo", { name: targetListName }) : t("moviePicker.yourLists")}
       </Text>
 
       {isSearching || isListAddMode ? (

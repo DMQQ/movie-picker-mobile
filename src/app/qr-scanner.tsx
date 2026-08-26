@@ -108,7 +108,7 @@ export default function QRScanner() {
       await joinRoom(parsed);
     } catch (error) {
       setScanError(true);
-      if (Platform.OS === "android") ToastAndroid.show("Invalid QR code", ToastAndroid.SHORT);
+      if (Platform.OS === "android") ToastAndroid.show(t("errors.invalid-qr"), ToastAndroid.SHORT);
     } finally {
       setIsScanned(false);
     }

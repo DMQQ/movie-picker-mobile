@@ -168,7 +168,7 @@ export const loadFavorites = createAsyncThunk(
     }
 
     const data = await AsyncStorage.getItem(STORAGE_KEY);
-    const language = (getState() as RootState).room.language;
+    const language = (getState() as RootState).app.language;
     const groups: FavoriteGroup[] = data
       ? parseStorage(data).groups
       : makeDefaultGroups(language);

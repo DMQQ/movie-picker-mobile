@@ -10,11 +10,6 @@ const isSameDeck = (current: Movie[], incoming: Movie[]) =>
   current.every((m, i) => m.id === incoming[i].id);
 
 const initialState = {
-  // Settings — survive resets
-  nickname: "",
-  language: "en",
-  regionalization: {} as Record<string, string>,
-
   // Join / setup
   isHost: false,
   isCreated: false,
@@ -92,8 +87,8 @@ const roomSlice = createSlice({
 
       const roomId = payload?.roomId || payload?.id;
       if (roomId) {
-        state.roomId = roomId;
-        state.qrCode = roomId;
+        state.roomId = roomId.toUpperCase();
+        state.qrCode = roomId.toUpperCase();
       }
 
       if (payload.maxRounds) state.maxRounds = payload.maxRounds;
@@ -121,27 +116,6 @@ const roomSlice = createSlice({
       if (action.payload) {
         state.joinError = false;
       }
-    },
-
-    setLanguage(state, action) {
-      state.language = action.payload;
-    },
-
-    setSettings(
-      state,
-      {
-        payload,
-      }: {
-        payload: Partial<{
-          nickname: string;
-          language: string;
-          regionalization: Record<string, string>;
-        }>;
-      },
-    ) {
-      state.nickname = payload.nickname || state.nickname;
-      state.language = payload.language || state.language;
-      state.regionalization = payload.regionalization || state.regionalization;
     },
 
     setQRCode(state, action) {
@@ -276,29 +250,25 @@ const roomSlice = createSlice({
     },
 
     reset(state) {
-      const language = state.language;
-      const nickname = state.nickname;
-      const regionalization = { ...state.regionalization };
       Object.assign(state, initialState);
-      state.language = language;
-      state.nickname = nickname;
-      state.regionalization = regionalization;
     },
 
     setRoomId(state, { payload }) {
-      if (state.roomId === payload) {
+      if (state.roomId.toUpperCase() === payload.toUpperCase()) {
         return;
       }
-      const language = state.language;
-      const nickname = state.nickname;
-      const regionalization = { ...state.regionalization };
+      // If the incoming room is the one this device created, preserve host identity.
+      const wasHost = state.qrCode
+        ? state.qrCode.toUpperCase() === payload.toUpperCase()
+        : false;
       Object.assign(state, initialState);
-      state.language = language;
-      state.nickname = nickname;
-      state.regionalization = regionalization;
       state.roomId = payload;
       state.qrCode = payload;
       state.joined = true;
+      if (wasHost) {
+        state.isHost = true;
+        state.isCreated = true;
+      }
     },
 
     setJoinError(state, { payload }: { payload: boolean }) {
@@ -319,6 +289,15 @@ const roomSlice = createSlice({
 
     setGameSummary(state, { payload }: { payload: IGameSummary }) {
       state.gameSummary = payload;
+    },
+
+    resetForNewGame(state, { payload: newRoomId }: { payload: string }) {
+      Object.assign(state, initialState);
+      state.roomId = newRoomId.toUpperCase();
+      state.qrCode = newRoomId.toUpperCase();
+      state.isHost = true;
+      state.isCreated = true;
+      state.joined = true;
     },
   },
 });

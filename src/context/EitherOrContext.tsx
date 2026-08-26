@@ -1,8 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { posthog } from "../constants/posthog";
 import { SocketContext } from "./SocketContext";
+import { usePartySocket } from "./PartySocketContext";
+import { store } from "../redux/store";
 import { eitherOrActions, type Side } from "../redux/eitherOr/eitherOrSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
+import { partyActions } from "../redux/party/partySlice";
 import type { PickedMovie } from "../redux/moviePicker/moviePickerSlice";
 
 export interface EitherOrRoomConfig {
@@ -40,8 +43,9 @@ export default function useEitherOrContext() {
 export function EitherOrContextProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   const { socket, emitter } = useContext(SocketContext);
+  const partySocket = usePartySocket();
   const userId = useAppSelector((state) => state.app.userId);
-  const nickname = useAppSelector((state) => state.room.nickname);
+  const nickname = useAppSelector((state) => state.app.nickname);
   const roomId = useAppSelector((state) => state.eitherOr.roomId);
 
   const userIdRef = useRef(userId);
@@ -72,6 +76,8 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
         dispatch(eitherOrActions.setRoomId(response.roomId));
         dispatch(eitherOrActions.setIsHost(true));
         dispatch(eitherOrActions.setIsCustomRoom(!!(config.movies && config.movies.length > 0)));
+        const partyId = store.getState().party.partyId;
+        if (partyId) partySocket?.emit("party:join", partyId);
         return response.roomId as string;
       } catch (error) {
         posthog?.captureException(error, { context: "either_or_create" });
@@ -109,6 +115,10 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
 
         dispatch(eitherOrActions.setRoomId(response.roomId));
         dispatch(eitherOrActions.setIsHost(false));
+        if (response.partyId) {
+          store.dispatch(partyActions.setParty({ partyId: response.partyId }));
+          partySocket?.emit("party:join", response.partyId);
+        }
         return true;
       } catch (error) {
         // Server sometimes sends room:state without calling the ack — if roomId
@@ -200,7 +210,13 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
     };
 
     const handleHostChanged = (data: { host: string }) => {
-      dispatch(eitherOrActions.setIsHost(data.host === userIdRef.current));
+      const nextIsHost = data.host === userIdRef.current;
+      console.log("[host-trace] either-or room:host:changed", {
+        serverHost: data.host,
+        localUserId: userIdRef.current,
+        nextIsHost,
+      });
+      dispatch(eitherOrActions.setIsHost(nextIsHost));
     };
 
     const handleRoundStart = (data: any) => {

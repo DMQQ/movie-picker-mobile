@@ -8,8 +8,8 @@ import { getLocaleForLanguage } from "./translationUtils";
 export default function prepareHeaders(headers: Headers, { getState }: Pick<BaseQueryApi, "getState">) {
   const state = getState() as RootState;
 
-  const appLanguage = state.room.language || "en";
-  const regionalization = state.room.regionalization || {};
+  const appLanguage = state.app.language || "en";
+  const regionalization = state.app.regionalization || {};
   const userLanguage = getLocaleForLanguage(appLanguage);
 
   const userToken = (state as RootState).auth.token;

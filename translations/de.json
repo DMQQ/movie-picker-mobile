@@ -71,7 +71,10 @@
     },
     "similar": {
       "load_more": "Mehr laden"
-    }
+    },
+    "shareMessage": "Schau dir \"{title}\"{suffix} an!",
+    "smart-search": "Smartsuche",
+    "trailer": "Trailer"
   },
   "match": {
     "title": "Ein Match!",
@@ -128,9 +131,10 @@
       "message": "Hey! Tritt meinem Raum auf FlickMate bei: {code}",
       "title": "Tritt meinem Raum auf FlickMate bei!",
       "button": "Code teilen",
-      "or-join-via": "Oder tritt über {url} bei"
+      "or-join-via": "Oder tritt über {url} bei",
+      "join-message": "Tritt meinem Flickmate-Raum bei! Code: {code}\n{url}"
     },
-    "page-range": "Müde von denselben Filmen? Erhöhe deine Chancen, etwas Neues zu finden, indem du deine Suche zufällig gestaltest.",
+    "page-range": "Seitenbereich",
     "provider_desc": "Wähle die Streaming-Anbieter aus, die du in deine Suche einbeziehen möchtest. Du kannst mehrere oder keinen Anbieter wählen, um alles zu sehen.",
     "genre_desc": "Wähle die Genres von Filmen und Serien, die du sehen möchtest. Du kannst mehrere oder keine Genres wählen, um alles zu sehen.",
     "game_time": "Spielzeit",
@@ -255,7 +259,24 @@
         "join": "Tippen zum Beitreten"
       }
     },
-    "inviteFriends": "Freunde einladen"
+    "inviteFriends": "Freunde einladen",
+    "loading-movies": "Filme werden geladen...",
+    "notify-me": "Benachrichtigen",
+    "notifying": "Benachrichtige",
+    "notify-on": "Du erhältst eine Push-Benachrichtigung, wenn ein Spieler ein Match mit dir hat.",
+    "notify-off": "Möchtest du eine Benachrichtigung, wenn jemand beitritt und ein Match mit dir hat?",
+    "loading-calculating": "Punkte werden berechnet…",
+    "loading-finding": "Die besten Filme werden gesucht…",
+    "loading-syncing": "Bibliothek wird synchronisiert…",
+    "loading-curating": "Auswahl wird zusammengestellt…",
+    "loading-analyzing": "Geschmacksprofile werden analysiert…",
+    "loading-results": "Beste Ergebnisse werden ermittelt…",
+    "loading-sneaking": "Vorbei an der Lobby…",
+    "loading-bribing": "Algorithmus wird bestochen…",
+    "loading-popcorn": "Popcorn wird warm gemacht…",
+    "loading-gods": "Die Film-Götter werden befragt…",
+    "loading-shuffling": "Deck wird gemischt…",
+    "setting-up": "Raum wird eingerichtet…"
   },
   "fortune-wheel": {
     "drag": "Nach oben ziehen zum Drehen",
@@ -274,7 +295,8 @@
       "Dein Film wird gefunden...",
       "Das Rad weiß es am besten...",
       "Etwas Besonderes kommt..."
-    ]
+    ],
+    "custom": "Benutzerdefiniert"
   },
   "filters": {
     "title": "Filter",
@@ -370,7 +392,15 @@
     "seeAll": "Alle anzeigen",
     "loading": "Laden...",
     "error": "Fehler",
-    "selected": "ausgewählt"
+    "selected": "ausgewählt",
+    "player-one": "{count} Spieler",
+    "player-many": "{count} Spieler",
+    "no-image": "Kein Bild verfügbar",
+    "guest": "Gast",
+    "search-actors": "Schauspieler, Regisseure suchen…",
+    "type-to-search": "Zum Suchen tippen…",
+    "search-placeholder": "Filme und Serien suchen…",
+    "rate": "Bewerten"
   },
   "global": {
     "justwatch": "Die Film-Verfügbarkeiten werden von JustWatch bereitgestellt",
@@ -615,7 +645,31 @@
       "badge": "BETA",
       "highlight": "Kopf-an-Kopf bis einer siegt"
     },
-    "empty": "Noch keine Spiele"
+    "empty": "Noch keine Spiele",
+    "duration-short": "~1 Min.",
+    "duration-instant": "< 1 Min.",
+    "duration-medium": "~3 Min.",
+    "duration-long": "2-5 Min.",
+    "tab-liked": "Gemocht",
+    "tab-disliked": "Nicht gemocht",
+    "recent-one": "{count} letztes Spiel",
+    "recent-many": "{count} letzte Spiele",
+    "type": {
+      "swipe": "Swipe-Spiel",
+      "voter": "Voter",
+      "tv": "Serien",
+      "movies": "Filme"
+    },
+    "players": "Spieler",
+    "titles": "{count} Titel",
+    "save-all": "Alle zur Liste hinzufügen",
+    "not-found": "Spiel nicht gefunden",
+    "no-matches": "Keine Matches",
+    "no-one-yet": "Noch niemand",
+    "no-games-yet": "Noch keine Spiele",
+    "loading": "Lädt…",
+    "swipes": "{count} Swipes",
+    "matches": "{count} Matches"
   },
   "moviePicker": {
     "searchPlaceholder": "Durchsuche Millionen von Filmen und Shows",
@@ -625,7 +679,25 @@
     "selectMinimum": "Wähle {count}+ Filme",
     "selectedProgress": "{count} / {total} ausgewählt",
     "movieCount": "{count} Film{plural}",
-    "yourLists": "Deine Listen"
+    "filterPlaceholder": "Diese Liste filtern…",
+    "selectAll": "Alle auswählen",
+    "deselectAll": "Auswahl aufheben",
+    "emptyList": "Nichts in dieser Liste",
+    "list": "Liste",
+    "yourLists": "Deine Listen",
+    "searchResults": "Suchergebnisse"
+  },
+  "person": {
+    "biography": "Biografie",
+    "readMore": "Mehr lesen",
+    "showLess": "Weniger anzeigen",
+    "knownFor": "Bekannt für",
+    "photos": "Fotos",
+    "movie": "Film",
+    "movies": "Filme",
+    "episode": "Episode",
+    "episodes": "Episoden",
+    "age": "Alter {age}"
   },
   "customMoviesBanner": {
     "title": "Wähle deine eigenen Filme",
@@ -705,6 +777,18 @@
       "error": "Marathon-Daten konnten nicht geladen werden",
       "no-movies": "Keine Filme zum Teilen",
       "dialog-title": "Film-Marathon-Ticket"
+    },
+    "tab-matches": "Matches",
+    "tab-picks": "Deine Auswahl",
+    "celebration": {
+      "so-close": "SO NAH...",
+      "marathon": "FILMMARATHON!",
+      "great-taste": "GROSSARTIGER GESCHMACK!",
+      "double-feature": "DOPPELFEATURE!",
+      "match-made": "MATCH!",
+      "keep-swiping": "weiter swipen — der perfekte Film wartet da draußen",
+      "locked-in-one": "{count} Film für heute Abend",
+      "locked-in": "{count} Filme für heute Abend"
     }
   },
   "game-rating": {
@@ -714,7 +798,11 @@
     "feedback-subtitle": "Hilf uns zu verbessern, indem du dein Feedback teilst",
     "feedback-placeholder": "Erzähle uns, was schiefgelaufen ist...",
     "submit": "Absenden",
-    "back": "Zurück"
+    "back": "Zurück",
+    "bad": "Schlecht",
+    "mid": "Mittel",
+    "good": "Gut",
+    "skip": "Überspringen"
   },
   "game-invite": {
     "social-title": "🎯 Finde deinen perfekten Film",
@@ -810,7 +898,8 @@
       "title": "Your streaming services",
       "subtitle": "We'll only show what you can actually watch",
       "continue": "Continue",
-      "skip": "Skip for now"
+      "skip": "Skip for now",
+      "searchPlaceholder": "Suchen..."
     }
   },
   "swipe": {
@@ -826,7 +915,8 @@
     "clear-all": "Alle löschen",
     "unblock": "Entsperren",
     "unblock-confirm": "Bist du sicher, dass du {title} entsperren möchtest? Es könnte wieder in deinen Spielen auftauchen.",
-    "clear-all-confirm": "Bist du sicher, dass du alle Filme entsperren möchtest? Sie könnten wieder in deinen Spielen auftauchen."
+    "clear-all-confirm": "Bist du sicher, dass du alle Filme entsperren möchtest? Sie könnten wieder in deinen Spielen auftauchen.",
+    "banner": "Blockierte Filme werden vollständig aus allen deinen Spielen entfernt — für dich und jeden Spieler, der mit dir spielt."
   },
   "super-liked": {
     "title": "Super Likes",
@@ -835,7 +925,8 @@
     "clear-all": "Alle löschen",
     "remove": "Entfernen",
     "remove-confirm": "Bist du sicher, dass du {title} aus deinen Super Likes entfernen möchtest?",
-    "clear-all-confirm": "Bist du sicher, dass du alle super gelikeden Filme löschen möchtest?"
+    "clear-all-confirm": "Bist du sicher, dass du alle super gelikeden Filme löschen möchtest?",
+    "banner": "Super-Likes erscheinen häufiger in deinen Spielen. Teile deinen Geschmack mit Freunden, damit deine Favoriten beim gemeinsamen Spielen auftauchen."
   },
   "rate-app": {
     "prompt": "Gefällt dir die App? Bewerte uns!"
@@ -873,7 +964,8 @@
     "LIST_ALREADY_EXISTS": "Eine Liste mit diesem Namen existiert bereits.",
     "RESERVED_LIST_TYPE": "Dieser Listentyp ist reserviert und kann nicht erstellt werden.",
     "SYSTEM_LIST_PROTECTED": "Systemlisten können nicht gelöscht werden.",
-    "INTERNAL_ERROR": "Etwas ist schiefgelaufen. Bitte versuche es später erneut."
+    "INTERNAL_ERROR": "Etwas ist schiefgelaufen. Bitte versuche es später erneut.",
+    "invalid-qr": "Ungültiger QR-Code"
   },
   "ticket": {
     "unknown-movie": "Unbekannter Film",
@@ -1163,7 +1255,20 @@
     "appleSignInFailed": "Apple Anmeldung fehlgeschlagen. Bitte versuche es erneut.",
     "googleSignInFailed": "Google Anmeldung fehlgeschlagen. Bitte versuche es erneut.",
     "googleNoAccounts": "Keine Google-Konten auf diesem Gerät gefunden. Füge ein Google-Konto in den Geräteeinstellungen hinzu und versuche es erneut.",
-    "sessionExpired": "Sitzung abgelaufen, zum Anmelden tippen."
+    "sessionExpired": "Sitzung abgelaufen, zum Anmelden tippen.",
+    "recoveryCodes": {
+      "title": "Wiederherstellungscodes",
+      "titleNew": "Neue Wiederherstellungscodes",
+      "subtitleNew": "Deine alten Codes wurden ungültig gemacht. Bewahre diese sicher auf.",
+      "subtitle": "Bewahre sie sicher auf. Sie werden nicht wieder angezeigt.",
+      "warning1": "Das Zurücksetzen des Passworts per E-Mail ist noch nicht verfügbar. Diese Codes sind der einzige Weg, dein Konto wiederherzustellen, wenn du dein Passwort vergisst. Speichere sie jetzt.",
+      "warning2": "Jeder Code ist nur einmal verwendbar. Bewahre sie in einem Passwort-Manager auf.",
+      "copied": "Kopiert!",
+      "copyAll": "Alle kopieren",
+      "share": "Teilen",
+      "saved": "Ich habe meine Codes gespeichert",
+      "shareMessage": "Meine Wiederherstellungscodes:\n\n{codes}\n\nBewahre sie sicher auf. Jeder kann nur einmal verwendet werden."
+    }
   },
   "ratings": {
     "title": "Meine Bewertungen",
@@ -1176,10 +1281,44 @@
     "reviewCount": "{count} Bewertung{plural}",
     "avgLabel": "{avg}/10 Ø",
     "noRatingsYet": "Noch keine Bewertungen",
-    "deleteRating": "Bewertung löschen"
+    "deleteRating": "Bewertung löschen",
+    "emptyHint": "Bewerte Filme, die du gesehen hast, um sie hier zu sehen"
   },
   "migration": {
     "success": "Deine Sammlung wurde mit deinem Konto synchronisiert.",
-    "successLarge": "Deine Sammlung wurde synchronisiert. Große Bibliotheken brauchen einen Moment zur Verarbeitung, die Einträge erscheinen in Kürze."
+    "successLarge": "Deine Sammlung wurde synchronisiert. Große Bibliotheken brauchen einen Moment zur Verarbeitung, die Einträge erscheinen in Kürze.",
+    "modal-title": "Sammlung synchronisieren",
+    "bodyStart": "Du hast ",
+    "bodyAnd": " und ",
+    "bodyEnd": " lokal gespeichert. Lade sie auf dein Konto hoch, damit sie überall verfügbar sind.",
+    "movies-one": "{count} gespeicherten Film",
+    "movies-many": "{count} gespeicherte Filme",
+    "interactions-one": "{count} Interaktion",
+    "interactions-many": "{count} Interaktionen",
+    "syncNow": "Jetzt synchronisieren",
+    "later": "Später",
+    "bannerTitle": "Mit Cloud synchronisieren",
+    "bannerSync": "Synchronisieren"
+  },
+  "error-boundary": {
+    "subject": "App-Fehlerbericht",
+    "body": "Ich bin in der App auf einen Fehler gestoßen:\n\nFehler: {message}\nZeit: {time}",
+    "unknown-error": "Unbekannter Fehler",
+    "open-email-failed": "Die E-Mail-App konnte nicht geöffnet werden. Bitte sende uns eine E-Mail mit der Fehlerbeschreibung.",
+    "sorry": "Entschuldigung!",
+    "description": "Etwas Unerwartetes ist passiert. Wir entschuldigen uns für die Unannehmlichkeiten.",
+    "send-report": "Fehlerbericht senden",
+    "restart": "App neu starten"
+  },
+  "party-waiting": {
+    "host-setting-up": "Der Gastgeber richtet das nächste Spiel ein…",
+    "host-subtitle": "Keine Sorge — du springst automatisch ein",
+    "starting": "Neues Spiel wird gestartet…",
+    "preparing": "Karten werden vorbereitet"
+  },
+  "sign-up-nudge": {
+    "title": "Geräteübergreifend synchronisieren",
+    "subtitle": "Melde dich an, um deine Listen überall zu haben",
+    "register": "Registrieren"
   }
 }

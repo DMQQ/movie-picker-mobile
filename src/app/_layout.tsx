@@ -14,13 +14,14 @@ import {
   initialWindowMetrics,
 } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
-import { roomActions } from "../redux/room/roomSlice";
+import { appActions } from "../redux/app/appSlice";
 import { restoreSession, authActions, ensureAnonymousSession } from "../redux/auth/authSlice";
 import { store, useAppDispatch, useAppSelector } from "../redux/store";
 import { loadTutorialState } from "../redux/tutorial/tutorialSlice";
 import useInit from "../service/useInit";
 import AppErrorBoundary from "../components/ErrorBoundary";
 import { DatabaseProvider } from "../context/DatabaseContext";
+import { PartySocketProvider } from "../context/PartySocketContext";
 import ScreenTracker from "../components/ScreenTracker";
 import PushTokenRegistrar from "../components/PushTokenRegistrar";
 import NotificationHandler from "../components/NotificationHandler";
@@ -78,6 +79,7 @@ function RootLayout() {
           }}
         >
           <Provider store={store}>
+            <PartySocketProvider>
             <PortalProvider>
               <DatabaseProvider>
                 {posthog ? (
@@ -92,6 +94,7 @@ function RootLayout() {
                 )}
               </DatabaseProvider>
             </PortalProvider>
+            </PartySocketProvider>
           </Provider>
         </ThemeProvider>
       </SafeAreaProvider>
@@ -209,7 +212,7 @@ const RootNavigator = ({
         const deviceSettings = getDeviceSettings();
 
         dispatch(
-          roomActions.setSettings({
+          appActions.setSettings({
             nickname: nickname || deviceSettings.nickname,
             language: deviceSettings.language,
             regionalization: deviceSettings.regionalization,
@@ -310,6 +313,7 @@ const RootNavigator = ({
         <Stack.Screen name="invite-players" options={formSheet([0.5, 0.85])} />
 
         <Stack.Screen name="movie-picker" options={formSheet([0.92, 1.0])} />
+        <Stack.Screen name="play-again" options={formSheet([0.8])} />
 
       </Stack>
     </GestureHandlerRootView>

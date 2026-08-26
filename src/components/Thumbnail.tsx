@@ -4,6 +4,7 @@ import { Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Image, ImageProps } from "expo-image";
 
 import { colors, spacing } from "../constants/design";
+import useTranslation from "../service/useTranslation";
 
 type Shared = {
   path: string;
@@ -55,20 +56,23 @@ export const ThumbnailSizes = {
   },
 } as const;
 
-const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path">) => (
-  <View style={[styles.container, container]}>
-    <View
-      style={[styles.image, rest.style, { justifyContent: "center", alignItems: "center", backgroundColor: colors.surface }]}
-    >
-      <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={colors.placeholder} />
-      {size >= 150 && (
-        <Text style={{ color: colors.placeholder, marginTop: spacing.sm, textAlign: "center" }} variant="bodyMedium">
-          {rest.alt || "No Image Available"}
-        </Text>
-      )}
+const NoImage = ({ container, size = 200, ...rest }: Omit<ThumbnailProps, "path">) => {
+  const t = useTranslation();
+  return (
+    <View style={[styles.container, container]}>
+      <View
+        style={[styles.image, rest.style, { justifyContent: "center", alignItems: "center", backgroundColor: colors.surface }]}
+      >
+        <MaterialCommunityIcons name="image-broken-variant" size={size / 3} color={colors.placeholder} />
+        {size >= 150 && (
+          <Text style={{ color: colors.placeholder, marginTop: spacing.sm, textAlign: "center" }} variant="bodyMedium">
+            {rest.alt || t("common.no-image")}
+          </Text>
+        )}
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 export default function Thumbnail({
   path,

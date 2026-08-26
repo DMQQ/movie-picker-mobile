@@ -31,6 +31,7 @@ function formatDate(unix: number) {
 }
 
 function GameRow({ item }: { item: UserGame }) {
+  const t = useTranslation();
   return (
     <Pressable
       style={styles.row}
@@ -64,7 +65,7 @@ function GameRow({ item }: { item: UserGame }) {
       )}
       <View style={styles.rowInfo}>
         <Text style={styles.rowTitle} numberOfLines={1}>
-          {formatGameType(item.session?.gameType ?? null)}
+          {t(formatGameType(item.session?.gameType ?? null))}
         </Text>
         <View style={styles.rowMeta}>
           {item.matchCount > 0 && (

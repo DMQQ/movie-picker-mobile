@@ -182,9 +182,9 @@ export default function MoviePickerListDetail() {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerText}>
-          <Text style={styles.title} numberOfLines={1}>{params.listName ?? "List"}</Text>
+          <Text style={styles.title} numberOfLines={1}>{params.listName ?? t("moviePicker.list")}</Text>
           {selectedInList > 0 && (
-            <Text style={styles.subtitle}>{selectedInList} selected</Text>
+            <Text style={styles.subtitle}>{selectedInList} {t("common.selected")}</Text>
           )}
         </View>
       </View>
@@ -194,7 +194,7 @@ export default function MoviePickerListDetail() {
         <SearchField
           value={query}
           onChangeText={setQuery}
-          placeholder="Filter this list…"
+          placeholder={t("moviePicker.filterPlaceholder")}
           style={styles.searchField}
         />
       </View>
@@ -202,7 +202,7 @@ export default function MoviePickerListDetail() {
       {!loading && items.length > 0 && (
         <Touch onPress={handleSelectAll} style={styles.selectAllRow}>
           <Text style={styles.selectAllText}>
-            {allFilteredSelected ? "Deselect all" : "Select all"}
+            {allFilteredSelected ? t("moviePicker.deselectAll") : t("moviePicker.selectAll")}
           </Text>
         </Touch>
       )}
@@ -233,7 +233,7 @@ export default function MoviePickerListDetail() {
           }}
           ListEmptyComponent={
             <Text style={styles.empty}>
-              {query.trim() ? t("search.no-results") as string : "Nothing in this list"}
+              {query.trim() ? t("search.no-results") as string : t("moviePicker.emptyList")}
             </Text>
           }
         />
@@ -249,7 +249,9 @@ export default function MoviePickerListDetail() {
           style={[styles.confirm, selected.length === 0 && styles.confirmDisabled]}
         >
           <Text style={styles.confirmText}>
-            {selected.length > 0 ? `Done (${selected.length})` : "Done"}
+            {selected.length > 0
+              ? t("moviePicker.doneWithCount", { count: selected.length })
+              : t("moviePicker.done")}
           </Text>
         </Pressable>
       </View>

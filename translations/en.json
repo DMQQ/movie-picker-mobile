@@ -71,7 +71,10 @@
     },
     "similar": {
       "load_more": "Load More"
-    }
+    },
+    "shareMessage": "Check out \"{title}\"{suffix}!",
+    "smart-search": "Smart Search",
+    "trailer": "Trailer"
   },
   "match": {
     "title": "It's a match!",
@@ -144,9 +147,10 @@
       "message": "Hey! Join my room on FlickMate: {code}",
       "title": "Join my room on FlickMate!",
       "button": "Share Code",
-      "or-join-via": "Or join via {url}"
+      "or-join-via": "Or join via {url}",
+      "join-message": "Join my Flickmate room! Code: {code}\n{url}"
     },
-    "page-range": "Tired of the same old movies? Increase your chances of finding something new by randomizing your search.",
+    "page-range": "Page Range",
     "provider_desc": "Select the streaming providers you want to include in your search. You can choose multiple providers or none to see everything.",
     "genre_desc": "Select the genres of movies and series you want to watch. You can choose multiple genres or none to see everything.",
     "game_time": "Game Time",
@@ -256,7 +260,24 @@
       },
       "loading": "Loading...",
       "roomActive": "Room is ready"
-    }
+    },
+    "loading-movies": "Loading movies...",
+    "notify-me": "Notify me",
+    "notifying": "Notifying",
+    "notify-on": "You'll get a push notification when a player matches with you.",
+    "notify-off": "Want a notification when someone joins and matches with you?",
+    "loading-calculating": "Calculating scores...",
+    "loading-finding": "Finding best movies...",
+    "loading-syncing": "Syncing your library...",
+    "loading-curating": "Curating your picks...",
+    "loading-analyzing": "Analyzing taste profiles...",
+    "loading-results": "Getting the best results...",
+    "loading-sneaking": "Sneaking past the lobby...",
+    "loading-bribing": "Bribing the algorithm...",
+    "loading-popcorn": "Warming up the popcorn...",
+    "loading-gods": "Asking the movie gods...",
+    "loading-shuffling": "Shuffling the deck...",
+    "setting-up": "Setting up room..."
   },
   "fortune-wheel": {
     "drag": "Drag up to spin",
@@ -275,7 +296,8 @@
       "Finding your movie...",
       "The wheel knows best...",
       "Something special is coming..."
-    ]
+    ],
+    "custom": "Custom"
   },
   "filters": {
     "title": "Filters",
@@ -347,7 +369,8 @@
     "reviewCount": "{count} review{plural}",
     "avgLabel": "{avg}/10 avg",
     "noRatingsYet": "No ratings yet",
-    "deleteRating": "Delete review"
+    "deleteRating": "Delete review",
+    "emptyHint": "Rate movies you've watched to see them here"
   },
   "lists": {
     "favourites": "Favorites",
@@ -384,7 +407,15 @@
     "seeAll": "See all",
     "loading": "Loading...",
     "error": "Error",
-    "selected": "selected"
+    "selected": "selected",
+    "player-one": "{count} player",
+    "player-many": "{count} players",
+    "no-image": "No Image Available",
+    "guest": "Guest",
+    "search-actors": "Search actors, directors...",
+    "type-to-search": "Type to search...",
+    "search-placeholder": "Search movies and TV shows...",
+    "rate": "Rate"
   },
   "global": {
     "justwatch": "The movie availabilities are powered by JustWatch",
@@ -629,7 +660,31 @@
       "description": "Two movies, head-to-head. Vote until one champion stands.",
       "badge": "BETA",
       "highlight": "Head-to-head until one stands"
-    }
+    },
+    "duration-short": "~1 min",
+    "duration-instant": "< 1 min",
+    "duration-medium": "~3 min",
+    "duration-long": "2-5 min",
+    "tab-liked": "Liked",
+    "tab-disliked": "Disliked",
+    "recent-one": "{count} recent game",
+    "recent-many": "{count} recent games",
+    "type": {
+      "swipe": "Swipe Game",
+      "voter": "Voter",
+      "tv": "TV Shows",
+      "movies": "Movies"
+    },
+    "players": "Players",
+    "titles": "{count} titles",
+    "save-all": "Save all to list",
+    "not-found": "Game not found",
+    "no-matches": "No matches recorded",
+    "no-one-yet": "No one yet",
+    "no-games-yet": "No games yet",
+    "loading": "Loading…",
+    "swipes": "{count} swipes",
+    "matches": "{count} matches"
   },
   "moviePicker": {
     "searchPlaceholder": "Search millions of movies and shows",
@@ -639,7 +694,25 @@
     "selectMinimum": "Select {count}+ movies",
     "selectedProgress": "{count} / {total} selected",
     "movieCount": "{count} movie{plural}",
-    "yourLists": "Your lists"
+    "filterPlaceholder": "Filter this list…",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "emptyList": "Nothing in this list",
+    "list": "List",
+    "yourLists": "Your lists",
+    "searchResults": "Search results"
+  },
+  "person": {
+    "biography": "Biography",
+    "readMore": "Read more",
+    "showLess": "Show less",
+    "knownFor": "Known For",
+    "photos": "Photos",
+    "movie": "movie",
+    "movies": "movies",
+    "episode": "episode",
+    "episodes": "episodes",
+    "age": "age {age}"
   },
   "customMoviesBanner": {
     "title": "Pick your own movies",
@@ -719,6 +792,18 @@
       "error": "Failed to load marathon data",
       "no-movies": "No movies to share",
       "dialog-title": "Movie Marathon Ticket"
+    },
+    "tab-matches": "Matched",
+    "tab-picks": "Your Picks",
+    "celebration": {
+      "so-close": "SO CLOSE...",
+      "marathon": "MOVIE MARATHON!",
+      "great-taste": "GREAT TASTE!",
+      "double-feature": "DOUBLE FEATURE!",
+      "match-made": "MATCH MADE!",
+      "keep-swiping": "keep swiping — the perfect film is out there",
+      "locked-in-one": "{count} film locked in for tonight",
+      "locked-in": "{count} films locked in for tonight"
     }
   },
   "game-rating": {
@@ -728,7 +813,11 @@
     "feedback-subtitle": "Help us improve by sharing your feedback",
     "feedback-placeholder": "Tell us what went wrong...",
     "submit": "Submit",
-    "back": "Back"
+    "back": "Back",
+    "bad": "Bad",
+    "mid": "Mid",
+    "good": "Good",
+    "skip": "Skip"
   },
   "game-invite": {
     "social-title": "🎯 Find Your Perfect Match",
@@ -824,7 +913,8 @@
       "title": "Your streaming services",
       "subtitle": "We'll only show what you can actually watch",
       "continue": "Continue",
-      "skip": "Skip for now"
+      "skip": "Skip for now",
+      "searchPlaceholder": "Search..."
     }
   },
   "swipe": {
@@ -840,7 +930,8 @@
     "clear-all": "Clear All",
     "unblock": "Unblock",
     "unblock-confirm": "Are you sure you want to unblock {title}? It may appear in your games again.",
-    "clear-all-confirm": "Are you sure you want to unblock all movies? They may appear in your games again."
+    "clear-all-confirm": "Are you sure you want to unblock all movies? They may appear in your games again.",
+    "banner": "Blocked movies are completely removed from all your games, for you and every player who plays with you."
   },
   "super-liked": {
     "title": "Super Liked",
@@ -849,7 +940,8 @@
     "clear-all": "Clear All",
     "remove": "Remove",
     "remove-confirm": "Are you sure you want to remove {title} from your super likes?",
-    "clear-all-confirm": "Are you sure you want to clear all super liked movies?"
+    "clear-all-confirm": "Are you sure you want to clear all super liked movies?",
+    "banner": "Super liked movies appear more often in your games. Share your taste with friends so your favorites show up when playing together."
   },
   "rate-app": {
     "prompt": "Enjoying the app? Rate us!"
@@ -887,7 +979,8 @@
     "LIST_ALREADY_EXISTS": "A list with this name already exists.",
     "RESERVED_LIST_TYPE": "This list type is reserved and cannot be created.",
     "SYSTEM_LIST_PROTECTED": "System lists cannot be deleted.",
-    "INTERNAL_ERROR": "Something went wrong. Please try again later."
+    "INTERNAL_ERROR": "Something went wrong. Please try again later.",
+    "invalid-qr": "Invalid QR code"
   },
   "ticket": {
     "unknown-movie": "Unknown Movie",
@@ -1177,10 +1270,56 @@
     "appleSignInFailed": "Apple Sign In failed. Please try again.",
     "googleSignInFailed": "Google Sign In failed. Please try again.",
     "googleNoAccounts": "No Google accounts found on this device. Add a Google account in your device settings and try again.",
-    "sessionExpired": "Session expired, tap to sign in."
+    "sessionExpired": "Session expired, tap to sign in.",
+    "recoveryCodes": {
+      "title": "Recovery Codes",
+      "titleNew": "New Recovery Codes",
+      "subtitleNew": "Your old codes have been invalidated. Save these somewhere safe.",
+      "subtitle": "Save these somewhere safe. They won't be shown again.",
+      "warning1": "Password reset via email is not available yet. These codes are the only way to recover your account if you forget your password. Save them now.",
+      "warning2": "Each code is single-use. Store them in a password manager.",
+      "copied": "Copied!",
+      "copyAll": "Copy all",
+      "share": "Share",
+      "saved": "I've saved my codes",
+      "shareMessage": "My recovery codes:\n\n{codes}\n\nKeep these safe. Each can only be used once."
+    }
   },
   "migration": {
     "success": "Your collection has been synced to your account.",
-    "successLarge": "Your collection has been synced. Large libraries take a moment to process, items will appear shortly."
+    "successLarge": "Your collection has been synced. Large libraries take a moment to process, items will appear shortly.",
+    "modal-title": "Sync your collection",
+    "bodyStart": "You have ",
+    "bodyAnd": " and ",
+    "bodyEnd": " stored locally. Upload them to your account so they're available everywhere.",
+    "movies-one": "{count} saved movie",
+    "movies-many": "{count} saved movies",
+    "interactions-one": "{count} interaction",
+    "interactions-many": "{count} interactions",
+    "syncNow": "Sync now",
+    "later": "Later",
+    "bannerTitle": "Sync to cloud",
+    "bannerSync": "Sync"
+  },
+  "error-boundary": {
+    "subject": "App Error Report",
+    "body": "I encountered an error in the app:\n\nError: {message}\nTime: {time}",
+    "unknown-error": "Unknown error",
+    "open-email-failed": "Unable to open email app. Please send us an email describing the error.",
+    "sorry": "I'm Sorry!",
+    "description": "Something unexpected happened. We apologize for the inconvenience.",
+    "send-report": "Send Error Report",
+    "restart": "Restart App"
+  },
+  "party-waiting": {
+    "host-setting-up": "Host is setting up the next game…",
+    "host-subtitle": "Sit tight — you'll jump in automatically",
+    "starting": "Starting a new game…",
+    "preparing": "Preparing the cards"
+  },
+  "sign-up-nudge": {
+    "title": "Sync across devices",
+    "subtitle": "Sign in to keep your lists everywhere",
+    "register": "Register"
   }
 }

@@ -6,6 +6,7 @@ import { StyleSheet, TextInput, View } from "react-native";
 import { colors, fontSize, radius, spacing } from "../constants/design";
 import Animated, { FadeInUp } from "react-native-reanimated";
 import PlatformBlurView from "./PlatformBlurView";
+import useTranslation from "../service/useTranslation";
 
 interface SearchBarProps {
   value: string;
@@ -13,8 +14,10 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-const CustomSearchBar = ({ value, onChangeText, placeholder = "Search movies and TV shows..." }: SearchBarProps) => {
+const CustomSearchBar = ({ value, onChangeText, placeholder }: SearchBarProps) => {
   const navigation = useNavigation();
+  const t = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t("common.search-placeholder");
 
   return (
     <Animated.View style={{ paddingHorizontal: spacing.screen }} entering={FadeInUp}>
@@ -23,7 +26,7 @@ const CustomSearchBar = ({ value, onChangeText, placeholder = "Search movies and
           <IconButton icon="chevron-left" onPress={() => navigation.goBack()} size={28} style={styles.backButton} />
 
           <TextInput
-            placeholder={placeholder}
+            placeholder={resolvedPlaceholder}
             placeholderTextColor="#666"
             value={value}
             onChangeText={onChangeText}

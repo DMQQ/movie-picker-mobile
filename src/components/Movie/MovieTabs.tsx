@@ -69,9 +69,8 @@ const styles = StyleSheet.create({
     padding: spacing.xs,
     ...Platform.select({
       android: {
-        backgroundColor: colors.surface + "cc",
-        borderWidth: 2,
-        borderColor: "#343434ff",
+        backgroundColor: colors.surface,
+        borderRadius: 100,
       },
     }),
   },

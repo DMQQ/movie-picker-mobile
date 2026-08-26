@@ -13,31 +13,40 @@ import LobbyShell from "../../components/GameLobby/LobbyShell";
 import { Movie } from "../../../types";
 import PageHeading from "../../components/PageHeading";
 import { roomActions } from "../../redux/room/roomSlice";
+import { partyActions } from "../../redux/party/partySlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { SocketContext } from "../../context/SocketContext";
+import { usePartySocket } from "../../context/PartySocketContext";
 import useTranslation from "../../service/useTranslation";
 import { FancySpinner } from "../../components/FancySpinner";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { hash } from "../../utils/hash";
-import {
-  useGetMovieCategoriesWithThumbnailsQuery,
-  useGetTVCategoriesWithThumbnailsQuery,
-} from "../../redux/movie/movieApi";
+import { useGetCategoriesWithThumbnailsQuery } from "../../redux/movie/movieApi";
 import { useFilterPreferences } from "../../hooks/useFilterPreferences";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
 import { Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import NewBadge from "@/components/NewBadge";
+import FloatingBadge from "@/components/FloatingBadge";
 
 const SYNC_PHRASES = [
-  "Calculating scores...",
-  "Finding best movies...",
-  "Syncing your library...",
-  "Curating your picks...",
-  "Analyzing taste profiles...",
-  "Getting the best results...",
+  "room.loading-calculating",
+  "room.loading-finding",
+  "room.loading-syncing",
+  "room.loading-curating",
+  "room.loading-analyzing",
+  "room.loading-results",
+];
+
+const AUTO_START_PHRASES = [
+  "room.loading-sneaking",
+  "room.loading-bribing",
+  "room.loading-popcorn",
+  "room.loading-gods",
+  "room.loading-shuffling",
 ];
 
 interface RoomSetupParams {
@@ -51,6 +60,7 @@ interface RoomSetupParams {
 
 interface ISocketResponse {
   roomId: string;
+  partyId: string;
   details: {
     type: "movie" | "tv";
     page: number;
@@ -65,6 +75,7 @@ export default function QRCodePage() {
   const params = useLocalSearchParams();
   const dispatch = useAppDispatch();
   const { socket } = useContext(SocketContext);
+  const partySocket = usePartySocket();
   const t = useTranslation();
   const autoStart = params?.autoStart === "true";
   const hasAutoStarted = useRef(false);
@@ -72,16 +83,19 @@ export default function QRCodePage() {
   const [isLoadingMovies, setIsLoadingMovies] = useState(false);
   const [isRefetching, setIsRefetching] = useState(false);
   const [syncPhraseIndex, setSyncPhraseIndex] = useState(0);
+  const [autoStartPhraseIndex, setAutoStartPhraseIndex] = useState(0);
+  const [autoStartTriggered, setAutoStartTriggered] = useState(false);
   const hashOptionsRef = useRef<string>("");
   const [isPending, startTransition] = useTransition();
-  const { qrCode, nickname } = useAppSelector((state) => state.room);
+  const qrCode = useAppSelector((state) => state.room.qrCode);
+  const nickname = useAppSelector((state) => state.app.nickname);
   const users = useAppSelector((state) => state.room.users);
   const roomId = useAppSelector((state) => state.room.roomId);
   const existingMovies = useAppSelector((state) => state.room.movies);
 
   const { preferences } = useFilterPreferences();
-  const movieCategoriesQuery = useGetMovieCategoriesWithThumbnailsQuery();
-  const tvCategoriesQuery = useGetTVCategoriesWithThumbnailsQuery();
+  const movieCategoriesQuery = useGetCategoriesWithThumbnailsQuery({ type: "movie" });
+  const tvCategoriesQuery = useGetCategoriesWithThumbnailsQuery({ type: "tv" });
   const { getBlockedIds, isReady: blockedReady } = useBlockedMovies();
   const { getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
 
@@ -219,6 +233,10 @@ export default function QRCodePage() {
         if (response) {
           dispatch(roomActions.setRoom(response.details));
           dispatch(roomActions.setQRCode(response.roomId));
+          if (response.partyId) {
+            dispatch(partyActions.setParty({ partyId: response.partyId }));
+            partySocket?.emit("party:join", response.partyId);
+          }
           socket.emit(
             "join-room",
             response.roomId.toUpperCase(),
@@ -306,6 +324,24 @@ export default function QRCodePage() {
     return () => clearInterval(id);
   }, [isRefetching]);
 
+  const showAutoStartLoading =
+    autoStart &&
+    (createRoomLoading ||
+      isLoadingMovies ||
+      (!autoStartTriggered && !isDisabled));
+
+  useEffect(() => {
+    if (!showAutoStartLoading) {
+      setAutoStartPhraseIndex(0);
+      return;
+    }
+    const id = setInterval(
+      () => setAutoStartPhraseIndex((i) => (i + 1) % AUTO_START_PHRASES.length),
+      2200,
+    );
+    return () => clearInterval(id);
+  }, [showAutoStartLoading]);
+
   const startGameHref = (() => {
     if (!qrCode) return "#";
     const gameType = roomConfig?.type?.includes("/tv") ? "tv" : "movie";
@@ -338,10 +374,13 @@ export default function QRCodePage() {
     socket?.emit("room:start", roomId);
     dispatch(roomActions.setPlaying(true));
     dispatch(reset());
-    router.push({
-      pathname: "/room/[roomId]",
-      params: { roomId: qrCode.toUpperCase(), type: gameType },
-    } as any);
+    startTransition(() => {
+      setAutoStartTriggered(true);
+      router.push({
+        pathname: "/room/[roomId]",
+        params: { roomId: qrCode.toUpperCase(), type: gameType },
+      } as any);
+    });
   }, [autoStart, isDisabled, qrCode]);
 
   return (
@@ -377,36 +416,41 @@ export default function QRCodePage() {
             </View>
 
             <PlayersRow
-              players={users.map((nick) => ({ id: nick, name: nick }))}
+              players={users.map((nick, index) => ({ id: nick, name: nick, isHost: index === 0 }))}
               waitingLabel={t("room.waiting-for-players")}
               style={{ marginBottom: 0 }}
+              showNames
             />
-            <View style={styles.asyncBanner}>
-              <MaterialCommunityIcons name="account-clock-outline" size={22} color={colors.primary} />
-              <View style={styles.asyncBannerText}>
-                <Text style={styles.asyncBannerTitle}>{t("room.async-play-title")}</Text>
-                <Text style={styles.asyncBannerDesc}>{t("room.async-play-desc")}</Text>
+            <NewBadge featureKey="async-play">
+              <View style={styles.asyncBanner}>
+                <MaterialCommunityIcons name="account-clock-outline" size={22} color={colors.primary} />
+                <View style={styles.asyncBannerText}>
+                  <Text style={styles.asyncBannerTitle}>{t("room.async-play-title")}</Text>
+                  <Text style={styles.asyncBannerDesc}>{t("room.async-play-desc")}</Text>
+                </View>
               </View>
-            </View>
+           </NewBadge>
           </>
         }
         actions={
           <View style={styles.actionRow}>
-            <Button
-              mode="outlined"
-              disabled={!qrCode}
-              icon="account-multiple-plus"
-              compact
-              style={styles.inviteButton}
-              onPress={() =>
-                router.push({
-                  pathname: "/invite-players",
-                  params: { roomId: qrCode, gameType: "swipe" },
-                })
-              }
-            >
-              {""}
-            </Button>
+            <NewBadge featureKey="invite-players">
+              <Button
+                mode="outlined"
+                disabled={!qrCode}
+                icon="account-multiple-plus"
+                compact
+                style={styles.inviteButton}
+                onPress={() =>
+                  router.push({
+                    pathname: "/invite-players",
+                    params: { roomId: qrCode, gameType: "swipe" },
+                  })
+                }
+              >
+                {""}
+              </Button>
+            </NewBadge>
 
             <Link
               href={startGameHref}
@@ -419,9 +463,9 @@ export default function QRCodePage() {
                 style={styles.startButton}
               >
                 {isRefetching
-                  ? SYNC_PHRASES[syncPhraseIndex]
+                  ? t(SYNC_PHRASES[syncPhraseIndex])
                   : isLoadingMovies
-                    ? "Loading movies..."
+                    ? t("room.loading-movies")
                     : moviesCount === 0
                       ? t("room.too-restricted")
                       : users.length === 1
@@ -432,10 +476,17 @@ export default function QRCodePage() {
           </View>
         }
       >
-        {createRoomLoading ? (
+        {showAutoStartLoading ? (
           <Animated.View entering={FadeInDown} style={styles.loadingContainer}>
             <FancySpinner size={100} />
-            <Text style={styles.loadingText}>Setting up room...</Text>
+            <Text style={styles.loadingText}>
+              {t(AUTO_START_PHRASES[autoStartPhraseIndex])}
+            </Text>
+          </Animated.View>
+        ) : createRoomLoading ? (
+          <Animated.View entering={FadeInDown} style={styles.loadingContainer}>
+            <FancySpinner size={100} />
+            <Text style={styles.loadingText}>{t("room.setting-up")}</Text>
           </Animated.View>
         ) : (
           qrCode && (

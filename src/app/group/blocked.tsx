@@ -121,7 +121,7 @@ export default function BlockedMoviesGroup() {
     <View style={styles.banner}>
       <MaterialCommunityIcons name="cancel" size={22} color="#FF4458" style={styles.bannerIcon} />
       <Text style={styles.bannerText}>
-        Blocked movies are completely removed from all your games, for you and every player who plays with you.
+        {t("blocked.banner")}
       </Text>
     </View>
   );

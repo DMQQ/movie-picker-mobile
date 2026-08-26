@@ -19,6 +19,7 @@ interface GroupScreenLayoutProps {
   showRightIconButton?: boolean;
   rightIconName?: string;
   onRightIconPress?: () => void;
+  headingChildren?: ReactNode;
   children?: ReactNode;
 }
 
@@ -34,6 +35,7 @@ export default function GroupScreenLayout({
   showRightIconButton,
   rightIconName,
   onRightIconPress,
+  headingChildren,
   children,
 }: GroupScreenLayoutProps) {
   const insets = useSafeAreaInsets();
@@ -47,7 +49,9 @@ export default function GroupScreenLayout({
           showRightIconButton={showRightIconButton}
           rightIconName={rightIconName}
           onRightIconPress={onRightIconPress}
-        />
+        >
+          {headingChildren}
+        </PageHeading>
       )}
       <View style={[styles.content, Platform.OS === "android" && styles.androidOffset]}>
         {isLoading ? (

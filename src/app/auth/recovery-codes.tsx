@@ -9,8 +9,10 @@ import { Platform, ScrollView, Share, StyleSheet, View } from "react-native";
 import Button from "../../components/Button";
 import PrimaryButton from "../../components/PrimaryButton";
 import FadeSlide from "../../components/FadeSlide";
+import useTranslation from "../../service/useTranslation";
 
 export default function RecoveryCodesScreen() {
+  const t = useTranslation();
   const { codes: codesParam, replacing } = useLocalSearchParams<{ codes: string; replacing?: string }>();
   const codes: string[] = JSON.parse(codesParam ?? "[]");
   const isReplacing = replacing === "true";
@@ -24,7 +26,7 @@ export default function RecoveryCodesScreen() {
 
   async function handleShare() {
     await Share.share({
-      message: `My recovery codes:\n\n${codes.join("\n")}\n\nKeep these safe. Each can only be used once.`,
+      message: t("auth.recoveryCodes.shareMessage", { codes: codes.join("\n") }),
     });
   }
 
@@ -43,11 +45,9 @@ export default function RecoveryCodesScreen() {
       </FadeSlide>
 
       <FadeSlide delay={80}>
-        <Text style={styles.title}>{isReplacing ? "New Recovery Codes" : "Recovery Codes"}</Text>
+        <Text style={styles.title}>{isReplacing ? t("auth.recoveryCodes.titleNew") : t("auth.recoveryCodes.title")}</Text>
         <Text style={styles.subtitle}>
-          {isReplacing
-            ? "Your old codes have been invalidated. Save these somewhere safe."
-            : "Save these somewhere safe. They won't be shown again."}
+          {isReplacing ? t("auth.recoveryCodes.subtitleNew") : t("auth.recoveryCodes.subtitle")}
         </Text>
       </FadeSlide>
 
@@ -55,12 +55,12 @@ export default function RecoveryCodesScreen() {
         <View style={[styles.warningRow, { borderColor: "rgba(239,68,68,0.3)", marginBottom: spacing.sm }]}>
           <Icon source="shield-alert-outline" size={15} color="#EF4444" />
           <Text style={[styles.warningText, { color: "#EF4444" }]}>
-            Password reset via email is not available yet. These codes are the <Text style={{ fontWeight: "700", color: "#EF4444" }}>only way</Text> to recover your account if you forget your password. Save them now.
+            {t("auth.recoveryCodes.warning1")}
           </Text>
         </View>
         <View style={[styles.warningRow]}>
           <Icon source="information-outline" size={14} color="#F59E0B" />
-          <Text style={styles.warningText}>Each code is single-use. Store them in a password manager.</Text>
+          <Text style={styles.warningText}>{t("auth.recoveryCodes.warning2")}</Text>
         </View>
       </FadeSlide>
 
@@ -84,7 +84,7 @@ export default function RecoveryCodesScreen() {
             style={styles.actionBtn}
             textColor={copied ? "#34A853" : undefined}
           >
-            {copied ? "Copied!" : "Copy all"}
+            {copied ? t("auth.recoveryCodes.copied") : t("auth.recoveryCodes.copyAll")}
           </Button>
           <Button
             mode="outlined"
@@ -92,12 +92,12 @@ export default function RecoveryCodesScreen() {
             icon="share-variant-outline"
             style={styles.actionBtn}
           >
-            Share
+            {t("auth.recoveryCodes.share")}
           </Button>
         </View>
 
         <PrimaryButton onPress={() => router.dismiss()} style={styles.doneBtn}>
-          I've saved my codes
+          {t("auth.recoveryCodes.saved")}
         </PrimaryButton>
       </FadeSlide>
     </ScrollView>

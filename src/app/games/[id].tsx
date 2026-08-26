@@ -24,6 +24,7 @@ import { useGetGameQuery } from "../../redux/lists/listsApi";
 import type { GameMember, ListItem } from "../../redux/lists/listsApi";
 import { setPendingBulkMovies } from "../../redux/favourites/favourites";
 import { formatGameType } from "../../utils/formatGameType";
+import useTranslation from "../../service/useTranslation";
 
 const { width: SW } = Dimensions.get("window");
 const COLUMNS = 3;
@@ -75,12 +76,13 @@ function Pill({ icon, label }: { icon: string; label: string }) {
 type Tab = "matches" | "liked" | "disliked";
 
 const TAB_OPTIONS = [
-  { value: "matches", label: "Matched" },
-  { value: "liked", label: "Liked" },
-  { value: "disliked", label: "Disliked" },
+  { value: "matches", labelKey: "game-summary.tab-matches" },
+  { value: "liked", labelKey: "games.tab-liked" },
+  { value: "disliked", labelKey: "games.tab-disliked" },
 ];
 
 export default function GameDetailScreen() {
+  const t = useTranslation();
   const { id, poster: posterParam } = useLocalSearchParams<{ id: string; poster?: string }>();
   const dispatch = useAppDispatch();
   const user = useAppSelector((s) => s.auth.user);
@@ -163,7 +165,7 @@ export default function GameDetailScreen() {
 
               <View style={[styles.bannerContent, { paddingTop: spacing.xxl * 2 + 4 }]}>
                 <Text style={styles.bannerTitle}>
-                  {formatGameType(session?.gameType ?? null)}
+                  {t(formatGameType(session?.gameType ?? null))}
                 </Text>
                 <Text style={styles.bannerDate}>
                   {data ? formatDate(data.list.createdAt) : ""}
@@ -172,11 +174,11 @@ export default function GameDetailScreen() {
                   <View style={styles.pills}>
                     <Pill
                       icon="gesture-swipe"
-                      label={`${session.totalSwipes} swipes`}
+                      label={t("games.swipes", { count: session.totalSwipes })}
                     />
                     <Pill
                       icon="heart"
-                      label={`${session.totalMatches} matches`}
+                      label={t("games.matches", { count: session.totalMatches })}
                     />
                     {duration && <Pill icon="clock-outline" label={duration} />}
                   </View>
@@ -187,7 +189,7 @@ export default function GameDetailScreen() {
             {/* Players */}
             {members.length > 0 && (
               <View style={styles.membersSection}>
-                <Text style={styles.membersSectionTitle}>Players</Text>
+                <Text style={styles.membersSectionTitle}>{t("games.players")}</Text>
                 <View style={styles.membersList}>
                   {members.map((m) => (
                     <MemberChip key={m.id} member={m} />
@@ -200,17 +202,17 @@ export default function GameDetailScreen() {
             {hasAnyContent && (
               <View style={styles.sectionHeader}>
                 <SegmentedControl
-                  options={TAB_OPTIONS}
+                  options={TAB_OPTIONS.map((o) => ({ ...o, label: t(o.labelKey) }))}
                   value={tab}
                   onChange={(v) => setTab(v as Tab)}
                   size="sm"
                 />
                 <View style={styles.sectionMeta}>
-                  <Text style={styles.sectionCount}>{activeItems.length} titles</Text>
+                  <Text style={styles.sectionCount}>{t("games.titles", { count: activeItems.length })}</Text>
                   {canSave && (
                     <Pressable style={styles.saveAllBtn} onPress={handleSaveAll}>
                       <Icon source="bookmark-plus-outline" size={15} color={colors.primary} />
-                      <Text style={styles.saveAllText}>Save all to list</Text>
+                      <Text style={styles.saveAllText}>{t("games.save-all")}</Text>
                     </Pressable>
                   )}
                 </View>
@@ -224,7 +226,7 @@ export default function GameDetailScreen() {
             {isLoading ? (
               <Icon source="loading" size={32} color="rgba(255,255,255,0.2)" />
             ) : isError ? (
-              <Text style={styles.emptyText}>Game not found</Text>
+              <Text style={styles.emptyText}>{t("games.not-found")}</Text>
             ) : (
               <>
                 <Icon
@@ -232,7 +234,7 @@ export default function GameDetailScreen() {
                   size={44}
                   color={colors.overlay}
                 />
-                <Text style={styles.emptyText}>No matches recorded</Text>
+                <Text style={styles.emptyText}>{t("games.no-matches")}</Text>
               </>
             )}
           </View>

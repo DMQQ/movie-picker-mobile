@@ -16,6 +16,7 @@ import GroupScreenLayout from "../../components/Group/GroupScreenLayout";
 import OverviewModal from "../../screens/Overview/Modal";
 import MoviesActionButtons from "../../components/MoviesActionButtons";
 import { colors, common, fontSize, fontWeight, radius, spacing } from "../../constants/design";
+import NewBadge from "../../components/NewBadge";
 import { useGroupData, type GroupMovie } from "../../hooks/useGroupData";
 import useTranslation from "../../service/useTranslation";
 import { useAppSelector } from "../../redux/store";
@@ -152,26 +153,30 @@ export default function Group() {
             showBackButton={!isPreview}
           >
             <PlatformBlurView interactive style={styles.headerActions}>
-              <IconButton
-                icon="plus"
-                size={28}
-                style={common.iconButton}
-                iconColor={colors.text}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  router.push({
-                    pathname: "/movie-picker",
-                    params: { targetListType: listType ?? "", targetListName: data?.name ?? "" },
-                  } as any);
-                }}
-              />
-              <IconButton
-                icon="cog-outline"
-                size={28}
-                style={common.iconButton}
-                iconColor={colors.text}
-                onPress={openManageSheet}
-              />
+              <NewBadge featureKey="movie-picker">
+                <IconButton
+                  icon="plus"
+                  size={28}
+                  style={common.iconButton}
+                  iconColor={colors.text}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    router.push({
+                      pathname: "/movie-picker",
+                      params: { targetListType: listType ?? "", targetListName: data?.name ?? "" },
+                    } as any);
+                  }}
+                />
+              </NewBadge>
+              <NewBadge featureKey="manage-list">
+                <IconButton
+                  icon="cog-outline"
+                  size={28}
+                  style={common.iconButton}
+                  iconColor={colors.text}
+                  onPress={openManageSheet}
+                />
+              </NewBadge>
             </PlatformBlurView>
           </PageHeading>
           <FlatList
@@ -223,15 +228,27 @@ export default function Group() {
           data={fortuneMovies}
           isLoading={false}
           showHeading={!isPreview}
-          showRightIconButton={!isPreview}
-          rightIconName="plus"
-          onRightIconPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            router.push({
-              pathname: "/movie-picker",
-              params: { targetListType: "local-group", targetListName: data?.name ?? "", targetGroupId: data?.id ?? "" },
-            } as any);
-          }}
+          headingChildren={
+            isPreview ? undefined : (
+              <NewBadge featureKey="movie-picker">
+                <PlatformBlurView interactive style={styles.headerActions}>
+                  <IconButton
+                    icon="plus"
+                    size={28}
+                    style={common.iconButton}
+                    iconColor={colors.text}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      router.push({
+                        pathname: "/movie-picker",
+                        params: { targetListType: "local-group", targetListName: data?.name ?? "", targetGroupId: data?.id ?? "" },
+                      } as any);
+                    }}
+                  />
+                </PlatformBlurView>
+              </NewBadge>
+            )
+          }
           renderItemFooter={(item) => renderFooter(item as GroupMovie)}
           onLongItemPress={(item) => handleRemoveItem(item.id)}
         />

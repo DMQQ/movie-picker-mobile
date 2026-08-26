@@ -71,6 +71,12 @@ function HomeAppbar() {
 
   const { isFinished, users, isPlaying, isHost } = useAppSelector((state) => state.room);
 
+  // Host-trace: the Appbar flips between "End game" (host) and "Leave" (guest)
+  // based solely on room.isHost — log every flip to catch where it's lost.
+  useEffect(() => {
+    console.log("[host-trace] Appbar button state", { isHost, roomId });
+  }, [isHost, roomId]);
+
   const t = useTranslation();
 
   const handleEndGame = () => {
@@ -127,7 +133,7 @@ function HomeAppbar() {
         </LiquidGlassView>
 
         <View style={[styles.midSection, showRatePill && { width: "75%" }]}>
-          <ActiveUsers data={users} onPress={onActiveUsersPress} />
+          <ActiveUsers data={users} onPress={onActiveUsersPress} isHost={isHost} />
           <ConnectionChip status={connectionStatus} />
         </View>
 

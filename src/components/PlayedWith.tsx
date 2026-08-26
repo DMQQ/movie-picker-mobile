@@ -8,6 +8,7 @@ import { useFocusEffect } from "expo-router";
 import { useAppSelector } from "../redux/store";
 import { useGetGameMembersQuery } from "../redux/lists/listsApi";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
+import useTranslation from "../service/useTranslation";
 
 const mutedText = "rgba(255,255,255,0.45)";
 
@@ -15,6 +16,7 @@ const AVATAR_SIZE = 34;
 const OVERLAP = 10;
 
 export default function PlayedWith() {
+  const t = useTranslation();
   const user = useAppSelector((s) => s.auth.user);
   const isFullAccount = !!user && user.provider !== "anonymous";
   const { data, isLoading, refetch } = useGetGameMembersQuery(undefined, { skip: !isFullAccount });
@@ -33,7 +35,7 @@ export default function PlayedWith() {
   if (members.length === 0) {
     return (
       <View style={styles.placeholder}>
-        <Text style={styles.empty}>No one yet</Text>
+        <Text style={styles.empty}>{t("games.no-one-yet")}</Text>
       </View>
     );
   }
@@ -75,7 +77,7 @@ export default function PlayedWith() {
         <View style={styles.countRow}>
           <Icon source="account-group" size={12} color={colors.textSecondary} />
           <Text style={styles.count}>
-            {members.length} {members.length === 1 ? "player" : "players"}
+            {t(members.length === 1 ? "common.player-one" : "common.player-many", { count: members.length })}
           </Text>
         </View>
         <Text style={styles.names} numberOfLines={1}>

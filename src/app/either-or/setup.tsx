@@ -12,6 +12,7 @@ import useTranslation from "../../service/useTranslation";
 import useEitherOrContext from "../../context/EitherOrContext";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { selectProviders } from "../../redux/filterPreferences/filterPreferencesSlice";
+import { usePartySocket } from "../../context/PartySocketContext";
 import { useBuilderPreferences } from "../../hooks/useBuilderPreferences";
 import { moviePickerActions, type PickedMovie } from "../../redux/moviePicker/moviePickerSlice";
 import { colors, radius, spacing, fontSize, fontWeight } from "../../constants/design";
@@ -24,6 +25,8 @@ export default function EitherOrSetup() {
   const t = useTranslation();
   const dispatch = useAppDispatch();
   const { createRoom } = useEitherOrContext();
+  const partySocket = usePartySocket();
+  const partyId = useAppSelector((s) => s.party.partyId);
   const savedProviders = useAppSelector(selectProviders);
   const pickerConfirmed = useAppSelector((s) => s.moviePicker.confirmed);
   const pickerSelected = useAppSelector((s) => s.moviePicker.selected);
@@ -84,8 +87,13 @@ export default function EitherOrSetup() {
     const roomId = await createRoom(config);
     setIsCreating(false);
 
-    if (roomId) router.push(`/either-or/${roomId}`);
-  }, [createRoom, type, genres, providers, isCustom, customMovies]);
+    if (roomId) {
+      if (partyId && partySocket) {
+        partySocket.emit("party:ready", { partyId, roomId, gameMode: "either-or" });
+      }
+      router.push(`/either-or/${roomId}`);
+    }
+  }, [createRoom, type, genres, providers, isCustom, customMovies, partyId, partySocket]);
 
   const handleQuickStart = useCallback(async () => {
     if (isCustom) {
@@ -99,11 +107,16 @@ export default function EitherOrSetup() {
       posthog?.capture("either_or_create_tapped", { type, bracketSize: BRACKET_SIZE, quick_start: true });
       const roomId = await createRoom({ type: type as "movie" | "tv", genre: [], providers: savedPrefs!.providers, bracketSize: BRACKET_SIZE });
       setIsCreating(false);
-      if (roomId) router.push(`/either-or/${roomId}`);
+      if (roomId) {
+        if (partyId && partySocket) {
+          partySocket.emit("party:ready", { partyId, roomId, gameMode: "either-or" });
+        }
+        router.push(`/either-or/${roomId}`);
+      }
     } else {
       setStep(STANDARD_STEPS);
     }
-  }, [hasSavedProviders, savedPrefs, createRoom, type, isCustom, customMovies, onCreate]);
+  }, [hasSavedProviders, savedPrefs, createRoom, type, isCustom, customMovies, onCreate, partyId, partySocket]);
 
   const totalSteps = isCustom ? 1 : STANDARD_STEPS;
 
@@ -144,7 +157,6 @@ export default function EitherOrSetup() {
 
   const isLastStep = step === totalSteps;
   const canCreate = !isCustom || customMovies.length >= BRACKET_SIZE;
-  const canProceedCustom = isCustom && customMovies.length >= 4;
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.appBackground }}>

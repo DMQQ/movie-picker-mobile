@@ -47,7 +47,7 @@ const Seasons = ({ seasons, id }: { seasons: Season[]; id: number }) => {
   return (
     <View style={styles.root}>
       <Text style={styles.heading}>
-        {t("movie.details.seasons")} ({seasons.length})
+        {t("movie.tabs.seasons")} ({seasons.length})
       </Text>
       <FlatList
         showsHorizontalScrollIndicator={false}

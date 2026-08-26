@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import Chip from "../../components/Chip";
+import PlayersRow from "../../components/GameLobby/PlayersRow";
 import Text from "../../components/Text";
 
 import { colors, fontSize, radius, spacing } from "../../constants/design";
@@ -54,27 +54,19 @@ export default function WaitingState({
       <LobbyShell
         bottomContent={
           <>
-            <Text style={{ color: colors.placeholder }}>
-              {t("voter.home.waiting")}... ({users.length})
-            </Text>
             {isHost && (
               <Text style={styles.hostHint}>{t("voter.home.you-are-host")}</Text>
             )}
 
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.xs }}>
-              {users.map((user) => (
-                <Chip
-                  key={user.userId}
-                  icon={user.ready ? "check" : "clock"}
-                  style={user.userId === currentUserId && { backgroundColor: "#1e88e5" }}
-                >
-                  {user.userId === currentUserId
-                    ? t("voter.home.you")
-                    : t("voter.home.user")}
-                  {user.ready ? ` (${t("voter.home.ready-status")})` : ""}
-                </Chip>
-              ))}
-            </View>
+            <PlayersRow
+              players={users.map((user) => ({
+                id: user.userId,
+                name: user.userId,
+                isActive: user.ready,
+                isHost: isHost && user.userId === currentUserId,
+              }))}
+              waitingLabel={t("voter.home.waiting")}
+            />
           </>
         }
         actions={

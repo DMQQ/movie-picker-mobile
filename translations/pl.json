@@ -71,7 +71,10 @@
     },
     "similar": {
       "load_more": "Załaduj więcej"
-    }
+    },
+    "shareMessage": "Sprawdź \"{title}\"{suffix}!",
+    "smart-search": "Inteligentne wyszukiwanie",
+    "trailer": "Zwiastun"
   },
   "match": {
     "title": "Mamy pare!",
@@ -128,9 +131,10 @@
       "message": "Hej! Dołącz do mojego pokoju w FlickMate: {code}",
       "title": "Dołącz do mojego pokoju w FlickMate!",
       "button": "Udostępnij kod",
-      "or-join-via": "Lub dołącz przez {url}"
+      "or-join-via": "Lub dołącz przez {url}",
+      "join-message": "Dołącz do mojego pokoju Flickmate! Kod: {code}\n{url}"
     },
-    "page-range": "Znudziły ci się te same stare filmy? Zwiększ swoje szanse na znalezienie czegoś nowego, losując wyszukiwanie.",
+    "page-range": "Zakres stron",
     "provider_desc": "Wybierz platformy, które chcesz uwzględnić w swoim wyszukiwaniu. Możesz wybrać wiele platform lub żadną, aby zobaczyć wszystko.",
     "genre_desc": "Wybierz gatunki filmów i seriali, które chcesz oglądać. Możesz wybrać wiele gatunków lub żaden, aby zobaczyć wszystko.",
     "game_time": "Czas Gry",
@@ -255,7 +259,24 @@
         "join": "Dotknij, aby dołączyć"
       }
     },
-    "inviteFriends": "Zaproś znajomych"
+    "inviteFriends": "Zaproś znajomych",
+    "loading-movies": "Ładowanie filmów...",
+    "notify-me": "Powiadom mnie",
+    "notifying": "Powiadamianie",
+    "notify-on": "Otrzymasz powiadomienie push, gdy gracz dopasuje się z tobą.",
+    "notify-off": "Chcesz otrzymać powiadomienie, gdy ktoś dołączy i dopasuje się z tobą?",
+    "loading-calculating": "Obliczanie wyników…",
+    "loading-finding": "Szukanie najlepszych filmów…",
+    "loading-syncing": "Synchronizowanie biblioteki…",
+    "loading-curating": "Dobieranie propozycji…",
+    "loading-analyzing": "Analizowanie profili gustu…",
+    "loading-results": "Uzyskiwanie najlepszych wyników…",
+    "loading-sneaking": "Przekradanie się obok lobby…",
+    "loading-bribing": "Przekupywanie algorytmu…",
+    "loading-popcorn": "Podgrzewanie popcornu…",
+    "loading-gods": "Pytanie bogów filmu…",
+    "loading-shuffling": "Tasowanie talii…",
+    "setting-up": "Ustawianie pokoju…"
   },
   "fortune-wheel": {
     "drag": "Przeciągnij, aby zakręcić",
@@ -274,7 +295,8 @@
       "Szukam Twojego filmu...",
       "Koło wie najlepiej...",
       "Coś wyjątkowego nadchodzi..."
-    ]
+    ],
+    "custom": "Własna"
   },
   "filters": {
     "title": "Filtry",
@@ -370,7 +392,15 @@
     "seeAll": "Zobacz wszystkie",
     "loading": "Ładowanie...",
     "error": "Błąd",
-    "selected": "wybrane"
+    "selected": "wybrane",
+    "player-one": "{count} gracz",
+    "player-many": "{count} graczy",
+    "no-image": "Brak zdjęcia",
+    "guest": "Gość",
+    "search-actors": "Szukaj aktorów, reżyserów…",
+    "type-to-search": "Wpisz, aby wyszukać…",
+    "search-placeholder": "Szukaj filmów i seriali…",
+    "rate": "Oceń"
   },
   "global": {
     "justwatch": "Dostępność filmów wspierana przez JustWatch",
@@ -615,7 +645,31 @@
       "badge": "BETA",
       "highlight": "Głowa w głowę aż jeden zwycięży"
     },
-    "empty": "Brak gier"
+    "empty": "Brak gier",
+    "duration-short": "~1 min",
+    "duration-instant": "< 1 min",
+    "duration-medium": "~3 min",
+    "duration-long": "2-5 min",
+    "tab-liked": "Polubione",
+    "tab-disliked": "Niepolubione",
+    "recent-one": "{count} ostatnia gra",
+    "recent-many": "{count} ostatnich gier",
+    "type": {
+      "swipe": "Gra Swipe",
+      "voter": "Voter",
+      "tv": "Seriale",
+      "movies": "Filmy"
+    },
+    "players": "Gracze",
+    "titles": "{count} tytułów",
+    "save-all": "Zapisz wszystko do listy",
+    "not-found": "Nie znaleziono gry",
+    "no-matches": "Brak dopasowań",
+    "no-one-yet": "Jeszcze nikt",
+    "no-games-yet": "Brak gier",
+    "loading": "Ładowanie…",
+    "swipes": "{count} przesunięć",
+    "matches": "{count} dopasowań"
   },
   "moviePicker": {
     "searchPlaceholder": "Przeszukaj miliony filmów i seriali",
@@ -625,7 +679,25 @@
     "selectMinimum": "Wybierz {count}+ filmów",
     "selectedProgress": "{count} / {total} wybrano",
     "movieCount": "{count} film{plural}",
-    "yourLists": "Twoje listy"
+    "filterPlaceholder": "Filtruj tę listę…",
+    "selectAll": "Zaznacz wszystko",
+    "deselectAll": "Odznacz wszystko",
+    "emptyList": "Ta lista jest pusta",
+    "list": "Lista",
+    "yourLists": "Twoje listy",
+    "searchResults": "Wyniki wyszukiwania"
+  },
+  "person": {
+    "biography": "Biografia",
+    "readMore": "Czytaj więcej",
+    "showLess": "Pokaż mniej",
+    "knownFor": "Znany z",
+    "photos": "Zdjęcia",
+    "movie": "film",
+    "movies": "filmów",
+    "episode": "odcinek",
+    "episodes": "odcinków",
+    "age": "wiek {age}"
   },
   "customMoviesBanner": {
     "title": "Wybierz własne filmy",
@@ -705,6 +777,18 @@
       "error": "Nie udało się załadować danych maratonu",
       "no-movies": "Brak filmów do udostępnienia",
       "dialog-title": "Bilet na maraton filmowy"
+    },
+    "tab-matches": "Dopasowane",
+    "tab-picks": "Twoje wybory",
+    "celebration": {
+      "so-close": "TAK BLISKO...",
+      "marathon": "MARATON FILMOWY!",
+      "great-taste": "ŚWIETNY SMAK!",
+      "double-feature": "PODWÓJNA DAWKA!",
+      "match-made": "JEST MATCH!",
+      "keep-swiping": "przewijaj dalej — idealny film jest gdzieś tam",
+      "locked-in-one": "{count} film na dziś wieczór",
+      "locked-in": "{count} filmów na dziś wieczór"
     }
   },
   "game-rating": {
@@ -714,7 +798,11 @@
     "feedback-subtitle": "Podziel się opinią, by pomóc nam ulepszyć aplikację",
     "feedback-placeholder": "Co się stało?",
     "submit": "Wyślij",
-    "back": "Wstecz"
+    "back": "Wstecz",
+    "bad": "Słabo",
+    "mid": "Średnio",
+    "good": "Dobrze",
+    "skip": "Pomiń"
   },
   "game-invite": {
     "social-title": "🎯 Znajdź Idealny Wybór",
@@ -810,7 +898,8 @@
       "title": "Your streaming services",
       "subtitle": "We'll only show what you can actually watch",
       "continue": "Continue",
-      "skip": "Skip for now"
+      "skip": "Skip for now",
+      "searchPlaceholder": "Szukaj..."
     }
   },
   "swipe": {
@@ -826,7 +915,8 @@
     "clear-all": "Wyczyść wszystko",
     "unblock": "Odblokuj",
     "unblock-confirm": "Czy na pewno chcesz odblokować {title}? Może ponownie pojawić się w grach.",
-    "clear-all-confirm": "Czy na pewno chcesz odblokować wszystkie filmy? Mogą ponownie pojawić się w grach."
+    "clear-all-confirm": "Czy na pewno chcesz odblokować wszystkie filmy? Mogą ponownie pojawić się w grach.",
+    "banner": "Zablokowane filmy są całkowicie usuwane ze wszystkich twoich gier — dla ciebie i każdego gracza grającego z tobą."
   },
   "super-liked": {
     "title": "Super polubione",
@@ -835,7 +925,8 @@
     "clear-all": "Wyczyść wszystko",
     "remove": "Usuń",
     "remove-confirm": "Czy na pewno chcesz usunąć {title} z super polubionych?",
-    "clear-all-confirm": "Czy na pewno chcesz wyczyścić wszystkie super polubione filmy?"
+    "clear-all-confirm": "Czy na pewno chcesz wyczyścić wszystkie super polubione filmy?",
+    "banner": "Filmy super-polubione pojawiają się częściej w twoich grach. Udostępnij swój gust znajomym, aby twoje ulubione pojawiały się podczas wspólnej gry."
   },
   "rate-app": {
     "prompt": "Podoba Ci się aplikacja? Oceń nas!"
@@ -873,7 +964,8 @@
     "LIST_ALREADY_EXISTS": "Lista o tej nazwie już istnieje.",
     "RESERVED_LIST_TYPE": "Ten typ listy jest zarezerwowany i nie może zostać utworzony.",
     "SYSTEM_LIST_PROTECTED": "Listy systemowe nie mogą być usuwane.",
-    "INTERNAL_ERROR": "Coś poszło nie tak. Spróbuj ponownie później."
+    "INTERNAL_ERROR": "Coś poszło nie tak. Spróbuj ponownie później.",
+    "invalid-qr": "Nieprawidłowy kod QR"
   },
   "ticket": {
     "unknown-movie": "Nieznany Film",
@@ -1162,7 +1254,20 @@
     "appleSignInFailed": "Logowanie przez Apple nie powiodło się. Spróbuj ponownie.",
     "googleSignInFailed": "Logowanie przez Google nie powiodło się. Spróbuj ponownie.",
     "googleNoAccounts": "Nie znaleziono kont Google na tym urządzeniu. Dodaj konto Google w ustawieniach urządzenia i spróbuj ponownie.",
-    "sessionExpired": "Sesja wygasła, dotknij aby się zalogować."
+    "sessionExpired": "Sesja wygasła, dotknij aby się zalogować.",
+    "recoveryCodes": {
+      "title": "Kody odzyskiwania",
+      "titleNew": "Nowe kody odzyskiwania",
+      "subtitleNew": "Twoje stare kody zostały unieważnione. Zapisz te w bezpiecznym miejscu.",
+      "subtitle": "Zapisz je w bezpiecznym miejscu. Nie zostaną pokazane ponownie.",
+      "warning1": "Reset hasła przez e-mail nie jest jeszcze dostępny. Te kody to jedyny sposób na odzyskanie konta, jeśli zapomnisz hasło. Zapisz je teraz.",
+      "warning2": "Każdy kod jest jednorazowy. Przechowuj je w menedżerze haseł.",
+      "copied": "Skopiowano!",
+      "copyAll": "Kopiuj wszystko",
+      "share": "Udostępnij",
+      "saved": "Zapisałem kody",
+      "shareMessage": "Moje kody odzyskiwania:\n\n{codes}\n\nPrzechowuj je bezpiecznie. Każdy może być użyty tylko raz."
+    }
   },
   "ratings": {
     "title": "Moje oceny",
@@ -1175,10 +1280,44 @@
     "reviewCount": "{count} recenzji",
     "avgLabel": "{avg}/10 średnio",
     "noRatingsYet": "Brak ocen",
-    "deleteRating": "Usuń recenzję"
+    "deleteRating": "Usuń recenzję",
+    "emptyHint": "Oceń filmy, które obejrzałeś, aby zobaczyć je tutaj"
   },
   "migration": {
     "success": "Twoja kolekcja została zsynchronizowana z kontem.",
-    "successLarge": "Twoja kolekcja została zsynchronizowana. Duże biblioteki potrzebują chwili na przetworzenie, elementy pojawią się wkrótce."
+    "successLarge": "Twoja kolekcja została zsynchronizowana. Duże biblioteki potrzebują chwili na przetworzenie, elementy pojawią się wkrótce.",
+    "modal-title": "Zsynchronizuj swoją kolekcję",
+    "bodyStart": "Masz ",
+    "bodyAnd": " i ",
+    "bodyEnd": " zapisane lokalnie. Prześlij je na swoje konto, aby były dostępne wszędzie.",
+    "movies-one": "{count} zapisany film",
+    "movies-many": "{count} zapisanych filmów",
+    "interactions-one": "{count} interakcja",
+    "interactions-many": "{count} interakcji",
+    "syncNow": "Synchronizuj teraz",
+    "later": "Później",
+    "bannerTitle": "Synchronizuj z chmurą",
+    "bannerSync": "Synchronizuj"
+  },
+  "error-boundary": {
+    "subject": "Raport o błędzie aplikacji",
+    "body": "Napotkałem błąd w aplikacji:\n\nBłąd: {message}\nCzas: {time}",
+    "unknown-error": "Nieznany błąd",
+    "open-email-failed": "Nie udało się otworzyć aplikacji e-mail. Napisz do nas e-mail z opisem błędu.",
+    "sorry": "Przepraszamy!",
+    "description": "Coś nieoczekiwanego się wydarzyło. Przepraszamy za utrudnienia.",
+    "send-report": "Wyślij raport o błędzie",
+    "restart": "Uruchom ponownie"
+  },
+  "party-waiting": {
+    "host-setting-up": "Gospodarz przygotowuje następną grę…",
+    "host-subtitle": "Spokojnie — dołączysz automatycznie",
+    "starting": "Rozpoczynanie nowej gry…",
+    "preparing": "Przygotowywanie kart"
+  },
+  "sign-up-nudge": {
+    "title": "Synchronizacja między urządzeniami",
+    "subtitle": "Zaloguj się, aby mieć listy wszędzie",
+    "register": "Zarejestruj się"
   }
 }

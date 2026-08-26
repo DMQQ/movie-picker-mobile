@@ -23,7 +23,7 @@ import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import PageHeading from "../../../components/PageHeading";
-import { roomActions } from "../../../redux/room/roomSlice";
+import { appActions } from "../../../redux/app/appSlice";
 import { authActions } from "../../../redux/auth/authSlice";
 import { setUserId } from "../../../redux/app/appSlice";
 import { ensureAnonymousSession } from "../../../redux/auth/authSlice";
@@ -97,7 +97,7 @@ function InfoRow({
 }
 
 export default function SettingsScreen() {
-  const nk = useAppSelector((state) => state.room.nickname);
+  const nk = useAppSelector((state) => state.app.nickname);
   const [nickname, setNickname] = useState<string>(nk);
   const user = useAppSelector((state) => state.auth.user);
   const isFullAccount = !!user && user.provider !== "anonymous";
@@ -273,7 +273,7 @@ export default function SettingsScreen() {
     if (!nickname.trim()) return;
     const id = setTimeout(() => {
       AsyncStorage.setItem("nickname", nickname);
-      dispatch(roomActions.setSettings({ nickname }));
+      dispatch(appActions.setSettings({ nickname }));
       if (user?.provider === "anonymous") {
         updateMe({ name: nickname }).catch(() => {});
       }
@@ -285,7 +285,7 @@ export default function SettingsScreen() {
     if (!user) return;
     setNickname(user.name);
     AsyncStorage.setItem("nickname", user.name);
-    dispatch(roomActions.setSettings({ nickname: user.name }));
+    dispatch(appActions.setSettings({ nickname: user.name }));
   }, [user?.name]);
 
   async function onRefresh() {

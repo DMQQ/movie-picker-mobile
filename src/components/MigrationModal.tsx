@@ -5,6 +5,7 @@ import { Modal, Pressable, StyleSheet, View } from "react-native";
 
 import Button from "./Button";
 import PrimaryButton from "./PrimaryButton";
+import useTranslation from "../service/useTranslation";
 
 type Props = {
   visible: boolean;
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export default function MigrationModal({ visible, counts, isMigrating, onSync, onDismiss }: Props) {
+  const t = useTranslation();
   return (
     <Modal
       visible={visible}
@@ -32,21 +34,21 @@ export default function MigrationModal({ visible, counts, isMigrating, onSync, o
             color={colors.primary}
             style={{ marginBottom: spacing.md }}
           />
-          <Text style={styles.title}>Sync your collection</Text>
+          <Text style={styles.title}>{t("migration.modal-title")}</Text>
           <Text style={styles.body}>
-            {"You have "}
+            {t("migration.bodyStart")}
             {counts.movies > 0 && (
               <Text style={styles.highlight}>
-                {counts.movies} saved movie{counts.movies !== 1 ? "s" : ""}
+                {t(counts.movies === 1 ? "migration.movies-one" : "migration.movies-many", { count: counts.movies })}
               </Text>
             )}
-            {counts.movies > 0 && counts.interactions > 0 && " and "}
+            {counts.movies > 0 && counts.interactions > 0 && t("migration.bodyAnd")}
             {counts.interactions > 0 && (
               <Text style={styles.highlight}>
-                {counts.interactions} interaction{counts.interactions !== 1 ? "s" : ""}
+                {t(counts.interactions === 1 ? "migration.interactions-one" : "migration.interactions-many", { count: counts.interactions })}
               </Text>
             )}
-            {" stored locally. Upload them to your account so they're available everywhere."}
+            {t("migration.bodyEnd")}
           </Text>
           <PrimaryButton
             onPress={onSync}
@@ -54,7 +56,7 @@ export default function MigrationModal({ visible, counts, isMigrating, onSync, o
             disabled={isMigrating}
             style={styles.syncBtn}
           >
-            Sync now
+            {t("migration.syncNow")}
           </PrimaryButton>
           <Button
             mode="text"
@@ -62,7 +64,7 @@ export default function MigrationModal({ visible, counts, isMigrating, onSync, o
             disabled={isMigrating}
             textColor="rgba(255,255,255,0.45)"
           >
-            Later
+            {t("migration.later")}
           </Button>
         </View>
       </View>

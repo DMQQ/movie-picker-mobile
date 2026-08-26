@@ -237,6 +237,12 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xl,
     paddingLeft: spacing.xs + 1,
     borderRadius: radius.modal,
+    ...Platform.select({
+      android: {
+        backgroundColor: colors.surface,
+        borderRadius: radius.lg,
+      }
+    })
   },
 
   text: { fontSize: fontSize.md + 1, color: "rgba(255,255,255,0.6)" },

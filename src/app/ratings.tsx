@@ -136,7 +136,7 @@ export default function AllRatingsScreen() {
                 />
                 <Text style={styles.emptyText}>{t("ratings.empty") as string}</Text>
                 <Text style={styles.emptyHint}>
-                  Rate movies you've watched to see them here
+                  {t("ratings.emptyHint")}
                 </Text>
               </View>
             )

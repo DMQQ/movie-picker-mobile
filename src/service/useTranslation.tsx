@@ -3,7 +3,7 @@ import { useAppSelector } from "../redux/store";
 import { translate } from "./translationUtils";
 
 export default function useTranslation() {
-  const lang = useAppSelector((state) => state.room.language) || "en";
+  const lang = useAppSelector((state) => state.app.language) || "en";
 
   return useCallback(
     (key: string, args?: Record<string, number | string | boolean>): string =>

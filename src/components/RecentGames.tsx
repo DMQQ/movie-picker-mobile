@@ -9,6 +9,7 @@ import { useGetGamesQuery } from "../redux/lists/listsApi";
 import { formatGameType } from "../utils/formatGameType";
 import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
 import { colors, fontSize, fontWeight, radius, spacing } from "../constants/design";
+import useTranslation from "../service/useTranslation";
 
 const mutedText = "rgba(255,255,255,0.45)";
 
@@ -25,6 +26,7 @@ function formatDate(unix: number) {
 }
 
 export default function RecentGames() {
+  const t = useTranslation();
   const { data, isLoading, error } = useGetGamesQuery();
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export default function RecentGames() {
     return (
       <View style={styles.placeholder}>
         <Icon source="loading" size={14} color={colors.textSecondary} />
-        <Text style={styles.placeholderText}>Loading…</Text>
+        <Text style={styles.placeholderText}>{t("games.loading")}</Text>
       </View>
     );
   }
@@ -47,7 +49,7 @@ export default function RecentGames() {
   if (recent.length === 0) {
     return (
       <View style={styles.placeholder}>
-        <Text style={styles.placeholderText}>No games yet</Text>
+        <Text style={styles.placeholderText}>{t("games.no-games-yet")}</Text>
       </View>
     );
   }
@@ -96,7 +98,7 @@ export default function RecentGames() {
 
       <View style={styles.info}>
         <Text style={styles.title}>
-          {recent.length} recent {recent.length === 1 ? "game" : "games"}
+          {t(recent.length === 1 ? "games.recent-one" : "games.recent-many", { count: recent.length })}
         </Text>
         <View style={styles.meta}>
           {totalMatches > 0 && (
@@ -108,7 +110,7 @@ export default function RecentGames() {
           <View style={styles.latestRow}>
             <Icon source="clock-outline" size={10} color={colors.textSecondary} />
             <Text style={styles.latest}>
-              {formatGameType(recent[0].session?.gameType ?? null)} •{" "}
+              {t(formatGameType(recent[0].session?.gameType ?? null))} •{" "}
               {formatDate(recent[0].createdAt)}
             </Text>
           </View>

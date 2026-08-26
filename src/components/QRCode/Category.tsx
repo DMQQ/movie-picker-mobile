@@ -39,7 +39,7 @@ export default function Category({
         <Text style={{ fontSize: 25, fontWeight: fontWeight.bold, marginTop: spacing.xs + 1 }}>{t("room.choose-category")}</Text>
         <TextInput
           keyboardType="numeric"
-          label={"Page Range"}
+          label={t("room.page-range")}
           value={pageRange.toString()}
           onChangeText={(text) => {
             setPageRange(text.replace(/[^0-9]/g, "").replace(/^0+/, ""));

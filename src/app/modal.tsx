@@ -62,7 +62,7 @@ function ServerErrorContent({ loading, onDismiss }: { loading?: boolean; onDismi
 
 function MaintenanceContent({ loading, data, onDismiss }: { loading?: boolean; data: SettingsResponse; onDismiss?: () => void }) {
   const t = useTranslation();
-  const lang = useAppSelector((state) => state.room.language) || "en";
+  const lang = useAppSelector((state) => state.app.language) || "en";
   const maintenance = data.maintenance!;
   const serverMessage = getLocalizedValue(maintenance.message, lang);
 
@@ -82,7 +82,7 @@ function MaintenanceContent({ loading, data, onDismiss }: { loading?: boolean; d
 
 function UpdateContent({ loading, data, onDismiss }: { loading?: boolean; data: SettingsResponse; onDismiss?: () => void }) {
   const t = useTranslation();
-  const lang = useAppSelector((state) => state.room.language) || "en";
+  const lang = useAppSelector((state) => state.app.language) || "en";
   const update = data.update!;
   const serverMessage = getLocalizedValue(update.message, lang);
   const link = Platform.OS === "ios" ? update.links?.ios : update.links?.android;

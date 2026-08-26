@@ -5,15 +5,38 @@ import { Pressable, View } from "react-native";
 import { colors } from "../../constants/design";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
+import useTranslation from "../../service/useTranslation";
 
 interface ActiveUsersProps {
   data: string[];
   showAll?: boolean;
   onPress?: () => void;
   size?: number;
+  isHost?: boolean;
+}
+
+function HostCrown() {
+  return (
+    <MaterialCommunityIcons
+      name="crown"
+      size={12}
+      color="#FFD700"
+      style={{
+        position: "absolute",
+        top: -10,
+        left: "50%",
+        transform: [{ translateX: -5 }],
+        zIndex: 10,
+        textShadowColor: "rgba(0, 0, 0, 0.5)",
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 2,
+      }}
+    />
+  );
 }
 
 function ActiveUsers(props: ActiveUsersProps) {
+  const t = useTranslation();
   const { size = 32 } = props;
   const isVisible = props.showAll ? true : props.data.length > 1;
 
@@ -42,31 +65,19 @@ function ActiveUsers(props: ActiveUsersProps) {
                 name={nick}
                 size={size}
               />
-              {n === 0 && (
-                <MaterialCommunityIcons
-                  name="crown"
-                  size={12}
-                  color="#FFD700"
-                  style={{
-                    position: "absolute",
-                    top: -10,
-                    left: "50%",
-                    transform: [{ translateX: -5 }],
-                    textShadowColor: "rgba(0, 0, 0, 0.5)",
-                    textShadowOffset: { width: 0, height: 1 },
-                    textShadowRadius: 2,
-                  }}
-                />
-              )}
+              {n === 0 && <HostCrown />}
             </View>
           ))
         ) : (
-          <UserAvatar
-            name={props.data[0] || "Guest"}
-            size={size}
-            borderWidth={0.5}
-            borderColor={colors.text}
-          />
+          <View>
+            {props.isHost && <HostCrown />}
+            <UserAvatar
+              name={props.data[0] || t("common.guest")}
+              size={size}
+              borderWidth={0.5}
+              borderColor={colors.text}
+            />
+          </View>
         )}
         <View
           style={{

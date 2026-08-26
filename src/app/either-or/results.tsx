@@ -5,20 +5,25 @@ import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn } from "react-native-reanimated";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Text from "../../components/Text";
 import PrimaryButton from "../../components/PrimaryButton";
+import IconButton from "../../components/IconButton";
 import AnimatedBg from "../../components/GameSummary/AnimatedBgClassic";
 import Podium from "../../components/EitherOr/Podium";
 import Bracket, { computeBracketFitScale } from "../../components/EitherOr/Bracket";
 import { FancySpinner } from "../../components/FancySpinner";
 import CreateCollectionFromLiked from "../../components/CreateCollectionFromLiked";
 import UserAvatar from "../../components/UserAvatar";
+import PartyWaitingOverlay from "../../components/PartyWaitingOverlay";
+import { usePartyGameFlow } from "../../hooks/usePartyGameFlow";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { eitherOrActions } from "../../redux/eitherOr/eitherOrSlice";
 import GameRatingPill from "../../components/GameRatingPill";
 import useTranslation from "../../service/useTranslation";
 import ReviewManager from "../../utils/rate";
-import { colors, fontSize, radius, spacing, typography, withAlpha } from "../../constants/design";
+import { colors, common, fontSize, radius, spacing, typography, withAlpha } from "../../constants/design";
+import { posthog } from "../../constants/posthog";
 
 export default function EitherOrResults() {
   const t = useTranslation();
@@ -33,6 +38,7 @@ export default function EitherOrResults() {
   const users = useAppSelector((state) => state.eitherOr.users);
   const players = useAppSelector((state) => state.eitherOr.players);
   const history = useAppSelector((state) => state.eitherOr.history);
+  const isHost = useAppSelector((state) => state.eitherOr.isHost);
 
   const displayPlayers = players.length > 0 ? players : users.map((u) => ({ userId: u.userId, username: u.username }));
 
@@ -70,6 +76,15 @@ export default function EitherOrResults() {
     });
     return () => sub.remove();
   }, []);
+
+  const configuring = usePartyGameFlow(isHost, (mode) => {
+    if (mode === "voter") {
+      router.navigate("/voter" as any);
+    } else if (mode === "either-or") {
+      dispatch(eitherOrActions.reset());
+      router.replace("/either-or/setup" as any);
+    }
+  });
 
   if (!top3.length) {
     return (
@@ -140,17 +155,47 @@ export default function EitherOrResults() {
 
       <GameRatingPill roomId={roomId} shouldShow={!!top3.length} />
 
-      <View
-        style={[
-          styles.buttonRow,
-          { paddingBottom: Platform.OS === "android" ? spacing.screen : spacing.sm },
-        ]}
-      >
-        <PrimaryButton onPress={onDone} style={styles.doneBtn}>
-          {t("eitherOr.results.done")}
-        </PrimaryButton>
-        <CreateCollectionFromLiked data={top3} />
-      </View>
+      {isHost ? (
+        <View
+          style={[
+            styles.buttonRow,
+            { paddingBottom: Platform.OS === "android" ? spacing.screen : spacing.sm },
+          ]}
+        >
+          <IconButton
+            icon="logout"
+            size={24}
+            onPress={onDone}
+            style={[common.iconButton, styles.quitIcon]}
+          />
+          <PrimaryButton
+            icon={({ color }) => (
+              <MaterialCommunityIcons name="refresh" size={18} color={color} />
+            )}
+            onPress={() => {
+              posthog?.capture("play_again_tapped", { game: "either-or" });
+              router.push({ pathname: "/play-again", params: { from: "either-or" } } as any);
+            }}
+            style={styles.playAgainBtn}
+          >
+            {t("game-summary.play-again")}
+          </PrimaryButton>
+        </View>
+      ) : (
+        <View
+          style={[
+            styles.buttonRow,
+            { paddingBottom: Platform.OS === "android" ? spacing.screen : spacing.sm },
+          ]}
+        >
+          <PrimaryButton onPress={onDone} style={styles.doneBtn}>
+            {t("eitherOr.results.done")}
+          </PrimaryButton>
+          <CreateCollectionFromLiked data={top3} />
+        </View>
+      )}
+
+      <PartyWaitingOverlay visible={configuring} />
     </View>
   );
 }
@@ -235,6 +280,16 @@ const styles = StyleSheet.create({
   doneBtn: {
     flex: 1,
     borderRadius: radius.pill,
+  },
+  playAgainBtn: {
+    flex: 1,
+    borderRadius: radius.pill,
+  },
+  quitIcon: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.pill,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: colors.border,
   },
   confetti: {
     ...StyleSheet.absoluteFill,

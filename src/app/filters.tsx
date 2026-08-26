@@ -32,6 +32,7 @@ import DecadeSelector from "../components/MediaFilters/DecadeSelector";
 import ProviderList from "../components/Room/ProviderList";
 import { useFilterPreferences } from "../hooks/useFilterPreferences";
 import { posthog } from "../constants/posthog";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 function ProvidersSection() {
   const t = useTranslation();
@@ -161,6 +162,7 @@ function CategoriesSection({ onSelect }: { onSelect: (name: string) => void }) {
 export default function FiltersScreen() {
   const t = useTranslation();
   const dispatch = useAppDispatch();
+  const insets = useSafeAreaInsets();
   const { showCategories } = useLocalSearchParams<{ showCategories: string }>();
 
   const mediaType = useAppSelector((state) => state.mediaFilters.mediaType);
@@ -242,7 +244,16 @@ export default function FiltersScreen() {
         </ScrollView>
       </FormSheetContainer>
 
-      <View style={[styles.footer, { paddingHorizontal: spacing.lg }]}>
+      <View
+        style={[
+          styles.footer,
+          {
+            paddingHorizontal: spacing.lg,
+            paddingBottom:
+              insets.bottom + (Platform.OS === "android" ? 30 : spacing.lg),
+          },
+        ]}
+      >
         <PrimaryButton onPress={handleApply} style={styles.applyButton}>
           {t("filters.apply")}
           {activeFilterCount > 0 && ` (${activeFilterCount})`}
@@ -288,7 +299,6 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingTop: spacing.lg,
-    paddingBottom: spacing.lg,
     borderTopWidth: 1,
     borderTopColor: "#333",
     backgroundColor: colors.surface,

@@ -15,12 +15,13 @@ import { SectionListItem, SECTION_ITEM_HEIGHT, SECTION_ITEM_WIDTH } from "../../
 import { colors, common, fontSize, fontWeight, radius, spacing, typography } from "../../constants/design";
 import Chip from "../../components/Chip";
 import RatingIcons from "../../components/RatingIcons";
+import useTranslation from "../../service/useTranslation";
 
 const { width, height } = Dimensions.get("screen");
 const IMG_HEIGHT = height * 0.58;
 
 function formatBirthday(birthday: string): string {
-  return new Date(birthday).toLocaleDateString("en-US", {
+  return new Date(birthday).toLocaleDateString(undefined, {
     month: "long",
     day: "numeric",
     year: "numeric",
@@ -40,6 +41,7 @@ export default function PersonScreen() {
   const { id, img } = useLocalSearchParams<{ id: string; img?: string }>();
   const insets = useSafeAreaInsets();
   const [bioExpanded, setBioExpanded] = useState(false);
+  const t = useTranslation();
 
   const { data, isLoading } = useGetPersonScreenQuery(
     { id: Number(id) },
@@ -127,10 +129,10 @@ export default function PersonScreen() {
                 <Chip>{data.known_for_department}</Chip>
               )}
               {movieCount > 0 && (
-                <Chip icon="movie-outline">{movieCount} movie{movieCount !== 1 ? "s" : ""}</Chip>
+                <Chip icon="movie-outline">{movieCount} {t(movieCount === 1 ? "person.movie" : "person.movies")}</Chip>
               )}
               {tvEpisodes > 0 && (
-                <Chip icon="television-play">{tvEpisodes} episode{tvEpisodes !== 1 ? "s" : ""}</Chip>
+                <Chip icon="television-play">{tvEpisodes} {t(tvEpisodes === 1 ? "person.episode" : "person.episodes")}</Chip>
               )}
             </View>
           </View>
@@ -142,7 +144,7 @@ export default function PersonScreen() {
                 <View style={styles.metaItem}>
                   <MaterialCommunityIcons name="cake-variant-outline" size={13} color={colors.placeholder} />
                   <Text style={styles.metaText}>
-                    {formatBirthday(data.birthday)} · age {getAge(data.birthday)}
+                    {formatBirthday(data.birthday)} · {t("person.age", { age: getAge(data.birthday) })}
                   </Text>
                 </View>
               )}
@@ -180,13 +182,13 @@ export default function PersonScreen() {
           {/* Biography */}
           {!!data?.biography && (
             <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { paddingHorizontal: 0 }]}>Biography</Text>
+              <Text style={[styles.sectionTitle, { paddingHorizontal: 0 }]}>{t("person.biography")}</Text>
               <Text style={styles.biography} numberOfLines={bioExpanded ? undefined : 4}>
                 {data.biography}
               </Text>
               {longBio && (
                 <Pressable onPress={() => setBioExpanded((v) => !v)} style={{ marginTop: spacing.sm }}>
-                  <Text style={styles.readMore}>{bioExpanded ? "Show less" : "Read more"}</Text>
+                  <Text style={styles.readMore}>{bioExpanded ? t("person.showLess") : t("person.readMore")}</Text>
                 </Pressable>
               )}
             </View>
@@ -195,7 +197,7 @@ export default function PersonScreen() {
           {/* Known For */}
           {castCredits.length > 0 && (
             <View style={[styles.sectionFull, { height: SECTION_ITEM_HEIGHT + spacing.xl + spacing.md }]}>
-              <Text style={styles.sectionTitle}>Known For</Text>
+              <Text style={styles.sectionTitle}>{t("person.knownFor")}</Text>
               <FlashList
                 data={castCredits}
                 keyExtractor={(c) => `${c.id}-${c.character ?? "crew"}`}
@@ -221,7 +223,7 @@ export default function PersonScreen() {
           {/* Photo gallery */}
           {photos.length > 0 && (
             <View style={styles.sectionFull}>
-              <Text style={styles.sectionTitle}>Photos</Text>
+              <Text style={styles.sectionTitle}>{t("person.photos")}</Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}

@@ -6,9 +6,7 @@ import {
   fontSize,
   radius,
   spacing,
-  withAlpha,
 } from "../../constants/design";
-import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Platform,
@@ -21,16 +19,9 @@ import {
 import SegmentedControl from "../../components/SegmentedControl";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import useTranslation from "../../service/useTranslation";
-import { Link, router } from "expo-router";
-import Animated, { FadeInDown } from "react-native-reanimated";
-import FortuneWheelAnimation from "../../components/GameListAnimations/FortuneWheelAnimation";
-import SwiperAnimation from "../../components/GameListAnimations/SwipeAnimation";
-import VoterAnimation from "../../components/GameListAnimations/VoterAnimation";
-import RandomMovieAnimation from "../../components/GameListAnimations/RandomMovieAnimation";
-import EitherOrAnimation from "../../components/GameListAnimations/EitherOrAnimation";
+import { router } from "expo-router";
 import PageHeading from "../../components/PageHeading";
 import { useUnviewedMatches } from "../../hooks/useUnviewedMatches";
-import Touch from "../../components/Touch";
 import ActiveGameBanner from "../../components/ActiveGameBanner";
 import { TourAttachStep } from "../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../components/Tour/TourProvider";
@@ -39,122 +30,10 @@ import TutorialTooltip from "../../components/TutorialTooltip";
 import { useTutorialSeen, useMarkAllTutorialsSeen } from "../../hooks/useTutorial";
 import PlatformBlurView from "../../components/PlatformBlurView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { posthog } from "../../constants/posthog";
+import GameCard, { CARD_HEIGHT } from "../../components/GameCard";
 
-const CARD_HEIGHT = 260;
-const CARD_HEIGHT_FEATURED = 310;
 const CARD_GAP = 24;
 
-interface GameCardProps {
-  title: string;
-  description: string;
-  href: string;
-  beta?: boolean;
-  players?: string;
-  duration?: string;
-  index: number;
-  badge?: string;
-  badgeColor?: string;
-  highlight?: string;
-  featured?: boolean;
-}
-
-const Animations = [
-  <SwiperAnimation />,
-  <VoterAnimation />,
-  <FortuneWheelAnimation />,
-  <RandomMovieAnimation />,
-  <EitherOrAnimation />,
-];
-
-const GameCard = ({
-  title,
-  description,
-  href,
-  players,
-  duration,
-  index,
-  badge,
-  badgeColor,
-  highlight,
-  featured,
-}: GameCardProps) => {
-  const cardHeight = featured ? CARD_HEIGHT_FEATURED : CARD_HEIGHT;
-  return (
-    <Animated.View
-      style={[styles.cardContainer]}
-      exiting={FadeInDown.delay((index + 1) * 75)}
-    >
-      <Link href={href as any} asChild>
-        <Touch onPress={() => posthog?.capture("game_mode_selected", { game: href })}>
-          <View style={[styles.card, { height: cardHeight }, featured && { borderWidth: 1.5, borderColor: `${badgeColor ?? colors.primary}66` }]}>
-            {Animations[index]}
-
-            {badge && (
-              <View style={[styles.badgeChip, { backgroundColor: badgeColor ?? colors.primary }]}>
-                {featured && (
-                  <MaterialCommunityIcons name="crown" size={11} color={colors.text} />
-                )}
-                <Text style={styles.badgeText}>{badge}</Text>
-              </View>
-            )}
-
-            <LinearGradient
-              colors={["transparent", colors.appBackground]}
-              style={styles.cardGradient}
-            >
-              <View style={styles.cardContent}>
-                <Text
-                  style={styles.cardTitle}
-                  numberOfLines={2}
-                  textBreakStrategy="highQuality"
-                >
-                  {title}
-                </Text>
-                <Text style={styles.cardDescription}>{description}</Text>
-                {highlight && (
-                  <View style={styles.highlightRow}>
-                    <MaterialCommunityIcons
-                      name="lightning-bolt"
-                      size={11}
-                      color={badgeColor ?? colors.primary}
-                    />
-                    <Text style={[styles.highlightText, { color: badgeColor ?? colors.primary }]}>
-                      {highlight}
-                    </Text>
-                  </View>
-                )}
-                <View style={styles.cardMeta}>
-                  {players && (
-                    <View style={styles.metaItem}>
-                      <MaterialCommunityIcons
-                        name="account-group"
-                        size={13}
-                        color="rgba(255,255,255,0.65)"
-                      />
-                      <Text style={styles.metaText}>{players}</Text>
-                    </View>
-                  )}
-                  {players && duration && <Text style={styles.metaDot}>·</Text>}
-                  {duration && (
-                    <View style={styles.metaItem}>
-                      <MaterialCommunityIcons
-                        name="clock-outline"
-                        size={13}
-                        color="rgba(255,255,255,0.65)"
-                      />
-                      <Text style={styles.metaText}>{duration}</Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-            </LinearGradient>
-          </View>
-        </Touch>
-      </Link>
-    </Animated.View>
-  );
-};
 
 export default function GameList() {
   const t = useTranslation();
@@ -253,8 +132,8 @@ export default function GameList() {
         title: t("games.voter.swipe"),
         description: t("games.voter.swipeDescription"),
         href: "/room/setup",
-        players: "1-8",
-        duration: "~1 min",
+        players: "1-10",
+        duration: t("games.duration-short"),
         index: 0,
         badge: t("games.voter.swipeBadge") as string,
         badgeColor: colors.primary,
@@ -266,7 +145,7 @@ export default function GameList() {
         description: t("games.fortunewheel.description"),
         href: "/fortune",
         players: "1",
-        duration: "< 1 min",
+        duration: t("games.duration-instant"),
         index: 2,
         badge: t("games.fortunewheel.badge") as string,
         badgeColor: "#F59E0B",
@@ -278,7 +157,7 @@ export default function GameList() {
         description: t("games.random.description"),
         href: "/random",
         players: "1",
-        duration: "< 1 min",
+        duration: t("games.duration-instant"),
         index: 3,
         badge: t("games.random.badge") as string,
         badgeColor: "#22C55E",
@@ -289,8 +168,8 @@ export default function GameList() {
         description: t("games.voter.description"),
         href: "/voter",
         beta: true,
-        players: "2",
-        duration: "~3 min",
+        players: "1+",
+        duration: t("games.duration-medium"),
         index: 1,
         badge: t("games.voter.badge") as string,
         badgeColor: "#8B5CF6",
@@ -301,8 +180,8 @@ export default function GameList() {
         description: t("games.eitherOr.description"),
         href: "/either-or/setup",
         beta: true,
-        players: "1-8",
-        duration: "2-5 min",
+        players: "1-10",
+        duration: t("games.duration-long"),
         index: 4,
         badge: t("games.eitherOr.badge") as string,
         badgeColor: colors.error,
@@ -417,89 +296,6 @@ const styles = StyleSheet.create({
   },
   modeChipsRow: {
     marginBottom: spacing.lg,
-  },
-  cardContainer: {
-    borderRadius: radius.card,
-    overflow: "hidden",
-  },
-
-  card: {
-    borderRadius: radius.card,
-    overflow: "hidden",
-  },
-  cardImage: {
-    width: "100%",
-    height: "100%",
-  },
-  cardGradient: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-  },
-  cardContent: {
-    paddingHorizontal: spacing.screen,
-    paddingVertical: spacing.md,
-  },
-  cardTitle: {
-    fontFamily: "Bebas",
-    fontSize: fontSize.display,
-    color: colors.text,
-  },
-  cardDescription: {
-    color: "rgba(255,255,255,0.7)",
-    fontSize: fontSize.md,
-    lineHeight: 18,
-    marginTop: spacing.xs - 2,
-  },
-  cardMeta: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm - 2,
-    marginTop: spacing.sm,
-  },
-  metaItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
-  metaText: {
-    color: "rgba(255,255,255,0.65)",
-    fontSize: fontSize.sm,
-  },
-  metaDot: {
-    color: "rgba(255,255,255,0.35)",
-    fontSize: fontSize.sm,
-  },
-  badgeChip: {
-    position: "absolute",
-    top: spacing.md,
-    left: spacing.md,
-    zIndex: 20,
-    borderRadius: radius.pill,
-    paddingHorizontal: spacing.sm + 2,
-    paddingVertical: 3,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  badgeText: {
-    color: colors.text,
-    fontSize: fontSize.xs,
-    fontWeight: fontWeight.bold,
-    letterSpacing: 0.4,
-    textTransform: "uppercase",
-  },
-  highlightRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 3,
-    marginTop: spacing.xs,
-  },
-  highlightText: {
-    fontSize: 11,
-    fontWeight: fontWeight.semibold,
   },
   qrButtonContainer: {
     borderRadius: radius.pill,

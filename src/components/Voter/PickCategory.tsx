@@ -1,11 +1,9 @@
 import { View, StyleSheet } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import TypeCollageStep from "../Setup/TypeCollageStep";
-import { useGetMovieCategoriesWithThumbnailsQuery, useGetTVCategoriesWithThumbnailsQuery } from "../../redux/movie/movieApi";
-import Text from "../Text";
-import Touch from "../Touch";
+import CustomMoviesBanner from "../CustomMoviesBanner";
+import { useGetCategoriesWithThumbnailsQuery } from "../../redux/movie/movieApi";
 import useTranslation from "../../service/useTranslation";
-import { colors, fontSize, fontWeight, radius, spacing, withAlpha } from "../../constants/design";
+import { spacing } from "../../constants/design";
 import { type PickedMovie } from "../../redux/moviePicker/moviePickerSlice";
 
 export default function PickCategory({
@@ -24,15 +22,14 @@ export default function PickCategory({
   onClearCustom?: () => void;
 }) {
   const t = useTranslation();
-  const { data: movieCategories, isLoading: moviesLoading } = useGetMovieCategoriesWithThumbnailsQuery();
-  const { data: tvCategories, isLoading: tvLoading } = useGetTVCategoriesWithThumbnailsQuery();
+  const { data: movieCategories, isLoading: moviesLoading } = useGetCategoriesWithThumbnailsQuery({ type: "movie" });
+  const { data: tvCategories, isLoading: tvLoading } = useGetCategoriesWithThumbnailsQuery({ type: "tv" });
 
   const moviePosters = (movieCategories ?? []).map((c) => c.featured_poster).filter(Boolean);
   const tvPosters = (tvCategories ?? []).map((c) => c.featured_poster).filter(Boolean);
   const mixedPosters = [moviePosters[0], tvPosters[0], moviePosters[1], tvPosters[1]].filter(Boolean);
 
   const isCustom = isCustomSelected;
-  const hasCustom = isCustom && customMovies.length > 0;
 
   const handleTileSelect = (value: string) => {
     onClearCustom?.();
@@ -52,18 +49,11 @@ export default function PickCategory({
           { value: "Mixed", label: t("voter.types.mixed"), posters: mixedPosters },
         ]}
       />
-      <Touch scaleTo={0.97} onPress={() => onPickCustom?.()} style={[styles.customBanner, isCustom && styles.customBannerSelected]}>
-        <View style={[styles.customBannerIcon, isCustom && styles.customBannerIconSelected]}>
-          <MaterialCommunityIcons name="movie-filter" size={20} color={isCustom ? colors.primary : colors.placeholder} />
-        </View>
-        <View style={styles.customBannerText}>
-          <Text style={[styles.customBannerTitle, isCustom && styles.customBannerTitleSelected]}>Pick your own movies</Text>
-          <Text style={styles.customBannerSubtitle}>
-            {hasCustom ? `${customMovies.length} movies selected · tap to change` : "Choose exactly what gets swiped"}
-          </Text>
-        </View>
-        <MaterialCommunityIcons name="chevron-right" size={22} color={isCustom ? colors.primary : colors.placeholder} />
-      </Touch>
+      <CustomMoviesBanner
+        selected={isCustomSelected}
+        moviesCount={customMovies.length}
+        onPress={() => onPickCustom?.()}
+      />
     </View>
   );
 }
@@ -72,47 +62,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: spacing.md,
-  },
-  customBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-    backgroundColor: colors.surface,
-    borderRadius: radius.card,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md + 2,
-    borderWidth: 1,
-    borderColor: "transparent",
-  },
-  customBannerSelected: {
-    backgroundColor: withAlpha(colors.primary, 0.1),
-    borderColor: withAlpha(colors.primary, 0.35),
-  },
-  customBannerIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: radius.sm,
-    backgroundColor: colors.input,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  customBannerIconSelected: {
-    backgroundColor: withAlpha(colors.primary, 0.15),
-  },
-  customBannerText: {
-    flex: 1,
-    gap: 2,
-  },
-  customBannerTitle: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.text,
-  },
-  customBannerTitleSelected: {
-    color: colors.primary,
-  },
-  customBannerSubtitle: {
-    fontSize: fontSize.sm,
-    color: colors.placeholder,
   },
 });

@@ -23,20 +23,20 @@ export default function GameSummaryHeader({
 }: Props) {
   const t = useTranslation();
   const title = (() => {
-    if (!hasMatches) return "SO CLOSE...";
-    if (matchCount >= 5) return "MOVIE MARATHON!";
-    if (matchCount >= 3) return "GREAT TASTE!";
-    if (matchCount === 2) return "DOUBLE FEATURE!";
-    return "MATCH MADE!";
+    if (!hasMatches) return t("game-summary.celebration.so-close");
+    if (matchCount >= 5) return t("game-summary.celebration.marathon");
+    if (matchCount >= 3) return t("game-summary.celebration.great-taste");
+    if (matchCount === 2) return t("game-summary.celebration.double-feature");
+    return t("game-summary.celebration.match-made");
   })();
 
   const subtitle = hasMatches
-    ? `${matchCount} film${matchCount !== 1 ? "s" : ""} locked in for tonight`
-    : "keep swiping — the perfect film is out there";
+    ? t(matchCount === 1 ? "game-summary.celebration.locked-in-one" : "game-summary.celebration.locked-in", { count: matchCount })
+    : t("game-summary.celebration.keep-swiping");
 
   const meta = [
     subtitle,
-    maxRounds != null ? `${maxRounds} rounds` : null,
+    maxRounds != null ? `${maxRounds} ${t("game-summary.rounds")}` : null,
     type === "movie" ? t("game-summary.movies") as string : type ? t("game-summary.tv-shows") as string : null,
   ]
     .filter(Boolean)

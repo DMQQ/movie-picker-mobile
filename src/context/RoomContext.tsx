@@ -5,10 +5,12 @@ import type { Movie } from "../../types";
 import { prefetchThumbnail, ThumbnailSizes } from "../components/Thumbnail";
 import { useDatabase, useMatches } from "./DatabaseContext";
 import { SocketContext } from "./SocketContext";
+import { usePartySocket } from "./PartySocketContext";
 import { useBlockedMovies } from "../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../hooks/useSuperLikedMovies";
 import { roomActions } from "../redux/room/roomSlice";
-import { useAppDispatch, useAppSelector } from "../redux/store";
+import { partyActions, PartyMember } from "../redux/party/partySlice";
+import { store, useAppDispatch, useAppSelector } from "../redux/store";
 import ReviewManager from "../utils/rate";
 import * as StoreReview from "expo-store-review";
 
@@ -36,6 +38,7 @@ export default function useRoomContext() {
 export function RoomContextProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   const { socket, emitter } = useContext(SocketContext);
+  const partySocket = usePartySocket();
   const userId = useAppSelector((state) => state.app.userId);
   const userIdRef = useRef(userId);
   userIdRef.current = userId;
@@ -46,7 +49,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
   const { movieInteractions, isReady } = useDatabase();
 
   const roomId = useAppSelector((state) => state.room.roomId);
-  const nickname = useAppSelector((state) => state.room.nickname);
+  const nickname = useAppSelector((state) => state.app.nickname);
   const joined = useAppSelector((state) => state.room.joined);
   const cards = useAppSelector((state) => state.room.movies);
   const isFinished = useAppSelector((state) => state.room.isFinished);
@@ -90,7 +93,11 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
         if (!response?.joined) {
           dispatch(roomActions.setJoinError(true));
           hasJoined.current = false;
+        } else if (response.partyId) {
+          dispatch(partyActions.setParty({ partyId: response.partyId }));
+          partySocket?.emit("party:join", response.partyId);
         }
+        console.log("[host-trace] swipe join-room ack", { code, joined: response?.joined, partyId: response?.partyId });
       } catch (error) {
         posthog?.captureException(error, { context: "room_join" });
         if (joinCancelToken.current !== token) return;
@@ -186,6 +193,13 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
 
     const handleRoomState = (data: any) => {
       if (!data) return;
+      console.log("[host-trace] room:state received", {
+        serverRoomId: data.roomId || data.id,
+        isStarted: data.isStarted,
+        gameEnded: data.gameEnded,
+        localIsHost: store.getState().room.isHost,
+        localUserId: userIdRef.current,
+      });
       dispatch(roomActions.setRoom(data));
       dispatch(roomActions.setPlaying(data.isStarted));
     };
@@ -200,11 +214,27 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
     };
 
     const handleHostChanged = (data: { host: string }) => {
-      dispatch(roomActions.setHost(data.host === userIdRef.current));
+      const nextIsHost = data.host === userIdRef.current;
+      console.log("[host-trace] room:host:changed", {
+        serverHost: data.host,
+        localUserId: userIdRef.current,
+        nextIsHost,
+      });
+      dispatch(roomActions.setHost(nextIsHost));
     };
 
     const handleRoomDeleted = () => {
       dispatch(roomActions.setRoomNotFound(true));
+    };
+
+    const handlePartyUpdate = (data: { partyId: string; members: PartyMember[] }) => {
+      console.log("[host-trace] party:update", { partyId: data.partyId, members: data.members?.length });
+      dispatch(partyActions.setParty({ partyId: data.partyId, members: data.members }));
+    };
+
+    const handlePartyGameEnded = (data: { partyId: string }) => {
+      console.log("[host-trace] party:game-ended", data);
+      dispatch(partyActions.setParty({ partyId: data.partyId }));
     };
 
     socket.on("movies", handleMovies);
@@ -213,6 +243,8 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
     socket.on("movies:blocked-update", handleBlockedUpdate);
     socket.on("room:host:changed", handleHostChanged);
     socket.on("room-deleted", handleRoomDeleted);
+    socket.on("party:update", handlePartyUpdate);
+    socket.on("party:game-ended", handlePartyGameEnded);
 
     return () => {
       socket.off("movies", handleMovies);
@@ -221,6 +253,8 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
       socket.off("movies:blocked-update", handleBlockedUpdate);
       socket.off("room:host:changed", handleHostChanged);
       socket.off("room-deleted", handleRoomDeleted);
+      socket.off("party:update", handlePartyUpdate);
+      socket.off("party:game-ended", handlePartyGameEnded);
     };
   }, [socket, dispatch]);
 

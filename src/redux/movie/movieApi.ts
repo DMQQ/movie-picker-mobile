@@ -279,18 +279,11 @@ export const movieApi = createApi({
       query: ({ type, id }) => `/${type}/${id}/trailers`,
     }),
 
-    getMovieCategoriesWithThumbnails: builder.query<
+    getCategoriesWithThumbnails: builder.query<
       CategoryWithThumbnails[],
-      void
+      { type: "movie" | "tv" }
     >({
-      query: () => "/movie/categories/movie/thumbnails",
-    }),
-
-    getTVCategoriesWithThumbnails: builder.query<
-      CategoryWithThumbnails[],
-      void
-    >({
-      query: () => "/movie/categories/tv/thumbnails",
+      query: ({ type }) => `/movie/categories/${type}/thumbnails`,
     }),
 
     getGenresWithThumbnails: builder.query<
@@ -440,8 +433,7 @@ export const {
 
   useLazyGetFeaturedQuery,
 
-  useGetMovieCategoriesWithThumbnailsQuery,
-  useGetTVCategoriesWithThumbnailsQuery,
+  useGetCategoriesWithThumbnailsQuery,
   useGetGenresWithThumbnailsQuery,
   useGetSpecialCategoriesWithThumbnailsQuery,
   useValidateRoomConfigMutation,

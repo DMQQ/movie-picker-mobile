@@ -8,6 +8,8 @@ import PrimaryButton from "./PrimaryButton";
 import * as Updates from "expo-updates";
 import { colors, fontSize, fontWeight, radius, spacing} from "../constants/design";
 import { posthog } from "../constants/posthog";
+import { translate } from "../service/translationUtils";
+import { store } from "../redux/store";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -47,17 +49,20 @@ export default class ErrorBoundary extends React.Component<
     });
   }
 
+  tr = (key: string, args?: Record<string, string | number>) =>
+    translate(store.getState().app.language || "en", key, args);
+
   sendError = () => {
     const { error } = this.state;
-    const subject = "App Error Report";
-    const body = `I encountered an error in the app:\n\nError: ${error?.message || "Unknown error"}\nTime: ${new Date().toISOString()}`;
+    const subject = this.tr("error-boundary.subject");
+    const body = this.tr("error-boundary.body", {
+      message: error?.message || this.tr("error-boundary.unknown-error"),
+      time: new Date().toISOString(),
+    });
     const mailtoUrl = `mailto:contact@flickmate.app?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     Linking.openURL(mailtoUrl).catch(() => {
-      Alert.alert(
-        "Error",
-        "Unable to open email app. Please send us an email describing the error.",
-      );
+      Alert.alert("Error", this.tr("error-boundary.open-email-failed"));
     });
   };
 
@@ -99,10 +104,9 @@ export default class ErrorBoundary extends React.Component<
                 resizeMode="contain"
               />
 
-              <Text style={styles.title}>I'm Sorry!</Text>
+              <Text style={styles.title}>{this.tr("error-boundary.sorry")}</Text>
               <Text style={styles.description}>
-                Something unexpected happened. We apologize for the
-                inconvenience.
+                {this.tr("error-boundary.description")}
               </Text>
             </View>
 
@@ -112,7 +116,7 @@ export default class ErrorBoundary extends React.Component<
                 style={styles.sendButton}
                 icon={({ color }) => <MaterialCommunityIcons name="send" size={16} color={color} />}
               >
-                Send Error Report
+                {this.tr("error-boundary.send-report")}
               </PrimaryButton>
 
               <Button
@@ -122,7 +126,7 @@ export default class ErrorBoundary extends React.Component<
                 icon="restart"
                 textColor={colors.text}
               >
-                Restart App
+                {this.tr("error-boundary.restart")}
               </Button>
             </View>
           </View>

@@ -3,6 +3,7 @@ import Text from "../Text";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { fontSize, radius, spacing } from "../../constants/design";
+import useTranslation from "../../service/useTranslation";
 
 interface RateButtonProps {
   rating?: number | null;
@@ -10,6 +11,7 @@ interface RateButtonProps {
 }
 
 export default function RateButton({ rating, onPress }: RateButtonProps) {
+  const t = useTranslation();
   const isRated = rating != null;
 
   return (
@@ -20,7 +22,7 @@ export default function RateButton({ rating, onPress }: RateButtonProps) {
         color={isRated ? "#FFD700" : "#aaa"}
       />
       <Text style={[styles.label, isRated && styles.labelRated]}>
-        {isRated ? String(rating) : "Rate"}
+        {isRated ? String(rating) : t("common.rate")}
       </Text>
     </Pressable>
   );

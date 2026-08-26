@@ -94,7 +94,7 @@ listenerMiddleware.startListening({
 });
 
 listenerMiddleware.startListening({
-  actionCreator: roomActions.setSettings,
+  actionCreator: appActions.setSettings,
   effect: (action) => {
     posthog?.register({
       language: action.payload.language ?? null,
@@ -110,5 +110,25 @@ listenerMiddleware.startListening({
   matcher: isAnyOf(createGroup.fulfilled, createGroupFromArray.fulfilled),
   effect: () => {
     posthog?.capture("group_created", { local: true });
+  },
+});
+
+// Host-trace: every local mutation of room.isHost logs the transition so host
+// ownership loss after a party play-again flow can be traced to the action.
+listenerMiddleware.startListening({
+  matcher: isAnyOf(
+    roomActions.setHost,
+    roomActions.setQRCode,
+    roomActions.setRoomId,
+    roomActions.resetForNewGame,
+    roomActions.reset,
+  ),
+  effect: (action, listenerApi) => {
+    const state = listenerApi.getState() as { room: { isHost: boolean; roomId: string } };
+    const prevState = listenerApi.getOriginalState() as { room: { isHost: boolean } };
+    console.log(
+      `[host-trace] ${action.type} → isHost ${prevState.room.isHost} → ${state.room.isHost}`,
+      { roomId: state.room.roomId, payload: (action as { payload?: unknown }).payload },
+    );
   },
 });

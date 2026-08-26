@@ -14,6 +14,7 @@ import Text from "../Text";
 import RoomShareStrip from "./RoomShareStrip";
 import { useAppSelector } from "../../redux/store";
 import { colors, fontSize, radius, spacing } from "../../constants/design";
+import { posthog } from "../../constants/posthog";
 
 const CARD_WIDTH = Dimensions.get("window").width - 40;
 
@@ -56,6 +57,7 @@ const GameEndFlow = memo(() => {
 
   const handlePlayAgain = useCallback(async () => {
     if (!socket || !roomId) return;
+    posthog?.capture("play_again_tapped", { game: "swipe", restart: true });
     setLoading(true);
     try {
       const response = await socket.emitWithAck("play-again", roomId);

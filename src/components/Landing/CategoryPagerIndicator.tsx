@@ -116,7 +116,7 @@ function CategoryPagerIndicator({
   );
 
   return (
-    <View style={[styles.container, { bottom: insets.bottom + 5 }]}>
+    <View style={[styles.container, { bottom: Platform.OS === 'ios' ? insets.bottom + 5 : 0 }]}>
       {tourStepIndex !== undefined ? (
         <TourAttachStep index={tourStepIndex} fill>
           {chips}

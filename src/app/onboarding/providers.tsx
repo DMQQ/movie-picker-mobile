@@ -88,7 +88,7 @@ export default function ProvidersScreen() {
       <SearchField
         value={searchQuery}
         onChangeText={setSearchQuery}
-        placeholder="Search..."
+        placeholder={t("onboarding.providers.searchPlaceholder")}
         returnKeyType="search"
         style={styles.search}
       />

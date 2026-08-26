@@ -16,6 +16,7 @@ import { memo, useMemo } from "react";
 import { Movie } from "../../../types";
 import { Link } from "expo-router";
 import { colors, fontSize, radius, spacing, typography} from "../../constants/design";
+import useTranslation from "../../service/useTranslation";
 
 const SwipeText = memo(
   (props: {
@@ -53,7 +54,7 @@ const SwipeText = memo(
         style={[
           animatedStyle,
           {
-            top: props.text === "LIKE" ? 40 : 60,
+            top: props.right ? 60 : 40,
             right: props.right ? 25 : undefined,
             left: props.right ? undefined : 25,
           },
@@ -104,6 +105,7 @@ function Poster(props: {
   href?: any;
 }) {
   const { height, width } = useWindowDimensions();
+  const t = useTranslation();
 
   const overlayAnimatedStyle = useAnimatedStyle(() => {
     if (!props.translateX) return {};
@@ -154,7 +156,7 @@ function Poster(props: {
               />
             }
             isVisible={props.isRightVisible}
-            text="NOPE"
+            text={t("swipe.nope")}
             color="#FF4458"
             rotate="30deg"
             right
@@ -169,7 +171,7 @@ function Poster(props: {
               />
             }
             isVisible={props.isLeftVisible}
-            text="LIKE"
+            text={t("swipe.like")}
             color="#42DCA3"
             rotate="-30deg"
             right={false}
@@ -198,7 +200,7 @@ function Poster(props: {
       {props.card.isSuperLiked && (
         <View style={styles.superLikeBadge}>
           <MaterialCommunityIcons name="star" size={15} color={colors.appBackground} />
-          <Text style={styles.superLikeText}>SUPER LIKE</Text>
+          <Text style={styles.superLikeText}>{t("swipe_tutorial.special_actions.super_like_label")}</Text>
         </View>
       )}
     </View>

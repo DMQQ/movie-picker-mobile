@@ -6,6 +6,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { SocketContext } from "../../context/SocketContext";
 import Text from "../Text";
 import { colors, fontSize, fontWeight, radius, spacing } from "../../constants/design";
+import useTranslation from "../../service/useTranslation";
 
 interface RoomShareStripProps {
   qrCode: string;
@@ -16,15 +17,16 @@ interface RoomShareStripProps {
 const RoomShareStrip = memo(({ qrCode, webPath = "swipe", roomId }: RoomShareStripProps) => {
   const { colors: themeColors } = useTheme();
   const { socket } = useContext(SocketContext);
+  const t = useTranslation();
   const [hasShared, setHasShared] = useState(false);
   const [notifyEnabled, setNotifyEnabled] = useState(false);
 
   const handleShare = useCallback(async () => {
     const code = qrCode.toUpperCase();
     const url = `https://flickmate.app/${webPath}/${code}`;
-    await Share.share({ message: `Join my Flickmate room! Code: ${code}\n${url}`, url });
+    await Share.share({ message: t("room.share.join-message", { code, url }), url });
     setHasShared(true);
-  }, [qrCode, webPath]);
+  }, [qrCode, webPath, t]);
 
   const handleNotify = useCallback(async () => {
     if (notifyEnabled) {
@@ -46,7 +48,7 @@ const RoomShareStrip = memo(({ qrCode, webPath = "swipe", roomId }: RoomShareStr
       <View style={styles.strip}>
         <TouchableOpacity style={styles.btn} onPress={handleShare} activeOpacity={0.7}>
           <MaterialCommunityIcons name="share-variant-outline" size={20} color={colors.text} />
-          <Text style={styles.label}>Share</Text>
+          <Text style={styles.label}>{t("room.share.button")}</Text>
         </TouchableOpacity>
 
         {hasShared && (
@@ -59,7 +61,7 @@ const RoomShareStrip = memo(({ qrCode, webPath = "swipe", roomId }: RoomShareStr
                 color={notifyEnabled ? themeColors.primary : colors.text}
               />
               <Text style={[styles.label, notifyEnabled && { color: themeColors.primary }]}>
-                {notifyEnabled ? "Notifying" : "Notify me"}
+                {notifyEnabled ? t("room.notifying") : t("room.notify-me")}
               </Text>
             </TouchableOpacity>
           </>
@@ -68,9 +70,7 @@ const RoomShareStrip = memo(({ qrCode, webPath = "swipe", roomId }: RoomShareStr
 
       {hasShared && (
         <Text style={styles.hint}>
-          {notifyEnabled
-            ? "You'll get a push notification when a player matches with you."
-            : "Want a notification when someone joins and matches with you?"}
+          {notifyEnabled ? t("room.notify-on") : t("room.notify-off")}
         </Text>
       )}
     </View>

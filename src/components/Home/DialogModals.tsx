@@ -4,7 +4,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { useContext } from "react";
 import { StyleSheet, View } from "react-native";
 
-import { colors, fontWeight, spacing } from "../../constants/design";
+import { colors, fontWeight, radius, spacing } from "../../constants/design";
 import QRCode from "../QRCode";
 import { roomActions } from "../../redux/room/roomSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
@@ -84,12 +84,14 @@ export default function DialogModals({
         ]}
       >
         <View style={styles.qrRow}>
-          <QRCode
-            backgroundColor="transparent"
-            color={theme.colors.primary}
-            value={`flickmate://room/${qrCode}`}
-            size={QR_SIZE}
-          />
+          <View style={styles.qrCard}>
+            <QRCode
+              backgroundColor={colors.text}
+              color={theme.colors.primary}
+              value={`flickmate://room/${qrCode}`}
+              size={QR_SIZE}
+            />
+          </View>
 
           <View style={styles.codeBlock}>
             <Text style={[styles.codeValue, { color: theme.colors.primary }]}>
@@ -109,6 +111,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.lg,
     width: "100%",
+  },
+  qrCard: {
+    backgroundColor: colors.text,
+    borderRadius: radius.sm,
+    padding: spacing.sm,
   },
   codeBlock: {
     flex: 1,

@@ -4,8 +4,10 @@ import { router } from "expo-router";
 import Text from "./Text";
 import { colors, fontSize, fontWeight, radius, spacing, typography } from "../constants/design";
 import { useAppSelector } from "../redux/store";
+import useTranslation from "../service/useTranslation";
 
 export default function SignUpNudgeBanner() {
+  const t = useTranslation();
   const user = useAppSelector((s) => s.auth.user);
   const isFullAccount = !!user && user.provider !== "anonymous";
   if (isFullAccount) return null;
@@ -19,11 +21,11 @@ export default function SignUpNudgeBanner() {
         <MaterialCommunityIcons name="cloud-sync-outline" size={28} color="#fff" />
       </View>
       <View style={styles.content}>
-        <Text style={styles.title}>Sync across devices</Text>
-        <Text style={styles.subtitle}>Sign in to keep your lists everywhere</Text>
+        <Text style={styles.title}>{t("sign-up-nudge.title")}</Text>
+        <Text style={styles.subtitle}>{t("sign-up-nudge.subtitle")}</Text>
       </View>
       <View style={styles.btnPrimary}>
-        <Text style={styles.btnPrimaryText}>Register</Text>
+        <Text style={styles.btnPrimaryText}>{t("sign-up-nudge.register")}</Text>
       </View>
     </Pressable>
   );

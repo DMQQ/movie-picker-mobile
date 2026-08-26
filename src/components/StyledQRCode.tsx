@@ -30,36 +30,39 @@ export default function StyledQRCode({
         },
       ]}
     >
-      <QRCode
-        value={value}
-        size={size}
-        color={theme.colors.primary}
-        backgroundColor={theme.colors.surface}
-      />
-
-      {showLogo && (
-        <Image
-          source={require("../../assets/images/icon-light.png")}
-          style={[
-            styles.logo,
-            {
-              width: logoSize,
-              height: logoSize,
-              left: logoOffset + spacing.screen,
-              top: logoOffset + spacing.screen,
-              borderRadius: logoSize * 0.2,
-            },
-          ]}
-          contentFit="contain"
+      <View style={{ width: size, height: size }}>
+        <QRCode
+          value={value}
+          size={size}
+          color={theme.colors.primary}
+          backgroundColor={theme.colors.surface}
+          clearArea={showLogo ? logoSize + spacing.sm : undefined}
         />
-      )}
+
+        {showLogo && (
+          <Image
+            source={require("../../assets/images/icon-light.png")}
+            style={[
+              styles.logo,
+              {
+                width: logoSize,
+                height: logoSize,
+                left: logoOffset,
+                top: logoOffset,
+                borderRadius: logoSize * 0.2,
+              },
+            ]}
+            contentFit="contain"
+          />
+        )}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   wrapper: {
-    padding: spacing.screen,
+    padding: spacing.sm,
     position: "relative",
     borderWidth: 5,
     borderRadius: radius.modal,

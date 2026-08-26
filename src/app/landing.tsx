@@ -1,6 +1,6 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import { router } from "expo-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
@@ -15,8 +15,8 @@ import { Image } from "expo-image";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Text from "../components/Text";
 import PrimaryButton from "../components/PrimaryButton";
-import Touch from "../components/Touch";
-import { colors, spacing, radius, fontSize, fontWeight, withAlpha } from "../constants/design";
+import Button from "../components/Button";
+import { colors, common, spacing, radius, fontSize, fontWeight, withAlpha } from "../constants/design";
 import { posthog } from "../constants/posthog";
 import useTranslation from "../service/useTranslation";
 
@@ -158,30 +158,109 @@ function PosterCard({
   );
 }
 
-function AnimatedHeading({ line1, line2 }: { line1: string; line2: string }) {
+const HERO_FONT = 50;
+const HERO_LINE = 52;
+const HERO_TRACKING = 2;
+const MIN_HERO_SCALE = 0.5;
+
+// Chars are grouped into non-wrapping word rows so a word never breaks mid-word.
+// If the two lines overflow, the whole heading scales down until it fits 2 lines.
+function AnimatedLine({
+  text,
+  delay,
+  accent,
+  scale,
+}: {
+  text: string;
+  delay: number;
+  accent: boolean;
+  scale: number;
+}) {
+  const style = accent ? styles.heroAccent : styles.heroWhite;
+  const sized = { fontSize: HERO_FONT * scale, lineHeight: HERO_LINE * scale };
+  const words = text.split(" ");
+  let charOffset = 0;
+
   return (
-    <View style={styles.heroBlock}>
-      <View style={styles.heroLine}>
-        {line1.split("").map((char, i) => (
-          <Animated.Text
-            key={i}
-            entering={FadeInUp.delay(100 + i * 35).duration(300)}
-            style={styles.heroWhite}
-          >
-            {char === " " ? " " : char}
-          </Animated.Text>
-        ))}
-      </View>
-      <View style={styles.heroLine}>
-        {line2.split("").map((char, i) => (
-          <Animated.Text
-            key={i}
-            entering={FadeInUp.delay(260 + i * 35).duration(300)}
-            style={styles.heroAccent}
-          >
-            {char === " " ? " " : char}
-          </Animated.Text>
-        ))}
+    <View style={styles.heroLine}>
+      {words.map((word, wi) => {
+        const wordEl = (
+          <View key={wi} style={styles.heroWord}>
+            {word.split("").map((char, i) => (
+              <Animated.Text
+                key={i}
+                entering={FadeInUp.delay(delay + (charOffset + i) * 35).duration(300)}
+                style={[style, sized]}
+              >
+                {char}
+              </Animated.Text>
+            ))}
+            {wi < words.length - 1 && (
+              <Animated.Text
+                entering={FadeInUp.delay(delay + (charOffset + word.length) * 35).duration(300)}
+                style={[style, sized]}
+              >
+                {" "}
+              </Animated.Text>
+            )}
+          </View>
+        );
+        charOffset += word.length + 1;
+        return wordEl;
+      })}
+    </View>
+  );
+}
+
+function AnimatedHeading({ line1, line2 }: { line1: string; line2: string }) {
+  const [fontScale, setFontScale] = useState(1);
+  const blockWidth = useRef(0);
+  const textWidths = useRef([0, 0]);
+
+  // Exact fit: hidden unwrapped copies give intrinsic line widths. letterSpacing
+  // doesn't scale with fontSize, so subtract it from both sides before dividing.
+  const fit = () => {
+    const avail = blockWidth.current;
+    const [w1, w2] = textWidths.current;
+    if (avail <= 0 || w1 <= 0 || w2 <= 0) return;
+    const scales = [line1, line2].map((text, i) => {
+      const w = textWidths.current[i];
+      const tracking = text.length * HERO_TRACKING;
+      if (w <= tracking) return 1;
+      return (avail - tracking) / (w - tracking);
+    });
+    setFontScale(Math.max(MIN_HERO_SCALE, Math.min(1, ...scales) * 0.99));
+  };
+
+  return (
+    <View
+      style={styles.heroBlock}
+      onLayout={(e) => {
+        blockWidth.current = e.nativeEvent.layout.width;
+        fit();
+      }}
+    >
+      <AnimatedLine text={line1} delay={100} accent={false} scale={fontScale} />
+      <AnimatedLine text={line2} delay={260} accent scale={fontScale} />
+      <View pointerEvents="none" style={styles.measureRow}>
+        <Text
+          style={[styles.heroWhite, styles.measureText]}
+          onLayout={(e) => {
+            textWidths.current[0] = e.nativeEvent.layout.width;
+            fit();
+          }}
+        >
+          {line1}
+        </Text>
+        <Text
+          style={[styles.heroAccent, styles.measureText]}
+          onLayout={(e) => {
+            textWidths.current[1] = e.nativeEvent.layout.width;
+            fit();
+          }}
+        >
+          {line2}
+        </Text>
       </View>
     </View>
   );
@@ -214,7 +293,7 @@ export default function LandingScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom + spacing.lg }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom  }]}>
       <CyclingGlow />
 
       <OrbitingPosters />
@@ -256,9 +335,9 @@ export default function LandingScreen() {
         <PrimaryButton onPress={goQuickstart} style={styles.primaryBtn}>
           {t("landing.cta")}
         </PrimaryButton>
-        <Touch onPress={goBrowse} style={styles.browseBtn}>
-          <Text style={styles.browseText}>{t("landing.browse")}</Text>
-        </Touch>
+        <Button mode="outlined" onPress={goBrowse} style={[common.pillButton, styles.browseBtn]}>
+          {t("landing.browse")}
+        </Button>
       </Animated.View>
     </View>
   );
@@ -318,19 +397,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
+  heroWord: {
+    flexDirection: "row",
+  },
   heroWhite: {
     fontFamily: "Bebas",
-    fontSize: 50,
     color: colors.text,
-    lineHeight: 52,
-    letterSpacing: 2,
+    letterSpacing: HERO_TRACKING,
   },
   heroAccent: {
     fontFamily: "Bebas",
-    fontSize: 50,
     color: colors.primary,
-    lineHeight: 52,
-    letterSpacing: 2,
+    letterSpacing: HERO_TRACKING,
+  },
+  measureRow: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    opacity: 0,
+  },
+  measureText: {
+    fontSize: HERO_FONT,
+    lineHeight: HERO_LINE,
+    alignSelf: "flex-start",
   },
   sub: {
     fontSize: fontSize.lg,
@@ -339,7 +428,7 @@ const styles = StyleSheet.create({
   },
   modesRow: {
     flexDirection: "row",
-    gap: spacing.xs,
+    gap: spacing.sm,
   },
   modeChip: {
     flex: 1,
@@ -360,18 +449,12 @@ const styles = StyleSheet.create({
   },
   actions: {
     gap: spacing.sm,
-    marginTop: spacing.xxl,
+    marginTop: spacing.md,
   },
   primaryBtn: {
     borderRadius: radius.pill,
   },
   browseBtn: {
-    alignItems: "center",
-    paddingVertical: spacing.sm,
-    marginTop: spacing.md,
-  },
-  browseText: {
-    color: withAlpha(colors.text, 0.45),
-    fontSize: fontSize.md,
+    borderRadius: radius.pill,
   },
 });

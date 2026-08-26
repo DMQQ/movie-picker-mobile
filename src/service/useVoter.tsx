@@ -4,7 +4,8 @@ import { SocketContext } from "../context/SocketContext";
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import { Movie } from "../../types";
 import * as Haptics from "expo-haptics";
-import { useAppSelector } from "../redux/store";
+import { store, useAppSelector } from "../redux/store";
+import { usePartySocket } from "../context/PartySocketContext";
 import { selectProviders } from "../redux/filterPreferences/filterPreferencesSlice";
 import { type PickedMovie } from "../redux/moviePicker/moviePickerSlice";
 
@@ -35,6 +36,7 @@ interface MovieVoterContextValue {
     submitRating: (movieId: string, ratings: RatingCriteria) => void;
     setSessionSettings: React.Dispatch<React.SetStateAction<Settings>>;
     setWaiting: () => void;
+    resetSession: () => void;
   };
 
   sessionSettings: Settings;
@@ -62,6 +64,7 @@ const MovieVoterContext = createContext<MovieVoterContextValue | null>(null);
 
 export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   const { socket, emitter } = useContext(SocketContext);
+  const partySocket = usePartySocket();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentMovies, setCurrentMovies] = useState<Movie[]>([]);
   const [cursor, setCursor] = useState<number | null>(null);
@@ -127,6 +130,19 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     setStatus("waiting");
     setIsHost(true);
     AsyncStorage.setItem("voterSessionId", sessionId);
+
+    const partyId = store.getState().party.partyId;
+    console.log("[host-trace] voter createSession", {
+      sessionId,
+      setIsHost: true,
+      partyId,
+      partySocketConnected: partySocket?.connected,
+    });
+    if (partyId) {
+      partySocket?.emit("party:join", partyId);
+      partySocket?.emit("party:ready", { partyId, roomId: sessionId, gameMode: "voter" });
+      console.log("[host-trace] party:join + party:ready emitted", { partyId, roomId: sessionId, gameMode: "voter" });
+    }
   }, [socket, sessionSettings]);
 
   const joinSession = useCallback(
@@ -154,6 +170,8 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     async (joinSessionId: string) => {
       try {
         const response = await socket!.emitWithAck("voter:session:join", { sessionId: joinSessionId });
+        const partyId = store.getState().party.partyId;
+        if (partyId) partySocket?.emit("party:join", partyId);
 
         if (response?.error) {
           setError(response.error);
@@ -166,6 +184,11 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
         setStatus("waiting");
 
         const userIsHost = response?.isHost || false;
+        console.log("[host-trace] voter joinSession ack", {
+          sessionId: joinSessionId,
+          serverIsHost: response?.isHost,
+          setIsHost: userIsHost,
+        });
         setIsHost(userIsHost);
       } catch (error) {
         posthog?.captureException(error, { context: "voter_join" });
@@ -251,6 +274,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       lastJoinedSessionId.current !== sessionId
     ) {
       lastJoinedSessionId.current = sessionId;
+      console.log("[host-trace] voter auto-join firing", { sessionId, isHost });
       joinSessionInternal(sessionId).catch((error) => {
         console.error(error);
         posthog?.captureException(error, { context: "voter_auto_join" });
@@ -339,6 +363,20 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     setStatus("waiting");
   }, []);
 
+  const resetSession = useCallback(() => {
+    console.log("[host-trace] voter resetSession", { setIsHost: false });
+    setStatus("idle");
+    setSessionId(null);
+    setSessionResults(null);
+    setIsHost(false);
+    setUsers([]);
+    setError(null);
+    setCurrentMovies([]);
+    setCursor(null);
+    lastJoinedSessionId.current = null;
+    AsyncStorage.removeItem("voterSessionId");
+  }, []);
+
   const value: MovieVoterContextValue = {
     sessionId,
     status,
@@ -356,6 +394,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       submitRating,
       setSessionSettings,
       setWaiting,
+      resetSession,
     },
     sessionResults,
     sessionSettings,

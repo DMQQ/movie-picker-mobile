@@ -27,6 +27,7 @@ import PlatformBlurView, { BlurViewWrapper } from "../PlatformBlurView";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import YoutubeIframe from "react-native-youtube-iframe";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useTranslation from "../../service/useTranslation";
 
 const { width, height } = Dimensions.get("window");
 
@@ -50,6 +51,7 @@ function Trailers({
   handleOpen(): void;
 }) {
   const { data: trailers } = useGetTrailersQuery({ id, type });
+  const t = useTranslation();
   const isExpanded = useSharedValue(false);
   const insets = useSafeAreaInsets();
 
@@ -170,7 +172,7 @@ function Trailers({
                 style={styles.buttonText}
                 numberOfLines={1}
               >
-                {isOpen ? "" : "Trailers"}
+                {isOpen ? "" : t("movie.tabs.trailers")}
               </Text>
             </TouchableOpacity>
           </Animated.View>

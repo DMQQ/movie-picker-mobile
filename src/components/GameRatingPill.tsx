@@ -20,17 +20,17 @@ type RatingType = "bad" | "mid" | "good";
 const RATING_CONFIG = {
   bad: {
     emoji: "😞",
-    label: "Bad",
+    labelKey: "game-rating.bad",
     color: "#FF6B6B",
   },
   mid: {
     emoji: "😐",
-    label: "Mid",
+    labelKey: "game-rating.mid",
     color: "#FFB347",
   },
   good: {
     emoji: "😊",
-    label: "Good",
+    labelKey: "game-rating.good",
     color: "#4CAF50",
   },
 };
@@ -145,7 +145,7 @@ export default function GameRatingPill({ roomId, sessionId, shouldShow }: GameRa
       ]
     : [
         {
-          label: "Skip",
+          label: t("game-rating.skip"),
           mode: "text",
           textColor: "rgba(255, 255, 255, 0.6)",
           onPress: handleSkip,
@@ -194,7 +194,7 @@ export default function GameRatingPill({ roomId, sessionId, shouldShow }: GameRa
                 activeOpacity={0.7}
               >
                 <Text style={styles.emoji}>{config.emoji}</Text>
-                <Text style={styles.label}>{config.label}</Text>
+                <Text style={styles.label}>{t(config.labelKey)}</Text>
               </TouchableOpacity>
             );
           })}

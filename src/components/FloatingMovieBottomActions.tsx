@@ -24,6 +24,7 @@ import PlatformBlurView, { BlurViewWrapper } from "./PlatformBlurView";
 import { useGetTrailersQuery } from "../redux/movie/movieApi";
 import { useNavigation } from "expo-router";
 import { router } from "expo-router";
+import useTranslation from "../service/useTranslation";
 
 const { height } = Dimensions.get("screen");
 const IMG_HEIGHT = height * 0.75;
@@ -44,6 +45,7 @@ export default function FloatingMovieBottomActions({
   providers,
 }: FloatingMovieBottomActionsProps) {
   const navigation = useNavigation<any>();
+  const t = useTranslation();
   const [showTrailers, setShowTrailers] = useState(false);
 
   const { data: trailers } = useGetTrailersQuery({
@@ -64,7 +66,7 @@ export default function FloatingMovieBottomActions({
       const year = movie.release_date
         ? new Date(movie.release_date).getFullYear()
         : "";
-      const shareText = `Check out "${title}"${year ? ` (${year})` : ""}!`;
+      const shareText = t("movie.shareMessage", { title, suffix: year ? ` (${year})` : "" });
 
       await Share.share({
         message: shareText,
@@ -72,7 +74,7 @@ export default function FloatingMovieBottomActions({
     } catch (error) {
       console.error("Error sharing:", error);
     }
-  }, [movie]);
+  }, [movie, t]);
 
   const handleTrailersPress = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -197,7 +199,7 @@ export default function FloatingMovieBottomActions({
                 color={colors.text}
               />
               <Text style={styles.searchButtonText} variant="bodySmall">
-                Smart Search
+                {t("movie.smart-search")}
               </Text>
             </View>
           </PlatformBlurView>
@@ -248,7 +250,7 @@ export default function FloatingMovieBottomActions({
                   style={styles.trailerText}
                   numberOfLines={1}
                 >
-                  {trailer.name || "Trailer"}
+                  {trailer.name || t("movie.trailer")}
                 </Text>
               </TouchableOpacity>
             ))}

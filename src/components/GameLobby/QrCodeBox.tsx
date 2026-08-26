@@ -23,7 +23,10 @@ const QrCodeBox = memo(({ code, scheme, webPath }: Props) => {
 
   const shareCode = async () => {
     const result = await Share.share({
-      message: t("room.share.message", { code }) + "\nOr join via " + webUrl,
+      message:
+        t("room.share.message", { code }) +
+        "\n" +
+        t("room.share.or-join-via", { url: webUrl }),
       title: t("room.share.title") as string,
       url: webUrl,
     });

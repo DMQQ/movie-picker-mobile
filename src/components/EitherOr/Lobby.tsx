@@ -37,7 +37,7 @@ export default function Lobby({ onGoBack }: Props) {
               <Text style={styles.hostHint}>{t("eitherOr.lobby.host")}</Text>
             )}
             <PlayersRow
-              players={users.map((user) => ({ id: user.userId, name: user.username, isActive: user.isActive }))}
+              players={users.map((user) => ({ id: user.userId, name: user.username, isActive: user.isActive, isHost: user.isAdmin }))}
               waitingLabel={t("eitherOr.lobby.waitingForHost")}
             />
           </>

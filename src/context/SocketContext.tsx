@@ -55,7 +55,7 @@ const connectionConfig = {
   pingTimeout: 2500,
 } as Partial<ManagerOptions & SocketOptions>;
 
-const makeHeaders = (
+export const makeHeaders = (
   appLanguage: string,
   regionalization: Record<string, string> = {},
 ) => {
@@ -89,11 +89,12 @@ export const SocketProvider = ({
   children: React.ReactNode;
   namespace: "/swipe" | "/voter" | "/either-or";
 }) => {
-  const language = useSelector((st: RootState) => st.room.language);
+  const language = useSelector((st: RootState) => st.app.language);
   const regionalization =
-    useSelector((st: RootState) => st.room.regionalization, shallowEqual) || {};
+    useSelector((st: RootState) => st.app.regionalization, shallowEqual) || {};
   const authToken = useSelector((st: RootState) => st.auth.token);
   const userId = useSelector((st: RootState) => st.app.userId);
+  const partyId = useSelector((st: RootState) => st.party.partyId);
   const socketRef = useRef<Socket | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connectionStatus, setConnectionStatus] =
@@ -126,6 +127,7 @@ export const SocketProvider = ({
           ...(effectiveUserId ? { "user-id": effectiveUserId } : {}),
           ...makeHeaders(language, regionalization),
           ...(namespace === "/voter" ? { "x-voter-version": "2" } : {}),
+          ...(partyId ? { "x-party-id": partyId } : {}),
         },
       });
 

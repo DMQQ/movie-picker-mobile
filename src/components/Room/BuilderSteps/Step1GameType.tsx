@@ -1,21 +1,17 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import Text from "../../Text";
-import Touch from "../../Touch";
 import { View, StyleSheet, LayoutChangeEvent, FlatList } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
-import {
-  useGetMovieCategoriesWithThumbnailsQuery,
-  useGetTVCategoriesWithThumbnailsQuery,
-} from "../../../redux/movie/movieApi";
+import { useGetCategoriesWithThumbnailsQuery } from "../../../redux/movie/movieApi";
 import PosterCard from "./PosterCard";
 import SkeletonCard from "../SkeletonCard";
+import CustomMoviesBanner from "../../CustomMoviesBanner";
 import useTranslation from "../../../service/useTranslation";
 import { useAppDispatch, useAppSelector } from "../../../redux/store";
 import { setCategory } from "../../../redux/roomBuilder/roomBuilderSlice";
 import { moviePickerActions } from "../../../redux/moviePicker/moviePickerSlice";
-import { colors, fontSize, fontWeight, radius, spacing, withAlpha } from "../../../constants/design";
+import { colors, fontSize, spacing } from "../../../constants/design";
 
 const MIN_CUSTOM_MOVIES = 20;
 
@@ -42,43 +38,41 @@ const Step1GameType: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <MoviesSection onSelectCategory={onSelectCategory} />
-      <SeriesSection onSelectCategory={onSelectCategory} />
-      <Touch scaleTo={0.97} onPress={handlePickCustomMovies} style={[styles.customBanner, hasCustom && styles.customBannerSelected]}>
-        <View style={[styles.customBannerIcon, hasCustom && styles.customBannerIconSelected]}>
-          <MaterialCommunityIcons name="movie-filter" size={20} color={hasCustom ? colors.primary : colors.placeholder} />
-        </View>
-        <View style={styles.customBannerText}>
-          <Text style={[styles.customBannerTitle, hasCustom && styles.customBannerTitleSelected]}>Pick your own movies</Text>
-          <Text style={styles.customBannerSubtitle}>
-            {hasCustom ? `${customMovies.length} movies selected · tap to change` : "Choose exactly what gets swiped"}
-          </Text>
-        </View>
-        <MaterialCommunityIcons name="chevron-right" size={22} color={hasCustom ? colors.primary : colors.placeholder} />
-      </Touch>
+      <CategorySection type="movie" titleKey="room.builder.step1.movies" onSelectCategory={onSelectCategory} />
+      <CategorySection type="tv" titleKey="room.builder.step1.tv" onSelectCategory={onSelectCategory} />
+      <CustomMoviesBanner
+        selected={hasCustom}
+        moviesCount={customMovies.length}
+        onPress={handlePickCustomMovies}
+        style={styles.bannerSpacing}
+      />
     </View>
   );
 };
 
-interface SectionPrpos {
+interface CategorySectionProps {
+  type: "movie" | "tv";
+  titleKey: string;
   onSelectCategory: (categoryId: string, categoryPath: string, gameType: "movie" | "tv") => void;
 }
 
-const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
+const CategorySection = ({ type, titleKey, onSelectCategory }: CategorySectionProps) => {
   const t = useTranslation();
   const [listHeight, setListHeight] = useState(0);
   const selectedCategoryId = useAppSelector((state) => state.builder.categoryId);
   const hasCustomMovies = useAppSelector((state) => state.builder.customMovies.length > 0);
-  const { data: movieCategories, isLoading: moviesLoading } = useGetMovieCategoriesWithThumbnailsQuery();
+  const { data: categories, isLoading } = useGetCategoriesWithThumbnailsQuery({ type });
   const didAutoSelect = useRef(false);
 
   useEffect(() => {
+    // Only movies auto-select the first category; TV is picked manually
+    if (type !== "movie") return;
     if (didAutoSelect.current || hasCustomMovies) return;
-    if (movieCategories && movieCategories.length > 0 && !selectedCategoryId) {
+    if (categories && categories.length > 0 && !selectedCategoryId) {
       didAutoSelect.current = true;
-      onSelectCategory(movieCategories[0].id, movieCategories[0].path, "movie");
+      onSelectCategory(categories[0].id, categories[0].path, type);
     }
-  }, [movieCategories, selectedCategoryId, hasCustomMovies, onSelectCategory]);
+  }, [categories, selectedCategoryId, hasCustomMovies, onSelectCategory, type]);
 
   const onListWrapperLayout = useCallback((e: LayoutChangeEvent) => {
     const h = e.nativeEvent.layout.height;
@@ -89,7 +83,7 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{t("room.builder.step1.movies")}</Text>
+      <Text style={styles.sectionTitle}>{t(titleKey)}</Text>
 
       <View style={styles.listWrapper} onLayout={onListWrapperLayout}>
         {listHeight > 0 && (
@@ -98,14 +92,14 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.scrollContent}
             style={{ height: listHeight }}
-            data={movieCategories}
+            data={categories}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item: category, index }) => (
               <PosterCard
                 posterUrl={category.featured_poster}
                 label={category.label}
                 isSelected={!hasCustomMovies && selectedCategoryId === category.id}
-                onPress={() => onSelectCategory(category.id, category.path, "movie")}
+                onPress={() => onSelectCategory(category.id, category.path, type)}
                 delay={index * 50}
                 large
                 cardWidth={cardWidth}
@@ -114,58 +108,7 @@ const MoviesSection = ({ onSelectCategory }: SectionPrpos) => {
             )}
             ListEmptyComponent={
               <View style={{ flexDirection: "row", gap: spacing.md }}>
-                {moviesLoading && [1, 2, 3, 4].map((item) => <SkeletonCard key={item} width={cardWidth} height={listHeight} borderRadius={12} />)}
-              </View>
-            }
-          />
-        )}
-      </View>
-    </View>
-  );
-};
-
-const SeriesSection = ({ onSelectCategory }: SectionPrpos) => {
-  const [listHeight, setListHeight] = useState(0);
-  const t = useTranslation();
-  const selectedCategoryId = useAppSelector((state) => state.builder.categoryId);
-  const hasCustomMovies = useAppSelector((state) => state.builder.customMovies.length > 0);
-  const { data: tvCategories, isLoading: tvLoading } = useGetTVCategoriesWithThumbnailsQuery();
-
-  const onListWrapperLayout = useCallback((e: LayoutChangeEvent) => {
-    const h = e.nativeEvent.layout.height;
-    if (h > 0) setListHeight(h);
-  }, []);
-
-  const cardWidth = Math.floor(listHeight * 0.7);
-
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{t("room.builder.step1.tv")}</Text>
-
-      <View style={styles.listWrapper} onLayout={onListWrapperLayout}>
-        {listHeight > 0 && (
-          <FlatList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-            style={{ height: listHeight }}
-            data={tvCategories}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item: category, index }) => (
-              <PosterCard
-                posterUrl={category.featured_poster}
-                label={category.label}
-                isSelected={!hasCustomMovies && selectedCategoryId === category.id}
-                onPress={() => onSelectCategory(category.id, category.path, "tv")}
-                delay={index * 50}
-                large
-                cardWidth={cardWidth}
-                cardHeight={listHeight}
-              />
-            )}
-            ListEmptyComponent={
-              <View style={{ flexDirection: "row", gap: spacing.md }}>
-                {tvLoading && [1, 2, 3, 4].map((item) => <SkeletonCard key={item} width={cardWidth} height={listHeight} borderRadius={12} />)}
+                {isLoading && [1, 2, 3, 4].map((item) => <SkeletonCard key={item} width={cardWidth} height={listHeight} borderRadius={12} />)}
               </View>
             }
           />
@@ -206,48 +149,8 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingRight: spacing.lg,
   },
-  customBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-    backgroundColor: colors.surface,
-    borderRadius: radius.card,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md + 2,
+  bannerSpacing: {
     marginTop: spacing.sm,
-    borderWidth: 1,
-    borderColor: "transparent",
-  },
-  customBannerSelected: {
-    backgroundColor: withAlpha(colors.primary, 0.1),
-    borderColor: withAlpha(colors.primary, 0.35),
-  },
-  customBannerIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: radius.sm,
-    backgroundColor: colors.input,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  customBannerIconSelected: {
-    backgroundColor: withAlpha(colors.primary, 0.15),
-  },
-  customBannerText: {
-    flex: 1,
-    gap: 2,
-  },
-  customBannerTitle: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.text,
-  },
-  customBannerTitleSelected: {
-    color: colors.primary,
-  },
-  customBannerSubtitle: {
-    fontSize: fontSize.sm,
-    color: colors.placeholder,
   },
 });
 

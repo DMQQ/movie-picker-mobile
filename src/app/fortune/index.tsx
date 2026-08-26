@@ -38,6 +38,7 @@ import { posthog } from "../../constants/posthog";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { moviePickerActions } from "../../redux/moviePicker/moviePickerSlice";
 import IconButton from "../../components/IconButton";
+import NewBadge from "@/components/NewBadge";
 
 const { width: screenWidth } = Dimensions.get("screen");
 
@@ -116,7 +117,7 @@ export default function FortuneWheel() {
         Image.prefetch(`https://image.tmdb.org/t/p/w200${m.poster_path}`)
       )
     );
-    setSelectedCards({ results, name: "Custom" });
+    setSelectedCards({ results, name: t("fortune-wheel.custom") });
     setShouldSpin(true);
   }, [pickerConfirmed]);
 
@@ -286,15 +287,17 @@ export default function FortuneWheel() {
         title={isSpin ? "" : (params?.title as string) || ""}
       >
         <PlatformBlurView style={fortuneStyles.headerActions}>
-          <IconButton
-            icon="playlist-play"
-            size={28}
-            style={common.iconButton}
-            onPress={() => {
-              dispatch(moviePickerActions.init({}));
-              router.push("/movie-picker" as any);
-            }}
-          />
+          <NewBadge featureKey="movie-picker">
+            <IconButton
+              icon="playlist-play"
+              size={28}
+              style={common.iconButton}
+              onPress={() => {
+                dispatch(moviePickerActions.init({}));
+                router.push("/movie-picker" as any);
+              }}
+            />
+          </NewBadge>
           <View style={fortuneStyles.headerDivider} />
           <FilterButton
             shouldAutoOpen

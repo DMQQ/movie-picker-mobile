@@ -1,179 +1,231 @@
-import { LinearGradient } from "expo-linear-gradient";
-import Icon from "./Icon";
-import Text from "./Text";
-import UserAvatar from "./UserAvatar";
 import { Link } from "expo-router";
-import { StyleSheet, View } from "react-native";
-
-import Thumbnail, { ThumbnailSizes } from "./Thumbnail";
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { View, StyleSheet, Pressable } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
+import Text from "./Text";
 import Touch from "./Touch";
-import { type GameMember, type UserGame } from "../redux/lists/listsApi";
-import { formatGameType } from "../utils/formatGameType";
 import {
   colors,
   fontSize,
   fontWeight,
   radius,
   spacing,
-  withAlpha,
 } from "../constants/design";
+import FortuneWheelAnimation from "./GameListAnimations/FortuneWheelAnimation";
+import SwiperAnimation from "./GameListAnimations/SwipeAnimation";
+import VoterAnimation from "./GameListAnimations/VoterAnimation";
+import RandomMovieAnimation from "./GameListAnimations/RandomMovieAnimation";
+import EitherOrAnimation from "./GameListAnimations/EitherOrAnimation";
+import { posthog } from "../constants/posthog";
 
-const AVATAR_SIZE = 20;
-const AVATAR_OVERLAP = 8;
+export const CARD_HEIGHT = 260;
+export const CARD_HEIGHT_FEATURED = 310;
 
-function formatDate(unix: number) {
-  return new Date(unix * 1000).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+const Animations = [
+  <SwiperAnimation />,
+  <VoterAnimation />,
+  <FortuneWheelAnimation />,
+  <RandomMovieAnimation />,
+  <EitherOrAnimation />,
+];
+
+export interface GameCardProps {
+  title: string;
+  description: string;
+  href?: string;
+  onPress?: () => void;
+  players?: string;
+  duration?: string;
+  index: number;
+  badge?: string;
+  badgeColor?: string;
+  highlight?: string;
+  featured?: boolean;
+  beta?: boolean;
+  compact?: boolean;
+  small?: boolean;
 }
 
-function AvatarStack({ members }: { members: GameMember[] }) {
-  if (members.length <= 1) return null;
-  const visible = members.slice(0, 4);
-  const extra = members.length - visible.length;
-  return (
-    <View style={av.row}>
-      {visible.map((m, i) => (
-        <View
-          key={m.id}
-          style={[
-            av.wrapper,
-            { marginLeft: i === 0 ? 0 : -AVATAR_OVERLAP },
-          ]}
-        >
-          <UserAvatar
-            name={m.name}
-            avatarUrl={m.avatarUrl}
-            size={AVATAR_SIZE}
-            borderWidth={1.5}
-            borderColor="rgba(0,0,0,0.6)"
-          />
+export default function GameCard({
+  title,
+  description,
+  href,
+  onPress,
+  players,
+  duration,
+  index,
+  badge,
+  badgeColor,
+  highlight,
+  featured,
+  compact,
+  small,
+}: GameCardProps) {
+  if (compact) {
+    return (
+      <Pressable
+        style={({ pressed }) => [styles.compactCard, pressed && styles.pressed]}
+        onPress={onPress}
+      >
+        <View style={[styles.compactAccent, { backgroundColor: badgeColor ?? colors.primary }]} />
+        <View style={[styles.compactAnimWrap, { backgroundColor: (badgeColor ?? colors.primary) + "22" }]}>
+          {Animations[index]}
         </View>
-      ))}
-      {extra > 0 && (
-        <View
-          style={[
-            av.circle,
-            av.extra,
-            { marginLeft: -AVATAR_OVERLAP },
-          ]}
-        >
-          <Text style={av.extraText}>+{extra}</Text>
+        <View style={styles.compactText}>
+          <Text style={styles.compactTitle}>{title}</Text>
+          <Text style={styles.compactDesc}>{description}</Text>
         </View>
-      )}
-    </View>
-  );
-}
+        <MaterialCommunityIcons name="chevron-right" size={22} color={colors.placeholder} />
+      </Pressable>
+    );
+  }
 
-interface GameCardProps {
-  game: UserGame;
-  width: number | "100%";
-  height: number;
-}
+  const cardHeight = (featured ? CARD_HEIGHT_FEATURED : CARD_HEIGHT) * (small ? 0.65 : 1);
+  const touchable = (
+    <Touch onPress={() => { posthog?.capture("game_mode_selected", { game: href ?? null }); onPress?.(); }}>
+      <View
+        style={[
+          styles.card,
+          { height: cardHeight },
+          featured && { borderWidth: 1.5, borderColor: `${badgeColor ?? colors.primary}66` },
+        ]}
+      >
+        {Animations[index]}
 
-export default function GameCard({ game, width, height }: GameCardProps) {
-  return (
-    <Link href={`/games/${game.id}?poster=${encodeURIComponent(game.posterPath ?? '')}` as any} asChild>
-      <Touch style={StyleSheet.flatten([styles.card, { width, height }])}>
-        <View style={{ flex: 1 }}>
-          <Link.AppleZoom>
-            {game.posterPath ? (
-              <Thumbnail
-                path={game.posterPath}
-                size={ThumbnailSizes.poster.xlarge}
-                container={{ width, height }}
-                showsPlaceholder={false}
-                priority="normal"
-              />
-            ) : (
-              <View style={[{ width, height }, styles.placeholder]}>
-                <Icon source="movie-open-outline" size={44} color={colors.overlay} />
+        {badge && (
+          <View style={[styles.badgeChip, { backgroundColor: badgeColor ?? colors.primary }]}>
+            {featured && <MaterialCommunityIcons name="crown" size={11} color={colors.text} />}
+            <Text style={styles.badgeText}>{badge}</Text>
+          </View>
+        )}
+
+        <LinearGradient
+          colors={["transparent", colors.appBackground]}
+          style={styles.cardGradient}
+        >
+          <View style={styles.cardContent}>
+            <Text style={styles.cardTitle} numberOfLines={2} textBreakStrategy="highQuality">
+              {title}
+            </Text>
+            <Text style={styles.cardDescription}>{description}</Text>
+            {highlight && (
+              <View style={styles.highlightRow}>
+                <MaterialCommunityIcons
+                  name="lightning-bolt"
+                  size={11}
+                  color={badgeColor ?? colors.primary}
+                />
+                <Text style={[styles.highlightText, { color: badgeColor ?? colors.primary }]}>
+                  {highlight}
+                </Text>
               </View>
             )}
-          </Link.AppleZoom>
-
-          <LinearGradient
-            colors={["transparent", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.92)"]}
-            locations={[0, 0.4, 1]}
-            style={StyleSheet.absoluteFill}
-          />
-
-          <View style={styles.meta}>
-            <Text style={styles.title} numberOfLines={1}>
-              {formatGameType(game.session?.gameType ?? null)}
-            </Text>
-            <Text style={styles.date}>{formatDate(game.createdAt)}</Text>
-
-            <View style={styles.chips}>
-              {game.matchCount > 0 && (
-                <View style={[styles.chip, styles.chipAccent]}>
-                  <Icon source="heart" size={10} color={colors.primary} />
-                  <Text style={[styles.chipLabel, styles.chipLabelAccent]}>
-                    {game.matchCount} {game.matchCount !== 1 ? "matches" : "match"}
-                  </Text>
+            <View style={styles.cardMeta}>
+              {players && (
+                <View style={styles.metaItem}>
+                  <MaterialCommunityIcons
+                    name="account-group"
+                    size={13}
+                    color="rgba(255,255,255,0.65)"
+                  />
+                  <Text style={styles.metaText}>{players}</Text>
                 </View>
               )}
-              {game.session && (
-                <View style={styles.chip}>
-                  <Icon source="gesture-swipe" size={10} color="rgba(255,255,255,0.55)" />
-                  <Text style={styles.chipLabel}>{game.session.totalSwipes} swipes</Text>
+              {players && duration && <Text style={styles.metaDot}>·</Text>}
+              {duration && (
+                <View style={styles.metaItem}>
+                  <MaterialCommunityIcons
+                    name="clock-outline"
+                    size={13}
+                    color="rgba(255,255,255,0.65)"
+                  />
+                  <Text style={styles.metaText}>{duration}</Text>
                 </View>
               )}
             </View>
-
-            <AvatarStack members={game.members ?? []} />
           </View>
-        </View>
-      </Touch>
-    </Link>
+        </LinearGradient>
+      </View>
+    </Touch>
+  );
+
+  return (
+    <Animated.View style={styles.cardContainer} exiting={FadeInDown.delay((index + 1) * 75)}>
+      {href ? <Link href={href as any} asChild>{touchable}</Link> : touchable}
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: radius.card,
-    overflow: "hidden",
-    backgroundColor: "rgba(255,255,255,0.05)",
+  // full card
+  cardContainer: { borderRadius: radius.card, overflow: "hidden" },
+  card: { borderRadius: radius.card, overflow: "hidden" },
+  cardGradient: { position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 10 },
+  cardContent: { paddingHorizontal: spacing.screen, paddingVertical: spacing.md },
+  cardTitle: { fontFamily: "Bebas", fontSize: fontSize.display, color: colors.text },
+  cardDescription: {
+    color: "rgba(255,255,255,0.7)",
+    fontSize: fontSize.md,
+    lineHeight: 18,
+    marginTop: spacing.xs - 2,
   },
-  placeholder: { alignItems: "center", justifyContent: "center" },
-
-  meta: { position: "absolute", bottom: spacing.md, left: 14, right: 14, gap: spacing.xs },
-
-  title: { fontSize: fontSize.lg, fontWeight: fontWeight.bold, color: colors.text },
-  date: { fontSize: fontSize.xs, color: "rgba(255,255,255,0.45)" },
-
-  chips: { flexDirection: "row", gap: spacing.sm - 2, flexWrap: "wrap" },
-  chip: {
+  cardMeta: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.xs,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    borderRadius: radius.modal,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs - 1,
+    gap: spacing.sm - 2,
+    marginTop: spacing.sm,
   },
-  chipAccent: {
-    backgroundColor: withAlpha(colors.primary, 0.12),
-    borderColor: withAlpha(colors.primary, 0.25),
-  },
-  chipLabel: { fontSize: fontSize.xs, fontWeight: fontWeight.medium, color: "rgba(255,255,255,0.65)" },
-  chipLabelAccent: { color: colors.primary },
-});
-
-const av = StyleSheet.create({
-  row: { flexDirection: "row", alignItems: "center" },
-  wrapper: { alignItems: "center", justifyContent: "center" },
-  circle: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
+  metaItem: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  metaText: { color: "rgba(255,255,255,0.65)", fontSize: fontSize.sm },
+  metaDot: { color: "rgba(255,255,255,0.35)", fontSize: fontSize.sm },
+  badgeChip: {
+    position: "absolute",
+    top: spacing.md,
+    left: spacing.md,
+    zIndex: 20,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm + 2,
+    paddingVertical: 3,
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    gap: 4,
   },
-  extra: { backgroundColor: colors.overlay },
-  extraText: { fontSize: fontSize.xs - 2, fontWeight: fontWeight.bold, color: "rgba(255,255,255,0.7)" },
+  badgeText: {
+    color: colors.text,
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.bold,
+    letterSpacing: 0.4,
+    textTransform: "uppercase",
+  },
+  highlightRow: { flexDirection: "row", alignItems: "center", gap: 3, marginTop: spacing.xs },
+  highlightText: { fontSize: 11, fontWeight: fontWeight.semibold },
+
+  // compact card
+  compactCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderRadius: radius.card,
+    overflow: "hidden",
+    gap: spacing.md,
+    paddingRight: spacing.lg,
+  },
+  pressed: { opacity: 0.7 },
+  compactAccent: { width: 4, alignSelf: "stretch" },
+  compactAnimWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: radius.sm,
+    overflow: "hidden",
+    marginVertical: spacing.md,
+  },
+  compactText: { flex: 1, gap: 3 },
+  compactTitle: {
+    fontFamily: "Bebas",
+    fontSize: fontSize.xl,
+    letterSpacing: 0.5,
+    color: colors.text,
+  },
+  compactDesc: { fontSize: fontSize.sm, color: colors.placeholder, lineHeight: 17 },
 });

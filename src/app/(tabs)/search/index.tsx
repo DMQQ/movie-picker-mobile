@@ -48,7 +48,7 @@ import { useQuickActions } from "../../../components/QuickActions";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 // Fixed row height so FlashList never has to measure on mount (fast-scroll blanks)
-const CARD_HEIGHT = 118;
+const CARD_HEIGHT = 104;
 
 const GENRE_MAP: Record<number, string> = {
   28: "Action", 12: "Adventure", 16: "Animation", 35: "Comedy", 80: "Crime",
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: "Bebas",
-    fontSize: 22,
+    fontSize: 19,
   },
   ratingRow: {
     flexDirection: "row",
