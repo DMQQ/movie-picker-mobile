@@ -127,7 +127,8 @@
     "share": {
       "message": "Olá! Entre na minha sala no FlickMate: {code}",
       "title": "Entre na minha sala no FlickMate!",
-      "button": "Compartilhar código"
+      "button": "Compartilhar código",
+      "or-join-via": "Ou entre através de {url}"
     },
     "page-range": "Cansado dos mesmos filmes? Aumente suas chances de encontrar algo novo aleatorizando sua busca.",
     "provider_desc": "Selecione as plataformas de streaming que deseja incluir na sua busca. Você pode escolher várias ou nenhuma para ver tudo.",
@@ -617,7 +618,19 @@
     "empty": "Nenhum jogo ainda"
   },
   "moviePicker": {
-    "searchPlaceholder": "Procure milhões de filmes e séries"
+    "searchPlaceholder": "Procure milhões de filmes e séries",
+    "addTo": "Adicionar a {name}",
+    "done": "Concluído",
+    "doneWithCount": "Concluído ({count})",
+    "selectMinimum": "Selecione {count}+ filmes",
+    "selectedProgress": "{count} / {total} selecionados",
+    "movieCount": "{count} filme{plural}",
+    "yourLists": "Suas listas"
+  },
+  "customMoviesBanner": {
+    "title": "Escolhe os teus próprios filmes",
+    "empty": "Escolhe exatamente o que será deslizado",
+    "selected": "{count} filmes selecionados · toque para alterar"
   },
   "search": {
     "error": "Algo deu errado. Por favor tente novamente.",

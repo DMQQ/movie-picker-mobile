@@ -143,7 +143,8 @@
     "share": {
       "message": "Hey! Join my room on FlickMate: {code}",
       "title": "Join my room on FlickMate!",
-      "button": "Share Code"
+      "button": "Share Code",
+      "or-join-via": "Or join via {url}"
     },
     "page-range": "Tired of the same old movies? Increase your chances of finding something new by randomizing your search.",
     "provider_desc": "Select the streaming providers you want to include in your search. You can choose multiple providers or none to see everything.",
@@ -631,7 +632,19 @@
     }
   },
   "moviePicker": {
-    "searchPlaceholder": "Search millions of movies and shows"
+    "searchPlaceholder": "Search millions of movies and shows",
+    "addTo": "Add to {name}",
+    "done": "Done",
+    "doneWithCount": "Done ({count})",
+    "selectMinimum": "Select {count}+ movies",
+    "selectedProgress": "{count} / {total} selected",
+    "movieCount": "{count} movie{plural}",
+    "yourLists": "Your lists"
+  },
+  "customMoviesBanner": {
+    "title": "Pick your own movies",
+    "empty": "Choose exactly what gets swiped",
+    "selected": "{count} movies selected · tap to change"
   },
   "search": {
     "error": "Something went wrong. Please try again.",

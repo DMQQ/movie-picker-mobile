@@ -127,7 +127,8 @@
     "share": {
       "message": "Hej! Dołącz do mojego pokoju w FlickMate: {code}",
       "title": "Dołącz do mojego pokoju w FlickMate!",
-      "button": "Udostępnij kod"
+      "button": "Udostępnij kod",
+      "or-join-via": "Lub dołącz przez {url}"
     },
     "page-range": "Znudziły ci się te same stare filmy? Zwiększ swoje szanse na znalezienie czegoś nowego, losując wyszukiwanie.",
     "provider_desc": "Wybierz platformy, które chcesz uwzględnić w swoim wyszukiwaniu. Możesz wybrać wiele platform lub żadną, aby zobaczyć wszystko.",
@@ -617,7 +618,19 @@
     "empty": "Brak gier"
   },
   "moviePicker": {
-    "searchPlaceholder": "Przeszukaj miliony filmów i seriali"
+    "searchPlaceholder": "Przeszukaj miliony filmów i seriali",
+    "addTo": "Dodaj do {name}",
+    "done": "Gotowe",
+    "doneWithCount": "Gotowe ({count})",
+    "selectMinimum": "Wybierz {count}+ filmów",
+    "selectedProgress": "{count} / {total} wybrano",
+    "movieCount": "{count} film{plural}",
+    "yourLists": "Twoje listy"
+  },
+  "customMoviesBanner": {
+    "title": "Wybierz własne filmy",
+    "empty": "Wybierz dokładnie to, co pojawi się w grze",
+    "selected": "{count} wybranych filmów · dotknij, aby zmienić"
   },
   "search": {
     "error": "Oops, coś poszło nie tak, spróbuj ponownie.",

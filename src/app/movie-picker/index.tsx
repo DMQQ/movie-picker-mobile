@@ -190,7 +190,7 @@ export default function MoviePickerIndex() {
       </View>
 
       <Text style={styles.sectionLabel}>
-        {isSearching ? "Search results" : isListAddMode ? `Add to ${targetListName}` : "Your lists"}
+        {isSearching ? "Search results" : isListAddMode ? t("moviePicker.addTo", { name: targetListName }) : t("moviePicker.yourLists")}
       </Text>
 
       {isSearching || isListAddMode ? (
@@ -212,7 +212,7 @@ export default function MoviePickerIndex() {
                 <View style={styles.rowInfo}>
                   <Text numberOfLines={2} style={styles.rowTitle}>{item.title}</Text>
                   <View style={styles.rowMeta}>
-                    <Text style={styles.metaText}>{item.media_type === "tv" ? "TV" : "Movie"}</Text>
+                    <Text style={styles.metaText}>{item.media_type === "tv" ? t("room.series") : t("room.movie")}</Text>
                     {item.vote_average > 0 && (
                       <>
                         <Text style={styles.metaDot}>·</Text>
@@ -260,7 +260,7 @@ export default function MoviePickerIndex() {
                     )}
                     <View style={{ flex: 1, gap: 2 }}>
                       <Text style={styles.rowTitle}>{list.name}</Text>
-                      <Text style={styles.countText}>{list.itemCount} movie{list.itemCount !== 1 ? "s" : ""}</Text>
+                      <Text style={styles.countText}>{t("moviePicker.movieCount", { count: list.itemCount, plural: list.itemCount === 1 ? "" : "s" }) as string}</Text>
                     </View>
                     <MaterialCommunityIcons name="chevron-right" size={20} color={colors.placeholder} />
                   </Touch>
@@ -287,7 +287,7 @@ export default function MoviePickerIndex() {
                     )}
                     <View style={{ flex: 1, gap: 2 }}>
                       <Text style={styles.rowTitle}>{group.name}</Text>
-                      <Text style={styles.countText}>{group.movies.length} movie{group.movies.length !== 1 ? "s" : ""}{selectedInGroup > 0 ? ` · ` : ""}<Text style={styles.selectedHint}>{selectedInGroup > 0 ? t("common.selected", { defaultValue: "selected" }) : ""}</Text></Text>
+                      <Text style={styles.countText}>{t("moviePicker.movieCount", { count: group.movies.length, plural: group.movies.length === 1 ? "" : "s" }) as string}{selectedInGroup > 0 ? ` · ` : ""}<Text style={styles.selectedHint}>{selectedInGroup > 0 ? t("common.selected", { defaultValue: "selected" }) : ""}</Text></Text>
                     </View>
                     <MaterialCommunityIcons name="chevron-right" size={20} color={colors.placeholder} />
                   </Touch>
@@ -306,12 +306,12 @@ export default function MoviePickerIndex() {
       >
         <Text style={styles.confirmText}>
           {isListAddMode
-            ? selected.length > 0 ? `Done (${selected.length})` : "Done"
+            ? selected.length > 0 ? t("moviePicker.doneWithCount", { count: selected.length }) : t("moviePicker.done")
             : selected.length === 0
-              ? `Select ${requiredCount}+ movies`
+              ? t("moviePicker.selectMinimum", { count: requiredCount })
               : selected.length < requiredCount
-                ? `${selected.length} / ${requiredCount} selected`
-                : `Done (${selected.length})`}
+                ? t("moviePicker.selectedProgress", { count: selected.length, total: requiredCount })
+                : t("moviePicker.doneWithCount", { count: selected.length })}
         </Text>
       </Pressable>
     </FormSheetContainer>

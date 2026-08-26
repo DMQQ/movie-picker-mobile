@@ -127,7 +127,8 @@
     "share": {
       "message": "Hey! Tritt meinem Raum auf FlickMate bei: {code}",
       "title": "Tritt meinem Raum auf FlickMate bei!",
-      "button": "Code teilen"
+      "button": "Code teilen",
+      "or-join-via": "Oder tritt über {url} bei"
     },
     "page-range": "Müde von denselben Filmen? Erhöhe deine Chancen, etwas Neues zu finden, indem du deine Suche zufällig gestaltest.",
     "provider_desc": "Wähle die Streaming-Anbieter aus, die du in deine Suche einbeziehen möchtest. Du kannst mehrere oder keinen Anbieter wählen, um alles zu sehen.",
@@ -617,7 +618,19 @@
     "empty": "Noch keine Spiele"
   },
   "moviePicker": {
-    "searchPlaceholder": "Durchsuche Millionen von Filmen und Shows"
+    "searchPlaceholder": "Durchsuche Millionen von Filmen und Shows",
+    "addTo": "Zu {name} hinzufügen",
+    "done": "Fertig",
+    "doneWithCount": "Fertig ({count})",
+    "selectMinimum": "Wähle {count}+ Filme",
+    "selectedProgress": "{count} / {total} ausgewählt",
+    "movieCount": "{count} Film{plural}",
+    "yourLists": "Deine Listen"
+  },
+  "customMoviesBanner": {
+    "title": "Wähle deine eigenen Filme",
+    "empty": "Wähle genau aus, was geswiped wird",
+    "selected": "{count} Filme ausgewählt · tippen zum Ändern"
   },
   "search": {
     "error": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
