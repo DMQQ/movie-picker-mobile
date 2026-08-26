@@ -97,6 +97,7 @@ export default function Thumbnail({
         placeholderContentFit="cover"
         cachePolicy={"memory-disk"}
         contentFit="cover"
+        recyclingKey={`${size}-${path}`}
         {...(showsPlaceholder && { placeholder: `https://image.tmdb.org/t/p/w${ThumbnailSizes.poster.tiny}` + path })}
       />
     </View>

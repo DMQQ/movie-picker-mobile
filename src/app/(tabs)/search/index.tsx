@@ -1,4 +1,4 @@
-import { Link, router, Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import SearchField from "../../../components/SearchField";
 import Text from "../../../components/Text";
 import React, {
@@ -27,7 +27,6 @@ import { FlashList } from "@shopify/flash-list";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Movie } from "../../../../types";
 import Thumbnail, {
-  prefetchThumbnail,
   ThumbnailSizes,
 } from "../../../components/Thumbnail";
 import useTranslation from "../../../service/useTranslation";
@@ -48,6 +47,9 @@ import { useQuickActions } from "../../../components/QuickActions";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
+// Fixed row height so FlashList never has to measure on mount (fast-scroll blanks)
+const CARD_HEIGHT = 118;
+
 const GENRE_MAP: Record<number, string> = {
   28: "Action", 12: "Adventure", 16: "Animation", 35: "Comedy", 80: "Crime",
   99: "Documentary", 18: "Drama", 10751: "Family", 14: "Fantasy", 36: "History",
@@ -62,52 +64,56 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
   const { isInGroup, onPress } = useQuickActions({ movie: item });
 
   return (
-    <View style={styles.card}>
-      <Link
-        href={{
+    <Touch
+      style={styles.card}
+      onPress={() =>
+        router.push({
           pathname: "/movie/type/[type]/[id]",
           params: {
             id: item.id.toString(),
             type: item?.title ? "movie" : "tv",
             img: item.poster_path,
           },
-        }}
-        asChild
-      >
-        <Touch style={styles.cardInner}>
-          <Thumbnail
-            path={item.poster_path}
-            container={[styles.poster]}
-            size={ThumbnailSizes.poster.small}
-          />
-          <View style={styles.info}>
-            <Text numberOfLines={2} style={styles.title}>
-              {item?.title || item?.name}
-            </Text>
-            <View style={styles.metaRow}>
-              {!!year && <Text style={styles.metaText}>{year}</Text>}
-              {!!genre && (
-                <View style={styles.genreChip}>
-                  <Text style={styles.genreText}>{genre}</Text>
-                </View>
-              )}
-            </View>
-            {!!item?.vote_average && (
-              <View style={styles.ratingRow}>
-                <RatingIcons vote={item.vote_average} size={14} />
+        })
+      }
+    >
+      <View style={styles.cardInner}>
+        <Thumbnail
+          path={item.poster_path}
+          container={[styles.poster]}
+          size={ThumbnailSizes.poster.small}
+        />
+        <View style={styles.info}>
+          <Text numberOfLines={2} style={styles.title}>
+            {item?.title || item?.name}
+          </Text>
+          <View style={styles.metaRow}>
+            {!!year && <Text style={styles.metaText}>{year}</Text>}
+            {!!genre && (
+              <View style={styles.genreChip}>
+                <Text style={styles.genreText}>{genre}</Text>
               </View>
             )}
           </View>
-        </Touch>
-      </Link>
-      <Touch onPress={() => onPress("2")} style={styles.actionButton}>
+          {!!item?.vote_average && (
+            <View style={styles.ratingRow}>
+              <RatingIcons vote={item.vote_average} size={14} />
+            </View>
+          )}
+        </View>
+      </View>
+      <Touch
+        scaleTo={1}
+        onPress={() => onPress("2")}
+        style={styles.actionButton}
+      >
         <MaterialCommunityIcons
           name={isInGroup("2") ? "clock" : "clock-outline"}
           size={22}
           color={isInGroup("2") ? colors.primary : colors.placeholder}
         />
       </Touch>
-    </View>
+    </Touch>
   );
 };
 
@@ -328,12 +334,6 @@ const SearchScreen = () => {
           });
         }
 
-        Promise.any(
-          response.results.map((item) =>
-            prefetchThumbnail(item, ThumbnailSizes.poster.xxlarge),
-          ),
-        );
-
         if (page === 1) {
           setAllResults(response.results);
           setSearchPhase("done");
@@ -487,6 +487,7 @@ const SearchScreen = () => {
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingHorizontal: spacing.lg }}
         data={allResults}
+        drawDistance={600}
         renderItem={({ item }) => <MovieCard item={item} />}
         keyExtractor={(item) => {
           const mediaType = item.media_type || mediaFilters.mediaType;
@@ -546,6 +547,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: SCREEN_WIDTH - spacing.lg * 2,
+    height: CARD_HEIGHT,
     borderRadius: radius.card,
     marginTop: spacing.sm,
     overflow: "hidden",
@@ -558,11 +560,12 @@ const styles = StyleSheet.create({
   },
   poster: {
     width: 60,
-    height: 90,
+    height: CARD_HEIGHT,
     borderRadius: 0,
   },
   info: {
     flex: 1,
+    justifyContent: "center",
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
     gap: spacing.xs,
