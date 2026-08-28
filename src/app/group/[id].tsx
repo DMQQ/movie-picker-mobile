@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import SearchField from "../../components/SearchField";
+import MovieRow from "../../components/MovieRow";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useIsPreview } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -9,7 +11,6 @@ import IconButton from "../../components/IconButton";
 import Text from "../../components/Text";
 import AvatarText from "../../components/AvatarText";
 import PageHeading from "../../components/PageHeading";
-import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
 import SafeIOSContainer from "../../components/SafeIOSContainer";
 import PlatformBlurView from "../../components/PlatformBlurView";
 import GroupScreenLayout from "../../components/Group/GroupScreenLayout";
@@ -21,9 +22,6 @@ import { useGroupData, type GroupMovie } from "../../hooks/useGroupData";
 import useTranslation from "../../service/useTranslation";
 import { useAppSelector } from "../../redux/store";
 import { getUserAvatarColor, getInitials } from "../../utils/avatar";
-
-const POSTER_W = 42;
-const POSTER_H = 62;
 
 export default function Group() {
   const { data, isListLoading, isRemote, handleRemoveItem, itemIdMap, listType } = useGroupData();
@@ -77,71 +75,50 @@ export default function Group() {
   );
 
   const renderRemoteRow = ({ item }: { item: GroupMovie }) => (
-    <View style={styles.row}>
-      <Pressable
-        style={styles.rowMain}
-        onPress={() =>
-          router.push({
-            pathname: "/movie/type/[type]/[id]",
-            params: { type: item.type ?? "movie", id: String(item.id), img: item.imageUrl },
-          } as any)
-        }
-        onLongPress={() => handleRemoveItem(item.id)}
-      >
-        <Thumbnail
-          path={item.imageUrl}
-          size={ThumbnailSizes.poster.small}
-          container={{
-            width: POSTER_W,
-            height: POSTER_H,
-            borderRadius: radius.xs + 2,
-          }}
-          showsPlaceholder={false}
-          priority="low"
-        />
-        <View style={styles.rowInfo}>
-          <Text style={styles.rowTitle} numberOfLines={1}>
-            {item.title ?? `#${item.id}`}
-          </Text>
-          <Pressable onPress={() => openRateSheet(item)} style={styles.reviewPressable}>
-            <AvatarText
-              label={getInitials(user?.name ?? "?")}
-              size={22}
-              style={{ backgroundColor: getUserAvatarColor(user?.name ?? "") }}
-            />
-            <View style={styles.reviewContent}>
-              <View style={styles.starRow}>
-                {Array.from({ length: 10 }, (_, i) => (
-                  <Icon
-                    key={i}
-                    source={item.rating != null && i < item.rating ? "star" : "star-outline"}
-                    size={10}
-                    color={item.rating != null && i < item.rating ? "#FFD700" : colors.border}
-                  />
-                ))}
-                {item.rating != null && (
-                  <Text style={styles.ratingNum}>{item.rating}/10</Text>
-                )}
-              </View>
-              {item.review ? (
-                <Text style={styles.reviewText} numberOfLines={1}>{item.review}</Text>
-              ) : (
-                <Text style={styles.noReviewText}>{t("lists.noReview") as string}</Text>
-              )}
-            </View>
-            <Icon source="pencil-outline" size={10} color="rgba(255,255,255,0.2)" />
-          </Pressable>
-        </View>
-      </Pressable>
-      <View style={styles.rowActions}>
+    <MovieRow
+      id={item.id}
+      title={item.title ?? `#${item.id}`}
+      posterPath={item.imageUrl}
+      type={item.type ?? "movie"}
+      onLongPress={() => handleRemoveItem(item.id)}
+      trailing={
         <IconButton
           icon="trash-can-outline"
           iconColor={colors.error}
           size={16}
           onPress={() => handleRemoveItem(item.id)}
         />
-      </View>
-    </View>
+      }
+    >
+      <Pressable onPress={() => openRateSheet(item)} style={styles.reviewPressable}>
+        <AvatarText
+          label={getInitials(user?.name ?? "?")}
+          size={22}
+          style={{ backgroundColor: getUserAvatarColor(user?.name ?? "") }}
+        />
+        <View style={styles.reviewContent}>
+          <View style={styles.starRow}>
+            {Array.from({ length: 10 }, (_, i) => (
+              <Icon
+                key={i}
+                source={item.rating != null && i < item.rating ? "star" : "star-outline"}
+                size={10}
+                color={item.rating != null && i < item.rating ? "#FFD700" : colors.border}
+              />
+            ))}
+            {item.rating != null && (
+              <Text style={styles.ratingNum}>{item.rating}/10</Text>
+            )}
+          </View>
+          {item.review ? (
+            <Text style={styles.reviewText} numberOfLines={1}>{item.review}</Text>
+          ) : (
+            <Text style={styles.noReviewText}>{t("lists.noReview") as string}</Text>
+          )}
+        </View>
+        <Icon source="pencil-outline" size={10} color="rgba(255,255,255,0.2)" />
+      </Pressable>
+    </MovieRow>
   );
 
   return (
@@ -179,48 +156,55 @@ export default function Group() {
               </NewBadge>
             </PlatformBlurView>
           </PageHeading>
-          <FlatList
-            data={filteredMovies}
-            keyExtractor={(item) => `${item.type}_${item.id}`}
-            renderItem={renderRemoteRow}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingBottom: insets.bottom + 140,
-              paddingHorizontal: spacing.lg,
-            }}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-            ListHeaderComponent={
-              <View>
-                <SearchField
-                  value={search}
-                  onChangeText={setSearch}
-                  placeholder={t("manage-group.searchPlaceholder") as string}
-                  returnKeyType="search"
-                  style={styles.searchInput}
-                />
-                {movies.length > 0 && (
-                  <Text style={styles.countLabel}>
-                    {t("lists.items", {
-                      count: filteredMovies.length,
-                      plural: filteredMovies.length === 1 ? "" : "s",
-                    }) as string}
-                  </Text>
-                )}
-              </View>
-            }
-            ListEmptyComponent={
-              isListLoading ? (
-                <View style={styles.empty}>
-                  <Icon source="loading" size={28} color="rgba(255,255,255,0.2)" />
+          <View style={styles.listContainer}>
+            <FlatList
+              data={filteredMovies}
+              keyExtractor={(item) => `${item.type}_${item.id}`}
+              renderItem={renderRemoteRow}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingBottom: insets.bottom + 140,
+                paddingHorizontal: spacing.lg,
+              }}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              ListHeaderComponent={
+                <View>
+                  <SearchField
+                    value={search}
+                    onChangeText={setSearch}
+                    placeholder={t("manage-group.searchPlaceholder") as string}
+                    returnKeyType="search"
+                    style={styles.searchInput}
+                  />
+                  {movies.length > 0 && (
+                    <Text style={styles.countLabel}>
+                      {t("lists.items", {
+                        count: filteredMovies.length,
+                        plural: filteredMovies.length === 1 ? "" : "s",
+                      }) as string}
+                    </Text>
+                  )}
                 </View>
-              ) : (
-                <View style={styles.empty}>
-                  <Icon source="movie-open-outline" size={44} color="rgba(255,255,255,0.07)" />
-                  <Text style={styles.emptyText}>{t("lists.empty") as string}</Text>
-                </View>
-              )
-            }
-          />
+              }
+              ListEmptyComponent={
+                isListLoading ? (
+                  <View style={styles.empty}>
+                    <Icon source="loading" size={28} color="rgba(255,255,255,0.2)" />
+                  </View>
+                ) : (
+                  <View style={styles.empty}>
+                    <Icon source="movie-open-outline" size={44} color="rgba(255,255,255,0.07)" />
+                    <Text style={styles.emptyText}>{t("lists.empty") as string}</Text>
+                  </View>
+                )
+              }
+            />
+            <LinearGradient
+              colors={["rgba(10,10,15,0)", colors.appBackground]}
+              style={styles.gradient}
+              pointerEvents="none"
+            />
+          </View>
         </SafeIOSContainer>
       ) : (
         <GroupScreenLayout
@@ -277,6 +261,14 @@ export default function Group() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.appBackground },
+  listContainer: { flex: 1 },
+  gradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 160,
+  },
 
   headerActions: {
     flexDirection: "row",
@@ -306,31 +298,6 @@ const styles = StyleSheet.create({
     color: "#888",
     marginTop: spacing.xs,
     marginLeft: spacing.xs - 2,
-  },
-
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-    paddingVertical: spacing.md,
-  },
-  rowMain: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-  },
-  rowInfo: { flex: 1, gap: spacing.xs },
-  rowTitle: {
-    fontSize: fontSize.lg,
-    fontFamily: "Bebas",
-    color: colors.text,
-    letterSpacing: 0.5,
-  },
-  rowActions: {
-    flexDirection: "column",
-    alignItems: "center",
-    gap: spacing.xs,
   },
 
   starRow: { flexDirection: "row", alignItems: "center", gap: 2 },

@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { Movie } from "../../../types";
 import MoviesActionButtons from "../../components/MoviesActionButtons";
 import TilesList from "../../components/Overview/TilesList";
 import { useAppSelector } from "../../redux/store";
 import useTranslation from "../../service/useTranslation";
 import Modal from "./Modal";
-import { spacing } from "../../constants/design";
+import { colors, spacing } from "../../constants/design";
 
 export default function LikesScreen() {
   const likes = useAppSelector((state) => state.room.likes);
@@ -25,9 +26,14 @@ export default function LikesScreen() {
   }, [likes.length]);
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, padding: spacing.screen, paddingBottom:0 }}>
-        <TilesList label={t("likes.title")} data={data} />
+    <View style={styles.container}>
+      <View style={styles.listContainer}>
+        <TilesList label={t("likes.title")} data={data} layout="column" />
+        <LinearGradient
+          colors={["rgba(10,10,15,0)", colors.appBackground]}
+          style={styles.gradient}
+          pointerEvents="none"
+        />
       </View>
       {match && <Modal onClose={() => setMatch(undefined)} match={match} />}
 
@@ -41,3 +47,15 @@ export default function LikesScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  listContainer: { flex: 1, padding: spacing.screen, paddingBottom: 0 },
+  gradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 160,
+  },
+});
