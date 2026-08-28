@@ -4,12 +4,12 @@ import { router, Link } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import { useContext, useEffect, useRef, useState, useTransition } from "react";
 import { View, StyleSheet } from "react-native";
-
 import { colors, fontSize, fontWeight, radius, spacing, withAlpha } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import QrCodeBox from "../../components/GameLobby/QrCodeBox";
 import PlayersRow from "../../components/GameLobby/PlayersRow";
 import LobbyShell from "../../components/GameLobby/LobbyShell";
+import AutoStartOverlay from "../../components/GameLobby/AutoStartOverlay";
 import { Movie } from "../../../types";
 import PageHeading from "../../components/PageHeading";
 import { roomActions } from "../../redux/room/roomSlice";
@@ -27,10 +27,7 @@ import { useFilterPreferences } from "../../hooks/useFilterPreferences";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import { useBlockedMovies } from "../../hooks/useBlockedMovies";
 import { useSuperLikedMovies } from "../../hooks/useSuperLikedMovies";
-import { Platform } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NewBadge from "@/components/NewBadge";
-import FloatingBadge from "@/components/FloatingBadge";
 
 const SYNC_PHRASES = [
   "room.loading-calculating",
@@ -41,13 +38,6 @@ const SYNC_PHRASES = [
   "room.loading-results",
 ];
 
-const AUTO_START_PHRASES = [
-  "room.loading-sneaking",
-  "room.loading-bribing",
-  "room.loading-popcorn",
-  "room.loading-gods",
-  "room.loading-shuffling",
-];
 
 interface RoomSetupParams {
   category: string;
@@ -71,6 +61,7 @@ interface ISocketResponse {
   };
 }
 
+
 export default function QRCodePage() {
   const params = useLocalSearchParams();
   const dispatch = useAppDispatch();
@@ -83,7 +74,6 @@ export default function QRCodePage() {
   const [isLoadingMovies, setIsLoadingMovies] = useState(false);
   const [isRefetching, setIsRefetching] = useState(false);
   const [syncPhraseIndex, setSyncPhraseIndex] = useState(0);
-  const [autoStartPhraseIndex, setAutoStartPhraseIndex] = useState(0);
   const [autoStartTriggered, setAutoStartTriggered] = useState(false);
   const hashOptionsRef = useRef<string>("");
   const [isPending, startTransition] = useTransition();
@@ -92,6 +82,8 @@ export default function QRCodePage() {
   const users = useAppSelector((state) => state.room.users);
   const roomId = useAppSelector((state) => state.room.roomId);
   const existingMovies = useAppSelector((state) => state.room.movies);
+  const partyId = useAppSelector((state) => state.party.partyId);
+  const swipeFromParty = useAppSelector((state) => state.party.swipeFromParty);
 
   const { preferences } = useFilterPreferences();
   const movieCategoriesQuery = useGetCategoriesWithThumbnailsQuery({ type: "movie" });
@@ -205,7 +197,7 @@ export default function QRCodePage() {
           (movie) => `${movie.type === "movie" ? "m" : "t"}${movie.id}`,
         );
 
-        if (qrCode && roomId) {
+        if (!swipeFromParty && qrCode && roomId) {
           if (existingMovies.length === 0) {
             setIsLoadingMovies(true);
             setMoviesCount(null);
@@ -228,6 +220,7 @@ export default function QRCodePage() {
           ...roomConfig,
           blockedMovies: mappedBlocked,
           superLikedMovies: mappedSuperLiked,
+          ...(swipeFromParty && partyId ? { partyId } : {}),
         })) as ISocketResponse;
 
         if (response) {
@@ -244,6 +237,15 @@ export default function QRCodePage() {
             mappedBlocked,
             mappedSuperLiked,
           );
+
+          if (swipeFromParty && response.partyId) {
+            partySocket?.emit("party:ready", {
+              partyId: response.partyId,
+              roomId: response.roomId,
+              gameMode: "swipe",
+            });
+            dispatch(partyActions.setSwipeFromParty(false));
+          }
         }
       } catch (error) {
         console.error("Error creating room:", error);
@@ -261,6 +263,8 @@ export default function QRCodePage() {
     roomId,
     blockedReady,
     superLikedReady,
+    partyId,
+    swipeFromParty,
   ]);
 
   useEffect(() => {
@@ -324,23 +328,19 @@ export default function QRCodePage() {
     return () => clearInterval(id);
   }, [isRefetching]);
 
+  const isDisabled =
+    !qrCode ||
+    isLoadingMovies ||
+    (moviesCount != null && moviesCount < 5) ||
+    createRoomLoading ||
+    isPending;
+
   const showAutoStartLoading =
     autoStart &&
     (createRoomLoading ||
       isLoadingMovies ||
       (!autoStartTriggered && !isDisabled));
 
-  useEffect(() => {
-    if (!showAutoStartLoading) {
-      setAutoStartPhraseIndex(0);
-      return;
-    }
-    const id = setInterval(
-      () => setAutoStartPhraseIndex((i) => (i + 1) % AUTO_START_PHRASES.length),
-      2200,
-    );
-    return () => clearInterval(id);
-  }, [showAutoStartLoading]);
 
   const startGameHref = (() => {
     if (!qrCode) return "#";
@@ -360,13 +360,6 @@ export default function QRCodePage() {
     });
   };
 
-  const isDisabled =
-    !qrCode ||
-    isLoadingMovies ||
-    (moviesCount != null && moviesCount < 5) ||
-    createRoomLoading ||
-    isPending;
-
   useEffect(() => {
     if (!autoStart || isDisabled || !qrCode || hasAutoStarted.current) return;
     hasAutoStarted.current = true;
@@ -382,6 +375,10 @@ export default function QRCodePage() {
       } as any);
     });
   }, [autoStart, isDisabled, qrCode]);
+
+  if (showAutoStartLoading || autoStart) {
+    return <AutoStartOverlay />;
+  }
 
   return (
     <View style={[styles.container, { paddingTop: spacing.screen * 3 }]}>
@@ -476,14 +473,7 @@ export default function QRCodePage() {
           </View>
         }
       >
-        {showAutoStartLoading ? (
-          <Animated.View entering={FadeInDown} style={styles.loadingContainer}>
-            <FancySpinner size={100} />
-            <Text style={styles.loadingText}>
-              {t(AUTO_START_PHRASES[autoStartPhraseIndex])}
-            </Text>
-          </Animated.View>
-        ) : createRoomLoading ? (
+        {createRoomLoading ? (
           <Animated.View entering={FadeInDown} style={styles.loadingContainer}>
             <FancySpinner size={100} />
             <Text style={styles.loadingText}>{t("room.setting-up")}</Text>
@@ -554,9 +544,11 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   asyncBannerTitle: {
-    fontSize: fontSize.md,
+    fontSize: fontSize.xl,
     fontWeight: fontWeight.semibold,
     color: colors.text,
+    fontFamily: 'Bebas',
+    letterSpacing:0.5
   },
   asyncBannerDesc: {
     fontSize: fontSize.sm,

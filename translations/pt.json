@@ -160,7 +160,8 @@
       "players-left": "{count} jogadores saíram",
       "connection-lost": "Conexão perdida, reconectando...",
       "connection-lost-refresh": "Conexão perdida, deslize para atualizar",
-      "reconnected": "Reconectado"
+      "reconnected": "Reconectado",
+      "no-match-hint": "120 swipes e ainda sem match — tente reiniciar com filtros ou géneros diferentes"
     },
     "genres": {
       "all_movies": "Todos os filmes",
@@ -499,34 +500,51 @@
       "start": "Iniciar votação",
       "you-are-host": "Você é o anfitrião. Comece agora ou aguarde outros entrarem.",
       "rate": "Avaliar",
-      "left": "restantes nesta rodada",
+      "left": "restantes",
+      "ratingHeadings": [
+        "OPINIÃO QUENTE? 🌶️",
+        "VALE O SOFÁ? 🛋️",
+        "VOCÊ ASSISTIRIA? 👀",
+        "SEJA HONESTO 🤥",
+        "HYPE OU NOPE? 🎯",
+        "CINEMA OU SKIP? 🍿",
+        "VIBE CHECK 🌊",
+        "VOCÊ DECIDE ⚖️",
+        "INSTINTO? 🫀",
+        "MOMENTO DA VERDADE ⚡",
+        "PRIMEIRA IMPRESSÃO 💭",
+        "ME CONVENÇA 🎤",
+        "DIGNO? 👑",
+        "ASSISTIR OU PASSAR? 🎬",
+        "SEU VEREDICTO 🔨"
+      ],
       "quit": "Sair",
       "qrcode-scan": "Escanear para entrar",
       "likes": "Deslizamentos"
     },
     "ratings": {
       "interest": {
-        "label": "Interesse",
+        "label": "Quero?",
         "options": {
-          "0": "Meh",
+          "0": "Passo",
           "1": "Talvez",
-          "2": "Quero ver"
+          "2": "Sim!"
         }
       },
       "mood": {
-        "label": "Vibe",
+        "label": "Agora?",
         "options": {
-          "0": "Não",
-          "1": "Pode ser",
+          "0": "Off",
+          "1": "Ok",
           "2": "Perfeito"
         }
       },
       "novelty": {
-        "label": "Novidade",
+        "label": "Descoberta",
         "options": {
-          "0": "Já vi",
-          "1": "Vagamente",
-          "2": "Nunca vi"
+          "0": "Sim",
+          "1": "Uma vez",
+          "2": "Nunca"
         }
       },
       "submit": "Enviar avaliação"
@@ -762,6 +780,20 @@
       "Nenhum filme sobreviveu à votação do grupo. Brutal, honestamente. Mas cada swipe nos disse algo sobre o gosto de vocês, então o próximo jogo já vai ser mais inteligente. Não desistam agora.",
       "E dizemos isso como elogio. Zero sobreposição de gosto significa que vocês são espectadores extremamente exigentes — ou simplesmente muito teimosos. De qualquer forma, aprendemos e o próximo jogo vai ser muito melhor.",
       "Não encontramos os filmes certos para unir o grupo desta vez, e isso é responsabilidade nossa. Anotamos tudo, atualizamos o algoritmo e demos uma boa bronca nele. No próximo jogo, voltamos mais fortes."
+    ],
+    "no-picks-titles": [
+      "Nenhuma curtida sequer.",
+      "Difícil de impressionar, hein?",
+      "Nada chamou sua atenção.",
+      "Exigente. Respeito.",
+      "Zero escolhas. Zero arrependimentos?"
+    ],
+    "no-picks-descs": [
+      "Você viu tudo e não curtiu nada. Estratégia ousada. Talvez o próximo lineup finalmente mereça sua aprovação.",
+      "Nenhum filme passou pelo seu critério. Ou seus padrões são altíssimos ou o algoritmo precisa de uma boa chamada de atenção. Provavelmente os dois.",
+      "Você deixou todos os filmes passarem sem piedade. Sem curtidas, sem concessões. Anotamos e voltamos com uma lista mais forte.",
+      "Respeito pelo compromisso total com zero compromissos. Nenhum filme mereceu sua curtida. Da próxima vez faremos melhor — temos que fazer.",
+      "Nada encaixou. Isso é informação útil — agora sabemos exatamente o que te deixa frio. A próxima rodada vai ser uma história bem diferente."
     ],
     "try-again": "Jogar novamente",
     "your-picks": "Suas curtidas",
@@ -1320,5 +1352,13 @@
     "title": "Sincronize entre dispositivos",
     "subtitle": "Entre para ter suas listas em qualquer lugar",
     "register": "Cadastrar"
+  },
+  "async-join": {
+    "title": "Jogo em andamento",
+    "subtitle": "Outros já estão deslizando — veja como está",
+    "liked": "Curtidos",
+    "matches": "Combinações",
+    "players": "Jogadores",
+    "got-it": "Entendi"
   }
 }

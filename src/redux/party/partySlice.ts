@@ -12,6 +12,7 @@ interface PartyState {
   members: PartyMember[];
   host: string | null;
   nextGame: PartyGameMode | null;
+  swipeFromParty: boolean;
 }
 
 const initialState: PartyState = {
@@ -19,6 +20,7 @@ const initialState: PartyState = {
   members: [],
   host: null,
   nextGame: null,
+  swipeFromParty: false,
 };
 
 const partySlice = createSlice({
@@ -44,6 +46,10 @@ const partySlice = createSlice({
 
     setNextGame(state, { payload }: { payload: PartyGameMode | null }) {
       state.nextGame = payload;
+    },
+
+    setSwipeFromParty(state, { payload }: { payload: boolean }) {
+      state.swipeFromParty = payload;
     },
 
     clearParty(state) {

@@ -1,5 +1,5 @@
 import { Link, router, useIsPreview, useLocalSearchParams } from "expo-router";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
@@ -16,6 +16,7 @@ import { useGetCombinedMovieDetailsQuery } from "../../../../redux/movie/movieAp
 import { colors, radius } from "../../../../constants/design";
 import { LinearGradient } from "expo-linear-gradient";
 import useTranslation from "../../../../service/useTranslation";
+import { posthog } from "../../../../constants/posthog";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -62,14 +63,20 @@ export default function MovieDetailsScreen() {
     type: typeOfContent,
     img: posterPath,
     id: movieId,
+    source,
   } = useLocalSearchParams<{
     type: "movie" | "tv";
     img?: string;
     id: string;
+    source?: string;
   }>();
 
   const isPreview = useIsPreview();
   const t = useTranslation();
+
+  useEffect(() => {
+    posthog?.capture("movie_detail_opened", { source: source ?? "unknown", content_type: typeOfContent });
+  }, []);
 
   const IMG_HEIGHT = useMemo(
     () => height * (isPreview ? 0.5 : 0.75),

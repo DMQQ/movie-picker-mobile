@@ -176,7 +176,8 @@
       "players-left": "{count} players left",
       "connection-lost": "Connection lost, reconnecting...",
       "connection-lost-refresh": "Connection lost, pull to refresh",
-      "reconnected": "Reconnected"
+      "reconnected": "Reconnected",
+      "no-match-hint": "120 swipes and no match yet — try restarting with different filters or genres"
     },
     "genres": {
       "all_movies": "All movies",
@@ -514,34 +515,51 @@
       "start": "Start voting",
       "you-are-host": "You're the host. Start now or wait for others to join.",
       "rate": "Rate",
-      "left": "left in this round",
+      "left": "to go",
+      "ratingHeadings": [
+        "HOT TAKE? 🌶️",
+        "WORTH YOUR COUCH? 🛋️",
+        "WOULD YOU WATCH? 👀",
+        "BE HONEST 🤥",
+        "HYPE OR NOPE? 🎯",
+        "CINEMA OR SKIP? 🍿",
+        "VIBES CHECK 🌊",
+        "YOU BE THE JUDGE ⚖️",
+        "GUT FEELING? 🫀",
+        "MOMENT OF TRUTH ⚡",
+        "FIRST IMPRESSION 💭",
+        "SELL ME ON IT 🎤",
+        "WORTHY? 👑",
+        "PASS OR WATCH? 🎬",
+        "YOUR VERDICT 🔨"
+      ],
       "quit": "Quit",
       "qrcode-scan": "Scan to join",
       "likes": "Swipes"
     },
     "ratings": {
       "interest": {
-        "label": "Interest",
+        "label": "Want it?",
         "options": {
-          "0": "Meh",
+          "0": "Pass",
           "1": "Maybe",
-          "2": "Want it"
+          "2": "Yes!"
         }
       },
       "mood": {
-        "label": "Vibe",
+        "label": "Right now?",
         "options": {
-          "0": "Nope",
-          "1": "Could work",
+          "0": "Off",
+          "1": "Ok",
           "2": "Perfect"
         }
       },
       "novelty": {
-        "label": "Freshness",
+        "label": "Discovery",
         "options": {
-          "0": "Seen it",
-          "1": "Vaguely",
-          "2": "Never seen"
+          "0": "Yep",
+          "1": "Once",
+          "2": "Never"
         }
       },
       "submit": "Submit rating"
@@ -777,6 +795,20 @@
       "Not a single film survived the group vote. Brutal, honestly. But every swipe told us something about your taste, so the next game is already going to be smarter. Don't give up now.",
       "And we mean that as a compliment. Zero overlap in taste means you're all extremely discerning viewers — or just really stubborn. Either way, we've learned from this and your next game will be way better.",
       "We didn't find the right movies to unite the group this time, and that's on us. We've taken notes, updated the algorithm, and promised it a stern talking-to. Next game, we're coming back hotter."
+    ],
+    "no-picks-titles": [
+      "Not a single like.",
+      "Hard to please, huh.",
+      "Nothing caught your eye.",
+      "Picky. Respect.",
+      "Zero picks. Zero regrets?"
+    ],
+    "no-picks-descs": [
+      "You swiped through everything and liked nothing. Bold strategy. Maybe the next round's lineup will finally earn your approval.",
+      "Not one movie made the cut for you. Either your standards are sky-high or the algorithm needs a serious talking-to. Probably both.",
+      "You let every movie walk right past you. No likes, no picks, no mercy. We're noting this and coming back with a stronger lineup.",
+      "Respect the commitment to zero compromise. Not a single film was worthy of your like. We'll do better next time — we have to.",
+      "Nothing clicked. That's actually useful data — we now know exactly what leaves you cold. Next round will be a very different story."
     ],
     "try-again": "Play Again",
     "your-picks": "Your likes",
@@ -1321,5 +1353,13 @@
     "title": "Sync across devices",
     "subtitle": "Sign in to keep your lists everywhere",
     "register": "Register"
+  },
+  "async-join": {
+    "title": "Game already in progress",
+    "subtitle": "Others have been swiping — here's where things stand",
+    "liked": "Liked",
+    "matches": "Matches",
+    "players": "Players",
+    "got-it": "Got it"
   }
 }

@@ -74,7 +74,6 @@ export const authApi = createApi({
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
           await saveAuthUserId(dispatch, data.user);
-          posthog?.capture("sign_in", { provider: "google" });
         } catch (err) {
           posthog?.captureException(err, { auth: "google" });
         }
@@ -90,7 +89,6 @@ export const authApi = createApi({
           const { data } = await queryFulfilled;
           dispatch(authActions.setCredentials(data));
           await saveAuthUserId(dispatch, data.user);
-          posthog?.capture("sign_in", { provider: "apple" });
         } catch (err) {
           posthog?.captureException(err, { auth: "apple" });
         }

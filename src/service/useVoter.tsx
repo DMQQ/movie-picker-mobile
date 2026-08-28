@@ -58,6 +58,7 @@ interface RatingCriteria {
   interest: number;
   mood: number;
   uniqueness: number;
+  durationMs: number;
 }
 
 const MovieVoterContext = createContext<MovieVoterContextValue | null>(null);
@@ -257,6 +258,7 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
           interest: ratings.interest,
           mood: ratings.mood,
           uniqueness: ratings.uniqueness,
+          durationMs: ratings.durationMs,
         },
       });
 

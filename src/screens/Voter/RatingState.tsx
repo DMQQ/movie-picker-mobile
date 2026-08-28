@@ -1,22 +1,133 @@
-import { TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Pressable, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import Text from "../../components/Text";
 
 import { colors, fontSize, radius, spacing } from "../../constants/design";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated, {
+  Easing,
+  FadeIn,
+  FadeOut,
+  useSharedValue,
+  useAnimatedStyle,
+  withDelay,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { ImageBackground } from "react-native";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { EdgeInsets } from "react-native-safe-area-context";
-import Touch from "../../components/Touch";
 import RatingIcons from "../../components/RatingIcons";
 import { FancySpinner } from "../../components/FancySpinner";
 import useTranslation from "../../service/useTranslation";
+
+const STAR_COLORS = ["#E5484D", "#F76B15", "#9ACD32", "#46A758", "#FFD700"];
+
+function AnimatedStar({
+  scale,
+  starColor,
+}: {
+  scale: ReturnType<typeof useSharedValue<number>>;
+  starColor: string;
+}) {
+  const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  return (
+    <View style={{ width: 46, alignItems: "center" }}>
+      <Animated.Text style={[{ fontSize: 36, color: starColor }, animStyle]}>★</Animated.Text>
+    </View>
+  );
+}
+
+function StarRow({
+  ratingKey,
+  label,
+  emoji,
+  localRatings,
+  setLocalRatings,
+}: {
+  ratingKey: "interest" | "mood" | "uniqueness";
+  label: string;
+  emoji: string;
+  localRatings: { interest: number | null; mood: number | null; uniqueness: number | null };
+  setLocalRatings: React.Dispatch<
+    React.SetStateAction<{ interest: number | null; mood: number | null; uniqueness: number | null }>
+  >;
+}) {
+  const s1 = useSharedValue(1);
+  const s2 = useSharedValue(1);
+  const s3 = useSharedValue(1);
+  const s4 = useSharedValue(1);
+  const s5 = useSharedValue(1);
+  const scales = [s1, s2, s3, s4, s5];
+
+  const filledCount = localRatings[ratingKey] ?? 0;
+
+  const animateSelection = (selected: number) => {
+    scales.forEach((s, i) => {
+      if (i >= selected) return;
+      s.value = 0;
+      s.value = withDelay(
+        i * 70,
+        selected === 5
+          ? withSpring(1, { damping: 10, stiffness: 260 })
+          : withTiming(1, { duration: 200, easing: Easing.out(Easing.cubic) }),
+      );
+    });
+  };
+
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center" }}>
+      <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.xs + 2 }}>
+        <Text style={{ fontSize: 26 }}>{emoji}</Text>
+        <Text
+          style={{
+            fontFamily: "Bebas",
+            fontSize: fontSize.title,
+            color: localRatings[ratingKey] !== null ? colors.text : "rgba(255,255,255,0.5)",
+            letterSpacing: 0.5,
+          }}
+        >
+          {label}
+        </Text>
+      </View>
+      <View>
+        {/* Static gray stars — tap targets, never animated */}
+        <View style={{ flexDirection: "row" }}>
+          {([1, 2, 3, 4, 5] as const).map((star) => (
+            <Pressable
+              key={star}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setLocalRatings((p) => ({ ...p, [ratingKey]: star }));
+                animateSelection(star);
+              }}
+              style={{ width: 46, alignItems: "center" }}
+            >
+              <Text style={{ fontSize: 36, color: "rgba(255,255,255,0.15)" }}>★</Text>
+            </Pressable>
+          ))}
+        </View>
+        {/* Animated colored stars on top of the gray ones */}
+        {filledCount > 0 && (
+          <View
+            pointerEvents="none"
+            style={{ position: "absolute", left: 0, top: 0, bottom: 0, flexDirection: "row" }}
+          >
+            {([1, 2, 3, 4, 5] as const).slice(0, filledCount).map((star, i) => (
+              <AnimatedStar key={star} scale={scales[i]} starColor={STAR_COLORS[filledCount - 1]} />
+            ))}
+          </View>
+        )}
+      </View>
+    </View>
+  );
+}
 
 const scaleTitle = (title: string, size = 30) => {
   if (title.length > 30) return size * 0.75;
   if (title.length > 20) return size * 0.85;
   return size;
 };
+
 
 interface Props {
   card: any;
@@ -41,7 +152,7 @@ export default function RatingState({
 }: Props) {
   const t = useTranslation();
   const { height: screenHeight, width: screenWidth } = useWindowDimensions();
-  const posterHeight = Math.min(screenHeight * 0.35, screenWidth * 0.5);
+  const posterHeight = Math.min(screenHeight * 0.5, screenWidth * 0.75);
   const posterWidth = posterHeight * (2 / 3);
 
   if (!card) {
@@ -61,33 +172,9 @@ export default function RatingState({
   }
 
   const ratingRows = [
-    {
-      key: "interest" as const,
-      label: t("voter.ratings.interest.label"),
-      options: [
-        { value: 0, icon: "😑", label: t("voter.ratings.interest.options.0") },
-        { value: 1, icon: "🙂", label: t("voter.ratings.interest.options.1") },
-        { value: 2, icon: "🔥", label: t("voter.ratings.interest.options.2") },
-      ],
-    },
-    {
-      key: "mood" as const,
-      label: t("voter.ratings.mood.label"),
-      options: [
-        { value: 0, icon: "🙅", label: t("voter.ratings.mood.options.0") },
-        { value: 1, icon: "🤷", label: t("voter.ratings.mood.options.1") },
-        { value: 2, icon: "😍", label: t("voter.ratings.mood.options.2") },
-      ],
-    },
-    {
-      key: "uniqueness" as const,
-      label: t("voter.ratings.novelty.label"),
-      options: [
-        { value: 0, icon: "🔁", label: t("voter.ratings.novelty.options.0") },
-        { value: 1, icon: "🤔", label: t("voter.ratings.novelty.options.1") },
-        { value: 2, icon: "✨", label: t("voter.ratings.novelty.options.2") },
-      ],
-    },
+    { key: "interest" as const, label: t("voter.ratings.interest.label"), emoji: "🔥" },
+    { key: "mood" as const, label: t("voter.ratings.mood.label"), emoji: "🎭" },
+    { key: "uniqueness" as const, label: t("voter.ratings.novelty.label"), emoji: "✨" },
   ] as const;
 
   return (
@@ -121,7 +208,7 @@ export default function RatingState({
             }}
           >
             <Text style={{ fontSize: 30, fontFamily: "Bebas" }}>
-              {t("voter.home.rate")} 🎬
+              {(t("voter.home.ratingHeadings") as unknown as string[])[card.id % 15]}
             </Text>
             <Text style={{ fontFamily: "Bebas", fontSize: fontSize.xxl }}>
               {currentMovies.length} {t("voter.home.left")}
@@ -139,6 +226,7 @@ export default function RatingState({
                   params: {
                     id: card?.id,
                     type: card?.title ? "movie" : "tv",
+                    source: "voter",
                     img: card?.poster_path,
                   },
                 })
@@ -177,7 +265,7 @@ export default function RatingState({
                 justifyContent: "center",
               }}
             >
-              <RatingIcons vote={card.vote_average} size={11} />
+              <RatingIcons vote={card.vote_average} size={14} />
               <Text style={{ color: "rgba(255,255,255,0.6)", fontSize: fontSize.sm }}>
                 {[
                   card?.release_date?.slice(0, 4),
@@ -193,78 +281,38 @@ export default function RatingState({
               style={{
                 marginTop: spacing.xs + 2,
                 color: "rgba(255,255,255,0.75)",
-                fontSize: fontSize.md - 1,
+                fontSize: fontSize.lg,
                 textAlign: "center",
-                lineHeight: 19,
+                lineHeight: 23,
               }}
             >
               {card?.overview}
             </Text>
           </View>
 
-          {/* Rating rows */}
+          {/* Rating section */}
           <View
             style={{
-              paddingHorizontal: spacing.screen,
-              paddingTop: spacing.sm + 2,
-              paddingBottom: insets.bottom + 10,
-              gap: spacing.sm + 2,
+              marginHorizontal: spacing.screen,
+              marginBottom: insets.bottom + 10,
+              paddingVertical: spacing.md,
+              paddingHorizontal: spacing.lg,
+              gap: spacing.xxl + 4,
+              backgroundColor: "rgba(0,0,0,0.6)",
+              borderRadius: radius.modal,
+              borderWidth: 1,
+              borderColor: "rgba(255,255,255,0.08)",
             }}
           >
-            {ratingRows.map(({ key, label, options }) => (
-              <View key={key} style={{ gap: spacing.xs + 1 }}>
-                <Text
-                  style={{
-                    fontSize: fontSize.md,
-                    fontFamily: "Bebas",
-                    color: "rgba(255,255,255,0.7)",
-                  }}
-                >
-                  {label}
-                </Text>
-                <View style={{ flexDirection: "row", gap: spacing.sm }}>
-                  {options.map((option) => {
-                    const isSelected = localRatings[key] === option.value;
-                    return (
-                      <Touch
-                        key={option.value}
-                        scaleTo={0.94}
-                        onPress={() => {
-                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                          setLocalRatings((p) => ({ ...p, [key]: option.value }));
-                        }}
-                        style={{
-                          flex: 1,
-                          height: 64,
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: spacing.xs,
-                          borderRadius: radius.md,
-                          backgroundColor: isSelected
-                            ? colors.primary
-                            : "rgba(0,0,0,0.5)",
-                          borderWidth: 1,
-                          borderColor: isSelected
-                            ? colors.primary
-                            : colors.border,
-                        }}
-                      >
-                        <Text style={{ fontSize: fontSize.xxl }}>{option.icon}</Text>
-                        <Text
-                          style={{
-                            fontSize: fontSize.sm - 1,
-                            color: colors.text,
-                            textAlign: "center",
-                            paddingHorizontal: spacing.xs,
-                          }}
-                        >
-                          {option.label}
-                        </Text>
-                      </Touch>
-                    );
-                  })}
-                </View>
-              </View>
+            {ratingRows.map(({ key, label, emoji }) => (
+              <StarRow
+                key={key}
+                ratingKey={key}
+                label={label}
+                emoji={emoji}
+                localRatings={localRatings}
+                setLocalRatings={setLocalRatings}
+              />
             ))}
           </View>
         </View>

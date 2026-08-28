@@ -73,6 +73,7 @@ const MovieCard = ({ item }: { item: Movie & { release_date?: string } }) => {
             id: item.id.toString(),
             type: item?.title ? "movie" : "tv",
             img: item.poster_path,
+            source: "search",
           },
         })
       }
@@ -430,7 +431,7 @@ const SearchScreen = () => {
   );
 
   return (
-    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkippedFirst={markAllSeen}>
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkip={markAllSeen}>
       <View style={[styles.container, { paddingTop: insets.top }]}>
         {memoStack}
 

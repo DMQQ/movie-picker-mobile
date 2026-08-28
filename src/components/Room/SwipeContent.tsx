@@ -101,7 +101,7 @@ const SwipeContent = memo(() => {
     if (!top) return;
     router.push({
       pathname: "/movie/type/[type]/[id]",
-      params: { id: top.id, type: mediaType, img: top.poster_path },
+      params: { id: top.id, type: mediaType, img: top.poster_path, source: "swiper" },
     });
   }, [mediaType]);
 

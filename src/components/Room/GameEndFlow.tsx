@@ -121,12 +121,13 @@ const GameEndFlow = memo(() => {
                     value={`flickmate://room/${code}`}
                     size={100}
                     color={colors.primary}
-                    backgroundColor="transparent"
+                    backgroundColor={colors.text}
                   />
                 </View>
                 <View style={styles.codeSide}>
                   <Text style={styles.codeLabel}>{t("room.invite-post-finish.code-label") as string}</Text>
                   <Text style={styles.codeValue}>{code}</Text>
+                  <RoomShareStrip qrCode={code} webPath="swipe" roomId={roomId ?? undefined} />
                 </View>
               </View>
             ) : null}
@@ -138,9 +139,6 @@ const GameEndFlow = memo(() => {
                 <Text style={styles.asyncText}>{t("room.invite-post-finish.async-hint") as string}</Text>
               </View>
             ) : null}
-
-            {/* Share + notify strip */}
-            {code ? <RoomShareStrip qrCode={code} webPath="swipe" roomId={roomId ?? undefined} /> : null}
 
             {/* Actions */}
             <View style={styles.actions}>
@@ -225,6 +223,10 @@ const styles = StyleSheet.create({
   qrSide: {
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: colors.text,
+    padding: spacing.xs,
+    borderRadius: radius.xs,
+    overflow: "hidden",
   },
   codeSide: {
     flex: 1,

@@ -66,7 +66,7 @@ export default function GameCard({
     return (
       <Pressable
         style={({ pressed }) => [styles.compactCard, pressed && styles.pressed]}
-        onPress={onPress}
+        onPress={() => { posthog?.capture("game_mode_selected", { game: title }); onPress?.(); }}
       >
         <View style={[styles.compactAccent, { backgroundColor: badgeColor ?? colors.primary }]} />
         <View style={[styles.compactAnimWrap, { backgroundColor: (badgeColor ?? colors.primary) + "22" }]}>
@@ -83,7 +83,7 @@ export default function GameCard({
 
   const cardHeight = (featured ? CARD_HEIGHT_FEATURED : CARD_HEIGHT) * (small ? 0.65 : 1);
   const touchable = (
-    <Touch onPress={() => { posthog?.capture("game_mode_selected", { game: href ?? null }); onPress?.(); }}>
+    <Touch onPress={() => { posthog?.capture("game_mode_selected", { game: title }); onPress?.(); }}>
       <View
         style={[
           styles.card,

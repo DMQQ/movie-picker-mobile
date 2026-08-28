@@ -1,6 +1,6 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import { router } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
@@ -14,6 +14,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Text from "../components/Text";
+import AnimatedHeading from "../components/AnimatedHeading";
 import PrimaryButton from "../components/PrimaryButton";
 import Button from "../components/Button";
 import { colors, common, spacing, radius, fontSize, fontWeight, withAlpha } from "../constants/design";
@@ -158,113 +159,6 @@ function PosterCard({
   );
 }
 
-const HERO_FONT = 50;
-const HERO_LINE = 52;
-const HERO_TRACKING = 2;
-const MIN_HERO_SCALE = 0.5;
-
-// Chars are grouped into non-wrapping word rows so a word never breaks mid-word.
-// If the two lines overflow, the whole heading scales down until it fits 2 lines.
-function AnimatedLine({
-  text,
-  delay,
-  accent,
-  scale,
-}: {
-  text: string;
-  delay: number;
-  accent: boolean;
-  scale: number;
-}) {
-  const style = accent ? styles.heroAccent : styles.heroWhite;
-  const sized = { fontSize: HERO_FONT * scale, lineHeight: HERO_LINE * scale };
-  const words = text.split(" ");
-  let charOffset = 0;
-
-  return (
-    <View style={styles.heroLine}>
-      {words.map((word, wi) => {
-        const wordEl = (
-          <View key={wi} style={styles.heroWord}>
-            {word.split("").map((char, i) => (
-              <Animated.Text
-                key={i}
-                entering={FadeInUp.delay(delay + (charOffset + i) * 35).duration(300)}
-                style={[style, sized]}
-              >
-                {char}
-              </Animated.Text>
-            ))}
-            {wi < words.length - 1 && (
-              <Animated.Text
-                entering={FadeInUp.delay(delay + (charOffset + word.length) * 35).duration(300)}
-                style={[style, sized]}
-              >
-                {" "}
-              </Animated.Text>
-            )}
-          </View>
-        );
-        charOffset += word.length + 1;
-        return wordEl;
-      })}
-    </View>
-  );
-}
-
-function AnimatedHeading({ line1, line2 }: { line1: string; line2: string }) {
-  const [fontScale, setFontScale] = useState(1);
-  const blockWidth = useRef(0);
-  const textWidths = useRef([0, 0]);
-
-  // Exact fit: hidden unwrapped copies give intrinsic line widths. letterSpacing
-  // doesn't scale with fontSize, so subtract it from both sides before dividing.
-  const fit = () => {
-    const avail = blockWidth.current;
-    const [w1, w2] = textWidths.current;
-    if (avail <= 0 || w1 <= 0 || w2 <= 0) return;
-    const scales = [line1, line2].map((text, i) => {
-      const w = textWidths.current[i];
-      const tracking = text.length * HERO_TRACKING;
-      if (w <= tracking) return 1;
-      return (avail - tracking) / (w - tracking);
-    });
-    setFontScale(Math.max(MIN_HERO_SCALE, Math.min(1, ...scales) * 0.99));
-  };
-
-  return (
-    <View
-      style={styles.heroBlock}
-      onLayout={(e) => {
-        blockWidth.current = e.nativeEvent.layout.width;
-        fit();
-      }}
-    >
-      <AnimatedLine text={line1} delay={100} accent={false} scale={fontScale} />
-      <AnimatedLine text={line2} delay={260} accent scale={fontScale} />
-      <View pointerEvents="none" style={styles.measureRow}>
-        <Text
-          style={[styles.heroWhite, styles.measureText]}
-          onLayout={(e) => {
-            textWidths.current[0] = e.nativeEvent.layout.width;
-            fit();
-          }}
-        >
-          {line1}
-        </Text>
-        <Text
-          style={[styles.heroAccent, styles.measureText]}
-          onLayout={(e) => {
-            textWidths.current[1] = e.nativeEvent.layout.width;
-            fit();
-          }}
-        >
-          {line2}
-        </Text>
-      </View>
-    </View>
-  );
-}
 
 const MODES = [
   { key: "landing.modes.swipe", icon: "cards-outline" },
@@ -389,37 +283,6 @@ const styles = StyleSheet.create({
   },
   subBlock: {
     gap: spacing.md,
-  },
-  heroBlock: {
-    gap: 2,
-  },
-  heroLine: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  heroWord: {
-    flexDirection: "row",
-  },
-  heroWhite: {
-    fontFamily: "Bebas",
-    color: colors.text,
-    letterSpacing: HERO_TRACKING,
-  },
-  heroAccent: {
-    fontFamily: "Bebas",
-    color: colors.primary,
-    letterSpacing: HERO_TRACKING,
-  },
-  measureRow: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    opacity: 0,
-  },
-  measureText: {
-    fontSize: HERO_FONT,
-    lineHeight: HERO_LINE,
-    alignSelf: "flex-start",
   },
   sub: {
     fontSize: fontSize.lg,

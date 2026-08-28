@@ -13,6 +13,7 @@ export interface MovieRowProps {
   type?: string;
   year?: string;
   score?: number;       // 0–10; renders as ⭐ score · year
+  source?: string;
   onPress?: () => void;
   onLongPress?: () => void;
   trailing?: ReactNode;
@@ -26,6 +27,7 @@ export default function MovieRow({
   type = "movie",
   year,
   score,
+  source,
   onPress,
   onLongPress,
   trailing,
@@ -36,7 +38,7 @@ export default function MovieRow({
   const handlePress = onPress ?? (() =>
     router.push({
       pathname: "/movie/type/[type]/[id]",
-      params: { type: resolvedType, id: String(id), img: posterPath },
+      params: { type: resolvedType, id: String(id), img: posterPath, source },
     } as any)
   );
 

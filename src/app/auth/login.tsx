@@ -16,6 +16,8 @@ import { useAuthProviders } from "../../hooks/useAuthProviders";
 import AuthProviderButtons from "../../components/AuthProviderButtons";
 import FadeSlide from "../../components/FadeSlide";
 import useTranslation from "../../service/useTranslation";
+import { useEffect } from "react";
+import { posthog } from "../../constants/posthog";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 
@@ -31,7 +33,11 @@ export default function LoginScreen() {
 
   const t = useTranslation();
   const { handleAppleSignIn, handleGoogleSignIn, isGoogleLoading, isAppleLoading } =
-    useAuthProviders((msg) => setErrors({ form: msg }));
+    useAuthProviders((msg) => setErrors({ form: msg }), "login");
+
+  useEffect(() => {
+    posthog?.capture("sign_in_started");
+  }, []);
 
   const anyLoading = isLoading || isGoogleLoading || isAppleLoading;
 
@@ -119,7 +125,7 @@ export default function LoginScreen() {
             )}
 
             <AuthProviderButtons
-              onEmailPress={() => setShowEmailForm(true)}
+              onEmailPress={() => { posthog?.capture("auth_provider_tapped", { provider: "email", screen: "login" }); setShowEmailForm(true); }}
               onApplePress={() => { setErrors({}); handleAppleSignIn(); }}
               onGooglePress={() => { setErrors({}); handleGoogleSignIn(); }}
               isGoogleLoading={isGoogleLoading}

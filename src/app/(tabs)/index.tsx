@@ -192,7 +192,7 @@ export default function GameList() {
   );
 
 return (
-    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkippedFirst={markAllSeen}>
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkip={markAllSeen}>
       <SafeIOSContainer
         style={{
           flex: 1,

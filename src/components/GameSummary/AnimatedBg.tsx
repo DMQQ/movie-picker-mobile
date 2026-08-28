@@ -102,6 +102,8 @@ function PosterCard({
   );
 }
 
+export { CyclingGlow };
+
 export default function AnimatedBg({ posters }: { posters: string[] }) {
   const orbitAngle = useSharedValue(0);
 

@@ -23,6 +23,7 @@ import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import PageHeading from "../../../components/PageHeading";
+import UserAvatar from "../../../components/UserAvatar";
 import { appActions } from "../../../redux/app/appSlice";
 import { authActions } from "../../../redux/auth/authSlice";
 import { setUserId } from "../../../redux/app/appSlice";
@@ -310,7 +311,7 @@ export default function SettingsScreen() {
     (Updates.manifest as any)?.createdAt?.toString().split("T")[0] ?? "—";
 
   return (
-    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkippedFirst={markAllSeen}>
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkip={markAllSeen}>
       <View style={styles.container}>
         <PageHeading
           title={t("settings.heading")}
@@ -342,6 +343,9 @@ export default function SettingsScreen() {
               title={t("settings.nickname").toUpperCase()}
             />
             <View style={styles.card}>
+              <View style={styles.avatarRow}>
+                <UserAvatar name={nickname} size={72} />
+              </View>
               <TextInput
                 value={nickname}
                 onChangeText={setNickname}
@@ -545,6 +549,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm + 2,
   },
 
+  avatarRow: { alignItems: "center", paddingVertical: spacing.sm },
   textInput: { backgroundColor: "transparent" },
   helperText: {
     fontSize: fontSize.md,

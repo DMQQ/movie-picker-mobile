@@ -42,7 +42,7 @@ export default function Matchup() {
 
   const contentWidth = duelSize.width > 0 ? duelSize.width - spacing.sm * 2 : 0;
   const cardWidth = contentWidth > 0 ? contentWidth / 2 : 0;
-  const cardHeight = cardWidth * (4 / 3);
+  const cardHeight = cardWidth * (3 / 2);
 
   const vsScale = useSharedValue(1);
 
@@ -109,8 +109,6 @@ export default function Matchup() {
   const champPercent = totalVotes > 0 ? Math.round((tally.champion / totalVotes) * 100) : 0;
   const chalPercent = totalVotes > 0 ? Math.round((tally.challenger / totalVotes) * 100) : 0;
   const matchKey = `${currentMatch.roundNumber}-${currentMatch.matchIndex}`;
-  const champTitle = currentMatch.champion.title || currentMatch.champion.name || "";
-  const chalTitle = currentMatch.challenger.title || currentMatch.challenger.name || "";
   const roundsFromEnd = currentMatch.totalRounds - currentMatch.roundNumber;
   const stageName = roundsFromEnd === 0
     ? t("eitherOr.bracket.final")
@@ -119,11 +117,13 @@ export default function Matchup() {
       : roundsFromEnd === 2
         ? t("eitherOr.bracket.quarterfinal")
         : t("eitherOr.bracket.round", { round: currentMatch.roundNumber });
-  const champYear = (currentMatch.champion.release_date || currentMatch.champion.first_air_date)?.slice(0, 4) ?? "";
-  const chalYear = (currentMatch.challenger.release_date || currentMatch.challenger.first_air_date)?.slice(0, 4) ?? "";
   const matchLabel = currentMatch.matchesInRound > 1
     ? `${currentMatch.matchIndex + 1}/${currentMatch.matchesInRound}`
     : null;
+  const champTitle = currentMatch.champion.title || currentMatch.champion.name || "";
+  const chalTitle = currentMatch.challenger.title || currentMatch.challenger.name || "";
+  const champYear = (currentMatch.champion.release_date || currentMatch.champion.first_air_date)?.slice(0, 4) ?? "";
+  const chalYear = (currentMatch.challenger.release_date || currentMatch.challenger.first_air_date)?.slice(0, 4) ?? "";
 
   return (
     <View style={{ flex: 1 }}>

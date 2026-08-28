@@ -1,43 +1,37 @@
 import { router, useLocalSearchParams } from "expo-router";
 import Text from "../../components/Text";
 import { useCallback, useState } from "react";
-import { Platform, StyleSheet, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import IconButton from "../../components/IconButton";
-import PrimaryButton from "../../components/PrimaryButton";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StyleSheet, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { roomActions } from "../../redux/room/roomSlice";
 import { partyActions } from "../../redux/party/partySlice";
 import { reset } from "../../redux/roomBuilder/roomBuilderSlice";
 import { FancySpinner } from "../../components/FancySpinner";
-import GameRatingPill from "../../components/GameRatingPill";
 import GameSummaryError from "../../components/GameSummary/GameSummaryError";
 import GameSummaryListHeader from "../../components/GameSummary/GameSummaryListHeader";
 import MovieGrid from "../../components/GameSummary/MovieGrid";
 import type { SummaryTab } from "../../components/GameSummary/MovieGrid";
 import ShareModal from "../../components/GameSummary/ShareModal";
 import TicketButton from "../../components/TicketButton";
-import PartyWaitingOverlay from "../../components/PartyWaitingOverlay";
+import SummaryFooter from "../../components/SummaryFooter";
 import { useGameSummary } from "../../hooks/useGameSummary";
 import { usePartyGameFlow } from "../../hooks/usePartyGameFlow";
 import { useNewGameSocket } from "../../hooks/useNewGameSocket";
 import useTranslation from "../../service/useTranslation";
-import { colors, common, fontSize, fontWeight, radius, spacing } from "../../constants/design";
+import { colors, fontSize, fontWeight, spacing } from "../../constants/design";
 import { posthog } from "../../constants/posthog";
 
 export default function GameSummary() {
   const { roomId } = useLocalSearchParams<{ roomId: string }>();
   const dispatch = useAppDispatch();
   const t = useTranslation();
-  const insets = useSafeAreaInsets();
   const likes = useAppSelector((st) => st.room.likes);
   const isHost = useAppSelector((st) => st.room.isHost);
   const partyId = useAppSelector((st) => st.party.partyId);
   const [shareVisible, setShareVisible] = useState(false);
   const [tab, setTab] = useState<SummaryTab>("matches");
-  const { summary, loading, error, shouldShowRatingPill, userId } =
+  const { summary, loading, error, userId } =
     useGameSummary(roomId);
   const { newGameLoading, handleNewGame } = useNewGameSocket(
     roomId,
@@ -112,43 +106,14 @@ export default function GameSummary() {
         }
       />
 
-      <GameRatingPill shouldShow={shouldShowRatingPill} roomId={roomId} />
-
-      {isHost ? (
-        <View style={[styles.buttonRow, styles.hostActions]}>
-          <IconButton
-            icon="logout"
-            size={24}
-            onPress={handleBackToHome}
-            style={[common.iconButton, styles.quitIcon]}
-          />
-          <PrimaryButton
-            icon={({ color }) => (
-              <MaterialCommunityIcons name="refresh" size={18} color={color} />
-            )}
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              posthog?.capture("play_again_tapped", { game: "swipe" });
-              router.push("/play-again" as any);
-            }}
-            style={styles.playAgainBtn}
-          >
-            {t("game-summary.play-again")}
-          </PrimaryButton>
-        </View>
-      ) : (
-        <View
-          style={[
-            styles.buttonRow,
-            {
-              paddingBottom: Platform.OS === "android" ? spacing.screen : 0,
-            },
-          ]}
-        >
-          <PrimaryButton onPress={handleBackToHome} style={styles.backBtn}>
-            {t("game-summary.back-to-home")}
-          </PrimaryButton>
-          {hasMatches && (
+      <SummaryFooter
+        isHost={isHost}
+        onQuit={handleBackToHome}
+        configuring={configuring}
+        posthogGame="swipe"
+        guestPrimaryLabel={t("game-summary.back-to-home") as string}
+        guestSecondary={
+          hasMatches ? (
             <TicketButton
               label={t("game-summary.share-marathon") as string}
               onPress={() => {
@@ -157,9 +122,11 @@ export default function GameSummary() {
                 setShareVisible(true);
               }}
             />
-          )}
-        </View>
-      )}
+          ) : undefined
+        }
+        id={roomId}
+        newGameLoading={newGameLoading}
+      />
 
       {shareVisible && (
         <ShareModal
@@ -168,11 +135,6 @@ export default function GameSummary() {
           roomId={roomId}
         />
       )}
-
-      <PartyWaitingOverlay
-        visible={configuring || newGameLoading}
-        state={configuring ? "waiting" : "starting"}
-      />
     </View>
   );
 }
@@ -185,36 +147,5 @@ const styles = StyleSheet.create({
     marginTop: spacing.screen,
     opacity: 0.7,
     fontWeight: fontWeight.bold,
-  },
-  buttonRow: {
-    padding: spacing.screen,
-    paddingBottom: 0,
-    gap: spacing.sm + 2,
-    flexDirection: "row",
-    backgroundColor: colors.appBackground,
-  },
-  backBtn: { borderRadius: radius.pill, flex: 1 },
-  hostActions: {
-    alignItems: "center",
-    paddingBottom: Platform.OS === "android" ? spacing.screen : spacing.sm,
-  },
-  playAgainBtn: {
-    flex: 1,
-    borderRadius: radius.pill,
-  },
-  quitIcon: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
-  },
-  shareHeader: {
-    gap: spacing.xs,
-  },
-  shareTitle: {
-    fontFamily: "Bebas",
-    fontSize: 32,
-    color: colors.text,
-    letterSpacing: 1,
   },
 });

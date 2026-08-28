@@ -53,6 +53,13 @@ export default function MovieGrid({
     return { title: titles[idx], desc: descs[idx] };
   }, [t]);
 
+  const noPicksContent = useMemo(() => {
+    const titles = t("game-summary.no-picks-titles") as unknown as string[];
+    const descs = t("game-summary.no-picks-descs") as unknown as string[];
+    const idx = Math.floor(Math.random() * titles.length);
+    return { title: titles[idx], desc: descs[idx] };
+  }, [t]);
+
   const listData = useMemo<ListItem[]>(() => {
     const items: ListItem[] = [];
 
@@ -96,15 +103,13 @@ export default function MovieGrid({
             <View style={styles.emptyState}>
               <Text style={styles.emptyTitle}>{noMatchContent.title}</Text>
               <Text style={styles.emptyDesc}>{noMatchContent.desc}</Text>
-              <Button onPress={onTryAgain}>
-                {t("game-summary.try-again")}
-              </Button>
             </View>
           );
         }
         return (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyDesc}>No picks yet</Text>
+            <Text style={styles.emptyTitle}>{noPicksContent.title}</Text>
+            <Text style={styles.emptyDesc}>{noPicksContent.desc}</Text>
           </View>
         );
       }
@@ -126,7 +131,7 @@ export default function MovieGrid({
         </View>
       );
     },
-    [tab, summaryType, t, noMatchContent, onTryAgain],
+    [tab, summaryType, t, noMatchContent, noPicksContent, onTryAgain],
   );
 
   return (
@@ -156,9 +161,7 @@ const styles = StyleSheet.create({
   movieCell: { flex: 1 },
   emptyState: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: spacing.xxl + 6,
+    marginBottom: spacing.xxl + 6,
   },
   emptyTitle: {
     color: colors.text,
@@ -168,8 +171,6 @@ const styles = StyleSheet.create({
   emptyDesc: {
     color: colors.text,
     fontSize: fontSize.lg,
-    textAlign: "center",
-    marginVertical: spacing.screen,
-    maxWidth: 300,
+    marginVertical: spacing.sm,
   },
 });

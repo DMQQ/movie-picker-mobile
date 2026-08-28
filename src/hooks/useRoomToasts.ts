@@ -17,9 +17,14 @@ function userId(u: unknown): string {
   return "?";
 }
 
+const NO_MATCH_SWIPE_THRESHOLD = 120;
+
 export default function useRoomToasts() {
   const users = useAppSelector((s) => s.room.users);
   const rejoinStatus = useAppSelector((s) => s.room.rejoinStatus);
+  const isHost = useAppSelector((s) => s.room.isHost);
+  const totalSwiped = useAppSelector((s) => s.room.likes.length + s.room.dislikes.length);
+  const matchCount = useAppSelector((s) => s.room.matches.length);
   const toast = useToast();
   const t = useTranslation();
   const { connectionStatus } = useContext(SocketContext);
@@ -27,6 +32,7 @@ export default function useRoomToasts() {
   const prevStatus = useRef<ConnectionStatus>("idle");
   const hasInit = useRef(false);
   const connToastId = useRef<string | null>(null);
+  const hasShownNoMatchHint = useRef(false);
 
   // User join/leave detection
   useEffect(() => {
@@ -86,4 +92,15 @@ export default function useRoomToasts() {
       connToastId.current = null;
     }
   }, [rejoinStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Hint host to restart with different config after many swipes with no match
+  useEffect(() => {
+    if (!isHost) return;
+    if (hasShownNoMatchHint.current) return;
+    if (totalSwiped < NO_MATCH_SWIPE_THRESHOLD) return;
+    if (matchCount > 0) return;
+
+    hasShownNoMatchHint.current = true;
+    toast.show(t("room.toast.no-match-hint"), { type: "info", duration: 6000 });
+  }, [totalSwiped]); // eslint-disable-line react-hooks/exhaustive-deps
 }

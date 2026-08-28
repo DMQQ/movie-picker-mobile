@@ -53,7 +53,6 @@ export default function MatchupCard({ movie, side, votes, totalVotes, votedSide,
 
   const hasVoted = votedSide !== null;
   const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
-  const title = movie.title || movie.name;
   const isMySide = votedSide === side;
 
   useEffect(() => {
@@ -117,10 +116,6 @@ export default function MatchupCard({ movie, side, votes, totalVotes, votedSide,
         )}
 
         <LinearGradient colors={["transparent", "rgba(0,0,0,0.92)"]} style={styles.gradient}>
-          <Text numberOfLines={2} style={styles.title}>
-            {title}
-          </Text>
-
           <View style={styles.voteInfo}>
             <Animated.View style={[styles.votedRow, votedRowStyle]}>
               <MaterialCommunityIcons name="check-circle" size={14} color={colors.primary} />
@@ -160,11 +155,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     padding: spacing.sm + 2,
     paddingTop: spacing.xl,
-  },
-  title: {
-    fontFamily: "Bebas",
-    fontSize: fontSize.xl,
-    color: colors.text,
   },
   voteInfo: {
     minHeight: 24,

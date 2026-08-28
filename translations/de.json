@@ -160,7 +160,8 @@
       "players-left": "{count} Spieler haben den Raum verlassen",
       "connection-lost": "Verbindung verloren, verbinde neu...",
       "connection-lost-refresh": "Verbindung verloren, zum Aktualisieren ziehen",
-      "reconnected": "Wieder verbunden"
+      "reconnected": "Wieder verbunden",
+      "no-match-hint": "120 Wischgesten und noch kein Match — versuche es mit anderen Filtern oder Genres"
     },
     "genres": {
       "all_movies": "Alle Filme",
@@ -499,34 +500,51 @@
       "start": "Abstimmung starten",
       "you-are-host": "Du bist der Gastgeber. Starte jetzt oder warte auf andere.",
       "rate": "Bewerten",
-      "left": "verbleibend in dieser Runde",
+      "left": "verbleibend",
+      "ratingHeadings": [
+        "HEISSE MEINUNG? 🌶️",
+        "COUCHTEST BESTANDEN? 🛋️",
+        "WÜRDEST DU SCHAUEN? 👀",
+        "SEI EHRLICH 🤥",
+        "HYPE ODER NOPE? 🎯",
+        "KINO ODER SKIP? 🍿",
+        "VIBE CHECK 🌊",
+        "DU ENTSCHEIDEST ⚖️",
+        "BAUCHGEFÜHL? 🫀",
+        "MOMENT DER WAHRHEIT ⚡",
+        "ERSTER EINDRUCK 💭",
+        "ÜBERZEUG MICH 🎤",
+        "WÜRDIG? 👑",
+        "ANSCHAUEN ODER PASS? 🎬",
+        "DEIN URTEIL 🔨"
+      ],
       "quit": "Beenden",
       "qrcode-scan": "Zum Beitreten scannen",
       "likes": "Wischbewegungen"
     },
     "ratings": {
       "interest": {
-        "label": "Interesse",
+        "label": "Will's sehen?",
         "options": {
-          "0": "Meh",
+          "0": "Nein",
           "1": "Vielleicht",
-          "2": "Will's sehen"
+          "2": "Ja!"
         }
       },
       "mood": {
-        "label": "Stimmung",
+        "label": "Gerade?",
         "options": {
-          "0": "Nein",
-          "1": "Geht so",
+          "0": "Off",
+          "1": "Ok",
           "2": "Perfekt"
         }
       },
       "novelty": {
-        "label": "Neuheit",
+        "label": "Entdeckung",
         "options": {
-          "0": "Gesehen",
-          "1": "Vage",
-          "2": "Noch nie"
+          "0": "Ja",
+          "1": "Einmal",
+          "2": "Nie"
         }
       },
       "submit": "Bewertung absenden"
@@ -762,6 +780,20 @@
       "Kein einziger Film hat das Gruppenabstimmen überlebt. Brutal, ehrlich gesagt. Aber jeder Swipe hat uns etwas über euren Geschmack verraten, also wird das nächste Spiel schon klüger sein. Gebt jetzt nicht auf.",
       "Und das meinen wir als Kompliment. Null Überschneidung im Geschmack bedeutet, ihr seid alle extrem anspruchsvolle Zuschauer — oder einfach sehr stur. So oder so: Wir haben gelernt und das nächste Spiel wird viel besser.",
       "Wir haben diesmal nicht die richtigen Filme gefunden, um die Gruppe zu vereinen — das liegt an uns. Wir haben Notizen gemacht, den Algorithmus aktualisiert und ihm eine ernste Standpauke gehalten. Nächstes Spiel kommen wir heißer zurück."
+    ],
+    "no-picks-titles": [
+      "Kein einziger Like.",
+      "Schwer zu beeindrucken, hm?",
+      "Nichts hat dich angesprochen.",
+      "Wählerisch. Respekt.",
+      "Null Picks. Null Reue?"
+    ],
+    "no-picks-descs": [
+      "Du hast alles durchgescrollt und nichts geliked. Mutige Strategie. Vielleicht verdient das nächste Lineup endlich deine Zustimmung.",
+      "Kein Film hat die Hürde geschafft. Entweder sind deine Ansprüche astronomisch hoch oder der Algorithmus braucht eine ernste Ansage. Wahrscheinlich beides.",
+      "Du hast jeden Film einfach vorbeiziehen lassen. Kein Like, kein Erbarmen. Wir merken uns das und kommen mit einer stärkeren Liste zurück.",
+      "Respekt für die kompromisslose Konsequenz. Kein einziger Film war deines Likes würdig. Beim nächsten Mal machen wir es besser — wir müssen.",
+      "Nichts hat geklickt. Das sind nützliche Daten — wir wissen jetzt genau, was dich kaltlässt. Die nächste Runde wird ganz anders."
     ],
     "try-again": "Nochmal spielen",
     "your-picks": "Deine Likes",
@@ -1320,5 +1352,13 @@
     "title": "Geräteübergreifend synchronisieren",
     "subtitle": "Melde dich an, um deine Listen überall zu haben",
     "register": "Registrieren"
+  },
+  "async-join": {
+    "title": "Spiel läuft bereits",
+    "subtitle": "Andere wischen schon — hier ist der aktuelle Stand",
+    "liked": "Gemocht",
+    "matches": "Treffer",
+    "players": "Spieler",
+    "got-it": "Verstanden"
   }
 }

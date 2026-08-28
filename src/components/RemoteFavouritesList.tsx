@@ -56,7 +56,6 @@ function GroupCard({ item }: { item: UserList }) {
 
   return (
     <Link
-      disabled={isEmpty}
       style={{ marginBottom: spacing.screen }}
       href={{ pathname: "/group/[id]", params: toGroupParams(item) }}
     >

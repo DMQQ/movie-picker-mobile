@@ -180,6 +180,7 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
     if (!movie) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     superLikeMovie(movie);
+    posthog?.capture("superlike_used", { source: "random" });
     superLikeIconScale.value = withSequence(
       withSpring(1.8, { damping: 8, stiffness: 400 }),
       withSpring(1, { damping: 10, stiffness: 200 })
@@ -190,6 +191,7 @@ export function useRandomMovie({ diceRotate, onReveal, onReset }: UseRandomMovie
     if (!movie) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     blockMovie(movie);
+    posthog?.capture("movie_blocked", { source: "random" });
     fetchRandomMovie();
   }, [movie, blockMovie, fetchRandomMovie]);
 

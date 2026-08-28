@@ -135,7 +135,7 @@ export default function Favourites() {
   };
 
   return (
-    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkippedFirst={markAllSeen}>
+    <TourProvider ref={tourRef} steps={steps} onStop={markSeen} onSkip={markAllSeen}>
       <SafeIOSContainer style={{ paddingBottom: 0 }}>
         <PageHeading
           title={t("favourites.title")}

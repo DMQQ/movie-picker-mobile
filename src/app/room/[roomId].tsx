@@ -11,6 +11,7 @@ import RoomMatches from "../../components/Room/RoomMatches";
 import useRoomScreen from "../../hooks/useRoomScreen";
 import { colors } from "../../constants/design";
 import useRoomToasts from "../../hooks/useRoomToasts";
+import AsyncJoinOverlay from "../../components/AsyncJoinOverlay";
 
 function RoomScreenListener() {
   useRoomScreen();
@@ -19,7 +20,7 @@ function RoomScreenListener() {
 }
 
 export default function RoomScreen() {
-  const isPlaying = useAppSelector((state) => state.room.isPlaying);
+  const isPlaying = useAppSelector((state) => state.room.isPlaying && state.room.beenFired);
   const hasCards = useAppSelector((state) => state.room.movies.length > 0);
 
   return (
@@ -36,6 +37,7 @@ export default function RoomScreen() {
         <RoomLoader />
       )}
 
+      <AsyncJoinOverlay />
       <RoomErrorModal />
       <GameEndFlow />
       <RoomMatches />

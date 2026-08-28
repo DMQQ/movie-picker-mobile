@@ -96,9 +96,14 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
         if (!response?.joined) {
           dispatch(roomActions.setJoinError(true));
           hasJoined.current = false;
-        } else if (response.partyId) {
-          dispatch(partyActions.setParty({ partyId: response.partyId }));
-          partySocket?.emit("party:join", response.partyId);
+        } else {
+          if (response.partyId) {
+            dispatch(partyActions.setParty({ partyId: response.partyId }));
+            partySocket?.emit("party:join", response.partyId);
+          }
+          if (response.async && response.extra) {
+            dispatch(roomActions.setAsyncJoinInfo(response.extra));
+          }
         }
         console.log("[host-trace] swipe join-room ack", { code, joined: response?.joined, partyId: response?.partyId });
       } catch (error) {
@@ -360,6 +365,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
     async (card: Movie, index: number) => {
       if (!cardsRef.current.some((m) => m.id === card.id)) return;
       blockMovie(card);
+      posthog?.capture("movie_blocked", { source: "swiper" });
       dislikeCard(card, index);
     },
     [blockMovie, dislikeCard],
@@ -369,6 +375,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
     async (card: Movie, index: number) => {
       if (!cardsRef.current.some((m) => m.id === card.id)) return;
       superLikeMovie(card);
+      posthog?.capture("superlike_used", { source: "swiper" });
       await likeCard(card, index);
 
       if (isReady && movieInteractions) {

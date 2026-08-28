@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import Text from "../Text";
-import AnimatedBg from "./AnimatedBg";
+import AnimatedBg, { CyclingGlow } from "./AnimatedBg";
 import GameSummaryHeader from "./GameSummaryHeader";
 import StatsDashboard from "./StatsDashboard";
 import PlayerPerformance from "./PlayerPerformance";
@@ -60,6 +60,7 @@ export default function GameSummaryListHeader({
   return (
     <View>
       <View style={[styles.hero, { height: HERO_HEIGHT }]}>
+        <CyclingGlow />
         {fanPosters.length > 0 && <AnimatedBg posters={fanPosters} />}
         <View style={styles.heroLabel}>
           <GameSummaryHeader

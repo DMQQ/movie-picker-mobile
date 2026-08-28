@@ -183,7 +183,6 @@ export default function LocalFavouritesList({
       }
       renderItem={({ item }) => (
         <Link
-          disabled={item?.movies?.length === 0}
           style={{ marginBottom: spacing.screen }}
           href={{
             pathname: "/group/[id]",

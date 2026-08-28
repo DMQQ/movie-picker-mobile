@@ -160,7 +160,8 @@
       "players-left": "{count} graczy opuściło pokój",
       "connection-lost": "Utracono połączenie, ponawiam...",
       "connection-lost-refresh": "Utracono połączenie, przeciągnij aby odświeżyć",
-      "reconnected": "Połączono ponownie"
+      "reconnected": "Połączono ponownie",
+      "no-match-hint": "120 przesunięć i nadal brak dopasowania — spróbuj zrestartować z innymi filtrami lub gatunkami"
     },
     "genres": {
       "all_movies": "Wszystkie filmy",
@@ -499,34 +500,51 @@
       "start": "Rozpocznij głosowanie",
       "you-are-host": "Jesteś gospodarzem. Zacznij teraz lub poczekaj na innych.",
       "rate": "Oceń",
-      "left": "pozostało w tej kolejce",
+      "left": "pozostało",
+      "ratingHeadings": [
+        "GORĄCY TEMAT? 🌶️",
+        "WARTO NA KANAPIE? 🛋️",
+        "CZY BYŁBYŚ NA TO? 👀",
+        "BĄDŹ SZCZERY 🤥",
+        "HYPE CZY NOPE? 🎯",
+        "KINO CZY SKIP? 🍿",
+        "VIBE CHECK 🌊",
+        "TY DECYDUJESZ ⚖️",
+        "INSTYNKT? 🫀",
+        "CHWILA PRAWDY ⚡",
+        "PIERWSZE WRAŻENIE 💭",
+        "PRZEKONAJ MNIE 🎤",
+        "GODNE? 👑",
+        "OGLĄDAĆ CZY PAS? 🎬",
+        "TWÓJ WERDYKT 🔨"
+      ],
       "quit": "Opuść grę",
       "qrcode-scan": "Zeskanuj",
       "likes": "Swipe'y"
     },
     "ratings": {
       "interest": {
-        "label": "Zainteresowanie",
+        "label": "Chcę to?",
         "options": {
-          "0": "Słabo",
+          "0": "Nie",
           "1": "Może",
-          "2": "Chcę"
+          "2": "Tak!"
         }
       },
       "mood": {
-        "label": "Nastrój",
+        "label": "Teraz?",
         "options": {
-          "0": "Nie",
-          "1": "Może być",
+          "0": "Off",
+          "1": "Ok",
           "2": "Idealnie"
         }
       },
       "novelty": {
-        "label": "Świeżość",
+        "label": "Nowość",
         "options": {
-          "0": "Widziałem",
-          "1": "Trochę",
-          "2": "Nigdy nie widziałem"
+          "0": "Tak",
+          "1": "Raz",
+          "2": "Nigdy"
         }
       },
       "submit": "Wyślij ocenę"
@@ -762,6 +780,20 @@
       "Ani jeden film nie przeżył grupowego głosowania. Brutalnie, serio. Ale każde przesunięcie powiedziało nam coś o waszym guście, więc następna gra będzie już mądrzejsza. Nie rezygnujcie teraz.",
       "I mówimy to z komplementem. Zero wspólnego gustu oznacza, że jesteście wyjątkowo wymagającymi widzami — albo po prostu bardzo upartymi. Tak czy inaczej, wyciągnęliśmy wnioski i następna gra będzie lepsza.",
       "Nie znaleźliśmy tym razem filmów, które połączyłyby grupę — i to nasza wina. Zanotowaliśmy, zaktualizowaliśmy algorytm i daliśmy mu porządną reprymendę. Następna gra będzie inna."
+    ],
+    "no-picks-titles": [
+      "Ani jednego polubienia.",
+      "Wymagający, co?",
+      "Nic cię nie zachwyciło.",
+      "Zero kompromisów. Szacun.",
+      "Zero wyborów. Zero żalu?"
+    ],
+    "no-picks-descs": [
+      "Przejrzałeś wszystko i nic nie polubiłeś. Odważna strategia. Może kolejna runda w końcu zdobędzie twoje uznanie.",
+      "Ani jeden film nie przeszedł selekcji. Albo twoje standardy są astronomiczne, albo algorytm potrzebuje porządnej reprymend. Pewnie i jedno, i drugie.",
+      "Przepuściłeś każdy film bez jednego polubienia. Bez litości. Notujemy i wracamy z lepszą listą.",
+      "Szacunek za stuprocentowy brak kompromisów. Żaden film nie zasłużył na twoje like. Następna runda będzie inna — musi być.",
+      "Nic nie trafiło w twój gust. To przydatne dane — wiemy już dokładnie, co cię nie kręci. Kolejna runda będzie zupełnie inna."
     ],
     "try-again": "Zagraj ponownie",
     "your-picks": "Twoje polubienia",
@@ -1319,5 +1351,13 @@
     "title": "Synchronizacja między urządzeniami",
     "subtitle": "Zaloguj się, aby mieć listy wszędzie",
     "register": "Zarejestruj się"
+  },
+  "async-join": {
+    "title": "Gra już trwa",
+    "subtitle": "Inni już przesuwają — oto aktualny stan",
+    "liked": "Polubione",
+    "matches": "Dopasowania",
+    "players": "Gracze",
+    "got-it": "Rozumiem"
   }
 }

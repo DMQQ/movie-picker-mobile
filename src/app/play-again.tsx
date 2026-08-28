@@ -15,7 +15,6 @@ interface Mode {
   descriptionKey: string;
   animationIndex: number;
   badgeColor: string;
-  featured?: boolean;
 }
 
 const MODES: Mode[] = [
@@ -25,7 +24,6 @@ const MODES: Mode[] = [
     descriptionKey: "games.voter.swipeDescription",
     animationIndex: 0,
     badgeColor: colors.primary,
-    featured: true,
   },
   {
     key: "voter",
@@ -59,11 +57,7 @@ export default function PlayAgain() {
           name: m.nickname,
           isHost: m.userId === partyHost,
         }));
-  const visibleModes = (
-    from === "either-or" || from === "voter"
-      ? MODES.filter((mode) => mode.key !== "swipe")
-      : MODES
-  ).map((mode) => ({
+  const visibleModes = MODES.map((mode) => ({
     ...mode,
     title: t(mode.titleKey),
     description: t(mode.descriptionKey),
@@ -97,7 +91,7 @@ export default function PlayAgain() {
               description={mode.description}
               index={mode.animationIndex}
               badgeColor={mode.badgeColor}
-              featured={mode.featured}
+              featured={false}
               onPress={() => handleSelect(mode.key)}
             />
           ))}

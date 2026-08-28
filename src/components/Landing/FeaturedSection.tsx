@@ -202,6 +202,7 @@ const FeaturedSection = memo(({ categoryId }: FeaturedSectionProps) => {
                     id: featured?.id,
                     type: featured?.type || (featured?.title ? "movie" : "tv"),
                     img: featured?.poster_path,
+                    source: "discover",
                   },
                 }}
                 asChild

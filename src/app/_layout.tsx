@@ -211,9 +211,19 @@ const RootNavigator = ({
 
         const deviceSettings = getDeviceSettings();
 
+        const resolvedNickname = (() => {
+          if (nickname) return nickname;
+          const serverName = anonymousResult?.user?.name;
+          if (serverName) {
+            AsyncStorage.setItemAsync("nickname", serverName);
+            return serverName;
+          }
+          return deviceSettings.nickname;
+        })();
+
         dispatch(
           appActions.setSettings({
-            nickname: nickname || deviceSettings.nickname,
+            nickname: resolvedNickname,
             language: deviceSettings.language,
             regionalization: deviceSettings.regionalization,
           }),

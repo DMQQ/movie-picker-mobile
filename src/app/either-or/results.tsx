@@ -1,28 +1,26 @@
 import { useEffect, useRef, useState } from "react";
-import { BackHandler, LayoutChangeEvent, Platform, ScrollView, StyleSheet, View } from "react-native";
+import { BackHandler, LayoutChangeEvent, ScrollView, StyleSheet, View } from "react-native";
 import LottieView from "lottie-react-native";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn } from "react-native-reanimated";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Text from "../../components/Text";
-import PrimaryButton from "../../components/PrimaryButton";
-import IconButton from "../../components/IconButton";
 import AnimatedBg from "../../components/GameSummary/AnimatedBgClassic";
 import Podium from "../../components/EitherOr/Podium";
 import Bracket, { computeBracketFitScale } from "../../components/EitherOr/Bracket";
 import { FancySpinner } from "../../components/FancySpinner";
 import CreateCollectionFromLiked from "../../components/CreateCollectionFromLiked";
 import UserAvatar from "../../components/UserAvatar";
-import PartyWaitingOverlay from "../../components/PartyWaitingOverlay";
 import { usePartyGameFlow } from "../../hooks/usePartyGameFlow";
 import { useAppDispatch, useAppSelector } from "../../redux/store";
 import { eitherOrActions } from "../../redux/eitherOr/eitherOrSlice";
-import GameRatingPill from "../../components/GameRatingPill";
+import { roomActions } from "../../redux/room/roomSlice";
+import { partyActions } from "../../redux/party/partySlice";
+import SummaryFooter from "../../components/SummaryFooter";
 import useTranslation from "../../service/useTranslation";
 import ReviewManager from "../../utils/rate";
-import { colors, common, fontSize, radius, spacing, typography, withAlpha } from "../../constants/design";
+import { colors, fontSize, radius, spacing, typography, withAlpha } from "../../constants/design";
 import { posthog } from "../../constants/posthog";
 
 export default function EitherOrResults() {
@@ -83,6 +81,10 @@ export default function EitherOrResults() {
     } else if (mode === "either-or") {
       dispatch(eitherOrActions.reset());
       router.replace("/either-or/setup" as any);
+    } else if (mode === "swipe") {
+      dispatch(roomActions.reset());
+      dispatch(partyActions.setSwipeFromParty(true));
+      router.navigate("/room/setup" as any);
     }
   });
 
@@ -153,49 +155,16 @@ export default function EitherOrResults() {
         pointerEvents="none"
       />
 
-      <GameRatingPill roomId={roomId} shouldShow={!!top3.length} />
-
-      {isHost ? (
-        <View
-          style={[
-            styles.buttonRow,
-            { paddingBottom: Platform.OS === "android" ? spacing.screen : spacing.sm },
-          ]}
-        >
-          <IconButton
-            icon="logout"
-            size={24}
-            onPress={onDone}
-            style={[common.iconButton, styles.quitIcon]}
-          />
-          <PrimaryButton
-            icon={({ color }) => (
-              <MaterialCommunityIcons name="refresh" size={18} color={color} />
-            )}
-            onPress={() => {
-              posthog?.capture("play_again_tapped", { game: "either-or" });
-              router.push({ pathname: "/play-again", params: { from: "either-or" } } as any);
-            }}
-            style={styles.playAgainBtn}
-          >
-            {t("game-summary.play-again")}
-          </PrimaryButton>
-        </View>
-      ) : (
-        <View
-          style={[
-            styles.buttonRow,
-            { paddingBottom: Platform.OS === "android" ? spacing.screen : spacing.sm },
-          ]}
-        >
-          <PrimaryButton onPress={onDone} style={styles.doneBtn}>
-            {t("eitherOr.results.done")}
-          </PrimaryButton>
-          <CreateCollectionFromLiked data={top3} />
-        </View>
-      )}
-
-      <PartyWaitingOverlay visible={configuring} />
+      <SummaryFooter
+        isHost={isHost}
+        onQuit={onDone}
+        configuring={configuring}
+        playAgainFrom="either-or"
+        posthogGame="either-or"
+        guestPrimaryLabel={t("eitherOr.results.done") as string}
+        guestSecondary={<CreateCollectionFromLiked data={top3} />}
+        id={roomId}
+      />
     </View>
   );
 }
@@ -264,32 +233,6 @@ const styles = StyleSheet.create({
   },
   bracketCard: {
     overflow: "hidden",
-  },
-  buttonRow: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm + 2,
-    paddingHorizontal: spacing.screen,
-    paddingTop: spacing.sm,
-    backgroundColor: colors.appBackground,
-  },
-  doneBtn: {
-    flex: 1,
-    borderRadius: radius.pill,
-  },
-  playAgainBtn: {
-    flex: 1,
-    borderRadius: radius.pill,
-  },
-  quitIcon: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
   },
   confetti: {
     ...StyleSheet.absoluteFill,

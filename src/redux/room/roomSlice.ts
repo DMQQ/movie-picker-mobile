@@ -58,6 +58,9 @@ const initialState = {
   likes: [] as Movie[],
   dislikes: [] as Movie[],
   gameSummary: null as IGameSummary | null,
+
+  // Async join info — set when joining a room that's already in progress
+  asyncJoinInfo: null as { likedMovies: number; matches: number; players: number; hasStarted: boolean } | null,
 };
 
 type MovieMatch = Movie;
@@ -269,6 +272,10 @@ const roomSlice = createSlice({
         state.isHost = true;
         state.isCreated = true;
       }
+    },
+
+    setAsyncJoinInfo(state, { payload }: { payload: typeof initialState.asyncJoinInfo }) {
+      state.asyncJoinInfo = payload;
     },
 
     setJoinError(state, { payload }: { payload: boolean }) {

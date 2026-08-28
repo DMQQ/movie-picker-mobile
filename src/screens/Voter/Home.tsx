@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Dialog from "../../components/Dialog";
 import Portal from "../../components/Portal";
 import Text from "../../components/Text";
@@ -6,7 +6,7 @@ import { useTheme } from "../../hooks/useTheme";
 import { Image, View } from "react-native";
 
 import Button from "../../components/Button";
-import { colors, radius, spacing } from "../../constants/design";
+import { radius } from "../../constants/design";
 import * as Haptics from "expo-haptics";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -41,6 +41,7 @@ export default function Home() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const [showError, setShowError] = useState(false);
+  const cardStartTime = useRef(Date.now());
   const t = useTranslation();
 
   useEffect(() => {
@@ -72,6 +73,11 @@ export default function Home() {
   }, [params?.sessionId]);
 
   useEffect(() => {
+    cardStartTime.current = Date.now();
+    setLocalRatings({ interest: null, mood: null, uniqueness: null });
+  }, [currentMovies?.[0]?.id]);
+
+  useEffect(() => {
     if (
       localRatings.interest === null ||
       localRatings.mood === null ||
@@ -86,6 +92,7 @@ export default function Home() {
         interest: localRatings.interest!,
         mood: localRatings.mood!,
         uniqueness: localRatings.uniqueness!,
+        durationMs: Date.now() - cardStartTime.current - 500,
       });
       setLocalRatings({ interest: null, mood: null, uniqueness: null });
     }, 500);
@@ -162,7 +169,7 @@ export default function Home() {
         />
       )}
       {status === "completed" && (
-        <View style={{ padding: spacing.screen, flex: 1 }}>
+        <View style={{ flex: 1 }}>
           <Results />
         </View>
       )}

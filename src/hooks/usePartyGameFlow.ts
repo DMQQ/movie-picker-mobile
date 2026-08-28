@@ -7,12 +7,14 @@ import { usePartySocket } from "../context/PartySocketContext";
 /**
  * Shared party flow for game summary screens:
  * - Non-hosts: party:configuring sets the "host is setting up" state,
- *   party:ready auto-navigates them into the new game room.
+ *   party:ready auto-navigates them into the new game room (swipe included —
+ *   guests land on /room/[roomId] and auto-join like a deeplink).
  * - Host: consumes party.nextGame (set by the play-again sheet), emits
- *   party:next-game for non-swipe modes and calls onMode.
+ *   party:next-game for all modes and calls onMode.
  *
- * Returns `configuring` for the waiting overlay. Swipe mode is never emitted
- * on the party socket — swipe restarts go through room:new-game on /swipe.
+ * Returns `configuring` for the waiting overlay. Swipe restarts from a swipe
+ * summary still go through room:new-game on /swipe — party:next-game for swipe
+ * only shows the configuring strip on guests during that restart.
  */
 export function usePartyGameFlow(isHost: boolean, onMode: (mode: PartyGameMode) => void) {
   const dispatch = useAppDispatch();
@@ -39,7 +41,7 @@ export function usePartyGameFlow(isHost: boolean, onMode: (mode: PartyGameMode) 
 
   useEffect(() => {
     if (!partySocket) return;
-    const onPartyReady = ({ roomId: gameRoomId, gameMode }: { roomId: string; gameMode: "voter" | "either-or" }) => {
+    const onPartyReady = ({ roomId: gameRoomId, gameMode }: { roomId: string; gameMode: "voter" | "either-or" | "swipe" }) => {
       console.log("[host-trace] party:ready received", {
         roomId: gameRoomId,
         gameMode,
@@ -50,8 +52,10 @@ export function usePartyGameFlow(isHost: boolean, onMode: (mode: PartyGameMode) 
       setConfiguring(false);
       if (gameMode === "voter") {
         router.navigate({ pathname: "/voter", params: { sessionId: gameRoomId } } as any);
-      } else {
+      } else if (gameMode === "either-or") {
         router.navigate(`/either-or/${gameRoomId}` as any);
+      } else {
+        router.navigate({ pathname: "/room/[roomId]", params: { roomId: gameRoomId } } as any);
       }
     };
     partySocket.on("party:ready", onPartyReady);
@@ -68,7 +72,7 @@ export function usePartyGameFlow(isHost: boolean, onMode: (mode: PartyGameMode) 
       partySocketConnected: partySocket?.connected,
     });
     dispatch(partyActions.setNextGame(null));
-    if (mode !== "swipe") {
+    if (partyId) {
       partySocket?.emit("party:next-game", { partyId, gameMode: mode });
       console.log("[host-trace] party:next-game emitted", { partyId, gameMode: mode });
     }

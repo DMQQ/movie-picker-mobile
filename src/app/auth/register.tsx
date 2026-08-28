@@ -35,7 +35,7 @@ export default function RegisterScreen() {
 
   const t = useTranslation();
   const { handleAppleSignIn, handleGoogleSignIn, isGoogleLoading, isAppleLoading } =
-    useAuthProviders((msg) => setErrors({ form: msg }));
+    useAuthProviders((msg) => setErrors({ form: msg }), "register");
 
   const anyLoading = isLoading || isGoogleLoading || isAppleLoading;
 
@@ -150,7 +150,7 @@ export default function RegisterScreen() {
             )}
 
             <AuthProviderButtons
-              onEmailPress={() => setShowEmailForm(true)}
+              onEmailPress={() => { posthog?.capture("auth_provider_tapped", { provider: "email", screen: "register" }); setShowEmailForm(true); }}
               onApplePress={handleAppleSignIn}
               onGooglePress={handleGoogleSignIn}
               isGoogleLoading={isGoogleLoading}

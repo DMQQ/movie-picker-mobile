@@ -1,11 +1,11 @@
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import { useState } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
-import IconButton from "../../components/IconButton";
 import Text from "../../components/Text";
-import { colors, common, fontWeight, fontSize, radius, spacing, typography, withAlpha } from "../../constants/design";
+import SummaryFooter from "../../components/SummaryFooter";
+import { colors, fontWeight, fontSize, radius, spacing, typography, withAlpha } from "../../constants/design";
 import PrimaryButton from "../../components/PrimaryButton";
 import Touch from "../../components/Touch";
 import Thumbnail, { ThumbnailSizes } from "../../components/Thumbnail";
@@ -14,15 +14,17 @@ import QuickActions from "../../components/QuickActions";
 import AnimatedBgClassic from "../../components/GameSummary/AnimatedBgClassic";
 import { useMovieVoter } from "../../service/useVoter";
 import { usePartyGameFlow } from "../../hooks/usePartyGameFlow";
+import { useAppDispatch } from "../../redux/store";
+import { roomActions } from "../../redux/room/roomSlice";
+import { partyActions } from "../../redux/party/partySlice";
 import ReviewManager from "../../utils/rate";
 import useTranslation from "../../service/useTranslation";
-import GameRatingPill from "../../components/GameRatingPill";
 import { posthog } from "../../constants/posthog";
 import { Movie } from "../../../types";
 
 const VOTER_AMBER = "#E5A830";
 
-const scaleTitle = (title: string, size = 42) => {
+const scaleTitle = (title: string, size = 36) => {
   if (title.length > 30) return size * 0.7;
   if (title.length > 20) return size * 0.85;
   return size;
@@ -33,8 +35,9 @@ const yearOf = (movie: Partial<Movie>) =>
 
 export default function Results() {
   const { sessionResults, sessionId, isHost, actions } = useMovieVoter();
-  const insets = useSafeAreaInsets();
+  const [footerHeight, setFooterHeight] = useState(0);
   const t = useTranslation();
+  const dispatch = useAppDispatch();
 
   const configuring = usePartyGameFlow(isHost, (mode) => {
     if (mode === "voter") {
@@ -42,6 +45,10 @@ export default function Results() {
       actions.resetSession();
     } else if (mode === "either-or") {
       router.navigate("/either-or/setup" as any);
+    } else if (mode === "swipe") {
+      dispatch(roomActions.reset());
+      dispatch(partyActions.setSwipeFromParty(true));
+      router.navigate("/room/setup" as any);
     }
   });
 
@@ -85,21 +92,19 @@ export default function Results() {
   const year = card ? yearOf(card) : "";
   const language = card?.original_language ?? "";
   const winnerTitle = card?.title || card?.name || "";
-  const footerPad = Platform.OS === "android" ? spacing.screen : spacing.sm;
 
   return (
+    <>
     <View style={styles.fill}>
       <AnimatedBgClassic matchedMovies={allPosters} />
       <View style={styles.overlay} />
-
-      <GameRatingPill sessionId={sessionId ?? undefined} shouldShow={!!sessionResults.topPicks.length} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.scroll}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: insets.top + spacing.sm, paddingBottom: (isHost ? 80 : 72) + footerPad },
+          { paddingTop: spacing.sm, paddingBottom: Math.max(footerHeight, 110) + spacing.sm },
         ]}
       >
         {/* Header */}
@@ -122,7 +127,7 @@ export default function Results() {
             <Thumbnail
               path={card?.poster_path ?? ""}
               size={ThumbnailSizes.poster.large}
-              style={styles.winnerPoster}
+              container={styles.winnerPoster}
             />
           </Touch>
 
@@ -146,7 +151,7 @@ export default function Results() {
           )}
 
           {!!card?.overview && (
-            <Text style={styles.overview} numberOfLines={4}>
+            <Text style={styles.overview} numberOfLines={3}>
               {card.overview}
             </Text>
           )}
@@ -174,7 +179,7 @@ export default function Results() {
                       trailing={
                         <View style={styles.agreementChip}>
                           <Text style={styles.agreementText}>
-                            {Math.round(item.agreement * 100)}%
+                            {item.agreement != null ? `${Math.round(item.agreement * 100)}%` : "—"}
                           </Text>
                         </View>
                       }
@@ -187,49 +192,29 @@ export default function Results() {
         )}
       </ScrollView>
 
-      {/* Footer */}
-      {isHost ? (
-        <View style={[styles.footer, { paddingBottom: footerPad }]}>
-          <IconButton
-            icon="logout"
-            size={24}
-            onPress={onQuit}
-            style={[common.iconButton, styles.quitIcon]}
-          />
-          <PrimaryButton
-            icon={({ color }) => (
-              <MaterialCommunityIcons name="refresh" size={18} color={color} />
-            )}
-            onPress={() => {
-              posthog?.capture("play_again_tapped", { game: "voter" });
-              router.push({ pathname: "/play-again", params: { from: "voter" } } as any);
-            }}
-            style={styles.playAgainBtn}
-          >
-            {t("game-summary.play-again")}
-          </PrimaryButton>
-        </View>
-      ) : (
-        <View
-          pointerEvents={configuring ? "none" : "auto"}
-          style={[styles.footer, { paddingBottom: footerPad, opacity: configuring ? 0.4 : 1 }]}
-        >
-          <PrimaryButton onPress={onQuit} style={styles.playAgainBtn}>
-            {t("voter.home.quit")}
-          </PrimaryButton>
-        </View>
-      )}
     </View>
+    <SummaryFooter
+      isHost={isHost}
+      onQuit={onQuit}
+      configuring={configuring}
+      playAgainFrom="voter"
+      posthogGame="voter"
+      guestPrimaryLabel={t("voter.home.quit") as string}
+      id={sessionId ?? undefined}
+      onHeightChange={setFooterHeight}
+  />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   fill: {
     flex: 1,
+    overflow: "hidden",
     backgroundColor: colors.appBackground,
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: "rgba(8,8,15,0.78)",
   },
   center: {
@@ -284,7 +269,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     letterSpacing: 0.5,
     marginTop: spacing.xs,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
   posterWrap: {
     borderRadius: radius.lg + 2,
@@ -297,16 +282,17 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   winnerPoster: {
-    width: 160,
-    height: 240,
+    width: 150,
+    height: 225,
     borderRadius: radius.lg,
+    overflow: "hidden",
     backgroundColor: colors.surfaceElevated,
   },
   metaRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs - 1,
-    marginTop: spacing.lg,
+    marginTop: spacing.md,
   },
   metaText: {
     fontSize: fontSize.sm,
@@ -319,16 +305,13 @@ const styles = StyleSheet.create({
   },
   quickActionsWrap: {
     width: "100%",
-    marginTop: spacing.xl,
-    marginBottom: spacing.sm,
-    paddingHorizontal: spacing.xxl,
+    marginTop: spacing.lg,
   },
   overview: {
     fontSize: fontSize.md,
     lineHeight: 21,
     color: withAlpha(colors.text, 0.65),
     textAlign: "center",
-    maxWidth: 320,
     marginTop: spacing.md,
   },
   picksSection: {
@@ -380,29 +363,5 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: VOTER_AMBER,
     fontWeight: fontWeight.bold,
-  },
-  footer: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm + 2,
-    paddingHorizontal: spacing.screen,
-    paddingTop: spacing.sm,
-    backgroundColor: withAlpha(colors.appBackground, 0.95),
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
-  },
-  playAgainBtn: {
-    flex: 1,
-    borderRadius: radius.pill,
-  },
-  quitIcon: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.pill,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.border,
   },
 });

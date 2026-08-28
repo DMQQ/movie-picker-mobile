@@ -64,6 +64,7 @@ export const SectionListItem = ({
           id: rest.id,
           type: rest.type === "tv" ? "tv" : "movie",
           img: poster_path,
+          source: "discover",
         },
       }}
       style={[
