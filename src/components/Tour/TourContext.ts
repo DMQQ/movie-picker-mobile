@@ -46,10 +46,6 @@ export const TourStableContext = createContext<TourStableContextValue>({
   registerMeasurer: () => {},
 });
 
-export function useTourContext() {
-  return useContext(TourContext);
-}
-
 export function useTourStableContext() {
   return useContext(TourStableContext);
 }

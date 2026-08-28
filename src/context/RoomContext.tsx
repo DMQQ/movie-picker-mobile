@@ -105,7 +105,6 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
             dispatch(roomActions.setAsyncJoinInfo(response.extra));
           }
         }
-        console.log("[host-trace] swipe join-room ack", { code, joined: response?.joined, partyId: response?.partyId });
       } catch (error) {
         posthog?.captureException(error, { context: "room_join" });
         if (joinCancelToken.current !== token) return;
@@ -201,13 +200,6 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
 
     const handleRoomState = (data: any) => {
       if (!data) return;
-      console.log("[host-trace] room:state received", {
-        serverRoomId: data.roomId || data.id,
-        isStarted: data.isStarted,
-        gameEnded: data.gameEnded,
-        localIsHost: store.getState().room.isHost,
-        localUserId: userIdRef.current,
-      });
       dispatch(roomActions.setRoom(data));
       dispatch(roomActions.setPlaying(data.isStarted));
       if (data.host) {
@@ -229,11 +221,6 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
     const handleHostChanged = (data: { host: string }) => {
       const nextIsHost =
         data.host === userIdRef.current || data.host === authUserIdRef.current;
-      console.log("[host-trace] room:host:changed", {
-        serverHost: data.host,
-        localUserId: userIdRef.current,
-        nextIsHost,
-      });
       dispatch(roomActions.setHost(nextIsHost));
     };
 
@@ -242,12 +229,10 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
     };
 
     const handlePartyUpdate = (data: { partyId: string; members: PartyMember[] }) => {
-      console.log("[host-trace] party:update", { partyId: data.partyId, members: data.members?.length });
       dispatch(partyActions.setParty({ partyId: data.partyId, members: data.members }));
     };
 
     const handlePartyGameEnded = (data: { partyId: string }) => {
-      console.log("[host-trace] party:game-ended", data);
       dispatch(partyActions.setParty({ partyId: data.partyId }));
     };
 

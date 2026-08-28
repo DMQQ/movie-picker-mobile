@@ -41,17 +41,13 @@ export default function EitherOrRoomScreen() {
 
   useEffect(() => {
     const target = (params.roomId || "").toUpperCase();
-    console.log("[EitherOr] join effect", { target, roomId, attempted: attempted.current, socketConnected: socket?.connected });
     if (!target || target === roomId || attempted.current || !socket?.connected) return;
     attempted.current = true;
-    console.log("[EitherOr] join effect: calling joinRoom", { target });
     joinRoom(target);
   }, [params.roomId, roomId, socket?.connected, joinRoom]);
 
   useEffect(() => {
-    console.log("[EitherOr] connection watcher", { connectionStatus, roomId, attempted: attempted.current });
     if (connectionStatus === "disconnected" && !roomId && !attempted.current) {
-      console.log("[EitherOr] connection watcher: disconnected with no roomId → setJoinError");
       dispatch(eitherOrActions.setJoinError(true));
     }
   }, [connectionStatus, roomId]);

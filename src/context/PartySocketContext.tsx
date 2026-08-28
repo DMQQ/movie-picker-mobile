@@ -45,20 +45,8 @@ export function PartySocketProvider({ children }: { children: React.ReactNode })
 
       if (!mounted) { s.disconnect(); return; }
       socketRef.current = s;
-      console.log("[host-trace] party socket created", {
-        connected: s.connected,
-        socketId: s.id,
-        userId: effectiveUserId,
-      });
       s.on("connect", () => {
-        console.log("[host-trace] party socket connect", { socketId: s.id });
         if (mounted) setPartySocket(s);
-      });
-      s.on("disconnect", (reason) => {
-        console.log("[host-trace] party socket disconnect", { socketId: s.id, reason });
-      });
-      s.io.on("reconnect", (attempt) => {
-        console.log("[host-trace] party socket reconnect", { attempt });
       });
       setPartySocket(s);
     })();

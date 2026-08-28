@@ -108,14 +108,6 @@ export const SocketProvider = ({
     try {
       const storedUserId = await AsyncStorage.getItem("userId");
       const effectiveUserId = userId || storedUserId;
-      console.log("Socket init:", {
-        namespace,
-        reduxUserId: userId,
-        storedUserId,
-        effectiveUserId,
-        authToken: !!authToken,
-      });
-
       const newSocket = socketIOClient(baseUrl + namespace, {
         ...connectionConfig,
         auth: {
@@ -132,10 +124,6 @@ export const SocketProvider = ({
       });
 
       newSocket.on("connect", () => {
-        console.log("✅ Socket connected successfully", {
-          id: newSocket.id,
-          namespace,
-        });
         setConnectionStatus("connected");
 
         // Emit before updating refs so listeners registered against the previous

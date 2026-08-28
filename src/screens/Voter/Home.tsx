@@ -115,16 +115,6 @@ export default function Home() {
     });
   }, [currentMovies.map((m) => m.id).join(",")]);
 
-  useEffect(() => {
-    if (status === "rating") {
-      console.log(
-        "[voter:home] currentMovies count:",
-        currentMovies.length,
-        "card:",
-        currentMovies?.[0]?.id ?? "none",
-      );
-    }
-  }, [currentMovies.length, status]);
 
   const handleReady = () => {
     const newReadyState = !localReady;

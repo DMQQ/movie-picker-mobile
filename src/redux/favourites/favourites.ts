@@ -352,15 +352,11 @@ export const renameGroup = createAsyncThunk(
     const { token, user } = state.auth;
     const isFullAccount = !!user && user.provider !== "anonymous";
 
-    console.log("[renameGroup] start", { groupId, name, isFullAccount, hasToken: !!token });
-
     if (token && isFullAccount) {
       const group = state.favourite.groups.find((g) => g.id === groupId);
       const listType = group?.type ?? LOCAL_ID_TO_TYPE[groupId] ?? groupId;
-      console.log("[renameGroup] remote path", { listType, groupFound: !!group });
       try {
         await d(dispatch)(listsApi.endpoints.patchList.initiate({ type: listType, name })).unwrap();
-        console.log("[renameGroup] remote success");
       } catch (err) {
         console.error("[renameGroup] remote error:", JSON.stringify(err));
         throw err;
@@ -368,7 +364,6 @@ export const renameGroup = createAsyncThunk(
       return { groupId, name };
     }
 
-    console.log("[renameGroup] local path");
     const storage = parseStorage(await AsyncStorage.getItem(STORAGE_KEY));
     const updated = {
       ...storage,
@@ -377,7 +372,6 @@ export const renameGroup = createAsyncThunk(
       ),
     };
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    console.log("[renameGroup] local success");
     return { groupId, name };
   }
 );

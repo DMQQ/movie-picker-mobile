@@ -51,7 +51,7 @@ const renderItem = ({ item }: ListRenderItemInfo<Movie>) => (
 
 const movieKeyExtractor = (item: Movie) => `${item.id}-${item.type}`;
 
-export const Section = memo(
+const Section = memo(
   ({ group }: SectionProps) => {
     const router = useRouter();
     const t = useTranslation();

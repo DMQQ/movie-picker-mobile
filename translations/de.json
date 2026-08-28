@@ -96,12 +96,12 @@
     "specialCategories": "Sonderkategorien",
     "loading": "Raum wird geladen...",
     "joining": "Raum beitreten...",
-    "waiting-for-players": "Warte auf Spieler...",
+    "waiting-for-players": "Warten auf die Crew...",
     "play-alone": "Alleine spielen",
     "start": "Starten",
     "no-more-results": "Keine weiteren Ergebnisse in dieser Kategorie",
     "awaiting-start": "Warte auf den Gastgeber, das Spiel zu starten",
-    "you-are-host": "Du hast diesen Raum erstellt. Starte alleine oder warte auf andere.",
+    "you-are-host": "Du bist Host. Spiel solo oder warte auf deine Crew.",
     "async-play-title": "Freunde können später spielen",
     "async-play-desc": "Teile den Raumcode — Freunde können Filme in ihrer eigenen Zeit durchswipen, ohne gleichzeitig online sein zu müssen.",
     "too-restricted": "Filter zu restriktiv, bitte erneut versuchen",
@@ -187,7 +187,7 @@
       "next": "Weiter",
       "createRoom": "Raum erstellen",
       "quickStart": "Raum erstellen",
-      "leaveStepConfirmation": "Bist du sicher, dass du zurückgehen möchtest? Dein Fortschritt geht verloren.",
+      "leaveStepConfirmation": "Zurück? Dein Fortschritt geht verloren.",
       "step1": {
         "title": "Was ist deine Wahl?",
         "subtitle": "Wähle eine Kategorie zum Starten",
@@ -313,15 +313,15 @@
     "2000s": "2000er",
     "2010s": "2010er",
     "2020s": "2020er",
-    "apply": "Filter anwenden",
+    "apply": "Anwenden",
     "clear": "Alle löschen",
     "active": "{count} Filter aktiv",
     "categories": "Kategorien",
-    "none": "Keine Filter aktiv"
+    "none": "Keine Filter — alles anzeigen"
   },
   "likes": {
     "title": "Deine Likes",
-    "empty": "Du hast noch keinen Film geliked",
+    "empty": "Noch nix — fang an zu swipen!",
     "close": "Übereinstimmung schließen",
     "no-matches": "Keine Übereinstimmungen gefunden",
     "random": "Zufällig"
@@ -334,7 +334,7 @@
     "searchPlaceholder": "Listen suchen…",
     "newList": "Neue Liste",
     "newListPlaceholder": "Listenname…",
-    "empty": "Du hast noch keine Filme zu {name} hinzugefügt",
+    "empty": "{name} ist noch leer",
     "create": {
       "title": "Neue Liste erstellen",
       "name": "Listenname",
@@ -379,8 +379,8 @@
     "save": "Speichern",
     "delete": "Liste löschen",
     "deleteTitle": "Liste löschen",
-    "deleteMessage": "Die Liste und alle enthaltenen Filme werden dauerhaft gelöscht.",
-    "deleteWarning": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteMessage": "Löscht die Liste und alles darin.",
+    "deleteWarning": "Kann nicht rückgängig gemacht werden.",
     "renameError": "Umbenennen fehlgeschlagen. Bitte erneut versuchen.",
     "searchPlaceholder": "Filme suchen…",
     "share": "Liste teilen"
@@ -421,7 +421,7 @@
     "matches": "Übereinstimmungen",
     "likes": "Likes",
     "empty-title": "Noch nichts hier",
-    "empty": "Noch keine Filme oder Serien gefunden. Fange an zu spielen, um deine Übereinstimmungen und Likes hier zu sehen!",
+    "empty": "Noch nix hier. Fang an zu spielen!",
     "back-to-game": "Zurück zum Spiel",
     "create-collection": "In Favoriten speichern",
     "save-list": "Speichern"
@@ -449,11 +449,11 @@
     "heading": "Konto",
     "nickname": "Spitzname",
     "nickname-label": "Spitzname",
-    "nickname-info": "Hier kannst du deinen Spitznamen ändern. Dieser wird anderen Nutzern im Raum angezeigt.",
+    "nickname-info": "So sehen dich andere Spieler.",
     "application-language": "App-Sprache",
-    "language-info": "Das Ändern dieses Wertes ändert die Zielsprache für erstellte Räume, d. h. die Filme werden in der gewählten Sprache sein, aber nicht die Steuerelemente und andere Texte. Weitere Sprachen werden in Zukunft hinzugefügt.",
-    "about": " Dies ist eine einfache App, mit der du einen Raum erstellen und Filme mit deinen Freunden auswählen kannst. Du kannst einen Raum erstellen und deine Freunde einladen, beizutreten. Du kannst auch einem Raum beitreten, indem du den Raumcode eingibst. Dann kannst du Filme zum Raum hinzufügen und sie gemeinsam schauen. Die App verwendet die The Movie Database API für Filmdaten und die JustWatch API für Verfügbarkeiten.",
-    "security": " Keine Daten werden auf dem Server gespeichert. Der Raum wird im Speicher erstellt und zerstört, wenn der letzte Nutzer den Raum verlässt. Keine weiteren Daten werden auf dem Server gespeichert. Der Raumcode wird zufällig generiert und die Lieblingsfilme werden lokal gespeichert. Derzeit wird das Backend in Europa gehostet, daher kann es für Nutzer außerhalb Europas zu langsameren Antwortzeiten kommen. Die App befindet sich noch in der Entwicklung und weitere Funktionen werden hinzugefügt. Ich verdiene nichts an dieser App und sie wurde zu Bildungszwecken erstellt.",
+    "language-info": "Die gewählte Sprache wird dauerhaft gespeichert.",
+    "about": "FlickMate hilft dir und deinen Freunden, den Film für den Abend zu finden. Filmdaten von TMDB und JustWatch.",
+    "security": "Es werden keine persönlichen Daten auf dem Server gespeichert. Deine Listen bleiben lokal — außer du erstellst ein Konto. Server in Europa.",
     "apply": "Anwenden",
     "update": "Aktualisieren",
     "version": "Version",
@@ -489,7 +489,7 @@
     },
     "home": {
       "title": "Film-Abstimmung",
-      "description": "Starte eine neue Sitzung oder tritt einer bestehenden bei, um für die Filme abzustimmen, die du sehen möchtest.",
+      "description": "Starte eine Session oder tritt einer bei. Bewertet Filme zusammen und findet euren Film für heute.",
       "create": "Neue Sitzung erstellen",
       "waiting": "Warte auf andere Spieler",
       "ready": "Bereit zum Starten",
@@ -559,7 +559,7 @@
   "eitherOr": {
     "setup": {
       "title": "Entweder/Oder",
-      "howto": "Erstelle ein Turnier aus Filmen und stimme mit Freunden im direkten Duell ab. In jeder Runde treten zwei Filme gegeneinander an – der Gewinner zieht weiter, bis ein Film zum Champion gekürt wird.",
+      "howto": "Filme duellieren sich. Du stimmst jede Runde ab. Der letzte Überlebende ist der Film für heute.",
       "bracketSize": "Turniergröße",
       "bracketSizeSubtitle": "Wie viele Filme sollen antreten?",
       "movieCount": "{count} Filme",
@@ -825,7 +825,7 @@
   },
   "game-rating": {
     "title": "Wie war das Spiel?",
-    "subtitle": "Ich schätze jedes Feedback, um diese App besser zu machen! 🙏",
+    "subtitle": "Ehrliches Feedback hilft uns, die App besser zu machen",
     "feedback-title": "Was ist schiefgelaufen?",
     "feedback-subtitle": "Hilf uns zu verbessern, indem du dein Feedback teilst",
     "feedback-placeholder": "Erzähle uns, was schiefgelaufen ist...",
@@ -919,18 +919,18 @@
       }
     },
     "taste": {
-      "title": "Tell us your taste",
-      "subtitle": "Like or skip movies you know",
+      "title": "Dein Geschmack",
+      "subtitle": "Like oder skip Filme, die du kennst",
       "like": "Like",
       "skip": "Skip",
       "skipAll": "Skip",
-      "progress": "{current} of {total}"
+      "progress": "{current} von {total}"
     },
     "providers": {
-      "title": "Your streaming services",
-      "subtitle": "We'll only show what you can actually watch",
-      "continue": "Continue",
-      "skip": "Skip for now",
+      "title": "Deine Streaming-Dienste",
+      "subtitle": "Wir zeigen nur das, was du wirklich schauen kannst",
+      "continue": "Weiter",
+      "skip": "Jetzt überspringen",
       "searchPlaceholder": "Suchen..."
     }
   },
@@ -942,23 +942,23 @@
   },
   "blocked": {
     "title": "Blockierte Filme",
-    "empty": "Du hast noch keine Filme blockiert. Blockiere Filme während des Wischspiels, um sie nie wieder zu sehen.",
+    "empty": "Noch nix blockiert. Blockiere Filme beim Swipen, um sie nie wieder zu sehen.",
     "count": "{count} blockiert",
     "clear-all": "Alle löschen",
     "unblock": "Entsperren",
     "unblock-confirm": "Bist du sicher, dass du {title} entsperren möchtest? Es könnte wieder in deinen Spielen auftauchen.",
     "clear-all-confirm": "Bist du sicher, dass du alle Filme entsperren möchtest? Sie könnten wieder in deinen Spielen auftauchen.",
-    "banner": "Blockierte Filme werden vollständig aus allen deinen Spielen entfernt — für dich und jeden Spieler, der mit dir spielt."
+    "banner": "Blockierte Filme verschwinden aus deinen Spielen — und aus denen jedes Mitspielers."
   },
   "super-liked": {
     "title": "Super Likes",
-    "empty": "Du hast noch keine Filme super geliked. Super like Filme während des Wischspiels, um sie hier zu speichern.",
+    "empty": "Noch keine Super Likes. Gib Super Likes beim Swipen, um sie hier zu speichern.",
     "count": "{count} super geliked",
     "clear-all": "Alle löschen",
     "remove": "Entfernen",
     "remove-confirm": "Bist du sicher, dass du {title} aus deinen Super Likes entfernen möchtest?",
     "clear-all-confirm": "Bist du sicher, dass du alle super gelikeden Filme löschen möchtest?",
-    "banner": "Super-Likes erscheinen häufiger in deinen Spielen. Teile deinen Geschmack mit Freunden, damit deine Favoriten beim gemeinsamen Spielen auftauchen."
+    "banner": "Super Likes tauchen öfter in deinen Spielen auf — und beeinflussen auch, was deine Crew sieht."
   },
   "rate-app": {
     "prompt": "Gefällt dir die App? Bewerte uns!"
@@ -966,19 +966,19 @@
   "status-modal": {
     "no-internet": {
       "title": "Kein Internet",
-      "message": "Bitte überprüfe deine Internetverbindung und versuche es erneut."
+      "message": "Verbindung prüfen und nochmal versuchen."
     },
     "maintenance": {
       "title": "Wartung",
-      "message": "Wir führen Wartungsarbeiten durch. Bitte versuche es später erneut."
+      "message": "Wir sind kurz offline — schau gleich nochmal rein."
     },
     "update": {
       "title": "Update verfügbar",
-      "message": "Eine neue Version ist verfügbar. Bitte aktualisiere die App, um fortzufahren."
+      "message": "Neue Version da — bitte updaten, um weiterzumachen."
     },
     "server": {
       "title": "Server-Problem",
-      "message": "Wir haben technische Probleme. Bitte versuche es später erneut."
+      "message": "Bei uns ist was schiefgelaufen. Gleich nochmal versuchen."
     },
     "retry": "Erneut versuchen",
     "update-button": "Aktualisieren",
@@ -1190,7 +1190,7 @@
       "systemDisabled": "Benachrichtigungen sind in den Systemeinstellungen deaktiviert."
     },
     "deleteDialog": {
-      "message": "Dein Konto und alle zugehörigen Daten werden dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.",
+      "message": "Löscht dein Konto und alles darin. Kann nicht rückgängig gemacht werden.",
       "confirm": "Löschen",
       "error": "Konto konnte nicht gelöscht werden. Bitte versuche es erneut."
     },
@@ -1202,7 +1202,7 @@
     "tasteProfileTV": "TV: {count}",
     "required": {
       "title": "Konto erforderlich",
-      "message": "Erstelle ein kostenloses Konto, um diese Funktion zu nutzen - es dauert nur einen Moment.",
+      "message": "Erstelle ein kostenloses Konto — dauert nur eine Minute.",
       "notNow": "Nicht jetzt"
     },
     "stats": {
@@ -1214,7 +1214,7 @@
       "updateFailed": "Aktualisierung fehlgeschlagen",
       "updateFailedMessage": "Name konnte nicht aktualisiert werden. Bitte versuche es erneut.",
       "regenerateTitle": "Wiederherstellungscodes neu generieren",
-      "regenerateMessage": "Deine vorhandenen Codes werden dauerhaft ungültig und durch 8 neue ersetzt.",
+      "regenerateMessage": "Alte Codes werden ungültig. Du bekommst 8 neue.",
       "regenerate": "Neu generieren",
       "regenerateError": "Codes konnten nicht neu generiert werden. Bitte versuche es erneut.",
       "regenerating": "Generiere…",
@@ -1228,7 +1228,7 @@
       "keywords": "Keywords",
       "keywordsWithCount": "Keywords ({count})",
       "searchPlaceholder": "Nach {tab} suchen...",
-      "legend": "0 = schwächste · 100 = stärkste Präferenz",
+      "legend": "0 = meh · 100 = besessen",
       "noPreferences": "Noch keine Präferenzen",
       "noPreferencesHint": "Spiele mehr Spiele, um dein Geschmacksprofil aufzubauen.",
       "noMatches": "Keine Treffer",
@@ -1337,8 +1337,8 @@
     "body": "Ich bin in der App auf einen Fehler gestoßen:\n\nFehler: {message}\nZeit: {time}",
     "unknown-error": "Unbekannter Fehler",
     "open-email-failed": "Die E-Mail-App konnte nicht geöffnet werden. Bitte sende uns eine E-Mail mit der Fehlerbeschreibung.",
-    "sorry": "Entschuldigung!",
-    "description": "Etwas Unerwartetes ist passiert. Wir entschuldigen uns für die Unannehmlichkeiten.",
+    "sorry": "Ups!",
+    "description": "Etwas ist schiefgelaufen. Wir kümmern uns darum.",
     "send-report": "Fehlerbericht senden",
     "restart": "App neu starten"
   },

@@ -65,7 +65,6 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
           nickname: nicknameRef.current || "guest",
           userId: userIdRef.current,
         };
-        console.log("Creating room with payload:", payload);
         const response = await socket.timeout(10000).emitWithAck("create-room", payload);
 
         if (!response?.roomId) {
@@ -91,12 +90,10 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
   const joinRoom = useCallback(
     async (targetRoomId: string) => {
       if (!socket) {
-        console.log("[EitherOr] joinRoom: no socket → setJoinError", { targetRoomId });
         dispatch(eitherOrActions.setJoinError(true));
         return false;
       }
 
-      console.log("[EitherOr] joinRoom: attempting", { targetRoomId, socketId: socket.id, connected: socket.connected });
       dispatch(eitherOrActions.setJoining(true));
       dispatch(eitherOrActions.setJoinError(false));
 
@@ -105,10 +102,7 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
           .timeout(10000)
           .emitWithAck("join-room", targetRoomId, nicknameRef.current || "guest");
 
-        console.log("[EitherOr] joinRoom: response", response);
-
         if (!response?.joined) {
-          console.log("[EitherOr] joinRoom: server rejected → setJoinError", { response });
           dispatch(eitherOrActions.setJoinError(true));
           return false;
         }
@@ -124,10 +118,8 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
         // Server sometimes sends room:state without calling the ack — if roomId
         // is already set it means the join succeeded despite the timeout.
         if (roomIdRef.current === targetRoomId) {
-          console.log("[EitherOr] joinRoom: ack timed out but room:state already arrived — join OK");
           return true;
         }
-        console.log("[EitherOr] joinRoom: exception → setJoinError", error);
         posthog?.captureException(error, { context: "either_or_join" });
         dispatch(eitherOrActions.setJoinError(true));
         return false;
@@ -198,11 +190,6 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
       dispatch(eitherOrActions.setRoomState(data));
       const isHostNow = data.host === userIdRef.current;
       dispatch(eitherOrActions.setIsHost(isHostNow));
-      console.log("room:state event:", {
-        serverHost: data.host,
-        clientUserId: userIdRef.current,
-        isHost: isHostNow,
-      });
     };
 
     const handleActive = (nicks: string[]) => {
@@ -211,11 +198,6 @@ export function EitherOrContextProvider({ children }: { children: React.ReactNod
 
     const handleHostChanged = (data: { host: string }) => {
       const nextIsHost = data.host === userIdRef.current;
-      console.log("[host-trace] either-or room:host:changed", {
-        serverHost: data.host,
-        localUserId: userIdRef.current,
-        nextIsHost,
-      });
       dispatch(eitherOrActions.setIsHost(nextIsHost));
     };
 

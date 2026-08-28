@@ -133,7 +133,6 @@ export default function useMaintenance(initialCheck = true) {
     if (result.success) {
       router.back();
     } else {
-      console.log("Still failing:", result.type);
     }
   };
 

@@ -32,7 +32,6 @@ export function usePartyGameFlow(isHost: boolean, onMode: (mode: PartyGameMode) 
   useEffect(() => {
     if (!partySocket) return;
     const onConfiguring = ({ configuring: c }: { configuring: boolean }) => {
-      console.log("[host-trace] party:configuring received", { configuring: c, isHost: isHostRef.current });
       if (!isHostRef.current) setConfiguring(c);
     };
     partySocket.on("party:configuring", onConfiguring);
@@ -42,12 +41,6 @@ export function usePartyGameFlow(isHost: boolean, onMode: (mode: PartyGameMode) 
   useEffect(() => {
     if (!partySocket) return;
     const onPartyReady = ({ roomId: gameRoomId, gameMode }: { roomId: string; gameMode: "voter" | "either-or" | "swipe" }) => {
-      console.log("[host-trace] party:ready received", {
-        roomId: gameRoomId,
-        gameMode,
-        isHost: isHostRef.current,
-        ignoredByHost: isHostRef.current,
-      });
       if (isHostRef.current) return;
       setConfiguring(false);
       if (gameMode === "voter") {
@@ -65,16 +58,9 @@ export function usePartyGameFlow(isHost: boolean, onMode: (mode: PartyGameMode) 
   useEffect(() => {
     if (!nextGame) return;
     const mode = nextGame;
-    console.log("[host-trace] nextGame consumed", {
-      mode,
-      partyId,
-      isHost: isHostRef.current,
-      partySocketConnected: partySocket?.connected,
-    });
     dispatch(partyActions.setNextGame(null));
     if (partyId) {
       partySocket?.emit("party:next-game", { partyId, gameMode: mode });
-      console.log("[host-trace] party:next-game emitted", { partyId, gameMode: mode });
     }
     onModeRef.current(mode);
   }, [nextGame]);

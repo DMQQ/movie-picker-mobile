@@ -89,5 +89,3 @@ export const mediaFiltersSlice = createSlice({
 });
 
 export const { setMediaType, setProviders, toggleProvider, toggleGenre, setGenres, setDecade, clearAllFilters } = mediaFiltersSlice.actions;
-
-export default mediaFiltersSlice.reducer;

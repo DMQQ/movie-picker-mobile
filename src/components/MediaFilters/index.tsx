@@ -7,7 +7,6 @@ import { colors, common } from "../../constants/design";
 import { router, useFocusEffect } from "expo-router";
 import { useAppSelector } from "../../redux/store";
 
-export { default as FilterSheet } from "./FilterSheet";
 export { default as TypeSelector } from "./TypeSelector";
 export { default as DecadeSelector } from "./DecadeSelector";
 

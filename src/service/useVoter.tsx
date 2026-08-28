@@ -133,16 +133,9 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
     AsyncStorage.setItem("voterSessionId", sessionId);
 
     const partyId = store.getState().party.partyId;
-    console.log("[host-trace] voter createSession", {
-      sessionId,
-      setIsHost: true,
-      partyId,
-      partySocketConnected: partySocket?.connected,
-    });
     if (partyId) {
       partySocket?.emit("party:join", partyId);
       partySocket?.emit("party:ready", { partyId, roomId: sessionId, gameMode: "voter" });
-      console.log("[host-trace] party:join + party:ready emitted", { partyId, roomId: sessionId, gameMode: "voter" });
     }
   }, [socket, sessionSettings]);
 
@@ -185,11 +178,6 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
         setStatus("waiting");
 
         const userIsHost = response?.isHost || false;
-        console.log("[host-trace] voter joinSession ack", {
-          sessionId: joinSessionId,
-          serverIsHost: response?.isHost,
-          setIsHost: userIsHost,
-        });
         setIsHost(userIsHost);
       } catch (error) {
         posthog?.captureException(error, { context: "voter_join" });
@@ -276,7 +264,6 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
       lastJoinedSessionId.current !== sessionId
     ) {
       lastJoinedSessionId.current = sessionId;
-      console.log("[host-trace] voter auto-join firing", { sessionId, isHost });
       joinSessionInternal(sessionId).catch((error) => {
         console.error(error);
         posthog?.captureException(error, { context: "voter_auto_join" });
@@ -366,7 +353,6 @@ export const MovieVoterProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const resetSession = useCallback(() => {
-    console.log("[host-trace] voter resetSession", { setIsHost: false });
     setStatus("idle");
     setSessionId(null);
     setSessionResults(null);

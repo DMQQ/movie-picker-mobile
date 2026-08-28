@@ -90,7 +90,6 @@ export const ensureAnonymousSession = createAsyncThunk(
 
     // Already have a UUID — just ensure it's in state
     if (userId && !isLegacyId) {
-      console.log("🕵️ anonymous session skipped — userId already exists", { userId });
       dispatch(setUserId(userId));
       return null;
     }

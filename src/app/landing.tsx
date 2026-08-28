@@ -151,9 +151,7 @@ function PosterCard({
   return (
     <Animated.View style={[styles.card, { left: ORBIT_CX - CARD_W / 2, top: ORBIT_CY - CARD_H / 2 }, style]}>
       <Image source={{ uri: BASE + poster }} style={StyleSheet.absoluteFill} contentFit="cover"
-        onError={() => {
-          console.log('error', poster)
-      }}
+        onError={() => {}}
       />
     </Animated.View>
   );

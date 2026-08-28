@@ -96,12 +96,12 @@
     "specialCategories": "Categorias especiais",
     "loading": "Carregando sala...",
     "joining": "Entrando na sala...",
-    "waiting-for-players": "Aguardando jogadores...",
+    "waiting-for-players": "Aguardando o grupo...",
     "play-alone": "Jogar sozinho",
     "start": "Iniciar",
     "no-more-results": "Sem mais resultados nesta categoria",
     "awaiting-start": "Aguardando o anfitrião iniciar o jogo",
-    "you-are-host": "Você criou esta sala. Jogue sozinho ou aguarde outros entrarem.",
+    "you-are-host": "Você é o host. Jogue solo ou aguarde o grupo.",
     "async-play-title": "Amigos podem jogar depois",
     "async-play-desc": "Compartilhe o código da sala — seus amigos podem explorar filmes no seu próprio tempo, sem precisar estar online ao mesmo tempo.",
     "too-restricted": "Filtros muito restritivos, tente novamente",
@@ -187,7 +187,7 @@
       "next": "Próximo",
       "createRoom": "Criar sala",
       "quickStart": "Criar sala",
-      "leaveStepConfirmation": "Tem certeza que deseja voltar? Seu progresso será perdido.",
+      "leaveStepConfirmation": "Voltar? Seu progresso será perdido.",
       "step1": {
         "title": "Qual é a sua escolha?",
         "subtitle": "Escolha uma categoria para começar",
@@ -313,15 +313,15 @@
     "2000s": "Anos 2000",
     "2010s": "Anos 2010",
     "2020s": "Anos 2020",
-    "apply": "Aplicar filtros",
+    "apply": "Aplicar",
     "clear": "Limpar tudo",
     "active": "{count} filtro{plural} ativo{plural}",
     "categories": "Categorias",
-    "none": "Sem filtros aplicados"
+    "none": "Sem filtros — mostrando tudo"
   },
   "likes": {
     "title": "Suas curtidas",
-    "empty": "Você ainda não curtiu nenhum filme",
+    "empty": "Nada ainda — começa a deslizar!",
     "close": "Fechar coincidência",
     "no-matches": "Nenhuma coincidência encontrada",
     "random": "Aleatório"
@@ -334,7 +334,7 @@
     "searchPlaceholder": "Pesquisar listas…",
     "newList": "Nova lista",
     "newListPlaceholder": "Nome da lista…",
-    "empty": "Você ainda não adicionou nenhum filme a {name}",
+    "empty": "{name} está vazio",
     "create": {
       "title": "Criar nova lista",
       "name": "Nome da lista",
@@ -379,8 +379,8 @@
     "save": "Salvar",
     "delete": "Excluir lista",
     "deleteTitle": "Excluir lista",
-    "deleteMessage": "Isso removerá permanentemente a lista e todos os seus filmes.",
-    "deleteWarning": "Esta ação não pode ser desfeita.",
+    "deleteMessage": "Remove a lista e tudo o que tem nela.",
+    "deleteWarning": "Não dá para desfazer.",
     "renameError": "Falha ao renomear. Tente novamente.",
     "searchPlaceholder": "Buscar filmes…",
     "share": "Partilhar lista"
@@ -421,7 +421,7 @@
     "matches": "Coincidências",
     "likes": "Curtidas",
     "empty-title": "Nada aqui ainda",
-    "empty": "Nenhum filme ou série encontrado ainda. Comece a jogar para ver suas coincidências e curtidas aqui!",
+    "empty": "Nada ainda. Começa a jogar!",
     "back-to-game": "Voltar ao jogo",
     "create-collection": "Salvar nos favoritos",
     "save-list": "Salvar"
@@ -449,11 +449,11 @@
     "heading": "Conta",
     "nickname": "Apelido",
     "nickname-label": "Apelido",
-    "nickname-info": "Aqui você pode alterar seu apelido. Ele será exibido para outros usuários na sala.",
+    "nickname-info": "É assim que os outros jogadores te veem.",
     "application-language": "Idioma do aplicativo",
-    "language-info": "Alterar este valor mudará o idioma de destino para a sala criada, o que significa que os filmes estarão no idioma escolhido, mas não os controles e outros textos. Mais idiomas serão adicionados no futuro.",
-    "about": " Este é um aplicativo simples que permite criar uma sala e escolher filmes com seus amigos. Você pode criar uma sala e convidar seus amigos para participar. Você também pode entrar em uma sala inserindo o código da sala. Em seguida, você pode adicionar filmes à sala e assisti-los juntos. O app usa a API do The Movie Database para obter os filmes e a API do JustWatch para obter as disponibilidades.",
-    "security": " Nenhum dado é armazenado no servidor. A sala é criada na memória e é destruída quando o último usuário a abandona. Nenhum dado adicional é armazenado no servidor. O código da sala é gerado aleatoriamente e os filmes favoritos são armazenados localmente. Atualmente o backend está hospedado na Europa, então pode haver tempos de resposta mais lentos para usuários fora da Europa. O app ainda está em desenvolvimento e mais recursos serão adicionados. Não ganho nada com este app e ele foi feito para fins educacionais.",
+    "language-info": "O idioma selecionado fica salvo permanentemente.",
+    "about": "FlickMate ajuda você e seus amigos a escolherem o que assistir. Dados de filmes do TMDB e JustWatch.",
+    "security": "Nenhum dado pessoal é armazenado no servidor. Suas listas ficam locais — a não ser que você crie uma conta. Servidor na Europa.",
     "apply": "Aplicar",
     "update": "Atualizar",
     "version": "Versão",
@@ -489,7 +489,7 @@
     },
     "home": {
       "title": "Votação de filmes",
-      "description": "Inicie uma nova sessão ou entre em uma existente para votar nos filmes que deseja assistir.",
+      "description": "Crie uma sessão ou entre em uma. Avaliem filmes juntos e escolham o hit da noite.",
       "create": "Criar nova sessão",
       "waiting": "Aguardando outros jogadores",
       "ready": "Pronto para começar",
@@ -559,7 +559,7 @@
   "eitherOr": {
     "setup": {
       "title": "Cara a Cara",
-      "howto": "Crie um chaveamento de filmes e vote cara a cara com os amigos. Cada rodada coloca dois filmes um contra o outro. O vencedor avança até que um filme seja coroado campeão.",
+      "howto": "Filmes se enfrentam em duelos. Você vota em cada rodada. O último de pé é o filme de hoje.",
       "bracketSize": "Tamanho do chaveamento",
       "bracketSizeSubtitle": "Quantos filmes vão competir?",
       "movieCount": "{count} filmes",
@@ -825,7 +825,7 @@
   },
   "game-rating": {
     "title": "Como foi esse jogo?",
-    "subtitle": "Agradeço muito todo feedback para tornar este app melhor! 🙏",
+    "subtitle": "Feedback honesto nos ajuda a melhorar o app",
     "feedback-title": "O que deu errado?",
     "feedback-subtitle": "Ajude-nos a melhorar compartilhando seu feedback",
     "feedback-placeholder": "Conte-nos o que deu errado...",
@@ -919,18 +919,18 @@
       }
     },
     "taste": {
-      "title": "Tell us your taste",
-      "subtitle": "Like or skip movies you know",
-      "like": "Like",
-      "skip": "Skip",
-      "skipAll": "Skip",
-      "progress": "{current} of {total}"
+      "title": "Seu gosto",
+      "subtitle": "Curta ou pule filmes que você conhece",
+      "like": "Curtir",
+      "skip": "Pular",
+      "skipAll": "Pular",
+      "progress": "{current} de {total}"
     },
     "providers": {
-      "title": "Your streaming services",
-      "subtitle": "We'll only show what you can actually watch",
-      "continue": "Continue",
-      "skip": "Skip for now",
+      "title": "Seus serviços de streaming",
+      "subtitle": "Só mostramos o que você pode assistir",
+      "continue": "Continuar",
+      "skip": "Pular por agora",
       "searchPlaceholder": "Pesquisar..."
     }
   },
@@ -942,23 +942,23 @@
   },
   "blocked": {
     "title": "Filmes bloqueados",
-    "empty": "Você ainda não bloqueou nenhum filme. Bloqueie filmes durante o jogo de deslizamento para nunca mais vê-los.",
+    "empty": "Nada bloqueado ainda. Bloqueie filmes enquanto joga para nunca mais vê-los.",
     "count": "{count} bloqueado{plural}",
     "clear-all": "Limpar tudo",
     "unblock": "Desbloquear",
     "unblock-confirm": "Tem certeza que deseja desbloquear {title}? Ele pode aparecer em seus jogos novamente.",
     "clear-all-confirm": "Tem certeza que deseja desbloquear todos os filmes? Eles podem aparecer em seus jogos novamente.",
-    "banner": "Filmes bloqueados são completamente removidos de todos os seus jogos, para você e para cada jogador que joga com você."
+    "banner": "Filmes bloqueados somem dos seus jogos — e dos de quem joga com você."
   },
   "super-liked": {
     "title": "Super curtidos",
-    "empty": "Você ainda não deu super curtida em nenhum filme. Dê super curtida em filmes durante o jogo de deslizamento para salvá-los aqui.",
+    "empty": "Nada ainda. Dê super curtida em filmes enquanto joga para salvar aqui.",
     "count": "{count} super curtido{plural}",
     "clear-all": "Limpar tudo",
     "remove": "Remover",
     "remove-confirm": "Tem certeza que deseja remover {title} dos seus super curtidos?",
     "clear-all-confirm": "Tem certeza que deseja limpar todos os filmes super curtidos?",
-    "banner": "Filmes super curtidos aparecem com mais frequência nos seus jogos. Compartilhe seu gosto com amigos para que seus favoritos apareçam ao jogar juntos."
+    "banner": "Filmes super curtidos aparecem mais — e influenciam o que o seu grupo vê também."
   },
   "rate-app": {
     "prompt": "Está gostando do app? Nos avalie!"
@@ -966,19 +966,19 @@
   "status-modal": {
     "no-internet": {
       "title": "Sem internet",
-      "message": "Por favor verifique sua conexão com a internet e tente novamente."
+      "message": "Verifique sua conexão e tente novamente."
     },
     "maintenance": {
       "title": "Manutenção",
-      "message": "Estamos realizando manutenção. Por favor tente novamente mais tarde."
+      "message": "Estamos em manutenção — volte em breve."
     },
     "update": {
       "title": "Atualização disponível",
-      "message": "Uma nova versão está disponível. Por favor atualize o app para continuar."
+      "message": "Nova versão disponível — atualize para continuar jogando."
     },
     "server": {
       "title": "Problema no servidor",
-      "message": "Estamos enfrentando problemas. Por favor tente novamente mais tarde."
+      "message": "Algo deu errado do nosso lado. Tente novamente em breve."
     },
     "retry": "Tentar novamente",
     "update-button": "Atualizar",
@@ -1190,7 +1190,7 @@
       "systemDisabled": "As notificações estão desativadas nas configurações do sistema."
     },
     "deleteDialog": {
-      "message": "Isso excluirá permanentemente sua conta e todos os dados associados. Esta ação não pode ser desfeita.",
+      "message": "Exclui sua conta e tudo o que há nela. Não dá para desfazer.",
       "confirm": "Excluir",
       "error": "Falha ao excluir conta. Por favor, tente novamente."
     },
@@ -1202,7 +1202,7 @@
     "tasteProfileTV": "TV: {count}",
     "required": {
       "title": "Conta necessária",
-      "message": "Crie uma conta gratuita para usar este recurso - leva apenas um momento.",
+      "message": "Crie uma conta grátis — leva uns 10 segundos.",
       "notNow": "Agora não"
     },
     "stats": {
@@ -1214,7 +1214,7 @@
       "updateFailed": "Falha na atualização",
       "updateFailedMessage": "Não foi possível atualizar o nome. Por favor, tente novamente.",
       "regenerateTitle": "Regenerar códigos de recuperação",
-      "regenerateMessage": "Seus códigos existentes serão invalidados permanentemente e substituídos por 8 novos.",
+      "regenerateMessage": "Os códigos atuais serão invalidados. Você receberá 8 novos.",
       "regenerate": "Regenerar",
       "regenerateError": "Falha ao regenerar códigos. Por favor, tente novamente.",
       "regenerating": "Regenerando…",
@@ -1228,7 +1228,7 @@
       "keywords": "Palavras-chave",
       "keywordsWithCount": "Palavras-chave ({count})",
       "searchPlaceholder": "Pesquisar {tab}...",
-      "legend": "0 = preferência mais fraca · 100 = mais forte",
+      "legend": "0 = meh · 100 = obcecado",
       "noPreferences": "Sem preferências ainda",
       "noPreferencesHint": "Jogue mais partidas para construir seu perfil de gostos.",
       "noMatches": "Sem resultados",
@@ -1337,8 +1337,8 @@
     "body": "Encontrei um erro no aplicativo:\n\nErro: {message}\nHora: {time}",
     "unknown-error": "Erro desconhecido",
     "open-email-failed": "Não foi possível abrir o aplicativo de e-mail. Envie-nos um e-mail descrevendo o erro.",
-    "sorry": "Desculpe!",
-    "description": "Algo inesperado aconteceu. Pedimos desculpas pelo inconveniente.",
+    "sorry": "Ops!",
+    "description": "Algo quebrou. Já estamos resolvendo.",
     "send-report": "Enviar relatório de erro",
     "restart": "Reiniciar o app"
   },

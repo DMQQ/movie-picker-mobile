@@ -257,14 +257,12 @@ export const listsApi = createApi({
 
     patchList: build.mutation<OkResponse, { type: string; name: string }>({
       query: ({ type, name }) => {
-        console.log("[listsApi.patchList] request", { type, name });
         return { url: `/lists/${type}`, method: "PATCH", body: { name } };
       },
       invalidatesTags: [{ type: "List", id: "ALL" }],
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           await queryFulfilled;
-          console.log("[listsApi.patchList] success");
         } catch (err) {
           console.error("[listsApi.patchList] error:", JSON.stringify(err));
         }

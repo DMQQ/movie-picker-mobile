@@ -123,12 +123,5 @@ listenerMiddleware.startListening({
     roomActions.resetForNewGame,
     roomActions.reset,
   ),
-  effect: (action, listenerApi) => {
-    const state = listenerApi.getState() as { room: { isHost: boolean; roomId: string } };
-    const prevState = listenerApi.getOriginalState() as { room: { isHost: boolean } };
-    console.log(
-      `[host-trace] ${action.type} → isHost ${prevState.room.isHost} → ${state.room.isHost}`,
-      { roomId: state.room.roomId, payload: (action as { payload?: unknown }).payload },
-    );
-  },
+  effect: () => {},
 });

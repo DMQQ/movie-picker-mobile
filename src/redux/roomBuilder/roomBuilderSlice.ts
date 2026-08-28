@@ -94,5 +94,3 @@ export const roomBuilderSlice = createSlice({
 
 export const { goToStep, goBack, goNext, setCategory, setCustomMovies, toggleGenre, setProviders, toggleSpecialCategory, setCacheKey, setQuickStartMode, reset } =
   roomBuilderSlice.actions;
-
-export default roomBuilderSlice.reducer;

@@ -169,46 +169,7 @@ export const selectInteractionsHydrated = createSelector(
   (interactions) => interactions.hydrated
 );
 
-export const selectSuperLikedIds = createSelector(
-  selectSuperLikedMovies,
-  (superLiked) => superLiked.map((m) => ({ id: m.movie_id, type: m.movie_type }))
-);
-
 export const selectSessionDisliked = createSelector(
   selectMovieInteractions,
   (interactions) => interactions.sessionDisliked
-);
-
-const parseKey = (key: string): { id: number; type: MovieType } => ({
-  id: parseInt(key.slice(1), 10),
-  type: key[0] === "m" ? "movie" : "tv",
-});
-
-export const selectBlockedIds = createSelector(
-  [selectBlockedMovies, selectSessionDisliked],
-  (blocked, sessionDisliked) => [
-    ...blocked.map((m) => ({ id: m.movie_id, type: m.movie_type })),
-    ...Object.keys(sessionDisliked).map(parseKey),
-  ]
-);
-
-export const selectBlockedIdSet = createSelector(
-  [selectBlockedMovies, selectSessionDisliked],
-  (blocked, sessionDisliked) => {
-    const blockedKeys = blocked.map((m) => `${m.movie_type === "movie" ? "m" : "t"}${m.movie_id}`);
-    const sessionKeys = Object.keys(sessionDisliked);
-    return new Set([...blockedKeys, ...sessionKeys]);
-  }
-);
-
-export const selectIsSuperLiked = createSelector(
-  [selectSuperLikedMovies, (_state: RootState, movieId: number, movieType: MovieType) => ({ movieId, movieType })],
-  (superLiked, { movieId, movieType }) =>
-    superLiked.some((m) => m.movie_id === movieId && m.movie_type === movieType)
-);
-
-export const selectIsBlocked = createSelector(
-  [selectBlockedMovies, (_state: RootState, movieId: number, movieType: MovieType) => ({ movieId, movieType })],
-  (blocked, { movieId, movieType }) =>
-    blocked.some((m) => m.movie_id === movieId && m.movie_type === movieType)
 );

@@ -13,7 +13,6 @@ const appSlice = createSlice({
   initialState,
   reducers: {
     setUserId(state, action: PayloadAction<string>) {
-      console.log("Redux setUserId:", action.payload);
       state.userId = action.payload;
     },
 
