@@ -40,8 +40,11 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
   const { socket, emitter } = useContext(SocketContext);
   const partySocket = usePartySocket();
   const userId = useAppSelector((state) => state.app.userId);
+  const authUserId = useAppSelector((state) => state.auth.user?.id ?? null);
   const userIdRef = useRef(userId);
   userIdRef.current = userId;
+  const authUserIdRef = useRef(authUserId);
+  authUserIdRef.current = authUserId;
 
   const { blockMovie, addDislikedMovie, getBlockedIds, isReady: blockedReady } = useBlockedMovies();
   const { superLikeMovie, getSuperLikedIds, isReady: superLikedReady } = useSuperLikedMovies();
@@ -202,7 +205,11 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
       });
       dispatch(roomActions.setRoom(data));
       dispatch(roomActions.setPlaying(data.isStarted));
-      if (data.host) dispatch(roomActions.setHost(data.host === userIdRef.current));
+      if (data.host) {
+        const isHost =
+          data.host === userIdRef.current || data.host === authUserIdRef.current;
+        dispatch(roomActions.setHost(isHost));
+      }
     };
 
     const handleActive = (users: any) => {
@@ -215,7 +222,8 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
     };
 
     const handleHostChanged = (data: { host: string }) => {
-      const nextIsHost = data.host === userIdRef.current;
+      const nextIsHost =
+        data.host === userIdRef.current || data.host === authUserIdRef.current;
       console.log("[host-trace] room:host:changed", {
         serverHost: data.host,
         localUserId: userIdRef.current,
