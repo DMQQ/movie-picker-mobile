@@ -202,6 +202,7 @@ export function RoomContextProvider({ children }: { children: React.ReactNode })
       });
       dispatch(roomActions.setRoom(data));
       dispatch(roomActions.setPlaying(data.isStarted));
+      if (data.host) dispatch(roomActions.setHost(data.host === userIdRef.current));
     };
 
     const handleActive = (users: any) => {

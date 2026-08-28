@@ -4,9 +4,7 @@ import * as StoreReview from "expo-store-review";
 import { Image } from "expo-image";
 import { SocketContext } from "../context/SocketContext";
 import useTranslation from "../service/useTranslation";
-import { roomActions } from "../redux/room/roomSlice";
-import { reset } from "../redux/roomBuilder/roomBuilderSlice";
-import { useAppDispatch, useAppSelector } from "../redux/store";
+import { useAppSelector } from "../redux/store";
 import ReviewManager from "../utils/rate";
 import { useMatches } from "../context/DatabaseContext";
 import { IGameSummary } from "../components/GameSummary/types";
@@ -15,7 +13,6 @@ export function useGameSummary(roomId: string) {
   const { socket } = useContext(SocketContext);
   const userId = useAppSelector((st) => st.app.userId);
   const t = useTranslation();
-  const dispatch = useAppDispatch();
   const { matches: matchesRepo } = useMatches();
 
   const preloaded = useAppSelector((st) => st.room.gameSummary);
@@ -52,14 +49,6 @@ export function useGameSummary(roomId: string) {
     };
     fetch();
   }, [socket, roomId, preloaded]);
-
-  useEffect(() => {
-    return () => {
-      dispatch(roomActions.reset());
-      dispatch(reset());
-      Image.clearMemoryCache();
-    };
-  }, []);
 
   useEffect(() => {
     const timeout = setTimeout(async () => {
