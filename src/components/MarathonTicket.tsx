@@ -137,9 +137,9 @@ const BonusPoster = memo(({ movie, unknownText }: { movie: MarathonMovie; unknow
 const MarathonTicket = forwardRef<View, MarathonTicketProps>(({ movies, headerText, pickupLine, ticketColor = "#F5F0E1" }, ref) => {
   const t = useTranslation();
 
-  const headerTexts = useMemo(() => t("ticket.marathon.headers") as string[], [t]);
-  const pickupLines = useMemo(() => t("ticket.marathon.pickups") as string[], [t]);
-  const bonusHeadings = useMemo(() => t("ticket.marathon.bonus-headings") as string[], [t]);
+  const headerTexts = useMemo(() => t("ticket.marathon.headers") as unknown as string[], [t]);
+  const pickupLines = useMemo(() => t("ticket.marathon.pickups") as unknown as string[], [t]);
+  const bonusHeadings = useMemo(() => t("ticket.marathon.bonus-headings") as unknown as string[], [t]);
 
   const displayHeader = headerText || getRandomItem(headerTexts);
   const displayPickup = pickupLine || getRandomItem(pickupLines);

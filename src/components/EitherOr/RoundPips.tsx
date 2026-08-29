@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { colors, spacing, withAlpha } from "../../constants/design";
 
 interface Props {
@@ -19,35 +19,48 @@ export default function RoundPips({ currentRound, totalRounds }: Props) {
 }
 
 function Pip({ active, done }: { active: boolean; done: boolean }) {
-  const scale = useSharedValue(1);
+  const width = useSharedValue(active ? 24 : 8);
 
   useEffect(() => {
-    if (active) {
-      scale.value = withRepeat(withSequence(withTiming(1.4, { duration: 500 }), withTiming(1, { duration: 500 })), -1, true);
-    } else {
-      scale.value = withTiming(1, { duration: 200 });
-    }
+    width.value = withTiming(active ? 24 : 8, { duration: 300 });
   }, [active]);
 
-  const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  const animatedStyle = useAnimatedStyle(() => ({ width: width.value }));
 
-  return <Animated.View style={[styles.pip, (active || done) && styles.pipFilled, animatedStyle]} />;
+  return (
+    <Animated.View
+      style={[
+        styles.pip,
+        done && styles.pipDone,
+        active && styles.pipActive,
+        animatedStyle,
+      ]}
+    />
+  );
 }
 
 const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
-    gap: spacing.xs,
+    gap: 6,
     justifyContent: "center",
     alignItems: "center",
   },
   pip: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     backgroundColor: withAlpha(colors.text, 0.2),
   },
-  pipFilled: {
+  pipDone: {
+    backgroundColor: withAlpha(colors.primary, 0.5),
+  },
+  pipActive: {
     backgroundColor: colors.primary,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 6,
+    elevation: 4,
   },
 });

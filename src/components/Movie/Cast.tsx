@@ -21,7 +21,7 @@ export default function Cast({ id, type, initialData }: { id: number; type: "mov
   return (
     <View style={styles.container}>
       <View style={styles.actorsRow}>
-        {data?.actors?.map((item, index) => (
+        {data?.actors?.map((item: any, index: number) => (
           <Link
             key={item.id.toString() + index}
             href={{ pathname: "/person/[id]", params: { id: item.id, img: item.profile_path || "" } }}
@@ -51,7 +51,7 @@ export default function Cast({ id, type, initialData }: { id: number; type: "mov
       </View>
 
       <ScrollView horizontal style={{ marginTop: spacing.xxl + 6 }} showsHorizontalScrollIndicator={false} overScrollMode="never">
-        {data?.directors?.map((item) => (
+        {data?.directors?.map((item: any) => (
           <Link
             key={item.id.toString()}
             href={{ pathname: "/person/[id]", params: { id: item.id, img: item.profile_path || "" } }}

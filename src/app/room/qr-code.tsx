@@ -46,6 +46,7 @@ interface RoomSetupParams {
   providers: number[];
   specialCategories: string[];
   cacheKey?: string;
+  customMovies?: any[];
 }
 
 interface ISocketResponse {
@@ -132,7 +133,7 @@ export default function QRCodePage() {
           maxRounds: roomSetup.maxRounds || 6,
           specialCategories: roomSetup.specialCategories || [],
           quickStart: false,
-          ...(customMovies?.length > 0 && {
+          ...(customMovies != null && customMovies.length > 0 && {
             customMovies: customMovies.map((m: { id: number; title: string; poster_path: string; contentType?: string }) => ({
               id: m.id,
               title: m.title,
@@ -450,7 +451,7 @@ export default function QRCodePage() {
             </NewBadge>
 
             <Link
-              href={startGameHref}
+              href={startGameHref as any}
               asChild
               disabled={isDisabled}
               onPress={handleStartGame}

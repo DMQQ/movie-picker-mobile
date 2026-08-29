@@ -128,7 +128,7 @@ const CinemaTicket = forwardRef<View, CinemaTicketProps>(
     const displayHeader = headerText || getRandomItem(headerTexts);
     const displayPickup = pickupLine || getRandomItem(pickupLines);
     const movieTitle = movie.title || movie.name || t("ticket.unknown-movie");
-    const releaseYear = (movie?.release_date || movie?.first_air_date)?.split("-")[0] || "";
+    const releaseYear = (movie?.release_date || (movie as any)?.first_air_date)?.split("-")[0] || "";
 
     const genreNames = movie.genres ? movie.genres.slice(0, 3).map((g) => g.name) : movie.mapped_genres?.slice(0, 3) || [];
 

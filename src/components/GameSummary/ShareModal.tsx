@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef } from "react";
+import { memo, useCallback, useEffect, useRef, type ElementRef } from "react";
 import IconButton from "../IconButton";
 import Text from "../Text";
 import { Dimensions, Modal, Pressable, StyleSheet, View } from "react-native";
@@ -22,7 +22,7 @@ interface Props {
 }
 
 export default memo(function ShareModal({ visible, onClose, roomId }: Props) {
-  const viewShotRef = useRef<ViewShot>(null);
+  const viewShotRef = useRef<ElementRef<typeof ViewShot>>(null);
   const [fetchSummaryShare, { data, isLoading, error }] =
     useLazyGetSummaryShareQuery();
   const t = useTranslation();
@@ -86,7 +86,7 @@ export default memo(function ShareModal({ visible, onClose, roomId }: Props) {
           ) : error ? (
             <View style={styles.centered}>
               <MaterialCommunityIcons
-                name="error-outline"
+                name="alert-circle-outline"
                 size={48}
                 color="#ff6b6b"
               />

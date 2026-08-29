@@ -107,6 +107,8 @@ export interface GameByIdResponse {
   items: ListItem[];
   members: GameMember[];
   session: GameSession | null;
+  liked?: ListItem[];
+  disliked?: ListItem[];
 }
 
 interface GetGameMembersResponse {

@@ -118,7 +118,7 @@ function TextInputBase({
                 {label}
               </AnimatedText>
             </View>
-            <View style={[styles.inputRow, right && styles.inputRowWithRight]}>
+            <View style={[styles.inputRow, right ? styles.inputRowWithRight : undefined]}>
               <RNTextInput
                 {...rest}
                 value={value}

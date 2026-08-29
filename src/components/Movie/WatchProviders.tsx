@@ -108,7 +108,7 @@ const WatchProviders = memo(({ providers, hideLabel = false, style }: WatchProvi
     <View style={[styles.container, style]}>
       {!hideLabel && <Text style={styles.title}>Streaming</Text>}
 
-      <PlatformBlurView style={styles.frostedGlass} container={styles.frostedGlassContainer}>
+      <PlatformBlurView style={styles.frostedGlass}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           {providersList.map((provider) => (
             <View key={provider.provider_id} style={styles.providerContainer}>

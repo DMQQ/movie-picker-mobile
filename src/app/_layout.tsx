@@ -205,7 +205,7 @@ const RootNavigator = ({
           dispatch(authActions.setCredentials({
             token: anonymousResult.token,
             refreshToken: anonymousResult.refreshToken,
-            user: anonymousResult.user,
+            user: anonymousResult.user!,
           }));
         }
 

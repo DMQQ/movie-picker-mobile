@@ -9,6 +9,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   Easing,
+  type SharedValue,
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { Image } from "expo-image";
@@ -133,7 +134,7 @@ function PosterCard({
   initAngle,
   poster,
 }: {
-  orbitAngle: Animated.SharedValue<number>;
+  orbitAngle: SharedValue<number>;
   initAngle: number;
   poster: string;
 }) {

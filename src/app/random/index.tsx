@@ -278,7 +278,7 @@ export default function RandomMovie() {
         <Animated.View style={[styles.bottomOverlay, { bottom: insets.bottom + spacing.lg }]}>
           {movie && isRevealed && details && (
             <Animated.View entering={SlideInDown.duration(400)} style={styles.shareWrapper}>
-              <ShareTicketButton movie={{ ...movie, genres: details.genres, tagline: details.tagline }} providers={details.providers} />
+              <ShareTicketButton movie={{ ...movie, genres: details.genres, tagline: details.tagline }} providers={(details as any).providers} />
             </Animated.View>
           )}
           <View style={styles.shakePromptRow}>

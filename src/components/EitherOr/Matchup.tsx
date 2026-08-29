@@ -78,18 +78,7 @@ export default function Matchup() {
     return () => timers.forEach(clearTimeout);
   }, [currentMatch?.roundNumber, currentMatch?.matchIndex, currentMatch?.startedAt, currentMatch?.countdownMs, votedSide, isRevealing]);
 
-  const [remainingSeconds, setRemainingSeconds] = useState(0);
-  useEffect(() => {
-    if (!currentMatch || isRevealing) { setRemainingSeconds(0); return; }
-    const tick = () => setRemainingSeconds(
-      Math.max(Math.ceil((currentMatch.startedAt + currentMatch.countdownMs - Date.now()) / 1000), 0)
-    );
-    tick();
-    const id = setInterval(tick, 250);
-    return () => clearInterval(id);
-  }, [currentMatch?.startedAt, currentMatch?.countdownMs, isRevealing]);
-
-  useEffect(() => {
+useEffect(() => {
     if (!currentMatch) return;
     prefetchThumbnails(
       [currentMatch.champion.poster_path, currentMatch.challenger.poster_path].filter(Boolean),
@@ -153,16 +142,13 @@ export default function Matchup() {
 
       <View style={styles.header}>
         <View style={styles.headerSide}>
-          <View style={styles.roundBadgeCol}>
-            <Text style={styles.roundBadgeStageName}>{stageName}</Text>
-            <View style={styles.roundBadge}>
-              {matchLabel && <Text style={styles.roundBadgeMatch}>{matchLabel}</Text>}
-              {!isRevealing && (
-                <Text style={[styles.roundBadgeSeconds, remainingSeconds <= 5 && styles.roundBadgeSecondsUrgent]}>
-                  {matchLabel ? "· " : ""}{remainingSeconds}s
-                </Text>
-              )}
-            </View>
+          <Text style={styles.roundBadgeStageName} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>{stageName}</Text>
+          <View style={styles.roundBadge}>
+            <Text style={styles.roundBadgeMatch}>
+              {currentMatch.roundNumber}
+              <Text style={styles.roundBadgeMatchTotal}>/{currentMatch.totalRounds}</Text>
+              {matchLabel ? `  ·  ${matchLabel}` : ""}
+            </Text>
           </View>
         </View>
 
@@ -286,8 +272,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
     paddingHorizontal: spacing.screen,
   },
   headerSide: {
@@ -297,35 +283,29 @@ const styles = StyleSheet.create({
   headerSideRight: {
     alignItems: "flex-end",
   },
-  roundBadgeCol: {
-    gap: 1,
-  },
   roundBadgeStageName: {
     fontFamily: "Bebas",
-    fontSize: 22,
+    fontSize: 36,
     color: colors.text,
-    lineHeight: 24,
+    lineHeight: 36,
+    letterSpacing: 1,
   },
   roundBadge: {
     flexDirection: "row",
     alignItems: "baseline",
-    gap: spacing.xs,
+    marginTop: 2,
   },
   roundBadgeMatch: {
-    fontSize: fontSize.xs,
-    color: colors.placeholder,
-    fontWeight: fontWeight.medium,
-  },
-  roundBadgeSeconds: {
-    fontSize: fontSize.xs,
-    color: colors.placeholder,
-    fontWeight: fontWeight.medium,
-  },
-  roundBadgeSecondsUrgent: {
-    color: colors.error,
+    fontSize: fontSize.md,
+    color: colors.text,
     fontWeight: fontWeight.semibold,
   },
-  bottomBar: {
+  roundBadgeMatchTotal: {
+    fontSize: fontSize.sm,
+    color: colors.placeholder,
+    fontWeight: fontWeight.normal,
+  },
+bottomBar: {
     position: "absolute",
     bottom: 0,
     left: 0,
@@ -402,7 +382,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: colors.appBackground,
+    backgroundColor: colors.primary,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 2,

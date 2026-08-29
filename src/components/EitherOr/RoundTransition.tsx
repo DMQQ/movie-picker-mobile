@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   trophyBadge: {
     position: "absolute",
     top: spacing.xs,
-    right: spacing.xs,
+    left: spacing.xs,
     width: 22,
     height: 22,
     borderRadius: radius.pill,

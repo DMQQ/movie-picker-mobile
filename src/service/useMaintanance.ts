@@ -24,7 +24,7 @@ export default function useMaintenance(initialCheck = true) {
         setIsRetrying(true);
       }
 
-      const hasInternet = isConnected === true && isInternetReachable !== false;
+      const hasInternet = isConnected !== false && isInternetReachable !== false;
 
       const handleFailure = (
         type: "no-internet" | "server-error" | "maintenance" | "update",
@@ -132,7 +132,15 @@ export default function useMaintenance(initialCheck = true) {
 
     if (result.success) {
       router.back();
-    } else {
+    } else if (result.type) {
+      router.replace({
+        pathname: "/modal",
+        params: {
+          type: result.type,
+          dismissible: "false",
+          ...(result.data && { data: JSON.stringify(result.data) }),
+        },
+      } as any);
     }
   };
 

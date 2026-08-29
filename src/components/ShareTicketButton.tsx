@@ -1,4 +1,4 @@
-import { memo, useCallback, useRef, useState } from "react";
+import { memo, useCallback, useRef, useState, type ElementRef } from "react";
 import IconButton from "./IconButton";
 import Text from "./Text";
 import { Dimensions, Modal, Pressable, StyleSheet, View } from "react-native";
@@ -66,7 +66,7 @@ interface ShareTicketButtonProps {
 function ShareTicketButton({ movie, providers, headerText, pickupLine, holeColor = colors.appBackground }: ShareTicketButtonProps) {
   const t = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
-  const viewShotRef = useRef<ViewShot>(null);
+  const viewShotRef = useRef<ElementRef<typeof ViewShot>>(null);
 
   const openModal = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -131,7 +131,7 @@ function ShareTicketButton({ movie, providers, headerText, pickupLine, holeColor
 export function IconShareButton({ movie }: { movie: Movie | null | undefined }) {
   if (!movie) return null;
   const [modalVisible, setModalVisible] = useState(false);
-  const viewShotRef = useRef<ViewShot>(null);
+  const viewShotRef = useRef<ElementRef<typeof ViewShot>>(null);
 
   const openModal = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

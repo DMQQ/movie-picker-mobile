@@ -57,7 +57,7 @@ export default function AsyncJoinOverlay() {
 
 const styles = StyleSheet.create({
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: colors.appBackground,
     justifyContent: "center",
     paddingHorizontal: spacing.xxl,

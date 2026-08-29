@@ -83,7 +83,7 @@ function UnviewedMatchesContent() {
     router.back();
     router.navigate({
       pathname: "/room/qr-code",
-      params: { quickStart: true },
+      params: { quickStart: "true" },
     });
   }, []);
   const gridConfig = useMemo(

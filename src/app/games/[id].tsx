@@ -107,7 +107,7 @@ export default function GameDetailScreen() {
   const handleSaveAll = () => {
     dispatch(
       setPendingBulkMovies(
-        activeItems.map((item) => ({
+        activeItems.map((item: (typeof activeItems)[0]) => ({
           id: item.contentId,
           title: item.content.title,
           poster_path: item.content.poster_path ?? undefined,

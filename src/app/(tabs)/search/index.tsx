@@ -129,7 +129,7 @@ const SearchScreen = () => {
     "idle",
   );
 
-  const searchTimeout = React.useRef<NodeJS.Timeout>(null);
+  const searchTimeout = React.useRef<ReturnType<typeof setTimeout>>(null);
   const lastReceivedApiPage = useRef(0);
   const isLoadingNextPage = useRef(false);
   const routeParamsRef = useRef(searchParams);
@@ -261,19 +261,6 @@ const SearchScreen = () => {
     }
   }, [searchParams, mediaFilters.mediaType]);
 
-  useEffect(() => {
-    if (lastReceivedApiPage.current > 0) {
-      setCurrentPage(1);
-      setAllResults([]);
-      setHasNextPage(false);
-      setSearchPhase("pending");
-      lastReceivedApiPage.current = 0;
-      isLoadingNextPage.current = false;
-
-      performSearch(1);
-    }
-  }, [mediaFilters.mediaType]);
-
   // Main search function
   const performSearch = async (page: number) => {
     if (searchQuery.trim().length === 0 && !searchParams) {
@@ -291,8 +278,8 @@ const SearchScreen = () => {
         searchParams?.type
       ) {
         const response = await getSimilar({
-          id: searchParams.movieId,
-          type: searchParams.type,
+          id: Number(searchParams.movieId),
+          type: searchParams.type as "movie" | "tv",
           page: page,
         }).unwrap();
 

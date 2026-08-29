@@ -7,12 +7,14 @@ import Animated, {
   Easing,
   FadeIn,
   FadeOut,
+  interpolateColor,
   useSharedValue,
   useAnimatedStyle,
   withDelay,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { useEffect } from "react";
 import { ImageBackground } from "react-native";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
@@ -130,6 +132,8 @@ const scaleTitle = (title: string, size = 30) => {
 };
 
 
+const COUNTDOWN_MS = 10_000;
+
 interface Props {
   card: any;
   currentMovies: any[];
@@ -142,6 +146,7 @@ interface Props {
       uniqueness: number | null;
     }>
   >;
+  onTimeout: () => void;
 }
 
 export default function RatingState({
@@ -150,8 +155,25 @@ export default function RatingState({
   insets,
   localRatings,
   setLocalRatings,
+  onTimeout,
 }: Props) {
   const t = useTranslation();
+  const countdownProgress = useSharedValue(1);
+
+  useEffect(() => {
+    countdownProgress.value = withTiming(0, { duration: COUNTDOWN_MS, easing: Easing.linear });
+    const timer = setTimeout(onTimeout, COUNTDOWN_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const countdownBarStyle = useAnimatedStyle(() => ({
+    width: `${countdownProgress.value * 100}%`,
+    backgroundColor: interpolateColor(
+      countdownProgress.value,
+      [0, 0.4, 1],
+      ["#E5484D", "#FFD700", "#46A758"],
+    ),
+  }));
   const { height: screenHeight, width: screenWidth } = useWindowDimensions();
   const posterHeight = Math.min(screenHeight * 0.5, screenWidth * 0.75);
   const posterWidth = posterHeight * (2 / 3);
@@ -214,6 +236,11 @@ export default function RatingState({
             <Text style={{ fontFamily: "Bebas", fontSize: fontSize.xxl }}>
               {currentMovies.length} {t("voter.home.left")}
             </Text>
+          </View>
+
+          {/* Countdown bar */}
+          <View style={{ height: 3, backgroundColor: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
+            <Animated.View style={[{ height: 3 }, countdownBarStyle]} />
           </View>
 
           {/* Poster — flex:1 so it fills whatever vertical space remains above the rating rows */}

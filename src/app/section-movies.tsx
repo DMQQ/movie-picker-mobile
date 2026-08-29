@@ -68,7 +68,6 @@ export default function SectionMoviesScreen() {
           keyExtractor={(item) => `${item.id}-${item.type}`}
           renderItem={renderItem}
           numColumns={NUM_COLS}
-          estimatedItemSize={ITEM_H + GAP}
           ListHeaderComponent={listHeader}
           contentContainerStyle={styles.list}
           onEndReached={() => {

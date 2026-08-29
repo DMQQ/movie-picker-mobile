@@ -60,7 +60,7 @@ export default function MoviePickerIndex() {
 
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
-  const debounceRef = useRef<NodeJS.Timeout>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
   const [search, { isFetching }] = useLazySearchQuery();
   const [addBulkItems] = useAddBulkItemsMutation();
 
@@ -128,7 +128,7 @@ export default function MoviePickerIndex() {
         const interactionType = targetListType === "superliked" ? "super_liked" : "blocked";
         await Promise.all(
           selected.map((m) =>
-            dispatch(action({
+            (dispatch as any)(action({
               repo: movieInteractions,
               interaction: {
                 movie_id: m.id,
@@ -198,7 +198,6 @@ export default function MoviePickerIndex() {
           <FlashList
             data={searchResults}
             keyExtractor={(item) => String(item.id)}
-            estimatedItemSize={68}
             contentContainerStyle={styles.listPad}
             renderItem={({ item }) => (
               <Touch scaleTo={0.97} onPress={() => handleToggle(item)} style={styles.row}>
@@ -247,7 +246,6 @@ export default function MoviePickerIndex() {
               <FlashList
                 data={authLists}
                 keyExtractor={(l) => l.id}
-                estimatedItemSize={68}
                 contentContainerStyle={styles.listPad}
                 renderItem={({ item: list }) => (
                   <Touch scaleTo={0.97} onPress={() => handleOpenAuthList(list)} style={styles.row}>
@@ -272,7 +270,6 @@ export default function MoviePickerIndex() {
             <FlashList
               data={localGroups}
               keyExtractor={(g) => g.id}
-              estimatedItemSize={68}
               contentContainerStyle={styles.listPad}
               renderItem={({ item: group }) => {
                 const selectedInGroup = group.movies.filter((m) => selectedSet.has(m.id)).length;

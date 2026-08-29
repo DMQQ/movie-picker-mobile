@@ -311,7 +311,7 @@ export default function FortuneWheel() {
         <Animated.View
           entering={FadeIn.duration(400).withInitialValues({
             transform: [{ translateY: 50 }],
-          })}
+          } as any)}
           exiting={FadeOut.duration(300)}
           style={fortuneStyles.cardOverlay}
         >
@@ -363,21 +363,6 @@ export default function FortuneWheel() {
         </Animated.View>
       )}
 
-      {selectedMovie && (
-        <Animated.View
-          style={[fortuneStyles.bottomActions, { top: height * 0.1 + CARD_HEIGHT + 20 }]}
-          entering={FadeIn.delay(300)}
-        >
-          <Button
-            mode='contained'
-            icon="refresh"
-            onPress={throttle(() => handleThrowDice(), 200)}
-          >
-            {t("fortune-wheel.spin-again")}
-          </Button>
-        </Animated.View>
-      )}
-
       {selectedCards?.results?.length > 0 && (
         <FortuneWheelComponent
           ref={wheelRef as any}
@@ -393,6 +378,21 @@ export default function FortuneWheel() {
           size={screenWidth * 2}
           items={selectedCards.results as any}
         />
+      )}
+
+      {selectedMovie && (
+        <Animated.View
+          style={[fortuneStyles.bottomActions, { top: height * 0.1 + CARD_HEIGHT + 20 }]}
+          entering={FadeIn.delay(300)}
+        >
+          <Button
+            mode='contained'
+            icon="refresh"
+            onPress={throttle(() => handleThrowDice(), 200)}
+          >
+            {t("fortune-wheel.spin-again")}
+          </Button>
+        </Animated.View>
       )}
     </SafeIOSContainer>
   );

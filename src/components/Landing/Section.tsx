@@ -77,7 +77,6 @@ const Section = memo(
           keyExtractor={movieKeyExtractor}
           horizontal
           showsHorizontalScrollIndicator={false}
-          estimatedItemSize={COMPACT_W + spacing.sm}
           ItemSeparatorComponent={() => <View style={{ width: spacing.sm }} />}
         />
       </View>

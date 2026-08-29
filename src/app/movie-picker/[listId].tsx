@@ -146,7 +146,7 @@ export default function MoviePickerListDetail() {
         const interactionType = targetListType === "superliked" ? "super_liked" : "blocked";
         await Promise.all(
           selected.map((m) =>
-            dispatch(action({
+            (dispatch as any)(action({
               repo: movieInteractions,
               interaction: {
                 movie_id: m.id,
@@ -213,7 +213,6 @@ export default function MoviePickerListDetail() {
         <FlashList
           data={filtered}
           keyExtractor={(item) => String(item.id)}
-          estimatedItemSize={68}
           contentContainerStyle={styles.listPad}
           renderItem={({ item }) => {
             const sel = selectedSet.has(item.id);

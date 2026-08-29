@@ -214,7 +214,6 @@ export default function PersonScreen() {
                 )}
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                estimatedItemSize={SECTION_ITEM_WIDTH + spacing.screen}
                 contentContainerStyle={{ paddingLeft: spacing.screen }}
               />
             </View>

@@ -48,7 +48,7 @@ export default function GroupScreenLayout({
           title={title}
           styles={Platform.OS === "android" ? { marginTop: insets.top } : undefined}
           showRightIconButton={showRightIconButton}
-          rightIconName={rightIconName}
+          rightIconName={rightIconName as any}
           onRightIconPress={onRightIconPress}
         >
           {headingChildren}

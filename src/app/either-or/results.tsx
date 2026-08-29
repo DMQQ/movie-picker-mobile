@@ -152,7 +152,6 @@ export default function EitherOrResults() {
         autoPlay={false}
         loop={false}
         style={styles.confetti}
-        pointerEvents="none"
       />
 
       <SummaryFooter

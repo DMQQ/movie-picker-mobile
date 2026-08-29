@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ElementRef } from "react";
 import ViewShot, { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as Haptics from "expo-haptics";
@@ -10,7 +10,7 @@ export const MAX_SELECTION = 7;
 export type ShareMovie = { id: number; imageUrl: string; type: "movie" | "tv" };
 
 export function useShareSelection(movies: ShareMovie[]) {
-  const viewShotRef = useRef<ViewShot>(null);
+  const viewShotRef = useRef<ElementRef<typeof ViewShot>>(null);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(
     () => new Set(movies.slice(0, Math.min(MAX_SELECTION, movies.length)).map((m) => m.id)),
   );

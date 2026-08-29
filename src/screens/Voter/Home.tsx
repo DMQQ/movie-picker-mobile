@@ -42,6 +42,9 @@ export default function Home() {
   const insets = useSafeAreaInsets();
   const [showError, setShowError] = useState(false);
   const cardStartTime = useRef(Date.now());
+  const submittedRef = useRef(false);
+  const localRatingsRef = useRef(localRatings);
+  localRatingsRef.current = localRatings;
   const t = useTranslation();
 
   useEffect(() => {
@@ -74,6 +77,7 @@ export default function Home() {
 
   useEffect(() => {
     cardStartTime.current = Date.now();
+    submittedRef.current = false;
     setLocalRatings({ interest: null, mood: null, uniqueness: null });
   }, [currentMovies?.[0]?.id]);
 
@@ -87,6 +91,8 @@ export default function Home() {
       return;
 
     const timer = setTimeout(() => {
+      if (submittedRef.current) return;
+      submittedRef.current = true;
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       actions.submitRating(currentMovies[0].id as any, {
         interest: localRatings.interest!,
@@ -104,6 +110,20 @@ export default function Home() {
     localRatings.uniqueness,
     currentMovies?.[0]?.id,
   ]);
+
+  const handleTimeout = () => {
+    if (submittedRef.current || !currentMovies?.[0]?.id) return;
+    submittedRef.current = true;
+    const r = localRatingsRef.current;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    actions.submitRating(currentMovies[0].id as any, {
+      interest: r.interest ?? 3,
+      mood: r.mood ?? 3,
+      uniqueness: r.uniqueness ?? 3,
+      durationMs: Date.now() - cardStartTime.current,
+    });
+    setLocalRatings({ interest: null, mood: null, uniqueness: null });
+  };
 
   useEffect(() => {
     if (!currentMovies?.length) return;
@@ -156,6 +176,7 @@ export default function Home() {
           insets={insets}
           localRatings={localRatings}
           setLocalRatings={setLocalRatings}
+          onTimeout={handleTimeout}
         />
       )}
       {status === "completed" && (

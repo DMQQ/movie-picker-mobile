@@ -9,17 +9,18 @@ interface SkeletonProps {
 }
 
 const Skeleton = ({ children }: SkeletonProps) => {
-  const { width, height } = children.props.style;
+  const props = children.props as Record<string, any>;
+  const { width, height } = props.style;
   const theme = useTheme();
 
   return (
-    <View 
-      style={{ 
-        width, 
-        height, 
+    <View
+      style={{
+        width,
+        height,
         backgroundColor: theme.colors.surface,
-        borderRadius: children.props.style.borderRadius || 5,
-      }} 
+        borderRadius: props.style.borderRadius || 5,
+      }}
     />
   );
 };

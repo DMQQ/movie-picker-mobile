@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import { StyleSheet, View, TextInput, TouchableOpacity, type ReactNode } from "react-native";
+import type { ReactNode } from "react";
+import { StyleSheet, View, TextInput, TouchableOpacity } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   FadeIn,
@@ -96,6 +97,7 @@ export default function SummaryFooter({
         if (Platform.OS !== "web") {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         }
+        setShowFeedback(false);
         setTimeout(() => setRatingVisible(false), 400);
       } else if (response.error === "Rating already submitted") {
         setRatingVisible(false);

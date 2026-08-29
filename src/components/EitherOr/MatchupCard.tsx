@@ -89,9 +89,9 @@ export default function MatchupCard({ movie, side, votes, totalVotes, votedSide,
       >
         <Thumbnail
           path={movie.poster_path}
-          size={ThumbnailSizes.poster.xlarge}
-          container={{ flex: 1, borderRadius: radius.card }}
-          style={{ borderRadius: radius.card }}
+          size={ThumbnailSizes.poster.xxlarge}
+          container={{ flex: 1, borderRadius: radius.sm }}
+          style={{ borderRadius: radius.sm }}
         />
 
         <Animated.View

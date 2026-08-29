@@ -19,7 +19,6 @@ if (Platform.OS === "android") {
   Notifications.setNotificationChannelAsync("default", {
     name: "Default",
     importance: Notifications.AndroidImportance.MAX,
-    color: "#4169E1",
   });
 }
 
@@ -42,7 +41,7 @@ export default function NotificationHandler() {
     if (data.screen === "invite") {
       const inviteId = data.inviteId as string | undefined;
       if (!inviteId) return;
-      handleInviteDeeplink(inviteId, token);
+      handleInviteDeeplink(inviteId, token ?? undefined);
     }
 
     if (data.screen === "GameDetail") {

@@ -71,7 +71,7 @@ export default function UserInputModal({
       onRequestClose={dismissable ? onDismiss : undefined}
     >
       <View style={styles.modalOverlay} onTouchEnd={handleBackdropPress}>
-        <View style={[styles.modalContent, { width, maxHeight }]} onTouchEnd={(e) => e.stopPropagation()}>
+        <View style={[styles.modalContent, { width, maxHeight: maxHeight as any }]} onTouchEnd={(e) => e.stopPropagation()}>
           <Animated.View style={[styles.modalInner]}>
             <Text style={styles.modalTitle}>{title}</Text>
             {subtitle && <Text style={styles.modalSubtitle}>{subtitle}</Text>}

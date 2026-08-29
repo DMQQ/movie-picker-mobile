@@ -179,7 +179,7 @@ export default function SettingsScreen() {
     await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
     await SecureStore.deleteItemAsync("user_refresh_token");
     dispatch(authActions.clearAuth());
-    await dispatch(ensureAnonymousSession(null));
+    await dispatch(ensureAnonymousSession({ userId: null, refreshToken: null }));
   }
 
   function handleDeleteAccount() {
@@ -197,7 +197,7 @@ export default function SettingsScreen() {
               await SecureStore.deleteItemAsync(AUTH_TOKEN_KEY);
               await SecureStore.deleteItemAsync("user_refresh_token");
               dispatch(authActions.clearAuth());
-              await dispatch(ensureAnonymousSession(null));
+              await dispatch(ensureAnonymousSession({ userId: null, refreshToken: null }));
             } catch {
               Alert.alert(t("common.error"), t("account.deleteDialog.error"));
             }

@@ -36,7 +36,7 @@ export const restoreSession = createAsyncThunk(
   "auth/restoreSession",
   async (
     { token, refreshToken }: { token: string; refreshToken: string | null },
-    { rejectWithValue },
+    { rejectWithValue, dispatch },
   ) => {
     const url = `${baseUrl}/api/auth/me`;
     let res: Response;
@@ -49,6 +49,7 @@ export const restoreSession = createAsyncThunk(
     }
     if (res.ok) {
       const { user } = await res.json();
+      dispatch(setUserId(user.id));
       return { token, refreshToken, user };
     }
     if (res.status !== 401) {
@@ -71,6 +72,7 @@ export const restoreSession = createAsyncThunk(
       const { token: newToken, refreshToken: newRefreshToken, user } = await refreshRes.json();
       await SecureStore.setItemAsync("user_auth_token", newToken);
       if (newRefreshToken) await SecureStore.setItemAsync("user_refresh_token", newRefreshToken);
+      dispatch(setUserId(user.id));
       return { token: newToken, refreshToken: newRefreshToken, user };
     } catch {
       await SecureStore.deleteItemAsync("user_auth_token");

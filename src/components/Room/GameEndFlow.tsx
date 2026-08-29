@@ -157,7 +157,6 @@ const GameEndFlow = memo(() => {
                 disabled={loading}
                 loading={loading}
                 style={[styles.actionBtn, styles.playAgainBtn]}
-                contentStyle={styles.actionBtnContent}
               >
                 {t("game-summary.play-again") as string}
               </PrimaryButton>
