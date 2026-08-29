@@ -103,9 +103,9 @@
     "awaiting-start": "Waiting for the host to kick things off",
     "you-are-host": "You're the host. Go solo or wait for your crew.",
     "async-play-title": "Friends can play later",
-    "async-play-desc": "Share the room code and your friends can swipe on their own time — no need to be online together.",
-    "too-restricted": "Filters too tight — loosen up and try again",
-    "lower-results-count": "Only {count} results — gonna be a short one",
+    "async-play-desc": "Share the room code and your friends can swipe on their own time, no need to be online together.",
+    "too-restricted": "Filters too tight, loosen up and try again",
+    "lower-results-count": "Only {count} results, gonna be a short one",
     "providers": "Pick your providers",
     "join-game": "Join game",
     "waiting": "Waiting on the others...",
@@ -129,7 +129,7 @@
       "sending": "Sending...",
       "invited": "Invited",
       "invite": "Invite",
-      "noNotifications": "Notifications off — they might miss the invite",
+      "noNotifications": "Notifications off, they might miss the invite",
       "banner": {
         "swipe": "You've been invited to a swiping game!",
         "voter": "You've been invited to a voting game!",
@@ -177,7 +177,7 @@
       "connection-lost": "Connection lost, reconnecting...",
       "connection-lost-refresh": "Connection lost, pull to refresh",
       "reconnected": "Reconnected",
-      "no-match-hint": "120 swipes and still no match — try different genres or filters"
+      "no-match-hint": "120 swipes and still no match, try different genres or filters"
     },
     "genres": {
       "all_movies": "All movies",
@@ -202,7 +202,7 @@
     "builder": {
       "next": "Next",
       "createRoom": "Create Room",
-      "quickStart": "Create Room",
+      "quickStart": "Play Now",
       "leaveStepConfirmation": "Go back? You'll lose your setup.",
       "step1": {
         "title": "What's your pick?",
@@ -318,11 +318,11 @@
     "clear": "Clear All",
     "active": "{count} filter{plural} active",
     "categories": "Categories",
-    "none": "No filters — showing everything"
+    "none": "No filters, showing everything"
   },
   "likes": {
     "title": "Your likes",
-    "empty": "Nothing liked yet — start swiping!",
+    "empty": "Nothing liked yet, start swiping!",
     "close": "Close match",
     "no-matches": "No matches yet",
     "random": "Randomize"
@@ -441,6 +441,10 @@
     "create-collection": "Save to favourites",
     "save-list": "Save"
   },
+  "nudge": {
+    "post_game": "Get notified when friends invite you to play",
+    "room_setup": "Get notified when your room fills up"
+  },
   "scanner": {
     "request-permission": "Request permission",
     "heading": "Scan QR code",
@@ -450,7 +454,7 @@
     "code": "Code",
     "error-empty": "Enter a code first",
     "error-invalid-prefix": "Code starts with S, V or E",
-    "error-room-not-found": "Room not found — check the code?",
+    "error-room-not-found": "Room not found, check the code?",
     "permission-denied": "Need camera access to scan. Allow it in Settings.",
     "open-settings": "Open Settings",
     "requesting-permission": "Requesting camera permission…",
@@ -479,9 +483,9 @@
     "search-regions": "Search regions...",
     "library": "Library",
     "unauth": {
-      "session-expired": "Session expired — sign in again.",
+      "session-expired": "Session expired, sign in again.",
       "title": "Get more out of Flickmate",
-      "subtitle": "Sync lists, track history, invite friends — the good stuff.",
+      "subtitle": "Sync lists, track history, invite friends, the good stuff.",
       "benefit-cloud": "Sync your lists across all your devices",
       "benefit-history": "Revisit every game, match, and session",
       "benefit-friends": "Invite friends to join in one tap",
@@ -489,7 +493,8 @@
       "sign-in": "Sign in",
       "create-account": "Create account",
       "benefit-ratings": "Rate and review everything you watch",
-      "benefit-scoring": "Fine-tune what genres and topics you prefer"
+      "benefit-scoring": "Taste Profile: fine-tune your genres and topic preferences",
+      "trust": "No spam · Delete anytime"
     }
   },
   "voter": {
@@ -504,7 +509,7 @@
     },
     "home": {
       "title": "Movie voting",
-      "description": "Create a session or join one. Rate movies together and find your pick.",
+      "description": "Play solo or invite friends. Rate movies and find tonight's pick.",
       "create": "Create a new session",
       "waiting": "Waiting for other players",
       "ready": "Ready to start",
@@ -513,7 +518,7 @@
       "ready-status": "Ready",
       "ready-cancel": "Cancel ready",
       "start": "Start voting",
-      "you-are-host": "You're the host. Start now or wait for others.",
+      "you-are-host": "Go solo or share the code to vote together.",
       "rate": "Rate",
       "left": "to go",
       "ratingHeadings": [
@@ -568,7 +573,7 @@
       "title": "Top picks",
       "h2": "Other picks",
       "loading": "Loading results...",
-      "no-matches": "No matches — tough crowd"
+      "no-matches": "No matches, tough crowd"
     }
   },
   "eitherOr": {
@@ -589,7 +594,7 @@
     "lobby": {
       "title": "Waiting room",
       "bracketSize": "{count}-movie bracket",
-      "host": "You're the host. Kick it off or wait for your crew.",
+      "host": "Go solo or share the code to play together.",
       "start": "Start bracket",
       "waitingForHost": "Waiting for the host...",
       "joining": "Joining...",
@@ -700,6 +705,8 @@
     "no-matches": "No matches recorded",
     "no-one-yet": "No one yet",
     "no-games-yet": "No games yet",
+    "play-to-see-history": "Play a game to see your history",
+    "play-with-friends": "Invite friends to a game to see them here",
     "loading": "Loading…",
     "swipes": "{count} swipes",
     "matches": "{count} matches"
@@ -781,7 +788,7 @@
     "add-to-favourites": "Favourite",
     "remove-from-favourites": "Undo",
     "no-matches": "Nobody agreed... yet.",
-    "no-matches-desc": "Zero matches. Rough. Turns out you're all cinematic snowflakes with wildly different taste — and that's actually great data for us. We just updated your personalization, so the next round is going to hit way differently. One more game?",
+    "no-matches-desc": "Zero matches. Rough. Turns out you're all cinematic snowflakes with wildly different taste, and that's actually great data for us. We just updated your personalization, so the next round is going to hit way differently. One more game?",
     "no-matches-titles": [
       "Nobody agreed... yet.",
       "The group chat has spoken.",
@@ -790,10 +797,10 @@
       "This one's on us."
     ],
     "no-matches-descs": [
-      "Zero matches. Rough. Turns out you're all cinematic snowflakes with wildly different taste — and that's actually great data for us. We just updated your personalization, so the next round is going to hit way differently. One more game?",
-      "And apparently nobody agreed on anything. Classic. On the bright side, we now know exactly what NOT to recommend next time — your personalization just got a serious upgrade. Come back stronger.",
+      "Zero matches. Rough. Turns out you're all cinematic snowflakes with wildly different taste, and that's actually great data for us. We just updated your personalization, so the next round is going to hit way differently. One more game?",
+      "And apparently nobody agreed on anything. Classic. On the bright side, we now know exactly what NOT to recommend next time, your personalization just got a serious upgrade. Come back stronger.",
       "Not a single film survived the group vote. Brutal, honestly. But every swipe told us something about your taste, so the next game is already going to be smarter. Don't give up now.",
-      "And we mean that as a compliment. Zero overlap in taste means you're all extremely discerning viewers — or just really stubborn. Either way, we've learned from this and your next game will be way better.",
+      "And we mean that as a compliment. Zero overlap in taste means you're all extremely discerning viewers, or just really stubborn. Either way, we've learned from this and your next game will be way better.",
       "We didn't find the right movies to unite the group this time, and that's on us. We've taken notes, updated the algorithm, and promised it a stern talking-to. Next game, we're coming back hotter."
     ],
     "no-picks-titles": [
@@ -807,8 +814,8 @@
       "You swiped through everything and liked nothing. Bold strategy. Maybe the next round's lineup will finally earn your approval.",
       "Not one movie made the cut for you. Either your standards are sky-high or the algorithm needs a serious talking-to. Probably both.",
       "You let every movie walk right past you. No likes, no picks, no mercy. We're noting this and coming back with a stronger lineup.",
-      "Respect the commitment to zero compromise. Not a single film was worthy of your like. We'll do better next time — we have to.",
-      "Nothing clicked. That's actually useful data — we now know exactly what leaves you cold. Next round will be a very different story."
+      "Respect the commitment to zero compromise. Not a single film was worthy of your like. We'll do better next time, we have to.",
+      "Nothing clicked. That's actually useful data, we now know exactly what leaves you cold. Next round will be a very different story."
     ],
     "try-again": "Play Again",
     "your-picks": "Your likes",
@@ -833,14 +840,14 @@
       "great-taste": "GREAT TASTE!",
       "double-feature": "DOUBLE FEATURE!",
       "match-made": "MATCH MADE!",
-      "keep-swiping": "keep swiping — the perfect film is out there",
+      "keep-swiping": "keep swiping, the perfect film is out there",
       "locked-in-one": "{count} film locked in for tonight",
       "locked-in": "{count} films locked in for tonight"
     }
   },
   "game-rating": {
     "title": "How was this game?",
-    "subtitle": "Honest feedback only — helps us make it better",
+    "subtitle": "Honest feedback only, helps us make it better",
     "feedback-title": "What went wrong?",
     "feedback-subtitle": "Help us improve by sharing your feedback",
     "feedback-placeholder": "Tell us what went wrong...",
@@ -859,8 +866,8 @@
     "quick-subtitle": "Start swiping instantly with random movies",
     "quick-button": "Quick Play",
     "quick-custom-button": "Custom Room",
-    "voter-title": "🗳️ Vote Together",
-    "voter-subtitle": "Rate movies with friends and find your shared favorites",
+    "voter-title": "🗳️ Rate & Decide",
+    "voter-subtitle": "Solo or with friends, rate movies and find tonight's pick.",
     "voter-button": "Start Voting",
     "fortune-title": "🎰 Spin to Decide",
     "fortune-subtitle": "Can't choose? Let the wheel of fortune pick for you!",
@@ -905,11 +912,11 @@
       "getStarted": "Get Started",
       "welcome": {
         "title": "Pick Movies Together",
-        "description": "No more endless scrolling. Pick the perfect movie with friends — fast."
+        "description": "No more endless scrolling. Pick the perfect movie with friends, fast."
       },
       "swiper": {
         "title": "Swipe & Match",
-        "description": "Swipe right on what you like. Everyone agrees — it's a match!"
+        "description": "Swipe right on what you like. Everyone agrees, it's a match!"
       },
       "voter": {
         "title": "Vote Together",
@@ -973,7 +980,7 @@
     "remove": "Remove",
     "remove-confirm": "Remove {title} from your super likes?",
     "clear-all-confirm": "Clear all super liked movies?",
-    "banner": "Super liked movies show up more in your games — and shape what your squad sees too."
+    "banner": "Super liked movies show up more in your games, and shape what your squad sees too."
   },
   "rate-app": {
     "prompt": "Enjoying the app? Rate us!"
@@ -985,11 +992,11 @@
     },
     "maintenance": {
       "title": "Maintenance",
-      "message": "We're doing some work — check back soon."
+      "message": "We're doing some work, check back soon."
     },
     "update": {
       "title": "Update Available",
-      "message": "New version out — update to keep going."
+      "message": "New version out, update to keep going."
     },
     "server": {
       "title": "Server Issue",
@@ -1000,12 +1007,12 @@
     "dismiss": "Dismiss"
   },
   "errors": {
-    "VALIDATION_ERROR": "Something's off — double-check what you entered.",
+    "VALIDATION_ERROR": "Something's off, double-check what you entered.",
     "EMAIL_ALREADY_IN_USE": "An account with this email already exists.",
     "INVALID_CREDENTIALS": "Wrong email or password.",
     "INVALID_GOOGLE_TOKEN": "Google sign-in failed. Try again.",
     "INVALID_APPLE_TOKEN": "Apple sign-in failed. Try again.",
-    "AVATAR_TOO_LARGE": "Image too big — try a smaller one.",
+    "AVATAR_TOO_LARGE": "Image too big, try a smaller one.",
     "AVATAR_INVALID_TYPE": "Use JPEG or PNG for your photo.",
     "LIST_NOT_FOUND": "List not found.",
     "LIST_ALREADY_EXISTS": "A list with this name already exists.",
@@ -1080,7 +1087,7 @@
   "tutorial": {
     "swipe": {
       "title": "Swipe with friends",
-      "description": "Create a room, share the code, everyone swipes. Match the same movie — that's tonight's pick."
+      "description": "Create a room, share the code, everyone swipes. Match the same movie, that's tonight's pick."
     },
     "fortune": {
       "title": "Fortune wheel",
@@ -1155,23 +1162,23 @@
     "how_to_vote": {
       "title": "How to vote",
       "like_label": "Like",
-      "like_desc": "Swipe right or tap ❤ — you want to watch this",
+      "like_desc": "Swipe right or tap ❤, you want to watch this",
       "pass_label": "Pass",
-      "pass_desc": "Swipe left or tap ✕ — not for you",
+      "pass_desc": "Swipe left or tap ✕, not for you",
       "details_label": "Details",
       "details_desc": "Tap the card to see cast, trailer and info"
     },
     "special_actions": {
       "title": "Special actions",
       "super_like_label": "Super Like",
-      "super_like_desc": "Strong yes — also saves to your must-watch list",
+      "super_like_desc": "Strong yes, also saves to your must-watch list",
       "block_label": "Block",
       "block_desc": "Never see this title again in any game"
     },
     "getting_a_match": {
       "title": "Getting a match",
       "match_label": "Match!",
-      "match_desc": "When everyone in the room likes the same film — match!",
+      "match_desc": "When everyone in the room likes the same film, match!",
       "saved_label": "Saved",
       "saved_desc": "All your matches are saved to game history"
     },
@@ -1217,7 +1224,7 @@
     "tasteProfileTV": "TV: {count}",
     "required": {
       "title": "Account required",
-      "message": "Create a free account — takes about 10 seconds.",
+      "message": "Create a free account, takes about 10 seconds.",
       "notNow": "Not now"
     },
     "stats": {
@@ -1302,13 +1309,13 @@
     "appleSignInFailed": "Apple Sign In failed. Try again.",
     "googleSignInFailed": "Google Sign In failed. Try again.",
     "googleNoAccounts": "No Google accounts on this device. Add one in Settings and try again.",
-    "sessionExpired": "Session expired — tap to sign in.",
+    "sessionExpired": "Session expired, tap to sign in.",
     "recoveryCodes": {
       "title": "Recovery Codes",
       "titleNew": "New Recovery Codes",
       "subtitleNew": "Old codes are gone. Save these somewhere safe.",
       "subtitle": "Save these somewhere safe. You won't see them again.",
-      "warning1": "Email reset isn't available yet — these codes are your only way back if you forget your password. Save them now.",
+      "warning1": "Email reset isn't available yet, these codes are your only way back if you forget your password. Save them now.",
       "warning2": "Each code is single-use. Store them in a password manager.",
       "copied": "Copied!",
       "copyAll": "Copy all",
@@ -1319,7 +1326,7 @@
   },
   "migration": {
     "success": "Collection synced!",
-    "successLarge": "Synced! Big collections take a sec — they'll show up soon.",
+    "successLarge": "Synced! Big collections take a sec, they'll show up soon.",
     "modal-title": "Sync your collection",
     "bodyStart": "You have ",
     "bodyAnd": " and ",
@@ -1345,7 +1352,7 @@
   },
   "party-waiting": {
     "host-setting-up": "Host is setting up the next game…",
-    "host-subtitle": "Hang tight — you'll jump in automatically",
+    "host-subtitle": "Hang tight, you'll jump in automatically",
     "starting": "Starting a new game…",
     "preparing": "Preparing the cards"
   },

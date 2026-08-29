@@ -103,7 +103,7 @@
     "awaiting-start": "Oczekiwanie na rozpoczęcie gry przez gospodarza",
     "you-are-host": "Jesteś hostem. Graj solo lub poczekaj na ekipę.",
     "async-play-title": "Znajomi mogą grać później",
-    "async-play-desc": "Udostępnij kod pokoju — znajomi mogą przeglądać filmy w swoim czasie, bez potrzeby bycia online jednocześnie.",
+    "async-play-desc": "Udostępnij kod pokoju, znajomi mogą przeglądać filmy w swoim czasie, bez potrzeby bycia online jednocześnie.",
     "too-restricted": "Filtry są zbyt restrykcyjne",
     "lower-results-count": "Znaleziono tylko {count} wyników, gra będzie krótsza",
     "providers": "Wybierz platformy",
@@ -161,7 +161,7 @@
       "connection-lost": "Utracono połączenie, ponawiam...",
       "connection-lost-refresh": "Utracono połączenie, przeciągnij aby odświeżyć",
       "reconnected": "Połączono ponownie",
-      "no-match-hint": "120 przesunięć i nadal brak dopasowania — spróbuj zrestartować z innymi filtrami lub gatunkami"
+      "no-match-hint": "120 przesunięć i nadal brak dopasowania, spróbuj zrestartować z innymi filtrami lub gatunkami"
     },
     "genres": {
       "all_movies": "Wszystkie filmy",
@@ -186,7 +186,7 @@
     "builder": {
       "next": "Dalej",
       "createRoom": "Utwórz pokój",
-      "quickStart": "Utwórz pokój",
+      "quickStart": "Graj teraz",
       "leaveStepConfirmation": "Wróć? Stracisz postęp.",
       "step1": {
         "title": "Co chcesz obejrzeć?",
@@ -317,11 +317,11 @@
     "clear": "Wyczyść",
     "active": "{count} filtr{plural} aktywny",
     "categories": "Kategorie",
-    "none": "Brak filtrów — pokazuję wszystko"
+    "none": "Brak filtrów, pokazuję wszystko"
   },
   "likes": {
     "title": "Twoje polubienia",
-    "empty": "Nic tu jeszcze — zacznij swipować!",
+    "empty": "Nic tu jeszcze, zacznij swipować!",
     "close": "Zamknij dopasowanie",
     "no-matches": "Nie znaleziono dopasowań",
     "random": "Losuj"
@@ -426,6 +426,10 @@
     "create-collection": "Zapisz do ulubionych",
     "save-list": "Zapisz"
   },
+  "nudge": {
+    "post_game": "Otrzymuj powiadomienia, gdy znajomi zaproszą cię do gry",
+    "room_setup": "Otrzymuj powiadomienia, gdy pokój się zapełni"
+  },
   "scanner": {
     "request-permission": "Poproś o pozwolenie",
     "heading": "Zeskanuj kod QR",
@@ -453,7 +457,7 @@
     "application-language": "Język aplikacji",
     "language-info": "Wybrany język zapisuje się na stałe.",
     "about": "FlickMate pomaga Tobie i znajomym wybrać, co obejrzeć. Dane o filmach od TMDB i JustWatch.",
-    "security": "Żadne dane osobowe nie są przechowywane na serwerze. Twoje listy są lokalne — chyba że założysz konto. Serwer w Europie.",
+    "security": "Żadne dane osobowe nie są przechowywane na serwerze. Twoje listy są lokalne, chyba że założysz konto. Serwer w Europie.",
     "apply": "Zapisz",
     "update": "Aktualizacja",
     "version": "Wersja",
@@ -474,7 +478,8 @@
       "sign-in": "Zaloguj się",
       "create-account": "Utwórz konto",
       "benefit-ratings": "Oceniaj i recenzuj wszystko, co obejrzysz",
-      "benefit-scoring": "Dostosuj preferencje gatunków i tematów"
+      "benefit-scoring": "Profil gustu: dostosuj ulubione gatunki i tematy",
+      "trust": "Zero spamu · Usuń w każdej chwili"
     }
   },
   "voter": {
@@ -489,7 +494,7 @@
     },
     "home": {
       "title": "Głosowanie w parach",
-      "description": "Utwórz sesję lub dołącz. Oceń filmy razem i wybierzcie hit wieczoru.",
+      "description": "Graj solo lub zaproś przyjaciół. Oceń filmy i wybierz hit wieczoru.",
       "create": "Utwórz nową sesję",
       "waiting": "Oczekiwanie na innych graczy",
       "ready": "Gotowy do głosowania",
@@ -498,7 +503,7 @@
       "ready-status": "Gotowy?",
       "ready-cancel": "Anuluj gotowość",
       "start": "Rozpocznij głosowanie",
-      "you-are-host": "Jesteś gospodarzem. Zacznij teraz lub poczekaj na innych.",
+      "you-are-host": "Graj solo lub udostępnij kod, aby głosować razem.",
       "rate": "Oceń",
       "left": "pozostało",
       "ratingHeadings": [
@@ -574,7 +579,7 @@
     "lobby": {
       "title": "Poczekalnia",
       "bracketSize": "Drabinka {count} filmów",
-      "host": "Jesteś gospodarzem. Zacznij drabinkę teraz lub poczekaj na innych.",
+      "host": "Graj solo lub udostępnij kod, aby grać razem.",
       "start": "Rozpocznij drabinkę",
       "waitingForHost": "Czekanie na rozpoczęcie przez gospodarza...",
       "joining": "Dołączanie do pokoju...",
@@ -685,6 +690,8 @@
     "no-matches": "Brak dopasowań",
     "no-one-yet": "Jeszcze nikt",
     "no-games-yet": "Brak gier",
+    "play-to-see-history": "Zagraj w grę, aby zobaczyć historię",
+    "play-with-friends": "Zaproś znajomych do gry, aby ich zobaczyć",
     "loading": "Ładowanie…",
     "swipes": "{count} przesunięć",
     "matches": "{count} dopasowań"
@@ -766,7 +773,7 @@
     "add-to-favourites": "Polub",
     "remove-from-favourites": "Usuń z ulubionych",
     "no-matches": "Nikt się nie zgodził... jeszcze.",
-    "no-matches-desc": "Zero dopasowań. Boli. Okazuje się, że macie zupełnie inny filmowy gust — a to świetna informacja dla nas. Właśnie zaktualizowaliśmy waszą personalizację, więc następna runda będzie zupełnie inna. Jeszcze jedna gra?",
+    "no-matches-desc": "Zero dopasowań. Boli. Okazuje się, że macie zupełnie inny filmowy gust, a to świetna informacja dla nas. Właśnie zaktualizowaliśmy waszą personalizację, więc następna runda będzie zupełnie inna. Jeszcze jedna gra?",
     "no-matches-titles": [
       "Nikt się nie zgodził... jeszcze.",
       "Grupowy czat przemówił.",
@@ -775,11 +782,11 @@
       "Tym razem to nasza wina."
     ],
     "no-matches-descs": [
-      "Zero dopasowań. Boli. Okazuje się, że macie zupełnie inny filmowy gust — a to świetna informacja dla nas. Właśnie zaktualizowaliśmy waszą personalizację, więc następna runda będzie zupełnie inna. Jeszcze jedna gra?",
-      "I najwyraźniej nikt się na niczym nie zgodził. Klasyka. Dobra wiadomość: wiemy już dokładnie, czego NIE polecać następnym razem — wasza personalizacja właśnie dostała poważny upgrade. Wracajcie silniejsi.",
+      "Zero dopasowań. Boli. Okazuje się, że macie zupełnie inny filmowy gust, a to świetna informacja dla nas. Właśnie zaktualizowaliśmy waszą personalizację, więc następna runda będzie zupełnie inna. Jeszcze jedna gra?",
+      "I najwyraźniej nikt się na niczym nie zgodził. Klasyka. Dobra wiadomość: wiemy już dokładnie, czego NIE polecać następnym razem, wasza personalizacja właśnie dostała poważny upgrade. Wracajcie silniejsi.",
       "Ani jeden film nie przeżył grupowego głosowania. Brutalnie, serio. Ale każde przesunięcie powiedziało nam coś o waszym guście, więc następna gra będzie już mądrzejsza. Nie rezygnujcie teraz.",
-      "I mówimy to z komplementem. Zero wspólnego gustu oznacza, że jesteście wyjątkowo wymagającymi widzami — albo po prostu bardzo upartymi. Tak czy inaczej, wyciągnęliśmy wnioski i następna gra będzie lepsza.",
-      "Nie znaleźliśmy tym razem filmów, które połączyłyby grupę — i to nasza wina. Zanotowaliśmy, zaktualizowaliśmy algorytm i daliśmy mu porządną reprymendę. Następna gra będzie inna."
+      "I mówimy to z komplementem. Zero wspólnego gustu oznacza, że jesteście wyjątkowo wymagającymi widzami, albo po prostu bardzo upartymi. Tak czy inaczej, wyciągnęliśmy wnioski i następna gra będzie lepsza.",
+      "Nie znaleźliśmy tym razem filmów, które połączyłyby grupę, i to nasza wina. Zanotowaliśmy, zaktualizowaliśmy algorytm i daliśmy mu porządną reprymendę. Następna gra będzie inna."
     ],
     "no-picks-titles": [
       "Ani jednego polubienia.",
@@ -792,8 +799,8 @@
       "Przejrzałeś wszystko i nic nie polubiłeś. Odważna strategia. Może kolejna runda w końcu zdobędzie twoje uznanie.",
       "Ani jeden film nie przeszedł selekcji. Albo twoje standardy są astronomiczne, albo algorytm potrzebuje porządnej reprymend. Pewnie i jedno, i drugie.",
       "Przepuściłeś każdy film bez jednego polubienia. Bez litości. Notujemy i wracamy z lepszą listą.",
-      "Szacunek za stuprocentowy brak kompromisów. Żaden film nie zasłużył na twoje like. Następna runda będzie inna — musi być.",
-      "Nic nie trafiło w twój gust. To przydatne dane — wiemy już dokładnie, co cię nie kręci. Kolejna runda będzie zupełnie inna."
+      "Szacunek za stuprocentowy brak kompromisów. Żaden film nie zasłużył na twoje like. Następna runda będzie inna, musi być.",
+      "Nic nie trafiło w twój gust. To przydatne dane, wiemy już dokładnie, co cię nie kręci. Kolejna runda będzie zupełnie inna."
     ],
     "try-again": "Zagraj ponownie",
     "your-picks": "Twoje polubienia",
@@ -818,7 +825,7 @@
       "great-taste": "ŚWIETNY SMAK!",
       "double-feature": "PODWÓJNA DAWKA!",
       "match-made": "JEST MATCH!",
-      "keep-swiping": "przewijaj dalej — idealny film jest gdzieś tam",
+      "keep-swiping": "przewijaj dalej, idealny film jest gdzieś tam",
       "locked-in-one": "{count} film na dziś wieczór",
       "locked-in": "{count} filmów na dziś wieczór"
     }
@@ -844,8 +851,8 @@
     "quick-subtitle": "Zacznij przesuwać od razu z losowymi filmami",
     "quick-button": "Szybka Gra",
     "quick-custom-button": "Własny Pokój",
-    "voter-title": "🗳️ Głosuj Razem",
-    "voter-subtitle": "Oceniaj filmy z przyjaciółmi i znajdź wspólne ulubione",
+    "voter-title": "🗳️ Oceń i Zdecyduj",
+    "voter-subtitle": "Solo lub z przyjaciółmi, oceń filmy i wybierz hit wieczoru.",
     "voter-button": "Rozpocznij Głosowanie",
     "fortune-title": "🎰 Kręć Kołem",
     "fortune-subtitle": "Nie możesz się zdecydować? Pozwól kołu fortuny wybrać za Ciebie!",
@@ -948,7 +955,7 @@
     "unblock": "Odblokuj",
     "unblock-confirm": "Czy na pewno chcesz odblokować {title}? Może ponownie pojawić się w grach.",
     "clear-all-confirm": "Czy na pewno chcesz odblokować wszystkie filmy? Mogą ponownie pojawić się w grach.",
-    "banner": "Zablokowane filmy znikają z Twoich gier — i z gier każdego, kto z tobą gra."
+    "banner": "Zablokowane filmy znikają z Twoich gier, i z gier każdego, kto z tobą gra."
   },
   "super-liked": {
     "title": "Super polubione",
@@ -958,7 +965,7 @@
     "remove": "Usuń",
     "remove-confirm": "Czy na pewno chcesz usunąć {title} z super polubionych?",
     "clear-all-confirm": "Czy na pewno chcesz wyczyścić wszystkie super polubione filmy?",
-    "banner": "Super polubione filmy pojawiają się częściej — i wpływają na to, co widzi Twoja ekipa."
+    "banner": "Super polubione filmy pojawiają się częściej, i wpływają na to, co widzi Twoja ekipa."
   },
   "rate-app": {
     "prompt": "Podoba Ci się aplikacja? Oceń nas!"
@@ -970,11 +977,11 @@
     },
     "maintenance": {
       "title": "Przerwa techniczna",
-      "message": "Robimy porządki — wróć za chwilę."
+      "message": "Robimy porządki, wróć za chwilę."
     },
     "update": {
       "title": "Dostępna aktualizacja",
-      "message": "Nowa wersja — zaktualizuj, żeby grać dalej."
+      "message": "Nowa wersja, zaktualizuj, żeby grać dalej."
     },
     "server": {
       "title": "Problem z serwerem",
@@ -1201,7 +1208,7 @@
     "tasteProfileTV": "TV: {count}",
     "required": {
       "title": "Wymagane konto",
-      "message": "Utwórz darmowe konto — zajmie to dosłownie chwilę.",
+      "message": "Utwórz darmowe konto, zajmie to dosłownie chwilę.",
       "notNow": "Nie teraz"
     },
     "stats": {
@@ -1343,7 +1350,7 @@
   },
   "party-waiting": {
     "host-setting-up": "Gospodarz przygotowuje następną grę…",
-    "host-subtitle": "Spokojnie — dołączysz automatycznie",
+    "host-subtitle": "Spokojnie, dołączysz automatycznie",
     "starting": "Rozpoczynanie nowej gry…",
     "preparing": "Przygotowywanie kart"
   },
@@ -1354,7 +1361,7 @@
   },
   "async-join": {
     "title": "Gra już trwa",
-    "subtitle": "Inni już przesuwają — oto aktualny stan",
+    "subtitle": "Inni już przesuwają, oto aktualny stan",
     "liked": "Polubione",
     "matches": "Dopasowania",
     "players": "Gracze",

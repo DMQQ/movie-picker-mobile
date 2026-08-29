@@ -11,13 +11,14 @@ import { posthog } from "../constants/posthog";
 import { useGoogleAuthMutation, useAppleAuthMutation } from "../redux/auth/authApi";
 import useTranslation from "../service/useTranslation";
 
-export function useAuthProviders(onError: (msg: string) => void, screen: "register" | "login" = "login") {
+export function useAuthProviders(onError: (msg: string) => void, screen: "register" | "login" = "login", onSuccess?: () => void) {
   const t = useTranslation();
   const navigation = useNavigation();
   const [googleAuth, { isLoading: isGoogleLoading }] = useGoogleAuthMutation();
   const [appleAuth, { isLoading: isAppleLoading }] = useAppleAuthMutation();
 
   function dismissAuthSheet() {
+    if (onSuccess) { onSuccess(); return; }
     // auth Stack is nested inside root Stack; goBack on root pops the formSheet
     navigation.getParent()?.goBack();
   }

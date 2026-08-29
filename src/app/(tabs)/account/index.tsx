@@ -40,7 +40,7 @@ import { TourAttachStep } from "../../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../../components/Tour/TourContext";
 import TutorialTooltip from "../../../components/TutorialTooltip";
-import { useTutorialSeen, useMarkAllTutorialsSeen } from "../../../hooks/useTutorial";
+import { useTutorialSeen, useMarkAllTutorialsSeen, useStableFocus } from "../../../hooks/useTutorial";
 
 const AUTH_TOKEN_KEY = "user_auth_token";
 const projectId = Constants.expoConfig?.extra?.eas?.projectId;
@@ -211,6 +211,7 @@ export default function SettingsScreen() {
   const { seen, markSeen } = useTutorialSeen("tutorial_account_seen");
   const markAllSeen = useMarkAllTutorialsSeen();
   const scrollRef = useRef<ScrollView>(null);
+  const isFocused = useStableFocus(100);
 
   const scrollTo = useCallback(
     (y: number) =>
@@ -263,12 +264,12 @@ export default function SettingsScreen() {
   );
 
   useEffect(() => {
-    if (seen === false) {
+    if (seen === false && isFocused) {
       // Wait for the profile block entering animation to settle before measuring
       const timer = setTimeout(() => tourRef.current?.start(), 700);
       return () => clearTimeout(timer);
     }
-  }, [seen]);
+  }, [seen, isFocused]);
 
   useEffect(() => {
     if (!nickname.trim()) return;
@@ -412,7 +413,7 @@ export default function SettingsScreen() {
               <SectionLabel icon="tune-variant" title={t("account.sections.preferences")} />
               <View style={[styles.card,{gap: 10}]}>
                 <TourAttachStep index={1} fill>
-                <ScoringPreferencesButton />
+                <ScoringPreferencesButton isLocked={!isFullAccount} />
               </TourAttachStep>
                 <View style={styles.infoRowDivider} />
               <TourAttachStep index={2} fill>
