@@ -48,8 +48,14 @@ export default function RecentGames() {
 
   if (recent.length === 0) {
     return (
-      <View style={styles.placeholder}>
-        <Text style={styles.placeholderText}>{t("games.no-games-yet")}</Text>
+      <View style={styles.emptyCard}>
+        <View style={styles.emptyIconWrap}>
+          <Icon source="gamepad-variant-outline" size={22} color={colors.placeholder} />
+        </View>
+        <View style={styles.emptyText}>
+          <Text style={styles.emptyTitle}>{t("games.no-games-yet")}</Text>
+          <Text style={styles.emptySub}>{t("games.play-to-see-history")}</Text>
+        </View>
       </View>
     );
   }
@@ -130,6 +136,26 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md + 2,
   },
   placeholderText: { fontSize: fontSize.sm + 1, color: mutedText },
+
+  emptyCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.xl,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+  },
+  emptyIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.overlay,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  emptyText: { flex: 1, gap: spacing.xs - 2 },
+  emptyTitle: { fontSize: fontSize.md, fontWeight: fontWeight.semibold, color: colors.text },
+  emptySub: { fontSize: fontSize.sm, color: mutedText },
 
   card: {
     backgroundColor: colors.surface,

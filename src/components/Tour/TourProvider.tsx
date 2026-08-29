@@ -13,7 +13,6 @@ import {
 import {
   Dimensions,
   LayoutRectangle,
-  Modal,
   Pressable,
   StyleSheet,
   View,
@@ -210,15 +209,9 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
       <TourContext.Provider value={ctx}>
         {children}
 
-        <Modal
-          visible={current !== undefined}
-          transparent
-          animationType="none"
-          statusBarTranslucent
-          presentationStyle="overFullScreen"
-        >
+        {current !== undefined && (
           <Animated.View
-            style={[StyleSheet.absoluteFill, overlayStyle]}
+            style={[StyleSheet.absoluteFill, overlayStyle, styles.overlay]}
             pointerEvents="box-none"
           >
             <Canvas style={StyleSheet.absoluteFill} pointerEvents="none">
@@ -242,30 +235,32 @@ export const TourProvider = forwardRef<TourRef, Props>(function TourProvider(
 
             <Pressable style={StyleSheet.absoluteFill} onPress={next} />
 
-            {current !== undefined && (
-              <View
-                style={[styles.tooltip, { top: tooltipTop }]}
-                pointerEvents="box-none"
-                onLayout={(e) => setTooltipHeight(e.nativeEvent.layout.height)}
-              >
-                {steps[current]?.render({
-                  current,
-                  isFirst: current === 0,
-                  isLast: current === steps.length - 1,
-                  total: steps.length,
-                  next,
-                  stop,
-                })}
-              </View>
-            )}
+            <View
+              style={[styles.tooltip, { top: tooltipTop }]}
+              pointerEvents="box-none"
+              onLayout={(e) => setTooltipHeight(e.nativeEvent.layout.height)}
+            >
+              {steps[current]?.render({
+                current,
+                isFirst: current === 0,
+                isLast: current === steps.length - 1,
+                total: steps.length,
+                next,
+                stop,
+              })}
+            </View>
           </Animated.View>
-        </Modal>
+        )}
       </TourContext.Provider>
     </TourStableContext.Provider>
   );
 });
 
 const styles = StyleSheet.create({
+  overlay: {
+    zIndex: 9999,
+    elevation: 99,
+  },
   tooltip: {
     position: "absolute",
     left: 16,

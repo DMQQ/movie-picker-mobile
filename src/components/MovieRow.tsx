@@ -12,7 +12,8 @@ export interface MovieRowProps {
   posterPath: string;
   type?: string;
   year?: string;
-  score?: number;       // 0–10; renders as ⭐ score · year
+  score?: number;       // 0–10
+  scoreDisplay?: "score" | "stars"; // "score" = ★ 7.5, "stars" = ★★★★☆
   source?: string;
   onPress?: () => void;
   onLongPress?: () => void;
@@ -27,6 +28,7 @@ export default function MovieRow({
   type = "movie",
   year,
   score,
+  scoreDisplay = "score",
   source,
   onPress,
   onLongPress,
@@ -55,7 +57,21 @@ export default function MovieRow({
         <Text style={styles.title} numberOfLines={1}>{title}</Text>
         {(score != null || year) && (
           <View style={styles.meta}>
-            {score != null && (
+            {score != null && scoreDisplay === "stars" && (
+              Array.from({ length: 10 }, (_, i) => {
+                const filled = score >= i + 1;
+                const half = !filled && score >= i + 0.5;
+                return (
+                  <Icon
+                    key={i}
+                    source={filled ? "star" : half ? "star-half-full" : "star-outline"}
+                    size={10}
+                    color="#FFD700"
+                  />
+                );
+              })
+            )}
+            {score != null && scoreDisplay === "score" && (
               <>
                 <Icon source="star" size={10} color="#FFD700" />
                 <Text style={styles.metaText}>{score.toFixed(1)}</Text>

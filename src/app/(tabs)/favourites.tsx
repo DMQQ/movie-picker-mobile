@@ -21,7 +21,7 @@ import { TourAttachStep } from "../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../components/Tour/TourContext";
 import TutorialTooltip from "../../components/TutorialTooltip";
-import { useTutorialSeen, useMarkAllTutorialsSeen } from "../../hooks/useTutorial";
+import { useTutorialSeen, useMarkAllTutorialsSeen, useStableFocus } from "../../hooks/useTutorial";
 
 export default function Favourites() {
   const params = useLocalSearchParams();
@@ -43,6 +43,7 @@ export default function Favourites() {
   const tourRef = useRef<TourRef>(null);
   const { seen, markSeen } = useTutorialSeen("tutorial_favourites_seen");
   const markAllSeen = useMarkAllTutorialsSeen();
+  const isFocused = useStableFocus(100);
 
   const scrollToEnd = useCallback(
     () =>
@@ -94,11 +95,11 @@ export default function Favourites() {
   );
 
   useEffect(() => {
-    if (seen === false) {
+    if (seen === false && isFocused) {
       const timer = setTimeout(() => tourRef.current?.start(), 300);
       return () => clearTimeout(timer);
     }
-  }, [seen]);
+  }, [seen, isFocused]);
 
   useEffect(() => {
     dispatch(loadFavorites());

@@ -94,7 +94,12 @@ export default function DialogModals({
           </View>
 
           <View style={styles.codeBlock}>
-            <Text style={[styles.codeValue, { color: theme.colors.primary }]}>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.6}
+              style={[styles.codeValue, { color: theme.colors.primary }]}
+            >
               {qrCode}
             </Text>
             <RoomShareStrip qrCode={qrCode ?? ""} webPath="swipe" roomId={roomId} />

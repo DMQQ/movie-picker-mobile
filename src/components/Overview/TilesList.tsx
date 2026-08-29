@@ -65,6 +65,7 @@ function ColumnRow({ item, type, onLongPress, renderFooter }: { item: Movie; typ
       type={resolvedType}
       year={year}
       score={item.vote_average > 0 ? item.vote_average : undefined}
+      scoreDisplay="stars"
       onLongPress={() => onLongPress?.(item)}
       trailing={
         <IconButton

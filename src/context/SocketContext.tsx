@@ -14,7 +14,7 @@ import { RootState } from "../redux/store";
 import { EventEmitter, useEventEmitter } from "../service/useEventEmitter";
 import { getLocaleForLanguage } from "../service/translationUtils";
 
-const isDev = true // envs.mode !== "production";
+const isDev = envs.mode !== "production";
 
 export const baseUrl = isDev
   ? Platform.OS === "ios"

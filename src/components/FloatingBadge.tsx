@@ -38,7 +38,7 @@ export default function FloatingBadge({
           <View style={[styles.badge, { backgroundColor: color }, style]}>
             {icon && <View style={styles.icon}>{icon}</View>}
             {label ? (
-              <Text style={[styles.label, { color: textColor }]}>{label}</Text>
+              <Text numberOfLines={1} style={[styles.label, { color: textColor }]}>{label}</Text>
             ) : null}
           </View>
         </View>
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   label: {
-    fontSize: 8,
+    fontSize: 7.5,
     fontWeight: fontWeight.bold,
     letterSpacing: 0.5,
   },

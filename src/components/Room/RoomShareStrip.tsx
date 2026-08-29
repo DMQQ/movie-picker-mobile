@@ -45,7 +45,7 @@ const RoomShareStrip = memo(({ qrCode, webPath = "swipe", roomId }: RoomShareStr
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.strip}>
+      <View style={[styles.strip, hasShared && styles.stripColumn]}>
         <TouchableOpacity style={styles.btn} onPress={handleShare} activeOpacity={0.7}>
           <MaterialCommunityIcons name="share-variant-outline" size={20} color={colors.text} />
           <Text style={styles.label}>{t("room.share.button")}</Text>
@@ -53,7 +53,7 @@ const RoomShareStrip = memo(({ qrCode, webPath = "swipe", roomId }: RoomShareStr
 
         {hasShared && (
           <>
-            <View style={styles.divider} />
+            <View style={styles.dividerH} />
             <TouchableOpacity style={styles.btn} onPress={handleNotify} activeOpacity={0.7}>
               <MaterialCommunityIcons
                 name={notifyEnabled ? "bell-ring" : "bell-outline"}
@@ -91,6 +91,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     width: "100%",
   },
+  stripColumn: {
+    flexDirection: "column",
+  },
   btn: {
     flex: 1,
     flexDirection: "row",
@@ -104,10 +107,10 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.medium,
     color: colors.text,
   },
-  divider: {
-    width: StyleSheet.hairlineWidth,
+  dividerH: {
+    height: StyleSheet.hairlineWidth,
     backgroundColor: colors.border,
-    marginVertical: spacing.sm,
+    marginHorizontal: spacing.sm,
   },
   hint: {
     fontSize: fontSize.xs,

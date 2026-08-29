@@ -2,18 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import * as Notifications from "expo-notifications";
 import { AsyncStorage } from "expo-sqlite/kv-store";
 import { useToast } from "../components/Toast";
+import useTranslation from "../service/useTranslation";
 
 const SNOOZE_KEY = "notification_nudge_snoozed_until";
 const SNOOZE_MS = 8 * 60 * 60 * 1000; // 8 hours
 
-const MESSAGES: Record<string, string> = {
-  post_game: "Get notified when friends invite you to play",
-  room_setup: "Get notified when your room fills up",
-};
-
 export function useNotificationNudge(context: "post_game" | "room_setup") {
   const [shouldShow, setShouldShow] = useState(false);
   const { show } = useToast();
+  const t = useTranslation();
   const shownRef = useRef(false);
 
   useEffect(() => {
@@ -37,7 +34,7 @@ export function useNotificationNudge(context: "post_game" | "room_setup") {
     if (!shouldShow || shownRef.current) return;
     shownRef.current = true;
 
-    show(MESSAGES[context], {
+    show(t(`nudge.${context}`), {
       type: "info",
       duration: 0,
       onPress: async () => {

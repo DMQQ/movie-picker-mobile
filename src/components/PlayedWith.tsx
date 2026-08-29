@@ -34,8 +34,19 @@ export default function PlayedWith() {
 
   if (members.length === 0) {
     return (
-      <View style={styles.placeholder}>
-        <Text style={styles.empty}>{t("games.no-one-yet")}</Text>
+      <View style={styles.emptyCard}>
+        <View style={styles.ghostRow}>
+          {[1, 0.55, 0.25].map((opacity, i) => (
+            <View
+              key={i}
+              style={[styles.ghostAvatar, { marginLeft: i === 0 ? 0 : -OVERLAP, opacity }]}
+            />
+          ))}
+        </View>
+        <View style={styles.emptyText}>
+          <Text style={styles.emptyTitle}>{t("games.no-one-yet")}</Text>
+          <Text style={styles.emptySub}>{t("games.play-with-friends")}</Text>
+        </View>
       </View>
     );
   }
@@ -96,6 +107,27 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md + 2,
   },
   empty: { fontSize: fontSize.sm + 1, color: mutedText },
+
+  emptyCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    padding: spacing.xl,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+  },
+  ghostRow: { flexDirection: "row", alignItems: "center" },
+  ghostAvatar: {
+    width: AVATAR_SIZE,
+    height: AVATAR_SIZE,
+    borderRadius: AVATAR_SIZE / 2,
+    backgroundColor: colors.surfaceElevated,
+    borderWidth: 2,
+    borderColor: colors.background,
+  },
+  emptyText: { flex: 1, gap: spacing.xs - 2 },
+  emptyTitle: { fontSize: fontSize.md, fontWeight: fontWeight.semibold, color: colors.text },
+  emptySub: { fontSize: fontSize.sm, color: mutedText },
 
   card: {
     backgroundColor: colors.surface,

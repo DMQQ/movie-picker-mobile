@@ -126,7 +126,7 @@ const GameEndFlow = memo(() => {
                 </View>
                 <View style={styles.codeSide}>
                   <Text style={styles.codeLabel}>{t("room.invite-post-finish.code-label") as string}</Text>
-                  <Text style={styles.codeValue}>{code}</Text>
+                  <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={styles.codeValue}>{code}</Text>
                   <RoomShareStrip qrCode={code} webPath="swipe" roomId={roomId ?? undefined} />
                 </View>
               </View>

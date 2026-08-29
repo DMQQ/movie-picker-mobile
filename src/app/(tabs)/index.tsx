@@ -27,7 +27,7 @@ import { TourAttachStep } from "../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../components/Tour/TourContext";
 import TutorialTooltip from "../../components/TutorialTooltip";
-import { useTutorialSeen, useMarkAllTutorialsSeen } from "../../hooks/useTutorial";
+import { useTutorialSeen, useMarkAllTutorialsSeen, useStableFocus } from "../../hooks/useTutorial";
 import PlatformBlurView from "../../components/PlatformBlurView";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import GameCard, { CARD_HEIGHT } from "../../components/GameCard";
@@ -44,13 +44,14 @@ export default function GameList() {
   const { seen, markSeen } = useTutorialSeen("tutorial_home_seen");
   const markAllSeen = useMarkAllTutorialsSeen();
   const insets = useSafeAreaInsets();
+  const isFocused = useStableFocus(100);
 
   useEffect(() => {
-    if (seen === false) {
+    if (seen === false && isFocused) {
       const timer = setTimeout(() => tourRef.current?.start(), 300);
       return () => clearTimeout(timer);
     }
-  }, [seen]);
+  }, [seen, isFocused]);
 
   const scrollTo = useCallback(
     (y: number) =>

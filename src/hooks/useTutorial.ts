@@ -1,7 +1,24 @@
 import { AsyncStorage } from "expo-sqlite/kv-store";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { tutorialActions, TutorialKey, TUTORIAL_KEYS } from "../redux/tutorial/tutorialSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
+import { useIsFocused } from "expo-router";
+
+export function useStableFocus(ms: number): boolean {
+  const isFocused = useIsFocused();
+  const [stable, setStable] = useState(false);
+
+  useEffect(() => {
+    if (!isFocused) {
+      setStable(false);
+      return;
+    }
+    const t = setTimeout(() => setStable(true), ms);
+    return () => clearTimeout(t);
+  }, [isFocused, ms]);
+
+  return stable;
+}
 
 export function useTutorialSeen(key: TutorialKey) {
   const dispatch = useAppDispatch();

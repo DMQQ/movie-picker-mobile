@@ -35,7 +35,7 @@ import { TourAttachStep } from "../../../components/Tour/TourAttachStep";
 import { TourProvider } from "../../../components/Tour/TourProvider";
 import { type TourRef, type TourStep } from "../../../components/Tour/TourContext";
 import TutorialTooltip from "../../../components/TutorialTooltip";
-import { useTutorialSeen, useMarkAllTutorialsSeen } from "../../../hooks/useTutorial";
+import { useTutorialSeen, useMarkAllTutorialsSeen, useStableFocus } from "../../../hooks/useTutorial";
 import Touch from "../../../components/Touch";
 import SearchSkeleton from "../../../components/Search/SearchSkeleton";
 import ActiveFilters from "../../../components/Search/ActiveFilters";
@@ -151,6 +151,7 @@ const SearchScreen = () => {
   const tourRef = useRef<TourRef>(null);
   const { seen, markSeen } = useTutorialSeen("tutorial_search_seen");
   const markAllSeen = useMarkAllTutorialsSeen();
+  const isFocused = useStableFocus(100);
 
   const steps = useMemo<TourStep[]>(
     () => [
@@ -192,11 +193,11 @@ const SearchScreen = () => {
   );
 
   useEffect(() => {
-    if (seen === false) {
+    if (seen === false && isFocused) {
       const timer = setTimeout(() => tourRef.current?.start(), 300);
       return () => clearTimeout(timer);
     }
-  }, [seen]);
+  }, [seen, isFocused]);
 
   useEffect(() => {
     if (searchParams?.initialQuery && !searchQuery) {
