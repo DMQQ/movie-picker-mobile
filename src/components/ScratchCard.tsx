@@ -1,7 +1,8 @@
 import { Canvas, Group, Image, Mask, Path, Rect, Skia, SkPath, useImage } from "@shopify/react-native-skia";
 import { colors, fontWeight, fontSize, radius, spacing} from "../constants/design";
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Dimensions, LayoutChangeEvent, StyleProp, StyleSheet, TouchableOpacity, Vibration, View, ViewStyle } from "react-native";
+import { Dimensions, LayoutChangeEvent, StyleProp, StyleSheet, Vibration, View, ViewStyle } from "react-native";
+import Touch from "./Touch";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useSharedValue, withSpring, useAnimatedStyle } from "react-native-reanimated";
 import { svgPathProperties } from "svg-path-properties";
@@ -168,11 +169,10 @@ export const ScratchCard = ({
 
         {isScratched && showButtonOnScratch && (
           <Animated.View style={[styles.buttonOverlay, animatedStyle]}>
-            <TouchableOpacity
+            <Touch
               style={[styles.buttonContent, buttonStyle]}
               onPress={handleButtonPress}
-              activeOpacity={0.8}
-            ></TouchableOpacity>
+            />
           </Animated.View>
         )}
       </View>

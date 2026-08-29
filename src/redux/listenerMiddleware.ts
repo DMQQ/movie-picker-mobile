@@ -113,15 +113,3 @@ listenerMiddleware.startListening({
   },
 });
 
-// Host-trace: every local mutation of room.isHost logs the transition so host
-// ownership loss after a party play-again flow can be traced to the action.
-listenerMiddleware.startListening({
-  matcher: isAnyOf(
-    roomActions.setHost,
-    roomActions.setQRCode,
-    roomActions.setRoomId,
-    roomActions.resetForNewGame,
-    roomActions.reset,
-  ),
-  effect: () => {},
-});

@@ -1,4 +1,5 @@
-import { FlatList, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import Touch from "../components/Touch";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "../components/Icon";
@@ -100,9 +101,9 @@ export default function AllRatingsScreen() {
         <View style={styles.error}>
           <Icon source="cloud-off-outline" size={44} color="rgba(255,255,255,0.12)" />
           <Text style={styles.errorText}>{t("ratings.loadError") as string}</Text>
-          <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
+          <Touch style={styles.retryBtn} onPress={() => refetch()}>
             <Text style={styles.retryText}>{t("status-modal.retry") as string}</Text>
-          </TouchableOpacity>
+          </Touch>
         </View>
       ) : (
         <FlatList

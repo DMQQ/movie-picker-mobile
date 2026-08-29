@@ -119,7 +119,6 @@ export default function QRScanner() {
   useEffect(() => {
     if (!isFocused) return;
 
-    console.log("Requesting camera permission...");
     !hasPermission?.granted && request();
   }, [isFocused, hasPermission?.granted]);
 

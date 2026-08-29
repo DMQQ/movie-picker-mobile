@@ -1,4 +1,5 @@
-import { Pressable, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Pressable, useWindowDimensions, View } from "react-native";
+import Touch from "../../components/Touch";
 import Text from "../../components/Text";
 
 import { colors, fontSize, radius, spacing } from "../../constants/design";
@@ -217,9 +218,8 @@ export default function RatingState({
 
           {/* Poster — flex:1 so it fills whatever vertical space remains above the rating rows */}
           <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.screen }}>
-            <TouchableOpacity
+            <Touch
               disabled={typeof card?.id === "undefined"}
-              activeOpacity={0.85}
               onPress={() =>
                 router.push({
                   pathname: "/movie/type/[type]/[id]",
@@ -242,7 +242,7 @@ export default function RatingState({
                 style={{ width: "100%", height: "100%", borderRadius: radius.md }}
                 resizeMode="cover"
               />
-            </TouchableOpacity>
+            </Touch>
 
             <Text
               style={{

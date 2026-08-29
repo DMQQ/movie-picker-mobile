@@ -1,4 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import Touch from "./Touch";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors, common, fontSize, fontWeight, radius, spacing, withAlpha } from "../constants/design";
 
@@ -28,7 +29,7 @@ export default function GenreChip({ genre, selected, onPress, light }: GenreChip
 
   if (isInteractive) {
     return (
-      <TouchableOpacity onPress={onPress} style={chipStyle} activeOpacity={0.7}>
+      <Touch onPress={onPress} style={chipStyle}>
         <Text style={textStyle}>{genre}</Text>
         {removable && (
           <MaterialCommunityIcons
@@ -38,7 +39,7 @@ export default function GenreChip({ genre, selected, onPress, light }: GenreChip
             style={styles.removeIcon}
           />
         )}
-      </TouchableOpacity>
+      </Touch>
     );
   }
 

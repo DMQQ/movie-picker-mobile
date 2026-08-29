@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import Touch from "./Touch";
 import Text from "./Text";
 import { Movie } from "../../types";
 import { useAppSelector } from "../redux/store";
@@ -38,7 +39,7 @@ export default function CustomFavourite({
 
   return (
     <View>
-      <TouchableOpacity style={styles.iconButton} onPress={openSheet}>
+      <Touch style={styles.iconButton} onPress={openSheet}>
         <>
           <MaterialCommunityIcons
             name={isFavorite ? "bookmark-check" : "bookmark"}
@@ -49,7 +50,7 @@ export default function CustomFavourite({
             <Text style={styles.iconText}>{t("quick-actions.my-lists")}</Text>
           )}
         </>
-      </TouchableOpacity>
+      </Touch>
     </View>
   );
 }
