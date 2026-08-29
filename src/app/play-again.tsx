@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Platform } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import FormSheetContainer from "../components/FormSheetContainer";
 import GameCard from "../components/GameCard";
@@ -74,6 +74,7 @@ export default function PlayAgain() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
+        nestedScrollEnabled={Platform.OS === "android"}
       >
         <PlayersRow
           players={players}

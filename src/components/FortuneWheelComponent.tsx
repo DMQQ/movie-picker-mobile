@@ -1,20 +1,23 @@
+import type { SkImage } from "@shopify/react-native-skia";
 import {
   BlurMask,
   Canvas,
   Circle,
   CornerPathEffect,
   Group,
+  Image as SkiaImage,
   LinearGradient,
   Path,
   RadialGradient,
   Rect,
   Skia,
   SweepGradient,
+  useCanvasRef,
   vec,
 } from "@shopify/react-native-skia";
 import * as Haptics from "expo-haptics";
 import { colors, radius } from "../constants/design";
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef } from "react";
+import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Dimensions, Image, Platform, StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -96,13 +99,40 @@ const Segment = memo(({ item, segmentAngle, wheelSize, startAngle }: SegmentProp
 });
 
 // --- THE FANCY OVERLAY (Gold-Silver Hub + Dual Rim) ---
-const WheelOverlay = ({ size }: { size: number }) => {
+const WheelOverlay = memo(({ size }: { size: number }) => {
+  const canvasRef = useCanvasRef();
+  const [snapshot, setSnapshot] = useState<SkImage | null>(null);
   const center = vec(size / 2, size / 2);
   const ringRadius = size / 2;
   const hubRadius = size * 0.175;
 
+  useEffect(() => {
+    // Android's GPU pipeline doesn't flush synchronously with rAF — skip snapshot there
+    if (Platform.OS !== "ios") return;
+    let id1: ReturnType<typeof requestAnimationFrame>;
+    let id2: ReturnType<typeof requestAnimationFrame>;
+    id1 = requestAnimationFrame(() => {
+      id2 = requestAnimationFrame(() => {
+        const image = canvasRef.current?.makeImageSnapshot();
+        if (image) setSnapshot(image);
+      });
+    });
+    return () => {
+      cancelAnimationFrame(id1);
+      cancelAnimationFrame(id2);
+    };
+  }, [size]);
+
+  if (snapshot) {
+    return (
+      <Canvas style={{ width: size, height: size, position: "absolute", top: 0, left: 0 }} pointerEvents="none">
+        <SkiaImage image={snapshot} x={0} y={0} width={size} height={size} fit="fill" />
+      </Canvas>
+    );
+  }
+
   return (
-    <Canvas style={{ width: size, height: size, position: "absolute", top: 0, left: 0 }} pointerEvents="none">
+    <Canvas ref={canvasRef} style={{ width: size, height: size, position: "absolute", top: 0, left: 0 }} pointerEvents="none">
       {/* 1. SHADOW VIGNETTE */}
       <Rect x={0} y={0} width={size} height={size}>
         <RadialGradient
@@ -116,14 +146,14 @@ const WheelOverlay = ({ size }: { size: number }) => {
       {/* 2. OUTER GOLD RIM (Primary) */}
       <Circle cx={center.x} cy={center.y} r={ringRadius - BORDER_WIDTH / 2} style="stroke" strokeWidth={BORDER_WIDTH}>
         <SweepGradient c={center} colors={["#FFD700", "#FFF8DC", "#B8860B", "#FFD700", "#FFF8DC", "#B8860B", "#FFD700"]} />
-        <BlurMask blur={2} style="solid" />
+        {Platform.OS === "ios" && <BlurMask blur={2} style="solid" />}
       </Circle>
 
-      {/* 3. NEW: SECOND EDGE (Silver/Platinum Inner Lip) */}
+      {/* 3. SECOND EDGE (Silver/Platinum Inner Lip) */}
       <Circle cx={center.x} cy={center.y} r={ringRadius - BORDER_WIDTH - 2} style="stroke" strokeWidth={10}>
         <SweepGradient
           c={center}
-          colors={["#c0c0c08e", "#e5e4e290", "#70707080", "#c0c0c08e"]} // Metallic Silver Gradient
+          colors={["#c0c0c08e", "#e5e4e290", "#70707080", "#c0c0c08e"]}
         />
       </Circle>
 
@@ -141,13 +171,7 @@ const WheelOverlay = ({ size }: { size: number }) => {
         <Circle cx={center.x} cy={center.y} r={hubRadius} style="stroke" strokeWidth={25}>
           <SweepGradient
             c={center}
-            colors={[
-              "#FFD700", // Gold
-              "#C0C0C0", // Silver
-              "#B8860B", // Dark Bronze
-              "#E5E4E2", // Platinum
-              "#FFD700", // Gold
-            ]}
+            colors={["#FFD700", "#C0C0C0", "#B8860B", "#E5E4E2", "#FFD700"]}
           />
         </Circle>
 
@@ -172,27 +196,34 @@ const WheelOverlay = ({ size }: { size: number }) => {
       </Group>
     </Canvas>
   );
-};
+});
 // --- BACKGROUND SEGMENTS ---
-const WheelBackground = ({ size, items }: { size: number; items: any[] }) => {
+const WheelBackground = memo(({ size, items }: { size: number; items: any[] }) => {
   const segmentAngle = 360 / items.length;
   const center = size / 2;
 
-  return (
-    <Canvas style={{ width: size, height: size, position: "absolute" }}>
-      {items.map((_, index) => {
+  const paths = useMemo(
+    () =>
+      items.map((_, index) => {
         const startAngle = index * segmentAngle;
         const rect = { x: 0, y: 0, width: size, height: size };
-        const p = Skia.PathBuilder.Make()
+        return Skia.PathBuilder.Make()
           .moveTo(center, center)
           .arcToOval(rect, startAngle - 90, segmentAngle, false)
           .close()
           .detach();
-        return <Path key={index} path={p} color={COLORS[index % COLORS.length]} />;
-      })}
+      }),
+    [items, size, segmentAngle, center],
+  );
+
+  return (
+    <Canvas style={{ width: size, height: size, position: "absolute" }}>
+      {paths.map((p, index) => (
+        <Path key={index} path={p} color={COLORS[index % COLORS.length]} />
+      ))}
     </Canvas>
   );
-};
+});
 
 interface WheelProps {
   size?: number;
@@ -340,7 +371,7 @@ const Wheel = forwardRef<{ spin: () => void; stop: () => void }, WheelProps>(
       .onUpdate((event) => {
         if (!isSpinning.value) {
           translateY.value = clamp(startTranslateY.value + event.translationY, -50, 200);
-          rotate.value = withTiming(rotate.value - 5, { duration: 50, easing: Easing.linear });
+          rotate.value = withTiming(rotate.value + (event.translationY > 0 ? -5 : 5), { duration: 50, easing: Easing.linear });
           pointerRotation.value = withTiming(25, { duration: 50, easing: Easing.out(Easing.quad) });
         }
       })

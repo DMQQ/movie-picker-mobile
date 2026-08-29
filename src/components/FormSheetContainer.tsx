@@ -65,6 +65,7 @@ export default function FormSheetContainer({
       keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ flexGrow: 1 }}
+      nestedScrollEnabled={Platform.OS === "android"}
     >
       {content}
     </ScrollView>

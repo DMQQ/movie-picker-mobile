@@ -211,10 +211,13 @@ export default function FiltersScreen() {
 
   return (
     <View style={styles.wrapper}>
-      <FormSheetContainer padX={0}>
+      <FormSheetContainer padX={0} {
+        ...(Platform.OS === 'android' && {style:{paddingBottom:0}})
+      }>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
+          nestedScrollEnabled={Platform.OS === "android"}
           showsVerticalScrollIndicator={false}
         >
           <View style={[styles.section, Platform.OS === "ios" && { paddingTop: spacing.xxl * 2 }]}>
@@ -272,8 +275,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: spacing.lg,
     paddingHorizontal: spacing.lg,
+    ...(Platform.OS === 'ios' && {paddingBottom: 5*spacing.xl}),
   },
   section: {
     marginBottom: spacing.xxl,
