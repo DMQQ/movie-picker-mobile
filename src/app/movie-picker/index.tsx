@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Platform, Pressable, StyleSheet, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FlashList } from "@shopify/flash-list";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
@@ -57,6 +58,7 @@ export default function MoviePickerIndex() {
     (s) => !!s.auth.user && s.auth.user.provider !== "anonymous",
   );
   const { movieInteractions } = useMovieInteractions();
+  const insets = useSafeAreaInsets();
 
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
@@ -299,7 +301,7 @@ export default function MoviePickerIndex() {
       <Pressable
         onPress={handleConfirm}
         disabled={isListAddMode ? selected.length === 0 : selected.length < requiredCount}
-        style={[styles.confirm, (isListAddMode ? selected.length === 0 : selected.length < requiredCount) && styles.confirmDisabled]}
+        style={[styles.confirm, (isListAddMode ? selected.length === 0 : selected.length < requiredCount) && styles.confirmDisabled, Platform.OS === "android" && { marginBottom: insets.bottom - spacing.lg }]}
       >
         <Text style={styles.confirmText}>
           {isListAddMode

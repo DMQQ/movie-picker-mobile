@@ -28,17 +28,24 @@ const STAR_COLORS = ["#E5484D", "#F76B15", "#9ACD32", "#46A758", "#FFD700"];
 function AnimatedStar({
   scale,
   starColor,
+  starWidth,
+  starFontSize,
 }: {
   scale: ReturnType<typeof useSharedValue<number>>;
   starColor: string;
+  starWidth: number;
+  starFontSize: number;
 }) {
   const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
   return (
-    <View style={{ width: 46, alignItems: "center" }}>
-      <Animated.Text style={[{ fontSize: 36, color: starColor }, animStyle]}>★</Animated.Text>
+    <View style={{ width: starWidth, alignItems: "center", justifyContent: "center" }}>
+      <Animated.Text style={[{ fontSize: starFontSize, color: starColor }, animStyle]}>★</Animated.Text>
     </View>
   );
 }
+
+// card horizontal insets: marginHorizontal spacing.screen + paddingHorizontal spacing.lg
+const CARD_H_INSET = (spacing.screen + spacing.lg) * 2;
 
 function StarRow({
   ratingKey,
@@ -55,39 +62,47 @@ function StarRow({
     React.SetStateAction<{ interest: number | null; mood: number | null; uniqueness: number | null }>
   >;
 }) {
-  const s1 = useSharedValue(1);
-  const s2 = useSharedValue(1);
-  const s3 = useSharedValue(1);
-  const s4 = useSharedValue(1);
-  const s5 = useSharedValue(1);
+  const { width: screenWidth } = useWindowDimensions();
+  const starWidth = Math.floor(((screenWidth - CARD_H_INSET) * 0.55) / 5);
+  const starFontSize = Math.round(starWidth * 0.78);
+
+  const s1 = useSharedValue(0);
+  const s2 = useSharedValue(0);
+  const s3 = useSharedValue(0);
+  const s4 = useSharedValue(0);
+  const s5 = useSharedValue(0);
   const scales = [s1, s2, s3, s4, s5];
 
   const filledCount = localRatings[ratingKey] ?? 0;
 
   const animateSelection = (selected: number) => {
     scales.forEach((s, i) => {
-      if (i >= selected) return;
-      s.value = 0;
-      s.value = withDelay(
-        i * 70,
-        selected === 5
-          ? withSpring(1, { damping: 10, stiffness: 260 })
-          : withTiming(1, { duration: 200, easing: Easing.out(Easing.cubic) }),
-      );
+      if (i < selected) {
+        s.value = withDelay(
+          i * 70,
+          selected === 5
+            ? withSpring(1, { damping: 10, stiffness: 260 })
+            : withTiming(1, { duration: 200, easing: Easing.out(Easing.cubic) }),
+        );
+      } else {
+        s.value = withTiming(0, { duration: 100 });
+      }
     });
   };
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center" }}>
       <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: spacing.xs + 2 }}>
-        <Text style={{ fontSize: 26 }}>{emoji}</Text>
+        <Text style={{ fontSize: starFontSize * 0.65, lineHeight: starFontSize }}>{emoji}</Text>
         <Text
           style={{
             fontFamily: "Bebas",
-            fontSize: fontSize.title,
+            fontSize: starFontSize * 0.6,
+            lineHeight: starFontSize,
             color: localRatings[ratingKey] !== null ? colors.text : "rgba(255,255,255,0.5)",
             letterSpacing: 0.5,
           }}
+          numberOfLines={1}
         >
           {label}
         </Text>
@@ -103,23 +118,21 @@ function StarRow({
                 setLocalRatings((p) => ({ ...p, [ratingKey]: star }));
                 animateSelection(star);
               }}
-              style={{ width: 46, alignItems: "center" }}
+              style={{ width: starWidth, alignItems: "center", justifyContent: "center" }}
             >
-              <Text style={{ fontSize: 36, color: "rgba(255,255,255,0.15)" }}>★</Text>
+              <Text style={{ fontSize: starFontSize, color: "rgba(255,255,255,0.15)" }}>★</Text>
             </Pressable>
           ))}
         </View>
         {/* Animated colored stars on top of the gray ones */}
-        {filledCount > 0 && (
-          <View
-            pointerEvents="none"
-            style={{ position: "absolute", left: 0, top: 0, bottom: 0, flexDirection: "row" }}
-          >
-            {([1, 2, 3, 4, 5] as const).slice(0, filledCount).map((star, i) => (
-              <AnimatedStar key={star} scale={scales[i]} starColor={STAR_COLORS[filledCount - 1]} />
-            ))}
-          </View>
-        )}
+        <View
+          pointerEvents="none"
+          style={{ position: "absolute", left: 0, top: 0, bottom: 0, flexDirection: "row" }}
+        >
+          {([1, 2, 3, 4, 5] as const).map((star, i) => (
+            <AnimatedStar key={star} scale={scales[i]} starColor={STAR_COLORS[Math.max(0, filledCount - 1)]} starWidth={starWidth} starFontSize={starFontSize} />
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -161,10 +174,11 @@ export default function RatingState({
   const countdownProgress = useSharedValue(1);
 
   useEffect(() => {
+    countdownProgress.value = 1;
     countdownProgress.value = withTiming(0, { duration: COUNTDOWN_MS, easing: Easing.linear });
     const timer = setTimeout(onTimeout, COUNTDOWN_MS);
     return () => clearTimeout(timer);
-  }, []);
+  }, [card?.id]);
 
   const countdownBarStyle = useAnimatedStyle(() => ({
     width: `${countdownProgress.value * 100}%`,

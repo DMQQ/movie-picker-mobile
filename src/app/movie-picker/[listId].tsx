@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Platform, Pressable, StyleSheet, View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -178,7 +178,7 @@ export default function MoviePickerListDetail() {
   }, [dispatch, isListAddMode, isAuthenticated, movieInteractions, selected, addBulkItems, targetListType, targetGroupId]);
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+    <View style={[styles.container, Platform.OS === "android" && { paddingBottom: insets.bottom * 2 }]}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerText}>

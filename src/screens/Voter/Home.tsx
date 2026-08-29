@@ -117,9 +117,9 @@ export default function Home() {
     const r = localRatingsRef.current;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     actions.submitRating(currentMovies[0].id as any, {
-      interest: r.interest ?? 3,
-      mood: r.mood ?? 3,
-      uniqueness: r.uniqueness ?? 3,
+      interest: r.interest ?? 1,
+      mood: r.mood ?? 1,
+      uniqueness: r.uniqueness ?? 1,
       durationMs: Date.now() - cardStartTime.current,
     });
     setLocalRatings({ interest: null, mood: null, uniqueness: null });
